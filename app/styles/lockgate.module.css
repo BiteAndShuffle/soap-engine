@@ -1,0 +1,102 @@
+/* ═══════════════════════════════════════════════════════════════
+   LockGate — パスワードロック画面スタイル
+   ═══════════════════════════════════════════════════════════════ */
+
+.overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: #1a1a2e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN',
+    'Noto Sans JP', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #24243c;
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  min-width: 280px;
+}
+
+.title {
+  color: #e8e8ff;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.badge {
+  background: #0a84ff;
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.warning {
+  color: #ff9f0a;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.input {
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  border: 1.5px solid #3d3d5c;
+  background: #1a1a2e;
+  color: #e8e8ff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input:focus { border-color: #0a84ff; }
+.inputError { border-color: #ff453a; }
+
+.errorText {
+  color: #ff453a;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.submitBtn {
+  padding: 0.65rem;
+  background: #0a84ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.submitBtn:hover { background: #006ee0; }
+
+/* ── ログアウトボタン（右下固定） ─────────────────────────────── */
+.logoutBtn {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(30, 30, 50, 0.85);
+  color: #aaa;
+  border: 1px solid #444;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  transition: color 0.12s, border-color 0.12s;
+}
+.logoutBtn:hover { color: #e8e8ff; border-color: #666; }

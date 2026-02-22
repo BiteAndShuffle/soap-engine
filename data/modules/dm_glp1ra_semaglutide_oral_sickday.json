@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "1.1",
+  "moduleId": "dm_glp1ra_semaglutide_oral",
+  "title": "GLP-1受容体作動薬（内服）リベルサス（セマグルチド）",
+  "categoryPath": ["糖尿病", "GLP-1受容体作動薬"],
+  "tags": {
+    "drugTags": ["GLP1_RA"],
+    "drugSpecificTags": ["semaglutide_oral"],
+    "situationTags": ["sickday"],
+    "riskTags": ["hypoglycemia_risk", "dehydration_risk"],
+    "conditionalRiskTags": ["ketoacidosis_risk"]
+  },
+  "search": {
+    "keywords": ["リベルサス", "セマグルチド", "GLP-1", "GLP1", "糖尿病", "シックデイ"],
+    "synonyms": ["Rybelsus", "semaglutide oral"]
+  },
+  "templates": [
+    {
+      "templateId": "init",
+      "label": "初回",
+      "type": "base",
+      "conditions": {},
+      "soap": {
+        "S": "血糖値が高いため薬が追加となった。",
+        "O": "GLP-1受容体作動薬処方",
+        "A": "GLP-1受容体作動薬は血糖コントロール不十分のため追加。\n血糖依存的にインスリン分泌を促進し、血糖改善を目的とする。",
+        "P": "GLP-1受容体作動薬は血糖値を改善する薬です。\n副作用があれば相談してください。\n次回、治療経過の確認。"
+      },
+      "addons": [
+        {
+          "addonId": "init_counseling_01",
+          "label": "服薬指導アドオン①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症を生じる可能性があることを説明。\n食事療法および運動療法の重要性について指導。\n間食はカロリーオフ・ノンシュガー食品への置き換えを提案。\n血糖改善に伴い低血糖症状が出現する可能性について注意喚起。"
+            }
+          ]
+        },
+        {
+          "addonId": "init_oral_01",
+          "label": "内服アドオン①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "湿気に弱いため、PTPシートはミシン目以外で切り離さないでください。"
+            }
+          ]
+        },
+        {
+          "addonId": "init_oral_02",
+          "label": "内服アドオン②",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "起床後すぐに、水約120mLで服用してください。服用後30分は飲食および他の薬の服用を避けてください。"
+            }
+          ]
+        },
+        {
+          "addonId": "init_se_01",
+          "label": "副作用アドオン①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "吐き気などの消化器症状が出ることがあります。症状があれば相談してください。"
+            }
+          ]
+        },
+        {
+          "addonId": "init_se_02",
+          "label": "副作用アドオン②",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "他の糖尿病薬と併用している場合は、ふらつき・動悸などの低血糖症状が出ることがあります。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "dose_up",
+      "label": "増量",
+      "type": "base",
+      "conditions": {},
+      "soap": {
+        "S": "GLP-1受容体作動薬は、増量になりました。",
+        "O": "GLP-1受容体作動薬処方",
+        "A": "GLP-1受容体作動薬は、効果不十分のため増量。副作用増悪の可能性に注意。",
+        "P": "GLP-1受容体作動薬は、増量により吐き気・下痢・便秘などの消化器症状が出やすくなることがあります。\nふらつき・動悸など低血糖症状があれば相談してください。\n次回、治療経過の確認。"
+      },
+      "addons": [
+        {
+          "addonId": "dose_up_se_01",
+          "label": "増量時副作用アドオン①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "増量直後は消化器症状が一時的に強くなることがあります。通常は数日〜数週間で軽減することが多いですが、継続する場合はご相談ください。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "dose_down",
+      "label": "減量",
+      "type": "base",
+      "conditions": {},
+      "soap": {
+        "S": "GLP-1受容体作動薬は、減量になりました。",
+        "O": "GLP-1受容体作動薬処方",
+        "A": "GLP-1受容体作動薬は、副作用軽減または用量調整のため減量。",
+        "P": "用量が変更になりました。引き続き血糖値の変化に注意してください。\n気になる症状があれば相談してください。\n次回、治療経過の確認。"
+      },
+      "addons": []
+    },
+    {
+      "templateId": "no_adverse_effects",
+      "label": "副作用なし",
+      "type": "followup",
+      "conditions": {},
+      "soap": {
+        "S": "特に副作用はありません。",
+        "O": "GLP-1受容体作動薬処方継続",
+        "A": "GLP-1受容体作動薬継続中。副作用の訴えなく経過良好。",
+        "P": "現在の用法・用量で継続してください。\n引き続き体調の変化があれば相談してください。\n次回、治療経過の確認。"
+      },
+      "addons": []
+    },
+    {
+      "templateId": "adverse_effects",
+      "label": "副作用あり",
+      "type": "followup",
+      "conditions": {},
+      "soap": {
+        "S": "吐き気などの症状があります。",
+        "O": "GLP-1受容体作動薬処方継続",
+        "A": "GLP-1受容体作動薬による消化器系副作用の可能性。経過観察または用量調整を検討。",
+        "P": "消化器症状は継続投与で改善する場合があります。\n症状が強い場合や日常生活に支障がある場合はご連絡ください。\n次回、副作用の経過を確認。"
+      },
+      "addons": [
+        {
+          "addonId": "adverse_effects_nausea_01",
+          "label": "悪心・嘔吐アドオン①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "食事を少量ずつ、ゆっくり摂取するよう心がけてください。脂っこい食事や過食を避けることで症状が和らぐ場合があります。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "templateId": "sickday",
+      "label": "シックデイ",
+      "type": "situation",
+      "conditions": {},
+      "soap": {
+        "S": "風邪気味です。",
+        "O": "GLP-1受容体作動薬処方",
+        "A": "食事摂取低下により低血糖および脱水リスク上昇。",
+        "P": "食事摂取が困難な場合は低血糖に注意。\n水分はこまめに摂取するよう指導。\n嘔吐・下痢が続く場合や水分が摂れない場合は受診を検討。\n次回、治療経過の確認。"
+      },
+      "addons": [
+        {
+          "addonId": "sickday_common_01",
+          "label": "糖尿病薬共通アドオン　シックデイ①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "併用中のSGLT2阻害薬やメトホルミンは脱水時中止が必要な場合あり。自己判断せず処方医へ相談してください。"
+            }
+          ]
+        },
+        {
+          "addonId": "sickday_glp1_01",
+          "label": "GLP-1シックデイアドオン①",
+          "patches": [
+            {
+              "target": "P",
+              "mode": "block",
+              "op": "append",
+              "text": "著しい嘔吐・食欲不振が続く場合は、薬の服用継続の可否について処方医へご相談ください。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

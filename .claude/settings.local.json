@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm install)",
       "Bash(npm run dev:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(BASIC_AUTH_USER=test BASIC_AUTH_PASS=test npm run build:*)",
+      "Bash(npx next build:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)"
     ]
   }
 }

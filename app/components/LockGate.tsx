@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import s from '../styles/lockgate.module.css'
 
 const STORAGE_KEY = 'app_unlocked'
 
@@ -30,28 +31,14 @@ export default function LockGate({ children }: { children: React.ReactNode }) {
     return (
       <>
         {children}
-        {/* ロック有効時のみ Logout ボタンを表示 */}
         {isLockEnabled && (
           <button
+            className={s.logoutBtn}
             onClick={() => {
               localStorage.removeItem(STORAGE_KEY)
               setUnlocked(false)
               setPwInput('')
               setPwError(false)
-            }}
-            style={{
-              position: 'fixed',
-              bottom: '1rem',
-              right: '1rem',
-              padding: '0.4rem 0.9rem',
-              background: 'rgba(30,30,50,0.85)',
-              color: '#aaa',
-              border: '1px solid #444',
-              borderRadius: '8px',
-              fontSize: '0.78rem',
-              cursor: 'pointer',
-              zIndex: 9999,
-              backdropFilter: 'blur(4px)',
             }}
           >
             Logout
@@ -61,7 +48,7 @@ export default function LockGate({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // ── ロック画面 ──────────────────────────────────────────────────────────────
+  // ── ロック画面 ─────────────────────────────────────────────────
 
   const noPassword = correctPassword === ''
 
@@ -79,58 +66,15 @@ export default function LockGate({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100dvh',
-        background: '#1a1a2e',
-        fontFamily: 'system-ui, sans-serif',
-      }}
-    >
-      <form
-        onSubmit={handleUnlock}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
-          background: '#24243c',
-          padding: '2rem',
-          borderRadius: '14px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-          minWidth: '280px',
-        }}
-      >
-        <span
-          style={{
-            color: '#e8e8ff',
-            fontWeight: 800,
-            fontSize: '1rem',
-            letterSpacing: '-0.01em',
-          }}
-        >
-          SOAP Engine{' '}
-          <span
-            style={{
-              background: '#0a84ff',
-              color: '#fff',
-              borderRadius: '4px',
-              padding: '1px 6px',
-              fontSize: '0.62rem',
-              fontWeight: 700,
-              verticalAlign: 'middle',
-              marginLeft: '4px',
-            }}
-          >
-            GLP-1
-          </span>
+    <div className={s.overlay}>
+      <form onSubmit={handleUnlock} className={s.form}>
+        <span className={s.title}>
+          SOAP Engine
+          <span className={s.badge}>GLP-1</span>
         </span>
 
         {noPassword ? (
-          <span style={{ color: '#ff9f0a', fontSize: '0.82rem', fontWeight: 600 }}>
-            パスワード未設定のため解除できません
-          </span>
+          <span className={s.warning}>パスワード未設定のため解除できません</span>
         ) : (
           <>
             <input
@@ -138,38 +82,16 @@ export default function LockGate({ children }: { children: React.ReactNode }) {
               autoFocus
               placeholder="パスワードを入力"
               value={pwInput}
+              className={[s.input, pwError ? s.inputError : ''].join(' ')}
               onChange={e => {
                 setPwInput(e.target.value)
                 setPwError(false)
               }}
-              style={{
-                padding: '0.55rem 0.9rem',
-                borderRadius: '8px',
-                border: `1.5px solid ${pwError ? '#ff453a' : '#3d3d5c'}`,
-                background: '#1a1a2e',
-                color: '#e8e8ff',
-                fontSize: '0.95rem',
-                outline: 'none',
-              }}
             />
             {pwError && (
-              <span style={{ color: '#ff453a', fontSize: '0.78rem', fontWeight: 600 }}>
-                パスワードが正しくありません
-              </span>
+              <span className={s.errorText}>パスワードが正しくありません</span>
             )}
-            <button
-              type="submit"
-              style={{
-                padding: '0.65rem',
-                background: '#0a84ff',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-              }}
-            >
+            <button type="submit" className={s.submitBtn}>
               ロック解除
             </button>
           </>

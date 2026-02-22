@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import LockGate from './components/LockGate'
 
 export const metadata: Metadata = {
   title: 'SOAP Engine',
@@ -14,9 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <LockGate>{children}</LockGate>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
