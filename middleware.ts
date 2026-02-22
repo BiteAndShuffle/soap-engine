@@ -1,42 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Paths that must be publicly accessible for Next.js to function
-const PUBLIC_PREFIXES = [
-  '/_next/static',
-  '/_next/image',
-  '/favicon.ico',
-]
+// ─────────────────────────────────────────────────────────────
+// パスレベルの公開ホワイトリスト
+// Next.js が内部で使うパス (_next/*) はすべて認証をスキップする。
+// ここを狭くしすぎると RSC payload / static chunk が 401/503 になり
+// Vercel 本番で画面が空白になる。
+// ─────────────────────────────────────────────────────────────
 
-function isPublic(pathname: string): boolean {
-  return PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix))
+function isNextInternal(pathname: string): boolean {
+  return (
+    pathname.startsWith('/_next/') ||   // static, data, image, chunk すべて
+    pathname === '/favicon.ico'
+  )
 }
 
 export function middleware(req: NextRequest): NextResponse {
-  // Skip auth for static assets and Next.js internals
-  if (isPublic(req.nextUrl.pathname)) {
+  // Next.js 内部リクエストは無条件パス
+  if (isNextInternal(req.nextUrl.pathname)) {
     return NextResponse.next()
   }
 
   const user = process.env.BASIC_AUTH_USER
   const pass = process.env.BASIC_AUTH_PASS
 
-  // If env vars are not set, fail open with a clear server log (dev convenience)
-  // but still block access so the app is never silently unprotected in production.
+  // 環境変数が未設定の場合はロック機能を無効にして素通りさせる。
+  // Vercel 環境変数が設定されていない状態で 503 を返すと
+  // 画面が完全に空白になるため、fail-open にする。
   if (!user || !pass) {
-    console.warn(
-      '[middleware] BASIC_AUTH_USER / BASIC_AUTH_PASS are not set. ' +
-      'Blocking all requests until credentials are configured.'
-    )
-    return new NextResponse('Authentication credentials not configured.', {
-      status: 503,
-      headers: { 'Content-Type': 'text/plain' },
-    })
+    return NextResponse.next()
   }
 
   const authHeader = req.headers.get('authorization')
 
   if (authHeader) {
-    // Authorization: Basic <base64(user:pass)>
     const [scheme, encoded] = authHeader.split(' ')
     if (scheme === 'Basic' && encoded) {
       const decoded = Buffer.from(encoded, 'base64').toString('utf-8')
@@ -51,7 +47,6 @@ export function middleware(req: NextRequest): NextResponse {
     }
   }
 
-  // Prompt the browser to show its native Basic Auth dialog
   return new NextResponse('Authentication required.', {
     status: 401,
     headers: {
@@ -61,7 +56,8 @@ export function middleware(req: NextRequest): NextResponse {
   })
 }
 
-// Run middleware on every request except Next.js internals handled above
+// /_next/* を matcher から除外することで
+// ミドルウェア自体が呼ばれる範囲を最小化する（パフォーマンス改善）
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/|favicon.ico).*)'],
 }
