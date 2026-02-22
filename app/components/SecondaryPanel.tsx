@@ -1,6 +1,6 @@
 'use client'
 
-import type { Template } from '../../lib/types'
+import type { Template, Addon } from '../../lib/types'
 import { templateTypeToColor, type ChipColor } from '../../lib/buildSoap'
 import s from '../styles/layout.module.css'
 
@@ -19,38 +19,61 @@ const CHIP_CLASS: Record<ChipColor, string> = {
 
 // テンプレートタイプ → 日本語ラベル
 const TYPE_LABEL: Record<string, string> = {
-  base:      '基本',
-  followup:  '経過',
-  situation: '状況',
+  initial:            '初回',
+  uptitrate:          '増量',
+  down_improved:      '減量',
+  down_lowbenefit:    '減量',
+  down_adjust_other:  '減量',
+  se_hypoglycemia:    '副作用',
+  se_gi:              '副作用',
+  se_appetite:        '副作用',
+  se_pancreatitis:    '副作用',
+  se_mild_continue:   '副作用',
+  se_strong_consult:  '副作用',
+  se_change:          '変更',
+  se_reduce:          '減量',
+  se_stop:            '中止',
+  cp_good:            'CP良',
+  cp_poor_forget:     'CP不良',
+  cp_poor_selfadjust: 'CP不良',
+  cp_poor_delay:      'CP不良',
+  stop_improved:      '終了',
+  stop_ineffective:   '終了',
+  stop_noeffect:      '終了',
+  lifestyle:          '生活指導',
+  sickday:            'シックデイ',
 }
 
 // ─────────────────────────────────────────────────────────────
 // Props
-// animKey は削除。アニメーションの再生は親が key prop を
-// このコンポーネントに渡すことで制御する（React の正規パターン）。
+// addons: テンプレートの addonIds 順に解決済みの Addon 配列
+//         （親 DashboardClient が addonMap で解決して渡す）
+// key は親側で selectedId を渡すことで再マウント＝アニメーション再生
 // ─────────────────────────────────────────────────────────────
 
 interface SecondaryPanelProps {
   template: Template
+  addons: Addon[]
   activeAddonIds: Set<string>
   onToggleAddon: (addonId: string) => void
 }
 
 export default function SecondaryPanel({
   template,
+  addons,
   activeAddonIds,
   onToggleAddon,
 }: SecondaryPanelProps) {
   const color = templateTypeToColor(template.type)
   const chipClass = CHIP_CLASS[color]
-  const hasAddons = template.addons.length > 0
+  const typeLabel = TYPE_LABEL[template.type] ?? template.type
 
   return (
     <div className={s.secondaryList}>
 
       {/* ── テンプレートタイプ見出し ── */}
       <div className={s.secondaryHeading}>
-        {TYPE_LABEL[template.type] ?? template.type}
+        {typeLabel}
       </div>
 
       {/* ── 選択中テンプレート（常にアクティブ・無効ボタン） ── */}
@@ -65,13 +88,13 @@ export default function SecondaryPanel({
       </button>
 
       {/* ── アドオン一覧 ── */}
-      {hasAddons && (
+      {addons.length > 0 && (
         <>
           <div className={s.secondaryHeading}>
             アドオン
           </div>
 
-          {template.addons.map((addon, i) => {
+          {addons.map((addon, i) => {
             const isActive = activeAddonIds.has(addon.addonId)
             return (
               <button

@@ -1,18 +1,28 @@
 // ─────────────────────────────────────────────────────────────
-// SOAPパッチの操作定義
+// 基本型
 // ─────────────────────────────────────────────────────────────
 
 export type SoapKey = 'S' | 'O' | 'A' | 'P'
 
+export const SOAP_KEYS: SoapKey[] = ['S', 'O', 'A', 'P']
+
+export type SoapFields = Record<SoapKey, string>
+
+// ─────────────────────────────────────────────────────────────
+// Patch（アドオンの差分操作）
+// 新スキーマ: mode は 'append' 固定、値フィールドは value
+// ─────────────────────────────────────────────────────────────
+
+export type PatchMode = 'append' | 'prepend' | 'replace'
+
 export interface Patch {
   target: SoapKey
-  mode: 'block'
-  op: 'append' | 'prepend' | 'replace'
-  text: string
+  mode: PatchMode
+  value: string
 }
 
 // ─────────────────────────────────────────────────────────────
-// アドオン
+// Addon（ルートの addons[] で定義）
 // ─────────────────────────────────────────────────────────────
 
 export interface Addon {
@@ -22,47 +32,39 @@ export interface Addon {
 }
 
 // ─────────────────────────────────────────────────────────────
-// テンプレート
+// Template（templates[] で定義）
+// addonIds で addons[] を参照する間接参照方式
+// type は文字列リテラル — JSON の値をそのまま許容する
 // ─────────────────────────────────────────────────────────────
-
-export type TemplateType = 'base' | 'followup' | 'situation'
 
 export interface Template {
   templateId: string
   label: string
-  type: TemplateType
-  conditions: Record<string, unknown>
+  type: string          // 'initial' | 'uptitrate' | 'sickday' … 拡張可能
   soap: Record<SoapKey, string>
-  addons: Addon[]
+  addonIds: string[]    // addons[].addonId への参照
 }
 
 // ─────────────────────────────────────────────────────────────
-// モジュール（JSONルート）
+// ModuleData（JSON ルート）
 // ─────────────────────────────────────────────────────────────
+
+export interface DrugDisplay {
+  class: string
+  examples: string[]
+}
 
 export interface ModuleData {
-  schemaVersion: string
   moduleId: string
-  title: string
   categoryPath?: string[]
-  tags?: {
-    drugTags?: string[]
-    drugSpecificTags?: string[]
-    situationTags?: string[]
-    riskTags?: string[]
-    conditionalRiskTags?: string[]
-  }
-  search?: {
-    keywords?: string[]
-    synonyms?: string[]
-  }
+  drugTags?: string[]
+  drugSpecificTags?: string[]
+  situationTags?: string[]
+  riskTags?: string[]
+  conditionalRiskTags?: string[]
+  severityTags?: string[]
+  emergencyFlag?: boolean
+  drugDisplay?: DrugDisplay
   templates: Template[]
+  addons: Addon[]         // テンプレートから addonId で参照されるアドオン一覧
 }
-
-// ─────────────────────────────────────────────────────────────
-// UIの状態型
-// ─────────────────────────────────────────────────────────────
-
-export type SoapFields = Record<SoapKey, string>
-
-export const SOAP_KEYS: SoapKey[] = ['S', 'O', 'A', 'P']

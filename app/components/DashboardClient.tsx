@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields } from '../../lib/types'
-import { buildSoap } from '../../lib/buildSoap'
+import { buildSoap, buildAddonMap } from '../../lib/buildSoap'
 
 import Topbar from './Topbar'
 import Sidebar from './Sidebar'
@@ -31,6 +31,12 @@ interface DashboardClientProps {
 // ─────────────────────────────────────────────────────────────
 
 export default function DashboardClient({ moduleData }: DashboardClientProps) {
+  // ── アドオン Map（レンダリングをまたいで再生成しない）──────
+  const addonMap = useMemo(
+    () => buildAddonMap(moduleData.addons),
+    [moduleData.addons],
+  )
+
   // ── 状態 ──────────────────────────────────────────────────
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -44,7 +50,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
 
   // ── SOAP フィールドの計算 ────────────────────────────────
   const computedFields = selectedTemplate
-    ? buildSoap(selectedTemplate, activeAddonIds)
+    ? buildSoap(selectedTemplate, activeAddonIds, addonMap)
     : EMPTY_FIELDS
 
   // 手動編集がある場合は優先（テンプレ/アドオン切替時にリセット）
@@ -87,6 +93,13 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = moduleData.categoryPath?.[1]
 
+  // ── SecondaryPanel に渡すアドオン一覧（テンプレ定義順）──
+  const templateAddons = selectedTemplate
+    ? selectedTemplate.addonIds
+        .map(id => addonMap.get(id))
+        .filter((a): a is NonNullable<typeof a> => a !== undefined)
+    : []
+
   // ── レンダリング ─────────────────────────────────────────
   return (
     <div className={s.layout}>
@@ -106,14 +119,15 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         />
 
         {/* Col 2: Secondary パネル
-            key を wrapper の div ではなく SecondaryPanel 自体に渡す。
+            key={selectedId} を SecondaryPanel 自体に渡す。
             親レンダー内で key が変わると React が完全再マウントし、
-            CSS アニメーションが確実に再生される。 */}
+            CSS スライドイン アニメーションが確実に再生される。 */}
         <div className={s.secondaryCol}>
           {selectedTemplate ? (
             <SecondaryPanel
               key={selectedId}
               template={selectedTemplate}
+              addons={templateAddons}
               activeAddonIds={activeAddonIds}
               onToggleAddon={handleToggleAddon}
             />

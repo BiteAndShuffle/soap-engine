@@ -1,12 +1,13 @@
-import type { Template, SoapFields, SoapKey, Patch } from './types'
+import type { Template, Addon, SoapFields, SoapKey, Patch } from './types'
 
 // ─────────────────────────────────────────────────────────────
-// 1つのパッチをSOAPフィールドに適用
+// 1 つの Patch を SOAP フィールドに適用
+// 新スキーマ: patch.value（旧 patch.text）を使う
 // ─────────────────────────────────────────────────────────────
 
 function applyPatch(current: string, patch: Patch): string {
-  const text = patch.text.trim()
-  switch (patch.op) {
+  const text = patch.value.trim()
+  switch (patch.mode) {
     case 'append':
       return current ? `${current}\n${text}` : text
     case 'prepend':
@@ -19,14 +20,17 @@ function applyPatch(current: string, patch: Patch): string {
 }
 
 // ─────────────────────────────────────────────────────────────
-// テンプレート＋アクティブなアドオンからSOAPを構築
+// テンプレート + アクティブなアドオンから SOAP フィールドを構築
+//
+// 新スキーマ: Template.addonIds → ModuleData.addons[] の参照方式。
+// addonMap を引数で受け取ることで buildSoap 単体をピュアに保つ。
 // ─────────────────────────────────────────────────────────────
 
 export function buildSoap(
   template: Template,
   activeAddonIds: Set<string>,
+  addonMap: Map<string, Addon>,
 ): SoapFields {
-  // ベースSOAPをコピー
   const fields: SoapFields = {
     S: template.soap.S ?? '',
     O: template.soap.O ?? '',
@@ -34,11 +38,12 @@ export function buildSoap(
     P: template.soap.P ?? '',
   }
 
-  // アクティブなアドオンをJSON定義順に適用（順序保証）
-  for (const addon of template.addons) {
-    if (!activeAddonIds.has(addon.addonId)) continue
+  // JSON 定義順（addonIds の並び順）でアドオンを適用し、出力の一貫性を保つ
+  for (const addonId of template.addonIds) {
+    if (!activeAddonIds.has(addonId)) continue
+    const addon = addonMap.get(addonId)
+    if (!addon) continue
     for (const patch of addon.patches) {
-      // patch.target は型定義上 SoapKey なのでキャスト不要
       fields[patch.target] = applyPatch(fields[patch.target], patch)
     }
   }
@@ -47,27 +52,60 @@ export function buildSoap(
 }
 
 // ─────────────────────────────────────────────────────────────
-// テンプレートタイプに対応する表示色クラス名を返す
+// addons 配列から高速参照用の Map を構築
+// ─────────────────────────────────────────────────────────────
+
+export function buildAddonMap(addons: Addon[]): Map<string, Addon> {
+  return new Map(addons.map(a => [a.addonId, a]))
+}
+
+// ─────────────────────────────────────────────────────────────
+// テンプレートタイプ → 色クラス名
 // ─────────────────────────────────────────────────────────────
 
 export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
 
 export function templateTypeToColor(type: string): ChipColor {
   switch (type) {
-    case 'base':      return 'blue'
-    case 'followup':  return 'green'
-    case 'situation': return 'orange'
-    default:          return 'gray'
+    case 'initial':
+    case 'uptitrate':
+      return 'blue'
+    case 'cp_good':
+    case 'down_improved':
+      return 'green'
+    case 'se_hypoglycemia':
+    case 'se_gi':
+    case 'se_appetite':
+    case 'se_pancreatitis':
+    case 'se_mild_continue':
+    case 'se_strong_consult':
+    case 'se_change':
+    case 'se_reduce':
+    case 'se_stop':
+      return 'red'
+    case 'sickday':
+      return 'orange'
+    case 'stop_improved':
+    case 'stop_ineffective':
+    case 'stop_noeffect':
+      return 'purple'
+    case 'cp_poor_forget':
+    case 'cp_poor_selfadjust':
+    case 'cp_poor_delay':
+    case 'down_lowbenefit':
+    case 'down_adjust_other':
+    case 'lifestyle':
+      return 'gray'
+    default:
+      return 'gray'
   }
 }
 
 // ─────────────────────────────────────────────────────────────
-// SOAPフィールド全体を改行区切りのテキストに結合（コピー用）
+// SOAP フィールド全体をコピー用テキストに変換
 // ─────────────────────────────────────────────────────────────
 
 export function formatSoapForCopy(fields: SoapFields): string {
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
-  return keys
-    .map(k => `【${k}】\n${fields[k]}`)
-    .join('\n\n')
+  return keys.map(k => `【${k}】\n${fields[k]}`).join('\n\n')
 }
