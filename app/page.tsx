@@ -1,11 +1,18 @@
 // Server Component — 'use client' なし
 // データ取得・整形を行い、Client Component にシリアライズして渡す
 
+// 静的キャッシュを無効化：毎リクエスト必ずサーバーサイドで実行させる
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import type { ModuleData } from '../lib/types'
 import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
 import DashboardClient from './components/DashboardClient'
 
 const moduleData = rawModuleData as ModuleData
+
+// ビルド識別子（Vercel環境変数から取得、ローカルはgit SHAフォールバック）
+const BUILD_SHA = process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
 
 // ── サーバーサイドのデータ検証ログ ────────────────────────────
 // Vercel のビルドログ / Function ログで確認できる。
@@ -67,5 +74,28 @@ export default function Page() {
     )
   }
 
-  return <DashboardClient moduleData={moduleData} />
+  return (
+    <>
+      <DashboardClient moduleData={moduleData} />
+      {/* ビルド識別子バッジ — 本番がどのcommitを見ているか確認用 */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 8,
+          right: 8,
+          background: 'rgba(0,0,0,0.65)',
+          color: '#a0ffa0',
+          fontFamily: 'monospace',
+          fontSize: '0.65rem',
+          padding: '2px 6px',
+          borderRadius: 4,
+          zIndex: 9999,
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
+      >
+        BUILD: {BUILD_SHA.slice(0, 7)}
+      </div>
+    </>
+  )
 }
