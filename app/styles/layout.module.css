@@ -153,6 +153,33 @@
 }
 .primaryNeutral:not(.primaryActive):hover { border-left-color: #0a84ff; }
 
+/* sickday: orange 系 */
+.primaryOrange { }
+.primaryOrange.primaryActive {
+  background: #2e1a00;
+  border-left-color: #ff9f0a;
+  color: #ff9f0a;
+}
+.primaryOrange:not(.primaryActive):hover { border-left-color: #ff9f0a; }
+
+/* stop系: purple 系 */
+.primaryPurple { }
+.primaryPurple.primaryActive {
+  background: #1e0d2e;
+  border-left-color: #bf5af2;
+  color: #bf5af2;
+}
+.primaryPurple:not(.primaryActive):hover { border-left-color: #bf5af2; }
+
+/* CP不良・生活指導: gray 系 */
+.primaryGray { }
+.primaryGray.primaryActive {
+  background: #1c1c26;
+  border-left-color: #8e8ea0;
+  color: #c0c0d0;
+}
+.primaryGray:not(.primaryActive):hover { border-left-color: #8e8ea0; }
+
 /* ── Col 2: Secondary パネル ───────────────────────────────────── */
 
 .secondaryCol {
@@ -396,6 +423,9 @@
   .primaryPositive.primaryActive { border-left-color: transparent; border-bottom-color: #30d158; }
   .primaryNegative.primaryActive { border-left-color: transparent; border-bottom-color: #ff453a; }
   .primaryNeutral.primaryActive  { border-left-color: transparent; border-bottom-color: #0a84ff; }
+  .primaryOrange.primaryActive   { border-left-color: transparent; border-bottom-color: #ff9f0a; }
+  .primaryPurple.primaryActive   { border-left-color: transparent; border-bottom-color: #bf5af2; }
+  .primaryGray.primaryActive     { border-left-color: transparent; border-bottom-color: #8e8ea0; }
 
   .secondaryCol {
     grid-area: secondary;
