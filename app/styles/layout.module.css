@@ -65,10 +65,17 @@
   letter-spacing: 0.04em;
 }
 
-.searchInput {
+/* ── サジェスト検索ラッパー ─────────────────────────────────── */
+
+.searchWrap {
   flex: 1;
   max-width: 420px;
   margin-left: auto;
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
   padding: 0.45rem 0.9rem;
   font-family: inherit;
   font-size: 0.9rem;
@@ -78,6 +85,7 @@
   color: #e8e8ff;
   outline: none;
   transition: border-color 0.15s, background 0.15s;
+  box-sizing: border-box;
 }
 .searchInput::placeholder { color: #6b6b8a; }
 .searchInput:focus {
@@ -85,12 +93,56 @@
   background: #1e1e38;
 }
 
+/* ── 候補ドロップダウン ─────────────────────────────────────── */
+
+.suggestionList {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #1e1e38;
+  border: 1.5px solid #3d3d5c;
+  border-radius: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3d3d5c transparent;
+}
+
+.suggestionItem {
+  padding: 0.52rem 1rem;
+  font-size: 0.85rem;
+  color: #c0c0e0;
+  cursor: pointer;
+  transition: background 0.08s, color 0.08s;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.suggestionItem:hover {
+  background: #28284a;
+  color: #e8e8ff;
+}
+.suggestionItemFocused {
+  background: #0a84ff22;
+  color: #e8e8ff;
+  outline: 1.5px solid #0a84ff88;
+  outline-offset: -1.5px;
+}
+
 /* ── 4カラムボディ ──────────────────────────────────────────────── */
 
 .body {
   grid-row: 2;
   display: grid;
-  grid-template-columns: 100px 220px 1fr 360px;
+  /* Col1 を 140px に拡張: Accordion グループ見出しが収まるよう */
+  grid-template-columns: 140px 220px 1fr 360px;
   overflow: hidden;
 }
 
@@ -101,31 +153,118 @@
   border-right: 1px solid #2d2d4a;
   display: flex;
   flex-direction: column;
-  padding: 8px 0;
-  gap: 2px;
+  padding: 6px 0;
+  gap: 0;
   overflow-y: auto;
   scrollbar-width: none;
 }
 .sidebar::-webkit-scrollbar { display: none; }
 
+/* ── Accordion グループ ─────────────────────────────────────── */
+
+.accordionGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+/* グループ見出しボタン */
+.accordionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.42rem 0.5rem 0.42rem 0.65rem;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid #24243c;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #6b6b8a;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px;
+}
+.accordionHeader:hover {
+  background: #20203a;
+  color: #a0a0c0;
+}
+/* 子アイテムに選択中がある＆グループが閉じているとき: 見出しを薄く光らせる */
+.accordionHeaderHasActive {
+  color: #a0a0c0;
+  background: #1e1e36;
+}
+
+.accordionLabel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accordionMeta {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.accordionCount {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #4a4a6a;
+  background: #2a2a44;
+  border-radius: 3px;
+  padding: 0 4px;
+  min-width: 14px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.accordionChevron {
+  font-size: 0.9rem;
+  color: #4a4a6a;
+  display: inline-block;
+  transform: rotate(0deg);
+  transition: transform 0.18s ease;
+  line-height: 1;
+}
+.accordionChevronOpen {
+  transform: rotate(90deg);
+}
+
+/* 子アイテムコンテナ */
+.accordionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #151525;
+}
+
 .primaryBtn {
   width: 100%;
-  padding: 0.62rem 0.5rem;
+  padding: 0.52rem 0.5rem 0.52rem 0.9rem; /* 左インデントでグループ内感を出す */
   border: none;
   border-left: 3px solid transparent;
   background: transparent;
   font-family: inherit;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 600;
-  color: #a0a0c0;
+  color: #8a8aaa;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   -webkit-tap-highlight-color: transparent;
-  line-height: 1.2;
-  min-height: 44px;
+  line-height: 1.3;
+  min-height: 40px;
 }
-.primaryBtn:hover { background: #24243c; color: #e8e8ff; }
+.primaryBtn:hover { background: #1e1e38; color: #d0d0f0; }
 
 /* followup: green-blue 系 */
 .primaryPositive { }
@@ -377,14 +516,15 @@
 
 /* Tablet: センタースペーサー非表示 */
 @media (max-width: 1100px) {
-  .body { grid-template-columns: 100px 200px 0 360px; }
+  .body { grid-template-columns: 140px 200px 0 360px; }
   .center { display: none; }
 }
 
 @media (max-width: 860px) {
-  .body { grid-template-columns: 86px 180px 0 280px; }
+  .body { grid-template-columns: 120px 170px 0 260px; }
   .center { display: none; }
-  .primaryBtn { font-size: 0.72rem; padding: 0.55rem 0.3rem; }
+  .primaryBtn { font-size: 0.7rem; padding: 0.48rem 0.4rem 0.48rem 0.75rem; }
+  .accordionHeader { font-size: 0.62rem; padding: 0.38rem 0.4rem 0.38rem 0.55rem; }
   .editor { padding: 0.65rem; }
   .secondaryBtn { font-size: 0.78rem; padding: 0.5rem 0.6rem; }
 }
@@ -403,22 +543,40 @@
   }
   .sidebar {
     grid-area: sidebar;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-direction: column;      /* モバイルでも縦 Accordion を維持 */
     border-right: none;
     border-bottom: 1px solid #2d2d4a;
-    padding: 6px;
-    gap: 4px;
+    padding: 0;
+    gap: 0;
     overflow-y: visible;
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+  /* モバイル: Accordion グループ見出しはそのまま表示 */
+  .accordionGroup { width: 100%; }
+  .accordionHeader {
+    font-size: 0.64rem;
+    padding: 0.38rem 0.6rem;
+    min-height: 34px;
+  }
+  /* モバイル: 子ボタンは横並びラップ */
+  .accordionBody {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 4px 6px 6px;
+    gap: 4px;
+    background: #151525;
   }
   .primaryBtn {
     flex: 0 0 auto;
     width: auto;
-    padding: 0.45rem 0.7rem;
+    padding: 0.38rem 0.6rem;
     border-left: none;
-    border-bottom: 3px solid transparent;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    border-bottom: 2px solid transparent;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    text-align: center;
+    min-height: 34px;
   }
   .primaryPositive.primaryActive { border-left-color: transparent; border-bottom-color: #30d158; }
   .primaryNegative.primaryActive { border-left-color: transparent; border-bottom-color: #ff453a; }
@@ -445,4 +603,8 @@
 
   .center { display: none; }
   .editor { grid-area: editor; min-height: 300px; }
+
+  /* サジェストドロップダウンはモバイルで全幅 */
+  .searchWrap { max-width: 100%; margin-left: 0; }
+  .suggestionList { font-size: 0.82rem; }
 }

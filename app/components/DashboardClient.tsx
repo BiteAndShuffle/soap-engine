@@ -4,6 +4,11 @@ import { useMemo, useState, useCallback } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields } from '../../lib/types'
 import { buildSoap, buildAddonMap } from '../../lib/buildSoap'
+import {
+  buildSearchIndex,
+  filterTemplates,
+  getSuggestions,
+} from '../../lib/search'
 
 import Topbar from './Topbar'
 import Sidebar from './Sidebar'
@@ -19,7 +24,7 @@ import s from '../styles/layout.module.css'
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
 
 // ─────────────────────────────────────────────────────────────
-// Props（Server Component から渡されるシリアライズ可能なデータ）
+// Props
 // ─────────────────────────────────────────────────────────────
 
 interface DashboardClientProps {
@@ -31,10 +36,16 @@ interface DashboardClientProps {
 // ─────────────────────────────────────────────────────────────
 
 export default function DashboardClient({ moduleData }: DashboardClientProps) {
-  // ── アドオン Map（レンダリングをまたいで再生成しない）──────
+  // ── アドオン Map ─────────────────────────────────────────
   const addonMap = useMemo(
     () => buildAddonMap(moduleData.addons),
     [moduleData.addons],
+  )
+
+  // ── 検索インデックス（マウント時に1回だけ構築）──────────
+  const searchIndex = useMemo(
+    () => buildSearchIndex(moduleData),
+    [moduleData],
   )
 
   // ── 状態 ──────────────────────────────────────────────────
@@ -53,7 +64,6 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     ? buildSoap(selectedTemplate, activeAddonIds, addonMap)
     : EMPTY_FIELDS
 
-  // 手動編集がある場合は優先（テンプレ/アドオン切替時にリセット）
   const fields: SoapFields = {
     S: manualFields.S ?? computedFields.S,
     O: manualFields.O ?? computedFields.O,
@@ -82,18 +92,28 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setManualFields(prev => ({ ...prev, [key]: value }))
   }, [])
 
-  // ── 検索フィルタ ─────────────────────────────────────────
-  const trimmedSearch = search.trim()
-  const filteredTemplates = trimmedSearch
-    ? moduleData.templates.filter(
-        t => t.label.includes(trimmedSearch) || t.type.includes(trimmedSearch),
-      )
-    : moduleData.templates
+  // サジェストから選択: テンプレを選択状態にしてクエリをリセット
+  const handleSelectSuggestion = useCallback((templateId: string) => {
+    handleSelectTemplate(templateId)
+    setSearch('')
+  }, [handleSelectTemplate])
+
+  // ── 検索フィルタ（正規化済み） ──────────────────────────
+  const filteredTemplates = useMemo(
+    () => filterTemplates(moduleData.templates, search, searchIndex),
+    [moduleData.templates, search, searchIndex],
+  )
+
+  // ── サジェスト候補 ───────────────────────────────────────
+  const suggestions = useMemo(
+    () => getSuggestions(search, searchIndex),
+    [search, searchIndex],
+  )
 
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = moduleData.categoryPath?.[1]
 
-  // ── SecondaryPanel に渡すアドオン一覧（テンプレ定義順）──
+  // ── SecondaryPanel に渡すアドオン一覧 ───────────────────
   const templateAddons = selectedTemplate
     ? selectedTemplate.addonIds
         .map(id => addonMap.get(id))
@@ -108,20 +128,20 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         badge={badge}
         searchValue={search}
         onSearchChange={setSearch}
+        suggestions={suggestions}
+        onSelectSuggestion={handleSelectSuggestion}
       />
 
       <div className={s.body}>
-        {/* Col 1: Primary サイドバー */}
+        {/* Col 1: Primary サイドバー（Accordion） */}
         <Sidebar
           templates={filteredTemplates}
           selectedId={selectedId}
           onSelect={handleSelectTemplate}
+          isSearching={search.trim().length > 0}
         />
 
-        {/* Col 2: Secondary パネル
-            key={selectedId} を SecondaryPanel 自体に渡す。
-            親レンダー内で key が変わると React が完全再マウントし、
-            CSS スライドイン アニメーションが確実に再生される。 */}
+        {/* Col 2: Secondary パネル */}
         <div className={s.secondaryCol}>
           {selectedTemplate ? (
             <SecondaryPanel
