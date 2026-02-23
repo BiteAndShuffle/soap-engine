@@ -4,6 +4,8 @@ import { useRef, useState, useCallback, useId } from 'react'
 import type { SuggestionItem } from '../../lib/search'
 import s from '../styles/layout.module.css'
 
+export type RouteFilter = 'all' | 'internal' | 'topical'
+
 interface TopbarProps {
   title: string
   badge?: string
@@ -11,6 +13,14 @@ interface TopbarProps {
   onSearchChange: (value: string) => void
   suggestions: SuggestionItem[]
   onSelectSuggestion: (templateId: string) => void
+  routeFilter: RouteFilter
+  onRouteFilterChange: (f: RouteFilter) => void
+}
+
+const ROUTE_LABELS: Record<RouteFilter, string> = {
+  all:      'すべて',
+  internal: '内服',
+  topical:  '外用',
 }
 
 export default function Topbar({
@@ -20,6 +30,8 @@ export default function Topbar({
   onSearchChange,
   suggestions,
   onSelectSuggestion,
+  routeFilter,
+  onRouteFilterChange,
 }: TopbarProps) {
   const listId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -28,7 +40,6 @@ export default function Topbar({
 
   const showDropdown = isOpen && suggestions.length > 0
 
-  // 候補を選択して入力欄をクリア
   const commitSuggestion = useCallback(
     (item: SuggestionItem) => {
       onSelectSuggestion(item.templateId)
@@ -77,7 +88,21 @@ export default function Topbar({
         {badge && <span className={s.topbarBadge}>{badge}</span>}
       </span>
 
-      {/* ── サジェスト検索コンテナ ── */}
+      {/* ── 内服 / 外用 / すべて トグル ── */}
+      <div className={s.routeToggle} role="group" aria-label="剤形フィルタ">
+        {(['all', 'internal', 'topical'] as RouteFilter[]).map(f => (
+          <button
+            key={f}
+            className={[s.routeBtn, routeFilter === f ? s.routeBtnActive : ''].join(' ')}
+            onClick={() => onRouteFilterChange(f)}
+            aria-pressed={routeFilter === f}
+          >
+            {ROUTE_LABELS[f]}
+          </button>
+        ))}
+      </div>
+
+      {/* ── サジェスト検索 ── */}
       <div className={s.searchWrap}>
         <input
           ref={inputRef}
@@ -94,16 +119,12 @@ export default function Topbar({
           value={searchValue}
           onChange={handleChange}
           onFocus={() => setIsOpen(true)}
-          onBlur={() => {
-            // クリック処理が先に発火するよう少し遅延
-            setTimeout(() => setIsOpen(false), 150)
-          }}
+          onBlur={() => setTimeout(() => setIsOpen(false), 150)}
           onKeyDown={handleKeyDown}
           aria-label="テンプレート検索"
           autoComplete="off"
         />
 
-        {/* ── 候補ドロップダウン ── */}
         {showDropdown && (
           <ul
             id={listId}
@@ -123,7 +144,12 @@ export default function Topbar({
                 ].join(' ')}
                 onMouseDown={() => commitSuggestion(item)}
               >
-                {item.label}
+                {/* メイン: 短縮ラベル */}
+                <span className={s.suggestionMain}>{item.shortLabel ?? item.label}</span>
+                {/* サブ: グループ名（副作用あり 等） */}
+                {item.groupLabel && (
+                  <span className={s.suggestionSub}>{item.groupLabel}</span>
+                )}
               </li>
             ))}
           </ul>

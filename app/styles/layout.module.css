@@ -65,6 +65,39 @@
   letter-spacing: 0.04em;
 }
 
+/* ── 内服 / 外用 トグル ─────────────────────────────────────── */
+
+.routeToggle {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #2a2a44;
+  border-radius: 8px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.routeBtn {
+  padding: 0.28rem 0.7rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b6b8a;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.routeBtn:hover { color: #a0a0c0; }
+.routeBtnActive {
+  background: #0a84ff;
+  color: #fff;
+}
+.routeBtnActive:hover { background: #0a84ff; }
+
 /* ── サジェスト検索ラッパー ─────────────────────────────────── */
 
 .searchWrap {
@@ -136,13 +169,33 @@
   outline-offset: -1.5px;
 }
 
+/* 候補アイテム内レイアウト */
+.suggestionMain {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.suggestionSub {
+  font-size: 0.72rem;
+  color: #6b6b8a;
+  white-space: nowrap;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+/* flexbox で左右に分ける */
+.suggestionItem {
+  display: flex;
+  align-items: center;
+}
+
 /* ── 4カラムボディ ──────────────────────────────────────────────── */
 
 .body {
   grid-row: 2;
   display: grid;
-  /* Col1 を 140px に拡張: Accordion グループ見出しが収まるよう */
-  grid-template-columns: 140px 220px 1fr 360px;
+  /* Col1: 大分類リスト / Col2: テンプレ一覧 / Col3: スペーサー / Col4: SOAP（360×5/3≒600px） */
+  grid-template-columns: 120px 220px 1fr 600px;
   overflow: hidden;
 }
 
@@ -160,7 +213,36 @@
 }
 .sidebar::-webkit-scrollbar { display: none; }
 
-/* ── Accordion グループ ─────────────────────────────────────── */
+/* ── Col 1: 大分類ボタン（menuGroupBtn） ──────────────────── */
+
+.menuGroupBtn {
+  width: 100%;
+  padding: 0.65rem 0.55rem 0.65rem 0.75rem;
+  border: none;
+  border-left: 3px solid transparent;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6b6b8a;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.3;
+  min-height: 44px;
+  border-bottom: 1px solid #20203a;
+}
+.menuGroupBtn:hover {
+  background: #20203a;
+  color: #c0c0e0;
+}
+.menuGroupBtnActive {
+  font-weight: 800;
+  /* color と borderLeftColor は JS の inline style で上書き */
+}
+
+/* ── Accordion グループ（旧スタイル: 互換維持のため残す）── */
 
 .accordionGroup {
   display: flex;
@@ -432,41 +514,53 @@
 .soapFields {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.45rem;
   flex: 1;
 }
 
-.soapField { display: flex; flex-direction: column; gap: 0.2rem; }
+/* S/O/A/P 横並びレイアウト */
+.soapField {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
 
+/* ラベル + コピーボタンを縦に積んだ左カラム */
 .soapFieldHeader {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  gap: 4px;
+  flex-shrink: 0;
+  width: 42px;
+  padding-top: 0.35rem;
 }
 
 .soapFieldLabel {
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #888;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #555;
+  line-height: 1;
 }
 
 .copySecBtn {
-  padding: 0.18rem 0.55rem;
+  padding: 0.15rem 0.35rem;
   font-family: inherit;
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 700;
   background: #f0f0f4;
   border: 1.5px solid #ddd;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  color: #555;
+  color: #777;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   -webkit-tap-highlight-color: transparent;
-  min-height: 28px;
-  min-width: 52px;
+  min-height: 24px;
+  min-width: 36px;
   text-align: center;
+  white-space: nowrap;
 }
 .copySecBtn:hover { background: #e0e8ff; border-color: #0a84ff; color: #0a44a0; }
 .copySecBtn.copySecBtnDone { background: #e6f9ee; border-color: #30d158; color: #1a7a3a; }
@@ -482,7 +576,9 @@
   color: #111;
   background: #fafbfc;
   transition: border-color 0.15s, box-shadow 0.15s;
-  width: 100%;
+  flex: 1;          /* 横並び時: ラベル以外の残り幅を全部使う */
+  min-width: 0;
+  min-height: 3.5rem;
 }
 .soapTextarea:focus {
   outline: none;
@@ -491,9 +587,150 @@
   background: #fff;
 }
 
+/* ── エディターフッター（保持 + 全コピー） ─────────────────── */
+
+.editorFooter {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* 保持ボタン */
+.pinBtn {
+  padding: 0.7rem 1rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: #2a2a44;
+  color: #c0c0e0;
+  border: 1.5px solid #3d3d5c;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  min-height: 44px;
+}
+.pinBtn:hover { background: #3a3a5c; color: #e8e8ff; }
+
+/* ── ピン済みSOAPエリア ────────────────────────────────────── */
+
+.pinnedArea {
+  border-bottom: 1.5px solid #e8eaf0;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.pinnedAreaHeading {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #999;
+  padding: 0 0 6px;
+}
+
+.pinnedCard {
+  background: #f8f9fc;
+  border: 1.5px solid #dde0e8;
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.pinnedCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+}
+
+.pinnedCardLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.pinnedCardActions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 6px;
+}
+
+.pinActionBtn {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #f0f0f4;
+  border: 1.5px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #555;
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pinActionBtn:hover { background: #e0e8ff; border-color: #0a84ff; color: #0a44a0; }
+.pinActionBtnDone { background: #e6f9ee !important; border-color: #30d158 !important; color: #1a7a3a !important; }
+
+.pinRemoveBtn {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: transparent;
+  border: 1.5px solid #eee;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #aaa;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pinRemoveBtn:hover { background: #fdecea; border-color: #ff453a; color: #b91c1c; }
+
+.pinnedField {
+  display: flex;
+  gap: 6px;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  border-top: 1px solid #eee;
+  padding-top: 3px;
+  margin-top: 3px;
+}
+
+.pinnedFieldKey {
+  font-weight: 800;
+  color: #888;
+  width: 12px;
+  flex-shrink: 0;
+}
+
+.pinnedFieldValue {
+  color: #333;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* アドオンなし表示 */
+.secondaryNoAddon {
+  font-size: 0.75rem;
+  color: #bbb;
+  padding: 0.5rem 0.25rem;
+  text-align: center;
+}
+
 .copyAllBtn {
-  margin-top: 0.75rem;
-  width: 100%;
+  flex: 1;
+  margin-top: 0;
   padding: 0.75rem;
   font-family: inherit;
   font-size: 0.95rem;
@@ -514,17 +751,16 @@
 
 /* ── レスポンシブ ───────────────────────────────────────────────── */
 
-/* Tablet: センタースペーサー非表示 */
-@media (max-width: 1100px) {
-  .body { grid-template-columns: 140px 200px 0 360px; }
+/* Tablet: センタースペーサー非表示、SOAP幅を圧縮 */
+@media (max-width: 1200px) {
+  .body { grid-template-columns: 110px 200px 0 480px; }
   .center { display: none; }
 }
 
-@media (max-width: 860px) {
-  .body { grid-template-columns: 120px 170px 0 260px; }
+@media (max-width: 960px) {
+  .body { grid-template-columns: 100px 180px 0 360px; }
   .center { display: none; }
-  .primaryBtn { font-size: 0.7rem; padding: 0.48rem 0.4rem 0.48rem 0.75rem; }
-  .accordionHeader { font-size: 0.62rem; padding: 0.38rem 0.4rem 0.38rem 0.55rem; }
+  .menuGroupBtn { font-size: 0.66rem; padding: 0.55rem 0.4rem 0.55rem 0.6rem; min-height: 38px; }
   .editor { padding: 0.65rem; }
   .secondaryBtn { font-size: 0.78rem; padding: 0.5rem 0.6rem; }
 }
@@ -543,47 +779,28 @@
   }
   .sidebar {
     grid-area: sidebar;
-    flex-direction: column;      /* モバイルでも縦 Accordion を維持 */
+    flex-direction: row;         /* モバイルは横並びタブ */
+    flex-wrap: wrap;
     border-right: none;
     border-bottom: 1px solid #2d2d4a;
-    padding: 0;
-    gap: 0;
+    padding: 4px 4px;
+    gap: 2px;
+    max-height: none;
     overflow-y: visible;
-    max-height: 40vh;
-    overflow-y: auto;
   }
-  /* モバイル: Accordion グループ見出しはそのまま表示 */
-  .accordionGroup { width: 100%; }
-  .accordionHeader {
-    font-size: 0.64rem;
-    padding: 0.38rem 0.6rem;
-    min-height: 34px;
-  }
-  /* モバイル: 子ボタンは横並びラップ */
-  .accordionBody {
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 4px 6px 6px;
-    gap: 4px;
-    background: #151525;
-  }
-  .primaryBtn {
+  .menuGroupBtn {
     flex: 0 0 auto;
     width: auto;
-    padding: 0.38rem 0.6rem;
+    padding: 0.35rem 0.6rem;
     border-left: none;
     border-bottom: 2px solid transparent;
     border-radius: 6px;
-    font-size: 0.75rem;
-    text-align: center;
-    min-height: 34px;
+    font-size: 0.72rem;
+    min-height: 32px;
   }
-  .primaryPositive.primaryActive { border-left-color: transparent; border-bottom-color: #30d158; }
-  .primaryNegative.primaryActive { border-left-color: transparent; border-bottom-color: #ff453a; }
-  .primaryNeutral.primaryActive  { border-left-color: transparent; border-bottom-color: #0a84ff; }
-  .primaryOrange.primaryActive   { border-left-color: transparent; border-bottom-color: #ff9f0a; }
-  .primaryPurple.primaryActive   { border-left-color: transparent; border-bottom-color: #bf5af2; }
-  .primaryGray.primaryActive     { border-left-color: transparent; border-bottom-color: #8e8ea0; }
+  .menuGroupBtnActive {
+    border-bottom-width: 2px;
+  }
 
   .secondaryCol {
     grid-area: secondary;
@@ -607,4 +824,21 @@
   /* サジェストドロップダウンはモバイルで全幅 */
   .searchWrap { max-width: 100%; margin-left: 0; }
   .suggestionList { font-size: 0.82rem; }
+
+  /* モバイル: SOAP欄は縦並びに戻す（幅が足りないため） */
+  .soapField { flex-direction: column; }
+  .soapFieldHeader {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 0;
+  }
+  .soapTextarea { flex: none; width: 100%; }
+
+  /* モバイル: ルートトグルを小さく */
+  .routeBtn { padding: 0.22rem 0.45rem; font-size: 0.68rem; }
+
+  /* モバイル: ピンカードの値を3行まで */
+  .pinnedFieldValue { -webkit-line-clamp: 3; }
 }

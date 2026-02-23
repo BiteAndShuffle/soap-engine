@@ -54,6 +54,23 @@ export interface DrugDisplay {
   examples: string[]
 }
 
+// ─────────────────────────────────────────────────────────────
+// PinnedSoap（保持機能）
+// ─────────────────────────────────────────────────────────────
+
+export interface PinnedSoap {
+  /** ユニークID（Date.now() + Math.random() で生成） */
+  id: string
+  /** 保持時のテンプレートラベル（表示用） */
+  templateLabel: string
+  /** スナップショット時点の SOAP フィールド */
+  fields: SoapFields
+}
+
+// ─────────────────────────────────────────────────────────────
+// ModuleData（JSON ルート）
+// ─────────────────────────────────────────────────────────────
+
 export interface ModuleData {
   moduleId: string
   categoryPath?: string[]

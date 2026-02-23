@@ -5,6 +5,7 @@
  */
 
 import type { Template, ModuleData } from './types'
+import { getMenuGroup, shortLabel as getShortLabel } from './menuGroups'
 
 // ─────────────────────────────────────────────────────────────
 // A) グループ定義
@@ -99,6 +100,10 @@ export interface SearchEntry {
   corpus: string
   /** 表示用スニペット（label をそのまま） */
   label: string
+  /** 薬効群名を省いた短縮ラベル */
+  shortLabel: string
+  /** 大分類グループ名（サブテキスト表示用） */
+  groupLabel: string
 }
 
 /** 静的キーワード（薬品名・表記揺れ）— モジュール横断で使う */
@@ -131,7 +136,13 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   return moduleData.templates.map(tpl => {
     const perTemplate = [tpl.label, tpl.type].join(' ')
     const corpus = normalizeText(perTemplate) + ' ' + globalCorpus
-    return { templateId: tpl.templateId, corpus, label: tpl.label }
+    return {
+      templateId: tpl.templateId,
+      corpus,
+      label: tpl.label,
+      shortLabel: getShortLabel(tpl.label),
+      groupLabel: getMenuGroup(tpl.type),
+    }
   })
 }
 
@@ -142,6 +153,10 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
 export interface SuggestionItem {
   templateId: string
   label: string
+  /** 薬効群名を省いた短縮ラベル */
+  shortLabel: string
+  /** 大分類グループ名（サブテキスト表示用） */
+  groupLabel: string
 }
 
 /**
@@ -162,7 +177,12 @@ export function getSuggestions(
 
   for (const entry of index) {
     if (!entry.corpus.includes(q)) continue
-    const item: SuggestionItem = { templateId: entry.templateId, label: entry.label }
+    const item: SuggestionItem = {
+      templateId: entry.templateId,
+      label: entry.label,
+      shortLabel: entry.shortLabel,
+      groupLabel: entry.groupLabel,
+    }
     // label の先頭に近い位置でマッチするほど優先
     if (normalizeText(entry.label).startsWith(q)) {
       priority.push(item)
