@@ -115,14 +115,9 @@ export default function SoapEditor({
                   onChange={e => onChange(key, e.target.value)}
                   aria-label={`SOAP ${key}フィールド`}
                 />
-                {/* 右カラム: ⬜S ラベル（上）+ copyBtn（下） */}
+                {/* 右カラム: S/O/A/Pラベル（上）+ copyBtn（下） */}
                 <div className={s.soapFieldSide}>
-                  {/*
-                    ⬜S: ボックス要素（soapLabelBox）と文字（S/O/A/P）を
-                    inline-flex / gap:0 / align-items:center で隙間ゼロ密着
-                  */}
                   <label className={s.soapFieldLabel} htmlFor={`soap-${key}`}>
-                    <span className={s.soapLabelBox} aria-hidden="true" />
                     <span className={s.soapLabelChar}>{FIELD_LABEL[key]}</span>
                   </label>
                   <button

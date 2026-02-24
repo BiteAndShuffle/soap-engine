@@ -5,7 +5,7 @@ import { useMemo, useState, useCallback } from 'react'
 import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
 import { buildSoap, buildAddonMap, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions } from '../../lib/search'
-import { type MenuGroup, groupByMenuGroup, getMenuGroup, MENU_GROUP_ORDER } from '../../lib/menuGroups'
+import { type MenuGroup, groupByMenuGroup, getMenuGroup } from '../../lib/menuGroups'
 
 import Topbar, { type RouteFilter } from './Topbar'
 import Sidebar from './Sidebar'
@@ -19,11 +19,6 @@ import s from '../styles/layout.module.css'
 // ─────────────────────────────────────────────────────────────
 
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
-
-/** Sidebar の各ボタン実高さ(px): min-height:44px + border-bottom:1px */
-const SIDEBAR_BTN_HEIGHT = 45
-/** Sidebar の上部 padding(px) */
-const SIDEBAR_PAD_TOP = 6
 
 // ─────────────────────────────────────────────────────────────
 // Props
@@ -118,17 +113,6 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         .map(id => addonMap.get(id))
         .filter((a): a is NonNullable<typeof a> => a !== undefined)
     : []
-
-  // ── SecondaryPanel の縦位置オフセット ───────────────────
-  // 実際に表示されているグループボタン（availableGroups でフィルタ済み）の中での
-  // selectedGroup の index を求め、ボタン高さ × index + 上部パディングを paddingTop に使う
-  const secondaryPanelTopOffset = useMemo<number>(() => {
-    if (selectedGroup === null) return 0
-    const visibleGroups = MENU_GROUP_ORDER.filter(g => availableGroups.has(g))
-    const idx = visibleGroups.indexOf(selectedGroup)
-    if (idx < 0) return 0
-    return SIDEBAR_PAD_TOP + idx * SIDEBAR_BTN_HEIGHT
-  }, [selectedGroup, availableGroups])
 
   // ── イベントハンドラ ─────────────────────────────────────
 
@@ -241,19 +225,8 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           onSelectGroup={handleSelectGroup}
         />
 
-        {/* Col 2: スペーサー（常に 0 幅） */}
-        <div className={s.center} aria-hidden="true" />
-
-        {/* Col 3: テンプレ一覧 または アドオンパネル（SOAPの左隣）
-            paddingTop で選択行の縦位置に合わせる */}
-        <div
-          className={s.secondaryCol}
-          style={
-            selectedGroup !== null
-              ? { paddingTop: secondaryPanelTopOffset }
-              : undefined
-          }
-        >
+        {/* Col 2: テンプレ一覧 または アドオンパネル */}
+        <div className={s.secondaryCol}>
           {selectedGroup === null ? (
             <div className={s.secondaryEmpty} aria-hidden="true" />
           ) : selectedTemplate ? (
@@ -275,10 +248,10 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           )}
         </div>
 
-        {/* Col 4: 3rd パネル用スペース（将来拡張用） */}
+        {/* Col 3: 3rdパネル用スペース（将来拡張用） */}
         <div className={s.thirdPanel} aria-hidden="true" />
 
-        {/* Col 5: SOAP エディター（右端固定） */}
+        {/* Col 4: SOAPエディター（右端・約1/2幅） */}
         <SoapEditor
           fields={fields}
           onChange={handleFieldChange}

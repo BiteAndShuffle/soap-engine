@@ -18,21 +18,25 @@ export type MenuGroup =
   | '初回'
   | '増量'
   | '減量'
-  | '副作用なし'
   | '副作用あり'
+  | '副作用なし'
   | 'コンプライアンス良好'
   | 'コンプライアンス不良'
   | '自己調整'
   | '終了'
   | 'その他'
 
-/** 左メニューに表示する固定順序 */
+/**
+ * 左メニューに表示する固定順序（仕様通り10項目）
+ * 1.初回 2.増量 3.減量 4.副作用あり 5.副作用なし
+ * 6.CP良好 7.CP不良 8.自己調整 9.終了 10.その他
+ */
 export const MENU_GROUP_ORDER: MenuGroup[] = [
   '初回',
   '増量',
   '減量',
-  '副作用なし',
   '副作用あり',
+  '副作用なし',
   'コンプライアンス良好',
   'コンプライアンス不良',
   '自己調整',
@@ -53,25 +57,25 @@ const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
   down_improved:       '減量',
   down_lowbenefit:     '減量',
   down_adjust_other:   '減量',
-  // 副作用なし（"se_" だが症状なし確認 or 該当なしの場合のみ）
-  // ※ 現データには「副作用なし」相当の明示 type がないため空
   // 副作用あり（se_系はすべてここ）
   se_hypoglycemia:     '副作用あり',
   se_gi:               '副作用あり',
   se_appetite:         '副作用あり',
   se_pancreatitis:     '副作用あり',
-  se_mild_continue:    '副作用あり',   // 軽症だが副作用あり継続扱い
+  se_mild_continue:    '副作用あり',
   se_strong_consult:   '副作用あり',
   se_change:           '副作用あり',
   se_reduce:           '副作用あり',
   se_stop:             '副作用あり',
+  // 副作用なし（se_none があればここ）
+  se_none:             '副作用なし',
   // コンプライアンス良好
   cp_good:             'コンプライアンス良好',
-  // コンプライアンス不良（自己判断もここ）
+  // コンプライアンス不良
   cp_poor_forget:      'コンプライアンス不良',
   cp_poor_delay:       'コンプライアンス不良',
-  cp_poor_selfadjust:  'コンプライアンス不良',   // ※ 自己調整ではなくCP不良へ
-  // 自己調整（別途 self_adjust type があれば）
+  cp_poor_selfadjust:  'コンプライアンス不良',
+  // 自己調整
   self_adjust:         '自己調整',
   // 終了
   stop_improved:       '終了',
