@@ -83,12 +83,17 @@ export default function Topbar({
 
   return (
     <header className={s.topbar}>
+      {/* ── 辞書ボタン枠（タイトルの左）── */}
+      <button className={s.dictBtn} disabled aria-label="辞書（準備中）" title="辞書（準備中）">
+        📘
+      </button>
+
       <span className={s.topbarTitle}>
         {title}
         {badge && <span className={s.topbarBadge}>{badge}</span>}
       </span>
 
-      {/* ── 右エリア: フィルタトグル + 検索窓 + 辞書ボタン枠 を横並び ── */}
+      {/* ── 右エリア: フィルタトグル + 検索窓 を横並び ── */}
       <div className={s.searchArea}>
         {/* 内服 / 外用 / すべて トグル（検索窓の直左） */}
         <div className={s.routeToggle} role="group" aria-label="剤形フィルタ">
@@ -160,11 +165,6 @@ export default function Topbar({
             </ul>
           )}
         </div>
-
-        {/* 辞書ボタン枠（将来: 薬効時間・粉砕可否・向精神分類・ステロイド強度） */}
-        <button className={s.dictBtn} disabled aria-label="辞書（準備中）" title="辞書（準備中）">
-          📘
-        </button>
       </div>
     </header>
   )

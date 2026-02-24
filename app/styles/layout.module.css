@@ -216,8 +216,8 @@
 .body {
   grid-row: 2;
   display: grid;
-  /* Col1: 大分類リスト / Col2: スペーサー（大画面のみ）/ Col3: テンプレ一覧（SOAPの左隣） / Col4: SOAP（残り全幅） */
-  grid-template-columns: 120px 0 220px minmax(0, 1fr);
+  /* Col1: サイドバー / Col2: スペーサー0 / Col3: テンプレ一覧 / Col4: SOAP（約半分）/ Col5: 3rdパネル用余白 */
+  grid-template-columns: 120px 0 220px minmax(0, 1fr) minmax(0, 1fr);
   overflow: hidden;
   min-height: 0;
 }
@@ -513,6 +513,15 @@
   border-right: 1px solid #dde0e8;
 }
 
+/* ── Col 5: 3rd パネル用スペース ────────────────────────────────── */
+
+.thirdPanel {
+  background: #f8f9fb;
+  border-left: 1px solid #dde0e8;
+  overflow-y: auto;
+  min-height: 0;
+}
+
 /* ── Col 4: SOAP エディター ────────────────────────────────────── */
 
 .editor {
@@ -742,15 +751,17 @@
 
 /* ── レスポンシブ ───────────────────────────────────────────────── */
 
-/* Tablet: センタースペーサーは常に0（全幅でSidebarの直右にSecondaryPanel） */
+/* Tablet 1200px: 3rdパネルを非表示、SOAPは残り全幅 */
 @media (max-width: 1200px) {
-  .body { grid-template-columns: 110px 0 200px minmax(0, 1fr); }
+  .body { grid-template-columns: 110px 0 200px minmax(0, 1fr) 0; }
   .center { display: none; }
+  .thirdPanel { display: none; }
 }
 
 @media (max-width: 960px) {
-  .body { grid-template-columns: 100px 0 180px minmax(0, 1fr); }
+  .body { grid-template-columns: 100px 0 180px minmax(0, 1fr) 0; }
   .center { display: none; }
+  .thirdPanel { display: none; }
   .menuGroupBtn { font-size: 0.66rem; padding: 0.55rem 0.4rem 0.55rem 0.6rem; min-height: 38px; }
   .editor { padding: 0.5rem; }
   .secondaryBtn { font-size: 0.78rem; padding: 0.5rem 0.6rem; }
@@ -810,6 +821,7 @@
   .secondaryBtn { width: auto; font-size: 0.8rem; }
 
   .center { display: none; }
+  .thirdPanel { display: none; }
   .editor { grid-area: editor; min-height: 300px; }
 
   /* サジェストドロップダウンはモバイルで全幅 */
