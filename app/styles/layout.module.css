@@ -98,12 +98,20 @@
 }
 .routeBtnActive:hover { background: #0a84ff; }
 
+/* ── 右エリア: 内服/外用トグル + 検索窓の横並びコンテナ ─── */
+
+.searchArea {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 /* ── サジェスト検索ラッパー ─────────────────────────────────── */
 
 .searchWrap {
-  flex: 1;
-  max-width: 420px;
-  margin-left: auto;
+  width: 360px;
   position: relative;
 }
 
@@ -176,12 +184,26 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.suggestionSub {
-  font-size: 0.72rem;
-  color: #6b6b8a;
-  white-space: nowrap;
-  margin-left: 8px;
+/* 右側: 薬剤名 + グループ名の縦積みコンテナ */
+.suggestionSubGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
   flex-shrink: 0;
+  margin-left: 8px;
+}
+/* 薬剤名（先発名/一般名） */
+.suggestionDrug {
+  font-size: 0.7rem;
+  color: #8080a0;
+  white-space: nowrap;
+}
+/* グループ名（副作用あり 等） */
+.suggestionSub {
+  font-size: 0.65rem;
+  color: #5a5a7a;
+  white-space: nowrap;
 }
 /* flexbox で左右に分ける */
 .suggestionItem {
@@ -194,9 +216,10 @@
 .body {
   grid-row: 2;
   display: grid;
-  /* Col1: 大分類リスト / Col2: テンプレ一覧 / Col3: スペーサー / Col4: SOAP（360×5/3≒600px） */
-  grid-template-columns: 120px 220px 1fr 600px;
+  /* Col1: 大分類リスト / Col2: スペーサー / Col3: テンプレ一覧（SOAPの左隣） / Col4: SOAP（残り全幅） */
+  grid-template-columns: 120px 1fr 220px minmax(0, 1fr);
   overflow: hidden;
+  min-height: 0;
 }
 
 /* ── Col 1: Primary サイドバー ─────────────────────────────────── */
@@ -405,7 +428,7 @@
 
 .secondaryCol {
   background: #f0f2f7;
-  border-right: 1px solid #dde0e8;
+  border-left: 1px solid #dde0e8;
   overflow-y: auto;
   position: relative;
   scrollbar-width: none;
@@ -480,6 +503,7 @@
   padding-top: 1.5rem;
   color: #ccc;
   font-size: 1.2rem;
+  /* カテゴリ未選択時は空白のみ表示 */
 }
 
 /* ── Col 3: センタースペーサー ─────────────────────────────────── */
@@ -496,8 +520,11 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 0.875rem;
+  padding: 0.5rem 0.75rem;
   gap: 0;
+  /* flex子要素がbody全高を占有できるよう */
+  min-height: 0;
+  flex: 1;
 }
 
 .editorEmpty {
@@ -514,43 +541,52 @@
 .soapFields {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.25rem;
   flex: 1;
+  min-height: 0;
 }
 
-/* S/O/A/P 横並びレイアウト */
+/* S/O/A/P 1行形式: [ラベル] [textareaWrap] */
 .soapField {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  flex: 1;
+  min-height: 0;
 }
 
-/* ラベル + コピーボタンを縦に積んだ左カラム */
-.soapFieldHeader {
+/* textareaと copyBtnを相対コンテナで包む */
+.soapTextareaWrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  width: 42px;
-  padding-top: 0.35rem;
 }
 
+/* ラベル（左端、縦方向に少しオフセット） */
 .soapFieldLabel {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   color: #555;
   line-height: 1;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  padding-top: 0.55rem;
 }
 
 .copySecBtn {
-  padding: 0.15rem 0.35rem;
+  position: absolute;
+  top: 0.35rem;
+  right: 0.4rem;
+  padding: 0.15rem 0.45rem;
   font-family: inherit;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  background: #f0f0f4;
+  background: #f0f0f4cc;
   border: 1.5px solid #ddd;
   border-radius: 5px;
   cursor: pointer;
@@ -558,9 +594,10 @@
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   -webkit-tap-highlight-color: transparent;
   min-height: 24px;
-  min-width: 36px;
+  min-width: 38px;
   text-align: center;
   white-space: nowrap;
+  z-index: 1;
 }
 .copySecBtn:hover { background: #e0e8ff; border-color: #0a84ff; color: #0a44a0; }
 .copySecBtn.copySecBtnDone { background: #e6f9ee; border-color: #30d158; color: #1a7a3a; }
@@ -569,16 +606,18 @@
   font-family: inherit;
   font-size: 0.83rem;
   line-height: 1.6;
-  padding: 0.5rem 0.65rem;
+  padding: 0.5rem 3.2rem 0.5rem 0.65rem; /* 右側にcopyBtn分の余白 */
   border: 1.5px solid #dde0e8;
   border-radius: 8px;
-  resize: vertical;
+  resize: none;
   color: #111;
   background: #fafbfc;
   transition: border-color 0.15s, box-shadow 0.15s;
-  flex: 1;          /* 横並び時: ラベル以外の残り幅を全部使う */
+  flex: 1;
+  width: 100%;
   min-width: 0;
-  min-height: 3.5rem;
+  min-height: 0;
+  box-sizing: border-box;
 }
 .soapTextarea:focus {
   outline: none;
@@ -592,12 +631,16 @@
 .editorFooter {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.6rem;
+  margin-top: 0.35rem;
   flex-shrink: 0;
+  padding-bottom: 0.25rem;
 }
 
-/* 保持ボタン */
+/* ── 保持ボタン ─────────────────────────────────────────────── */
 .pinBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 0.7rem 1rem;
   font-family: inherit;
   font-size: 0.88rem;
@@ -611,114 +654,65 @@
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
   min-height: 44px;
+  flex-shrink: 0;
 }
-.pinBtn:hover { background: #3a3a5c; color: #e8e8ff; }
+.pinBtn:hover:not(:disabled) { background: #3a3a5c; color: #e8e8ff; }
+.pinBtnFlash { background: #0a5c2e !important; color: #fff !important; border-color: #30d158 !important; }
+.pinBtnDisabled { opacity: 0.45; cursor: not-allowed; }
 
-/* ── ピン済みSOAPエリア ────────────────────────────────────── */
-
-.pinnedArea {
-  border-bottom: 1.5px solid #e8eaf0;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
-}
-
-.pinnedAreaHeading {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #999;
-  padding: 0 0 6px;
-}
-
-.pinnedCard {
-  background: #f8f9fc;
-  border: 1.5px solid #dde0e8;
-  border-radius: 8px;
-  padding: 0.5rem 0.6rem;
-  margin-bottom: 0.4rem;
+/* 保持件数バッジ */
+.mergedBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #ff9f0a;
+  color: #1a0a00;
+  font-size: 0.62rem;
+  font-weight: 900;
+  border-radius: 9px;
+  line-height: 1;
 }
 
-.pinnedCardHeader {
+/* ── 合成済みバナー ──────────────────────────────────────────── */
+.mergedBanner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
+  background: #fff4e5;
+  border: 1.5px solid #ffc985;
+  border-radius: 8px;
+  padding: 0.35rem 0.75rem;
   margin-bottom: 0.3rem;
-}
-
-.pinnedCardLabel {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #444;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  min-width: 0;
-}
-
-.pinnedCardActions {
-  display: flex;
-  gap: 4px;
   flex-shrink: 0;
-  margin-left: 6px;
 }
 
-.pinActionBtn {
-  padding: 0.15rem 0.4rem;
-  font-size: 0.65rem;
-  font-weight: 700;
-  background: #f0f0f4;
-  border: 1.5px solid #ddd;
-  border-radius: 5px;
-  cursor: pointer;
-  color: #555;
-  transition: background 0.1s, color 0.1s;
-  -webkit-tap-highlight-color: transparent;
+.mergedBannerText {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #7a4000;
+  line-height: 1.3;
 }
-.pinActionBtn:hover { background: #e0e8ff; border-color: #0a84ff; color: #0a44a0; }
-.pinActionBtnDone { background: #e6f9ee !important; border-color: #30d158 !important; color: #1a7a3a !important; }
 
-.pinRemoveBtn {
-  padding: 0.15rem 0.4rem;
-  font-size: 0.65rem;
+.mergedResetBtn {
+  padding: 0.2rem 0.55rem;
+  font-family: inherit;
+  font-size: 0.72rem;
   font-weight: 700;
   background: transparent;
-  border: 1.5px solid #eee;
-  border-radius: 5px;
+  border: 1.5px solid #ffc985;
+  border-radius: 6px;
   cursor: pointer;
-  color: #aaa;
-  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  color: #9a3d00;
+  transition: background 0.1s, color 0.1s;
   -webkit-tap-highlight-color: transparent;
-}
-.pinRemoveBtn:hover { background: #fdecea; border-color: #ff453a; color: #b91c1c; }
-
-.pinnedField {
-  display: flex;
-  gap: 6px;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  border-top: 1px solid #eee;
-  padding-top: 3px;
-  margin-top: 3px;
-}
-
-.pinnedFieldKey {
-  font-weight: 800;
-  color: #888;
-  width: 12px;
+  white-space: nowrap;
   flex-shrink: 0;
 }
-
-.pinnedFieldValue {
-  color: #333;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
+.mergedResetBtn:hover { background: #fdecea; border-color: #ff453a; color: #b91c1c; }
 
 /* アドオンなし表示 */
 .secondaryNoAddon {
@@ -751,17 +745,17 @@
 
 /* ── レスポンシブ ───────────────────────────────────────────────── */
 
-/* Tablet: センタースペーサー非表示、SOAP幅を圧縮 */
+/* Tablet: センタースペーサー非表示、SOAPは残り幅を全部使う */
 @media (max-width: 1200px) {
-  .body { grid-template-columns: 110px 200px 0 480px; }
+  .body { grid-template-columns: 110px 0 200px minmax(0, 1fr); }
   .center { display: none; }
 }
 
 @media (max-width: 960px) {
-  .body { grid-template-columns: 100px 180px 0 360px; }
+  .body { grid-template-columns: 100px 0 180px minmax(0, 1fr); }
   .center { display: none; }
   .menuGroupBtn { font-size: 0.66rem; padding: 0.55rem 0.4rem 0.55rem 0.6rem; min-height: 38px; }
-  .editor { padding: 0.65rem; }
+  .editor { padding: 0.5rem; }
   .secondaryBtn { font-size: 0.78rem; padding: 0.5rem 0.6rem; }
 }
 
@@ -825,20 +819,37 @@
   .searchWrap { max-width: 100%; margin-left: 0; }
   .suggestionList { font-size: 0.82rem; }
 
-  /* モバイル: SOAP欄は縦並びに戻す（幅が足りないため） */
-  .soapField { flex-direction: column; }
-  .soapFieldHeader {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding-top: 0;
-  }
-  .soapTextarea { flex: none; width: 100%; }
+  /* モバイル: SOAP欄は横並びのまま（ラベル + textarea + copyBtn） */
+  .soapField { flex: none; min-height: 5rem; }
+  .soapTextarea { flex: 1; }
 
   /* モバイル: ルートトグルを小さく */
   .routeBtn { padding: 0.22rem 0.45rem; font-size: 0.68rem; }
 
   /* モバイル: ピンカードの値を3行まで */
   .pinnedFieldValue { -webkit-line-clamp: 3; }
+
+  /* モバイル: 辞書ボタン非表示 */
+  .dictBtn { display: none; }
 }
+
+/* ── 辞書ボタン枠（将来拡張用: 薬効時間・粉砕可否・向精神分類等） ── */
+
+.dictBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: #2a2a44;
+  border: 1.5px solid #3d3d5c;
+  border-radius: 8px;
+  cursor: not-allowed;
+  font-size: 1rem;
+  color: #5a5a7a;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.12s;
+}
+.dictBtn:not(:disabled):hover { opacity: 1; cursor: pointer; }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import type { SoapFields, SoapKey, PinnedSoap } from '../../lib/types'
+import type { SoapFields, SoapKey } from '../../lib/types'
 import { SOAP_KEYS } from '../../lib/types'
 import { formatSoapForCopy } from '../../lib/buildSoap'
 import s from '../styles/layout.module.css'
@@ -13,14 +13,15 @@ import s from '../styles/layout.module.css'
 interface SoapEditorProps {
   fields: SoapFields
   onChange: (key: SoapKey, value: string) => void
-  templateLabel: string          // 現在のテンプレラベル（ピン時の表示用）
-  pinnedSoaps: PinnedSoap[]
-  onPin: () => void
-  onUnpin: (id: string) => void
+  templateLabel: string       // 現在のテンプレラベル（保持ボタンのtitle用）
+  mergedBlockCount: number    // 保持済みブロック数（バッジ表示用）
+  onMerge: () => void         // 保持（合成）ボタン押下
+  onResetMerge: () => void    // 合成リセット
+  canMerge: boolean           // テンプレ選択中のみ保持可
 }
 
 // ─────────────────────────────────────────────────────────────
-// S/O/A/Pのラベル名（日本語併記）
+// S/O/A/Pのラベル名
 // ─────────────────────────────────────────────────────────────
 
 const FIELD_LABEL: Record<SoapKey, string> = {
@@ -31,50 +32,6 @@ const FIELD_LABEL: Record<SoapKey, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
-// ピン済みSOAPカード
-// ─────────────────────────────────────────────────────────────
-
-function PinnedCard({ pin, onUnpin }: { pin: PinnedSoap; onUnpin: (id: string) => void }) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = useCallback(async () => {
-    await navigator.clipboard.writeText(formatSoapForCopy(pin.fields))
-    setCopied(true)
-    setTimeout(() => setCopied(false), 1500)
-  }, [pin.fields])
-
-  return (
-    <div className={s.pinnedCard}>
-      <div className={s.pinnedCardHeader}>
-        <span className={s.pinnedCardLabel}>{pin.templateLabel}</span>
-        <div className={s.pinnedCardActions}>
-          <button
-            className={[s.pinActionBtn, copied ? s.pinActionBtnDone : ''].join(' ')}
-            onClick={handleCopy}
-            aria-label="保持したSOAPをコピー"
-          >
-            {copied ? '✓' : 'コピー'}
-          </button>
-          <button
-            className={s.pinRemoveBtn}
-            onClick={() => onUnpin(pin.id)}
-            aria-label="保持を解除"
-          >
-            ✕
-          </button>
-        </div>
-      </div>
-      {SOAP_KEYS.map(k => (
-        <div key={k} className={s.pinnedField}>
-          <span className={s.pinnedFieldKey}>{k}</span>
-          <span className={s.pinnedFieldValue}>{pin.fields[k]}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────
 // SoapEditor 本体
 // ─────────────────────────────────────────────────────────────
 
@@ -82,12 +39,14 @@ export default function SoapEditor({
   fields,
   onChange,
   templateLabel,
-  pinnedSoaps,
-  onPin,
-  onUnpin,
+  mergedBlockCount,
+  onMerge,
+  onResetMerge,
+  canMerge,
 }: SoapEditorProps) {
   const [copyState, setCopyState] = useState<Partial<Record<SoapKey, 'done'>>>({})
   const [allCopied, setAllCopied] = useState(false)
+  const [mergeFlash, setMergeFlash] = useState(false)
 
   const copySingle = useCallback(
     async (key: SoapKey) => {
@@ -107,39 +66,61 @@ export default function SoapEditor({
     setTimeout(() => setAllCopied(false), 1500)
   }, [fields])
 
+  const handleMerge = useCallback(() => {
+    onMerge()
+    setMergeFlash(true)
+    setTimeout(() => setMergeFlash(false), 1200)
+  }, [onMerge])
+
   const isEmpty = SOAP_KEYS.every(k => !fields[k].trim())
 
   return (
-    <div className={s.editor} aria-label={isEmpty ? undefined : 'SOAPノート編集'} role={isEmpty ? undefined : 'region'}>
-
-      {/* ── ピン済みSOAPエリア ── */}
-      {pinnedSoaps.length > 0 && (
-        <div className={s.pinnedArea}>
-          <div className={s.pinnedAreaHeading}>
-            保持中 ({pinnedSoaps.length})
-          </div>
-          {pinnedSoaps.map(pin => (
-            <PinnedCard key={pin.id} pin={pin} onUnpin={onUnpin} />
-          ))}
+    <div
+      className={s.editor}
+      aria-label={isEmpty ? undefined : 'SOAPノート編集'}
+      role={isEmpty ? undefined : 'region'}
+    >
+      {/* ── 合成済みバナー（保持後） ── */}
+      {mergedBlockCount > 0 && (
+        <div className={s.mergedBanner}>
+          <span className={s.mergedBannerText}>
+            📋 {mergedBlockCount}件合成済み — 次の薬剤を選択して追記できます
+          </span>
+          <button
+            className={s.mergedResetBtn}
+            onClick={onResetMerge}
+            aria-label="合成内容をリセット"
+          >
+            リセット
+          </button>
         </div>
       )}
 
       {/* ── Current SOAP ── */}
       {isEmpty ? (
         <div className={s.editorEmpty}>
-          左のカテゴリ → 中央のテンプレートを選択してください
+          左のカテゴリ → 右のテンプレートを選択してください
         </div>
       ) : (
         <>
-          {/* S/O/A/P 横並び入力エリア */}
+          {/* S/O/A/P 1行形式: [ラベル] [テキストエリア＋copyBtn重ね] */}
           <div className={s.soapFields}>
             {SOAP_KEYS.map(key => (
               <div key={key} className={s.soapField}>
-                {/* ラベル + コピーボタン（横並びヘッダー） */}
-                <div className={s.soapFieldHeader}>
-                  <label className={s.soapFieldLabel} htmlFor={`soap-${key}`}>
-                    {FIELD_LABEL[key]}
-                  </label>
+                {/* ラベル */}
+                <label className={s.soapFieldLabel} htmlFor={`soap-${key}`}>
+                  {FIELD_LABEL[key]}
+                </label>
+                {/* テキストエリアラッパー（copyBtnをabsoluteで右上に配置） */}
+                <div className={s.soapTextareaWrap}>
+                  <textarea
+                    id={`soap-${key}`}
+                    className={s.soapTextarea}
+                    value={fields[key]}
+                    onChange={e => onChange(key, e.target.value)}
+                    aria-label={`SOAP ${key}フィールド`}
+                  />
+                  {/* コピーボタン（textareaの右上に絶対配置） */}
                   <button
                     className={[
                       s.copySecBtn,
@@ -151,26 +132,31 @@ export default function SoapEditor({
                     {copyState[key] === 'done' ? '✓' : 'copy'}
                   </button>
                 </div>
-                <textarea
-                  id={`soap-${key}`}
-                  className={s.soapTextarea}
-                  value={fields[key]}
-                  onChange={e => onChange(key, e.target.value)}
-                  aria-label={`SOAP ${key}フィールド`}
-                />
               </div>
             ))}
           </div>
 
-          {/* フッターボタン行: 保持 + 全コピー */}
+          {/* フッターボタン行: 保持（合成） + 全コピー */}
           <div className={s.editorFooter}>
             <button
-              className={s.pinBtn}
-              onClick={onPin}
-              aria-label="現在のSOAPを保持する"
-              title={`「${templateLabel}」を保持`}
+              className={[
+                s.pinBtn,
+                mergeFlash ? s.pinBtnFlash : '',
+                !canMerge ? s.pinBtnDisabled : '',
+              ].join(' ')}
+              onClick={handleMerge}
+              disabled={!canMerge}
+              aria-label="現在のSOAPを保持して合成する"
+              title={
+                canMerge
+                  ? `「${templateLabel}」を保持して次の薬剤に追記`
+                  : 'テンプレートを選択してください'
+              }
             >
-              📌 保持
+              {mergeFlash ? '✓ 保持しました' : '📌 保持'}
+              {mergedBlockCount > 0 && (
+                <span className={s.mergedBadge}>{mergedBlockCount}</span>
+              )}
             </button>
             <button
               className={[s.copyAllBtn, allCopied ? s.copyAllBtnDone : ''].join(' ')}
