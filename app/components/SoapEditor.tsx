@@ -103,24 +103,23 @@ export default function SoapEditor({
         </div>
       ) : (
         <>
-          {/* S/O/A/P 1行形式: [ラベル] [テキストエリア＋copyBtn重ね] */}
+          {/* S/O/A/P 1行形式: [textarea(左・flex:1)] [右カラム: ラベル + copyBtn] */}
           <div className={s.soapFields}>
             {SOAP_KEYS.map(key => (
               <div key={key} className={s.soapField}>
-                {/* ラベル */}
-                <label className={s.soapFieldLabel} htmlFor={`soap-${key}`}>
-                  {FIELD_LABEL[key]}
-                </label>
-                {/* テキストエリアラッパー（copyBtnをabsoluteで右上に配置） */}
-                <div className={s.soapTextareaWrap}>
-                  <textarea
-                    id={`soap-${key}`}
-                    className={s.soapTextarea}
-                    value={fields[key]}
-                    onChange={e => onChange(key, e.target.value)}
-                    aria-label={`SOAP ${key}フィールド`}
-                  />
-                  {/* コピーボタン（textareaの右上に絶対配置） */}
+                {/* テキストエリア（左・横幅最大確保） */}
+                <textarea
+                  id={`soap-${key}`}
+                  className={s.soapTextarea}
+                  value={fields[key]}
+                  onChange={e => onChange(key, e.target.value)}
+                  aria-label={`SOAP ${key}フィールド`}
+                />
+                {/* 右カラム: ラベル（上）+ copyBtn（下） */}
+                <div className={s.soapFieldSide}>
+                  <label className={s.soapFieldLabel} htmlFor={`soap-${key}`}>
+                    {FIELD_LABEL[key]}
+                  </label>
                   <button
                     className={[
                       s.copySecBtn,

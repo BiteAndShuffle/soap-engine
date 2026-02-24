@@ -216,8 +216,8 @@
 .body {
   grid-row: 2;
   display: grid;
-  /* Col1: 大分類リスト / Col2: スペーサー / Col3: テンプレ一覧（SOAPの左隣） / Col4: SOAP（残り全幅） */
-  grid-template-columns: 120px 1fr 220px minmax(0, 1fr);
+  /* Col1: 大分類リスト / Col2: スペーサー（大画面のみ）/ Col3: テンプレ一覧（SOAPの左隣） / Col4: SOAP（残り全幅） */
+  grid-template-columns: 120px 0 220px minmax(0, 1fr);
   overflow: hidden;
   min-height: 0;
 }
@@ -520,7 +520,7 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.6rem 0.25rem;
   gap: 0;
   /* flex子要素がbody全高を占有できるよう */
   min-height: 0;
@@ -546,26 +546,28 @@
   min-height: 0;
 }
 
-/* S/O/A/P 1行形式: [ラベル] [textareaWrap] */
+/* S/O/A/P 1行形式: [textarea(左・flex:1)] [右カラム: ラベル+copyBtn] */
 .soapField {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 0.4rem;
+  gap: 0.5rem;
   flex: 1;
   min-height: 0;
 }
 
-/* textareaと copyBtnを相対コンテナで包む */
-.soapTextareaWrap {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
+/* 右カラム: ラベル（上）+ copyBtn（下）を縦積み */
+.soapFieldSide {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  width: 52px;
+  padding-top: 0.4rem;
 }
 
-/* ラベル（左端、縦方向に少しオフセット） */
+/* ラベル（右カラム上段） */
 .soapFieldLabel {
   font-size: 0.85rem;
   font-weight: 900;
@@ -573,15 +575,12 @@
   color: #555;
   line-height: 1;
   flex-shrink: 0;
-  width: 20px;
+  width: 100%;
   text-align: center;
-  padding-top: 0.55rem;
+  cursor: default;
 }
 
 .copySecBtn {
-  position: absolute;
-  top: 0.35rem;
-  right: 0.4rem;
   padding: 0.15rem 0.45rem;
   font-family: inherit;
   font-size: 0.62rem;
@@ -594,10 +593,9 @@
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   -webkit-tap-highlight-color: transparent;
   min-height: 24px;
-  min-width: 38px;
+  width: 100%;
   text-align: center;
   white-space: nowrap;
-  z-index: 1;
 }
 .copySecBtn:hover { background: #e0e8ff; border-color: #0a84ff; color: #0a44a0; }
 .copySecBtn.copySecBtnDone { background: #e6f9ee; border-color: #30d158; color: #1a7a3a; }
@@ -606,7 +604,7 @@
   font-family: inherit;
   font-size: 0.83rem;
   line-height: 1.6;
-  padding: 0.5rem 3.2rem 0.5rem 0.65rem; /* 右側にcopyBtn分の余白 */
+  padding: 0.5rem 0.65rem;
   border: 1.5px solid #dde0e8;
   border-radius: 8px;
   resize: none;
@@ -614,7 +612,6 @@
   background: #fafbfc;
   transition: border-color 0.15s, box-shadow 0.15s;
   flex: 1;
-  width: 100%;
   min-width: 0;
   min-height: 0;
   box-sizing: border-box;
@@ -631,9 +628,9 @@
 .editorFooter {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.35rem;
+  margin-top: 0.3rem;
   flex-shrink: 0;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0;
 }
 
 /* ── 保持ボタン ─────────────────────────────────────────────── */
@@ -745,7 +742,7 @@
 
 /* ── レスポンシブ ───────────────────────────────────────────────── */
 
-/* Tablet: センタースペーサー非表示、SOAPは残り幅を全部使う */
+/* Tablet: センタースペーサーは常に0（全幅でSidebarの直右にSecondaryPanel） */
 @media (max-width: 1200px) {
   .body { grid-template-columns: 110px 0 200px minmax(0, 1fr); }
   .center { display: none; }
@@ -819,8 +816,9 @@
   .searchWrap { max-width: 100%; margin-left: 0; }
   .suggestionList { font-size: 0.82rem; }
 
-  /* モバイル: SOAP欄は横並びのまま（ラベル + textarea + copyBtn） */
+  /* モバイル: SOAP欄は横並びのまま（textarea + 右カラム） */
   .soapField { flex: none; min-height: 5rem; }
+  .soapFieldSide { width: 44px; }
   .soapTextarea { flex: 1; }
 
   /* モバイル: ルートトグルを小さく */

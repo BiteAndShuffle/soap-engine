@@ -88,9 +88,23 @@ export default function Topbar({
         {badge && <span className={s.topbarBadge}>{badge}</span>}
       </span>
 
-      {/* ── 右エリア: 検索窓 + フィルタトグル + 辞書ボタン枠 を横並び ── */}
+      {/* ── 右エリア: フィルタトグル + 検索窓 + 辞書ボタン枠 を横並び ── */}
       <div className={s.searchArea}>
-        {/* ── サジェスト検索 ── */}
+        {/* 内服 / 外用 / すべて トグル（検索窓の直左） */}
+        <div className={s.routeToggle} role="group" aria-label="剤形フィルタ">
+          {(['all', 'internal', 'topical'] as RouteFilter[]).map(f => (
+            <button
+              key={f}
+              className={[s.routeBtn, routeFilter === f ? s.routeBtnActive : ''].join(' ')}
+              onClick={() => onRouteFilterChange(f)}
+              aria-pressed={routeFilter === f}
+            >
+              {ROUTE_LABELS[f]}
+            </button>
+          ))}
+        </div>
+
+        {/* ── サジェスト検索（一番右） ── */}
         <div className={s.searchWrap}>
           <input
             ref={inputRef}
@@ -145,20 +159,6 @@ export default function Topbar({
               ))}
             </ul>
           )}
-        </div>
-
-        {/* 内服 / 外用 / すべて トグル（検索窓の直右） */}
-        <div className={s.routeToggle} role="group" aria-label="剤形フィルタ">
-          {(['all', 'internal', 'topical'] as RouteFilter[]).map(f => (
-            <button
-              key={f}
-              className={[s.routeBtn, routeFilter === f ? s.routeBtnActive : ''].join(' ')}
-              onClick={() => onRouteFilterChange(f)}
-              aria-pressed={routeFilter === f}
-            >
-              {ROUTE_LABELS[f]}
-            </button>
-          ))}
         </div>
 
         {/* 辞書ボタン枠（将来: 薬効時間・粉砕可否・向精神分類・ステロイド強度） */}
