@@ -11,8 +11,10 @@ import DashboardClient from './components/DashboardClient'
 
 const moduleData = rawModuleData as ModuleData
 
-// ビルド識別子（Vercel環境変数から取得、ローカルはgit SHAフォールバック）
-const BUILD_SHA = process.env.VERCEL_GIT_COMMIT_SHA ?? process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
+// ビルド識別子
+// next.config.js で NEXT_PUBLIC_BUILD_SHA にビルド時 SHA を埋め込み済み
+// （git rev-parse HEAD または VERCEL_GIT_COMMIT_SHA から解決）
+const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
 
 // ── サーバーサイドのデータ検証ログ ────────────────────────────
 // Vercel のビルドログ / Function ログで確認できる。
