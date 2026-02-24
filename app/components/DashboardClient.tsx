@@ -275,7 +275,10 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           )}
         </div>
 
-        {/* Col 4: SOAP エディター */}
+        {/* Col 4: 3rd パネル用スペース（将来拡張用） */}
+        <div className={s.thirdPanel} aria-hidden="true" />
+
+        {/* Col 5: SOAP エディター（右端固定） */}
         <SoapEditor
           fields={fields}
           onChange={handleFieldChange}
@@ -285,9 +288,6 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           onResetMerge={handleResetMerge}
           canMerge={!!selectedTemplate}
         />
-
-        {/* Col 5: 3rd パネル用スペース（将来拡張用） */}
-        <div className={s.thirdPanel} aria-hidden="true" />
       </div>
     </div>
   )

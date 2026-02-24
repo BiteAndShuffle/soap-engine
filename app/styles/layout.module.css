@@ -513,11 +513,12 @@
   border-right: 1px solid #dde0e8;
 }
 
-/* ── Col 5: 3rd パネル用スペース ────────────────────────────────── */
+/* ── Col 4: 3rd パネル用スペース（SOAPの左隣）──────────────────── */
 
 .thirdPanel {
   background: #f8f9fb;
   border-left: 1px solid #dde0e8;
+  border-right: 1px solid #dde0e8;
   overflow-y: auto;
   min-height: 0;
 }
@@ -565,28 +566,54 @@
   min-height: 0;
 }
 
-/* 右カラム: ラベル（上）+ copyBtn（下）を縦積み */
+/* 右カラム: ⬜S ラベル（上）+ copyBtn（下）を縦積み */
 .soapFieldSide {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  width: 52px;
+  width: 64px;
   padding-top: 0.4rem;
 }
 
-/* ラベル（右カラム上段） */
+/* ラベル外枠: ⬜ と文字を inline-flex / gap:0 / align-items:center で密着 */
 .soapFieldLabel {
-  font-size: 0.85rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
-  color: #555;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
   line-height: 1;
-  flex-shrink: 0;
-  width: 100%;
-  text-align: center;
   cursor: default;
+  width: 100%;
+  justify-content: center;
+  /* フォント起因のベースラインズレを防ぐため padding/margin を 0 に */
+  margin: 0;
+  padding: 0;
+}
+
+/* ⬜ ボックス本体: 行高に合わせた正方形 */
+.soapLabelBox {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  background: #e8eaf0;
+  border: 2px solid #b0b4c4;
+  border-radius: 4px;
+  flex-shrink: 0;
+  /* vertical-align / transform は使わず align-items:center で親が揃える */
+}
+
+/* S/O/A/P 文字: ボックスに密着 */
+.soapLabelChar {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: #333;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+  /* gap:0 なので padding-left も 0 */
 }
 
 .copySecBtn {
@@ -830,7 +857,7 @@
 
   /* モバイル: SOAP欄は横並びのまま（textarea + 右カラム） */
   .soapField { flex: none; min-height: 5rem; }
-  .soapFieldSide { width: 44px; }
+  .soapFieldSide { width: 56px; }
   .soapTextarea { flex: 1; }
 
   /* モバイル: ルートトグルを小さく */
