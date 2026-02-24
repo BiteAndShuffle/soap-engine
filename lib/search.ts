@@ -104,17 +104,22 @@ export interface SearchEntry {
   shortLabel: string
   /** 大分類グループ名（サブテキスト表示用） */
   groupLabel: string
+  /** 薬剤表示名（例: リベルサス錠（一般名：セマグルチド）） */
+  drugDisplayLabel?: string
 }
 
 /** 静的キーワード（薬品名・表記揺れ）— モジュール横断で使う */
 const STATIC_KEYWORDS: string[] = [
-  // 薬品名・別名
-  'リベルサス', 'rybelsus', 'セマグルチド', 'semaglutide',
+  // 薬品名・別名（カタカナ・ひらがな・英語表記を網羅）
+  'リベルサス', 'りべるさす', 'Rybelsus', 'rybelsus',
+  'セマグルチド', 'せまぐるちど', 'semaglutide',
   'glp1', 'glp-1', 'glp1ra', 'glp-1ra',
-  'インスリン', 'sglt2', 'メトホルミン',
+  'インスリン', 'いんすりん',
+  'sglt2', 'メトホルミン', 'めとほるみん',
   // カテゴリ語
-  '糖尿病', 'シックデイ', '低血糖', '消化器', '膵炎', '食欲不振',
-  'コンプライアンス', '服薬', '副作用',
+  '糖尿病', 'とうにょうびょう', 'シックデイ', 'しっくでい',
+  '低血糖', 'ていけっとう', '消化器', '膵炎', '食欲不振',
+  'コンプライアンス', 'こんぷらいあんす', '服薬', '副作用',
 ]
 
 /**
@@ -129,9 +134,16 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     ...(moduleData.riskTags ?? []),
     ...(moduleData.conditionalRiskTags ?? []),
     ...(moduleData.severityTags ?? []),
+    // drugDisplay の薬品名もコーパスに追加
+    ...(moduleData.drugDisplay?.examples ?? []),
+    moduleData.drugDisplay?.class ?? '',
     ...STATIC_KEYWORDS,
   ]
   const globalCorpus = normalizeText(globalTags.join(' '))
+
+  // 薬剤表示ラベル（候補ドロップダウンのサブテキスト用）
+  // 例: "リベルサス（セマグルチド）" → "リベルサス（セマグルチド）"
+  const exampleDrugName = moduleData.drugDisplay?.examples?.[0]
 
   return moduleData.templates.map(tpl => {
     const perTemplate = [tpl.label, tpl.type].join(' ')
@@ -142,6 +154,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       label: tpl.label,
       shortLabel: getShortLabel(tpl.label),
       groupLabel: getMenuGroup(tpl.type),
+      drugDisplayLabel: exampleDrugName,
     }
   })
 }
@@ -157,6 +170,8 @@ export interface SuggestionItem {
   shortLabel: string
   /** 大分類グループ名（サブテキスト表示用） */
   groupLabel: string
+  /** 薬剤名（例: リベルサス（セマグルチド）） */
+  drugDisplayLabel?: string
 }
 
 /**
@@ -182,6 +197,7 @@ export function getSuggestions(
       label: entry.label,
       shortLabel: entry.shortLabel,
       groupLabel: entry.groupLabel,
+      drugDisplayLabel: entry.drugDisplayLabel,
     }
     // label の先頭に近い位置でマッチするほど優先
     if (normalizeText(entry.label).startsWith(q)) {

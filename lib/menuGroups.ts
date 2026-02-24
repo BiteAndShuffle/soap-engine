@@ -11,7 +11,7 @@
 import type { Template } from './types'
 
 // ─────────────────────────────────────────────────────────────
-// 大分類の型
+// 大分類の型（10カテゴリ固定）
 // ─────────────────────────────────────────────────────────────
 
 export type MenuGroup =
@@ -53,24 +53,26 @@ const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
   down_improved:       '減量',
   down_lowbenefit:     '減量',
   down_adjust_other:   '減量',
-  // 副作用なし（軽症〜経過観察）
-  se_hypoglycemia:     '副作用なし',   // 低血糖チェック（問題なし確認）
-  se_gi:               '副作用なし',   // 消化器（問題なし確認）
-  se_appetite:         '副作用なし',   // 食欲不振（問題なし確認）
-  se_pancreatitis:     '副作用なし',   // 膵炎（問題なし確認）
-  se_mild_continue:    '副作用なし',   // 軽症継続（継続可能）
-  // 副作用あり（対応が必要）
-  se_strong_consult:   '副作用あり',   // 強い副作用・医師相談
-  se_change:           '副作用あり',   // 副作用により変更
-  se_reduce:           '副作用あり',   // 副作用により減量
-  se_stop:             '副作用あり',   // 副作用により中止
+  // 副作用なし（"se_" だが症状なし確認 or 該当なしの場合のみ）
+  // ※ 現データには「副作用なし」相当の明示 type がないため空
+  // 副作用あり（se_系はすべてここ）
+  se_hypoglycemia:     '副作用あり',
+  se_gi:               '副作用あり',
+  se_appetite:         '副作用あり',
+  se_pancreatitis:     '副作用あり',
+  se_mild_continue:    '副作用あり',   // 軽症だが副作用あり継続扱い
+  se_strong_consult:   '副作用あり',
+  se_change:           '副作用あり',
+  se_reduce:           '副作用あり',
+  se_stop:             '副作用あり',
   // コンプライアンス良好
   cp_good:             'コンプライアンス良好',
-  // コンプライアンス不良（服薬忘れ・受診遅延）
+  // コンプライアンス不良（自己判断もここ）
   cp_poor_forget:      'コンプライアンス不良',
   cp_poor_delay:       'コンプライアンス不良',
-  // 自己調整
-  cp_poor_selfadjust:  '自己調整',
+  cp_poor_selfadjust:  'コンプライアンス不良',   // ※ 自己調整ではなくCP不良へ
+  // 自己調整（別途 self_adjust type があれば）
+  self_adjust:         '自己調整',
   // 終了
   stop_improved:       '終了',
   stop_ineffective:    '終了',
@@ -117,16 +119,12 @@ export function groupByMenuGroup(templates: Template[]): MenuGroupEntry[] {
 /**
  * テンプレ label から冗長な薬効群名プレフィックスを除去して短縮表示名を返す。
  * 例: "GLP-1受容体作動薬(内服) 副作用 低血糖" → "副作用 低血糖"
- *
- * 区切りパターン: "薬効群名 " の後ろの部分を取り出す。
- * 末尾の括弧付きコメント（例: （Drに検討））は残す。
  */
 export function shortLabel(label: string): string {
-  // パターン: 漢字/英数/括弧/スラッシュ・受容体作動薬など + スペース が続いた後の本体
-  // 具体的には「）または英数 + スペース」の後ろを取る
+  // 「）または英数 + スペース」の後ろを取る
   const match = label.match(/^[^\s].*?[\)）]\s+(.+)$/)
   if (match) return match[1]
-  // 括弧なし: 最後のスペース区切りで2トークン以上あれば後半を返す
+  // 括弧なし: スペース区切りで2トークン以上あれば後半を返す
   const parts = label.split(/\s+/)
   if (parts.length >= 3) return parts.slice(1).join(' ')
   return label

@@ -55,15 +55,15 @@ export interface DrugDisplay {
 }
 
 // ─────────────────────────────────────────────────────────────
-// PinnedSoap（保持機能）
+// MergedSoap（保持＝合成機能）
 // ─────────────────────────────────────────────────────────────
 
-export interface PinnedSoap {
-  /** ユニークID（Date.now() + Math.random() で生成） */
+export interface MergedBlock {
+  /** ユニークID */
   id: string
-  /** 保持時のテンプレートラベル（表示用） */
+  /** 合成時のテンプレートラベル（区切りヘッダ表示用） */
   templateLabel: string
-  /** スナップショット時点の SOAP フィールド */
+  /** 合成時の SOAP フィールド（スナップショット） */
   fields: SoapFields
 }
 

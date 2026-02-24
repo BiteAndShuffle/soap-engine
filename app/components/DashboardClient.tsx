@@ -2,8 +2,8 @@
 
 import { useMemo, useState, useCallback } from 'react'
 
-import type { ModuleData, SoapKey, SoapFields, PinnedSoap } from '../../lib/types'
-import { buildSoap, buildAddonMap } from '../../lib/buildSoap'
+import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
+import { buildSoap, buildAddonMap, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions } from '../../lib/search'
 import { type MenuGroup, groupByMenuGroup, getMenuGroup } from '../../lib/menuGroups'
 
@@ -19,7 +19,6 @@ import s from '../styles/layout.module.css'
 // ─────────────────────────────────────────────────────────────
 
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
-const PIN_LIMIT = 5
 
 // ─────────────────────────────────────────────────────────────
 // Props
@@ -52,8 +51,20 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   const [selectedGroup, setSelectedGroup] = useState<MenuGroup | null>(null)
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null)
   const [activeAddonIds, setActiveAddonIds] = useState<Set<string>>(new Set())
+
+  /**
+   * manualFields: ユーザーが手動編集した内容。
+   * 保持後の合成済みテキストもここに格納される。
+   * テンプレ切替時にリセット（保持していない場合）。
+   */
   const [manualFields, setManualFields] = useState<Partial<SoapFields>>({})
-  const [pinnedSoaps, setPinnedSoaps] = useState<PinnedSoap[]>([])
+
+  /**
+   * mergedBlocks: 「保持」済みのSOAPブロック一覧。
+   * 保持ボタンを押すたびに現在のSOAPをここに追加する。
+   * テンプレ切替でリセットしない（保持内容を維持する）。
+   */
+  const [mergedBlocks, setMergedBlocks] = useState<MergedBlock[]>([])
 
   // ── 選択中テンプレート ───────────────────────────────────
   const selectedTemplate = moduleData.templates.find(
@@ -105,7 +116,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
 
   // ── イベントハンドラ ─────────────────────────────────────
 
-  // 大分類選択: テンプレ選択・アドオンをリセット
+  // 大分類選択: テンプレ選択・アドオンをリセット（mergedBlocksは維持）
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
     setSelectedTemplateId(null)
@@ -113,14 +124,16 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setManualFields({})
   }, [])
 
-  // テンプレ選択（中央パネル or サジェスト）
-  // サジェスト経由の場合はグループも自動で合わせる
+  // テンプレ選択（secondaryパネル or サジェスト）
+  // mergedBlocks が空の場合 → SOAP欄をリセット（上書き）
+  // mergedBlocks が1件以上ある場合 → 保持済みを維持しつつ新テンプレを表示
   const handleSelectTemplate = useCallback((id: string) => {
     const tpl = moduleData.templates.find(t => t.templateId === id)
     if (tpl) setSelectedGroup(getMenuGroup(tpl.type))
     setSelectedTemplateId(id)
     setActiveAddonIds(new Set())
     setManualFields({})
+    // ※ mergedBlocks はリセットしない（保持内容を維持）
   }, [moduleData.templates])
 
   // サジェスト確定
@@ -142,19 +155,52 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setManualFields(prev => ({ ...prev, [key]: value }))
   }, [])
 
-  // ── ピン機能 ─────────────────────────────────────────────
-  const handlePin = useCallback(() => {
+  // ── 保持（合成）機能 ─────────────────────────────────────
+  /**
+   * 「保持」ボタン押下:
+   * 1. 現在のSOAP内容を mergedBlocks に追加
+   * 2. 合成済みテキスト（全ブロック + 現在）を manualFields に書き込む
+   * 3. これにより S/O/A/P テキストエリアに合成結果が反映される
+   */
+  const handleMerge = useCallback(() => {
     if (!selectedTemplate) return
-    const snapshot: PinnedSoap = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      templateLabel: selectedTemplate.label,
-      fields: { ...fields },
-    }
-    setPinnedSoaps(prev => [...prev, snapshot].slice(-PIN_LIMIT))
-  }, [selectedTemplate, fields])
 
-  const handleUnpin = useCallback((id: string) => {
-    setPinnedSoaps(prev => prev.filter(p => p.id !== id))
+    const currentLabel = selectedTemplate.label
+    const currentFields = { ...fields }
+
+    const newBlock: MergedBlock = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      templateLabel: currentLabel,
+      fields: currentFields,
+    }
+
+    const updatedBlocks = [...mergedBlocks, newBlock]
+    setMergedBlocks(updatedBlocks)
+
+    // 合成済みフィールドを manualFields に書き込む
+    // → テキストエリアに全ブロックの連結テキストが表示される
+    const merged = mergeBlocks(
+      updatedBlocks.slice(0, -1), // newBlock は currentFields として渡す
+      currentFields,
+      currentLabel,
+    )
+    setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
+
+    // テンプレ選択は解除して「合成済み編集状態」にする
+    setSelectedTemplateId(null)
+    setSelectedGroup(null)
+    setActiveAddonIds(new Set())
+  }, [selectedTemplate, fields, mergedBlocks])
+
+  /**
+   * 合成リセット: 全ブロックを破棄してSOAPをクリア
+   */
+  const handleResetMerge = useCallback(() => {
+    setMergedBlocks([])
+    setManualFields({})
+    setSelectedTemplateId(null)
+    setSelectedGroup(null)
+    setActiveAddonIds(new Set())
   }, [])
 
   // ── レンダリング ─────────────────────────────────────────
@@ -179,10 +225,13 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           onSelectGroup={handleSelectGroup}
         />
 
-        {/* Col 2: テンプレ一覧 または アドオンパネル */}
+        {/* Col 2: スペーサー（大画面のみ） */}
+        <div className={s.center} aria-hidden="true" />
+
+        {/* Col 3: テンプレ一覧 または アドオンパネル（SOAPの左隣） */}
         <div className={s.secondaryCol}>
           {selectedGroup === null ? (
-            <div className={s.secondaryEmpty} aria-hidden="true">←</div>
+            <div className={s.secondaryEmpty} aria-hidden="true" />
           ) : selectedTemplate ? (
             <AddonPanel
               key={selectedTemplateId}
@@ -202,17 +251,15 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           )}
         </div>
 
-        {/* Col 3: スペーサー（大画面のみ） */}
-        <div className={s.center} aria-hidden="true" />
-
-        {/* Col 4: SOAP エディター（幅5/3倍） */}
+        {/* Col 4: SOAP エディター */}
         <SoapEditor
           fields={fields}
           onChange={handleFieldChange}
           templateLabel={selectedTemplate?.label ?? ''}
-          pinnedSoaps={pinnedSoaps}
-          onPin={handlePin}
-          onUnpin={handleUnpin}
+          mergedBlockCount={mergedBlocks.length}
+          onMerge={handleMerge}
+          onResetMerge={handleResetMerge}
+          canMerge={!!selectedTemplate}
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { Template, Addon, SoapFields, SoapKey, Patch } from './types'
+import type { Template, Addon, SoapFields, SoapKey, Patch, MergedBlock } from './types'
 
 // ─────────────────────────────────────────────────────────────
 // 1 つの Patch を SOAP フィールドに適用
@@ -108,4 +108,43 @@ export function templateTypeToColor(type: string): ChipColor {
 export function formatSoapForCopy(fields: SoapFields): string {
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   return keys.map(k => `【${k}】\n${fields[k]}`).join('\n\n')
+}
+
+// ─────────────────────────────────────────────────────────────
+// 複数薬のSOAPブロックを現在フィールドへ合成
+// 区切り: "----\n▶ {薬剤名}" をセパレータとして追記
+// ─────────────────────────────────────────────────────────────
+
+const SEPARATOR = '----'
+
+/**
+ * 保持済みブロック群 + 現在フィールドを合成した新しいフィールドを返す。
+ * 各ブロックは SEPARATOR + ラベルヘッダで区切られる。
+ */
+export function mergeBlocks(
+  blocks: MergedBlock[],
+  currentFields: SoapFields,
+  currentLabel: string,
+): SoapFields {
+  const keys: SoapKey[] = ['S', 'O', 'A', 'P']
+  const result: SoapFields = { S: '', O: '', A: '', P: '' }
+
+  // 既存ブロック + 現在を順に連結
+  const all = [
+    ...blocks,
+    { id: 'current', templateLabel: currentLabel, fields: currentFields },
+  ]
+
+  for (const key of keys) {
+    const parts: string[] = []
+    for (const block of all) {
+      const text = block.fields[key].trim()
+      if (!text) continue
+      const header = `${SEPARATOR}\n▶ ${block.templateLabel}`
+      parts.push(`${header}\n${text}`)
+    }
+    result[key] = parts.join('\n\n')
+  }
+
+  return result
 }
