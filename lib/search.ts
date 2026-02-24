@@ -1,7 +1,7 @@
 /**
  * search.ts — 正規化・グループ分類・サジェスト検索
  *
- * 依存ライブラリなし。ライブラリなし、ピュア TypeScript。
+ * 依存ライブラリなし。ピュア TypeScript。
  */
 
 import type { Template, ModuleData } from './types'
@@ -104,19 +104,17 @@ export interface SearchEntry {
   shortLabel: string
   /** 大分類グループ名（サブテキスト表示用） */
   groupLabel: string
-  /** 薬剤表示名（例: リベルサス錠（一般名：セマグルチド）） */
+  /** 薬剤表示名（例: リベルサス（セマグルチド）） */
   drugDisplayLabel?: string
 }
 
 /** 静的キーワード（薬品名・表記揺れ）— モジュール横断で使う */
 const STATIC_KEYWORDS: string[] = [
-  // 薬品名・別名（カタカナ・ひらがな・英語表記を網羅）
   'リベルサス', 'りべるさす', 'Rybelsus', 'rybelsus',
   'セマグルチド', 'せまぐるちど', 'semaglutide',
   'glp1', 'glp-1', 'glp1ra', 'glp-1ra',
   'インスリン', 'いんすりん',
   'sglt2', 'メトホルミン', 'めとほるみん',
-  // カテゴリ語
   '糖尿病', 'とうにょうびょう', 'シックデイ', 'しっくでい',
   '低血糖', 'ていけっとう', '消化器', '膵炎', '食欲不振',
   'コンプライアンス', 'こんぷらいあんす', '服薬', '副作用',
@@ -134,15 +132,12 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     ...(moduleData.riskTags ?? []),
     ...(moduleData.conditionalRiskTags ?? []),
     ...(moduleData.severityTags ?? []),
-    // drugDisplay の薬品名もコーパスに追加
     ...(moduleData.drugDisplay?.examples ?? []),
     moduleData.drugDisplay?.class ?? '',
     ...STATIC_KEYWORDS,
   ]
   const globalCorpus = normalizeText(globalTags.join(' '))
 
-  // 薬剤表示ラベル（候補ドロップダウンのサブテキスト用）
-  // 例: "リベルサス（セマグルチド）" → "リベルサス（セマグルチド）"
   const exampleDrugName = moduleData.drugDisplay?.examples?.[0]
 
   return moduleData.templates.map(tpl => {
@@ -178,6 +173,8 @@ export interface SuggestionItem {
  * クエリにマッチするテンプレを最大 `limit` 件返す。
  * - 空文字は [] を返す（候補なし）
  * - label 前方一致を優先 → corpus 部分一致を後続に
+ * - 同一 shortLabel のエントリは1件のみ採用（薬剤名でユニーク化）
+ *   同一薬剤がカテゴリ違いで複数ヒットしても1件だけ出す。
  */
 export function getSuggestions(
   query: string,
@@ -190,8 +187,15 @@ export function getSuggestions(
   const priority: SuggestionItem[] = []
   const secondary: SuggestionItem[] = []
 
+  // shortLabel ベースで重複排除（同一薬剤はカテゴリが違っても1件）
+  const seenShortLabels = new Set<string>()
+
   for (const entry of index) {
     if (!entry.corpus.includes(q)) continue
+
+    if (seenShortLabels.has(entry.shortLabel)) continue
+    seenShortLabels.add(entry.shortLabel)
+
     const item: SuggestionItem = {
       templateId: entry.templateId,
       label: entry.label,
@@ -199,7 +203,6 @@ export function getSuggestions(
       groupLabel: entry.groupLabel,
       drugDisplayLabel: entry.drugDisplayLabel,
     }
-    // label の先頭に近い位置でマッチするほど優先
     if (normalizeText(entry.label).startsWith(q)) {
       priority.push(item)
     } else {

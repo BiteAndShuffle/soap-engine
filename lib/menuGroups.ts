@@ -6,6 +6,7 @@
  *   - type → MenuGroup の変換は必ずここだけで行う（UI側に分散しない）
  *   - 大分類の表示名に薬効群名（GLP-1…）は含めない
  *   - 表示順は MENU_GROUP_ORDER で一意に保証する
+ *   - MENU_GROUP_ORDER の配列順が Sidebar の表示順と一致する（sort禁止）
  */
 
 import type { Template } from './types'
@@ -18,8 +19,8 @@ export type MenuGroup =
   | '初回'
   | '増量'
   | '減量'
-  | '副作用あり'
   | '副作用なし'
+  | '副作用あり'
   | 'コンプライアンス良好'
   | 'コンプライアンス不良'
   | '自己調整'
@@ -27,16 +28,19 @@ export type MenuGroup =
   | 'その他'
 
 /**
- * 左メニューに表示する固定順序（仕様通り10項目）
- * 1.初回 2.増量 3.減量 4.副作用あり 5.副作用なし
+ * 左メニューの表示順（固定10項目・仕様通り）
+ * 1.初回 2.増量 3.減量 4.副作用なし 5.副作用あり
  * 6.CP良好 7.CP不良 8.自己調整 9.終了 10.その他
+ *
+ * ※ この配列の順序が Sidebar ボタンの表示順になる。
+ *    sort / indexOf による並び替えは一切禁止。
  */
 export const MENU_GROUP_ORDER: MenuGroup[] = [
   '初回',
   '増量',
   '減量',
-  '副作用あり',
   '副作用なし',
+  '副作用あり',
   'コンプライアンス良好',
   'コンプライアンス不良',
   '自己調整',
@@ -57,6 +61,8 @@ const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
   down_improved:       '減量',
   down_lowbenefit:     '減量',
   down_adjust_other:   '減量',
+  // 副作用なし
+  se_none:             '副作用なし',
   // 副作用あり（se_系はすべてここ）
   se_hypoglycemia:     '副作用あり',
   se_gi:               '副作用あり',
@@ -67,8 +73,6 @@ const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
   se_change:           '副作用あり',
   se_reduce:           '副作用あり',
   se_stop:             '副作用あり',
-  // 副作用なし（se_none があればここ）
-  se_none:             '副作用なし',
   // コンプライアンス良好
   cp_good:             'コンプライアンス良好',
   // コンプライアンス不良
@@ -103,6 +107,7 @@ export interface MenuGroupEntry {
 /**
  * テンプレ配列を MENU_GROUP_ORDER 順のグループ配列に変換。
  * テンプレが1件もないグループは出力に含まない。
+ * ※ MENU_GROUP_ORDER の順序を破壊しないこと（sort禁止）
  */
 export function groupByMenuGroup(templates: Template[]): MenuGroupEntry[] {
   const map = new Map<MenuGroup, Template[]>()
