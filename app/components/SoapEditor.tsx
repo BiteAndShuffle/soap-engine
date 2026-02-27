@@ -21,6 +21,65 @@ interface SoapEditorProps {
 }
 
 // ─────────────────────────────────────────────────────────────
+// S欄トグル型定義
+// ─────────────────────────────────────────────────────────────
+
+/** 接頭句バリアント */
+export type SPrefix = 'none' | 'new_drug' | 'changed_drug'
+
+/** 状態バリアント */
+export type SStatus = 'stable' | 'better' | 'unchanged' | 'not_better'
+
+/** 接頭句の表示ラベル */
+export const S_PREFIX_LABELS: Record<SPrefix, string> = {
+  none:         'なし',
+  new_drug:     '新しく使用して',
+  changed_drug: '変更になって',
+}
+
+/** 状態の表示ラベル */
+export const S_STATUS_LABELS: Record<SStatus, string> = {
+  stable:     '落ち着いている',
+  better:     '良くなってきた',
+  unchanged:  '変わりない',
+  not_better: 'あまり良くなっていない',
+}
+
+/**
+ * prefix + status から「S欄先頭文」を生成する。
+ * 例:
+ *   none + stable      → 「使用して、症状は落ち着いている。」
+ *   new_drug + better  → 「前回から新しく薬を使用して良くなってきた。」
+ *   changed_drug + unchanged → 「前回から薬が変更になって使用して変わりない。」
+ */
+export function buildSFirstSentence(prefix: SPrefix, status: SStatus): string {
+  switch (prefix) {
+    case 'none':
+      return `使用して、症状は${S_STATUS_LABELS[status]}。`
+    case 'new_drug':
+      return `前回から新しく薬を使用して${S_STATUS_LABELS[status]}。`
+    case 'changed_drug':
+      return `前回から薬が変更になって使用して${S_STATUS_LABELS[status]}。`
+  }
+}
+
+/**
+ * Sフィールドの先頭文（最初の「。」まで）を新しい文に差し替える。
+ * 2文目以降は保持する。
+ */
+export function replaceSFirstSentence(current: string, newFirst: string): string {
+  const dotIdx = current.indexOf('。')
+  if (dotIdx === -1) {
+    // 「。」がない場合は全体を置換
+    return newFirst
+  }
+  const rest = current.slice(dotIdx + 1)
+  // restが空白・改行のみの場合はそのまま置換
+  const restTrimmed = rest.replace(/^[\n\r\s]+/, '')
+  return restTrimmed ? `${newFirst}\n${restTrimmed}` : newFirst
+}
+
+// ─────────────────────────────────────────────────────────────
 // S/O/A/Pのラベル名
 // ─────────────────────────────────────────────────────────────
 
@@ -72,13 +131,14 @@ export default function SoapEditor({
     setTimeout(() => setMergeFlash(false), 1200)
   }, [onMerge])
 
-  const isEmpty = SOAP_KEYS.every(k => !fields[k].trim())
+  // テンプレ未選択かつ合成なしの場合のみ空状態とみなす（テンプレ選択後は常に編集UIを表示）
+  const isNoContent = SOAP_KEYS.every(k => !fields[k].trim()) && mergedBlockCount === 0 && !templateLabel
 
   return (
     <div
       className={s.editor}
-      aria-label={isEmpty ? undefined : 'SOAPノート編集'}
-      role={isEmpty ? undefined : 'region'}
+      aria-label="SOAPノート編集"
+      role="region"
     >
       {/* ── 合成済みバナー（保持後） ── */}
       {mergedBlockCount > 0 && (
@@ -97,7 +157,7 @@ export default function SoapEditor({
       )}
 
       {/* ── Current SOAP ── */}
-      {isEmpty ? (
+      {isNoContent ? (
         <div className={s.editorEmpty}>
           左のカテゴリ → 右のテンプレートを選択してください
         </div>
@@ -114,6 +174,7 @@ export default function SoapEditor({
                   value={fields[key]}
                   onChange={e => onChange(key, e.target.value)}
                   aria-label={`SOAP ${key}フィールド`}
+                  placeholder={`${key}欄を入力...`}
                 />
                 {/* 右カラム: S/O/A/Pラベル（上）+ copyBtn（下） */}
                 <div className={s.soapFieldSide}>

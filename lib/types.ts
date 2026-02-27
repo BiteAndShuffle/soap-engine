@@ -46,6 +46,36 @@ export interface Template {
 }
 
 // ─────────────────────────────────────────────────────────────
+// DrugSearch（drug.search ブロック — v1.2 スキーマ）
+// ─────────────────────────────────────────────────────────────
+
+export interface DrugSearchMatchPolicy {
+  preferExactAlias: boolean
+  allowPrefixMatch: boolean
+  suppressCrossModuleSuggestionsOnExactHit: boolean
+}
+
+export interface DrugSearch {
+  primaryDisplayName: string
+  priority: number
+  exactAliases: string[]
+  prefixAliases: string[]
+  keywords: string[]
+  matchPolicy: DrugSearchMatchPolicy
+}
+
+export interface Drug {
+  genericName?: string
+  brandNames?: string[]
+  drugClass?: string[]
+  route?: string
+  dosageForms?: string[]
+  drugSpecificTags?: string[]
+  nameAliases?: string[]
+  search?: DrugSearch
+}
+
+// ─────────────────────────────────────────────────────────────
 // ModuleData（JSON ルート）
 // ─────────────────────────────────────────────────────────────
 
@@ -74,6 +104,7 @@ export interface MergedBlock {
 export interface ModuleData {
   moduleId: string
   categoryPath?: string[]
+  drug?: Drug
   drugTags?: string[]
   drugSpecificTags?: string[]
   situationTags?: string[]

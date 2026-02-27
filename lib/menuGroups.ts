@@ -90,9 +90,21 @@ const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
   lifestyle:           'その他',
 }
 
-/** type 文字列 → MenuGroup（未知の type は「その他」へ） */
+/**
+ * type 文字列 → MenuGroup。
+ * 明示マッピングが優先。未知の type はプレフィックスでフォールバック。
+ * - se_none は「副作用なし」（se_* 汎用フォールバックより前に解決される）
+ * - 未知の se_* は「副作用あり」へ（se_none はTYPE_TO_MENU_GROUPで先に解決）
+ */
 export function getMenuGroup(type: string): MenuGroup {
-  return TYPE_TO_MENU_GROUP[type] ?? 'その他'
+  // 明示マッピングが最優先（se_none など特殊 type はここで確実に解決）
+  if (type in TYPE_TO_MENU_GROUP) return TYPE_TO_MENU_GROUP[type]
+  // 未知 type のプレフィックスフォールバック
+  if (type.startsWith('se_')) return '副作用あり'
+  if (type.startsWith('cp_')) return 'コンプライアンス不良'
+  if (type.startsWith('down_')) return '減量'
+  if (type.startsWith('stop_')) return '終了'
+  return 'その他'
 }
 
 // ─────────────────────────────────────────────────────────────

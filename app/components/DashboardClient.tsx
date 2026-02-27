@@ -10,7 +10,13 @@ import { type MenuGroup, groupByMenuGroup, getMenuGroup } from '../../lib/menuGr
 import Topbar, { type RouteFilter } from './Topbar'
 import Sidebar from './Sidebar'
 import { TemplateListPanel, AddonPanel } from './SecondaryPanel'
-import SoapEditor from './SoapEditor'
+import ThirdPanel from './ThirdPanel'
+import SoapEditor, {
+  type SPrefix,
+  type SStatus,
+  buildSFirstSentence,
+  replaceSFirstSentence,
+} from './SoapEditor'
 
 import s from '../styles/layout.module.css'
 
@@ -19,6 +25,7 @@ import s from '../styles/layout.module.css'
 // ─────────────────────────────────────────────────────────────
 
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
+
 
 // ─────────────────────────────────────────────────────────────
 // Props
@@ -65,6 +72,13 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
    * テンプレ切替でリセットしない（保持内容を維持する）。
    */
   const [mergedBlocks, setMergedBlocks] = useState<MergedBlock[]>([])
+
+  /**
+   * S欄トグル状態（接頭句 / 症状ステータス）。
+   * テンプレ切替時にデフォルト値（none / stable）にリセット。
+   */
+  const [sPrefix, setSPrefix] = useState<SPrefix>('none')
+  const [sStatus, setSStatus] = useState<SStatus>('stable')
 
   // ── 選択中テンプレート ───────────────────────────────────
   const selectedTemplate = moduleData.templates.find(
@@ -122,6 +136,8 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setSelectedTemplateId(null)
     setActiveAddonIds(new Set())
     setManualFields({})
+    setSPrefix('none')
+    setSStatus('stable')
   }, [])
 
   // テンプレ選択（secondaryパネル or サジェスト）
@@ -133,6 +149,8 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setSelectedTemplateId(id)
     setActiveAddonIds(new Set())
     setManualFields({})
+    setSPrefix('none')
+    setSStatus('stable')
     // ※ mergedBlocks はリセットしない（保持内容を維持）
   }, [moduleData.templates])
 
@@ -154,6 +172,22 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))
   }, [])
+
+  // ── S欄トグル操作 ────────────────────────────────────────
+  /**
+   * prefix または status が変更された時:
+   * 1. 新しいS先頭文を生成
+   * 2. 現在のS欄の先頭文を差し替え（2文目以降は保持）
+   * 3. manualFields.S に書き込む（即時反映）
+   */
+  const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
+    setSPrefix(prefix)
+    setSStatus(status)
+    const newFirst = buildSFirstSentence(prefix, status)
+    const currentS = fields.S
+    const updated = replaceSFirstSentence(currentS, newFirst)
+    setManualFields(prev => ({ ...prev, S: updated }))
+  }, [fields.S])
 
   // ── 保持（合成）機能 ─────────────────────────────────────
   /**
@@ -190,6 +224,8 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setSelectedTemplateId(null)
     setSelectedGroup(null)
     setActiveAddonIds(new Set())
+    setSPrefix('none')
+    setSStatus('stable')
   }, [selectedTemplate, fields, mergedBlocks])
 
   /**
@@ -201,6 +237,8 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setSelectedTemplateId(null)
     setSelectedGroup(null)
     setActiveAddonIds(new Set())
+    setSPrefix('none')
+    setSStatus('stable')
   }, [])
 
   // ── レンダリング ─────────────────────────────────────────
@@ -248,8 +286,13 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           )}
         </div>
 
-        {/* Col 3: 3rdパネル用スペース（将来拡張用） */}
-        <div className={s.thirdPanel} aria-hidden="true" />
+        {/* Col 3: ThirdPanel（常設・中身は条件に応じて出し分け） */}
+        <ThirdPanel
+          selectedGroup={selectedGroup}
+          currentSPrefix={sPrefix}
+          currentSStatus={sStatus}
+          onSAction={handleSToggle}
+        />
 
         {/* Col 4: SOAPエディター（右端・約1/2幅） */}
         <SoapEditor

@@ -19,12 +19,33 @@ const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
 // ── サーバーサイドのデータ検証ログ ────────────────────────────
 // Vercel のビルドログ / Function ログで確認できる。
 // templates 数が 0 や MISSING の場合は JSON 読み込み失敗を示す。
+const drugSearch = moduleData?.drug?.search
+const validationErrors: string[] = []
+
+if (!moduleData?.moduleId) validationErrors.push('moduleId が存在しない')
+if (!Array.isArray(moduleData?.templates) || moduleData.templates.length === 0)
+  validationErrors.push('templates が空または未定義')
+if (!Array.isArray(moduleData?.addons))
+  validationErrors.push('addons が配列でない')
+if (drugSearch) {
+  if (!Array.isArray(drugSearch.exactAliases))
+    validationErrors.push('drug.search.exactAliases が配列でない')
+  if (!Array.isArray(drugSearch.prefixAliases))
+    validationErrors.push('drug.search.prefixAliases が配列でない')
+}
+
 console.log(
   '[SOAP Engine] moduleData loaded:',
   `moduleId=${moduleData?.moduleId ?? 'MISSING'}`,
   `templates=${moduleData?.templates?.length ?? 'MISSING'}`,
   `addons=${moduleData?.addons?.length ?? 'MISSING'}`,
+  `drug.search.exactAliases=${drugSearch?.exactAliases?.length ?? 'none'}件`,
+  `drug.search.prefixAliases=${drugSearch?.prefixAliases?.length ?? 'none'}件`,
+  `suppress=${drugSearch?.matchPolicy?.suppressCrossModuleSuggestionsOnExactHit ?? 'none'}`,
 )
+if (validationErrors.length > 0) {
+  console.error('[SOAP Engine] バリデーションエラー:', validationErrors.join(', '))
+}
 
 // ── データ破損ガード ──────────────────────────────────────────
 // テンプレートが 0 件または未定義の場合は空白画面ではなく

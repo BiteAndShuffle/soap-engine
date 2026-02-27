@@ -444,13 +444,116 @@
   text-align: center;
 }
 
-/* ── Col 3: 3rdパネル余白 ──────────────────────────────────── */
+/* ── Col 3: ThirdPanel（常設コンテナ） ────────────────────── */
 
 .thirdPanel {
   background: #f8f9fb;
   border-right: 1px solid #dde0e8;
   overflow-y: auto;
   min-height: 0;
+}
+
+/* ThirdPanel 内側レイアウト */
+.thirdPanelInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0.5rem 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Sボタン非表示時のプレースホルダー */
+.thirdPanelPlaceholder {
+  flex: 1;
+}
+
+/* グループ選択済みだがSボタン対象外の場合のヒント */
+.thirdPanelHint {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1.5rem;
+}
+
+.thirdPanelHintText {
+  font-size: 0.62rem;
+  color: #bbb;
+  text-align: center;
+  line-height: 1.7;
+}
+
+/* ── S先頭文ボタン群（ThirdPanel内） ──────────────────────── */
+
+.sActionWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.sActionHeading {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #999;
+  padding: 2px 0 4px;
+  white-space: nowrap;
+}
+
+/* 各セクション（前回、新薬追加 / 薬変更 / Do） */
+.sActionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sActionSectionLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #666;
+  padding: 0 2px;
+  white-space: nowrap;
+}
+
+/* 4ボタンを2×2グリッドで並べる */
+.sActionBtnGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+
+/* 各アクションボタン */
+.sActionBtn {
+  padding: 0.3rem 0.3rem;
+  font-family: inherit;
+  font-size: 0.67rem;
+  font-weight: 600;
+  background: #f0f2f7;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #444;
+  text-align: center;
+  line-height: 1.35;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px;
+}
+.sActionBtn:hover {
+  background: #e0e8ff;
+  border-color: #0a84ff;
+  color: #0044c0;
+}
+.sActionBtnActive {
+  background: #0a84ff;
+  border-color: #006ee0;
+  color: #fff;
+  font-weight: 700;
+}
+.sActionBtnActive:hover {
+  background: #006ee0;
+  border-color: #005ab8;
 }
 
 /* ── Col 4: SOAPエディター（右端・約1/2幅） ────────────────── */
@@ -485,13 +588,19 @@
   min-height: 0;
 }
 
-/* 各フィールド行: [textarea(左)] [右カラム: ラベル+copy] */
+/* 各フィールド行: [textarea(左) または [トグル+textarea]ラッパー] [右カラム: ラベル+copy] */
 .soapField {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   gap: 0.4rem;
   min-height: 0;
+}
+/* sToggleWrap を持つS欄の右カラムは上揃えにする */
+.soapField:has(.sToggleWrap) .soapFieldSide {
+  align-self: flex-end;
+  padding-bottom: 0.3rem;
+  padding-top: 0;
 }
 
 /* 右カラム: ラベル + copyBtn を縦積み */
@@ -681,18 +790,21 @@
 
 /* 1400px: 3rdパネルを縮小 */
 @media (max-width: 1400px) {
-  .body { grid-template-columns: 120px 260px minmax(0, 1fr) minmax(460px, 2fr); }
+  .body { grid-template-columns: 120px 260px minmax(180px, 1fr) minmax(460px, 2fr); }
 }
 
-/* 1100px: 3rdパネルを非表示、SOAPは残り全幅 */
-@media (max-width: 1100px) {
-  .body { grid-template-columns: 120px 260px 0 minmax(0, 1fr); }
-  .thirdPanel { display: none; }
+/* 1200px: 3rdパネルをさらに縮小 */
+@media (max-width: 1200px) {
+  .body { grid-template-columns: 120px 240px minmax(160px, 1fr) minmax(400px, 2fr); }
+}
+
+/* 1000px: 3rdパネルを最小化（非表示にしない） */
+@media (max-width: 1000px) {
+  .body { grid-template-columns: 100px 200px minmax(140px, 1fr) minmax(0, 2fr); }
 }
 
 @media (max-width: 900px) {
-  .body { grid-template-columns: 100px 200px 0 minmax(0, 1fr); }
-  .thirdPanel { display: none; }
+  .body { grid-template-columns: 100px 180px minmax(120px, 1fr) minmax(0, 2fr); }
   .menuGroupBtn { font-size: 0.66rem; min-height: 38px; }
   .editor { padding: 0.4rem; }
   .secondaryBtn { font-size: 0.78rem; padding: 0.5rem 0.6rem; }
@@ -756,6 +868,90 @@
   .soapTextarea { flex: 1; }
   .routeBtn { padding: 0.22rem 0.45rem; font-size: 0.68rem; }
   .dictBtn { display: none; }
+}
+
+/* ── S欄状態切替トグル ─────────────────────────────────────── */
+
+/**
+ * S欄のテキストエリアの上に表示する2段トグルUI。
+ * soapField内で textarea の直前に配置し、
+ * flex-direction: column で積み上げる。
+ * このため soapField は flex-wrap 対応が必要（既存 flex-direction:row を維持しつつ
+ * S欄のみ内部を column 配置にする）。
+ */
+
+/* S欄のテキストエリアとトグルをまとめるラッパー */
+.sToggleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* トグル1行分（接頭句 or 状態） */
+.sToggleRow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* 行ラベル（「接頭」「状態」） */
+.sToggleRowLabel {
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #888;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  width: 26px;
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 2px;
+}
+
+/* 各トグルボタン */
+.sToggleBtn {
+  padding: 0.18rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: #f0f2f7;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #555;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  line-height: 1.4;
+  min-height: 24px;
+}
+.sToggleBtn:hover {
+  background: #e0e8ff;
+  border-color: #0a84ff;
+  color: #0044c0;
+}
+.sToggleBtnActive {
+  background: #0a84ff;
+  border-color: #006ee0;
+  color: #fff;
+  font-weight: 700;
+}
+.sToggleBtnActive:hover {
+  background: #006ee0;
+  border-color: #005ab8;
+}
+
+/**
+ * S欄のtextareaがトグルと同じラッパー内に入るため、
+ * ラッパー(sToggleWrap)がflex:1を担い、
+ * textareaはflex:1で残り高さを確保する。
+ */
+.soapTextareaWithToggle {
+  flex: 1;
+  min-height: 0;
 }
 
 /* ── 互換クラス（旧コードとの後方互換） ─────────────────────── */

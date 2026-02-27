@@ -1,6 +1,163 @@
 {
+  "schemaVersion": "soap-engine.module.v1.1",
   "moduleId": "dm_glp1ra_semaglutide_oral_sickday",
-  "categoryPath": ["糖尿病", "GLP-1受容体作動薬(内服)", "シックデイ"],
+  "categoryPath": ["糖尿病", "GLP-1受容体作動薬", "内服", "シックデイ"],
+  "moduleNotes": {
+    "designIntent": [
+      "本モジュールは『糖尿病外来の継続治療がうまくいっているか』を俯瞰するためのSOAPテンプレ群。",
+      "大枠の骨格は ①副作用（あり/なし） ②コンプライアンス（良好/不良）の2軸で整理する。",
+      "ここでの『コンプライアンス不良』は『服用できていない/継続できていない』だけでなく、『処方医の治療計画から逸脱（自己判断での中止・減量・間隔調整など）』も含む。",
+      "したがって『自己判断で量・タイミング・回数などを調整』は self_adjust（汎用カテゴリ）としても概念上は存在するが、本モジュールでは『治療計画からの乖離＝コンプライアンス不良』として compliance_bad に分類する（UI分類の安定性優先）。"
+    ],
+    "uiContract": [
+      "sidebarOrder / sidebarLabels は『ユーザーの直感性を保つため固定』。薬剤ごとに項目を増減させない。",
+      "self_adjust は薬剤によってテンプレが存在しない場合がある（空でもOK）。UI側で当該薬剤にテンプレが無い場合はグレーアウト等で扱う。",
+      "no_side_effect と side_effect は混在させない（menuGroupKeyを厳密分離）。"
+    ],
+    "riskModelNotes": [
+      "risks.conditional の ketoacidosis_risk_sglt2 は『患者がSGLT2阻害薬などを併用している場合に成立しうる条件付きリスク』として残す。",
+      "本モジュールは単剤専用ではなく、糖尿病シックデイを含む総合ハブとしての再利用も想定するため、条件付きリスクは削除しない。"
+    ],
+    "futureExtension": [
+      "templateBinding.severityTags は将来の重症度分岐（テンプレ選択/追記/文言切替）に備えたタグ枠。現時点でテンプレ側に分岐が無くても保持する。"
+    ]
+  },
+  "drug": {
+    "genericName": "セマグルチド",
+    "brandNames": ["リベルサス"],
+    "drugClass": ["GLP1_RA"],
+    "route": "oral",
+    "dosageForms": ["tablet"],
+    "drugSpecificTags": ["semaglutide_oral"],
+    "nameAliases": [
+      "リベルサス",
+      "りべるさす",
+      "セマグルチド",
+      "せまぐるちど"
+    ],
+    "search": {
+      "primaryDisplayName": "リベルサス",
+      "priority": 100,
+      "exactAliases": [
+        "リベルサス",
+        "りべるさす",
+        "セマグルチド",
+        "せまぐるちど"
+      ],
+      "prefixAliases": [
+        "りべ",
+        "リベ"
+      ],
+      "keywords": [
+        "GLP-1",
+        "GLP1",
+        "GLP-1受容体作動薬",
+        "内服",
+        "糖尿病"
+      ],
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
+    }
+  },
+  "templateBinding": {
+    "situationTags": ["sickday"],
+    "severityTags": ["mild", "moderate", "severe"],
+    "emergencyFlag": true
+  },
+  "risks": {
+    "primary": ["hypoglycemia_risk", "dehydration_risk"],
+    "conditional": ["ketoacidosis_risk_sglt2"]
+  },
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "index": {
+    "searchableText": [
+      "リベルサス",
+      "セマグルチド",
+      "GLP1",
+      "GLP-1",
+      "GLP1RA",
+      "GLP-1RA",
+      "経口GLP1",
+      "内服GLP1",
+      "GLP-1受容体作動薬",
+      "シックデイ",
+      "糖尿病"
+    ],
+    "normalizedTokens": [],
+    "facets": {
+      "route": ["oral"],
+      "dosageForms": ["tablet"]
+    }
+  },
+  "drugKnowledge": {
+    "duration": null,
+    "crushable": null,
+    "lightSensitive": null,
+    "oneDosePackaging": null,
+    "hygroscopic": null,
+    "storage": null,
+    "administration": null,
+    "interactions": null,
+    "renalDose": null,
+    "hepaticDose": null,
+    "pregnancyLactation": null
+  },
+  "regulatory": {
+    "psychotropicClass": null,
+    "controlledSubstance": null,
+    "notes": null
+  },
+  "topical": {
+    "steroidPotency": "not_applicable",
+    "notes": null
+  },
+  "display": {
+    "title": "GLP-1受容体作動薬（内服）",
+    "subtitle": "リベルサス（セマグルチド）"
+  },
+  "menu": {
+    "sidebarOrder": [
+      "initial",
+      "dose_up",
+      "dose_down",
+      "no_side_effect",
+      "side_effect",
+      "compliance_good",
+      "compliance_bad",
+      "self_adjust",
+      "end",
+      "other"
+    ],
+    "sidebarLabels": {
+      "initial": "初回",
+      "dose_up": "増量",
+      "dose_down": "減量",
+      "no_side_effect": "副作用なし",
+      "side_effect": "副作用あり",
+      "compliance_good": "コンプライアンス良好",
+      "compliance_bad": "コンプライアンス不良",
+      "self_adjust": "自己調整",
+      "end": "終了",
+      "other": "その他"
+    }
+  },
   "drugTags": ["GLP1_RA"],
   "drugSpecificTags": ["semaglutide_oral"],
   "situationTags": ["sickday"],
@@ -14,49 +171,49 @@
   },
   "templates": [
     {
-      "templateId": "glp1ra_oral_initial",
+      "templateId": "glp1_oral_initial",
       "label": "GLP-1受容体作動薬(内服) 初回",
       "type": "initial",
       "soap": {
         "S": "血糖値が高いため薬が追加となった。",
         "O": "GLP-1受容体作動薬(内服)処方",
-        "A": "GLP-1受容体作動薬(内服)は血糖コントロール不十分のため追加。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。\n血糖改善および体重減少（体重管理の補助）を目的とする。",
+        "A": "GLP-1受容体作動薬(内服)は血糖コントロール不十分のため追加。血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。血糖改善および体重減少（体重管理の補助）を目的とする。",
         "P": "GLP-1受容体作動薬(内服)は血糖値を改善する薬です。\n副作用があればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": [
-        "addon_lifestyle_01",
-        "addon_oral_01",
-        "addon_oral_02",
-        "addon_se_gi_01",
-        "addon_se_hypo_02"
+        "addon_counseling_1",
+        "addon_oral_1",
+        "addon_oral_2",
+        "addon_se_1",
+        "addon_se_2"
       ]
     },
     {
-      "templateId": "glp1ra_oral_uptitrate",
+      "templateId": "glp1_oral_dose_up",
       "label": "GLP-1受容体作動薬(内服) 増量",
       "type": "uptitrate",
       "soap": {
         "S": "GLP-1受容体作動薬(内服)は、増量になりました。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)は、効果不十分のため増量。副作用増悪の可能性に注意。",
-        "P": "GLP-1受容体作動薬(内服)は、増量により吐き気・下痢・便秘などの消化器症状が出やすくなることがあります。\nふらつき・動悸など低血糖症状があれば相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)は、増量により吐き気・下痢・便秘などの消化器症状が出やすくなることがあります。\nふらつき・動悸など低血糖症状があればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_down_improved",
+      "templateId": "glp1_oral_dose_down_improved",
       "label": "GLP-1受容体作動薬(内服) 減量（症状改善）",
       "type": "down_improved",
       "soap": {
         "S": "GLP-1受容体作動薬(内服)は、検査値が良くなって減量となった。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)は血糖推移を踏まえ減量。減量に伴う血糖上昇の可能性に注意。",
-        "P": "GLP-1受容体作動薬(内服)は、減量により血糖値が上がることがあります。\n気になる変化があれば相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)は、減量により血糖値が上がることがあります。\n気になる変化があればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_down_lowbenefit",
+      "templateId": "glp1_oral_dose_down_no_benefit",
       "label": "GLP-1受容体作動薬(内服) 減量（効果実感乏しい）",
       "type": "down_lowbenefit",
       "soap": {
@@ -68,7 +225,7 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_down_adjust_other",
+      "templateId": "glp1_oral_dose_down_adjust_other_drugs",
       "label": "GLP-1受容体作動薬(内服) 減量（他剤との調整）",
       "type": "down_adjust_other",
       "soap": {
@@ -80,43 +237,56 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_hypo_check",
+      "templateId": "glp1_oral_no_se_generic",
+      "label": "GLP-1受容体作動薬(内服) 副作用なし（総合）",
+      "type": "se_none",
+      "soap": {
+        "S": "使用して症状は安定している。",
+        "O": "GLP-1受容体作動薬(内服)処方",
+        "A": "副作用は現時点で認めず、治療継続可能。",
+        "P": "副作用があればご相談ください。\n次回、治療経過の確認。"
+      },
+      "addonIds": [],
+      "notes": "『副作用なし』メニューの土台。個別SEテンプレ（低血糖/悪心/食欲不振/膵炎）と混ざらないよう、UI側でmenuGroupKey=no_side_effect と side_effect を厳密に分離する。"
+    },
+    {
+      "templateId": "glp1_oral_se_hypoglycemia",
       "label": "GLP-1受容体作動薬(内服) 副作用 低血糖",
       "type": "se_hypoglycemia",
       "soap": {
         "S": "使用して、症状は落ち着いている。ふらふらしたり、動悸などはない。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)による低血糖は現時点で認めず、治療継続可能。",
-        "P": "GLP-1受容体作動薬(内服)の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、\n他の糖尿病薬（インスリン・SU薬）と併用中は低血糖が起こることがあります。\n出現時は糖分摂取等で対応し、改善しない場合は相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、\n他の糖尿病薬（インスリン・SU薬）と併用中は低血糖が起こることがあります。\n出現時は糖分摂取等で対応し、改善しない場合はご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_gi",
+      "templateId": "glp1_oral_se_gi",
       "label": "GLP-1受容体作動薬(内服) 副作用 悪心・下痢",
       "type": "se_gi",
       "soap": {
         "S": "使用して、症状は落ち着いている。悪心や下痢はない。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)による消化器症状は現時点で認めず、治療継続可能。",
-        "P": "GLP-1受容体作動薬(内服)の継続中に吐き気・下痢などが出ることがあります。続く場合は相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)の継続中に吐き気・下痢などが出ることがあります。続く場合はご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_anorexia",
+      "templateId": "glp1_oral_se_appetite_loss",
       "label": "GLP-1受容体作動薬(内服) 副作用 食欲不振",
       "type": "se_appetite",
       "soap": {
         "S": "使用して、症状は落ち着いている。食欲不振はない。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)による食欲低下は現時点で認めず、治療継続可能。",
-        "P": "GLP-1受容体作動薬(内服)の継続中に食欲低下が出ることがあります。食事量が落ちる・体重が急に減るなどあれば相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)の継続中に食欲低下が出ることがあります。食事量が落ちる・体重が急に減るなどあればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_pancreatitis",
+      "templateId": "glp1_oral_se_pancreatitis",
       "label": "GLP-1受容体作動薬(内服) 副作用 膵炎",
       "type": "se_pancreatitis",
       "soap": {
@@ -128,7 +298,7 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_cp_good",
+      "templateId": "glp1_oral_cp_good",
       "label": "GLP-1受容体作動薬(内服) CP良",
       "type": "cp_good",
       "soap": {
@@ -140,7 +310,7 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_cp_poor_forget",
+      "templateId": "glp1_oral_cp_bad_forget",
       "label": "GLP-1受容体作動薬(内服) CP不良（使用忘れ）",
       "type": "cp_poor_forget",
       "soap": {
@@ -149,22 +319,22 @@
         "A": "コンプライアンス不良。服薬指導実施。",
         "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。\n使用忘れにより血糖値が変動し、十分な治療効果が得られない可能性があることを説明。\n次回、治療経過を確認予定。"
       },
-      "addonIds": ["addon_forget_01", "addon_forget_02"]
+      "addonIds": ["addon_forget_prevent_1", "addon_forget_prevent_2"]
     },
     {
-      "templateId": "glp1ra_oral_cp_poor_selfadjust",
+      "templateId": "glp1_oral_cp_bad_self_judge",
       "label": "GLP-1受容体作動薬(内服) CP不良（自己判断）",
       "type": "cp_poor_selfadjust",
       "soap": {
-        "S": "自己判断で使用を調整していた様子。",
+        "S": "自己判断で使用量や間隔を調整していた様子。",
         "O": "GLP-1受容体作動薬(内服)処方",
-        "A": "コンプライアンス不良。服薬指導実施。",
-        "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。\n自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があることを説明。\n有害事象や体調変化がある場合は、自己調整せず医療機関へ相談するよう指導。\n次回、治療経過を確認。"
+        "A": "コンプライアンス不良。治療計画との乖離がある可能性。",
+        "P": "自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があることを説明。\n有害事象や体調変化がある場合は、自己判断で調整せず医療機関へ相談するよう指導。\n次回、治療経過を確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_cp_poor_delay",
+      "templateId": "glp1_oral_cp_bad_visit_delay",
       "label": "GLP-1受容体作動薬(内服) CP不良（受診遅延）",
       "type": "cp_poor_delay",
       "soap": {
@@ -176,7 +346,7 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_stop_improved",
+      "templateId": "glp1_oral_end_improved",
       "label": "GLP-1受容体作動薬(内服) 終了(改善)",
       "type": "stop_improved",
       "soap": {
@@ -188,7 +358,7 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_stop_ineffective",
+      "templateId": "glp1_oral_end_insufficient",
       "label": "GLP-1受容体作動薬(内服) 終了(効果不十分)",
       "type": "stop_ineffective",
       "soap": {
@@ -200,7 +370,7 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_stop_noeffect",
+      "templateId": "glp1_oral_end_ineffective",
       "label": "GLP-1受容体作動薬(内服) 終了(無効)",
       "type": "stop_noeffect",
       "soap": {
@@ -212,67 +382,67 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_mild_continue",
+      "templateId": "glp1_oral_se_mild_continue",
       "label": "GLP-1受容体作動薬(内服) SE軽症継続",
       "type": "se_mild_continue",
       "soap": {
         "S": "吐き気／下痢／便秘などがあるが、日常生活は可能。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)による消化器症状を軽度認めるが、治療継続可能。",
-        "P": "症状が軽い場合は、食事量を無理せず、脂っこいものを控えるなどで改善することがあります。\n便秘が続く・下痢が続くなど強い場合は調整が必要なことがあるため相談してください。\n次回、治療経過の確認。"
+        "P": "症状が軽い場合は、食事量を無理せず、脂っこいものを控えるなどで改善することがあります。\n便秘が続く・下痢が続くなど強い場合は調整が必要なことがあるためご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_strong_consult",
+      "templateId": "glp1_oral_se_mild_continue_consider_dr",
       "label": "GLP-1受容体作動薬(内服) SE軽症継続（Drに検討）",
       "type": "se_strong_consult",
       "soap": {
         "S": "吐き気／下痢／便秘が強く、辛いことがあるが、日常生活は可能。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)による消化器症状が強く、継続困難の可能性あり。",
-        "P": "症状が強い場合は減量や薬の変更、便秘薬など追加が必要なことがあります。処方医へ相談してください。\n次回、治療経過の確認。"
+        "P": "症状が強い場合は減量や薬の変更、便秘薬など追加が必要なことがあります。処方医へご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_change",
+      "templateId": "glp1_oral_se_change",
       "label": "GLP-1受容体作動薬(内服) SE変更",
       "type": "se_change",
       "soap": {
         "S": "低血糖症状出現のため他剤へ変更となった。",
         "O": "GLP-1受容体作動薬(内服)処方変更",
         "A": "GLP-1受容体作動薬(内服)の使用による低血糖出現のため変更。",
-        "P": "GLP-1受容体作動薬(内服)の変更により血糖上昇や体調変化があれば相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)の変更により血糖上昇や体調変化があればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_reduce",
+      "templateId": "glp1_oral_se_reduce",
       "label": "GLP-1受容体作動薬(内服) SE減量",
       "type": "se_reduce",
       "soap": {
         "S": "低血糖がひどいので減量になりました。",
         "O": "GLP-1受容体作動薬(内服)処方",
         "A": "GLP-1受容体作動薬(内服)の使用による低血糖がみられたため減量。今後の低血糖再発および血糖変動に注意。",
-        "P": "GLP-1受容体作動薬(内服)の減量後も、ふらつき・冷汗・動悸などの症状があれば相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)の減量後も、ふらつき・冷汗・動悸などの症状があればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_se_stop",
+      "templateId": "glp1_oral_se_stop",
       "label": "GLP-1受容体作動薬(内服) SE中止",
       "type": "se_stop",
       "soap": {
         "S": "低血糖がひどいので中止となった。",
         "O": "GLP-1受容体作動薬(内服)処方中止",
         "A": "GLP-1受容体作動薬(内服)の使用による低血糖出現のため中止。",
-        "P": "GLP-1受容体作動薬(内服)の中止により血糖上昇や体調変化があれば相談してください。\n次回、治療経過の確認。"
+        "P": "GLP-1受容体作動薬(内服)の中止により血糖上昇や体調変化があればご相談ください。\n次回、治療経過の確認。"
       },
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_lifestyle",
+      "templateId": "glp1_oral_lifestyle_guidance",
       "label": "GLP-1受容体作動薬(内服) 生活指導",
       "type": "lifestyle",
       "soap": {
@@ -284,21 +454,21 @@
       "addonIds": []
     },
     {
-      "templateId": "glp1ra_oral_sickday",
+      "templateId": "glp1_oral_sickday_main",
       "label": "GLP-1受容体作動薬(内服) シックデイ",
       "type": "sickday",
       "soap": {
         "S": "風邪気味です。",
         "O": "GLP-1受容体作動薬(内服)処方",
-        "A": "食事摂取低下により低血糖および脱水リスク上昇。",
-        "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n体調不良で内服が難しい場合も、自己判断で中止せず処方医へ相談してください。\n嘔吐が続く、尿量が減る、強い倦怠感がある場合は受診してください。"
+        "A": "食事摂取低下により脱水リスク上昇。併用薬により低血糖リスクあり。",
+        "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n体調不良で内服が難しい場合は無理に服用せず、処方医へご相談ください。\n嘔吐が続く、尿量が減る、強い倦怠感がある場合は受診してください。"
       },
-      "addonIds": ["addon_sickday_common_01"]
+      "addonIds": ["addon_sickday_common_1"]
     }
   ],
   "addons": [
     {
-      "addonId": "addon_lifestyle_01",
+      "addonId": "addon_counseling_1",
       "label": "服薬指導アドオン①",
       "patches": [
         {
@@ -309,8 +479,8 @@
       ]
     },
     {
-      "addonId": "addon_oral_01",
-      "label": "内服アドオン①（PTP・湿気）",
+      "addonId": "addon_oral_1",
+      "label": "内服アドオン①",
       "patches": [
         {
           "target": "P",
@@ -320,8 +490,8 @@
       ]
     },
     {
-      "addonId": "addon_oral_02",
-      "label": "内服アドオン②（空腹時・水量・30分）",
+      "addonId": "addon_oral_2",
+      "label": "内服アドオン②",
       "patches": [
         {
           "target": "P",
@@ -331,19 +501,19 @@
       ]
     },
     {
-      "addonId": "addon_se_gi_01",
-      "label": "副作用アドオン①（消化器）",
+      "addonId": "addon_se_1",
+      "label": "副作用アドオン①",
       "patches": [
         {
           "target": "P",
           "mode": "append",
-          "value": "吐き気などの消化器症状が出ることがあります。症状があれば相談してください。"
+          "value": "吐き気などの消化器症状が出ることがあります。症状があればご相談ください。"
         }
       ]
     },
     {
-      "addonId": "addon_se_hypo_02",
-      "label": "副作用アドオン②（低血糖注意）",
+      "addonId": "addon_se_2",
+      "label": "副作用アドオン②",
       "patches": [
         {
           "target": "P",
@@ -353,8 +523,8 @@
       ]
     },
     {
-      "addonId": "addon_forget_01",
-      "label": "服薬指導アドオン①（忘れ防止：アラーム）",
+      "addonId": "addon_forget_prevent_1",
+      "label": "服薬指導アドオン①（忘れ防止）",
       "patches": [
         {
           "target": "P",
@@ -364,8 +534,8 @@
       ]
     },
     {
-      "addonId": "addon_forget_02",
-      "label": "服薬指導アドオン②（忘れ防止：準備習慣）",
+      "addonId": "addon_forget_prevent_2",
+      "label": "服薬指導アドオン②（忘れ防止）",
       "patches": [
         {
           "target": "P",
@@ -375,13 +545,13 @@
       ]
     },
     {
-      "addonId": "addon_sickday_common_01",
+      "addonId": "addon_sickday_common_1",
       "label": "糖尿病薬共通アドオン シックデイ①",
       "patches": [
         {
           "target": "P",
           "mode": "append",
-          "value": "併用中のSGLT2阻害薬やメトホルミンは脱水時中止が必要な場合あり。自己判断せず処方医へ相談してください。"
+          "value": "併用中のSGLT2阻害薬やメトホルミンは脱水時中止が必要な場合あり。自己判断せず処方医へご相談ください。"
         }
       ]
     }
