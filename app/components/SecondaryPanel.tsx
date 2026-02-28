@@ -56,7 +56,7 @@ export function TemplateListPanel({
             style={{ animationDelay: `${i * 30}ms` }}
             onClick={() => onSelectTemplate(tpl.templateId)}
             aria-pressed={isActive}
-            title={tpl.label}
+            title={label}
           >
             {label}
           </button>

@@ -113,10 +113,20 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   )
 
   // ── サジェスト候補 ───────────────────────────────────────
-  const suggestions = useMemo(
-    () => getSuggestions(search, searchIndex),
-    [search, searchIndex],
-  )
+  // 【仕様】選択中グループが「副作用あり」なら groupLabel=「副作用なし」の候補を除外。
+  //         選択中グループが「副作用なし」なら groupLabel=「副作用あり」の候補を除外。
+  //         type ベースの厳密分離: se_none ↔ se_* の混入を防ぐ。
+  const suggestions = useMemo(() => {
+    const raw = getSuggestions(search, searchIndex)
+    if (!selectedGroup) return raw
+    if (selectedGroup === '副作用あり') {
+      return raw.filter(item => item.groupLabel !== '副作用なし')
+    }
+    if (selectedGroup === '副作用なし') {
+      return raw.filter(item => item.groupLabel !== '副作用あり')
+    }
+    return raw
+  }, [search, searchIndex, selectedGroup])
 
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = moduleData.categoryPath?.[1]
@@ -171,6 +181,11 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))
+  }, [])
+
+  // ── 診療領域サブカテゴリ選択: 検索窓に語を投入 ─────────
+  const handleSubcategorySelect = useCallback((label: string) => {
+    setSearch(label)
   }, [])
 
   // ── S欄トグル操作 ────────────────────────────────────────
@@ -292,6 +307,11 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           currentSPrefix={sPrefix}
           currentSStatus={sStatus}
           onSAction={handleSToggle}
+          searchValue={search}
+          onSearchChange={setSearch}
+          suggestions={suggestions}
+          onSelectSuggestion={handleSelectSuggestion}
+          onSubcategorySelect={handleSubcategorySelect}
         />
 
         {/* Col 4: SOAPエディター（右端・約1/2幅） */}

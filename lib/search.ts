@@ -316,8 +316,9 @@ function scoreEntry(entry: SearchEntry, q: string): number {
  * - 空文字は [] を返す（候補なし）
  * - スコア降順 → priority 降順 → 元配列順でソート
  * - 同一 shortLabel のエントリは1件のみ採用（薬剤名でユニーク化）
- * - スコア≥7（exactAlias ヒット）かつ suppressOnExactHit=true の場合:
- *   同一 moduleId のエントリのみを返す（他モジュール抑制）
+ * - スコア≥5（exactAlias / primaryDisplayName / nameAlias 完全一致）かつ suppressOnExactHit=true の場合:
+ *   1) 他モジュール候補を除外（suppressモジュールのみ残す）
+ *   2) suppress モジュール内でも moduleId 単位で代表1件のみ返す
  */
 export function getSuggestions(
   query: string,
@@ -341,22 +342,44 @@ export function getSuggestions(
     a.originalIndex - b.originalIndex,
   )
 
-  // exactAlias ヒット（score≥7）かつ suppress が true なら他モジュールを除外
+  // exactAlias / primaryDisplayName / nameAlias 完全一致（score≥5）かつ suppress が true なら:
+  //   1) 他モジュールを除外
+  //   2) 同一モジュール内でも moduleId 単位で1件のみに絞る（薬剤名入力 → 薬剤代表1件）
+  // ※ score5以上 = exactAliases(7) / primaryDisplayName(6) / nameAliases(5) の完全一致
   const topScore = scored[0]?.score ?? 0
   let filtered = scored
-  if (topScore >= 7) {
-    const suppressingModuleId = scored.find(s => s.score >= 7 && s.entry.suppressOnExactHit)?.entry.moduleId
-    if (suppressingModuleId) {
-      filtered = scored.filter(s => s.entry.moduleId === suppressingModuleId)
+  let suppressModuleIds: Set<string> | null = null
+  if (topScore >= 5) {
+    const suppressCandidates = scored.filter(s => s.score >= 5 && s.entry.suppressOnExactHit)
+    if (suppressCandidates.length > 0) {
+      // suppress 対象 moduleId の集合
+      suppressModuleIds = new Set(suppressCandidates.map(s => s.entry.moduleId))
+      // suppress 対象モジュールのエントリは除外し、suppress モジュールは代表1件ずつに差し替える
+      const nonSuppressFiltered = scored.filter(s => !suppressModuleIds!.has(s.entry.moduleId))
+      // suppress モジュールごとに先頭エントリ（最高スコア・最高priority・配列順先頭）を1件
+      const suppressRepresentatives: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
+      for (const moduleId of suppressModuleIds) {
+        const rep = scored.find(s => s.entry.moduleId === moduleId)
+        if (rep) suppressRepresentatives.push(rep)
+      }
+      // suppress代表を先頭に、非suppress候補を後に並べる
+      filtered = [...suppressRepresentatives, ...nonSuppressFiltered]
     }
   }
 
   // shortLabel ベースで重複排除（同一薬剤はカテゴリが違っても1件）
   const seenShortLabels = new Set<string>()
+  // suppress モジュールは moduleId ベースでも1件に限定（shortLabel が異なる場合も含む）
+  const seenSuppressModules = new Set<string>()
   const results: SuggestionItem[] = []
 
   for (const { entry } of filtered) {
     if (results.length >= limit) break
+    // suppress モジュールは1件のみ
+    if (suppressModuleIds?.has(entry.moduleId)) {
+      if (seenSuppressModules.has(entry.moduleId)) continue
+      seenSuppressModules.add(entry.moduleId)
+    }
     if (seenShortLabels.has(entry.shortLabel)) continue
     seenShortLabels.add(entry.shortLabel)
     results.push({

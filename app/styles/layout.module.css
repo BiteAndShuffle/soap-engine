@@ -449,25 +449,67 @@
 .thirdPanel {
   background: #f8f9fb;
   border-right: 1px solid #dde0e8;
-  overflow-y: auto;
+  /* overflow-y はInner側で管理するため外側は hidden */
+  overflow: hidden;
   min-height: 0;
 }
 
-/* ThirdPanel 内側レイアウト */
+/*
+ * ThirdPanel 内側レイアウト
+ * 構造:
+ *   thirdPanelInner (flex column, height:100%)
+ *     ├─ thirdPanelScrollArea (flex:1, overflow-y:auto) ← 薬剤追加検索窓・診療領域
+ *     └─ thirdPanelStickyBottom (flex-shrink:0)        ← Sボタン（副作用なし/CP良好のみ）
+ */
 .thirdPanelInner {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0.5rem 0.5rem;
+  /* padding は子要素に委譲 */
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* Sボタン非表示時のプレースホルダー */
-.thirdPanelPlaceholder {
+/* 上部スクロール可能エリア（薬剤追加・診療領域） */
+.thirdPanelScrollArea {
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem 0.5rem 0.3rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #d0d4e0 transparent;
+}
+.thirdPanelScrollArea::-webkit-scrollbar { width: 4px; }
+.thirdPanelScrollArea::-webkit-scrollbar-thumb { background: #d0d4e0; border-radius: 2px; }
+
+/* 各セクション（見出し + 中身） */
+.thirdSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.6rem;
 }
 
-/* グループ選択済みだがSボタン対象外の場合のヒント */
+/* 下部固定エリア（Sボタン） */
+.thirdPanelStickyBottom {
+  flex-shrink: 0;
+  border-top: 1.5px solid #dde0e8;
+  background: #f0f2f7;
+  padding: 0.5rem 0.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+/* 旧プレースホルダー（後方互換残置） */
+.thirdPanelPlaceholder { flex: 1; }
+
+/* 旧ヒント（後方互換残置） */
 .thirdPanelHint {
   flex: 1;
   display: flex;
@@ -475,7 +517,6 @@
   justify-content: center;
   padding-top: 1.5rem;
 }
-
 .thirdPanelHintText {
   font-size: 0.62rem;
   color: #bbb;
@@ -956,3 +997,192 @@
 
 /* ── 互換クラス（旧コードとの後方互換） ─────────────────────── */
 .center { display: none; }
+
+/* ── 初回パネル（ThirdPanel内）────────────────────────────── */
+
+.initialPanelWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* 初回パネル内の検索ラッパー */
+.thirdSearchWrap {
+  position: relative;
+  width: 100%;
+}
+
+.thirdSearchInput {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  background: #fff;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 7px;
+  color: #222;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.thirdSearchInput::placeholder { color: #aaa; }
+.thirdSearchInput:focus { border-color: #0a84ff; }
+
+/* 初回パネルのサジェストドロップダウン */
+.thirdSuggestionList {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1.5px solid #c0c4d4;
+  border-radius: 7px;
+  list-style: none;
+  margin: 0;
+  padding: 3px 0;
+  z-index: 300;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.thirdSuggestionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.42rem 0.65rem;
+  font-size: 0.78rem;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.08s;
+  gap: 6px;
+}
+.thirdSuggestionItem:hover { background: #f0f4ff; }
+.thirdSuggestionItemFocused { background: #e0eaff; outline: 1.5px solid #0a84ff44; outline-offset: -1.5px; }
+
+/* 診療領域ボタングリッド */
+.categoryBtnGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.categoryBtn {
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: #f0f4ff;
+  border: 1.5px solid #c0caff;
+  border-radius: 7px;
+  cursor: pointer;
+  color: #2244aa;
+  text-align: left;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 34px;
+  line-height: 1.3;
+}
+.categoryBtn:hover { background: #dce8ff; border-color: #0a84ff; color: #003da0; }
+
+/* ── 常設薬剤追加セクション ────────────────────────────────── */
+
+.addDrugSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+}
+
+/* 追加UIヒントセクション（副作用なし/CP良好のみ） */
+.addDrugHintSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.8rem;
+  border-top: 1px dashed #dde0e8;
+}
+
+.addDrugHintText {
+  font-size: 0.67rem;
+  color: #aaa;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0 2px;
+}
+
+/* ── 診療領域アコーディオン ───────────────────────────────── */
+
+.medAreaWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.medAreaGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.medAreaBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #eef1f8;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 7px;
+  cursor: pointer;
+  color: #334;
+  text-align: left;
+  transition: background 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 30px;
+}
+.medAreaBtn:hover { background: #e0e8ff; border-color: #0a84ff; color: #0044c0; }
+.medAreaBtnOpen { background: #0a84ff; border-color: #006ee0; color: #fff; }
+.medAreaBtnOpen:hover { background: #006ee0; }
+
+.medAreaLabel { flex: 1; }
+
+.medAreaChevron {
+  font-size: 1.1rem;
+  display: inline-block;
+  transform: rotate(0deg);
+  transition: transform 0.18s ease;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.medAreaChevronOpen { transform: rotate(90deg); }
+
+.medSubcatWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 4px 2px 2px;
+}
+
+.medSubcatBtn {
+  padding: 0.2rem 0.45rem;
+  font-family: inherit;
+  font-size: 0.67rem;
+  font-weight: 600;
+  background: #f5f7ff;
+  border: 1.5px solid #c0caff;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #2244aa;
+  transition: background 0.08s, color 0.08s, border-color 0.08s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  line-height: 1.4;
+  min-height: 26px;
+}
+.medSubcatBtn:hover { background: #dce8ff; border-color: #0a84ff; color: #003da0; }
