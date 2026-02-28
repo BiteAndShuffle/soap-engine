@@ -107,25 +107,61 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     [allGroups],
   )
   // 選択中グループのテンプレ一覧
-  const groupTemplates = useMemo(
-    () => allGroups.find(g => g.group === selectedGroup)?.templates ?? [],
-    [allGroups, selectedGroup],
-  )
+  // 【SSOT二重保証】groupByMenuGroup() の結果をそのまま使うのに加え、
+  // getMenuGroup(tpl.type) === selectedGroup の完全一致で再フィルタする。
+  // これにより groupByMenuGroup() 側のバグや型の不一致があっても混入を防ぐ。
+  const groupTemplates = useMemo(() => {
+    if (!selectedGroup) return []
+    const raw = allGroups.find(g => g.group === selectedGroup)?.templates ?? []
+    // SSOT完全一致フィルタ（includes/部分一致禁止）
+    const filtered = raw.filter(t => getMenuGroup(t.type) === selectedGroup)
+    // DEV: 混入検出ログ
+    if (process.env.NODE_ENV !== 'production') {
+      const seA = allGroups.find(g => g.group === '副作用あり')?.templates ?? []
+      const seN = allGroups.find(g => g.group === '副作用なし')?.templates ?? []
+      console.debug(
+        '[SOAP] groupTemplates debug\n',
+        '副作用あり raw:',
+        seA.slice(0, 30).map(t => ({
+          id: t.templateId,
+          title: t.label,
+          type: t.type,
+          getMenuGroup: getMenuGroup(t.type),
+        })),
+        '\n副作用なし raw:',
+        seN.slice(0, 30).map(t => ({
+          id: t.templateId,
+          title: t.label,
+          type: t.type,
+          getMenuGroup: getMenuGroup(t.type),
+        })),
+      )
+      // 混入検出: 副作用あり配列内に getMenuGroup==='副作用なし' があれば警告
+      const contamA = seA.filter(t => getMenuGroup(t.type) === '副作用なし')
+      const contamN = seN.filter(t => getMenuGroup(t.type) === '副作用あり')
+      if (contamA.length > 0)
+        console.warn('[SOAP] ⚠️ 副作用ありに副作用なしが混入:', contamA.map(t => ({ id: t.templateId, type: t.type })))
+      if (contamN.length > 0)
+        console.warn('[SOAP] ⚠️ 副作用なしに副作用ありが混入:', contamN.map(t => ({ id: t.templateId, type: t.type })))
+      // SSOT後フィルタとの差分を表示
+      if (selectedGroup === '副作用あり' || selectedGroup === '副作用なし') {
+        const removed = raw.filter(t => getMenuGroup(t.type) !== selectedGroup)
+        if (removed.length > 0)
+          console.warn('[SOAP] ⚠️ SSOTフィルタで除外されたテンプレ:', removed.map(t => ({ id: t.templateId, type: t.type, getMenuGroup: getMenuGroup(t.type) })))
+      }
+    }
+    return filtered
+  }, [allGroups, selectedGroup])
 
   // ── サジェスト候補 ───────────────────────────────────────
-  // 【仕様】選択中グループが「副作用あり」なら groupLabel=「副作用なし」の候補を除外。
-  //         選択中グループが「副作用なし」なら groupLabel=「副作用あり」の候補を除外。
-  //         type ベースの厳密分離: se_none ↔ se_* の混入を防ぐ。
+  // 【仕様】選択中グループが設定されている場合は、
+  //         groupLabel が selectedGroup と完全一致するもののみ返す。
+  //         （副作用あり ↔ 副作用なし の混入を含む全グループ間の混在を防ぐ）
+  //         グループ未選択時は全候補を返す。
   const suggestions = useMemo(() => {
     const raw = getSuggestions(search, searchIndex)
     if (!selectedGroup) return raw
-    if (selectedGroup === '副作用あり') {
-      return raw.filter(item => item.groupLabel !== '副作用なし')
-    }
-    if (selectedGroup === '副作用なし') {
-      return raw.filter(item => item.groupLabel !== '副作用あり')
-    }
-    return raw
+    return raw.filter(item => item.groupLabel === selectedGroup)
   }, [search, searchIndex, selectedGroup])
 
   // ── 表示用メタデータ ─────────────────────────────────────
