@@ -20,7 +20,9 @@ const CHIP_CLASS: Record<ChipColor, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
-// A) テンプレ一覧パネル（大分類選択時）
+// テンプレ一覧パネル（大分類選択時）
+// 【仕様】選択済みシナリオも含め全候補を常時表示。
+//         selectedScenarioId と一致するボタンのみ選択色を当てる（トグル可）。
 // ─────────────────────────────────────────────────────────────
 
 interface TemplatePanelProps {
@@ -37,7 +39,6 @@ export function TemplateListPanel({
   onSelectScenario,
 }: TemplatePanelProps) {
   // 【混入検出SSOT】受け取った scenarios の中で group と一致しないものを検出
-  // getMenuGroupFromScenario(sc) が SSOT — sideEffectPresence を見る
   const invalid = scenarios.filter(sc => getMenuGroupFromScenario(sc) !== group)
   const total = scenarios.length
 
@@ -71,9 +72,7 @@ export function TemplateListPanel({
         const color = scenarioToColor(sc)
         const chipClass = CHIP_CLASS[color]
         const isActive = sc.id === selectedScenarioId
-        // Col2 表示ラベル: group に応じて正規化
         const label = displayTitleForCol2(sc.title, group)
-        // 混入チェック
         const isMismatch = getMenuGroupFromScenario(sc) !== group
         return (
           <button
@@ -108,38 +107,7 @@ export function TemplateListPanel({
 }
 
 // ─────────────────────────────────────────────────────────────
-// B) アドオンパネル（シナリオ選択後）
-// ─────────────────────────────────────────────────────────────
-
-interface AddonPanelProps {
-  scenario: Scenario
-  group: MenuGroup
-}
-
-export function AddonPanel({ scenario, group }: AddonPanelProps) {
-  const color = scenarioToColor(scenario)
-  const chipClass = CHIP_CLASS[color]
-  const label = displayTitleForCol2(scenario.title, group)
-
-  return (
-    <div className={s.secondaryList}>
-      <div className={s.secondaryHeading}>選択中テンプレ</div>
-      <button
-        className={[s.secondaryBtn, s.secondaryBtnActive, chipClass, s.secondaryItemAnim].join(' ')}
-        style={{ animationDelay: '0ms' }}
-        aria-pressed="true"
-        aria-disabled="true"
-        disabled
-      >
-        {label}
-      </button>
-      <p className={s.secondaryNoAddon}>アドオンなし</p>
-    </div>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────
 // デフォルトエクスポート（後方互換）
 // ─────────────────────────────────────────────────────────────
 
-export default AddonPanel
+export default TemplateListPanel

@@ -74,7 +74,8 @@ export interface SearchEntry {
 
 /**
  * ModuleData（新スキーマ）からサジェスト用エントリ一覧を生成する。
- * scenarios[] を対象とし、各 scenario の title・sideEffectPresence を使う。
+ * scenarios[] を対象とし、各 scenario の title / S / O / A / P を使う。
+ * グローバルコーパスには drug 情報 + display.title/subtitle + categoryPath を含む。
  */
 export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const drug = moduleData.drug
@@ -98,12 +99,16 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
 
   const keywordTexts: string[] = drugSearch?.keywords ?? []
 
+  // グローバルコーパス: drug情報 + display.title/subtitle + categoryPath
   const globalTags: string[] = [
     ...(drug?.drugSpecificTags ?? []),
     ...(drug?.drugClass ?? []),
     ...(drug?.brandNames ?? []),
     ...rawAliases,
     ...keywordTexts,
+    moduleData.display?.title ?? '',
+    moduleData.display?.subtitle ?? '',
+    ...(moduleData.categoryPath ?? []),
   ]
   const globalCorpus = normalizeText(globalTags.join(' '))
 
@@ -114,7 +119,15 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const priority = drugSearch?.priority ?? 0
 
   return moduleData.scenarios.map(scenario => {
-    const perScenario = [scenario.title, scenario.scenarioGroup].join(' ')
+    // per-scenario コーパス: title + scenarioGroup + S / O / A / P 全文
+    const perScenario = [
+      scenario.title,
+      scenario.scenarioGroup,
+      scenario.S ?? '',
+      scenario.O ?? '',
+      scenario.A ?? '',
+      scenario.P ?? '',
+    ].join(' ')
     const corpus = normalizeText(perScenario) + ' ' + globalCorpus
     const groupLabel = getMenuGroupFromScenario(scenario)
 

@@ -486,6 +486,19 @@
 .thirdPanelScrollArea::-webkit-scrollbar { width: 4px; }
 .thirdPanelScrollArea::-webkit-scrollbar-thumb { background: #d0d4e0; border-radius: 2px; }
 
+/* サードパネル: 未選択時ガイドテキスト */
+.thirdPanelGuide {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.72rem;
+  color: #bbb;
+  text-align: center;
+  line-height: 1.6;
+}
+
 /* 各セクション（見出し + 中身） */
 .thirdSection {
   display: flex;

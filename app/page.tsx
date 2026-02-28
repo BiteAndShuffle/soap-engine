@@ -7,6 +7,7 @@ export const revalidate = 0
 import type { ModuleData } from '../lib/types'
 import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
 import DashboardClient from './components/DashboardClient'
+import { reportInvalidScenarios } from '../lib/scenarioValidator'
 
 const moduleData = rawModuleData as unknown as ModuleData
 
@@ -37,6 +38,12 @@ console.log(
 if (validationErrors.length > 0) {
   console.error('[SOAP Engine] バリデーションエラー:', validationErrors.join(', '))
 }
+
+// ── ScenarioValidator: 構造的妥当性チェック ───────────────────
+// invalid な scenario（必須キー欠落 / S/O/A/P空 / sideEffectPresence不正 等）をログ出力
+const invalidScenarios = Array.isArray(moduleData?.scenarios)
+  ? reportInvalidScenarios(moduleData.scenarios, moduleData.moduleId)
+  : []
 
 // ── データ破損ガード ──────────────────────────────────────────
 const hasValidData =
@@ -88,7 +95,40 @@ export default function Page() {
   return (
     <>
       <DashboardClient moduleData={moduleData} />
-      {/* ビルド識別子バッジ */}
+
+      {/* ── ScenarioValidator バッジ（invalid > 0 の場合のみ表示） ── */}
+      {invalidScenarios.length > 0 && (
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 30,
+            right: 8,
+            background: 'rgba(255,69,58,0.18)',
+            color: '#ff453a',
+            border: '1px solid #ff453a44',
+            fontFamily: 'monospace',
+            fontSize: '0.62rem',
+            padding: '4px 8px',
+            borderRadius: 4,
+            zIndex: 9999,
+            pointerEvents: 'none',
+            userSelect: 'none',
+            maxWidth: 340,
+            lineHeight: 1.5,
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 2 }}>
+            ⚠️ ScenarioValidator: {invalidScenarios.length}件 invalid
+          </div>
+          {invalidScenarios.slice(0, 5).map(r => (
+            <div key={r.scenarioId} style={{ opacity: 0.9 }}>
+              [{r.scenarioId}] {r.errors.map(e => e.code).join(', ')}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── ビルド識別子バッジ ── */}
       <div
         style={{
           position: 'fixed',

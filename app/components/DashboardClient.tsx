@@ -13,7 +13,7 @@ import {
 
 import Topbar, { type RouteFilter } from './Topbar'
 import Sidebar from './Sidebar'
-import { TemplateListPanel, AddonPanel } from './SecondaryPanel'
+import { TemplateListPanel } from './SecondaryPanel'
 import ThirdPanel from './ThirdPanel'
 import SoapEditor, {
   type SPrefix,
@@ -119,12 +119,21 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   }, [])
 
   const handleSelectScenario = useCallback((id: string) => {
-    const sc = moduleData.scenarios.find(s => s.id === id)
-    if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
-    setSelectedScenarioId(id)
-    setManualFields({})
-    setSPrefix('none')
-    setSStatus('stable')
+    setSelectedScenarioId(prev => {
+      if (prev === id) {
+        // 同じ項目を再押下 → 選択解除
+        setManualFields({})
+        setSPrefix('none')
+        setSStatus('stable')
+        return null
+      }
+      const sc = moduleData.scenarios.find(s => s.id === id)
+      if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
+      setManualFields({})
+      setSPrefix('none')
+      setSStatus('stable')
+      return id
+    })
   }, [moduleData.scenarios])
 
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
@@ -210,16 +219,10 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           onSelectGroup={handleSelectGroup}
         />
 
-        {/* Col 2: テンプレ一覧 または アドオンパネル */}
+        {/* Col 2: テンプレ一覧（常時表示・選択中のみハイライト） */}
         <div className={s.secondaryCol}>
           {selectedGroup === null ? (
             <div className={s.secondaryEmpty} aria-hidden="true" />
-          ) : selectedScenario ? (
-            <AddonPanel
-              key={selectedScenarioId}
-              scenario={selectedScenario}
-              group={selectedGroup}
-            />
           ) : (
             <TemplateListPanel
               key={selectedGroup}
@@ -231,9 +234,10 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           )}
         </div>
 
-        {/* Col 3: ThirdPanel */}
+        {/* Col 3: ThirdPanel（セカンドパネルで何か選択するまで非表示） */}
         <ThirdPanel
           selectedGroup={selectedGroup}
+          thirdPanelEnabled={selectedScenarioId !== null}
           currentSPrefix={sPrefix}
           currentSStatus={sStatus}
           onSAction={handleSToggle}

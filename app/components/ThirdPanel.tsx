@@ -200,6 +200,11 @@ function InlineSearch({
 interface ThirdPanelProps {
   /** 現在選択中の大分類（null = 未選択） */
   selectedGroup: MenuGroup | null
+  /**
+   * サードパネルを表示するか。
+   * false のときはガイドのみ表示（セカンドパネルで何も選択されていない状態）。
+   */
+  thirdPanelEnabled: boolean
   /** S欄トグル: 現在の接頭句 */
   currentSPrefix: SPrefix
   /** S欄トグル: 現在の状態 */
@@ -230,6 +235,7 @@ interface ThirdPanelProps {
 
 export default function ThirdPanel({
   selectedGroup,
+  thirdPanelEnabled,
   currentSPrefix,
   currentSStatus,
   onSAction,
@@ -240,7 +246,7 @@ export default function ThirdPanel({
   onSubcategorySelect,
 }: ThirdPanelProps) {
   // 【仕様】S操作: 副作用なし・CP良好のみ。CP不良は含まない。
-  const showSButtons = selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  const showSButtons = thirdPanelEnabled && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
 
   // 診療領域サブカテゴリ押下 → 検索窓に語を投入
   const handleSubcategorySelect = useCallback((label: string) => {
@@ -251,14 +257,27 @@ export default function ThirdPanel({
     }
   }, [onSubcategorySelect, onSearchChange])
 
+  // thirdPanelEnabled が false のときはガイドのみ表示
+  if (!thirdPanelEnabled) {
+    return (
+      <div className={s.thirdPanel}>
+        <div className={s.thirdPanelInner}>
+          <div className={s.thirdPanelGuide}>
+            左のテンプレを選択すると、ここに機能が表示されます
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={s.thirdPanel}>
       <div className={s.thirdPanelInner}>
 
-        {/* ══ 上部エリア（スクロール可・常設） ══ */}
+        {/* ══ 上部エリア（スクロール可） ══ */}
         <div className={s.thirdPanelScrollArea}>
 
-          {/* 薬剤追加検索窓（全カテゴリ常設） */}
+          {/* 薬剤追加検索窓 */}
           {onSearchChange && onSelectSuggestion && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>薬剤追加</div>
@@ -271,7 +290,7 @@ export default function ThirdPanel({
             </div>
           )}
 
-          {/* 診療領域ボタン（全カテゴリ常設） */}
+          {/* 診療領域ボタン */}
           <div className={s.thirdSection}>
             <div className={s.sActionHeading}>診療領域</div>
             <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
