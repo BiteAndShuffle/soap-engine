@@ -1,7 +1,6 @@
 // Server Component — 'use client' なし
 // データ取得・整形を行い、Client Component にシリアライズして渡す
 
-// 静的キャッシュを無効化：毎リクエスト必ずサーバーサイドで実行させる
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -9,24 +8,18 @@ import type { ModuleData } from '../lib/types'
 import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
 import DashboardClient from './components/DashboardClient'
 
-const moduleData = rawModuleData as ModuleData
+const moduleData = rawModuleData as unknown as ModuleData
 
 // ビルド識別子
-// next.config.js で NEXT_PUBLIC_BUILD_SHA にビルド時 SHA を埋め込み済み
-// （git rev-parse HEAD または VERCEL_GIT_COMMIT_SHA から解決）
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
 
 // ── サーバーサイドのデータ検証ログ ────────────────────────────
-// Vercel のビルドログ / Function ログで確認できる。
-// templates 数が 0 や MISSING の場合は JSON 読み込み失敗を示す。
 const drugSearch = moduleData?.drug?.search
 const validationErrors: string[] = []
 
 if (!moduleData?.moduleId) validationErrors.push('moduleId が存在しない')
-if (!Array.isArray(moduleData?.templates) || moduleData.templates.length === 0)
-  validationErrors.push('templates が空または未定義')
-if (!Array.isArray(moduleData?.addons))
-  validationErrors.push('addons が配列でない')
+if (!Array.isArray(moduleData?.scenarios) || moduleData.scenarios.length === 0)
+  validationErrors.push('scenarios が空または未定義')
 if (drugSearch) {
   if (!Array.isArray(drugSearch.exactAliases))
     validationErrors.push('drug.search.exactAliases が配列でない')
@@ -37,10 +30,8 @@ if (drugSearch) {
 console.log(
   '[SOAP Engine] moduleData loaded:',
   `moduleId=${moduleData?.moduleId ?? 'MISSING'}`,
-  `templates=${moduleData?.templates?.length ?? 'MISSING'}`,
-  `addons=${moduleData?.addons?.length ?? 'MISSING'}`,
+  `scenarios=${moduleData?.scenarios?.length ?? 'MISSING'}`,
   `drug.search.exactAliases=${drugSearch?.exactAliases?.length ?? 'none'}件`,
-  `drug.search.prefixAliases=${drugSearch?.prefixAliases?.length ?? 'none'}件`,
   `suppress=${drugSearch?.matchPolicy?.suppressCrossModuleSuggestionsOnExactHit ?? 'none'}`,
 )
 if (validationErrors.length > 0) {
@@ -48,12 +39,9 @@ if (validationErrors.length > 0) {
 }
 
 // ── データ破損ガード ──────────────────────────────────────────
-// テンプレートが 0 件または未定義の場合は空白画面ではなく
-// 明示的なエラー画面を表示する。
 const hasValidData =
-  Array.isArray(moduleData?.templates) &&
-  moduleData.templates.length > 0 &&
-  Array.isArray(moduleData?.addons)
+  Array.isArray(moduleData?.scenarios) &&
+  moduleData.scenarios.length > 0
 
 export default function Page() {
   if (!hasValidData) {
@@ -90,7 +78,7 @@ export default function Page() {
           <code style={{ fontSize: '0.72rem', opacity: 0.7 }}>
             moduleId: {moduleData?.moduleId ?? '（取得不可）'}
             {' / '}
-            templates: {String(moduleData?.templates?.length ?? '?')}件
+            scenarios: {String(moduleData?.scenarios?.length ?? '?')}件
           </code>
         </p>
       </div>
@@ -100,7 +88,7 @@ export default function Page() {
   return (
     <>
       <DashboardClient moduleData={moduleData} />
-      {/* ビルド識別子バッジ — 本番がどのcommitを見ているか確認用 */}
+      {/* ビルド識別子バッジ */}
       <div
         style={{
           position: 'fixed',

@@ -9,44 +9,67 @@ export const SOAP_KEYS: SoapKey[] = ['S', 'O', 'A', 'P']
 export type SoapFields = Record<SoapKey, string>
 
 // ─────────────────────────────────────────────────────────────
-// Patch（アドオンの差分操作）
-// 新スキーマ: mode は 'append' 固定、値フィールドは value
+// sideEffectPresence — グルーピングの唯一のソース（SSOT）
+//
+//   "absent_or_not_observed" → 副作用なし
+//   "present"                → 副作用あり
+//   "not_applicable"         → 副作用メニュー対象外（初回・増量・減量・CP・終了 等）
 // ─────────────────────────────────────────────────────────────
 
-export type PatchMode = 'append' | 'prepend' | 'replace'
+export type SideEffectPresence =
+  | 'absent_or_not_observed'
+  | 'present'
+  | 'not_applicable'
 
-export interface Patch {
-  target: SoapKey
-  mode: PatchMode
-  value: string
+// ─────────────────────────────────────────────────────────────
+// Scenario（新スキーマ: scenarios[] で定義）
+//
+// 旧 Template の後継。SOAP フィールドを直接持ち、
+// sideEffectPresence でグルーピングを管理する。
+// ─────────────────────────────────────────────────────────────
+
+export interface Scenario {
+  /** 一意識別子（旧 templateId に相当） */
+  id: string
+  /** 表示タイトル（Col2 表示の元）*/
+  title: string
+  /** シナリオ種別（治療一般 / 副作用 / アドヒアランス 等） */
+  scenarioType: string
+  /** シナリオグループ（検索・フィルタ用） */
+  scenarioGroup: string
+  /**
+   * 副作用存在フラグ — グルーピングの SSOT。
+   *   "absent_or_not_observed" → 副作用なし グループ
+   *   "present"                → 副作用あり グループ
+   *   "not_applicable"         → 副作用軸以外のグループ
+   */
+  sideEffectPresence: SideEffectPresence
+  /** SOAP フィールド（直接持つ） */
+  S: string
+  O: string
+  A: string
+  P: string
 }
 
 // ─────────────────────────────────────────────────────────────
-// Addon（ルートの addons[] で定義）
+// Addon（新スキーマ: addons オブジェクト内のカテゴリ配列）
 // ─────────────────────────────────────────────────────────────
 
-export interface Addon {
-  addonId: string
-  label: string
-  patches: Patch[]
+export interface AddonItem {
+  id: string
+  text: string
+}
+
+export interface AddonsMap {
+  counseling?: AddonItem[]
+  sickday?: AddonItem[]
+  oral?: AddonItem[]
+  sideEffects?: AddonItem[]
+  [key: string]: AddonItem[] | undefined
 }
 
 // ─────────────────────────────────────────────────────────────
-// Template（templates[] で定義）
-// addonIds で addons[] を参照する間接参照方式
-// type は文字列リテラル — JSON の値をそのまま許容する
-// ─────────────────────────────────────────────────────────────
-
-export interface Template {
-  templateId: string
-  label: string
-  type: string          // 'initial' | 'uptitrate' | 'sickday' … 拡張可能
-  soap: Record<SoapKey, string>
-  addonIds: string[]    // addons[].addonId への参照
-}
-
-// ─────────────────────────────────────────────────────────────
-// DrugSearch（drug.search ブロック — v1.2 スキーマ）
+// DrugSearch（drug.search ブロック）
 // ─────────────────────────────────────────────────────────────
 
 export interface DrugSearchMatchPolicy {
@@ -76,43 +99,56 @@ export interface Drug {
 }
 
 // ─────────────────────────────────────────────────────────────
-// ModuleData（JSON ルート）
-// ─────────────────────────────────────────────────────────────
-
-export interface DrugDisplay {
-  class: string
-  examples: string[]
-}
-
-// ─────────────────────────────────────────────────────────────
-// MergedSoap（保持＝合成機能）
+// MergedBlock（保持＝合成機能）
 // ─────────────────────────────────────────────────────────────
 
 export interface MergedBlock {
   /** ユニークID */
   id: string
-  /** 合成時のテンプレートラベル（区切りヘッダ表示用） */
+  /** 合成時のシナリオタイトル（区切りヘッダ表示用） */
   templateLabel: string
   /** 合成時の SOAP フィールド（スナップショット） */
   fields: SoapFields
 }
 
 // ─────────────────────────────────────────────────────────────
-// ModuleData（JSON ルート）
+// ModuleData（新スキーマ JSON ルート）
 // ─────────────────────────────────────────────────────────────
 
 export interface ModuleData {
   moduleId: string
   categoryPath?: string[]
   drug?: Drug
-  drugTags?: string[]
-  drugSpecificTags?: string[]
-  situationTags?: string[]
-  riskTags?: string[]
-  conditionalRiskTags?: string[]
-  severityTags?: string[]
-  emergencyFlag?: boolean
-  drugDisplay?: DrugDisplay
-  templates: Template[]
-  addons: Addon[]         // テンプレートから addonId で参照されるアドオン一覧
+  display?: { title: string; subtitle: string }
+  /** 新スキーマ: scenarios[] がメインデータ */
+  scenarios: Scenario[]
+  /** 新スキーマ: addons はカテゴリ別オブジェクト */
+  addons: AddonsMap
+}
+
+// ─────────────────────────────────────────────────────────────
+// 後方互換: 旧スキーマ用 Template / Addon 型
+// （旧 JSON が残っている場合のフォールバック用。新規開発では使わない）
+// ─────────────────────────────────────────────────────────────
+
+export type PatchMode = 'append' | 'prepend' | 'replace'
+
+export interface Patch {
+  target: SoapKey
+  mode: PatchMode
+  value: string
+}
+
+export interface Addon {
+  addonId: string
+  label: string
+  patches: Patch[]
+}
+
+export interface Template {
+  templateId: string
+  label: string
+  type: string
+  soap: Record<SoapKey, string>
+  addonIds: string[]
 }

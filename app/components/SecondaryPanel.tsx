@@ -1,9 +1,9 @@
 'use client'
 
-import type { Template, Addon } from '../../lib/types'
+import type { Scenario } from '../../lib/types'
 import type { MenuGroup } from '../../lib/menuGroups'
-import { shortLabel, getMenuGroup } from '../../lib/menuGroups'
-import { templateTypeToColor, type ChipColor } from '../../lib/buildSoap'
+import { getMenuGroupFromScenario, displayTitleForCol2 } from '../../lib/menuGroups'
+import { scenarioToColor, type ChipColor } from '../../lib/buildSoap'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
@@ -25,20 +25,21 @@ const CHIP_CLASS: Record<ChipColor, string> = {
 
 interface TemplatePanelProps {
   group: MenuGroup
-  templates: Template[]
-  selectedTemplateId: string | null
-  onSelectTemplate: (id: string) => void
+  scenarios: Scenario[]
+  selectedScenarioId: string | null
+  onSelectScenario: (id: string) => void
 }
 
 export function TemplateListPanel({
   group,
-  templates,
-  selectedTemplateId,
-  onSelectTemplate,
+  scenarios,
+  selectedScenarioId,
+  onSelectScenario,
 }: TemplatePanelProps) {
-  // 【混入検出】受け取った templates の中で group と一致しないものを検出
-  const invalid = templates.filter(t => getMenuGroup(t.type) !== group)
-  const total = templates.length
+  // 【混入検出SSOT】受け取った scenarios の中で group と一致しないものを検出
+  // getMenuGroupFromScenario(sc) が SSOT — sideEffectPresence を見る
+  const invalid = scenarios.filter(sc => getMenuGroupFromScenario(sc) !== group)
+  const total = scenarios.length
 
   return (
     <div className={s.secondaryList}>
@@ -57,20 +58,26 @@ export function TemplateListPanel({
       }}>
         {group} total:{total} / invalid:{invalid.length}
         {invalid.length > 0 && (
-          <span> ⚠️ {invalid.slice(0, 5).map(t => `${t.templateId}[${t.type}→${getMenuGroup(t.type)}]`).join(', ')}</span>
+          <span>
+            {' '}⚠️{' '}
+            {invalid.slice(0, 5).map(sc =>
+              `${sc.id}[sep=${sc.sideEffectPresence}→${getMenuGroupFromScenario(sc)}]`
+            ).join(', ')}
+          </span>
         )}
       </div>
 
-      {templates.map((tpl, i) => {
-        const color = templateTypeToColor(tpl.type)
+      {scenarios.map((sc, i) => {
+        const color = scenarioToColor(sc)
         const chipClass = CHIP_CLASS[color]
-        const isActive = tpl.templateId === selectedTemplateId
-        const label = shortLabel(tpl.label)
-        // 混入テンプレには赤枠を付けて視認性を上げる
-        const isMismatch = getMenuGroup(tpl.type) !== group
+        const isActive = sc.id === selectedScenarioId
+        // Col2 表示ラベル: group に応じて正規化
+        const label = displayTitleForCol2(sc.title, group)
+        // 混入チェック
+        const isMismatch = getMenuGroupFromScenario(sc) !== group
         return (
           <button
-            key={tpl.templateId}
+            key={sc.id}
             className={[
               s.secondaryBtn,
               chipClass,
@@ -81,12 +88,18 @@ export function TemplateListPanel({
               animationDelay: `${i * 30}ms`,
               ...(isMismatch ? { outline: '2px solid #ff453a', outlineOffset: '-2px' } : {}),
             }}
-            onClick={() => onSelectTemplate(tpl.templateId)}
+            onClick={() => onSelectScenario(sc.id)}
             aria-pressed={isActive}
-            title={isMismatch ? `⚠️ 混入: type=${tpl.type} → ${getMenuGroup(tpl.type)}` : label}
+            title={isMismatch
+              ? `⚠️ 混入: sep=${sc.sideEffectPresence} → ${getMenuGroupFromScenario(sc)}`
+              : label}
           >
             {label}
-            {isMismatch && <span style={{ marginLeft: 4, fontSize: '0.6rem', color: '#ff453a' }}>⚠️{tpl.type}</span>}
+            {isMismatch && (
+              <span style={{ marginLeft: 4, fontSize: '0.6rem', color: '#ff453a' }}>
+                ⚠️{sc.sideEffectPresence}
+              </span>
+            )}
           </button>
         )
       })}
@@ -95,28 +108,21 @@ export function TemplateListPanel({
 }
 
 // ─────────────────────────────────────────────────────────────
-// B) アドオンパネル（テンプレ選択後）
+// B) アドオンパネル（シナリオ選択後）
 // ─────────────────────────────────────────────────────────────
 
 interface AddonPanelProps {
-  template: Template
-  addons: Addon[]
-  activeAddonIds: Set<string>
-  onToggleAddon: (addonId: string) => void
+  scenario: Scenario
+  group: MenuGroup
 }
 
-export function AddonPanel({
-  template,
-  addons,
-  activeAddonIds,
-  onToggleAddon,
-}: AddonPanelProps) {
-  const color = templateTypeToColor(template.type)
+export function AddonPanel({ scenario, group }: AddonPanelProps) {
+  const color = scenarioToColor(scenario)
   const chipClass = CHIP_CLASS[color]
+  const label = displayTitleForCol2(scenario.title, group)
 
   return (
     <div className={s.secondaryList}>
-      {/* 選択中テンプレ（ラベル表示のみ・無効ボタン） */}
       <div className={s.secondaryHeading}>選択中テンプレ</div>
       <button
         className={[s.secondaryBtn, s.secondaryBtnActive, chipClass, s.secondaryItemAnim].join(' ')}
@@ -125,45 +131,15 @@ export function AddonPanel({
         aria-disabled="true"
         disabled
       >
-        {shortLabel(template.label)}
+        {label}
       </button>
-
-      {/* アドオン */}
-      {addons.length > 0 && (
-        <>
-          <div className={s.secondaryHeading}>アドオン</div>
-          {addons.map((addon, i) => {
-            const isActive = activeAddonIds.has(addon.addonId)
-            return (
-              <button
-                key={addon.addonId}
-                className={[
-                  s.secondaryBtn,
-                  chipClass,
-                  isActive ? s.secondaryBtnActive : '',
-                  s.secondaryItemAnim,
-                ].join(' ')}
-                style={{ animationDelay: `${(i + 1) * 40}ms` }}
-                onClick={() => onToggleAddon(addon.addonId)}
-                aria-pressed={isActive}
-              >
-                {addon.label}
-              </button>
-            )
-          })}
-        </>
-      )}
-
-      {addons.length === 0 && (
-        <p className={s.secondaryNoAddon}>アドオンなし</p>
-      )}
+      <p className={s.secondaryNoAddon}>アドオンなし</p>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────────────────────
-// デフォルトエクスポート（後方互換用: 旧 SecondaryPanel）
-// → DashboardClient が直接 TemplateListPanel / AddonPanel を使う
+// デフォルトエクスポート（後方互換）
 // ─────────────────────────────────────────────────────────────
 
 export default AddonPanel

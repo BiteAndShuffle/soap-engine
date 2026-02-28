@@ -3,13 +3,13 @@
  * 左メニューの「大分類（MenuGroup）」を一元管理する。
  *
  * ルール:
- *   - type → MenuGroup の変換は必ずここだけで行う（UI側に分散しない）
- *   - 大分類の表示名に薬効群名（GLP-1…）は含めない
+ *   - Scenario → MenuGroup の変換は必ずここだけで行う（UI側に分散しない）
+ *   - 新スキーマ: sideEffectPresence が SSOT（副作用あり/なし の分類）
+ *   - 旧スキーマ互換: type 文字列からの変換も保持（後方互換）
  *   - 表示順は MENU_GROUP_ORDER で一意に保証する
- *   - MENU_GROUP_ORDER の配列順が Sidebar の表示順と一致する（sort禁止）
  */
 
-import type { Template } from './types'
+import type { Scenario, SideEffectPresence } from './types'
 
 // ─────────────────────────────────────────────────────────────
 // 大分類の型（10カテゴリ固定）
@@ -29,11 +29,6 @@ export type MenuGroup =
 
 /**
  * 左メニューの表示順（固定10項目・仕様通り）
- * 1.初回 2.増量 3.減量 4.副作用なし 5.副作用あり
- * 6.CP良好 7.CP不良 8.自己調整 9.終了 10.その他
- *
- * ※ この配列の順序が Sidebar ボタンの表示順になる。
- *    sort / indexOf による並び替えは一切禁止。
  */
 export const MENU_GROUP_ORDER: MenuGroup[] = [
   '初回',
@@ -49,21 +44,63 @@ export const MENU_GROUP_ORDER: MenuGroup[] = [
 ]
 
 // ─────────────────────────────────────────────────────────────
-// type → MenuGroup 変換テーブル（1箇所で完結）
+// 新スキーマ: Scenario → MenuGroup
+// sideEffectPresence + scenarioGroup の組み合わせで決定
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 【SSOT】Scenario オブジェクトから MenuGroup を決定する。
+ *
+ * 副作用軸:
+ *   sideEffectPresence === "absent_or_not_observed" → "副作用なし"
+ *   sideEffectPresence === "present"                → "副作用あり"
+ *
+ * not_applicable の場合は scenarioGroup / scenarioType で分類:
+ *   start_or_change    → "初回"  ※ dose_change も scenarioGroup で区別
+ *   dose_change (dose_increase) → "増量"
+ *   dose_change (reduce系)      → "減量"
+ *   adherence_good              → "コンプライアンス良好"
+ *   adherence_poor              → "コンプライアンス不良"
+ *   end_*                       → "終了"
+ *   lifestyle_guidance          → "その他"
+ *   sickday                     → "その他"
+ */
+export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
+  // 副作用軸は sideEffectPresence が SSOT
+  if (scenario.sideEffectPresence === 'absent_or_not_observed') return '副作用なし'
+  if (scenario.sideEffectPresence === 'present') return '副作用あり'
+
+  // not_applicable: scenarioGroup / id で分類
+  const sg = scenario.scenarioGroup
+  const sid = scenario.id
+
+  if (sg === 'start_or_change') return '初回'
+  if (sg === 'dose_change') {
+    // 増量 vs 減量は id で区別
+    if (sid === 'dose_increase') return '増量'
+    return '減量'  // dose_reduce_* は全て減量
+  }
+  if (sg === 'adherence_good') return 'コンプライアンス良好'
+  if (sg === 'adherence_poor') return 'コンプライアンス不良'
+  if (sg.startsWith('end_')) return '終了'
+  if (sg === 'lifestyle_guidance') return 'その他'
+  if (sg === 'sickday') return 'その他'
+
+  return 'その他'
+}
+
+// ─────────────────────────────────────────────────────────────
+// 旧スキーマ互換: type 文字列 → MenuGroup
+// （旧 Template.type を使う箇所の後方互換として残す）
 // ─────────────────────────────────────────────────────────────
 
 const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
-  // 導入
   initial:             '初回',
-  // 増量
   uptitrate:           '増量',
-  // 減量
   down_improved:       '減量',
   down_lowbenefit:     '減量',
   down_adjust_other:   '減量',
-  // 副作用なし
   se_none:             '副作用なし',
-  // 副作用あり（se_系はすべてここ）
   se_hypoglycemia:     '副作用あり',
   se_gi:               '副作用あり',
   se_appetite:         '副作用あり',
@@ -73,33 +110,21 @@ const TYPE_TO_MENU_GROUP: Record<string, MenuGroup> = {
   se_change:           '副作用あり',
   se_reduce:           '副作用あり',
   se_stop:             '副作用あり',
-  // コンプライアンス良好
   cp_good:             'コンプライアンス良好',
-  // コンプライアンス不良
   cp_poor_forget:      'コンプライアンス不良',
   cp_poor_delay:       'コンプライアンス不良',
   cp_poor_selfadjust:  'コンプライアンス不良',
-  // 自己調整
   self_adjust:         '自己調整',
-  // 終了
   stop_improved:       '終了',
   stop_ineffective:    '終了',
   stop_noeffect:       '終了',
-  // その他（シックデイ・生活指導）
   sickday:             'その他',
   lifestyle:           'その他',
 }
 
-/**
- * type 文字列 → MenuGroup。
- * 明示マッピングが優先。未知の type はプレフィックスでフォールバック。
- * - se_none は「副作用なし」（se_* 汎用フォールバックより前に解決される）
- * - 未知の se_* は「副作用あり」へ（se_none はTYPE_TO_MENU_GROUPで先に解決）
- */
+/** 旧スキーマ互換: type 文字列 → MenuGroup */
 export function getMenuGroup(type: string): MenuGroup {
-  // 明示マッピングが最優先（se_none など特殊 type はここで確実に解決）
   if (type in TYPE_TO_MENU_GROUP) return TYPE_TO_MENU_GROUP[type]
-  // 未知 type のプレフィックスフォールバック
   if (type.startsWith('se_')) return '副作用あり'
   if (type.startsWith('cp_')) return 'コンプライアンス不良'
   if (type.startsWith('down_')) return '減量'
@@ -108,33 +133,64 @@ export function getMenuGroup(type: string): MenuGroup {
 }
 
 // ─────────────────────────────────────────────────────────────
-// グルーピングユーティリティ
+// グルーピングユーティリティ（新スキーマ: Scenario[]）
 // ─────────────────────────────────────────────────────────────
 
 export interface MenuGroupEntry {
   group: MenuGroup
-  templates: Template[]
+  scenarios: Scenario[]
 }
 
 /**
- * テンプレ配列を MENU_GROUP_ORDER 順のグループ配列に変換。
+ * Scenario 配列を MENU_GROUP_ORDER 順のグループ配列に変換。
+ * グルーピングは getMenuGroupFromScenario() のみで行う（SSOT強制）。
  * テンプレが1件もないグループは出力に含まない。
- * ※ MENU_GROUP_ORDER の順序を破壊しないこと（sort禁止）
  */
-export function groupByMenuGroup(templates: Template[]): MenuGroupEntry[] {
-  const map = new Map<MenuGroup, Template[]>()
-  for (const tpl of templates) {
-    const g = getMenuGroup(tpl.type)
+export function groupByMenuGroup(scenarios: Scenario[]): MenuGroupEntry[] {
+  const map = new Map<MenuGroup, Scenario[]>()
+  for (const sc of scenarios) {
+    const g = getMenuGroupFromScenario(sc)
     if (!map.has(g)) map.set(g, [])
-    map.get(g)!.push(tpl)
+    map.get(g)!.push(sc)
   }
   return MENU_GROUP_ORDER
     .filter(g => map.has(g))
-    .map(g => ({ group: g, templates: map.get(g)! }))
+    .map(g => ({ group: g, scenarios: map.get(g)! }))
 }
 
 // ─────────────────────────────────────────────────────────────
-// ラベル短縮ユーティリティ
+// Col2 表示ラベル生成
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * セカンドパネル（Col2）に表示するラベルを生成する。
+ *
+ * 【副作用なし】選択中:
+ *   "低血糖（症状なし）" → "低血糖"  （サフィックス除去）
+ *   "副作用（低血糖）"   → "低血糖"  （旧形式の剥ぎ取り）
+ *
+ * 【副作用あり】選択中:
+ *   "消化器症状（軽症継続）" → そのまま
+ *   "副作用（低血糖）"        → "低血糖"  （旧形式の剥ぎ取り）
+ *
+ * 【その他】:
+ *   title をそのまま返す
+ */
+export function displayTitleForCol2(title: string, group: MenuGroup): string {
+  // 旧形式 "副作用（◯◯）" → "◯◯" に正規化（後方互換）
+  const oldFormatMatch = title.match(/^副作用[（(](.+)[）)]$/)
+  if (oldFormatMatch) return oldFormatMatch[1]
+
+  if (group === '副作用なし') {
+    // "◯◯（症状なし）" → "◯◯"
+    return title.replace(/[（(]症状なし[）)]\s*$/, '').trim()
+  }
+
+  return title
+}
+
+// ─────────────────────────────────────────────────────────────
+// ラベル短縮ユーティリティ（後方互換）
 // ─────────────────────────────────────────────────────────────
 
 /**
@@ -142,10 +198,8 @@ export function groupByMenuGroup(templates: Template[]): MenuGroupEntry[] {
  * 例: "GLP-1受容体作動薬(内服) 副作用 低血糖" → "副作用 低血糖"
  */
 export function shortLabel(label: string): string {
-  // 「）または英数 + スペース」の後ろを取る
   const match = label.match(/^[^\s].*?[\)）]\s+(.+)$/)
   if (match) return match[1]
-  // 括弧なし: スペース区切りで2トークン以上あれば後半を返す
   const parts = label.split(/\s+/)
   if (parts.length >= 3) return parts.slice(1).join(' ')
   return label

@@ -1,125 +1,63 @@
-import type { Template, Addon, SoapFields, SoapKey, Patch, MergedBlock } from './types'
+import type { Scenario, SoapFields, SoapKey, MergedBlock } from './types'
 
 // ─────────────────────────────────────────────────────────────
-// 締め文（closing sentence）ホワイトリスト
-// P欄の末尾に必ず来るべき定型句。
-// アドオン合成後にこれらを末尾へ移動して「説明→補足→締め」の順を保証する。
+// SOAP フィールド構築（新スキーマ: Scenario）
+//
+// 新スキーマでは Scenario が SOAP フィールドを直接持つ。
+// アドオンは将来的に別途追加できるが、現時点では未使用。
 // ─────────────────────────────────────────────────────────────
-
-const CLOSING_SENTENCES: string[] = [
-  '次回、治療経過の確認。',
-  '次回、治療経過を確認。',
-  '次回、治療経過の確認予定。',
-  '次回、治療経過を確認予定。',
-  '次回、経過確認。',
-  '次回、経過を確認。',
-]
 
 /**
- * テキスト（P欄の内容）を受け取り、締め文を末尾に移動した結果を返す。
- * ロジック:
- *  1. 行単位に分解
- *  2. 締め文ホワイトリストに一致する行を closing として分離
- *  3. 重複を排除し 1 件に統合（複数あっても末尾に 1 回だけ）
- *  4. 残り行 + closing の順に再結合
+ * Scenario から SOAP フィールドを構築する。
+ * 新スキーマでは S/O/A/P を直接 scenario から読む。
  */
-function reorderClosingSentence(text: string): string {
-  if (!text) return text
-
-  const lines = text.split('\n')
-  const body: string[] = []
-  const closing: string[] = []
-
-  for (const line of lines) {
-    const trimmed = line.trim()
-    if (CLOSING_SENTENCES.includes(trimmed)) {
-      // 既に同じ締め文が closing に無ければ追加（重複排除）
-      if (!closing.includes(trimmed)) closing.push(trimmed)
-    } else {
-      body.push(line)
-    }
+export function buildSoapFromScenario(scenario: Scenario): SoapFields {
+  return {
+    S: scenario.S ?? '',
+    O: scenario.O ?? '',
+    A: scenario.A ?? '',
+    P: scenario.P ?? '',
   }
-
-  if (closing.length === 0) return text
-
-  // body の末尾の空行を除去してから締め文を付ける
-  const trimmedBody = body.join('\n').trimEnd()
-  return trimmedBody
-    ? `${trimmedBody}\n${closing[0]}`
-    : closing[0]
-}
-
-// ─────────────────────────────────────────────────────────────
-// 1 つの Patch を SOAP フィールドに適用
-// 新スキーマ: patch.value（旧 patch.text）を使う
-// ─────────────────────────────────────────────────────────────
-
-function applyPatch(current: string, patch: Patch): string {
-  const text = patch.value.trim()
-  switch (patch.mode) {
-    case 'append':
-      return current ? `${current}\n${text}` : text
-    case 'prepend':
-      return current ? `${text}\n${current}` : text
-    case 'replace':
-      return text
-    default:
-      return current
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// テンプレート + アクティブなアドオンから SOAP フィールドを構築
-//
-// 新スキーマ: Template.addonIds → ModuleData.addons[] の参照方式。
-// addonMap を引数で受け取ることで buildSoap 単体をピュアに保つ。
-//
-// アドオン合成後に P 欄の締め文を末尾に移動する（reorderClosingSentence）。
-// これにより「ベース説明 → アドオン補足 → 締め」の自然な順序が保たれる。
-// ─────────────────────────────────────────────────────────────
-
-export function buildSoap(
-  template: Template,
-  activeAddonIds: Set<string>,
-  addonMap: Map<string, Addon>,
-): SoapFields {
-  const fields: SoapFields = {
-    S: template.soap.S ?? '',
-    O: template.soap.O ?? '',
-    A: template.soap.A ?? '',
-    P: template.soap.P ?? '',
-  }
-
-  // JSON 定義順（addonIds の並び順）でアドオンを適用し、出力の一貫性を保つ
-  for (const addonId of template.addonIds) {
-    if (!activeAddonIds.has(addonId)) continue
-    const addon = addonMap.get(addonId)
-    if (!addon) continue
-    for (const patch of addon.patches) {
-      fields[patch.target] = applyPatch(fields[patch.target], patch)
-    }
-  }
-
-  // P欄の締め文を末尾に整列
-  fields.P = reorderClosingSentence(fields.P)
-
-  return fields
-}
-
-// ─────────────────────────────────────────────────────────────
-// addons 配列から高速参照用の Map を構築
-// ─────────────────────────────────────────────────────────────
-
-export function buildAddonMap(addons: Addon[]): Map<string, Addon> {
-  return new Map(addons.map(a => [a.addonId, a]))
 }
 
 // ─────────────────────────────────────────────────────────────
 // テンプレートタイプ → 色クラス名
+// sideEffectPresence ベースに変更
 // ─────────────────────────────────────────────────────────────
 
 export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
 
+/**
+ * Scenario の sideEffectPresence と scenarioGroup からチップ色を決定する。
+ *   副作用あり (present)              → red
+ *   副作用なし (absent_or_not_observed) → green
+ *   初回・増量 (start_or_change / dose_change/increase) → blue
+ *   減量       (dose_change reduce系) → gray
+ *   CP良好     (adherence_good)        → green
+ *   CP不良     (adherence_poor)        → orange
+ *   終了       (end_*)                 → purple
+ *   その他                             → gray
+ */
+export function scenarioToColor(scenario: Scenario): ChipColor {
+  if (scenario.sideEffectPresence === 'present') return 'red'
+  if (scenario.sideEffectPresence === 'absent_or_not_observed') return 'green'
+
+  const sg = scenario.scenarioGroup
+  if (sg === 'start_or_change') return 'blue'
+  if (sg === 'dose_change' && scenario.id === 'dose_increase') return 'blue'
+  if (sg === 'dose_change') return 'gray'
+  if (sg === 'adherence_good') return 'green'
+  if (sg === 'adherence_poor') return 'orange'
+  if (sg.startsWith('end_')) return 'purple'
+  if (sg === 'sickday') return 'orange'
+
+  return 'gray'
+}
+
+/**
+ * 後方互換: 旧 type 文字列からチップ色を返す。
+ * 新スキーマでは scenarioToColor() を使うこと。
+ */
 export function templateTypeToColor(type: string): ChipColor {
   switch (type) {
     case 'initial':
@@ -127,8 +65,6 @@ export function templateTypeToColor(type: string): ChipColor {
       return 'blue'
     case 'cp_good':
     case 'down_improved':
-      return 'green'
-    // 副作用なし（se_none）は緑で区別 — 副作用ありの赤とは別扱い
     case 'se_none':
       return 'green'
     case 'se_hypoglycemia':
@@ -147,13 +83,6 @@ export function templateTypeToColor(type: string): ChipColor {
     case 'stop_ineffective':
     case 'stop_noeffect':
       return 'purple'
-    case 'cp_poor_forget':
-    case 'cp_poor_selfadjust':
-    case 'cp_poor_delay':
-    case 'down_lowbenefit':
-    case 'down_adjust_other':
-    case 'lifestyle':
-      return 'gray'
     default:
       return 'gray'
   }
@@ -169,16 +98,11 @@ export function formatSoapForCopy(fields: SoapFields): string {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 複数薬のSOAPブロックを現在フィールドへ合成
-// 区切り: "----\n▶ {薬剤名}" をセパレータとして追記
+// 複数薬の SOAP ブロックを合成
 // ─────────────────────────────────────────────────────────────
 
 const SEPARATOR = '----'
 
-/**
- * 保持済みブロック群 + 現在フィールドを合成した新しいフィールドを返す。
- * 各ブロックは SEPARATOR + ラベルヘッダで区切られる。
- */
 export function mergeBlocks(
   blocks: MergedBlock[],
   currentFields: SoapFields,
@@ -187,7 +111,6 @@ export function mergeBlocks(
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   const result: SoapFields = { S: '', O: '', A: '', P: '' }
 
-  // 既存ブロック + 現在を順に連結
   const all = [
     ...blocks,
     { id: 'current', templateLabel: currentLabel, fields: currentFields },
