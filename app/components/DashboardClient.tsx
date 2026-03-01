@@ -1,8 +1,8 @@
 'use client'
 
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState, useCallback, useEffect } from 'react'
 
-import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
+import type { ModuleData, SoapKey, SoapFields, MergedBlock, AddonsMap } from '../../lib/types'
 import { buildSoapFromScenario, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions } from '../../lib/search'
 import {
@@ -10,10 +10,12 @@ import {
   groupByMenuGroup,
   getMenuGroupFromScenario,
 } from '../../lib/menuGroups'
+import { S_BUTTON_GROUPS } from './ThirdPanel'
 
 import Topbar, { type RouteFilter } from './Topbar'
 import Sidebar from './Sidebar'
 import { TemplateListPanel } from './SecondaryPanel'
+import AddonPanel from './AddonPanel'
 import ThirdPanel from './ThirdPanel'
 import SoapEditor, {
   type SPrefix,
@@ -58,6 +60,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   const [mergedBlocks, setMergedBlocks] = useState<MergedBlock[]>([])
   const [sPrefix, setSPrefix] = useState<SPrefix>('none')
   const [sStatus, setSStatus] = useState<SStatus>('stable')
+  const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(new Set())
 
   // ── 選択中シナリオ ────────────────────────────────────────
   const selectedScenario = moduleData.scenarios.find(
@@ -75,6 +78,15 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     A: manualFields.A ?? computedFields.A,
     P: manualFields.P ?? computedFields.P,
   }
+
+  // ── S操作: 副作用なし/CP良好への変更時に prev_do_stable へ強制初期化 ──
+  // prev_do_stable = prefix:'none'(前回、Do) + status:'stable'(体調落ち着いている)
+  useEffect(() => {
+    if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
+      setSPrefix('none')
+      setSStatus('stable')
+    }
+  }, [selectedGroup])
 
   // ── グループ構造 ─────────────────────────────────────────
   // groupByMenuGroup は getMenuGroupFromScenario (sideEffectPresence SSOT) で分類
@@ -116,6 +128,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setManualFields({})
     setSPrefix('none')
     setSStatus('stable')
+    setSelectedAddonIds(new Set())
   }, [])
 
   const handleSelectScenario = useCallback((id: string) => {
@@ -125,6 +138,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         setManualFields({})
         setSPrefix('none')
         setSStatus('stable')
+        setSelectedAddonIds(new Set())
         return null
       }
       const sc = moduleData.scenarios.find(s => s.id === id)
@@ -132,6 +146,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
       setManualFields({})
       setSPrefix('none')
       setSStatus('stable')
+      setSelectedAddonIds(new Set())
       return id
     })
   }, [moduleData.scenarios])
@@ -148,6 +163,33 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   const handleSubcategorySelect = useCallback((label: string) => {
     setSearch(label)
   }, [])
+
+  // アドオントグル
+  const handleAddonToggle = useCallback((addonId: string, text: string) => {
+    setSelectedAddonIds(prev => {
+      const next = new Set(prev)
+      if (next.has(addonId)) {
+        next.delete(addonId)
+      } else {
+        next.add(addonId)
+      }
+      return next
+    })
+    // アドオンテキストをP欄に追記/削除
+    setManualFields(prev => {
+      const currentP = prev.P ?? computedFields.P
+      const alreadyAdded = currentP.includes(text)
+      if (alreadyAdded) {
+        // テキストを削除（前後の改行も整理）
+        const removed = currentP.replace(`\n${text}`, '').replace(`${text}\n`, '').replace(text, '')
+        return { ...prev, P: removed.trim() }
+      } else {
+        // P欄末尾に追記
+        const updated = currentP ? `${currentP}\n${text}` : text
+        return { ...prev, P: updated }
+      }
+    })
+  }, [computedFields.P])
 
   // S欄トグル操作
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
@@ -219,18 +261,27 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
           onSelectGroup={handleSelectGroup}
         />
 
-        {/* Col 2: テンプレ一覧（常時表示・選択中のみハイライト） */}
+        {/* Col 2: テンプレ一覧（常時表示・選択中のみハイライト）＋アドオン */}
         <div className={s.secondaryCol}>
           {selectedGroup === null ? (
             <div className={s.secondaryEmpty} aria-hidden="true" />
           ) : (
-            <TemplateListPanel
-              key={selectedGroup}
-              group={selectedGroup}
-              scenarios={groupScenarios}
-              selectedScenarioId={selectedScenarioId}
-              onSelectScenario={handleSelectScenario}
-            />
+            <>
+              <TemplateListPanel
+                key={selectedGroup}
+                group={selectedGroup}
+                scenarios={groupScenarios}
+                selectedScenarioId={selectedScenarioId}
+                onSelectScenario={handleSelectScenario}
+              />
+              {selectedScenarioId !== null && (
+                <AddonPanel
+                  addons={moduleData.addons}
+                  selectedAddonIds={selectedAddonIds}
+                  onToggle={handleAddonToggle}
+                />
+              )}
+            </>
           )}
         </div>
 

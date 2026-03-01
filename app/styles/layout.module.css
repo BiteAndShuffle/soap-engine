@@ -444,6 +444,82 @@
   text-align: center;
 }
 
+/* ── アドオンパネル（SecondaryPanel直下・テンプレ選択時のみ） ── */
+
+.addonPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 8px 12px;
+  border-top: 1.5px solid #dde0e8;
+  margin-top: 4px;
+}
+
+.addonPanelHeading {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #999;
+  padding: 4px 4px 2px;
+  white-space: nowrap;
+}
+
+.addonCategory {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.addonCategoryLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #888;
+  padding: 2px 4px 1px;
+  letter-spacing: 0.04em;
+}
+
+.addonBtn {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: left;
+  border-radius: 6px;
+  border: 1.5px solid #d0d8e8;
+  background: #f4f6fb;
+  color: #334;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 36px;
+  line-height: 1.3;
+}
+.addonBtn:hover {
+  background: #e8f0ff;
+  border-color: #5a9bff;
+  color: #1a4da0;
+}
+.addonBtnActive {
+  background: #1a5cbf;
+  border-color: #0a44a0;
+  color: #fff;
+  font-weight: 700;
+}
+.addonBtnActive:hover {
+  background: #0a44a0;
+}
+
+.addonBtnText {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Col 3: ThirdPanel（常設コンテナ） ────────────────────── */
 
 .thirdPanel {
