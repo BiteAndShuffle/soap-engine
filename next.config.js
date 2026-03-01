@@ -14,28 +14,42 @@ function resolveBuildSha() {
 
 const BUILD_SHA = resolveBuildSha()
 
+// EXPORT_STATIC=1 のとき完全静的 export モード
+const isStaticExport = process.env.EXPORT_STATIC === '1'
+
 const nextConfig = {
   // ビルド時に BUILD_SHA を埋め込む（サーバーコンポーネントから process.env で参照可能）
   env: {
     NEXT_PUBLIC_BUILD_SHA: BUILD_SHA,
   },
 
+  // 静的 export 設定（EXPORT_STATIC=1 のときのみ有効）
+  ...(isStaticExport && {
+    output: 'export',
+    images: {
+      unoptimized: true,
+    },
+  }),
+
   // Vercel Edge/CDN がレスポンスをキャッシュしないよう強制
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          },
-          { key: 'Pragma', value: 'no-cache' },
-          { key: 'Expires', value: '0' },
-        ],
-      },
-    ]
-  },
+  // 静的 export 時は headers() が使えないため無効化する
+  ...(!isStaticExport && {
+    async headers() {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            },
+            { key: 'Pragma', value: 'no-cache' },
+            { key: 'Expires', value: '0' },
+          ],
+        },
+      ]
+    },
+  }),
 }
 
 module.exports = nextConfig

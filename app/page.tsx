@@ -1,6 +1,10 @@
 // Server Component — 'use client' なし
 // データ取得・整形を行い、Client Component にシリアライズして渡す
 
+// Next.js 15 はルートセグメント設定をASTで静的解析するためリテラル値のみ有効。
+// 通常は force-dynamic（Vercel 向け）を維持する。
+// EXPORT_STATIC=1 の場合は next.config.js 側で output:'export' を設定することで
+// 静的ビルドとして扱われるため、page.tsx の dynamic 設定はそのまま無視される。
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
