@@ -9,14 +9,22 @@
  *   oral      group    → oral     アドオンを表示
  *   lifestyle type     → counseling アドオンを表示
  *   その他           → counseling / oral / sickday は非表示
- *   sideEffects は常に非表示（addonsRef で個別付与する場合のみ表示）
+ *   sideEffects は常に非表示（SOAP生成には addonsRef 経由で使われるが
+ *                             UIトグルボタンには出さない）
  *
  * 優先順位（高→低）:
- *   1. scenario.addonsRef が存在する → addonsRef をそのまま返す（シナリオ個別指定優先）
+ *   1. scenario.addonsRef が存在する → addonsRef の union を返すが、
+ *      sideEffects グループは除外（UIトグル非表示）
  *   2. scenarioType / scenarioGroup のルールで自動選択
  */
 
 import type { Scenario, AddonsData } from './types'
+
+// ─────────────────────────────────────────────────────────────
+// UIトグルに表示しないグループ（SOAP生成には使われるがボタンには出さない）
+// ─────────────────────────────────────────────────────────────
+
+const UI_HIDDEN_GROUPS: ReadonlySet<string> = new Set(['sideEffects'])
 
 // ─────────────────────────────────────────────────────────────
 // グループ → 表示条件マップ
@@ -42,7 +50,7 @@ const GROUP_RULES: Array<{ group: string; match: GroupPredicate }> = [
     group: 'counseling',
     match: sc => sc.scenarioType === 'lifestyle',
   },
-  // sideEffects は addonsRef 個別指定でのみ表示（ここでは常に除外）
+  // sideEffects は UI_HIDDEN_GROUPS で常に除外
 ]
 
 // ─────────────────────────────────────────────────────────────
@@ -61,6 +69,9 @@ export function getVisibleAddonKeys(
   if (!addons || !scenario) return []
 
   // 1. scenario.addonsRef が存在する → そのキー一覧を返す（個別指定優先）
+  //    ただし UI_HIDDEN_GROUPS（sideEffects 等）は除外する。
+  //    それらは SOAP 生成時（buildSoapFull / soapComposer）では使われるが、
+  //    ユーザが手動トグルするボタンには出さない。
   const ref = scenario.addonsRef
   if (ref) {
     const allKeys: string[] = []
@@ -68,8 +79,10 @@ export function getVisibleAddonKeys(
     for (const k of soapSections) {
       if (ref[k]) allKeys.push(...ref[k]!)
     }
-    // 重複除去（順序保持）・items に存在するキーのみ
-    return [...new Set(allKeys)].filter(k => k in addons.items)
+    // 重複除去（順序保持）・items に存在するキーのみ・UI非表示グループは除外
+    return [...new Set(allKeys)].filter(
+      k => k in addons.items && !UI_HIDDEN_GROUPS.has(addons.items[k].group),
+    )
   }
 
   // 2. GROUP_RULES に従いグループを選択し、そのグループのアイテムキーを返す

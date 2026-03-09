@@ -3,7 +3,7 @@
 import { useMemo, useState, useCallback, useEffect } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
-import { buildSoapFromScenario, mergeBlocks } from '../../lib/buildSoap'
+import { buildSoapFromScenario, buildSoapFull, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions } from '../../lib/search'
 import {
   type MenuGroup,
@@ -86,15 +86,37 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   )
 
   // ── SOAP フィールド ──────────────────────────────────────
+  // computedFields: S/O/A/P のみ（followup未適用）
+  //   → handleAddonToggle でアドオンテキストを合成するときの「起点」として使う
   const computedFields = selectedScenario
     ? buildSoapFromScenario(selectedScenario)
     : EMPTY_FIELDS
 
+  // computedFieldsWithFollowup: followup のみ適用したベース表示用
+  //   addonsRef は展開しない（UIトグルで個別制御するため）
+  //   シナリオ選択直後（manualFields 未設定時）の初期表示に使う
+  const computedFieldsWithFollowup: SoapFields = useMemo(() => {
+    if (!selectedScenario) return EMPTY_FIELDS
+    const base = buildSoapFromScenario(selectedScenario)
+    const followupDefaults = moduleData.defaults?.followup ?? {}
+    const result = { ...base }
+    for (const key of ['S', 'P'] as const) {
+      const followupVal = selectedScenario.followup?.[key]
+      if (followupVal === 'default') {
+        const defaultText = followupDefaults[key]
+        if (defaultText) {
+          result[key] = result[key] ? `${result[key]}\n${defaultText}` : defaultText
+        }
+      }
+    }
+    return result
+  }, [selectedScenario, moduleData.defaults?.followup])
+
   const fields: SoapFields = {
-    S: manualFields.S ?? computedFields.S,
-    O: manualFields.O ?? computedFields.O,
-    A: manualFields.A ?? computedFields.A,
-    P: manualFields.P ?? computedFields.P,
+    S: manualFields.S ?? computedFieldsWithFollowup.S,
+    O: manualFields.O ?? computedFieldsWithFollowup.O,
+    A: manualFields.A ?? computedFieldsWithFollowup.A,
+    P: manualFields.P ?? computedFieldsWithFollowup.P,
   }
 
   // ── アドオン表示キー解決 ──────────────────────────────────
@@ -192,7 +214,11 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
 
   // アドオントグル
   // addonKey: addons.items の "group:id" 形式キー
-  const handleAddonToggle = useCallback((addonKey: string, text: string) => {
+  //
+  // P欄の合成順: base(scenario.P) → addonTexts → followup
+  // manualFields に文字列を直接 append/remove するのではなく、
+  // 「選択中 scenario + 選択中 addon ids」をもとに毎回 P/targetSection を再合成する。
+  const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
     setSelectedAddonIds(prev => {
       const next = new Set(prev)
       if (next.has(addonKey)) {
@@ -200,27 +226,63 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
       } else {
         next.add(addonKey)
       }
+
+      // next が確定した addon ids をもとに、各 targetSection を再合成する
+      if (moduleData.addons && selectedScenario) {
+        // targetSection → activeAddonKeys のマップを作る
+        const sectionAddonMap = new Map<string, string[]>()
+        for (const key of next) {
+          const item = moduleData.addons.items[key]
+          if (!item) continue
+          const sec = item.targetSection
+          if (!sectionAddonMap.has(sec)) sectionAddonMap.set(sec, [])
+          sectionAddonMap.get(sec)!.push(item.text)
+        }
+
+        // 各セクションを再合成して manualFields に反映
+        const followupDefaults = moduleData.defaults?.followup ?? {}
+        setManualFields(prevFields => {
+          const updated = { ...prevFields }
+          for (const [sec, addonTexts] of sectionAddonMap) {
+            const base = computedFields[sec as keyof typeof computedFields] ?? ''
+            // followup があるセクション (P, S) は末尾に追加
+            const followupVal = selectedScenario.followup?.[sec as 'S' | 'P']
+            const followupText =
+              followupVal === 'default'
+                ? (followupDefaults[sec as 'S' | 'P'] ?? '')
+                : ''
+            const parts = [base, ...addonTexts].filter(Boolean)
+            if (followupText) parts.push(followupText)
+            updated[sec as keyof typeof updated] = parts.join('\n')
+          }
+          // sectionAddonMap に含まれないセクションで、以前 addon が付いていた場合も
+          // 再合成が必要なセクション（addon が全解除になった場合）を処理する
+          for (const sec of ['S', 'O', 'A', 'P'] as const) {
+            if (!sectionAddonMap.has(sec)) {
+              // このセクションへの addon が全解除 → base + followup のみに戻す
+              const hasAnyAddonForSec = [...next].some(
+                k => moduleData.addons?.items[k]?.targetSection === sec,
+              )
+              if (!hasAnyAddonForSec) {
+                const base = computedFields[sec] ?? ''
+                const followupVal = selectedScenario.followup?.[sec as 'S' | 'P']
+                const followupText =
+                  followupVal === 'default'
+                    ? (followupDefaults[sec as 'S' | 'P'] ?? '')
+                    : ''
+                const parts = [base].filter(Boolean)
+                if (followupText) parts.push(followupText)
+                updated[sec] = parts.join('\n')
+              }
+            }
+          }
+          return updated
+        })
+      }
+
       return next
     })
-    // targetSection に応じたフィールドにテキストを追記/削除
-    const targetSection = moduleData.addons?.items[addonKey]?.targetSection ?? 'P'
-    setManualFields(prev => {
-      const currentVal = prev[targetSection] ?? computedFields[targetSection]
-      const alreadyAdded = currentVal.includes(text)
-      if (alreadyAdded) {
-        // テキストを削除（前後の改行も整理）
-        const removed = currentVal
-          .replace(`\n${text}`, '')
-          .replace(`${text}\n`, '')
-          .replace(text, '')
-        return { ...prev, [targetSection]: removed.trim() }
-      } else {
-        // 末尾に追記
-        const updated = currentVal ? `${currentVal}\n${text}` : text
-        return { ...prev, [targetSection]: updated }
-      }
-    })
-  }, [moduleData.addons?.items, computedFields])
+  }, [moduleData.addons, moduleData.defaults?.followup, selectedScenario, computedFields])
 
   // S欄トグル操作
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
