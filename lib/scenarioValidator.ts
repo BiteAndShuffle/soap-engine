@@ -32,7 +32,11 @@ const REQUIRED_KEYS: (keyof Scenario)[] = [
 
 const VALID_SIDE_EFFECT_PRESENCE: SideEffectPresence[] = [
   'absent_or_not_observed',
-  'present',
+  'present_mild',
+  'present_moderate',
+  'present_dose_decrease',
+  'present_change',
+  'present_stop',
   'not_applicable',
 ]
 

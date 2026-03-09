@@ -68,7 +68,13 @@ export const MENU_GROUP_ORDER: MenuGroup[] = [
 export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
   // 副作用軸は sideEffectPresence が SSOT
   if (scenario.sideEffectPresence === 'absent_or_not_observed') return '副作用なし'
-  if (scenario.sideEffectPresence === 'present') return '副作用あり'
+  if (
+    scenario.sideEffectPresence === 'present_mild' ||
+    scenario.sideEffectPresence === 'present_moderate' ||
+    scenario.sideEffectPresence === 'present_dose_decrease' ||
+    scenario.sideEffectPresence === 'present_change' ||
+    scenario.sideEffectPresence === 'present_stop'
+  ) return '副作用あり'
 
   // not_applicable: scenarioGroup / id で分類
   const sg = scenario.scenarioGroup

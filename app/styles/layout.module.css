@@ -1275,3 +1275,235 @@
   min-height: 26px;
 }
 .medSubcatBtn:hover { background: #dce8ff; border-color: #0a84ff; color: #003da0; }
+
+/* ══════════════════════════════════════════════════════════════
+   モード切替バー（Col 2 上部: 手動選択 ↔ 自然言語生成）
+   ══════════════════════════════════════════════════════════════ */
+
+.modeToggleBar {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px 4px;
+  background: #f0f2f7;
+  border-bottom: 1.5px solid #dde0e8;
+  flex-shrink: 0;
+}
+
+.modeToggleBtn {
+  flex: 1;
+  padding: 0.3rem 0.4rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 6px;
+  background: #fff;
+  color: #667;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+  min-height: 30px;
+  white-space: nowrap;
+}
+.modeToggleBtn:hover { background: #e8f0ff; border-color: #0a84ff; color: #0044c0; }
+.modeToggleBtnActive {
+  background: #1a1a2e;
+  border-color: #0a84ff;
+  color: #e8e8ff;
+  cursor: default;
+}
+.modeToggleBtnActive:hover { background: #1a1a2e; color: #e8e8ff; }
+
+/* ══════════════════════════════════════════════════════════════
+   NlpInputPanel（Col 3 / 自然言語生成モード時に表示）
+   ══════════════════════════════════════════════════════════════ */
+
+.nlpPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.65rem 0.7rem;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d0d4e0 transparent;
+}
+
+/* ── ヘッダー ─────────────────────────────────────────────── */
+
+.nlpPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.nlpPanelTitle {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #334;
+  white-space: nowrap;
+}
+
+.nlpSwitchBtn {
+  padding: 0.2rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.67rem;
+  font-weight: 600;
+  background: transparent;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #667;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nlpSwitchBtn:hover { background: #f0f4ff; border-color: #0a84ff; color: #0044c0; }
+
+/* ── 入力セクション ───────────────────────────────────────── */
+
+.nlpInputSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.nlpInputLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #667;
+  padding: 0 2px;
+  white-space: nowrap;
+}
+
+.nlpTextarea {
+  font-family: inherit;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  padding: 0.5rem 0.65rem;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 7px;
+  resize: vertical;
+  color: #222;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  min-height: 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.nlpTextarea::placeholder { color: #aaa; font-size: 0.72rem; }
+.nlpTextarea:focus {
+  outline: none;
+  border-color: #0a84ff;
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+}
+
+/* ── 生成ボタン ───────────────────────────────────────────── */
+
+.nlpGenerateBtn {
+  padding: 0.6rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  background: #0a84ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.08s, opacity 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  min-height: 40px;
+  text-align: center;
+}
+.nlpGenerateBtn:hover:not(:disabled) { background: #006ee0; }
+.nlpGenerateBtn:active:not(:disabled) { transform: scale(0.98); }
+.nlpGenerateBtn:disabled { opacity: 0.45; cursor: not-allowed; }
+.nlpGenerateBtnLoading { background: #6b6b8a; }
+
+/* ── バリデーションエラー ─────────────────────────────────── */
+
+.nlpValidationError {
+  background: rgba(255, 69, 58, 0.08);
+  border: 1.5px solid rgba(255, 69, 58, 0.35);
+  border-radius: 7px;
+  padding: 0.5rem 0.65rem;
+  flex-shrink: 0;
+}
+
+.nlpValidationErrorTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #c0392b;
+  margin-bottom: 0.3rem;
+}
+
+.nlpErrorList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nlpErrorList li {
+  font-size: 0.62rem;
+  font-family: monospace;
+  color: #c0392b;
+  word-break: break-all;
+}
+
+/* ── 選択結果表示 ─────────────────────────────────────────── */
+
+.nlpResult {
+  background: #f4f6fb;
+  border: 1.5px solid #d0d8e8;
+  border-radius: 7px;
+  padding: 0.5rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.nlpResultRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.nlpResultLabel {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #999;
+  white-space: nowrap;
+  min-width: 60px;
+}
+
+.nlpResultValue {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #334;
+  word-break: break-all;
+}
+
+/* confidence カラー */
+.nlpConfidenceHigh { color: #1a7a3a; }
+.nlpConfidenceMid  { color: #9a4d00; }
+.nlpConfidenceLow  { color: #c0392b; }
+
+.nlpResultReason {
+  font-size: 0.62rem;
+  color: #888;
+  line-height: 1.5;
+  word-break: break-all;
+  margin-top: 0.1rem;
+  font-style: italic;
+}

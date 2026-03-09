@@ -1,69 +1,94 @@
 'use client'
 
-import type { AddonsMap, AddonItem } from '../../lib/types'
+import type { AddonsData, AddonItem } from '../../lib/types'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
-// アドオンカテゴリ定義（表示順・ラベル）
+// グループ表示順・ラベル定義
 // ─────────────────────────────────────────────────────────────
 
-interface AddonCategory {
-  key: keyof AddonsMap
-  label: string
-}
+const GROUP_ORDER: string[] = ['counseling', 'oral', 'sickday', 'sideEffects']
 
-const ADDON_CATEGORIES: AddonCategory[] = [
-  { key: 'counseling', label: '服薬指導' },
-  { key: 'oral',       label: '内服アドオン' },
-  { key: 'sickday',    label: 'シックデイ' },
-  { key: 'sideEffects', label: '副作用' },
-]
+const GROUP_LABELS: Record<string, string> = {
+  counseling:  '服薬指導',
+  oral:        '内服アドオン',
+  sickday:     'シックデイ',
+  sideEffects: '副作用',
+}
 
 // ─────────────────────────────────────────────────────────────
 // Props
 // ─────────────────────────────────────────────────────────────
 
 interface AddonPanelProps {
-  addons: AddonsMap
+  addons: AddonsData
+  /**
+   * 選択中のアドオンキー集合。
+   * キーは addons.items の "group:id" 形式（例: "counseling:counseling_1"）。
+   */
   selectedAddonIds: Set<string>
-  onToggle: (addonId: string, text: string) => void
+  /** キーとテキストを渡すトグルコールバック */
+  onToggle: (addonKey: string, text: string) => void
+  /**
+   * シナリオに対応するアドオンキー（addonsRef から解決済み）。
+   * 指定された場合はそのキーのみ表示する。未指定時は全件表示。
+   */
+  visibleKeys?: string[]
 }
 
 // ─────────────────────────────────────────────────────────────
 // AddonPanel — テンプレ選択時にセカンドパネル直下に表示
+// panel_2 固定レンダリング。ReactキーはaddonsのフルキーID。
 // ─────────────────────────────────────────────────────────────
 
 export default function AddonPanel({
   addons,
   selectedAddonIds,
   onToggle,
+  visibleKeys,
 }: AddonPanelProps) {
-  // 表示するカテゴリ（アイテムが1件以上あるもの）
-  const visibleCategories = ADDON_CATEGORIES.filter(
-    cat => (addons[cat.key]?.length ?? 0) > 0,
-  )
+  // 表示するアイテムを決定
+  const itemEntries: [string, AddonItem][] = visibleKeys
+    ? visibleKeys
+        .map(k => [k, addons.items[k]] as [string, AddonItem])
+        .filter(([, item]) => Boolean(item))
+    : Object.entries(addons.items)
 
-  if (visibleCategories.length === 0) return null
+  if (itemEntries.length === 0) return null
+
+  // グループ別に分類
+  const groupMap = new Map<string, [string, AddonItem][]>()
+  for (const entry of itemEntries) {
+    const [, item] = entry
+    const group = item.group
+    if (!groupMap.has(group)) groupMap.set(group, [])
+    groupMap.get(group)!.push(entry)
+  }
+
+  // 表示順: GROUP_ORDER に従い、未定義グループは末尾に追加
+  const knownGroups = GROUP_ORDER.filter(g => groupMap.has(g))
+  const unknownGroups = [...groupMap.keys()].filter(g => !GROUP_ORDER.includes(g))
+  const orderedGroups = [...knownGroups, ...unknownGroups]
 
   return (
     <div className={s.addonPanel}>
       <div className={s.addonPanelHeading}>アドオン</div>
-      {visibleCategories.map(cat => {
-        const items = addons[cat.key] as AddonItem[]
+      {orderedGroups.map(group => {
+        const entries = groupMap.get(group)!
+        const label = GROUP_LABELS[group] ?? group
         return (
-          <div key={cat.key} className={s.addonCategory}>
-            <div className={s.addonCategoryLabel}>{cat.label}</div>
-            {items.map(item => {
-              const isActive = selectedAddonIds.has(item.id)
+          <div key={group} className={s.addonCategory}>
+            <div className={s.addonCategoryLabel}>{label}</div>
+            {entries.map(([fullKey, item]) => {
+              const isActive = selectedAddonIds.has(fullKey)
               return (
                 <button
-                  key={item.id}
+                  key={fullKey}
                   className={[s.addonBtn, isActive ? s.addonBtnActive : ''].join(' ')}
-                  onClick={() => onToggle(item.id, item.text)}
+                  onClick={() => onToggle(fullKey, item.text)}
                   aria-pressed={isActive}
                   title={item.text}
                 >
-                  {/* テキストを省略表示（ツールチップで全文確認） */}
                   <span className={s.addonBtnText}>{item.text}</span>
                 </button>
               )

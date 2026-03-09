@@ -12,6 +12,7 @@ import type { ModuleData } from '../lib/types'
 import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
 import DashboardClient from './components/DashboardClient'
 import { reportInvalidScenarios } from '../lib/scenarioValidator'
+import { assertModuleValid } from '../lib/moduleValidator'
 
 const moduleData = rawModuleData as unknown as ModuleData
 
@@ -41,6 +42,15 @@ console.log(
 )
 if (validationErrors.length > 0) {
   console.error('[SOAP Engine] バリデーションエラー:', validationErrors.join(', '))
+}
+
+// ── ModuleValidator: モジュールレベル整合性チェック ───────────
+// addonsRef 参照切れ / panelOrder 不整合 / key 不一致 等を起動時に検出（致命的エラーはスロー）
+try {
+  assertModuleValid(rawModuleData)
+} catch (e) {
+  console.error('[page.tsx] ModuleValidator でエラーが検出されました:', e)
+  // 本番でも起動を止めず、エラーをログに残す（UI バッジで表示する）
 }
 
 // ── ScenarioValidator: 構造的妥当性チェック ───────────────────

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback, useEffect } from 'react'
 
-import type { ModuleData, SoapKey, SoapFields, MergedBlock, AddonsMap } from '../../lib/types'
+import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
 import { buildSoapFromScenario, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions } from '../../lib/search'
 import {
@@ -10,13 +10,17 @@ import {
   groupByMenuGroup,
   getMenuGroupFromScenario,
 } from '../../lib/menuGroups'
+import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { S_BUTTON_GROUPS } from './ThirdPanel'
+import { createSoapFromInput } from '../../lib/createSoapFromInput'
+import type { ValidationResult } from '../../lib/validationRunner'
 
 import Topbar, { type RouteFilter } from './Topbar'
 import Sidebar from './Sidebar'
 import { TemplateListPanel } from './SecondaryPanel'
 import AddonPanel from './AddonPanel'
 import ThirdPanel from './ThirdPanel'
+import NlpInputPanel from './NlpInputPanel'
 import SoapEditor, {
   type SPrefix,
   type SStatus,
@@ -31,6 +35,13 @@ import s from '../styles/layout.module.css'
 // ─────────────────────────────────────────────────────────────
 
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
+
+// ─────────────────────────────────────────────────────────────
+// UI モード
+//   'manual' — 既存の手動選択フロー（Sidebar → SecondaryPanel）
+//   'nlp'    — 自然言語生成モード（NlpInputPanel → createSoapFromInput）
+// ─────────────────────────────────────────────────────────────
+type UiMode = 'manual' | 'nlp'
 
 // ─────────────────────────────────────────────────────────────
 // Props
@@ -62,6 +73,13 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   const [sStatus, setSStatus] = useState<SStatus>('stable')
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(new Set())
 
+  // ── NLP モード専用状態 ─────────────────────────────────────
+  const [uiMode, setUiMode] = useState<UiMode>('manual')
+  const [nlpValidation, setNlpValidation] = useState<ValidationResult | null>(null)
+  const [nlpSelectorReason, setNlpSelectorReason] = useState('')
+  const [nlpConfidence, setNlpConfidence] = useState(0)
+  const [nlpIsGenerating, setNlpIsGenerating] = useState(false)
+
   // ── 選択中シナリオ ────────────────────────────────────────
   const selectedScenario = moduleData.scenarios.find(
     sc => sc.id === selectedScenarioId,
@@ -78,6 +96,14 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     A: manualFields.A ?? computedFields.A,
     P: manualFields.P ?? computedFields.P,
   }
+
+  // ── アドオン表示キー解決 ──────────────────────────────────
+  // getVisibleAddonKeys: scenario の scenarioType / scenarioGroup を SSOT として
+  // 表示すべきアドオンキーを決定する（addonsRef があれば個別指定優先）。
+  const addonVisibleKeys = useMemo(
+    () => getVisibleAddonKeys(moduleData.addons, selectedScenario),
+    [moduleData.addons, selectedScenario],
+  )
 
   // ── S操作: 副作用なし/CP良好への変更時に prev_do_stable へ強制初期化 ──
   // prev_do_stable = prefix:'none'(前回、Do) + status:'stable'(体調落ち着いている)
@@ -165,31 +191,36 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   }, [])
 
   // アドオントグル
-  const handleAddonToggle = useCallback((addonId: string, text: string) => {
+  // addonKey: addons.items の "group:id" 形式キー
+  const handleAddonToggle = useCallback((addonKey: string, text: string) => {
     setSelectedAddonIds(prev => {
       const next = new Set(prev)
-      if (next.has(addonId)) {
-        next.delete(addonId)
+      if (next.has(addonKey)) {
+        next.delete(addonKey)
       } else {
-        next.add(addonId)
+        next.add(addonKey)
       }
       return next
     })
-    // アドオンテキストをP欄に追記/削除
+    // targetSection に応じたフィールドにテキストを追記/削除
+    const targetSection = moduleData.addons?.items[addonKey]?.targetSection ?? 'P'
     setManualFields(prev => {
-      const currentP = prev.P ?? computedFields.P
-      const alreadyAdded = currentP.includes(text)
+      const currentVal = prev[targetSection] ?? computedFields[targetSection]
+      const alreadyAdded = currentVal.includes(text)
       if (alreadyAdded) {
         // テキストを削除（前後の改行も整理）
-        const removed = currentP.replace(`\n${text}`, '').replace(`${text}\n`, '').replace(text, '')
-        return { ...prev, P: removed.trim() }
+        const removed = currentVal
+          .replace(`\n${text}`, '')
+          .replace(`${text}\n`, '')
+          .replace(text, '')
+        return { ...prev, [targetSection]: removed.trim() }
       } else {
-        // P欄末尾に追記
-        const updated = currentP ? `${currentP}\n${text}` : text
-        return { ...prev, P: updated }
+        // 末尾に追記
+        const updated = currentVal ? `${currentVal}\n${text}` : text
+        return { ...prev, [targetSection]: updated }
       }
     })
-  }, [computedFields.P])
+  }, [moduleData.addons?.items, computedFields])
 
   // S欄トグル操作
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
@@ -239,6 +270,91 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
     setSStatus('stable')
   }, [])
 
+  // ── NLP モード: モード切替 ────────────────────────────────
+  /**
+   * 手動選択モード → 自然言語生成モードへ切替。
+   * 既存の選択・手動入力はリセットする。
+   */
+  const handleSwitchToNlp = useCallback(() => {
+    setUiMode('nlp')
+    setSelectedScenarioId(null)
+    setSelectedGroup(null)
+    setManualFields({})
+    setSPrefix('none')
+    setSStatus('stable')
+    setSelectedAddonIds(new Set())
+    setMergedBlocks([])
+    setNlpValidation(null)
+    setNlpSelectorReason('')
+    setNlpConfidence(0)
+  }, [])
+
+  /**
+   * 自然言語生成モード → 手動選択モードへ切替。
+   * NLP 結果はリセットする。
+   */
+  const handleSwitchToManual = useCallback(() => {
+    setUiMode('manual')
+    setManualFields({})
+    setNlpValidation(null)
+    setNlpSelectorReason('')
+    setNlpConfidence(0)
+  }, [])
+
+  // ── NLP モード: SOAP 生成 ─────────────────────────────────
+  /**
+   * createSoapFromInput() を呼び、結果を状態に反映する。
+   *
+   * 呼び出し元: NlpInputPanel.onGenerate
+   * 生成結果:
+   *   - validation.valid=false → manualFields をクリア（エラー表示のみ）
+   *   - scenarioId=null        → manualFields をクリア（シナリオ未特定）
+   *   - soap が存在する場合    → manualFields に反映して SoapEditor に表示
+   *
+   * DashboardClient → createSoapFromInput（lib/createSoapFromInput.ts）
+   *                     ├─ scenarioSelector（lib/scenarioSelector.ts）
+   *                     ├─ validationRunner（lib/validationRunner.ts）
+   *                     │    ├─ validateModule（lib/moduleValidator.ts）
+   *                     │    └─ validateAllScenarios（lib/scenarioValidator.ts）
+   *                     ├─ jsonScenarioBuilder（lib/jsonScenarioBuilder.ts）
+   *                     └─ soapComposer（lib/soapComposer.ts）
+   */
+  const handleNlpGenerate = useCallback(
+    (patientInput: string) => {
+      setNlpIsGenerating(true)
+
+      // createSoapFromInput は同期関数（現時点では非同期APIなし）
+      const result = createSoapFromInput(moduleData, patientInput)
+
+      setNlpValidation(result.validation)
+      setNlpSelectorReason(result.selectorReason)
+      setNlpConfidence(result.confidence)
+
+      if (result.soap) {
+        // SOAP 生成成功: SoapEditor に表示
+        setManualFields({
+          S: result.soap.S,
+          O: result.soap.O,
+          A: result.soap.A,
+          P: result.soap.P,
+        })
+        // 選択シナリオIDも反映（templateLabel 表示に使う）
+        if (result.scenarioId) {
+          setSelectedScenarioId(result.scenarioId)
+          const sc = moduleData.scenarios.find(s => s.id === result.scenarioId)
+          if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
+        }
+      } else {
+        // 生成失敗: フィールドをクリア
+        setManualFields({})
+        setSelectedScenarioId(null)
+      }
+
+      setNlpIsGenerating(false)
+    },
+    [moduleData],
+  )
+
   // ── レンダリング ─────────────────────────────────────────
   return (
     <div className={s.layout}>
@@ -262,42 +378,93 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         />
 
         {/* Col 2: テンプレ一覧（常時表示・選択中のみハイライト）＋アドオン */}
+        {/*        自然言語生成モード時は NLP モード切替ボタンのみ表示 */}
         <div className={s.secondaryCol}>
-          {selectedGroup === null ? (
-            <div className={s.secondaryEmpty} aria-hidden="true" />
-          ) : (
+          {/* モード切替ボタン（常時表示） */}
+          <div className={s.modeToggleBar}>
+            <button
+              className={[
+                s.modeToggleBtn,
+                uiMode === 'manual' ? s.modeToggleBtnActive : '',
+              ].join(' ')}
+              onClick={() => uiMode !== 'manual' && handleSwitchToManual()}
+              aria-pressed={uiMode === 'manual'}
+            >
+              手動選択
+            </button>
+            <button
+              className={[
+                s.modeToggleBtn,
+                uiMode === 'nlp' ? s.modeToggleBtnActive : '',
+              ].join(' ')}
+              onClick={() => uiMode !== 'nlp' && handleSwitchToNlp()}
+              aria-pressed={uiMode === 'nlp'}
+            >
+              🤖 自然言語
+            </button>
+          </div>
+
+          {uiMode === 'manual' && (
             <>
-              <TemplateListPanel
-                key={selectedGroup}
-                group={selectedGroup}
-                scenarios={groupScenarios}
-                selectedScenarioId={selectedScenarioId}
-                onSelectScenario={handleSelectScenario}
-              />
-              {selectedScenarioId !== null && (
-                <AddonPanel
-                  addons={moduleData.addons}
-                  selectedAddonIds={selectedAddonIds}
-                  onToggle={handleAddonToggle}
-                />
+              {selectedGroup === null ? (
+                <div className={s.secondaryEmpty} aria-hidden="true" />
+              ) : (
+                <>
+                  <TemplateListPanel
+                    key={selectedGroup}
+                    group={selectedGroup}
+                    scenarios={groupScenarios}
+                    selectedScenarioId={selectedScenarioId}
+                    onSelectScenario={handleSelectScenario}
+                  />
+                  {selectedScenarioId !== null && moduleData.addons && (
+                    <AddonPanel
+                      addons={moduleData.addons}
+                      selectedAddonIds={selectedAddonIds}
+                      onToggle={handleAddonToggle}
+                      visibleKeys={addonVisibleKeys}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
+
+          {uiMode === 'nlp' && (
+            <div className={s.secondaryEmpty} aria-hidden="true" />
+          )}
         </div>
 
-        {/* Col 3: ThirdPanel（セカンドパネルで何か選択するまで非表示） */}
-        <ThirdPanel
-          selectedGroup={selectedGroup}
-          thirdPanelEnabled={selectedScenarioId !== null}
-          currentSPrefix={sPrefix}
-          currentSStatus={sStatus}
-          onSAction={handleSToggle}
-          searchValue={search}
-          onSearchChange={setSearch}
-          suggestions={suggestions}
-          onSelectSuggestion={handleSelectSuggestion}
-          onSubcategorySelect={handleSubcategorySelect}
-        />
+        {/* Col 3:
+            手動選択モード → ThirdPanel（Sボタン / 薬剤追加 / 診療領域）
+            自然言語生成モード → NlpInputPanel
+        */}
+        {uiMode === 'manual' ? (
+          <ThirdPanel
+            selectedGroup={selectedGroup}
+            thirdPanelEnabled={selectedScenarioId !== null}
+            currentSPrefix={sPrefix}
+            currentSStatus={sStatus}
+            onSAction={handleSToggle}
+            searchValue={search}
+            onSearchChange={setSearch}
+            suggestions={suggestions}
+            onSelectSuggestion={handleSelectSuggestion}
+            onSubcategorySelect={handleSubcategorySelect}
+          />
+        ) : (
+          <div className={s.thirdPanel}>
+            <NlpInputPanel
+              scenarioId={selectedScenarioId}
+              validation={nlpValidation}
+              selectorReason={nlpSelectorReason}
+              confidence={nlpConfidence}
+              isGenerating={nlpIsGenerating}
+              onGenerate={handleNlpGenerate}
+              onSwitchToManual={handleSwitchToManual}
+            />
+          </div>
+        )}
 
         {/* Col 4: SOAPエディター */}
         <SoapEditor

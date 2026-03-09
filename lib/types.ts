@@ -12,13 +12,21 @@ export type SoapFields = Record<SoapKey, string>
 // sideEffectPresence — グルーピングの唯一のソース（SSOT）
 //
 //   "absent_or_not_observed" → 副作用なし
-//   "present"                → 副作用あり
+//   "present_mild"           → 副作用あり（軽微・経過観察）
+//   "present_moderate"       → 副作用あり（中等度・要対応）
+//   "present_dose_decrease"  → 副作用あり → 減量で対応
+//   "present_change"         → 副作用あり → 変更で対応
+//   "present_stop"           → 副作用あり → 中止
 //   "not_applicable"         → 副作用メニュー対象外（初回・増量・減量・CP・終了 等）
 // ─────────────────────────────────────────────────────────────
 
 export type SideEffectPresence =
   | 'absent_or_not_observed'
-  | 'present'
+  | 'present_mild'
+  | 'present_moderate'
+  | 'present_dose_decrease'
+  | 'present_change'
+  | 'present_stop'
   | 'not_applicable'
 
 // ─────────────────────────────────────────────────────────────
@@ -49,23 +57,51 @@ export interface Scenario {
   O: string
   A: string
   P: string
+  /**
+   * addons.items への参照（セクション別キー一覧）。
+   * 存在する場合、SOAP生成時に対応セクションへ追記する。
+   * scenario に定義がない場合は orderPresets.initial_default を使用。
+   */
+  addonsRef?: {
+    S?: string[]
+    O?: string[]
+    A?: string[]
+    P?: string[]
+  }
+  /**
+   * followup 制御。
+   *   "default" → defaults.followup の値を末尾に追加
+   *   null      → followup を追加しない
+   * 省略時は null 扱い（何も追加しない）。
+   */
+  followup?: {
+    S?: 'default' | null
+    P?: 'default' | null
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
-// Addon（新スキーマ: addons オブジェクト内のカテゴリ配列）
+// Addon（新スキーマ: addons.items 内の各アイテム）
 // ─────────────────────────────────────────────────────────────
 
 export interface AddonItem {
+  /** addons.items のマップキーと一致するキー（例: "counseling:counseling_1"） */
+  key?: string
   id: string
+  group: string
+  targetSection: 'S' | 'O' | 'A' | 'P'
   text: string
 }
 
-export interface AddonsMap {
-  counseling?: AddonItem[]
-  sickday?: AddonItem[]
-  oral?: AddonItem[]
-  sideEffects?: AddonItem[]
-  [key: string]: AddonItem[] | undefined
+/**
+ * addons.items の形式: "group:id" をキーとする Record。
+ * 例: { "counseling:counseling_1": { id, group, targetSection, text }, ... }
+ */
+export type AddonsItems = Record<string, AddonItem>
+
+export interface AddonsData {
+  items: AddonsItems
+  orderPresets: Record<string, string[]>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -115,21 +151,109 @@ export interface MergedBlock {
 // ModuleData（新スキーマ JSON ルート）
 // ─────────────────────────────────────────────────────────────
 
+export interface EmergencyCriteria {
+  seekUrgentCareIf?: string[]
+  contactPrescriberIf?: string[]
+}
+
+/** risks.conditional の1件 */
+export interface ConditionalRisk {
+  risk: string
+  rule: {
+    whenAny?: string[]
+    whenAll?: string[]
+  }
+}
+
+/** risks ブロック */
+export interface ModuleRisks {
+  primary?: string[]
+  conditional?: ConditionalRisk[]
+}
+
+/** searchConfig.normalize */
+export interface SearchNormalizeConfig {
+  toHiragana?: boolean
+  lowerLatin?: boolean
+  stripSymbols?: boolean
+  zenkakuToHankaku?: boolean
+  trimSpaces?: boolean
+}
+
+/** searchConfig.multiTerm */
+export interface MultiTermConfig {
+  enabled?: boolean
+  operator?: 'AND' | 'OR'
+  match?: 'prefix' | 'contains'
+}
+
+/** searchConfig ブロック */
+export interface ModuleSearchConfig {
+  minPrefixLen?: number
+  normalize?: SearchNormalizeConfig
+  multiTerm?: MultiTermConfig
+}
+
+/** index ブロック */
+export interface ModuleIndex {
+  searchableText?: string[]
+  normalizedTokens?: string[]
+  facets?: Record<string, string[]>
+}
+
+export interface ModuleTemplate {
+  templateId?: string
+  templateVersion?: string
+  situationTags?: string[]
+  severityTags?: string[]
+  /** 旧スキーマ互換 */
+  emergencyFlag?: boolean
+  emergencyCriteria?: EmergencyCriteria
+  /** 新スキーマ */
+  urgentFlag?: boolean
+  urgentCriteria?: EmergencyCriteria
+}
+
 export interface ModuleData {
   moduleId: string
+  moduleVersion?: string
   categoryPath?: string[]
   drug?: Drug
-  display?: { title: string; subtitle: string }
+  display?: { title: string; subtitle: string; drugClassLabel?: string }
+  template?: ModuleTemplate
+  risks?: ModuleRisks
+  searchConfig?: ModuleSearchConfig
+  index?: ModuleIndex
+  /** defaults: followup などのデフォルト値 */
+  defaults?: {
+    followup?: {
+      S?: string | null
+      P?: string | null
+    }
+  }
+  ui?: {
+    panels?: Array<{ id: string; title?: string; sections?: string[] }>
+    panelOrder?: string[]
+    defaultPanelId?: string
+  }
   /** 新スキーマ: scenarios[] がメインデータ */
   scenarios: Scenario[]
-  /** 新スキーマ: addons はカテゴリ別オブジェクト */
-  addons: AddonsMap
+  /** 新スキーマ: addons は items + orderPresets（旧フォーマットでもクラッシュしないよう optional） */
+  addons?: AddonsData
 }
 
 // ─────────────────────────────────────────────────────────────
-// 後方互換: 旧スキーマ用 Template / Addon 型
+// 後方互換: 旧スキーマ用 Template / Addon 型 / AddonsMap
 // （旧 JSON が残っている場合のフォールバック用。新規開発では使わない）
 // ─────────────────────────────────────────────────────────────
+
+export interface AddonsMap {
+  counseling?: { id: string; text: string }[]
+  sickday?: { id: string; text: string }[]
+  oral?: { id: string; text: string }[]
+  sideEffects?: { id: string; text: string }[]
+  [key: string]: { id: string; text: string }[] | undefined
+}
 
 export type PatchMode = 'append' | 'prepend' | 'replace'
 
