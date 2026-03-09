@@ -73,6 +73,7 @@ export default function AddonPanel({
   return (
     <div className={s.addonPanel}>
       <div className={s.addonPanelHeading}>アドオン</div>
+      <div className={s.addonPanelNote}>ON/OFF すると該当欄を再構成します</div>
       {orderedGroups.map(group => {
         const entries = groupMap.get(group)!
         const label = GROUP_LABELS[group] ?? group

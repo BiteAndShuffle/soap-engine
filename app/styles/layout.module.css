@@ -465,6 +465,13 @@
   white-space: nowrap;
 }
 
+.addonPanelNote {
+  font-size: 0.6rem;
+  color: #aaa;
+  padding: 0 4px 4px;
+  line-height: 1.3;
+}
+
 .addonCategory {
   display: flex;
   flex-direction: column;

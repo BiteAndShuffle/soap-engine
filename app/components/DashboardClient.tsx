@@ -215,9 +215,11 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
   // アドオントグル
   // addonKey: addons.items の "group:id" 形式キー
   //
-  // P欄の合成順: base(scenario.P) → addonTexts → followup
-  // manualFields に文字列を直接 append/remove するのではなく、
-  // 「選択中 scenario + 選択中 addon ids」をもとに毎回 P/targetSection を再合成する。
+  // 【仕様】アドオン ON/OFF はそのセクションを「再構成」する操作。
+  //   合成順: base(scenario.S/O/A/P) → addonTexts → followup
+  //   アドオン操作前にユーザーが手修正していた場合、その内容は失われる。
+  //   運用上は「アドオン操作を先に確定 → その後で手修正」を前提とする。
+  //   手修正保持（ユーザー追記領域の分離）は今回スコープ外。
   const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
     setSelectedAddonIds(prev => {
       const next = new Set(prev)
