@@ -90,7 +90,7 @@ export default function AddonPanel({
                   aria-pressed={isActive}
                   title={item.text}
                 >
-                  <span className={s.addonBtnText}>{item.text}</span>
+                  <span className={s.addonBtnText}>{item.title ?? item.text}</span>
                 </button>
               )
             })}

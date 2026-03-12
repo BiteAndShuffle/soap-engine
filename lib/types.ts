@@ -88,6 +88,8 @@ export interface AddonItem {
   /** addons.items のマップキーと一致するキー（例: "counseling:counseling_1"） */
   key?: string
   id: string
+  /** UI表示用タイトル。省略時は text をフォールバック表示する */
+  title?: string
   group: string
   targetSection: 'S' | 'O' | 'A' | 'P'
   text: string

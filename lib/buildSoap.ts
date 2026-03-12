@@ -154,7 +154,7 @@ export function scenarioToColor(scenario: Scenario): ChipColor {
 
   const sg = scenario.scenarioGroup
   if (sg === 'start_or_change') return 'blue'
-  if (sg === 'dose_change' && scenario.id === 'dose_increase') return 'blue'
+  if (sg === 'dose_change' && scenario.id.startsWith('dose_increase')) return 'blue'
   if (sg === 'dose_change') return 'gray'
   if (sg === 'adherence_good') return 'green'
   if (sg === 'adherence_poor') return 'orange'
