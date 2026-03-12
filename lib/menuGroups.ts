@@ -82,9 +82,9 @@ export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
 
   if (sg === 'start_or_change') return '初回'
   if (sg === 'dose_change') {
-    // 増量 vs 減量は id で区別
-    if (sid === 'dose_increase') return '増量'
-    return '減量'  // dose_reduce_* は全て減量
+    // 増量 vs 減量は id で区別（dose_increase_ で始まる id も含む）
+    if (sid.startsWith('dose_increase')) return '増量'
+    return '減量'  // dose_decrease_* は全て減量
   }
   if (sg === 'adherence_good') return 'コンプライアンス良好'
   if (sg === 'adherence_poor') return 'コンプライアンス不良'

@@ -9,10 +9,14 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 import type { ModuleData } from '../lib/types'
-import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
+import rawModuleSickday from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
+import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral.json'
 import DashboardClient from './components/DashboardClient'
 import { reportInvalidScenarios } from '../lib/scenarioValidator'
 import { assertModuleValid } from '../lib/moduleValidator'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _sickdayModule = rawModuleSickday as unknown as ModuleData
 
 const moduleData = rawModuleData as unknown as ModuleData
 
@@ -51,6 +55,11 @@ try {
 } catch (e) {
   console.error('[page.tsx] ModuleValidator でエラーが検出されました:', e)
   // 本番でも起動を止めず、エラーをログに残す（UI バッジで表示する）
+}
+try {
+  assertModuleValid(rawModuleSickday)
+} catch (e) {
+  console.error('[page.tsx] ModuleValidator (sickday) でエラーが検出されました:', e)
 }
 
 // ── ScenarioValidator: 構造的妥当性チェック ───────────────────
