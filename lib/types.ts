@@ -37,8 +37,10 @@ export type SideEffectPresence =
 // ─────────────────────────────────────────────────────────────
 
 export interface Scenario {
-  /** 一意識別子（旧 templateId に相当） */
+  /** module 内ローカル識別子（旧 templateId に相当） */
   id: string
+  /** アプリ全体の一意識別子（形式: moduleId + "." + id） */
+  globalId: string
   /** 表示タイトル（Col2 表示の元）*/
   title: string
   /** シナリオ種別（治療一般 / 副作用 / アドヒアランス 等） */
@@ -69,15 +71,47 @@ export interface Scenario {
     P?: string[]
   }
   /**
-   * followup 制御。
+   * followupRef — defaults.followupProfiles のキーを参照する（新スキーマ）。
+   * 存在する場合、対応するプロファイルの値を末尾に追加。
+   * followup より優先される。
+   */
+  followupRef?: string
+  /**
+   * followup 制御（旧スキーマ・後方互換）。
    *   "default" → defaults.followup の値を末尾に追加
    *   null      → followup を追加しない
    * 省略時は null 扱い（何も追加しない）。
+   * followupRef が存在する場合はそちらが優先される。
    */
   followup?: {
     S?: 'default' | null
     P?: 'default' | null
   }
+  /** 意味タグ（intentTags）— 文章の意味的役割を表す */
+  intentTags?: string[]
+  /** 臨床タグ（将来拡張用） */
+  clinicalTags?: string[]
+  /** 服薬指導タグ（将来拡張用） */
+  counselingTags?: string[]
+  /** ワークフロータグ（将来拡張用） */
+  workflowTags?: string[]
+
+  // ── 将来の競合制御用メタデータ（現在 buildSoap では未使用） ──
+  /**
+   * シナリオ優先順位。将来の自動選定ロジックで使用予定。
+   * 現時点では buildSoap に影響しない。
+   */
+  priority?: number | null
+  /**
+   * 排他グループ名。同一グループ内では1件のみ採用する制御を将来実装予定。
+   * 現時点では buildSoap に影響しない。
+   */
+  exclusiveGroup?: string | null
+  /**
+   * 他 scenario と同時採用可能か。将来の combinable 制御で使用予定。
+   * 現時点では buildSoap に影響しない。
+   */
+  combinable?: boolean | null
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -93,6 +127,14 @@ export interface AddonItem {
   group: string
   targetSection: 'S' | 'O' | 'A' | 'P'
   text: string
+  /** 意味タグ（intentTags）— 文章の意味的役割を表す */
+  intentTags?: string[]
+  /** 臨床タグ（将来拡張用） */
+  clinicalTags?: string[]
+  /** 服薬指導タグ（将来拡張用） */
+  counselingTags?: string[]
+  /** ワークフロータグ（将来拡張用） */
+  workflowTags?: string[]
 }
 
 /**
@@ -104,6 +146,34 @@ export type AddonsItems = Record<string, AddonItem>
 export interface AddonsData {
   items: AddonsItems
   orderPresets: Record<string, string[]>
+}
+
+// ─────────────────────────────────────────────────────────────
+// TagCatalog（モジュールレベルのタグ語彙レジストリ）
+// ─────────────────────────────────────────────────────────────
+
+export interface TagCatalog {
+  intentTags?: string[]
+  clinicalTags?: string[]
+  counselingTags?: string[]
+  workflowTags?: string[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// Persona（スタイルプロファイル）
+// ─────────────────────────────────────────────────────────────
+
+export interface PersonaStyleProfile {
+  sentenceTone?: string | null
+  warningTone?: string | null
+  proposalTone?: string | null
+  closingTone?: string | null
+}
+
+export interface PersonaConfig {
+  defaultStyle?: string
+  availableStyles?: string[]
+  styleProfiles?: Record<string, PersonaStyleProfile>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -120,7 +190,9 @@ export interface DrugSearch {
   primaryDisplayName: string
   priority: number
   exactAliases: string[]
-  prefixAliases: string[]
+  /** @deprecated JSON への記載不要。nameAliases / brandNames から前方一致を自動生成。 */
+  prefixAliases?: string[]
+  nameAliases?: string[]
   keywords: string[]
   matchPolicy: DrugSearchMatchPolicy
 }
@@ -228,11 +300,21 @@ export interface ModuleData {
   index?: ModuleIndex
   /** defaults: followup などのデフォルト値 */
   defaults?: {
+    /** 旧スキーマ互換: scenario.followup === "default" 参照先 */
     followup?: {
       S?: string | null
       P?: string | null
     }
+    /** 新スキーマ: followupRef キー → フォールバックテキストのマップ */
+    followupProfiles?: Record<string, {
+      S?: string | null
+      P?: string | null
+    }>
   }
+  /** ペルソナ設定（スタイルプロファイル） */
+  persona?: PersonaConfig
+  /** タグ語彙レジストリ（intentTags/clinicalTags 等の有効値一覧） */
+  tagCatalog?: TagCatalog
   ui?: {
     panels?: Array<{ id: string; title?: string; sections?: string[] }>
     panelOrder?: string[]

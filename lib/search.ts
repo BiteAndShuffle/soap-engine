@@ -6,9 +6,8 @@
  * スコアリング優先順位（高→低）:
  *   7) drug.search.exactAliases 完全一致（suppressCrossModuleSuggestionsOnExactHit 発動）
  *   6) drug.search.primaryDisplayName 完全一致
- *   5) 薬剤名エイリアス（nameAliases）完全一致
- *   4) drug.search.prefixAliases 前方一致
- *   3) 薬剤名エイリアス前方一致
+ *   5) 薬剤名エイリアス（nameAliases + brandNames）完全一致
+ *   4) 薬剤名エイリアス（nameAliases + brandNames）前方一致（JSON prefixAliases 不要）
  *   2) タイトル前方一致 / エイリアス部分一致
  *   1) コーパス（keywords・一般語）部分一致
  *   0) マッチなし
@@ -54,7 +53,6 @@ export interface SearchEntry {
   corpus: string
   exactAliasTokens: string[]
   primaryDisplayNameNorm: string
-  prefixAliasTokens: string[]
   aliasTokens: string[]
   /** 表示用タイトル（scenario.title） */
   label: string
@@ -87,12 +85,9 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
 
   const primaryDisplayNameNorm = normalizeText(drugSearch?.primaryDisplayName ?? '')
 
-  const prefixAliasTokens: string[] = (drugSearch?.prefixAliases ?? [])
-    .map(normalizeText)
-    .filter(Boolean)
-
   const rawAliases: string[] = [
     ...(drug?.nameAliases ?? []),
+    ...(drugSearch?.nameAliases ?? []),
     ...(drug?.brandNames ?? []),
   ]
   const aliasTokens = rawAliases.map(normalizeText).filter(Boolean)
@@ -137,7 +132,6 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       corpus,
       exactAliasTokens,
       primaryDisplayNameNorm,
-      prefixAliasTokens,
       aliasTokens,
       label: scenario.title,
       shortLabel: scenario.title,  // 新スキーマでは title が既に短縮形
@@ -169,11 +163,8 @@ function scoreEntry(entry: SearchEntry, q: string): number {
   for (const alias of entry.aliasTokens) {
     if (alias === q) return 5
   }
-  for (const alias of entry.prefixAliasTokens) {
-    if (alias.startsWith(q)) return 4
-  }
   for (const alias of entry.aliasTokens) {
-    if (alias.startsWith(q)) return 3
+    if (alias.startsWith(q)) return 4
   }
   const normLabel = normalizeText(entry.label)
   if (normLabel.startsWith(q)) return 2

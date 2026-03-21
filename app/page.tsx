@@ -8,17 +8,12 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-import type { ModuleData } from '../lib/types'
-import rawModuleSickday from '../data/modules/dm_glp1ra_semaglutide_oral_sickday.json'
-import rawModuleData from '../data/modules/dm_glp1ra_semaglutide_oral.json'
+import { ALL_MODULES } from '../data/modules/index'
 import DashboardClient from './components/DashboardClient'
 import { reportInvalidScenarios } from '../lib/scenarioValidator'
 import { assertModuleValid } from '../lib/moduleValidator'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _sickdayModule = rawModuleSickday as unknown as ModuleData
-
-const moduleData = rawModuleData as unknown as ModuleData
+const moduleData = ALL_MODULES[0]
 
 // ビルド識別子
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
@@ -50,17 +45,14 @@ if (validationErrors.length > 0) {
 
 // ── ModuleValidator: モジュールレベル整合性チェック ───────────
 // addonsRef 参照切れ / panelOrder 不整合 / key 不一致 等を起動時に検出（致命的エラーはスロー）
-try {
-  assertModuleValid(rawModuleData)
-} catch (e) {
-  console.error('[page.tsx] ModuleValidator でエラーが検出されました:', e)
-  // 本番でも起動を止めず、エラーをログに残す（UI バッジで表示する）
-}
-try {
-  assertModuleValid(rawModuleSickday)
-} catch (e) {
-  console.error('[page.tsx] ModuleValidator (sickday) でエラーが検出されました:', e)
-}
+ALL_MODULES.forEach((m, i) => {
+  try {
+    assertModuleValid(m)
+  } catch (e) {
+    console.error(`[page.tsx] ModuleValidator でエラーが検出されました (index=${i}, moduleId=${m?.moduleId}):`, e)
+    // 本番でも起動を止めず、エラーをログに残す（UI バッジで表示する）
+  }
+})
 
 // ── ScenarioValidator: 構造的妥当性チェック ───────────────────
 // invalid な scenario（必須キー欠落 / S/O/A/P空 / sideEffectPresence不正 等）をログ出力
@@ -117,7 +109,7 @@ export default function Page() {
 
   return (
     <>
-      <DashboardClient moduleData={moduleData} />
+      <DashboardClient moduleData={moduleData} allModules={ALL_MODULES} />
 
       {/* ── ScenarioValidator バッジ（invalid > 0 の場合のみ表示） ── */}
       {invalidScenarios.length > 0 && (

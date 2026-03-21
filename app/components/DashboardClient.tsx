@@ -49,17 +49,18 @@ type UiMode = 'manual' | 'nlp'
 
 interface DashboardClientProps {
   moduleData: ModuleData
+  allModules: ModuleData[]
 }
 
 // ─────────────────────────────────────────────────────────────
 // DashboardClient — 状態管理・UIオーケストレーター
 // ─────────────────────────────────────────────────────────────
 
-export default function DashboardClient({ moduleData }: DashboardClientProps) {
-  // ── 検索インデックス（マウント時に1回だけ構築）──────────
+export default function DashboardClient({ moduleData, allModules }: DashboardClientProps) {
+  // ── 検索インデックス（全モジュールを結合して構築）────────
   const searchIndex = useMemo(
-    () => buildSearchIndex(moduleData),
-    [moduleData],
+    () => allModules.flatMap(m => buildSearchIndex(m)),
+    [allModules],
   )
 
   // ── 状態 ──────────────────────────────────────────────────
@@ -82,7 +83,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
 
   // ── 選択中シナリオ ────────────────────────────────────────
   const selectedScenario = moduleData.scenarios.find(
-    sc => sc.id === selectedScenarioId,
+    sc => sc.globalId === selectedScenarioId,
   )
 
   // ── SOAP フィールド ──────────────────────────────────────
@@ -189,7 +190,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         setSelectedAddonIds(new Set())
         return null
       }
-      const sc = moduleData.scenarios.find(s => s.id === id)
+      const sc = moduleData.scenarios.find(s => s.globalId === id)
       if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
       setManualFields({})
       setSPrefix('none')
@@ -405,7 +406,7 @@ export default function DashboardClient({ moduleData }: DashboardClientProps) {
         // 選択シナリオIDも反映（templateLabel 表示に使う）
         if (result.scenarioId) {
           setSelectedScenarioId(result.scenarioId)
-          const sc = moduleData.scenarios.find(s => s.id === result.scenarioId)
+          const sc = moduleData.scenarios.find(s => s.globalId === result.scenarioId)
           if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
         }
       } else {
