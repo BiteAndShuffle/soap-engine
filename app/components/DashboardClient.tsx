@@ -63,6 +63,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [allModules],
   )
 
+  // ── アクティブモジュール（検索候補選択で切り替わる） ──────
+  // 手動選択（Sidebar→SecondaryPanel）は常に moduleData（デフォルト=oral）。
+  // 検索候補選択時に候補の moduleId に一致するモジュールへ切り替える。
+  const [activeModuleData, setActiveModuleData] = useState<ModuleData>(moduleData)
+
   // ── 状態 ──────────────────────────────────────────────────
   const [search, setSearch] = useState('')
   const [routeFilter, setRouteFilter] = useState<RouteFilter>('all')
@@ -82,7 +87,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [nlpIsGenerating, setNlpIsGenerating] = useState(false)
 
   // ── 選択中シナリオ ────────────────────────────────────────
-  const selectedScenario = moduleData.scenarios.find(
+  const selectedScenario = activeModuleData.scenarios.find(
     sc => sc.globalId === selectedScenarioId,
   )
 
@@ -99,7 +104,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const computedFieldsWithFollowup: SoapFields = useMemo(() => {
     if (!selectedScenario) return EMPTY_FIELDS
     const base = buildSoapFromScenario(selectedScenario)
-    const followupDefaults = moduleData.defaults?.followup ?? {}
+    const followupDefaults = activeModuleData.defaults?.followup ?? {}
     const result = { ...base }
     for (const key of ['S', 'P'] as const) {
       const followupVal = selectedScenario.followup?.[key]
@@ -111,7 +116,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
     }
     return result
-  }, [selectedScenario, moduleData.defaults?.followup])
+  }, [selectedScenario, activeModuleData.defaults?.followup])
 
   const fields: SoapFields = {
     S: manualFields.S ?? computedFieldsWithFollowup.S,
@@ -124,8 +129,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // getVisibleAddonKeys: scenario の scenarioType / scenarioGroup を SSOT として
   // 表示すべきアドオンキーを決定する（addonsRef があれば個別指定優先）。
   const addonVisibleKeys = useMemo(
-    () => getVisibleAddonKeys(moduleData.addons, selectedScenario),
-    [moduleData.addons, selectedScenario],
+    () => getVisibleAddonKeys(activeModuleData.addons, selectedScenario),
+    [activeModuleData.addons, selectedScenario],
   )
 
   // ── S操作: 副作用なし/CP良好への変更時に prev_do_stable へ強制初期化 ──
@@ -140,8 +145,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ── グループ構造 ─────────────────────────────────────────
   // groupByMenuGroup は getMenuGroupFromScenario (sideEffectPresence SSOT) で分類
   const allGroups = useMemo(
-    () => groupByMenuGroup(moduleData.scenarios),
-    [moduleData.scenarios],
+    () => groupByMenuGroup(activeModuleData.scenarios),
+    [activeModuleData.scenarios],
   )
   const availableGroups = useMemo<Set<MenuGroup>>(
     () => new Set(allGroups.map(g => g.group)),
@@ -167,18 +172,20 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [search, searchIndex, selectedGroup])
 
   // ── 表示用メタデータ ─────────────────────────────────────
-  const badge = moduleData.categoryPath?.[1]
+  const badge = activeModuleData.categoryPath?.[1]
 
   // ── イベントハンドラ ─────────────────────────────────────
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
+    // 手動選択ではデフォルトモジュール（prop moduleData）に戻す
+    setActiveModuleData(moduleData)
     setSelectedGroup(group)
     setSelectedScenarioId(null)
     setManualFields({})
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
-  }, [])
+  }, [moduleData])
 
   const handleSelectScenario = useCallback((id: string) => {
     setSelectedScenarioId(prev => {
@@ -190,7 +197,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setSelectedAddonIds(new Set())
         return null
       }
-      const sc = moduleData.scenarios.find(s => s.globalId === id)
+      const sc = activeModuleData.scenarios.find(s => s.globalId === id)
       if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
       setManualFields({})
       setSPrefix('none')
@@ -198,12 +205,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSelectedAddonIds(new Set())
       return id
     })
-  }, [moduleData.scenarios])
+  }, [activeModuleData.scenarios])
 
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
+    // searchIndex から候補エントリを逆引きして moduleId を取得
+    const entry = searchIndex.find(e => e.templateId === scenarioId)
+    if (entry) {
+      const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
+      setActiveModuleData(targetModule)
+    }
     handleSelectScenario(scenarioId)
     setSearch('')
-  }, [handleSelectScenario])
+  }, [searchIndex, allModules, moduleData, handleSelectScenario])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))
@@ -231,11 +244,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
 
       // next が確定した addon ids をもとに、各 targetSection を再合成する
-      if (moduleData.addons && selectedScenario) {
+      if (activeModuleData.addons && selectedScenario) {
         // targetSection → activeAddonKeys のマップを作る
         const sectionAddonMap = new Map<string, string[]>()
         for (const key of next) {
-          const item = moduleData.addons.items[key]
+          const item = activeModuleData.addons.items[key]
           if (!item) continue
           const sec = item.targetSection
           if (!sectionAddonMap.has(sec)) sectionAddonMap.set(sec, [])
@@ -243,7 +256,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
 
         // 各セクションを再合成して manualFields に反映
-        const followupDefaults = moduleData.defaults?.followup ?? {}
+        const followupDefaults = activeModuleData.defaults?.followup ?? {}
         setManualFields(prevFields => {
           const updated = { ...prevFields }
           for (const [sec, addonTexts] of sectionAddonMap) {
@@ -264,7 +277,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             if (!sectionAddonMap.has(sec)) {
               // このセクションへの addon が全解除 → base + followup のみに戻す
               const hasAnyAddonForSec = [...next].some(
-                k => moduleData.addons?.items[k]?.targetSection === sec,
+                k => activeModuleData.addons?.items[k]?.targetSection === sec,
               )
               if (!hasAnyAddonForSec) {
                 const base = computedFields[sec] ?? ''
@@ -285,7 +298,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       return next
     })
-  }, [moduleData.addons, moduleData.defaults?.followup, selectedScenario, computedFields])
+  }, [activeModuleData.addons, activeModuleData.defaults?.followup, selectedScenario, computedFields])
 
   // S欄トグル操作
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
@@ -406,7 +419,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         // 選択シナリオIDも反映（templateLabel 表示に使う）
         if (result.scenarioId) {
           setSelectedScenarioId(result.scenarioId)
-          const sc = moduleData.scenarios.find(s => s.globalId === result.scenarioId)
+          const sc = activeModuleData.scenarios.find(s => s.globalId === result.scenarioId)
           if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
         }
       } else {
@@ -482,9 +495,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     selectedScenarioId={selectedScenarioId}
                     onSelectScenario={handleSelectScenario}
                   />
-                  {selectedScenarioId !== null && moduleData.addons && (
+                  {selectedScenarioId !== null && activeModuleData.addons && (
                     <AddonPanel
-                      addons={moduleData.addons}
+                      addons={activeModuleData.addons}
                       selectedAddonIds={selectedAddonIds}
                       onToggle={handleAddonToggle}
                       visibleKeys={addonVisibleKeys}

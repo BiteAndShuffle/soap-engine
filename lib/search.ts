@@ -47,7 +47,7 @@ export function normalizeText(s: string): string {
 // ─────────────────────────────────────────────────────────────
 
 export interface SearchEntry {
-  /** 新スキーマ: scenario.id */
+  /** 新スキーマ: scenario.globalId（アプリ全体で一意） */
   templateId: string
   moduleId: string
   corpus: string
@@ -127,7 +127,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     const groupLabel = getMenuGroupFromScenario(scenario)
 
     return {
-      templateId: scenario.id,
+      templateId: scenario.globalId,
       moduleId: moduleData.moduleId,
       corpus,
       exactAliasTokens,
@@ -149,6 +149,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
 
 export interface SuggestionItem {
   templateId: string
+  moduleId: string
   label: string
   shortLabel: string
   groupLabel: string
@@ -227,6 +228,7 @@ export function getSuggestions(
     seenShortLabels.add(entry.shortLabel)
     results.push({
       templateId: entry.templateId,
+      moduleId: entry.moduleId,
       label: entry.label,
       shortLabel: entry.shortLabel,
       groupLabel: entry.groupLabel,
@@ -251,5 +253,5 @@ export function filterTemplates(
   const hitIds = new Set(
     index.filter(e => e.corpus.includes(q)).map(e => e.templateId),
   )
-  return scenarios.filter(s => hitIds.has(s.id))
+  return scenarios.filter(s => hitIds.has(s.globalId))
 }
