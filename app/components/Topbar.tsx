@@ -41,6 +41,12 @@ export default function Topbar({
   const [focusedIdx, setFocusedIdx] = useState(-1)
   const [isOpen, setIsOpen] = useState(false)
 
+  // suggestionsRef: Enter 押下時に render サイクルに依存せず
+  // 最新の suggestions を参照するための ref。
+  // props の suggestions が更新されるたびに同期する。
+  const suggestionsRef = useRef<SuggestionItem[]>(suggestions)
+  suggestionsRef.current = suggestions
+
   const showDropdown = isOpen && suggestions.length > 0
 
   const commitSuggestion = useCallback(
@@ -65,23 +71,34 @@ export default function Topbar({
         e.preventDefault()
         setFocusedIdx(i => Math.max(i - 1, 0))
         break
-      case 'Enter':
+      case 'Enter': {
         e.preventDefault()
-        // [DEBUG]
+        // ref 経由で Enter 時点の最新 suggestions を取得（stale closure 対策）
+        const currentSuggestions = suggestionsRef.current
+        // [DEBUG] props版とref版の両方をログ出力して差異を確認
         console.log('[Topbar Enter]', {
           showDropdown,
           isOpen,
-          suggestionsCount: suggestions.length,
+          suggestionsCount_props: suggestions.length,
+          suggestionsCount_ref: currentSuggestions.length,
+          suggestions0_props: suggestions[0]?.templateId,
+          suggestions0_ref: currentSuggestions[0]?.templateId,
           focusedIdx,
-          suggestions0: suggestions[0]?.templateId,
+          mismatch: suggestions[0]?.templateId !== currentSuggestions[0]?.templateId,
         })
-        if (focusedIdx >= 0 && suggestions[focusedIdx]) {
-          commitSuggestion(suggestions[focusedIdx])
-        } else if (suggestions[0]) {
-          // フォーカス未設定のとき先頭候補を自動選択
-          commitSuggestion(suggestions[0])
+        if (suggestions.length === 0 && currentSuggestions.length === 0) {
+          console.warn('[Topbar Enter] ⚠️ suggestions が空 → commitSuggestion スキップ')
+          break
+        }
+        // ref版を優先して使用
+        const target = focusedIdx >= 0 ? currentSuggestions[focusedIdx] : currentSuggestions[0]
+        if (target) {
+          commitSuggestion(target)
+        } else {
+          console.warn('[Topbar Enter] ⚠️ target が undefined → commitSuggestion スキップ')
         }
         break
+      }
       case 'Escape':
         setIsOpen(false)
         setFocusedIdx(-1)
