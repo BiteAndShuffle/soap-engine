@@ -206,14 +206,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
-    // group 内の最初のシナリオを自動選択する
-    const firstScenario = allGroups.find(g => g.group === group)?.scenarios[0]
-    setSelectedScenarioId(firstScenario?.globalId ?? null)
+    setSelectedScenarioId(null)
     setManualFields({})
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
-  }, [allGroups])
+  }, [])
 
   const handleSelectScenario = useCallback((id: string) => {
     setSelectedScenarioId(prev => {
