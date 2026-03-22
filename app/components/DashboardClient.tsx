@@ -5,7 +5,7 @@ import { useMemo, useState, useCallback, useEffect } from 'react'
 import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
 import { buildSoapFromScenario, buildSoapFull, mergeBlocks } from '../../lib/buildSoap'
-import { buildSearchIndex, getSuggestions } from '../../lib/search'
+import { buildSearchIndex, getSuggestions, normalizeText } from '../../lib/search'
 import {
   type MenuGroup,
   groupByMenuGroup,
@@ -252,15 +252,33 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       scenarioId,
       foundEntry: entry ? { moduleId: entry.moduleId, templateId: entry.templateId } : null,
       searchIndexLength: searchIndex.length,
+      currentSearch: search,
     })
     if (entry) {
       const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
       console.log('[handleSelectSuggestion] switching to module:', targetModule.moduleId)
       setActiveModuleData(targetModule)
     }
-    // suggestions（getSuggestions 結果）から matchedBrandName を取得
-    const suggestion = suggestions.find(s => s.templateId === scenarioId)
-    setActiveBrandName(suggestion?.matchedBrandName)
+    // matchedBrandName: suggestions への依存を排除し、searchIndex + 現在のクエリから直接解決。
+    // これにより setSearch('') 後の suggestions 消去による stale closure を防ぐ。
+    const q = normalizeText(search)
+    let matchedBrandName: string | undefined
+    if (entry && q) {
+      for (const brand of entry.brandNames) {
+        if (normalizeText(brand) === q) { matchedBrandName = brand; break }
+      }
+      if (!matchedBrandName) {
+        for (const brand of entry.brandNames) {
+          if (normalizeText(brand).startsWith(q)) { matchedBrandName = brand; break }
+        }
+      }
+      if (!matchedBrandName) {
+        for (const brand of entry.brandNames) {
+          if (normalizeText(brand).includes(q)) { matchedBrandName = brand; break }
+        }
+      }
+    }
+    setActiveBrandName(matchedBrandName)
     // シナリオは自動選択しない: selectedScenarioId は null のまま
     // 検索 = 薬剤（モジュール）切替のみ。シナリオ確定は中央パネルのクリックで行う。
     setSelectedScenarioId(null)
@@ -270,7 +288,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSStatus('stable')
     setSelectedAddonIds(new Set())
     setSearch('')
-  }, [searchIndex, allModules, moduleData, suggestions])
+  }, [searchIndex, allModules, moduleData, search])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))
