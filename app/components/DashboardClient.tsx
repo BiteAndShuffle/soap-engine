@@ -164,10 +164,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // getMenuGroupFromScenario(sc) === selectedGroup で再フィルタ。
   // sideEffectPresence の完全一致のみ。部分一致・includes 禁止。
   const groupScenarios = useMemo(() => {
-    if (!selectedGroup) {
-      // group 未選択（検索直後など）: 全シナリオをフラットに返す
-      return allGroups.flatMap(g => g.scenarios)
-    }
+    // group 未選択（検索直後・初期状態など）: セカンドパネルは空
+    if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
     return raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
   }, [allGroups, selectedGroup])
