@@ -2,56 +2,19 @@
  * addonFilter.ts
  *
  * シナリオに応じて表示するアドオンキーを決定する純関数。
- * SSOT: selectedScenario の scenarioType / scenarioGroup を参照する。
+ * SSOT: scenario.addonsRef のみを参照する。
  *
- * ルール（仕様通り）:
- *   sickday   group    → sickday  アドオンを表示
- *   oral      group    → oral     アドオンを表示
- *   lifestyle type     → counseling アドオンを表示
- *   その他           → counseling / oral / sickday は非表示
- *   sideEffects は常に非表示（SOAP生成には addonsRef 経由で使われるが
- *                             UIトグルボタンには出さない）
+ * ルール:
+ *   addonsRef あり → S/O/A/P 全セクションのキーを union して返す
+ *                    （group による UI_HIDDEN フィルタは行わない）
+ *   addonsRef なし → 空配列（アドオンパネル非表示）
  *
- * 優先順位（高→低）:
- *   1. scenario.addonsRef が存在する → addonsRef の union を返すが、
- *      sideEffects グループは除外（UIトグル非表示）
- *   2. scenarioType / scenarioGroup のルールで自動選択
+ * 廃止:
+ *   GROUP_RULES（scenarioType/scenarioGroup ベースの自動選択）は廃止。
+ *   addonsRef のないシナリオにアドオンを自動表示しない。
  */
 
 import type { Scenario, AddonsData } from './types'
-
-// ─────────────────────────────────────────────────────────────
-// UIトグルに表示しないグループ（SOAP生成には使われるがボタンには出さない）
-// ─────────────────────────────────────────────────────────────
-
-const UI_HIDDEN_GROUPS: ReadonlySet<string> = new Set(['sideEffects'])
-
-// ─────────────────────────────────────────────────────────────
-// グループ → 表示条件マップ
-//   key: addons.items 内の group 名
-//   predicate: scenario を受け取り「このグループを表示すべきか」を返す関数
-// ─────────────────────────────────────────────────────────────
-
-type GroupPredicate = (sc: Scenario) => boolean
-
-const GROUP_RULES: Array<{ group: string; match: GroupPredicate }> = [
-  {
-    // sickday アドオン: scenarioType === "sickday" のシナリオのみ
-    group: 'sickday',
-    match: sc => sc.scenarioType === 'sickday',
-  },
-  {
-    // oral アドオン: scenarioGroup === "start_or_change" のシナリオのみ
-    group: 'oral',
-    match: sc => sc.scenarioGroup === 'start_or_change',
-  },
-  {
-    // counseling アドオン: scenarioType === "lifestyle" のシナリオのみ
-    group: 'counseling',
-    match: sc => sc.scenarioType === 'lifestyle',
-  },
-  // sideEffects は UI_HIDDEN_GROUPS で常に除外
-]
 
 // ─────────────────────────────────────────────────────────────
 // getVisibleAddonKeys — 表示するアドオンキー配列を返す純関数
@@ -68,32 +31,22 @@ export function getVisibleAddonKeys(
 ): string[] {
   if (!addons || !scenario) return []
 
-  // 1. scenario.addonsRef が存在する → そのキー一覧を返す（個別指定優先）
-  //    ただし UI_HIDDEN_GROUPS（sideEffects 等）は除外する。
-  //    それらは SOAP 生成時（buildSoapFull / soapComposer）では使われるが、
-  //    ユーザが手動トグルするボタンには出さない。
+  // addonsRef が SSOT（source of truth）。
+  // 存在する場合: そのキー一覧をそのまま返す。
+  //   - UI_HIDDEN_GROUPS フィルタを適用しない。
+  //     addonsRef で明示指定されたキーはグループに関わらず表示する。
+  //   - items に存在しないキーのみ除外（参照切れ防止）。
+  // 存在しない場合: アドオンなし（空配列）。
+  //   GROUP_RULES フォールバックは廃止。addonsRef のない
+  //   シナリオにはアドオンパネルを表示しない。
   const ref = scenario.addonsRef
-  if (ref) {
-    const allKeys: string[] = []
-    const soapSections = ['S', 'O', 'A', 'P'] as const
-    for (const k of soapSections) {
-      if (ref[k]) allKeys.push(...ref[k]!)
-    }
-    // 重複除去（順序保持）・items に存在するキーのみ・UI非表示グループは除外
-    return [...new Set(allKeys)].filter(
-      k => k in addons.items && !UI_HIDDEN_GROUPS.has(addons.items[k].group),
-    )
+  if (!ref) return []
+
+  const allKeys: string[] = []
+  const soapSections = ['S', 'O', 'A', 'P'] as const
+  for (const k of soapSections) {
+    if (ref[k]) allKeys.push(...ref[k]!)
   }
-
-  // 2. GROUP_RULES に従いグループを選択し、そのグループのアイテムキーを返す
-  const allowedGroups = new Set(
-    GROUP_RULES.filter(rule => rule.match(scenario)).map(rule => rule.group),
-  )
-
-  if (allowedGroups.size === 0) return []
-
-  // addons.items から allowedGroups に属するキーを抽出（items の定義順を維持）
-  return Object.entries(addons.items)
-    .filter(([, item]) => allowedGroups.has(item.group))
-    .map(([key]) => key)
+  // 重複除去（順序保持）・items に存在するキーのみ
+  return [...new Set(allKeys)].filter(k => k in addons.items)
 }

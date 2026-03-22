@@ -181,12 +181,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [allGroups, selectedGroup, activeModuleData.moduleId])
 
   // ── サジェスト候補 ───────────────────────────────────────
-  // selectedGroup が設定されている場合は groupLabel 完全一致のみ返す
-  const suggestions = useMemo(() => {
-    const raw = getSuggestions(search, searchIndex)
-    if (!selectedGroup) return raw
-    return raw.filter(item => item.groupLabel === selectedGroup)
-  }, [search, searchIndex, selectedGroup])
+  // selectedGroup に関係なく常に全候補を返す。
+  // 検索 Enter は左メニュー状態に依存せず query だけで確定するべきであるため、
+  // selectedGroup によるフィルタを廃止。
+  const suggestions = useMemo(
+    () => getSuggestions(search, searchIndex),
+    [search, searchIndex],
+  )
 
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = activeModuleData.categoryPath?.[1]
