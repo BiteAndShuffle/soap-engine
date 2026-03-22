@@ -173,7 +173,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = activeModuleData.categoryPath?.[1]
-  const activeDrugLabel = activeModuleData.drug?.search?.primaryDisplayName
+
+  // ── 選択中薬剤ラベル: 「ブランド名（一般名）」形式 ───────
+  // activeBrandName: 将来は検索語に最も近いブランド名を優先する拡張ポイント。
+  //   現在は brandNames[0] 固定（代表ブランド）。
+  const activeBrandName = activeModuleData.drug?.brandNames?.[0]
+  const activeGenericName = activeModuleData.drug?.genericName
+  const activeDrugLabel = activeBrandName && activeGenericName
+    ? `${activeBrandName}（${activeGenericName}）`
+    : activeBrandName ?? activeGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
 
   // ── イベントハンドラ ─────────────────────────────────────
 
