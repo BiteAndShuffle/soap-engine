@@ -177,15 +177,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ── イベントハンドラ ─────────────────────────────────────
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
-    // 手動選択ではデフォルトモジュール（prop moduleData）に戻す
-    setActiveModuleData(moduleData)
     setSelectedGroup(group)
     setSelectedScenarioId(null)
     setManualFields({})
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
-  }, [moduleData])
+  }, [])
 
   const handleSelectScenario = useCallback((id: string) => {
     setSelectedScenarioId(prev => {
