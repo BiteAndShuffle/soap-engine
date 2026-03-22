@@ -164,7 +164,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // getMenuGroupFromScenario(sc) === selectedGroup で再フィルタ。
   // sideEffectPresence の完全一致のみ。部分一致・includes 禁止。
   const groupScenarios = useMemo(() => {
-    if (!selectedGroup) return []
+    if (!selectedGroup) {
+      // group 未選択（検索直後など）: 全シナリオをフラットに返す
+      return allGroups.flatMap(g => g.scenarios)
+    }
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
     return raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
   }, [allGroups, selectedGroup])
@@ -521,12 +524,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
           {uiMode === 'manual' && (
             <>
-              {selectedGroup === null ? (
+              {groupScenarios.length === 0 ? (
                 <div className={s.secondaryEmpty} aria-hidden="true" />
               ) : (
                 <>
                   <TemplateListPanel
-                    key={selectedGroup}
+                    key={selectedGroup ?? 'all'}
                     group={selectedGroup}
                     scenarios={groupScenarios}
                     selectedScenarioId={selectedScenarioId}
