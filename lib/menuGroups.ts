@@ -77,7 +77,7 @@ export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
   ) return '副作用あり'
 
   // not_applicable: scenarioGroup / id で分類
-  const sg = scenario.scenarioGroup
+  const sg = scenario.scenarioGroup ?? ''
   const sid = scenario.id
 
   if (sg === 'start_or_change') return '初回'

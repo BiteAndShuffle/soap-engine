@@ -384,11 +384,27 @@
         "title": "副作用注意喚起（低血糖）",
         "group": "sideEffects",
         "targetSection": "P",
-        "text": "他の糖尿病薬と併用している場合は、ふらつき・動悸などの低血糖症状が出ることがあります。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取するよう指導。",
+        "text": "他の糖尿病薬と併用している場合は、ふらつき・動悸などの低血糖症状が出ることがあります。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取するよう説明。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
           "hypoglycemia_attention"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_injection_guidance": {
+        "key": "addon_injection_guidance",
+        "id": "addon_injection_guidance",
+        "title": "注射指導",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "注射の具体的な手技については、指導せんを用いて説明。\n注射部位は、同じ場所に繰り返し行うと皮膚が硬くなることがあります。\n部位を適切に変えながら使用してください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "administration_instruction"
         ],
         "clinicalTags": [],
         "counselingTags": [],
@@ -463,7 +479,7 @@
       "id": "initial",
       "globalId": "dm_glp1ra_injection.initial",
       "title": "初回",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
         "initial",
@@ -498,7 +514,7 @@
       "id": "dose_increase_low_perceived_effect",
       "globalId": "dm_glp1ra_injection.dose_increase_low_perceived_effect",
       "title": "増量（効果実感乏しい）",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "dose_change",
@@ -533,7 +549,7 @@
       "id": "dose_increase_no_lab_improvement",
       "globalId": "dm_glp1ra_injection.dose_increase_no_lab_improvement",
       "title": "増量（検査値改善なし）",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "dose_change",
@@ -568,7 +584,7 @@
       "id": "dose_increase_due_to_other_med_adjustment",
       "globalId": "dm_glp1ra_injection.dose_increase_due_to_other_med_adjustment",
       "title": "増量（他剤との調整）",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "dose_change",
@@ -603,7 +619,7 @@
       "id": "dose_decrease_improved",
       "globalId": "dm_glp1ra_injection.dose_decrease_improved",
       "title": "減量（症状改善）",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "dose_change",
@@ -633,7 +649,7 @@
       "id": "dose_decrease_low_perceived_effect",
       "globalId": "dm_glp1ra_injection.dose_decrease_low_perceived_effect",
       "title": "減量（効果実感乏しい）",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "dose_change",
@@ -663,7 +679,7 @@
       "id": "dose_decrease_due_to_other_med_adjustment",
       "globalId": "dm_glp1ra_injection.dose_decrease_due_to_other_med_adjustment",
       "title": "減量（他剤との調整）",
-      "scenarioType": "treatment",
+      "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "dose_change",
@@ -856,9 +872,9 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "使用して、症状は落ち着いている。使用は継続できている。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)使用中",
       "A": "コンプライアンス良好。治療継続可能。",
-      "P": "将来の合併症予防のため継続してください。",
+      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。",
       "followupRef": "default_followup",
       "phrasing": null,
       "evidenceRefs": [],
@@ -885,9 +901,9 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "使用を忘れることがある様子。",
-      "O": "GLP-1受容体作動薬(注射)処方",
-      "A": "コンプライアンス不良。服薬指導実施。",
-      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。\n使用忘れにより血糖値が変動し、十分な治療効果が得られない可能性があります。",
+      "O": "GLP-1受容体作動薬(注射)使用中",
+      "A": "コンプライアンス不良。使用忘れあり。",
+      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。\n使用忘れにより血糖値が変動し、十分な治療効果が得られない可能性があることを説明。",
       "addonsRef": {
         "P": [
           "addon_adherence_alarm_suggestion",
@@ -920,9 +936,9 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "自己判断で使用を調整していた様子。",
-      "O": "GLP-1受容体作動薬(注射)処方",
-      "A": "コンプライアンス不良。服薬指導実施。",
-      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。\n自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があることを説明。\n有害事象や体調変化がある場合は、自己調整せず医療機関へ相談するよう指導。",
+      "O": "GLP-1受容体作動薬(注射)使用中",
+      "A": "コンプライアンス不良。自己判断による使用調整あり。",
+      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。\n自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があることを説明。\n有害事象や体調変化がある場合は、自己調整せず医療機関へ相談する必要があることを説明。",
       "followupRef": "default_followup",
       "phrasing": null,
       "evidenceRefs": [],
@@ -950,9 +966,9 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "都合で受診できなかった様子。",
-      "O": "GLP-1受容体作動薬(注射)処方",
-      "A": "コンプライアンス不良。服薬指導実施。",
-      "P": "継続投与が血糖コントロール維持および合併症予防に重要であることを説明。\n治療中断により血糖値悪化の可能性があることを説明。\n受診が困難な場合は、事前に医療機関へ相談するよう助言。",
+      "O": "GLP-1受容体作動薬(注射)使用中",
+      "A": "コンプライアンス不良。受診遅延あり。",
+      "P": "継続投与が血糖コントロール維持および合併症予防に重要であることを説明。\n治療中断により血糖値悪化の可能性があることを説明。\n受診が困難な場合は、事前に医療機関へ相談する必要があることを説明。",
       "followupRef": "default_followup",
       "phrasing": null,
       "evidenceRefs": [],
@@ -964,10 +980,45 @@
       "workflowTags": []
     },
     {
+      "id": "cp_poor_injection_technique",
+      "globalId": "dm_glp1ra_injection.cp_poor_injection_technique",
+      "title": "コンプライアンス不良（注射手技不備）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "injection_technique"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "S": "注射手技がわからず使用できなかった様子。",
+      "O": "GLP-1受容体作動薬(注射)使用中",
+      "A": "コンプライアンス不良。注射手技理解不十分の可能性あり。",
+      "P": "継続投与が血糖コントロール維持および合併症予防に重要であることを説明。\n治療中断により血糖値悪化の可能性があることを説明。\n注射手技について再指導が必要であることを説明。",
+      "addonsRef": {
+        "P": [
+          "addon_injection_guidance"
+        ]
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "adherence_support",
+        "administration_instruction"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
       "id": "end_improved",
       "globalId": "dm_glp1ra_injection.end_improved",
       "title": "終了（改善）",
-      "scenarioType": "discontinuation",
+      "scenarioType": "treatment_end",
       "scenarioGroup": "end_improved",
       "scenarioTags": [
         "end",
@@ -995,7 +1046,7 @@
       "id": "end_insufficient_effect",
       "globalId": "dm_glp1ra_injection.end_insufficient_effect",
       "title": "終了（効果不十分）",
-      "scenarioType": "discontinuation",
+      "scenarioType": "treatment_end",
       "scenarioGroup": "end_insufficient_effect",
       "scenarioTags": [
         "end",
@@ -1023,7 +1074,7 @@
       "id": "end_ineffective",
       "globalId": "dm_glp1ra_injection.end_ineffective",
       "title": "終了（無効）",
-      "scenarioType": "discontinuation",
+      "scenarioType": "treatment_end",
       "scenarioGroup": "end_ineffective",
       "scenarioTags": [
         "end",
@@ -1207,7 +1258,7 @@
       "id": "lifestyle_guidance",
       "globalId": "dm_glp1ra_injection.lifestyle_guidance",
       "title": "生活指導",
-      "scenarioType": "lifestyle",
+      "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
         "lifestyle",
@@ -1261,6 +1312,34 @@
         "sickday_guidance",
         "urgent_consult_advice"
       ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "injection_technique_check",
+      "globalId": "dm_glp1ra_injection.injection_technique_check",
+      "title": "注射手技の確認",
+      "scenarioType": "followup",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "S": "注射のやり方がこれで合っているか不安とのこと。",
+      "O": "自己注射は継続しているが、手技に不安あり。",
+      "A": "注射手技理解不十分の可能性あり。",
+      "P": "注射手技について再確認し、必要に応じて再指導が必要であることを説明。",
+      "addonsRef": {
+        "P": [
+          "addon_injection_guidance"
+        ]
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": []
