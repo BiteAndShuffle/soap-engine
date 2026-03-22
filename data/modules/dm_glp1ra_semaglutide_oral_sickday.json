@@ -39,7 +39,7 @@
     ],
     "search": {
       "primaryDisplayName": "リベルサス",
-      "priority": 100,
+      "priority": 0,
       "exactAliases": [
         "リベルサス",
         "りべるさす",
@@ -67,7 +67,7 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": false
       },
       "deprecated": false
     }
