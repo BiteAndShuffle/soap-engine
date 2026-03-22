@@ -9,6 +9,8 @@ export type RouteFilter = 'all' | 'internal' | 'topical'
 interface TopbarProps {
   title: string
   badge?: string
+  /** 現在選択中の薬剤名（activeModuleData の primaryDisplayName）*/
+  activeDrugLabel?: string
   searchValue: string
   onSearchChange: (value: string) => void
   suggestions: SuggestionItem[]
@@ -26,6 +28,7 @@ const ROUTE_LABELS: Record<RouteFilter, string> = {
 export default function Topbar({
   title,
   badge,
+  activeDrugLabel,
   searchValue,
   onSearchChange,
   suggestions,
@@ -52,7 +55,7 @@ export default function Topbar({
   )
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (!showDropdown) return
+    if (!showDropdown && e.key !== 'Enter') return
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
@@ -66,6 +69,9 @@ export default function Topbar({
         e.preventDefault()
         if (focusedIdx >= 0 && suggestions[focusedIdx]) {
           commitSuggestion(suggestions[focusedIdx])
+        } else if (suggestions[0]) {
+          // フォーカス未設定のとき先頭候補を自動選択
+          commitSuggestion(suggestions[0])
         }
         break
       case 'Escape':
@@ -92,6 +98,11 @@ export default function Topbar({
         {title}
         {badge && <span className={s.topbarBadge}>{badge}</span>}
       </span>
+
+      {/* ── 選択中薬剤名ラベル（タイトル右・中央寄り） ── */}
+      {activeDrugLabel && (
+        <span className={s.topbarDrugLabel}>{activeDrugLabel}</span>
+      )}
 
       {/* ── 右エリア: フィルタトグル + 検索窓 を横並び ── */}
       <div className={s.searchArea}>

@@ -59,6 +59,21 @@
   letter-spacing: 0.04em;
 }
 
+/* ── 選択中薬剤名ラベル（タイトル右・中央寄り） ─────────────── */
+
+.topbarDrugLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #a0a0c8;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid #3a3a5c;
+  border-radius: 6px;
+  background: #22223a;
+  letter-spacing: 0.02em;
+}
+
 /* ── 辞書ボタン（Topbar左端・DOM先頭） ──────────────────────── */
 
 .dictBtn {

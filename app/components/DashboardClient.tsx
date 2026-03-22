@@ -173,6 +173,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = activeModuleData.categoryPath?.[1]
+  const activeDrugLabel = activeModuleData.drug?.search?.primaryDisplayName
 
   // ── イベントハンドラ ─────────────────────────────────────
 
@@ -439,6 +440,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       <Topbar
         title="SOAP Engine"
         badge={badge}
+        activeDrugLabel={activeDrugLabel}
         searchValue={search}
         onSearchChange={setSearch}
         suggestions={suggestions}
