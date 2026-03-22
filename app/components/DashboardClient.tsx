@@ -167,8 +167,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // group 未選択（検索直後・初期状態など）: セカンドパネルは空
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
-    return raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
-  }, [allGroups, selectedGroup])
+    const result = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
+    // [DEBUG] ブラウザコンソールで実測確認用（後で削除）
+    console.log('[groupScenarios]', {
+      moduleId: activeModuleData.moduleId,
+      selectedGroup,
+      allGroupsSummary: allGroups.map(g => [g.group, g.scenarios.length]),
+      rawCount: raw.length,
+      resultCount: result.length,
+      resultIds: result.map(sc => sc.id),
+    })
+    return result
+  }, [allGroups, selectedGroup, activeModuleData.moduleId])
 
   // ── サジェスト候補 ───────────────────────────────────────
   // selectedGroup が設定されている場合は groupLabel 完全一致のみ返す
@@ -237,8 +247,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
     // searchIndex から候補エントリを逆引きして moduleId を取得し、activeModuleData を切替
     const entry = searchIndex.find(e => e.templateId === scenarioId)
+    // [DEBUG]
+    console.log('[handleSelectSuggestion]', {
+      scenarioId,
+      foundEntry: entry ? { moduleId: entry.moduleId, templateId: entry.templateId } : null,
+      searchIndexLength: searchIndex.length,
+    })
     if (entry) {
       const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
+      console.log('[handleSelectSuggestion] switching to module:', targetModule.moduleId)
       setActiveModuleData(targetModule)
     }
     // suggestions（getSuggestions 結果）から matchedBrandName を取得

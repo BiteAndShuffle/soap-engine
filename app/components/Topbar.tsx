@@ -67,6 +67,14 @@ export default function Topbar({
         break
       case 'Enter':
         e.preventDefault()
+        // [DEBUG]
+        console.log('[Topbar Enter]', {
+          showDropdown,
+          isOpen,
+          suggestionsCount: suggestions.length,
+          focusedIdx,
+          suggestions0: suggestions[0]?.templateId,
+        })
         if (focusedIdx >= 0 && suggestions[focusedIdx]) {
           commitSuggestion(suggestions[focusedIdx])
         } else if (suggestions[0]) {
