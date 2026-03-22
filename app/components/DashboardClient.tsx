@@ -3,6 +3,7 @@
 import { useMemo, useState, useCallback, useEffect } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
+import { TAG_TO_GENERIC_NAME } from '../../lib/types'
 import { buildSoapFromScenario, buildSoapFull, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions } from '../../lib/search'
 import {
@@ -67,6 +68,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 手動選択（Sidebar→SecondaryPanel）は常に moduleData（デフォルト=oral）。
   // 検索候補選択時に候補の moduleId に一致するモジュールへ切り替える。
   const [activeModuleData, setActiveModuleData] = useState<ModuleData>(moduleData)
+
+  // ── 選択中ブランド名（検索クエリに最も近いブランド） ───────
+  // 将来: 検索語からブランドを特定して優先表示する拡張ポイント。
+  // undefined のときは activeModuleData.drug.brandNames[0] にフォールバック。
+  const [activeBrandName, setActiveBrandName] = useState<string | undefined>(undefined)
 
   // ── 状態 ──────────────────────────────────────────────────
   const [search, setSearch] = useState('')
@@ -175,13 +181,26 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const badge = activeModuleData.categoryPath?.[1]
 
   // ── 選択中薬剤ラベル: 「ブランド名（一般名）」形式 ───────
-  // activeBrandName: 将来は検索語に最も近いブランド名を優先する拡張ポイント。
-  //   現在は brandNames[0] 固定（代表ブランド）。
-  const activeBrandName = activeModuleData.drug?.brandNames?.[0]
-  const activeGenericName = activeModuleData.drug?.genericName
-  const activeDrugLabel = activeBrandName && activeGenericName
-    ? `${activeBrandName}（${activeGenericName}）`
-    : activeBrandName ?? activeGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
+  // 優先順:
+  //   1. activeBrandName（検索ヒットしたブランド）+ drugResolution で解決した一般名
+  //   2. activeBrandName + drug.genericName
+  //   3. brandNames[0] + drugResolution で解決した一般名
+  //   4. brandNames[0] + drug.genericName
+  //   5. primaryDisplayName フォールバック
+  const resolvedBrand = activeBrandName ?? activeModuleData.drug?.brandNames?.[0]
+  const drugResolution = activeModuleData.drugResolution
+  const resolvedGenericName = (() => {
+    if (resolvedBrand && drugResolution) {
+      const tags = drugResolution.brandToTags[resolvedBrand] ?? []
+      for (const tag of tags) {
+        if (TAG_TO_GENERIC_NAME[tag]) return TAG_TO_GENERIC_NAME[tag]
+      }
+    }
+    return activeModuleData.drug?.genericName
+  })()
+  const activeDrugLabel = resolvedBrand && resolvedGenericName
+    ? `${resolvedBrand}（${resolvedGenericName}）`
+    : resolvedBrand ?? resolvedGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
 
   // ── イベントハンドラ ─────────────────────────────────────
 
@@ -223,9 +242,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
       setActiveModuleData(targetModule)
     }
+    // suggestions（getSuggestions 結果）から matchedBrandName を取得
+    const suggestion = suggestions.find(s => s.templateId === scenarioId)
+    setActiveBrandName(suggestion?.matchedBrandName)
     handleSelectScenario(scenarioId)
     setSearch('')
-  }, [searchIndex, allModules, moduleData, handleSelectScenario])
+  }, [searchIndex, allModules, moduleData, suggestions, handleSelectScenario])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))

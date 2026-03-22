@@ -209,6 +209,33 @@ export interface Drug {
 }
 
 // ─────────────────────────────────────────────────────────────
+// DrugResolution（ブランド名 → 成分タグ のマッピング）
+// ─────────────────────────────────────────────────────────────
+
+export interface DrugResolution {
+  /**
+   * ブランド名 → タグ配列。
+   * タグは成分識別子（"semaglutide", "liraglutide" 等）を含む。
+   * TAG_TO_GENERIC_NAME と組み合わせてブランドごとの一般名を解決する。
+   */
+  brandToTags: Record<string, string[]>
+}
+
+/**
+ * 成分タグ → 日本語一般名 の変換テーブル。
+ * DrugResolution.brandToTags のタグから一般名を導出する際に使用。
+ */
+export const TAG_TO_GENERIC_NAME: Record<string, string> = {
+  semaglutide:  'セマグルチド',
+  liraglutide:  'リラグルチド',
+  dulaglutide:  'デュラグルチド',
+  exenatide:    'エキセナチド',
+  lixisenatide: 'リキシセナチド',
+  tirzepatide:  'チルゼパチド',
+  insulin:      'インスリン',
+}
+
+// ─────────────────────────────────────────────────────────────
 // MergedBlock（保持＝合成機能）
 // ─────────────────────────────────────────────────────────────
 
@@ -293,6 +320,7 @@ export interface ModuleData {
   moduleVersion?: string
   categoryPath?: string[]
   drug?: Drug
+  drugResolution?: DrugResolution
   display?: { title: string; subtitle: string; drugClassLabel?: string }
   template?: ModuleTemplate
   risks?: ModuleRisks

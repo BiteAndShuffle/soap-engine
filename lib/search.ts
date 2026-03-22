@@ -64,6 +64,11 @@ export interface SearchEntry {
   drugDisplayLabel?: string
   suppressOnExactHit: boolean
   priority: number
+  /**
+   * ブランド名リスト（drug.brandNames）。
+   * getSuggestions でクエリと照合し、どのブランドにヒットしたか特定するために使用。
+   */
+  brandNames: string[]
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -108,6 +113,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const globalCorpus = normalizeText(globalTags.join(' '))
 
   const exampleDrugName = drug?.brandNames?.[0]
+  const brandNames = drug?.brandNames ?? []
 
   const suppressOnExactHit =
     drugSearch?.matchPolicy?.suppressCrossModuleSuggestionsOnExactHit ?? false
@@ -139,6 +145,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       drugDisplayLabel: exampleDrugName,
       suppressOnExactHit,
       priority,
+      brandNames,
     }
   })
 }
@@ -154,6 +161,12 @@ export interface SuggestionItem {
   shortLabel: string
   groupLabel: string
   drugDisplayLabel?: string
+  /**
+   * 検索クエリに最も近かったブランド名。
+   * exactAliases / aliasTokens でヒットしたブランドを特定して格納。
+   * ブランド特定できない場合は undefined（DashboardClient 側でフォールバック）。
+   */
+  matchedBrandName?: string
 }
 
 function scoreEntry(entry: SearchEntry, q: string): number {
@@ -226,6 +239,25 @@ export function getSuggestions(
     }
     if (seenShortLabels.has(entry.shortLabel)) continue
     seenShortLabels.add(entry.shortLabel)
+
+    // クエリに最も近いブランド名を特定する
+    // 優先順: exactAlias完全一致 → aliasToken前方一致 → aliasToken部分一致
+    let matchedBrandName: string | undefined
+    for (const brand of entry.brandNames) {
+      const norm = normalizeText(brand)
+      if (norm === q) { matchedBrandName = brand; break }
+    }
+    if (!matchedBrandName) {
+      for (const brand of entry.brandNames) {
+        if (normalizeText(brand).startsWith(q)) { matchedBrandName = brand; break }
+      }
+    }
+    if (!matchedBrandName) {
+      for (const brand of entry.brandNames) {
+        if (normalizeText(brand).includes(q)) { matchedBrandName = brand; break }
+      }
+    }
+
     results.push({
       templateId: entry.templateId,
       moduleId: entry.moduleId,
@@ -233,6 +265,7 @@ export function getSuggestions(
       shortLabel: entry.shortLabel,
       groupLabel: entry.groupLabel,
       drugDisplayLabel: entry.drugDisplayLabel,
+      matchedBrandName,
     })
   }
 
