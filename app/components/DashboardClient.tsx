@@ -470,7 +470,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       <Topbar
         title="SOAP Engine"
         badge={badge}
-        activeDrugLabel={activeDrugLabel}
+        activeDrugLabel={selectedScenarioId !== null ? activeDrugLabel : undefined}
         searchValue={search}
         onSearchChange={setSearch}
         suggestions={suggestions}
