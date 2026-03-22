@@ -234,7 +234,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeModuleData.scenarios])
 
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
-    // searchIndex から候補エントリを逆引きして moduleId を取得
+    // searchIndex から候補エントリを逆引きして moduleId を取得し、activeModuleData を切替
     const entry = searchIndex.find(e => e.templateId === scenarioId)
     if (entry) {
       const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
@@ -243,9 +243,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // suggestions（getSuggestions 結果）から matchedBrandName を取得
     const suggestion = suggestions.find(s => s.templateId === scenarioId)
     setActiveBrandName(suggestion?.matchedBrandName)
-    handleSelectScenario(scenarioId)
+    // シナリオは自動選択しない: selectedScenarioId は null のまま
+    // 検索 = 薬剤（モジュール）切替のみ。シナリオ確定は中央パネルのクリックで行う。
+    setSelectedScenarioId(null)
+    setSelectedGroup(null)
+    setManualFields({})
+    setSPrefix('none')
+    setSStatus('stable')
+    setSelectedAddonIds(new Set())
     setSearch('')
-  }, [searchIndex, allModules, moduleData, suggestions, handleSelectScenario])
+  }, [searchIndex, allModules, moduleData, suggestions])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))
@@ -468,7 +475,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       <Topbar
         title="SOAP Engine"
         badge={badge}
-        activeDrugLabel={selectedScenarioId !== null ? activeDrugLabel : undefined}
+        activeDrugLabel={activeBrandName != null || selectedScenarioId !== null ? activeDrugLabel : undefined}
         searchValue={search}
         onSearchChange={setSearch}
         suggestions={suggestions}
