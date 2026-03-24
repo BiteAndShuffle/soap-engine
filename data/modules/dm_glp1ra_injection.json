@@ -361,9 +361,9 @@
   "evidenceCatalog": [],
   "addons": {
     "items": {
-      "glycemic_guidance": {
-        "key": "glycemic_guidance",
-        "id": "glycemic_guidance",
+      "addon_glycemic_guidance": {
+        "key": "addon_glycemic_guidance",
+        "id": "addon_glycemic_guidance",
         "title": "血糖指導",
         "group": "counseling",
         "targetSection": "P",
@@ -378,9 +378,9 @@
         "counselingTags": [],
         "workflowTags": []
       },
-      "se_hypoglycemia_guidance": {
-        "key": "se_hypoglycemia_guidance",
-        "id": "se_hypoglycemia_guidance",
+      "addon_se_hypoglycemia_guidance": {
+        "key": "addon_se_hypoglycemia_guidance",
+        "id": "addon_se_hypoglycemia_guidance",
         "title": "副作用注意喚起（低血糖）",
         "group": "sideEffects",
         "targetSection": "P",
@@ -442,9 +442,9 @@
         "counselingTags": [],
         "workflowTags": []
       },
-      "sickday_hold_sglt2_metformin": {
-        "key": "sickday_hold_sglt2_metformin",
-        "id": "sickday_hold_sglt2_metformin",
+      "addon_sickday_hold_sglt2_metformin": {
+        "key": "addon_sickday_hold_sglt2_metformin",
+        "id": "addon_sickday_hold_sglt2_metformin",
         "title": "シックデイ時併用薬注意",
         "group": "sickday",
         "targetSection": "P",
@@ -462,15 +462,16 @@
     },
     "orderPresets": {
       "initial_default": [
-        "glycemic_guidance",
-        "se_hypoglycemia_guidance"
+        "addon_glycemic_guidance",
+        "addon_se_hypoglycemia_guidance",
+        "addon_injection_guidance"
       ],
       "cp_poor_missed_doses_default": [
         "addon_adherence_alarm_suggestion",
         "addon_adherence_prep_before_meal_habit"
       ],
       "sickday_default": [
-        "sickday_hold_sglt2_metformin"
+        "addon_sickday_hold_sglt2_metformin"
       ]
     }
   },
@@ -478,7 +479,7 @@
     {
       "id": "initial",
       "globalId": "dm_glp1ra_injection.initial",
-      "title": "初回",
+      "title": "GLP-1受容体作動薬(注射) 初回",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
@@ -495,8 +496,9 @@
       "P": "GLP-1受容体作動薬(注射)は血糖値を改善する薬です。\n悪心や食欲不振などの副作用があればご相談ください。",
       "addonsRef": {
         "P": [
-          "glycemic_guidance",
-          "se_hypoglycemia_guidance"
+          "addon_glycemic_guidance",
+          "addon_se_hypoglycemia_guidance",
+          "addon_injection_guidance"
         ]
       },
       "followupRef": "default_followup",
@@ -513,7 +515,7 @@
     {
       "id": "dose_increase_low_perceived_effect",
       "globalId": "dm_glp1ra_injection.dose_increase_low_perceived_effect",
-      "title": "増量（効果実感乏しい）",
+      "title": "GLP-1受容体作動薬(注射) 増量（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -526,12 +528,12 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "GLP-1受容体作動薬(注射)は、効果が実感できないので増量となった。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)増量",
       "A": "GLP-1受容体作動薬(注射)は、効果不十分のため増量。副作用増強の可能性に注意。",
       "P": "GLP-1受容体作動薬(注射)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。\n消化器症状が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "se_hypoglycemia_guidance"
+          "addon_se_hypoglycemia_guidance"
         ]
       },
       "followupRef": "default_followup",
@@ -548,7 +550,7 @@
     {
       "id": "dose_increase_no_lab_improvement",
       "globalId": "dm_glp1ra_injection.dose_increase_no_lab_improvement",
-      "title": "増量（検査値改善なし）",
+      "title": "GLP-1受容体作動薬(注射) 増量（検査値改善なし）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -561,12 +563,12 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "GLP-1受容体作動薬(注射)は、検査値が改善しないため増量となった。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)増量",
       "A": "GLP-1受容体作動薬(注射)は、効果不十分のため増量。副作用増強の可能性に注意。",
       "P": "GLP-1受容体作動薬(注射)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。\n消化器症状が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "se_hypoglycemia_guidance"
+          "addon_se_hypoglycemia_guidance"
         ]
       },
       "followupRef": "default_followup",
@@ -583,7 +585,7 @@
     {
       "id": "dose_increase_due_to_other_med_adjustment",
       "globalId": "dm_glp1ra_injection.dose_increase_due_to_other_med_adjustment",
-      "title": "増量（他剤との調整）",
+      "title": "GLP-1受容体作動薬(注射) 増量（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -596,12 +598,12 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "GLP-1受容体作動薬(注射)は、他剤変更に伴い調整のため増量となった。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)増量",
       "A": "GLP-1受容体作動薬(注射)は、他剤変更に伴い調整のため増量。副作用増強の可能性に注意。",
       "P": "GLP-1受容体作動薬(注射)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。\n消化器症状が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "se_hypoglycemia_guidance"
+          "addon_se_hypoglycemia_guidance"
         ]
       },
       "followupRef": "default_followup",
@@ -618,7 +620,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_glp1ra_injection.dose_decrease_improved",
-      "title": "減量（症状改善）",
+      "title": "GLP-1受容体作動薬(注射) 減量（症状改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -631,7 +633,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "GLP-1受容体作動薬(注射)は、検査値が良くなって減量となった。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)減量",
       "A": "GLP-1受容体作動薬(注射)は血糖推移を踏まえ減量。減量に伴う血糖上昇の可能性に注意。",
       "P": "GLP-1受容体作動薬(注射)は、減量により血糖値が上がることがあります。\n気になる変化があればご相談ください。",
       "followupRef": "default_followup",
@@ -648,7 +650,7 @@
     {
       "id": "dose_decrease_low_perceived_effect",
       "globalId": "dm_glp1ra_injection.dose_decrease_low_perceived_effect",
-      "title": "減量（効果実感乏しい）",
+      "title": "GLP-1受容体作動薬(注射) 減量（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -661,7 +663,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "GLP-1受容体作動薬(注射)は、効果の実感が乏しいため減量を希望された。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)減量",
       "A": "GLP-1受容体作動薬(注射)は患者希望を踏まえ減量。減量後の血糖推移に注意。",
       "P": "GLP-1受容体作動薬(注射)は、減量により血糖値が上昇する可能性があります。\n体調変化があればご相談ください。",
       "followupRef": "default_followup",
@@ -678,7 +680,7 @@
     {
       "id": "dose_decrease_due_to_other_med_adjustment",
       "globalId": "dm_glp1ra_injection.dose_decrease_due_to_other_med_adjustment",
-      "title": "減量（他剤との調整）",
+      "title": "GLP-1受容体作動薬(注射) 減量（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -691,7 +693,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "GLP-1受容体作動薬(注射)は、他剤変更に伴い調整のため減量となった。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)減量",
       "A": "GLP-1受容体作動薬(注射)は併用薬変更に伴う血糖調整目的で減量。血糖推移に注意。",
       "P": "GLP-1受容体作動薬(注射)は、減量により血糖値が上昇する可能性があります。\n体調変化があればご相談ください。",
       "followupRef": "default_followup",
@@ -708,9 +710,9 @@
     {
       "id": "se_injection_site_induration_none",
       "globalId": "dm_glp1ra_injection.se_injection_site_induration_none",
-      "title": "注射部固縮（症状なし）",
+      "title": "GLP-1受容体作動薬(注射) 副作用なし（注射部固縮）",
       "scenarioType": "side_effect",
-      "scenarioGroup": "digestive",
+      "scenarioGroup": "injection_site",
       "scenarioTags": [
         "side_effect",
         "digestive",
@@ -738,7 +740,7 @@
     {
       "id": "se_hypo_none",
       "globalId": "dm_glp1ra_injection.se_hypo_none",
-      "title": "低血糖（症状なし）",
+      "title": "GLP-1受容体作動薬(注射) 副作用なし（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -768,7 +770,7 @@
     {
       "id": "se_nausea_diarrhea_none",
       "globalId": "dm_glp1ra_injection.se_nausea_diarrhea_none",
-      "title": "悪心・下痢（症状なし）",
+      "title": "GLP-1受容体作動薬(注射) 副作用なし（悪心・下痢）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -798,7 +800,7 @@
     {
       "id": "se_appetite_loss_none",
       "globalId": "dm_glp1ra_injection.se_appetite_loss_none",
-      "title": "食欲不振（症状なし）",
+      "title": "GLP-1受容体作動薬(注射) 副作用なし（食欲不振）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -829,7 +831,7 @@
     {
       "id": "se_pancreatitis_none",
       "globalId": "dm_glp1ra_injection.se_pancreatitis_none",
-      "title": "膵炎（症状なし）",
+      "title": "GLP-1受容体作動薬(注射) 副作用なし（膵炎）",
       "scenarioType": "side_effect",
       "scenarioGroup": "pancreatitis",
       "scenarioTags": [
@@ -860,7 +862,7 @@
     {
       "id": "cp_good",
       "globalId": "dm_glp1ra_injection.cp_good",
-      "title": "コンプライアンス良好",
+      "title": "GLP-1受容体作動薬(注射) CP良好",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_good",
       "scenarioTags": [
@@ -888,7 +890,7 @@
     {
       "id": "cp_poor_missed_doses",
       "globalId": "dm_glp1ra_injection.cp_poor_missed_doses",
-      "title": "コンプライアンス不良（使用忘れ）",
+      "title": "GLP-1受容体作動薬(注射) CP不良（使用忘れ）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -923,7 +925,7 @@
     {
       "id": "cp_poor_self_adjust",
       "globalId": "dm_glp1ra_injection.cp_poor_self_adjust",
-      "title": "コンプライアンス不良（自己判断）",
+      "title": "GLP-1受容体作動薬(注射) CP不良（自己判断）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -953,7 +955,7 @@
     {
       "id": "cp_poor_visit_delay",
       "globalId": "dm_glp1ra_injection.cp_poor_visit_delay",
-      "title": "コンプライアンス不良（受診遅延）",
+      "title": "GLP-1受容体作動薬(注射) CP不良（受診遅延）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -982,7 +984,7 @@
     {
       "id": "cp_poor_injection_technique",
       "globalId": "dm_glp1ra_injection.cp_poor_injection_technique",
-      "title": "コンプライアンス不良（注射手技不備）",
+      "title": "GLP-1受容体作動薬(注射) CP不良（注射手技不備）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -1017,7 +1019,7 @@
     {
       "id": "end_improved",
       "globalId": "dm_glp1ra_injection.end_improved",
-      "title": "終了（改善）",
+      "title": "GLP-1受容体作動薬(注射) 終了（改善）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_improved",
       "scenarioTags": [
@@ -1045,7 +1047,7 @@
     {
       "id": "end_insufficient_effect",
       "globalId": "dm_glp1ra_injection.end_insufficient_effect",
-      "title": "終了（効果不十分）",
+      "title": "GLP-1受容体作動薬(注射) 終了（効果不十分）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_insufficient_effect",
       "scenarioTags": [
@@ -1073,7 +1075,7 @@
     {
       "id": "end_ineffective",
       "globalId": "dm_glp1ra_injection.end_ineffective",
-      "title": "終了（無効）",
+      "title": "GLP-1受容体作動薬(注射) 終了（無効）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_ineffective",
       "scenarioTags": [
@@ -1101,7 +1103,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_glp1ra_injection.se_mild_continue",
-      "title": "ＳＥ継続　軽症",
+      "title": "GLP-1受容体作動薬(注射) SE継続（軽症）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1132,7 +1134,7 @@
     {
       "id": "se_moderate_consider_dr",
       "globalId": "dm_glp1ra_injection.se_moderate_consider_dr",
-      "title": "ＳＥ継続　中等度(Dr検討)",
+      "title": "GLP-1受容体作動薬(注射) SE継続（中等度）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1164,7 +1166,7 @@
     {
       "id": "se_change_due_to_gi_symptoms",
       "globalId": "dm_glp1ra_injection.se_change_due_to_gi_symptoms",
-      "title": "ＳＥ他剤変更（消化器症状）",
+      "title": "GLP-1受容体作動薬(注射) SE変更（消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1195,7 +1197,7 @@
     {
       "id": "se_dose_decrease_due_to_gi_symptoms",
       "globalId": "dm_glp1ra_injection.se_dose_decrease_due_to_gi_symptoms",
-      "title": "ＳＥ減量（消化器症状）",
+      "title": "GLP-1受容体作動薬(注射) SE減量（消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1209,7 +1211,7 @@
       ],
       "sideEffectPresence": "present_dose_decrease",
       "S": "吐き気／下痢／便秘がひどいので減量になりました。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)減量",
       "A": "GLP-1受容体作動薬(注射)の使用による消化器症状がみられたため減量。今後の血糖変動に注意。",
       "P": "GLP-1受容体作動薬(注射)の減量後も、消化器症状があればご相談ください。",
       "followupRef": "se_followup",
@@ -1226,7 +1228,7 @@
     {
       "id": "se_stop_due_to_gi_symptoms",
       "globalId": "dm_glp1ra_injection.se_stop_due_to_gi_symptoms",
-      "title": "ＳＥ中止（消化器症状）",
+      "title": "GLP-1受容体作動薬(注射) SE中止（消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1257,7 +1259,7 @@
     {
       "id": "lifestyle_guidance",
       "globalId": "dm_glp1ra_injection.lifestyle_guidance",
-      "title": "生活指導",
+      "title": "GLP-1受容体作動薬(注射) 生活指導",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
@@ -1272,7 +1274,7 @@
       "O": "GLP-1受容体作動薬(注射)処方",
       "A": "血糖改善不十分のため生活指導が必要。",
       "P": "高血糖が続くと眼・腎・神経障害のリスクがあります。\n薬物療法に加え食事・運動療法が重要です。\n間食は控え、代替食品の活用を提案。\n血糖改善時は低血糖にも注意。",
-      "followupRef": "default_followup",
+      "followupRef": "se_followup",
       "phrasing": null,
       "evidenceRefs": [],
       "intentTags": [
@@ -1286,7 +1288,7 @@
     {
       "id": "sickday",
       "globalId": "dm_glp1ra_injection.sickday",
-      "title": "シックデイ",
+      "title": "GLP-1受容体作動薬(注射) シックデイ",
       "scenarioType": "sickday",
       "scenarioGroup": "sickday",
       "scenarioTags": [
@@ -1297,12 +1299,12 @@
       ],
       "sideEffectPresence": "not_applicable",
       "S": "風邪気味です。",
-      "O": "GLP-1受容体作動薬(注射)処方",
+      "O": "GLP-1受容体作動薬(注射)使用中",
       "A": "食事摂取低下および消化器症状により脱水リスク上昇。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要。",
       "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n使用継続の可否は体調や摂取状況により異なるため、自己判断せず処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
       "addonsRef": {
         "P": [
-          "sickday_hold_sglt2_metformin"
+          "addon_sickday_hold_sglt2_metformin"
         ]
       },
       "followupRef": "default_followup",
@@ -1321,7 +1323,7 @@
       "globalId": "dm_glp1ra_injection.injection_technique_check",
       "title": "注射手技の確認",
       "scenarioType": "followup",
-      "scenarioGroup": "lifestyle_guidance",
+      "scenarioGroup": "followup",
       "scenarioTags": [],
       "situationFilter": [
         "general"
@@ -1330,12 +1332,7 @@
       "S": "注射のやり方がこれで合っているか不安とのこと。",
       "O": "自己注射は継続しているが、手技に不安あり。",
       "A": "注射手技理解不十分の可能性あり。",
-      "P": "注射手技について再確認し、必要に応じて再指導が必要であることを説明。",
-      "addonsRef": {
-        "P": [
-          "addon_injection_guidance"
-        ]
-      },
+      "P": "注射の具体的な手技については、指導せんを用いて説明。\n注射部位は、同じ場所に繰り返し行うと皮膚が硬くなることがあります。\n部位を適切に変えながら使用してください。",
       "followupRef": "default_followup",
       "phrasing": null,
       "evidenceRefs": [],
