@@ -110,19 +110,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const computedFieldsWithFollowup: SoapFields = useMemo(() => {
     if (!selectedScenario) return EMPTY_FIELDS
     const base = buildSoapFromScenario(selectedScenario)
-    const followupDefaults = activeModuleData.defaults?.followup ?? {}
     const result = { ...base }
     for (const key of ['S', 'P'] as const) {
-      const followupVal = selectedScenario.followup?.[key]
-      if (followupVal === 'default') {
-        const defaultText = followupDefaults[key]
-        if (defaultText) {
-          result[key] = result[key] ? `${result[key]}\n${defaultText}` : defaultText
+      let appendText: string | null | undefined = undefined
+      const followupRef = selectedScenario.followupRef
+      if (followupRef) {
+        const profile = activeModuleData.defaults?.followupProfiles?.[followupRef]
+        if (profile) appendText = profile[key]
+      } else {
+        const followupVal = selectedScenario.followup?.[key]
+        if (followupVal === 'default') {
+          appendText = activeModuleData.defaults?.followup?.[key]
         }
+      }
+      if (appendText) {
+        result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
       }
     }
     return result
-  }, [selectedScenario, activeModuleData.defaults?.followup])
+  }, [selectedScenario, activeModuleData.defaults])
 
   const fields: SoapFields = {
     S: manualFields.S ?? computedFieldsWithFollowup.S,
@@ -280,10 +286,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
     }
     setActiveBrandName(matchedBrandName)
-    // シナリオは自動選択しない: selectedScenarioId は null のまま
-    // 検索 = 薬剤（モジュール）切替のみ。シナリオ確定は中央パネルのクリックで行う。
-    setSelectedScenarioId(null)
-    setSelectedGroup(null)
+    // entry が見つかった場合は templateId（= globalId）でシナリオを確定する
+    // これにより AddonPanel が initial 選択直後から正常表示される
+    if (entry) {
+      setSelectedScenarioId(entry.templateId)
+      const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
+      const sc = targetModule.scenarios.find(s => s.globalId === entry.templateId)
+      if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
+    } else {
+      setSelectedScenarioId(null)
+      setSelectedGroup(null)
+    }
     setManualFields({})
     setSPrefix('none')
     setSStatus('stable')
@@ -329,17 +342,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
 
         // 各セクションを再合成して manualFields に反映
-        const followupDefaults = activeModuleData.defaults?.followup ?? {}
+        const resolveFollowupText = (sec: 'S' | 'P'): string => {
+          const followupRef = selectedScenario.followupRef
+          if (followupRef) {
+            return activeModuleData.defaults?.followupProfiles?.[followupRef]?.[sec] ?? ''
+          }
+          const followupVal = selectedScenario.followup?.[sec]
+          return followupVal === 'default'
+            ? (activeModuleData.defaults?.followup?.[sec] ?? '')
+            : ''
+        }
         setManualFields(prevFields => {
           const updated = { ...prevFields }
           for (const [sec, addonTexts] of sectionAddonMap) {
             const base = computedFields[sec as keyof typeof computedFields] ?? ''
             // followup があるセクション (P, S) は末尾に追加
-            const followupVal = selectedScenario.followup?.[sec as 'S' | 'P']
-            const followupText =
-              followupVal === 'default'
-                ? (followupDefaults[sec as 'S' | 'P'] ?? '')
-                : ''
+            const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupText(sec) : ''
             const parts = [base, ...addonTexts].filter(Boolean)
             if (followupText) parts.push(followupText)
             updated[sec as keyof typeof updated] = parts.join('\n')
@@ -354,11 +372,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               )
               if (!hasAnyAddonForSec) {
                 const base = computedFields[sec] ?? ''
-                const followupVal = selectedScenario.followup?.[sec as 'S' | 'P']
-                const followupText =
-                  followupVal === 'default'
-                    ? (followupDefaults[sec as 'S' | 'P'] ?? '')
-                    : ''
+                const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupText(sec) : ''
                 const parts = [base].filter(Boolean)
                 if (followupText) parts.push(followupText)
                 updated[sec] = parts.join('\n')
@@ -371,7 +385,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       return next
     })
-  }, [activeModuleData.addons, activeModuleData.defaults?.followup, selectedScenario, computedFields])
+  }, [activeModuleData.addons, activeModuleData.defaults, selectedScenario, computedFields])
 
   // S欄トグル操作
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
@@ -475,7 +489,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setNlpIsGenerating(true)
 
       // createSoapFromInput は同期関数（現時点では非同期APIなし）
-      const result = createSoapFromInput(moduleData, patientInput)
+      const result = createSoapFromInput(activeModuleData, patientInput)
 
       setNlpValidation(result.validation)
       setNlpSelectorReason(result.selectorReason)
@@ -503,7 +517,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       setNlpIsGenerating(false)
     },
-    [moduleData],
+    [activeModuleData],
   )
 
   // ── レンダリング ─────────────────────────────────────────

@@ -61,7 +61,7 @@ export function createSoapFromInput(
   }
 
   // 3. シナリオオブジェクトを取得
-  const scenario = module.scenarios.find(sc => sc.id === selected.scenarioId)
+  const scenario = module.scenarios.find(sc => sc.globalId === selected.scenarioId)
   if (!scenario) {
     // scenarioSelector が返した id が scenarios[] に存在しない（通常は発生しない）
     return {

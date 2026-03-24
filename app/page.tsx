@@ -13,7 +13,8 @@ import DashboardClient from './components/DashboardClient'
 import { reportInvalidScenarios } from '../lib/scenarioValidator'
 import { assertModuleValid } from '../lib/moduleValidator'
 
-const moduleData = ALL_MODULES[0]
+const INITIAL_MODULE_ID = 'dm_glp1ra_semaglutide_oral'
+const moduleData = ALL_MODULES.find(m => m.moduleId === INITIAL_MODULE_ID) ?? ALL_MODULES[0]
 
 // ビルド識別子
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'

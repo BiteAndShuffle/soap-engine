@@ -13,11 +13,9 @@
 import type { ModuleData } from '../../lib/types'
 
 import rawSemaglutideOral from './dm_glp1ra_semaglutide_oral.json'
-import rawSemaglutideOralSickday from './dm_glp1ra_semaglutide_oral_sickday.json'
 import rawGlp1raInjection from './dm_glp1ra_injection.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
-  rawSemaglutideOralSickday as unknown as ModuleData,
   rawGlp1raInjection as unknown as ModuleData,
 ]

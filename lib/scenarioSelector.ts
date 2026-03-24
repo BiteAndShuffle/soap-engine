@@ -231,7 +231,7 @@ export function scenarioSelector(
       : `全件スキャン → 「${bestScenario.title}」(score=${bestScore})`
 
   return {
-    scenarioId: bestScenario.id,
+    scenarioId: bestScenario.globalId,
     confidence,
     reason,
   }

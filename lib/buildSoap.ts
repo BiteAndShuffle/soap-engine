@@ -83,19 +83,36 @@ export function buildSoapFull(
     }
   }
 
-  // 3. followup
-  const followupDefaults = moduleData.defaults?.followup ?? {}
+  // 3. followup（4段階フォールバック）
+  //
+  // 優先順位:
+  //   1) scenario.followupRef → defaults.followupProfiles[followupRef][key]  (新スキーマ)
+  //   2) scenario.followup?.[key] === 'default' → defaults.followup[key]     (旧スキーマ後方互換)
+  //   3) 何も追加しない
   for (const key of ['S', 'P'] as const) {
-    const followupVal = scenario.followup?.[key]
-    if (followupVal === 'default') {
-      const defaultText = followupDefaults[key]
-      if (defaultText) {
-        fields[key] = fields[key]
-          ? `${fields[key]}\n${defaultText}`
-          : defaultText
+    let appendText: string | null | undefined = undefined
+
+    const followupRef = scenario.followupRef
+    if (followupRef) {
+      // 新スキーマ: followupRef → followupProfiles
+      const profile = moduleData.defaults?.followupProfiles?.[followupRef]
+      if (profile) {
+        appendText = profile[key]
+      }
+    } else {
+      // 旧スキーマ後方互換: followup + defaults.followup
+      const followupVal = scenario.followup?.[key]
+      if (followupVal === 'default') {
+        appendText = moduleData.defaults?.followup?.[key]
       }
     }
-    // null または省略時は何も追加しない
+
+    if (appendText) {
+      fields[key] = fields[key]
+        ? `${fields[key]}\n${appendText}`
+        : appendText
+    }
+    // null / undefined / 省略時は何も追加しない
   }
 
   // 4. urgentFlag / emergencyFlag（新旧どちらも対応）

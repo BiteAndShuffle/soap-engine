@@ -31,6 +31,13 @@ export type ModuleValidationErrorCode =
   | 'ADDON_KEY_MISMATCH'       // addons.items のキーと item.key が不一致
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
   | 'PANEL_ORDER_MISMATCH'     // ui.panelOrder に存在する id が ui.panels にない
+  | 'FOLLOWUP_REF_BROKEN'      // scenarios[].followupRef が defaults.followupProfiles に存在しない（警告）
+  | 'TAG_NOT_IN_CATALOG'       // scenario/addon の各 *Tags 値が tagCatalog に存在しない（警告）
+  | 'ADDON_SCOPE_VIOLATION'    // addon.text に医療判断・受診判断を示す禁止語が含まれる（警告）
+  | 'FOLLOWUP_SCOPE_VIOLATION' // defaults.followup* のテキストに同禁止語が含まれる（警告）
+  | 'SCENARIO_PRIORITY_INVALID'       // scenario.priority が不正（負値・number以外）（警告）
+  | 'SCENARIO_EXCLUSIVE_GROUP_INVALID' // scenario.exclusiveGroup が string/null 以外（警告）
+  | 'SCENARIO_COMBINABLE_INVALID'     // scenario.combinable が boolean/null 以外（警告）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -45,6 +52,34 @@ export interface ModuleValidationResult {
   isValid: boolean
   /** isWarning=true のみのエントリは警告扱い（アプリ起動は続行） */
   errors: ModuleValidationError[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// addon / followup 責務逸脱チェック用 禁止語
+// ─────────────────────────────────────────────────────────────
+
+const FORBIDDEN_DECISION_WORDS = [
+  '中止してください',
+  '休薬してください',
+  '受診してください',
+  '救急受診',
+  '救急',
+  '緊急受診',
+  '直ちに受診',
+  'すぐ受診',
+  '至急受診',
+  '受診を検討してください',
+  '直ちに',
+  'ただちに',
+] as const
+
+/** テキストに禁止語が含まれるか確認し、最初にマッチした語を返す */
+function findForbiddenWord(text: string | null | undefined): string | null {
+  if (!text) return null
+  for (const word of FORBIDDEN_DECISION_WORDS) {
+    if (text.includes(word)) return word
+  }
+  return null
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -150,6 +185,194 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     }
   }
 
+  // 7) addons.orderPresets の全参照が addons.items に存在するか
+  const orderPresets = addons?.orderPresets as Record<string, unknown> | undefined
+  if (orderPresets && addonItems) {
+    for (const [presetKey, refs] of Object.entries(orderPresets)) {
+      if (!Array.isArray(refs)) continue
+      for (const ref of refs as string[]) {
+        if (!(ref in addonItems)) {
+          errors.push({
+            code: 'ADDON_REF_BROKEN',
+            detail: `addons.orderPresets["${presetKey}"] に参照切れ: "${ref}" が addons.items に存在しません`,
+            isWarning: false,
+          })
+        }
+      }
+    }
+  }
+
+  // 8) scenarios[].followupRef が defaults.followupProfiles に存在するか（警告）
+  const followupProfiles = (obj?.defaults as Record<string, unknown> | undefined)
+    ?.followupProfiles as Record<string, unknown> | undefined
+
+  if (Array.isArray(scenarios) && followupProfiles) {
+    for (const sc of scenarios as Scenario[]) {
+      const ref = sc.followupRef
+      if (ref && !(ref in followupProfiles)) {
+        errors.push({
+          code: 'FOLLOWUP_REF_BROKEN',
+          detail: `scenarios["${sc.id}"].followupRef = "${ref}" が defaults.followupProfiles に存在しません`,
+          isWarning: true,
+        })
+      }
+    }
+  }
+
+  // 9) tagCatalog メンバーシップチェック（警告）
+  //    tagCatalog が存在し、かつ対象配列が非空の場合のみ検証する
+  const tagCatalog = obj?.tagCatalog as Record<string, unknown> | undefined
+
+  if (tagCatalog) {
+    type TagField = 'intentTags' | 'clinicalTags' | 'counselingTags' | 'workflowTags'
+    const tagFields: TagField[] = ['intentTags', 'clinicalTags', 'counselingTags', 'workflowTags']
+
+    // 有効値セットを構築（空配列の場合はチェックをスキップ）
+    const catalogSets: Partial<Record<TagField, Set<string>>> = {}
+    for (const field of tagFields) {
+      const catalog = tagCatalog[field]
+      if (Array.isArray(catalog) && catalog.length > 0) {
+        catalogSets[field] = new Set(catalog as string[])
+      }
+    }
+
+    // scenarios のタグをチェック
+    if (Array.isArray(scenarios)) {
+      for (const sc of scenarios as Record<string, unknown>[]) {
+        for (const field of tagFields) {
+          const validSet = catalogSets[field]
+          if (!validSet) continue
+          const tags = sc[field]
+          if (!Array.isArray(tags)) continue
+          for (const tag of tags as string[]) {
+            if (!validSet.has(tag)) {
+              errors.push({
+                code: 'TAG_NOT_IN_CATALOG',
+                detail: `scenarios["${sc.id}"].${field} に未定義タグ: "${tag}" が tagCatalog.${field} に存在しません`,
+                isWarning: true,
+              })
+            }
+          }
+        }
+      }
+    }
+
+    // addons.items のタグをチェック
+    if (addonItems) {
+      for (const [mapKey, item] of Object.entries(addonItems)) {
+        for (const field of tagFields) {
+          const validSet = catalogSets[field]
+          if (!validSet) continue
+          const tags = (item as Record<string, unknown>)[field]
+          if (!Array.isArray(tags)) continue
+          for (const tag of tags as string[]) {
+            if (!validSet.has(tag)) {
+              errors.push({
+                code: 'TAG_NOT_IN_CATALOG',
+                detail: `addons.items["${mapKey}"].${field} に未定義タグ: "${tag}" が tagCatalog.${field} に存在しません`,
+                isWarning: true,
+              })
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 10) addon.text の責務逸脱チェック（警告）
+  if (addonItems) {
+    for (const [mapKey, item] of Object.entries(addonItems)) {
+      const text = (item as Record<string, unknown>).text
+      const hit = findForbiddenWord(typeof text === 'string' ? text : null)
+      if (hit) {
+        errors.push({
+          code: 'ADDON_SCOPE_VIOLATION',
+          detail: `[ADDON_SCOPE_VIOLATION] addon "${mapKey}" contains decision-level wording: "${hit}"`,
+          isWarning: true,
+        })
+      }
+    }
+  }
+
+  // 11) defaults.followupProfiles / defaults.followup の責務逸脱チェック（警告）
+  const defaultsObj = obj?.defaults as Record<string, unknown> | undefined
+
+  // 新スキーマ: followupProfiles
+  const followupProfilesForScope = defaultsObj?.followupProfiles as
+    Record<string, Record<string, unknown>> | undefined
+  if (followupProfilesForScope) {
+    for (const [profileKey, profile] of Object.entries(followupProfilesForScope)) {
+      for (const fieldKey of ['S', 'P'] as const) {
+        const val = profile[fieldKey]
+        const hit = findForbiddenWord(typeof val === 'string' ? val : null)
+        if (hit) {
+          errors.push({
+            code: 'FOLLOWUP_SCOPE_VIOLATION',
+            detail: `[FOLLOWUP_SCOPE_VIOLATION] followup profile "${profileKey}" contains decision-level wording: "${hit}"`,
+            isWarning: true,
+          })
+        }
+      }
+    }
+  }
+
+  // 旧スキーマ: defaults.followup
+  const legacyFollowup = defaultsObj?.followup as Record<string, unknown> | undefined
+  if (legacyFollowup) {
+    for (const fieldKey of ['S', 'P'] as const) {
+      const val = legacyFollowup[fieldKey]
+      const hit = findForbiddenWord(typeof val === 'string' ? val : null)
+      if (hit) {
+        errors.push({
+          code: 'FOLLOWUP_SCOPE_VIOLATION',
+          detail: `[FOLLOWUP_SCOPE_VIOLATION] defaults.followup.${fieldKey} contains decision-level wording: "${hit}"`,
+          isWarning: true,
+        })
+      }
+    }
+  }
+
+  // 12) scenario 競合制御メタデータの型チェック（警告）
+  //     フィールドが省略・null の場合はスキップ。値が存在する場合のみ型を検証する。
+  if (Array.isArray(scenarios)) {
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const scId = String(sc.id ?? '(unknown)')
+
+      // priority: number かつ非負
+      if (sc.priority !== undefined && sc.priority !== null) {
+        if (typeof sc.priority !== 'number' || sc.priority < 0) {
+          errors.push({
+            code: 'SCENARIO_PRIORITY_INVALID',
+            detail: `scenarios["${scId}"].priority = ${JSON.stringify(sc.priority)} は非負の number である必要があります`,
+            isWarning: true,
+          })
+        }
+      }
+
+      // exclusiveGroup: string または null
+      if (sc.exclusiveGroup !== undefined && sc.exclusiveGroup !== null) {
+        if (typeof sc.exclusiveGroup !== 'string') {
+          errors.push({
+            code: 'SCENARIO_EXCLUSIVE_GROUP_INVALID',
+            detail: `scenarios["${scId}"].exclusiveGroup = ${JSON.stringify(sc.exclusiveGroup)} は string または null である必要があります`,
+            isWarning: true,
+          })
+        }
+      }
+
+      // combinable: boolean または null
+      if (sc.combinable !== undefined && sc.combinable !== null) {
+        if (typeof sc.combinable !== 'boolean') {
+          errors.push({
+            code: 'SCENARIO_COMBINABLE_INVALID',
+            detail: `scenarios["${scId}"].combinable = ${JSON.stringify(sc.combinable)} は boolean または null である必要があります`,
+            isWarning: true,
+          })
+        }
+      }
+    }
+  }
+
   const fatalErrors = errors.filter(e => !e.isWarning)
   return {
     moduleId,
@@ -181,6 +404,7 @@ export function assertModuleValid(moduleData: unknown): void {
     for (const w of warnings) {
       console.warn(`  ⚠️ [${w.code}] ${w.detail}`)
     }
+    console.warn(`[ModuleValidator Warning] ${result.moduleId}`, warnings)
   }
 
   if (fatals.length > 0) {
