@@ -230,28 +230,84 @@ export function formatSoapForCopy(fields: SoapFields): string {
 
 const SEPARATOR = '----'
 
+/**
+ * mergeBlocks — 複数薬の SOAP ブロックを合成する。
+ *
+ * P フィールドの closing deduplication:
+ *   各ブロックに closingText が設定されている場合、
+ *   同一 closing テキストは最後に1回だけ出力する。
+ *   手順:
+ *   1. 各ブロックの P から closingText を末尾で除去してボディを取得
+ *   2. ボディを `----\n▶ label\n...` 形式で結合
+ *   3. 出現した unique closing テキストを収集し、末尾に追記
+ *
+ * currentClosingText: 現在選択中シナリオの closing テキスト（省略可）
+ */
 export function mergeBlocks(
   blocks: MergedBlock[],
   currentFields: SoapFields,
   currentLabel: string,
+  currentClosingText?: string,
 ): SoapFields {
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   const result: SoapFields = { S: '', O: '', A: '', P: '' }
 
-  const all = [
+  const all: Array<MergedBlock & { isCurrent?: boolean }> = [
     ...blocks,
-    { id: 'current', templateLabel: currentLabel, fields: currentFields },
+    {
+      id: 'current',
+      templateLabel: currentLabel,
+      fields: currentFields,
+      closingText: currentClosingText,
+    },
   ]
 
   for (const key of keys) {
-    const parts: string[] = []
-    for (const block of all) {
-      const text = block.fields[key].trim()
-      if (!text) continue
-      const header = `${SEPARATOR}\n▶ ${block.templateLabel}`
-      parts.push(`${header}\n${text}`)
+    if (key !== 'P') {
+      // S / O / A: そのまま結合
+      const parts: string[] = []
+      for (const block of all) {
+        const text = block.fields[key].trim()
+        if (!text) continue
+        const header = `${SEPARATOR}\n▶ ${block.templateLabel}`
+        parts.push(`${header}\n${text}`)
+      }
+      result[key] = parts.join('\n\n')
+    } else {
+      // P: closing deduplication
+      const seenClosings = new Set<string>()
+      const orderedClosings: string[] = []
+      const parts: string[] = []
+
+      for (const block of all) {
+        const rawText = block.fields.P.trim()
+        if (!rawText) continue
+
+        const closing = block.closingText?.trim() ?? ''
+        let body = rawText
+
+        // closing が設定されており P の末尾に一致する場合に除去
+        if (closing && body.endsWith(closing)) {
+          body = body.slice(0, body.length - closing.length).trimEnd()
+        }
+
+        const header = `${SEPARATOR}\n▶ ${block.templateLabel}`
+        parts.push(`${header}${body ? '\n' + body : ''}`)
+
+        // unique closing を順序付きで収集
+        if (closing && !seenClosings.has(closing)) {
+          seenClosings.add(closing)
+          orderedClosings.push(closing)
+        }
+      }
+
+      let merged = parts.join('\n\n')
+      if (orderedClosings.length > 0) {
+        const closingBlock = orderedClosings.join('\n')
+        merged = merged ? `${merged}\n\n${closingBlock}` : closingBlock
+      }
+      result.P = merged
     }
-    result[key] = parts.join('\n\n')
   }
 
   return result

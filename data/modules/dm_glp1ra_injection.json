@@ -76,7 +76,63 @@
         "おぜんぴっく",
         "おぜ",
         "おぜん"
-      ]
+      ],
+      "keywords": [],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
+    },
+    "brandCatalog": {
+      "ビクトーザ": {
+        "displayName": "ビクトーザ",
+        "genericName": "リラグルチド",
+        "aliases": ["びくとーざ", "びく", "びくと"],
+        "normalizedAliases": ["びくとーざ", "びく", "びくと"]
+      },
+      "バイエッタ": {
+        "displayName": "バイエッタ",
+        "genericName": "エキセナチド",
+        "aliases": ["ばいえった", "ばい", "ばいえ"],
+        "normalizedAliases": ["ばいえった", "ばい", "ばいえ"]
+      },
+      "リキスミア": {
+        "displayName": "リキスミア",
+        "genericName": "リキシセナチド",
+        "aliases": ["りきすみあ", "りき", "りきす"],
+        "normalizedAliases": ["りきすみあ", "りき", "りきす"]
+      },
+      "トルリシティ": {
+        "displayName": "トルリシティ",
+        "genericName": "デュラグルチド",
+        "aliases": ["とるりしてぃ", "とる", "とるり"],
+        "normalizedAliases": ["とるりしてぃ", "とる", "とるり"]
+      },
+      "オゼンピック": {
+        "displayName": "オゼンピック",
+        "genericName": "セマグルチド",
+        "aliases": ["おぜんぴっく", "おぜ", "おぜん"],
+        "normalizedAliases": ["おぜんぴっく", "おぜ", "おぜん"]
+      }
+    },
+    "aliasToBrand": {
+      "びくとーざ": "ビクトーザ",
+      "びく": "ビクトーザ",
+      "びくと": "ビクトーザ",
+      "ばいえった": "バイエッタ",
+      "ばい": "バイエッタ",
+      "ばいえ": "バイエッタ",
+      "りきすみあ": "リキスミア",
+      "りき": "リキスミア",
+      "りきす": "リキスミア",
+      "とるりしてぃ": "トルリシティ",
+      "とる": "トルリシティ",
+      "とるり": "トルリシティ",
+      "おぜんぴっく": "オゼンピック",
+      "おぜ": "オゼンピック",
+      "おぜん": "オゼンピック"
     }
   },
   "drugResolution": {
@@ -264,8 +320,8 @@
     "pregnancyLactation": null
   },
   "display": {
-    "title": "GLP-1受容体作動薬（注射）",
-    "subtitle": "GLP-1受容体作動薬（注射）",
+    "title": "GLP-1受容体作動薬（注射）🔥",
+    "subtitle": "GLP-1受容体作動薬（注射）🔥",
     "drugClassLabel": "GLP-1受容体作動薬",
     "drugGeneric": "GLP-1受容体作動薬"
   },

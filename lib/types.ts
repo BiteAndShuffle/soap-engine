@@ -30,6 +30,24 @@ export type SideEffectPresence =
   | 'not_applicable'
 
 // ─────────────────────────────────────────────────────────────
+// SComposition（S欄合成メタデータ）
+//
+// 2剤目合成時に S フィールドを構成するためのメタデータ。
+//   intent        — このシナリオの意図（new_addition / dose_increase / etc）
+//   template      — S 合成テンプレート種別（symptom_based / status_based）
+//   symptomCodes  — S 合成で使用する症状コード（英語 snake_case）。
+//                   absent_or_not_observed は空配列 []
+//   symptoms      — 表示用日本語症状名リスト（symptomCodes に対応）
+// ─────────────────────────────────────────────────────────────
+
+export interface SComposition {
+  intent: string
+  template: string
+  symptomCodes: string[]
+  symptoms: string[]
+}
+
+// ─────────────────────────────────────────────────────────────
 // Scenario（新スキーマ: scenarios[] で定義）
 //
 // 旧 Template の後継。SOAP フィールドを直接持ち、
@@ -87,6 +105,11 @@ export interface Scenario {
     S?: 'default' | null
     P?: 'default' | null
   }
+  /**
+   * S欄合成メタデータ — 2剤目合成時の S フィールド構成に使用。
+   * 省略時は undefined（合成対象外）。
+   */
+  sComposition?: SComposition
   /** 意味タグ（intentTags）— 文章の意味的役割を表す */
   intentTags?: string[]
   /** 臨床タグ（将来拡張用） */
@@ -197,6 +220,24 @@ export interface DrugSearch {
   matchPolicy: DrugSearchMatchPolicy
 }
 
+// ─────────────────────────────────────────────────────────────
+// BrandCatalog（drug.brandCatalog ブロック）
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * ブランド名ごとのエントリ。
+ * displayName  — 表示用ブランド名（brandCatalog キーと一致）
+ * genericName  — 化合物レベルの一般名（drug.genericName はクラス名のため別管理）
+ * aliases      — カナ・略称など検索用の別名
+ * normalizedAliases — aliases をひらがな正規化したもの（検索インデックス用）
+ */
+export interface BrandEntry {
+  displayName: string
+  genericName: string
+  aliases: string[]
+  normalizedAliases: string[]
+}
+
 export interface Drug {
   genericName?: string
   brandNames?: string[]
@@ -206,6 +247,18 @@ export interface Drug {
   drugSpecificTags?: string[]
   nameAliases?: string[]
   search?: DrugSearch
+  /**
+   * ブランド名 → BrandEntry の正本辞書。
+   * brandNames はこの辞書の表示順リストとして機能する（集合一致が必須）。
+   * brandCatalog が存在する場合、表示順は brandNames の並びに従う。
+   */
+  brandCatalog?: Record<string, BrandEntry>
+  /**
+   * ひらがなエイリアス → ブランド名 のフラット逆引きマップ。
+   * brandCatalog.aliases をひらがな正規化した値がキー。
+   * UI 検索での高速ルックアップ用。
+   */
+  aliasToBrand?: Record<string, string>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -246,6 +299,17 @@ export interface MergedBlock {
   templateLabel: string
   /** 合成時の SOAP フィールド（スナップショット） */
   fields: SoapFields
+  /**
+   * S欄合成用の症状コード（sComposition.symptomCodes スナップショット）。
+   * 2剤目合成時に S フィールドを構成するために使用。
+   * 省略時は undefined。
+   */
+  symptomCodes?: string[]
+  /**
+   * P末尾 closing テキスト（deduplication 用）。
+   * mergeBlocks で同一の closing が複数ある場合、最後の1件のみ出力。
+   */
+  closingText?: string
 }
 
 // ─────────────────────────────────────────────────────────────

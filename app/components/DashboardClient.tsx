@@ -404,10 +404,26 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const currentLabel = selectedScenario.title
     const currentFields = { ...fields }
 
+    // P末尾 closing テキストを解決（followup テキスト）
+    const resolveClosingText = (): string | undefined => {
+      const followupRef = selectedScenario.followupRef
+      if (followupRef) {
+        return activeModuleData.defaults?.followupProfiles?.[followupRef]?.P ?? undefined
+      }
+      const followupVal = selectedScenario.followup?.P
+      if (followupVal === 'default') {
+        return activeModuleData.defaults?.followup?.P ?? undefined
+      }
+      return undefined
+    }
+    const currentClosingText = resolveClosingText()
+
     const newBlock: MergedBlock = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       templateLabel: currentLabel,
       fields: currentFields,
+      symptomCodes: selectedScenario.sComposition?.symptomCodes,
+      closingText: currentClosingText,
     }
 
     const updatedBlocks = [...mergedBlocks, newBlock]
@@ -417,6 +433,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       updatedBlocks.slice(0, -1),
       currentFields,
       currentLabel,
+      currentClosingText,
     )
     setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
 
@@ -424,7 +441,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSelectedGroup(null)
     setSPrefix('none')
     setSStatus('stable')
-  }, [selectedScenario, fields, mergedBlocks])
+  }, [selectedScenario, fields, mergedBlocks, activeModuleData.defaults])
 
   const handleResetMerge = useCallback(() => {
     setMergedBlocks([])

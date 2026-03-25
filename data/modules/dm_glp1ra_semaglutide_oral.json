@@ -15,8 +15,12 @@
     "GLP-1受容体作動薬",
     "内服"
   ],
+  "composition": {
+    "domain": "diabetes",
+    "priority": "chronic"
+  },
   "drug": {
-    "genericName": "セマグルチド",
+    "genericName": "GLP-1受容体作動薬",
     "brandNames": [
       "リベルサス"
     ],
@@ -42,6 +46,39 @@
         "せまぐ",
         "せま"
       ]
+    },
+    "brandCatalog": {
+      "リベルサス": {
+        "displayName": "リベルサス",
+        "genericName": "セマグルチド",
+        "aliases": [
+          "りべるさす",
+          "りべ",
+          "りべるさ",
+          "りべるさすじょう",
+          "せまぐるちど",
+          "せまぐ",
+          "せま"
+        ],
+        "normalizedAliases": [
+          "りべるさす",
+          "りべ",
+          "りべるさ",
+          "りべるさすじょう",
+          "せまぐるちど",
+          "せまぐ",
+          "せま"
+        ]
+      }
+    },
+    "aliasToBrand": {
+      "りべるさす": "リベルサス",
+      "りべ": "リベルサス",
+      "りべるさ": "リベルサス",
+      "りべるさすじょう": "リベルサス",
+      "せまぐるちど": "リベルサス",
+      "せまぐ": "リベルサス",
+      "せま": "リベルサス"
     }
   },
   "drugResolution": {
@@ -216,11 +253,18 @@
     "followupProfiles": {
       "se_followup": {
         "S": null,
-        "P": "次回、治療経過および副作用の有無を確認。"
+        "P": "次回、治療経過および副作用の有無を確認。",
+        "tags": [
+          "side_effect",
+          "drug_effect"
+        ]
       },
       "end_followup": {
         "S": null,
-        "P": "次回、治療経過および体調変化の有無を確認。"
+        "P": "次回、治療経過および体調変化の有無を確認。",
+        "tags": [
+          "drug_effect"
+        ]
       }
     }
   },
@@ -342,6 +386,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperglycemia"
+        ],
+        "symptoms": [
+          "血糖値が高い"
+        ]
+      },
       "S": "血糖値が高いため薬が追加となった。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)は血糖コントロール不十分のため追加。血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。血糖改善および体重減少（体重管理の補助）を目的とする。",
@@ -372,6 +426,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感がない"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、効果が実感できないので増量となった。",
       "O": "GLP-1受容体作動薬(内服)増量",
       "A": "GLP-1受容体作動薬(内服)は、効果不十分のため増量。副作用増強の可能性に注意。",
@@ -400,6 +464,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "no_lab_improvement"
+        ],
+        "symptoms": [
+          "検査値改善なし"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、検査値が改善しないため増量となった。",
       "O": "GLP-1受容体作動薬(内服)増量",
       "A": "GLP-1受容体作動薬(内服)は、効果不十分のため増量。副作用増強の可能性に注意。",
@@ -428,6 +502,12 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "GLP-1受容体作動薬(内服)は、他剤変更に伴い調整のため増量となった。",
       "O": "GLP-1受容体作動薬(内服)増量",
       "A": "GLP-1受容体作動薬(内服)は、他剤変更に伴い調整のため増量。副作用増強の可能性に注意。",
@@ -456,6 +536,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "lab_improved"
+        ],
+        "symptoms": [
+          "検査値改善"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、検査値が良くなって減量となった。",
       "O": "GLP-1受容体作動薬(内服)減量",
       "A": "GLP-1受容体作動薬(内服)は血糖推移を踏まえ減量。減量に伴う血糖上昇の可能性に注意。",
@@ -479,6 +569,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、効果の実感が乏しいため減量を希望された。",
       "O": "GLP-1受容体作動薬(内服)減量",
       "A": "GLP-1受容体作動薬(内服)は患者希望を踏まえ減量。減量後の血糖推移に注意。",
@@ -502,6 +602,12 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "GLP-1受容体作動薬(内服)は、他剤変更に伴い調整のため減量となった。",
       "O": "GLP-1受容体作動薬(内服)減量",
       "A": "GLP-1受容体作動薬(内服)は併用薬変更に伴う血糖調整目的で減量。血糖推移に注意。",
@@ -526,6 +632,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "使用して、症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)による低血糖は現時点で認めず、治療継続可能。",
@@ -550,6 +662,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "使用して、症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)による消化器症状は現時点で認めず、治療継続可能。",
@@ -575,6 +693,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "使用して、症状は落ち着いている。食欲低下は認めない。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)による食欲低下は現時点で認めず、治療継続可能。",
@@ -599,6 +723,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "使用して、症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)による膵炎は現時点で認めず、治療継続可能。",
@@ -621,6 +751,12 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
       "S": "使用して、症状は落ち着いている。使用は継続できている。",
       "O": "GLP-1受容体作動薬(内服)使用中",
       "A": "コンプライアンス良好。治療継続可能。",
@@ -644,6 +780,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "missed_doses"
+        ],
+        "symptoms": [
+          "使用忘れ"
+        ]
+      },
       "S": "使用を忘れることがある様子。",
       "O": "GLP-1受容体作動薬(内服)使用中",
       "A": "コンプライアンス不良。服薬指導実施。",
@@ -673,6 +819,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "self_adjustment"
+        ],
+        "symptoms": [
+          "自己判断での調整"
+        ]
+      },
       "S": "自己判断で使用を調整していた様子。",
       "O": "GLP-1受容体作動薬(内服)使用中",
       "A": "コンプライアンス不良。服薬指導実施。",
@@ -696,6 +852,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "visit_delay"
+        ],
+        "symptoms": [
+          "受診遅延"
+        ]
+      },
       "S": "都合で受診できなかった様子。",
       "O": "GLP-1受容体作動薬(内服)使用中",
       "A": "コンプライアンス不良。服薬指導実施。",
@@ -718,6 +884,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "glycemic_improved"
+        ],
+        "symptoms": [
+          "血糖改善"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、血糖コントロールが改善したため中止となった。",
       "O": "GLP-1受容体作動薬(内服)処方終了",
       "A": "GLP-1受容体作動薬(内服)は血糖改善のため終了。終了に伴う血糖変動に注意。",
@@ -738,6 +914,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、効果不十分のため中止となった。",
       "O": "GLP-1受容体作動薬(内服)処方終了",
       "A": "GLP-1受容体作動薬(内服)は効果不十分のため終了。血糖管理の再評価が必要。",
@@ -758,6 +944,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "ineffective"
+        ],
+        "symptoms": [
+          "無効"
+        ]
+      },
       "S": "GLP-1受容体作動薬(内服)は、効果が認められなかったため中止となった。",
       "O": "GLP-1受容体作動薬(内服)処方終了",
       "A": "GLP-1受容体作動薬(内服)は無効と判断し終了。治療方針の変更が必要。",
@@ -781,6 +977,20 @@
         "sickday"
       ],
       "sideEffectPresence": "present_mild",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "nausea",
+          "diarrhea",
+          "constipation"
+        ],
+        "symptoms": [
+          "吐き気",
+          "下痢",
+          "便秘"
+        ]
+      },
       "S": "吐き気／下痢／便秘などがあるが、日常生活は可能。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)による消化器症状を軽度認めるが、治療継続可能。",
@@ -804,6 +1014,20 @@
         "sickday"
       ],
       "sideEffectPresence": "present_moderate",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "nausea",
+          "diarrhea",
+          "constipation"
+        ],
+        "symptoms": [
+          "吐き気",
+          "下痢",
+          "便秘"
+        ]
+      },
       "S": "吐き気／下痢／便秘が強く、辛いことがあるが、日常生活は可能。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "GLP-1受容体作動薬(内服)による消化器症状が強く、継続困難の可能性あり。",
@@ -826,6 +1050,20 @@
         "sickday"
       ],
       "sideEffectPresence": "present_change",
+      "sComposition": {
+        "intent": "stop",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "nausea",
+          "diarrhea",
+          "constipation"
+        ],
+        "symptoms": [
+          "吐き気",
+          "下痢",
+          "便秘"
+        ]
+      },
       "S": "吐き気／下痢／便秘出現のため他剤へ変更となった。",
       "O": "GLP-1受容体作動薬(内服)処方変更",
       "A": "GLP-1受容体作動薬(内服)の使用による消化器症状出現のため変更。",
@@ -848,6 +1086,20 @@
         "sickday"
       ],
       "sideEffectPresence": "present_dose_decrease",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "nausea",
+          "diarrhea",
+          "constipation"
+        ],
+        "symptoms": [
+          "吐き気",
+          "下痢",
+          "便秘"
+        ]
+      },
       "S": "吐き気／下痢／便秘がひどいので減量になりました。",
       "O": "GLP-1受容体作動薬(内服)減量",
       "A": "GLP-1受容体作動薬(内服)の使用による消化器症状がみられたため減量。今後の血糖変動に注意。",
@@ -870,6 +1122,20 @@
         "sickday"
       ],
       "sideEffectPresence": "present_stop",
+      "sComposition": {
+        "intent": "stop",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "nausea",
+          "diarrhea",
+          "constipation"
+        ],
+        "symptoms": [
+          "吐き気",
+          "下痢",
+          "便秘"
+        ]
+      },
       "S": "吐き気／下痢／便秘がひどいので中止となった。",
       "O": "GLP-1受容体作動薬(内服)処方中止",
       "A": "GLP-1受容体作動薬(内服)の使用による消化器症状出現のため中止。",
@@ -890,6 +1156,16 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "poor_glycemic_control"
+        ],
+        "symptoms": [
+          "血糖値が下がらない"
+        ]
+      },
       "S": "薬はちゃんと使用していますが、血糖値がなかなか下がりません。",
       "O": "GLP-1受容体作動薬(内服)処方",
       "A": "血糖改善不十分のため生活指導が必要。",
@@ -909,6 +1185,16 @@
         "sickday"
       ],
       "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "cold_like_symptoms"
+        ],
+        "symptoms": [
+          "風邪気味"
+        ]
+      },
       "S": "風邪気味です。",
       "O": "GLP-1受容体作動薬(内服)使用中",
       "A": "食事摂取低下および消化器症状により脱水リスク上昇。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要。",
