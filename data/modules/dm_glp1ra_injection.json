@@ -35,7 +35,7 @@
       "glp1ra_injection"
     ],
     "search": {
-      "primaryDisplayName": "GLP-1受容体作動薬（注射）",
+      "primaryDisplayName": "GLP-1受容体作動薬（注射）🔥",
       "exactAliases": [
         "ビクトーザ",
         "バイエッタ",
@@ -535,7 +535,7 @@
     {
       "id": "initial",
       "globalId": "dm_glp1ra_injection.initial",
-      "title": "GLP-1受容体作動薬(注射) 初回",
+      "title": "GLP-1受容体作動薬(注射) 初回🔥",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
@@ -546,7 +546,7 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
-      "S": "血糖値が高いため薬が追加となった。",
+      "S": "🔥血糖値が高いため薬が追加となった。",
       "O": "GLP-1受容体作動薬(注射)処方",
       "A": "GLP-1受容体作動薬(注射)は血糖コントロール不十分のため追加。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。\n血糖改善および体重減少（体重管理の補助）を目的とする。",
       "P": "GLP-1受容体作動薬(注射)は血糖値を改善する薬です。\n悪心や食欲不振などの副作用があればご相談ください。",
