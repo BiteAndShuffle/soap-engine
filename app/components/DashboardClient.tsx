@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useCallback, useEffect } from 'react'
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
@@ -113,6 +113,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // non-null = そのノードIDのシナリオを左メニューで操作中
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
 
+  // ── stale closure 対策: 常に最新値を ref で保持 ──────────
+  // useCallback の deps から外しても最新値を参照できる
+  const selectedNodeIdRef = useRef<string | null>(null)
+  const composeNodesRef = useRef<ComposeNode[]>([])
+  const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
+  const selectedScenarioRef = useRef<typeof selectedScenario>(undefined)
+
   // ── NLP モード専用状態 ─────────────────────────────────────
   const [uiMode, setUiMode] = useState<UiMode>('manual')
   const [nlpValidation, setNlpValidation] = useState<ValidationResult | null>(null)
@@ -154,6 +161,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
     return result
   }, [selectedScenario, activeModuleData.defaults])
+
+  // ── ref を最新値に同期（レンダリングのたびに更新） ─────────
+  selectedNodeIdRef.current = selectedNodeId
+  composeNodesRef.current = composeNodes
+  computedFieldsWithFollowupRef.current = computedFieldsWithFollowup
+  selectedScenarioRef.current = selectedScenario
 
   const fields: SoapFields = {
     S: manualFields.S ?? computedFieldsWithFollowup.S,
@@ -265,14 +278,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
     // ノード選択中でない場合のみシナリオをリセット
-    if (selectedNodeId === null) {
+    if (selectedNodeIdRef.current === null) {
       setSelectedScenarioId(null)
       setManualFields({})
       setSPrefix('none')
       setSStatus('stable')
       setSelectedAddonIds(new Set())
     }
-  }, [selectedNodeId])
+  }, [])
 
   // ── 合成ノードの block を再構築して更新するユーティリティ ─
   const rebuildNodeBlock = useCallback((
@@ -331,20 +344,26 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [allModules, moduleData])
 
   const handleSelectScenario = useCallback((id: string) => {
-    console.log('[handleSelectScenario] id=', id, 'selectedNodeId=', selectedNodeId)
-    // ノード選択中 → そのノードのシナリオを変更
-    if (selectedNodeId !== null) {
-      console.log('[handleSelectScenario] → node path, nodeId=', selectedNodeId)
+    // ref で最新値を参照（stale closure を完全排除）
+    const nodeId = selectedNodeIdRef.current
+    console.log('[handleSelectScenario] id=', id, 'selectedNodeId(ref)=', nodeId)
+
+    if (nodeId !== null) {
+      // ── ノード選択中 → そのノードのシナリオを変更 ──
+      console.log('[handleSelectScenario] → node path, nodeId=', nodeId)
+      const sc = selectedScenarioRef.current
+      const baseFields = computedFieldsWithFollowupRef.current
+      const currentClosing = sc
+        ? resolveClosingText(sc, activeModuleData.defaults)
+        : undefined
+      const baseLabel = sc?.title ?? ''
+
       setComposeNodes(prev => {
-        const currentClosing = selectedScenario
-          ? resolveClosingText(selectedScenario, activeModuleData.defaults)
-          : undefined
-        const baseLabel = selectedScenario?.title ?? ''
         const { updatedNodes, mergedFields } = rebuildNodeBlock(
-          selectedNodeId,
+          nodeId,
           id,
           prev,
-          computedFieldsWithFollowup,
+          baseFields,
           baseLabel,
           currentClosing,
         )
@@ -356,7 +375,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
 
     console.log('[handleSelectScenario] → main path')
-    // 通常（1剤目）操作
+    // ── 通常（1剤目）操作 ──
     setSelectedScenarioId(prev => {
       if (prev === id) {
         setManualFields({})
@@ -373,7 +392,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSelectedAddonIds(new Set())
       return id
     })
-  }, [selectedNodeId, activeModuleData, selectedScenario, computedFieldsWithFollowup, rebuildNodeBlock])
+  }, [activeModuleData, rebuildNodeBlock])
 
   // ── メイン検索選択: currentModule を切り替える ───────────
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
@@ -512,17 +531,20 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ── 合成ノード選択 ────────────────────────────────────────
   // ノードをクリック → selectedNodeId を切り替え、Sidebar グループをそのシナリオに合わせる
   const handleSelectNode = useCallback((nodeId: string) => {
-    // updater 関数の中で副作用 (setSelectedGroup) を呼ばない
-    if (selectedNodeId === nodeId) {
+    const currentNodeId = selectedNodeIdRef.current
+    const currentNodes = composeNodesRef.current
+    const currentScenario = selectedScenarioRef.current
+
+    if (currentNodeId === nodeId) {
       // 同じノードをクリック → 解除して1剤目に戻る
       console.log('[handleSelectNode] deselect', nodeId)
       setSelectedNodeId(null)
-      setSelectedGroup(selectedScenario ? getMenuGroupFromScenario(selectedScenario) : null)
+      setSelectedGroup(currentScenario ? getMenuGroupFromScenario(currentScenario) : null)
       return
     }
     // 選択切替
     console.log('[handleSelectNode] select', nodeId)
-    const node = composeNodes.find(n => n.id === nodeId)
+    const node = currentNodes.find(n => n.id === nodeId)
     if (node) {
       const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
       const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
@@ -530,48 +552,46 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (sc) {
         setSelectedGroup(getMenuGroupFromScenario(sc))
       } else {
-        // シナリオが見つからない場合はモジュールの最初のグループにフォールバック
         const firstGroup = groupByMenuGroup(mod.scenarios)[0]?.group ?? null
-        console.log('[handleSelectNode] sc not found, fallback to first group:', firstGroup)
         setSelectedGroup(firstGroup)
       }
     }
     setSelectedNodeId(nodeId)
-  }, [selectedNodeId, composeNodes, allModules, moduleData, selectedScenario])
+  }, [allModules, moduleData])
 
   // ── 合成ノード削除 ────────────────────────────────────────
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
-    // 削除ノードが選択中なら選択解除して1剤目に戻す
-    setSelectedNodeId(prev => {
-      if (prev === nodeId) {
-        if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
-        return null
-      }
-      return prev
-    })
+    // ref で最新値を参照
+    const currentNodeId = selectedNodeIdRef.current
+    const currentScenario = selectedScenarioRef.current
+    const baseFields = computedFieldsWithFollowupRef.current
+
+    // 削除ノードが選択中なら選択解除して1剤目に戻す（副作用を updater 外に出す）
+    if (currentNodeId === nodeId) {
+      setSelectedNodeId(null)
+      if (currentScenario) setSelectedGroup(getMenuGroupFromScenario(currentScenario))
+    }
     setComposeNodes(prev => {
       const updated = prev.filter(n => n.id !== nodeId)
       if (updated.length === 0) {
-        // ノードが全削除 → 1剤目の状態に戻す
         setManualFields({})
         return updated
       }
       // 残りのノードで再合成
-      const currentClosing = selectedScenario
-        ? resolveClosingText(selectedScenario, activeModuleData.defaults)
+      const currentClosing = currentScenario
+        ? resolveClosingText(currentScenario, activeModuleData.defaults)
         : undefined
-      const baseLabel = selectedScenario?.title ?? ''
-      // 1剤目の computedFieldsWithFollowup をベースに再合成
+      const baseLabel = currentScenario?.title ?? ''
       const merged = mergeBlocks(
         updated.map(n => n.block),
-        computedFieldsWithFollowup,
+        baseFields,
         baseLabel,
         currentClosing,
       )
       setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
       return updated
     })
-  }, [selectedScenario, activeModuleData.defaults, computedFieldsWithFollowup])
+  }, [activeModuleData.defaults])
 
   // ── 合成ノード全削除 ──────────────────────────────────────
   const handleResetCompose = useCallback(() => {
