@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback, useId } from 'react'
 import type { MenuGroup } from '../../lib/menuGroups'
-import type { SuggestionItem } from '../../lib/search'
+import type { DrugSuggestionItem } from '../../lib/search'
 import type { SPrefix, SStatus } from './SoapEditor'
 import s from '../styles/layout.module.css'
 
@@ -10,17 +10,13 @@ import s from '../styles/layout.module.css'
 // 仕様定数
 // ─────────────────────────────────────────────────────────────
 
-/**
- * S操作ボタンを表示するグループ。
- * 【仕様】副作用なし と コンプライアンス良好 のみ。コンプライアンス不良は含まない。
- */
 export const S_BUTTON_GROUPS = new Set<MenuGroup>([
   '副作用なし',
   'コンプライアンス良好',
 ])
 
 // ─────────────────────────────────────────────────────────────
-// 診療領域定義（サブカテゴリ → 検索窓に投入）
+// 診療領域定義
 // ─────────────────────────────────────────────────────────────
 
 interface MedicalArea {
@@ -48,7 +44,7 @@ const MEDICAL_AREAS: MedicalArea[] = [
 ]
 
 // ─────────────────────────────────────────────────────────────
-// S状態ボタン定義（3セクション × 4ボタン）
+// S状態ボタン定義
 // ─────────────────────────────────────────────────────────────
 
 interface SectionDef { label: string; prefix: SPrefix }
@@ -68,16 +64,11 @@ const STATUSES: StatusDef[] = [
 ]
 
 // ─────────────────────────────────────────────────────────────
-// 診療領域アコーディオン（全カテゴリ常設）
+// 診療領域アコーディオン
 // ─────────────────────────────────────────────────────────────
 
-interface MedicalAreaAccordionProps {
-  onSubcategorySelect: (label: string) => void
-}
-
-function MedicalAreaAccordion({ onSubcategorySelect }: MedicalAreaAccordionProps) {
+function MedicalAreaAccordion({ onSubcategorySelect }: { onSubcategorySelect: (label: string) => void }) {
   const [openArea, setOpenArea] = useState<string | null>(null)
-
   return (
     <div className={s.medAreaWrap}>
       {MEDICAL_AREAS.map(area => {
@@ -95,11 +86,7 @@ function MedicalAreaAccordion({ onSubcategorySelect }: MedicalAreaAccordionProps
             {isOpen && (
               <div className={s.medSubcatWrap}>
                 {area.subcategories.map(sub => (
-                  <button
-                    key={sub}
-                    className={s.medSubcatBtn}
-                    onClick={() => onSubcategorySelect(sub)}
-                  >
+                  <button key={sub} className={s.medSubcatBtn} onClick={() => onSubcategorySelect(sub)}>
                     {sub}
                   </button>
                 ))}
@@ -113,22 +100,22 @@ function MedicalAreaAccordion({ onSubcategorySelect }: MedicalAreaAccordionProps
 }
 
 // ─────────────────────────────────────────────────────────────
-// インライン検索ドロップダウン（全カテゴリ常設）
+// 薬剤追加インライン検索（DrugSuggestionItem専用）
 // ─────────────────────────────────────────────────────────────
 
-interface InlineSearchProps {
+interface DrugInlineSearchProps {
   searchValue: string
   onSearchChange: (v: string) => void
-  suggestions: SuggestionItem[]
-  onSelectSuggestion: (templateId: string) => void
+  suggestions: DrugSuggestionItem[]
+  onSelectDrug: (item: DrugSuggestionItem) => void
 }
 
-function InlineSearch({
+function DrugInlineSearch({
   searchValue,
   onSearchChange,
   suggestions,
-  onSelectSuggestion,
-}: InlineSearchProps) {
+  onSelectDrug,
+}: DrugInlineSearchProps) {
   const listId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -136,13 +123,13 @@ function InlineSearch({
 
   const showDropdown = isOpen && suggestions.length > 0
 
-  const commit = useCallback((item: SuggestionItem) => {
-    onSelectSuggestion(item.templateId)
+  const commit = useCallback((item: DrugSuggestionItem) => {
+    onSelectDrug(item)
     onSearchChange('')
     setIsOpen(false)
     setFocusedIdx(-1)
     inputRef.current?.blur()
-  }, [onSelectSuggestion, onSearchChange])
+  }, [onSelectDrug, onSearchChange])
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!showDropdown) return
@@ -163,28 +150,28 @@ function InlineSearch({
         aria-controls={listId}
         aria-activedescendant={focusedIdx >= 0 ? `${listId}-item-${focusedIdx}` : undefined}
         className={s.thirdSearchInput}
-        placeholder="薬剤・テンプレを検索…"
+        placeholder="薬剤を検索…"
         value={searchValue}
         onChange={e => { onSearchChange(e.target.value); setIsOpen(true); setFocusedIdx(-1) }}
         onFocus={() => setIsOpen(true)}
         onBlur={() => setTimeout(() => setIsOpen(false), 150)}
         onKeyDown={handleKeyDown}
-        aria-label="薬剤追加・テンプレート検索"
+        aria-label="薬剤追加検索"
         autoComplete="off"
       />
       {showDropdown && (
-        <ul id={listId} role="listbox" className={s.thirdSuggestionList} aria-label="検索候補">
+        <ul id={listId} role="listbox" className={s.thirdSuggestionList} aria-label="薬剤候補">
           {suggestions.map((item, idx) => (
             <li
-              key={item.templateId}
+              key={item.moduleId}
               id={`${listId}-item-${idx}`}
               role="option"
               aria-selected={idx === focusedIdx}
               className={[s.thirdSuggestionItem, idx === focusedIdx ? s.thirdSuggestionItemFocused : ''].join(' ')}
               onMouseDown={() => commit(item)}
             >
-              <span className={s.suggestionMain}>{item.shortLabel ?? item.label}</span>
-              {item.groupLabel && <span className={s.suggestionSub}>{item.groupLabel}</span>}
+              {/* 薬剤名のみ表示 */}
+              <span className={s.suggestionMain}>{item.drugDisplayLabel}</span>
             </li>
           ))}
         </ul>
@@ -198,39 +185,23 @@ function InlineSearch({
 // ─────────────────────────────────────────────────────────────
 
 interface ThirdPanelProps {
-  /** 現在選択中の大分類（null = 未選択） */
   selectedGroup: MenuGroup | null
-  /**
-   * サードパネルを表示するか。
-   * false のときはガイドのみ表示（セカンドパネルで何も選択されていない状態）。
-   */
   thirdPanelEnabled: boolean
-  /** S欄トグル: 現在の接頭句 */
   currentSPrefix: SPrefix
-  /** S欄トグル: 現在の状態 */
   currentSStatus: SStatus
-  /** Sボタン押下時コールバック */
   onSAction: (prefix: SPrefix, status: SStatus) => void
-  /** 検索クエリ（常設検索窓用） */
-  searchValue?: string
-  /** 検索クエリ変更ハンドラ */
-  onSearchChange?: (v: string) => void
-  /** サジェスト候補 */
-  suggestions?: SuggestionItem[]
-  /** サジェスト選択ハンドラ */
-  onSelectSuggestion?: (templateId: string) => void
-  /** 診療領域サブカテゴリ選択ハンドラ */
+  /** 合成薬剤追加検索クエリ */
+  composeSearchValue?: string
+  onComposeSearchChange?: (v: string) => void
+  /** 薬剤専用サジェスト候補 */
+  composeDrugSuggestions?: DrugSuggestionItem[]
+  /** 薬剤選択ハンドラ */
+  onSelectComposeDrug?: (item: DrugSuggestionItem) => void
   onSubcategorySelect?: (label: string) => void
 }
 
 // ─────────────────────────────────────────────────────────────
 // ThirdPanel 本体
-//
-// レイアウト構造（上→下）:
-//   [常設上部スクロール領域]
-//     - 薬剤追加検索窓
-//     - 診療領域ボタン（アコーディオン）
-//   [Sボタン: 副作用なし/CP良好のみ・最下部固定]
 // ─────────────────────────────────────────────────────────────
 
 export default function ThirdPanel({
@@ -239,32 +210,49 @@ export default function ThirdPanel({
   currentSPrefix,
   currentSStatus,
   onSAction,
-  searchValue = '',
-  onSearchChange,
-  suggestions = [],
-  onSelectSuggestion,
+  composeSearchValue = '',
+  onComposeSearchChange,
+  composeDrugSuggestions = [],
+  onSelectComposeDrug,
   onSubcategorySelect,
 }: ThirdPanelProps) {
-  // 【仕様】S操作: 副作用なし・CP良好のみ。CP不良は含まない。
   const showSButtons = thirdPanelEnabled && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
 
-  // 診療領域サブカテゴリ押下 → 検索窓に語を投入
   const handleSubcategorySelect = useCallback((label: string) => {
     if (onSubcategorySelect) {
       onSubcategorySelect(label)
     } else {
-      onSearchChange?.(label)
+      onComposeSearchChange?.(label)
     }
-  }, [onSubcategorySelect, onSearchChange])
+  }, [onSubcategorySelect, onComposeSearchChange])
 
-  // thirdPanelEnabled が false のときはガイドのみ表示
   if (!thirdPanelEnabled) {
     return (
       <div className={s.thirdPanel}>
         <div className={s.thirdPanelInner}>
-          <div className={s.thirdPanelGuide}>
-            左のテンプレを選択すると、ここに機能が表示されます
-          </div>
+          {/* 薬剤追加窓は常設（シナリオ未選択でも使える） */}
+          {onComposeSearchChange && onSelectComposeDrug && (
+            <div className={s.thirdPanelScrollArea}>
+              <div className={s.thirdSection}>
+                <div className={s.sActionHeading}>薬剤追加</div>
+                <DrugInlineSearch
+                  searchValue={composeSearchValue}
+                  onSearchChange={onComposeSearchChange}
+                  suggestions={composeDrugSuggestions}
+                  onSelectDrug={onSelectComposeDrug}
+                />
+              </div>
+              <div className={s.thirdSection}>
+                <div className={s.sActionHeading}>診療領域</div>
+                <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
+              </div>
+            </div>
+          )}
+          {(!onComposeSearchChange || !onSelectComposeDrug) && (
+            <div className={s.thirdPanelGuide}>
+              左のテンプレを選択すると、ここに機能が表示されます
+            </div>
+          )}
         </div>
       </div>
     )
@@ -273,32 +261,24 @@ export default function ThirdPanel({
   return (
     <div className={s.thirdPanel}>
       <div className={s.thirdPanelInner}>
-
-        {/* ══ 上部エリア（スクロール可） ══ */}
         <div className={s.thirdPanelScrollArea}>
-
-          {/* 薬剤追加検索窓 */}
-          {onSearchChange && onSelectSuggestion && (
+          {onComposeSearchChange && onSelectComposeDrug && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>薬剤追加</div>
-              <InlineSearch
-                searchValue={searchValue}
-                onSearchChange={onSearchChange}
-                suggestions={suggestions}
-                onSelectSuggestion={onSelectSuggestion}
+              <DrugInlineSearch
+                searchValue={composeSearchValue}
+                onSearchChange={onComposeSearchChange}
+                suggestions={composeDrugSuggestions}
+                onSelectDrug={onSelectComposeDrug}
               />
             </div>
           )}
-
-          {/* 診療領域ボタン */}
           <div className={s.thirdSection}>
             <div className={s.sActionHeading}>診療領域</div>
             <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
           </div>
-
         </div>
 
-        {/* ══ 下部固定エリア: S操作ボタン（副作用なし/CP良好のみ） ══ */}
         {showSButtons && (
           <div className={s.thirdPanelStickyBottom}>
             <div className={s.sActionHeading}>S 先頭文</div>
@@ -307,15 +287,11 @@ export default function ThirdPanel({
                 <div className={s.sActionSectionLabel}>{sec.label}</div>
                 <div className={s.sActionBtnGrid}>
                   {STATUSES.map(st => {
-                    const isActive =
-                      currentSPrefix === sec.prefix && currentSStatus === st.status
+                    const isActive = currentSPrefix === sec.prefix && currentSStatus === st.status
                     return (
                       <button
                         key={st.status}
-                        className={[
-                          s.sActionBtn,
-                          isActive ? s.sActionBtnActive : '',
-                        ].join(' ')}
+                        className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
                         onClick={() => onSAction(sec.prefix, st.status)}
                         aria-pressed={isActive}
                       >
@@ -328,7 +304,6 @@ export default function ThirdPanel({
             ))}
           </div>
         )}
-
       </div>
     </div>
   )

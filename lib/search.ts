@@ -273,7 +273,88 @@ export function getSuggestions(
 }
 
 // ─────────────────────────────────────────────────────────────
-// E) フィルタ（後方互換エクスポート）
+// E) 薬剤専用サジェスト（シナリオを除く・モジュール単位）
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * DrugSuggestionItem — モジュール（薬剤）単位の候補。
+ * templateId はそのモジュールの代表シナリオ（先頭）のIDであり、
+ * 薬剤選択後のモジュール特定に使う。
+ */
+export interface DrugSuggestionItem {
+  moduleId: string
+  /** 表示用薬剤名（brandNames[0] / primaryDisplayName） */
+  drugDisplayLabel: string
+  /** クエリに最もマッチしたブランド名 */
+  matchedBrandName?: string
+  /** モジュール代表シナリオのID（モジュール特定用） */
+  representativeTemplateId: string
+}
+
+/**
+ * 薬剤（モジュール）単位のサジェスト候補を返す。
+ * 各モジュールから代表1件のみ選出し、シナリオ名はドロップダウンに出さない。
+ * getSuggestions と同じスコアリングを使いつつ、moduleId でデデュープする。
+ */
+export function getDrugSuggestions(
+  query: string,
+  index: SearchEntry[],
+  limit = 8,
+): DrugSuggestionItem[] {
+  const q = normalizeText(query)
+  if (!q) return []
+
+  // スコアリング（getSuggestions と同じロジック）
+  const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
+  for (let i = 0; i < index.length; i++) {
+    const score = scoreEntry(index[i], q)
+    if (score > 0) scored.push({ entry: index[i], score, originalIndex: i })
+  }
+
+  scored.sort((a, b) =>
+    b.score - a.score ||
+    b.entry.priority - a.entry.priority ||
+    a.originalIndex - b.originalIndex,
+  )
+
+  // moduleId 単位でデデュープ（先頭＝最高スコア代表のみ採用）
+  const seenModules = new Set<string>()
+  const results: DrugSuggestionItem[] = []
+
+  for (const { entry } of scored) {
+    if (results.length >= limit) break
+    if (seenModules.has(entry.moduleId)) continue
+    seenModules.add(entry.moduleId)
+
+    // マッチしたブランド名を特定
+    let matchedBrandName: string | undefined
+    for (const brand of entry.brandNames) {
+      if (normalizeText(brand) === q) { matchedBrandName = brand; break }
+    }
+    if (!matchedBrandName) {
+      for (const brand of entry.brandNames) {
+        if (normalizeText(brand).startsWith(q)) { matchedBrandName = brand; break }
+      }
+    }
+    if (!matchedBrandName) {
+      for (const brand of entry.brandNames) {
+        if (normalizeText(brand).includes(q)) { matchedBrandName = brand; break }
+      }
+    }
+
+    results.push({
+      moduleId: entry.moduleId,
+      drugDisplayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
+      matchedBrandName,
+      representativeTemplateId: entry.templateId,
+    })
+  }
+
+  return results
+}
+
+// ─────────────────────────────────────────────────────────────
+// F) フィルタ（後方互換エクスポート）
 // ─────────────────────────────────────────────────────────────
 
 export function filterTemplates(

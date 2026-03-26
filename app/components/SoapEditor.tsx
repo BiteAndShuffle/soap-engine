@@ -125,12 +125,19 @@ export default function SoapEditor({
         </div>
       ) : (
         <>
-          {/* Sブロック上部: ノードバースロット */}
-          {nodeBarSlot && (
-            <div className={s.soapNodeBarSlot}>
+          {/* 上部エリア: ノードバースロット（左） + 全文コピーボタン（右） */}
+          <div className={s.editorTopBar}>
+            <div className={s.editorTopBarLeft}>
               {nodeBarSlot}
             </div>
-          )}
+            <button
+              className={[s.copyAllBtn, allCopied ? s.copyAllBtnDone : ''].join(' ')}
+              onClick={copyAll}
+              aria-label="SOAPノート全体をコピー"
+            >
+              {allCopied ? '✓ コピー済' : 'すべてコピー'}
+            </button>
+          </div>
 
           {/* S/O/A/P フィールド */}
           <div className={s.soapFields}>
@@ -162,17 +169,6 @@ export default function SoapEditor({
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* フッター: SOAPをすべてコピー（単独配置） */}
-          <div className={s.editorFooter}>
-            <button
-              className={[s.copyAllBtn, allCopied ? s.copyAllBtnDone : ''].join(' ')}
-              onClick={copyAll}
-              aria-label="SOAPノート全体をコピー"
-            >
-              {allCopied ? '✓ コピーしました' : 'SOAPをすべてコピー'}
-            </button>
           </div>
         </>
       )}

@@ -20,6 +20,8 @@ interface ComposeNodeBarProps {
   onReset: () => void
   /** 1剤目（ベース薬）の薬剤ラベル（常時表示用） */
   baseDrugLabel?: string
+  /** シナリオ未確定ノードのID集合（pending状態表示用） */
+  pendingNodeIds?: Set<string>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -40,6 +42,7 @@ export default function ComposeNodeBar({
   onRemove,
   onReset,
   baseDrugLabel,
+  pendingNodeIds,
 }: ComposeNodeBarProps) {
   if (nodes.length === 0) return null
 
@@ -63,21 +66,26 @@ export default function ComposeNodeBar({
         {/* ── 2剤目以降チップ（クリックで選択/解除） ── */}
         {nodes.map(node => {
           const isSelected = selectedNodeId === node.id
+          const isPending = pendingNodeIds?.has(node.id) ?? false
           return (
             <button
               key={node.id}
               className={[
                 s.composeNode,
                 isSelected ? s.composeNodeSelected : '',
+                isPending ? s.composeNodePending : '',
               ].join(' ')}
               onClick={() => onSelectNode(node.id)}
               aria-pressed={isSelected}
               title={
-                isSelected
-                  ? `${node.drugLabel} のシナリオを変更中 — クリックで解除`
-                  : `${node.drugLabel} — クリックしてシナリオを変更`
+                isPending
+                  ? `${node.drugLabel} — テンプレを選択してください`
+                  : isSelected
+                    ? `${node.drugLabel} のシナリオを変更中 — クリックで解除`
+                    : `${node.drugLabel} — クリックしてシナリオを変更`
               }
             >
+              {isPending && !isSelected && <span className={s.composeNodePendingIcon}>?</span>}
               {isSelected && <span className={s.composeNodeEditIcon}>✎</span>}
               <span className={s.composeNodeDrug}>{node.drugLabel}</span>
               <span

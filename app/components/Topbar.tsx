@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState, useCallback, useId } from 'react'
-import type { SuggestionItem } from '../../lib/search'
+import type { DrugSuggestionItem } from '../../lib/search'
 import s from '../styles/layout.module.css'
 
 export type RouteFilter = 'all' | 'internal' | 'topical'
@@ -9,12 +9,13 @@ export type RouteFilter = 'all' | 'internal' | 'topical'
 interface TopbarProps {
   title: string
   badge?: string
-  /** 現在選択中の薬剤名（activeModuleData の primaryDisplayName）*/
   activeDrugLabel?: string
   searchValue: string
   onSearchChange: (value: string) => void
-  suggestions: SuggestionItem[]
-  onSelectSuggestion: (templateId: string) => void
+  /** 薬剤専用サジェスト候補（シナリオなし） */
+  drugSuggestions: DrugSuggestionItem[]
+  /** 薬剤選択ハンドラ */
+  onSelectDrugSuggestion: (item: DrugSuggestionItem) => void
   routeFilter: RouteFilter
   onRouteFilterChange: (f: RouteFilter) => void
 }
@@ -31,8 +32,8 @@ export default function Topbar({
   activeDrugLabel,
   searchValue,
   onSearchChange,
-  suggestions,
-  onSelectSuggestion,
+  drugSuggestions,
+  onSelectDrugSuggestion,
   routeFilter,
   onRouteFilterChange,
 }: TopbarProps) {
@@ -41,23 +42,20 @@ export default function Topbar({
   const [focusedIdx, setFocusedIdx] = useState(-1)
   const [isOpen, setIsOpen] = useState(false)
 
-  // suggestionsRef: Enter 押下時に render サイクルに依存せず
-  // 最新の suggestions を参照するための ref。
-  // props の suggestions が更新されるたびに同期する。
-  const suggestionsRef = useRef<SuggestionItem[]>(suggestions)
-  suggestionsRef.current = suggestions
+  const suggestionsRef = useRef<DrugSuggestionItem[]>(drugSuggestions)
+  suggestionsRef.current = drugSuggestions
 
-  const showDropdown = isOpen && suggestions.length > 0
+  const showDropdown = isOpen && drugSuggestions.length > 0
 
   const commitSuggestion = useCallback(
-    (item: SuggestionItem) => {
-      onSelectSuggestion(item.templateId)
+    (item: DrugSuggestionItem) => {
+      onSelectDrugSuggestion(item)
       onSearchChange('')
       setIsOpen(false)
       setFocusedIdx(-1)
       inputRef.current?.blur()
     },
-    [onSelectSuggestion, onSearchChange],
+    [onSelectDrugSuggestion, onSearchChange],
   )
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -65,7 +63,7 @@ export default function Topbar({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
-        setFocusedIdx(i => Math.min(i + 1, suggestions.length - 1))
+        setFocusedIdx(i => Math.min(i + 1, drugSuggestions.length - 1))
         break
       case 'ArrowUp':
         e.preventDefault()
@@ -73,30 +71,10 @@ export default function Topbar({
         break
       case 'Enter': {
         e.preventDefault()
-        // ref 経由で Enter 時点の最新 suggestions を取得（stale closure 対策）
-        const currentSuggestions = suggestionsRef.current
-        // [DEBUG] props版とref版の両方をログ出力して差異を確認
-        console.log('[Topbar Enter]', {
-          showDropdown,
-          isOpen,
-          suggestionsCount_props: suggestions.length,
-          suggestionsCount_ref: currentSuggestions.length,
-          suggestions0_props: suggestions[0]?.templateId,
-          suggestions0_ref: currentSuggestions[0]?.templateId,
-          focusedIdx,
-          mismatch: suggestions[0]?.templateId !== currentSuggestions[0]?.templateId,
-        })
-        if (suggestions.length === 0 && currentSuggestions.length === 0) {
-          console.warn('[Topbar Enter] ⚠️ suggestions が空 → commitSuggestion スキップ')
-          break
-        }
-        // ref版を優先して使用
-        const target = focusedIdx >= 0 ? currentSuggestions[focusedIdx] : currentSuggestions[0]
-        if (target) {
-          commitSuggestion(target)
-        } else {
-          console.warn('[Topbar Enter] ⚠️ target が undefined → commitSuggestion スキップ')
-        }
+        const current = suggestionsRef.current
+        if (current.length === 0) break
+        const target = focusedIdx >= 0 ? current[focusedIdx] : current[0]
+        if (target) commitSuggestion(target)
         break
       }
       case 'Escape':
@@ -114,7 +92,6 @@ export default function Topbar({
 
   return (
     <header className={s.topbar}>
-      {/* ── 辞書ボタン枠（タイトルの左）── */}
       <button className={s.dictBtn} disabled aria-label="辞書（準備中）" title="辞書（準備中）">
         📘
       </button>
@@ -124,14 +101,11 @@ export default function Topbar({
         {badge && <span className={s.topbarBadge}>{badge}</span>}
       </span>
 
-      {/* ── 選択中薬剤名ラベル（タイトル右・中央寄り） ── */}
       {activeDrugLabel && (
         <span className={s.topbarDrugLabel}>{activeDrugLabel}</span>
       )}
 
-      {/* ── 右エリア: フィルタトグル + 検索窓 を横並び ── */}
       <div className={s.searchArea}>
-        {/* 内服 / 外用 / すべて トグル（検索窓の直左） */}
         <div className={s.routeToggle} role="group" aria-label="剤形フィルタ">
           {(['all', 'internal', 'topical'] as RouteFilter[]).map(f => (
             <button
@@ -145,7 +119,6 @@ export default function Topbar({
           ))}
         </div>
 
-        {/* ── サジェスト検索（一番右） ── */}
         <div className={s.searchWrap}>
           <input
             ref={inputRef}
@@ -158,13 +131,13 @@ export default function Topbar({
               focusedIdx >= 0 ? `${listId}-item-${focusedIdx}` : undefined
             }
             className={s.searchInput}
-            placeholder="テンプレ検索（1文字から）…"
+            placeholder="薬剤を検索…"
             value={searchValue}
             onChange={handleChange}
             onFocus={() => setIsOpen(true)}
             onBlur={() => setTimeout(() => setIsOpen(false), 150)}
             onKeyDown={handleKeyDown}
-            aria-label="テンプレート検索"
+            aria-label="薬剤検索"
             autoComplete="off"
           />
 
@@ -173,11 +146,11 @@ export default function Topbar({
               id={listId}
               role="listbox"
               className={s.suggestionList}
-              aria-label="検索候補"
+              aria-label="薬剤候補"
             >
-              {suggestions.map((item, idx) => (
+              {drugSuggestions.map((item, idx) => (
                 <li
-                  key={item.templateId}
+                  key={item.moduleId}
                   id={`${listId}-item-${idx}`}
                   role="option"
                   aria-selected={idx === focusedIdx}
@@ -187,15 +160,13 @@ export default function Topbar({
                   ].join(' ')}
                   onMouseDown={() => commitSuggestion(item)}
                 >
-                  <span className={s.suggestionMain}>{item.shortLabel ?? item.label}</span>
-                  <span className={s.suggestionSubGroup}>
-                    {item.drugDisplayLabel && (
-                      <span className={s.suggestionDrug}>{item.drugDisplayLabel}</span>
-                    )}
-                    {item.groupLabel && (
-                      <span className={s.suggestionSub}>{item.groupLabel}</span>
-                    )}
-                  </span>
+                  {/* 薬剤名のみ表示（シナリオ名なし） */}
+                  <span className={s.suggestionMain}>{item.drugDisplayLabel}</span>
+                  {item.matchedBrandName && item.matchedBrandName !== item.drugDisplayLabel && (
+                    <span className={s.suggestionSubGroup}>
+                      <span className={s.suggestionDrug}>{item.matchedBrandName}</span>
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
