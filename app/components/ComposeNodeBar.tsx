@@ -20,8 +20,6 @@ interface ComposeNodeBarProps {
   onReset: () => void
   /** 1剤目（ベース薬）の薬剤ラベル（常時表示用） */
   baseDrugLabel?: string
-  /** 1剤目（ベース薬）のシナリオラベル */
-  baseScenarioLabel?: string
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -31,6 +29,8 @@ interface ComposeNodeBarProps {
 // ノードが1件以上のとき:
 //   [1剤目ベースチップ(固定・グレー)] [2剤目チップ(クリックで選択)] ...
 //   選択中チップはハイライト + ✎ アイコンで「編集中」を示す。
+//
+// 表示ラベル: scenario.title は非表示。薬剤ラベルのみ（最大6文字）。
 // ─────────────────────────────────────────────────────────────
 
 export default function ComposeNodeBar({
@@ -40,7 +40,6 @@ export default function ComposeNodeBar({
   onRemove,
   onReset,
   baseDrugLabel,
-  baseScenarioLabel,
 }: ComposeNodeBarProps) {
   if (nodes.length === 0) return null
 
@@ -55,12 +54,9 @@ export default function ComposeNodeBar({
               s.composeNodeBase,
               selectedNodeId === null ? s.composeNodeBaseActive : '',
             ].join(' ')}
-            title="1剤目（メイン薬）"
+            title={baseDrugLabel}
           >
             <span className={s.composeNodeDrug}>{baseDrugLabel}</span>
-            {baseScenarioLabel && (
-              <span className={s.composeNodeScenario}>{baseScenarioLabel}</span>
-            )}
           </div>
         )}
 
@@ -84,7 +80,6 @@ export default function ComposeNodeBar({
             >
               {isSelected && <span className={s.composeNodeEditIcon}>✎</span>}
               <span className={s.composeNodeDrug}>{node.drugLabel}</span>
-              <span className={s.composeNodeScenario}>{node.block.templateLabel}</span>
               <span
                 className={s.composeNodeRemoveBtn}
                 role="button"

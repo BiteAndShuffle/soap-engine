@@ -406,6 +406,13 @@ export interface ModuleData {
   moduleId: string
   moduleVersion?: string
   categoryPath?: string[]
+  /** 合成ノード表示設定 */
+  composition?: {
+    domain?: string
+    priority?: number
+    /** ノードバーに表示する短縮ラベル（未指定時は NODE_LABEL_MAP / categoryPath[1] / brandNames[0] で決定） */
+    nodeLabel?: string
+  }
   drug?: Drug
   drugResolution?: DrugResolution
   display?: { title: string; subtitle: string; drugClassLabel?: string }

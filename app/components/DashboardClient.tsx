@@ -39,6 +39,33 @@ import s from '../styles/layout.module.css'
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
 
 // ─────────────────────────────────────────────────────────────
+// ノードラベルマッピング
+// categoryPath[1] の日本語薬剤クラス名 → 短縮ラベル
+// ─────────────────────────────────────────────────────────────
+
+const NODE_LABEL_MAP: Record<string, string> = {
+  'GLP-1受容体作動薬': 'GLP1',
+  '去痰薬': '去痰',
+  '鎮咳薬': '鎮咳',
+  '抗菌薬': '抗生剤',
+}
+
+/**
+ * モジュールデータからノードバー表示用の短縮ラベルを決定する。
+ * 優先順位:
+ *   1. composition.nodeLabel（明示指定）
+ *   2. NODE_LABEL_MAP[categoryPath[1]]（マッピング変換）
+ *   3. drug.brandNames[0]（ブランド名フォールバック）
+ *   4. moduleId（最終フォールバック）
+ */
+function resolveNodeLabel(mod: ModuleData): string {
+  if (mod.composition?.nodeLabel) return mod.composition.nodeLabel
+  const cat1 = mod.categoryPath?.[1]
+  if (cat1 && NODE_LABEL_MAP[cat1]) return NODE_LABEL_MAP[cat1]
+  return mod.drug?.brandNames?.[0] ?? mod.moduleId
+}
+
+// ─────────────────────────────────────────────────────────────
 // UI モード
 //   'manual' — 既存の手動選択フロー（Sidebar → SecondaryPanel）
 //   'nlp'    — 自然言語生成モード（NlpInputPanel → createSoapFromInput）
@@ -465,10 +492,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
       }
     }
-    const drugLabel = matchedBrand
-      ?? targetModule.drug?.brandNames?.[0]
-      ?? targetModule.drug?.search?.primaryDisplayName
-      ?? targetModule.moduleId
+    const drugLabel = resolveNodeLabel(targetModule)
 
     // MergedBlock を構築
     const base = buildSoapFromScenario(sc)
@@ -858,25 +882,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
         {/* Col 4: SOAPエディター */}
         <div className={s.editorCol}>
-          {/* 合成ノードバー（2剤目以降のノード表示） */}
-          <ComposeNodeBar
-            nodes={composeNodes}
-            selectedNodeId={selectedNodeId}
-            onSelectNode={handleSelectNode}
-            onRemove={handleRemoveComposeNode}
-            onReset={handleResetCompose}
-            baseDrugLabel={activeDrugLabel}
-            baseScenarioLabel={selectedScenario?.title}
-          />
-
           <SoapEditor
             fields={fields}
             onChange={handleFieldChange}
-            templateLabel={selectedScenario?.title ?? ''}
-            mergedBlockCount={0}
-            onMerge={() => { /* 合成ノードUIに移行したため保持ボタンは非使用 */ }}
-            onResetMerge={handleResetCompose}
-            canMerge={false}
+            nodeBarSlot={
+              <ComposeNodeBar
+                nodes={composeNodes}
+                selectedNodeId={selectedNodeId}
+                onSelectNode={handleSelectNode}
+                onRemove={handleRemoveComposeNode}
+                onReset={handleResetCompose}
+                baseDrugLabel={resolveNodeLabel(activeModuleData)}
+              />
+            }
           />
         </div>
       </div>
