@@ -708,6 +708,123 @@
   border-color: #005ab8;
 }
 
+/* ── Col 4: エディターカラム（ComposeNodeBar + SoapEditor） ── */
+
+/*
+ * editorCol: ComposeNodeBar と SoapEditor を縦積みにするコンテナ。
+ * 既存の .editor から grid-row/overflow を引き継ぐため flex column で包む。
+ */
+.editorCol {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── 合成ノードバー ──────────────────────────────────────── */
+
+.composeNodeBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #fff8ec;
+  border-bottom: 1.5px solid #ffd080;
+  flex-shrink: 0;
+  min-height: 38px;
+}
+
+.composeNodeBarLabel {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #8a5500;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.composeNodeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 各ノードチップ */
+.composeNode {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px 3px 8px;
+  background: #fff3d0;
+  border: 1.5px solid #ffc040;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  color: #6a3800;
+  white-space: nowrap;
+  max-width: 260px;
+}
+
+.composeNodeDrug {
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.composeNodeScenario {
+  font-weight: 500;
+  color: #8a5500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.composeNodeRemoveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: #ffc040;
+  border: none;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #6a3800;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.composeNodeRemoveBtn:hover {
+  background: #ff453a;
+  color: #fff;
+}
+
+.composeNodeResetBtn {
+  padding: 0.18rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: transparent;
+  border: 1.5px solid #ffc040;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #8a5500;
+  transition: background 0.1s, color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.composeNodeResetBtn:hover {
+  background: #fdecea;
+  border-color: #ff453a;
+  color: #b91c1c;
+}
+
 /* ── Col 4: SOAPエディター（右端・約1/2幅） ────────────────── */
 
 .editor {

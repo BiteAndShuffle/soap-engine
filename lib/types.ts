@@ -289,6 +289,29 @@ export const TAG_TO_GENERIC_NAME: Record<string, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
+// ComposeNode（合成ノード: 2剤目以降の合成対象）
+//
+// composeNodes: ComposeNode[] で複数薬剤を管理する。
+//   moduleId   — どのモジュールから選んだか
+//   scenarioId — scenario.globalId
+//   block      — buildSoap済みの MergedBlock スナップショット
+//   drugLabel  — ノードに表示する薬剤名ラベル（drug.brandNames[0] など）
+// ─────────────────────────────────────────────────────────────
+
+export interface ComposeNode {
+  /** ユニークID（Date.now() + random） */
+  id: string
+  /** モジュールID */
+  moduleId: string
+  /** scenario.globalId */
+  scenarioId: string
+  /** SOAP スナップショット（P closing dedup 用メタデータ含む） */
+  block: MergedBlock
+  /** ノード表示用薬剤ラベル */
+  drugLabel: string
+}
+
+// ─────────────────────────────────────────────────────────────
 // MergedBlock（保持＝合成機能）
 // ─────────────────────────────────────────────────────────────
 

@@ -2,9 +2,9 @@
 
 import { useMemo, useState, useCallback, useEffect } from 'react'
 
-import type { ModuleData, SoapKey, SoapFields, MergedBlock } from '../../lib/types'
+import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
-import { buildSoapFromScenario, buildSoapFull, mergeBlocks } from '../../lib/buildSoap'
+import { buildSoapFromScenario, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getSuggestions, normalizeText } from '../../lib/search'
 import {
   type MenuGroup,
@@ -28,6 +28,7 @@ import SoapEditor, {
   buildSFirstSentence,
   replaceSFirstSentence,
 } from './SoapEditor'
+import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
 
@@ -54,6 +55,24 @@ interface DashboardClientProps {
 }
 
 // ─────────────────────────────────────────────────────────────
+// followup closing テキストを解決するユーティリティ
+// ─────────────────────────────────────────────────────────────
+
+function resolveClosingText(
+  scenario: { followupRef?: string; followup?: Record<string, unknown> },
+  defaults?: ModuleData['defaults'],
+): string | undefined {
+  if (scenario.followupRef) {
+    return (defaults?.followupProfiles?.[scenario.followupRef] as Record<string, string> | undefined)?.P ?? undefined
+  }
+  const followupVal = (scenario.followup as Record<string, string> | undefined)?.P
+  if (followupVal === 'default') {
+    return (defaults?.followup as Record<string, string> | undefined)?.P ?? undefined
+  }
+  return undefined
+}
+
+// ─────────────────────────────────────────────────────────────
 // DashboardClient — 状態管理・UIオーケストレーター
 // ─────────────────────────────────────────────────────────────
 
@@ -64,26 +83,30 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [allModules],
   )
 
-  // ── アクティブモジュール（検索候補選択で切り替わる） ──────
-  // 手動選択（Sidebar→SecondaryPanel）は常に moduleData（デフォルト=oral）。
-  // 検索候補選択時に候補の moduleId に一致するモジュールへ切り替える。
+  // ── アクティブモジュール（メイン検索選択で切り替わる） ──────
   const [activeModuleData, setActiveModuleData] = useState<ModuleData>(moduleData)
 
-  // ── 選択中ブランド名（検索クエリに最も近いブランド） ───────
-  // 将来: 検索語からブランドを特定して優先表示する拡張ポイント。
-  // undefined のときは activeModuleData.drug.brandNames[0] にフォールバック。
+  // ── 選択中ブランド名（メイン検索クエリに最も近いブランド） ──
   const [activeBrandName, setActiveBrandName] = useState<string | undefined>(undefined)
 
-  // ── 状態 ──────────────────────────────────────────────────
-  const [search, setSearch] = useState('')
+  // ── 検索状態（責務分離） ──────────────────────────────────
+  // mainSearch:    Topbar の検索窓 → currentModule 切替専用
+  // composeSearch: ThirdPanel の検索窓 → composeNodes への追加専用
+  const [mainSearch, setMainSearch] = useState('')
+  const [composeSearch, setComposeSearch] = useState('')
+
+  // ── その他状態 ────────────────────────────────────────────
   const [routeFilter, setRouteFilter] = useState<RouteFilter>('all')
   const [selectedGroup, setSelectedGroup] = useState<MenuGroup | null>(null)
   const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null)
   const [manualFields, setManualFields] = useState<Partial<SoapFields>>({})
-  const [mergedBlocks, setMergedBlocks] = useState<MergedBlock[]>([])
   const [sPrefix, setSPrefix] = useState<SPrefix>('none')
   const [sStatus, setSStatus] = useState<SStatus>('stable')
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(new Set())
+
+  // ── 合成ノード（2剤目以降の合成対象リスト） ───────────────
+  // composeNodes は追加順を保持し、mergeBlocks の入力として使われる
+  const [composeNodes, setComposeNodes] = useState<ComposeNode[]>([])
 
   // ── NLP モード専用状態 ─────────────────────────────────────
   const [uiMode, setUiMode] = useState<UiMode>('manual')
@@ -99,14 +122,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── SOAP フィールド ──────────────────────────────────────
   // computedFields: S/O/A/P のみ（followup未適用）
-  //   → handleAddonToggle でアドオンテキストを合成するときの「起点」として使う
   const computedFields = selectedScenario
     ? buildSoapFromScenario(selectedScenario)
     : EMPTY_FIELDS
 
   // computedFieldsWithFollowup: followup のみ適用したベース表示用
-  //   addonsRef は展開しない（UIトグルで個別制御するため）
-  //   シナリオ選択直後（manualFields 未設定時）の初期表示に使う
   const computedFieldsWithFollowup: SoapFields = useMemo(() => {
     if (!selectedScenario) return EMPTY_FIELDS
     const base = buildSoapFromScenario(selectedScenario)
@@ -116,11 +136,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const followupRef = selectedScenario.followupRef
       if (followupRef) {
         const profile = activeModuleData.defaults?.followupProfiles?.[followupRef]
-        if (profile) appendText = profile[key]
+        if (profile) appendText = (profile as Record<string, string | null>)[key]
       } else {
-        const followupVal = selectedScenario.followup?.[key]
+        const followupVal = (selectedScenario.followup as Record<string, string> | undefined)?.[key]
         if (followupVal === 'default') {
-          appendText = activeModuleData.defaults?.followup?.[key]
+          appendText = (activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[key]
         }
       }
       if (appendText) {
@@ -138,15 +158,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }
 
   // ── アドオン表示キー解決 ──────────────────────────────────
-  // getVisibleAddonKeys: scenario の scenarioType / scenarioGroup を SSOT として
-  // 表示すべきアドオンキーを決定する（addonsRef があれば個別指定優先）。
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(activeModuleData.addons, selectedScenario),
     [activeModuleData.addons, selectedScenario],
   )
 
   // ── S操作: 副作用なし/CP良好への変更時に prev_do_stable へ強制初期化 ──
-  // prev_do_stable = prefix:'none'(前回、Do) + status:'stable'(体調落ち着いている)
   useEffect(() => {
     if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
       setSPrefix('none')
@@ -155,7 +172,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [selectedGroup])
 
   // ── グループ構造 ─────────────────────────────────────────
-  // groupByMenuGroup は getMenuGroupFromScenario (sideEffectPresence SSOT) で分類
   const allGroups = useMemo(
     () => groupByMenuGroup(activeModuleData.scenarios),
     [activeModuleData.scenarios],
@@ -165,46 +181,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [allGroups],
   )
 
-  // 選択中グループのシナリオ一覧
-  // 【SSOT二重保証】groupByMenuGroup の結果に加え、
-  // getMenuGroupFromScenario(sc) === selectedGroup で再フィルタ。
-  // sideEffectPresence の完全一致のみ。部分一致・includes 禁止。
   const groupScenarios = useMemo(() => {
-    // group 未選択（検索直後・初期状態など）: セカンドパネルは空
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
-    const result = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
-    // [DEBUG] ブラウザコンソールで実測確認用（後で削除）
-    console.log('[groupScenarios]', {
-      moduleId: activeModuleData.moduleId,
-      selectedGroup,
-      allGroupsSummary: allGroups.map(g => [g.group, g.scenarios.length]),
-      rawCount: raw.length,
-      resultCount: result.length,
-      resultIds: result.map(sc => sc.id),
-    })
-    return result
-  }, [allGroups, selectedGroup, activeModuleData.moduleId])
+    return raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
+  }, [allGroups, selectedGroup])
 
-  // ── サジェスト候補 ───────────────────────────────────────
-  // selectedGroup に関係なく常に全候補を返す。
-  // 検索 Enter は左メニュー状態に依存せず query だけで確定するべきであるため、
-  // selectedGroup によるフィルタを廃止。
-  const suggestions = useMemo(
-    () => getSuggestions(search, searchIndex),
-    [search, searchIndex],
+  // ── サジェスト候補（検索窓別） ────────────────────────────
+  // mainSuggestions: Topbar 用
+  const mainSuggestions = useMemo(
+    () => getSuggestions(mainSearch, searchIndex),
+    [mainSearch, searchIndex],
+  )
+  // composeSuggestions: ThirdPanel 合成検索用
+  const composeSuggestions = useMemo(
+    () => getSuggestions(composeSearch, searchIndex),
+    [composeSearch, searchIndex],
   )
 
   // ── 表示用メタデータ ─────────────────────────────────────
   const badge = activeModuleData.categoryPath?.[1]
 
   // ── 選択中薬剤ラベル: 「ブランド名（一般名）」形式 ───────
-  // 優先順:
-  //   1. activeBrandName（検索ヒットしたブランド）+ drugResolution で解決した一般名
-  //   2. activeBrandName + drug.genericName
-  //   3. brandNames[0] + drugResolution で解決した一般名
-  //   4. brandNames[0] + drug.genericName
-  //   5. primaryDisplayName フォールバック
   const resolvedBrand = activeBrandName ?? activeModuleData.drug?.brandNames?.[0]
   const drugResolution = activeModuleData.drugResolution
   const resolvedGenericName = (() => {
@@ -220,6 +218,23 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     ? `${resolvedBrand}（${resolvedGenericName}）`
     : resolvedBrand ?? resolvedGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
 
+  // ── composeNodes から SOAP を再合成するユーティリティ ─────
+  // 現在の fields（1剤目）を先頭、composeNodes を後続として mergeBlocks する
+  const recomposeSoap = useCallback((
+    baseFields: SoapFields,
+    baseClosingText: string | undefined,
+    baseLabel: string,
+    nodes: ComposeNode[],
+  ): SoapFields => {
+    if (nodes.length === 0) return baseFields
+    return mergeBlocks(
+      nodes.map(n => n.block),
+      baseFields,
+      baseLabel,
+      baseClosingText,
+    )
+  }, [])
+
   // ── イベントハンドラ ─────────────────────────────────────
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
@@ -234,7 +249,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleSelectScenario = useCallback((id: string) => {
     setSelectedScenarioId(prev => {
       if (prev === id) {
-        // 同じ項目を再押下 → 選択解除
         setManualFields({})
         setSPrefix('none')
         setSStatus('stable')
@@ -251,24 +265,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     })
   }, [activeModuleData.scenarios])
 
+  // ── メイン検索選択: currentModule を切り替える ───────────
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
-    // searchIndex から候補エントリを逆引きして moduleId を取得し、activeModuleData を切替
     const entry = searchIndex.find(e => e.templateId === scenarioId)
-    // [DEBUG]
-    console.log('[handleSelectSuggestion]', {
-      scenarioId,
-      foundEntry: entry ? { moduleId: entry.moduleId, templateId: entry.templateId } : null,
-      searchIndexLength: searchIndex.length,
-      currentSearch: search,
-    })
     if (entry) {
       const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
-      console.log('[handleSelectSuggestion] switching to module:', targetModule.moduleId)
       setActiveModuleData(targetModule)
     }
-    // matchedBrandName: suggestions への依存を排除し、searchIndex + 現在のクエリから直接解決。
-    // これにより setSearch('') 後の suggestions 消去による stale closure を防ぐ。
-    const q = normalizeText(search)
+    const q = normalizeText(mainSearch)
     let matchedBrandName: string | undefined
     if (entry && q) {
       for (const brand of entry.brandNames) {
@@ -286,8 +290,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
     }
     setActiveBrandName(matchedBrandName)
-    // entry が見つかった場合は templateId（= globalId）でシナリオを確定する
-    // これにより AddonPanel が initial 選択直後から正常表示される
     if (entry) {
       setSelectedScenarioId(entry.templateId)
       const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
@@ -301,25 +303,143 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
-    setSearch('')
-  }, [searchIndex, allModules, moduleData, search])
+    setMainSearch('')
+    // メイン薬剤切替時は合成ノードをリセット
+    setComposeNodes([])
+  }, [searchIndex, allModules, moduleData, mainSearch])
+
+  // ── 合成検索選択: composeNodes に追加する ────────────────
+  // currentModule は変更しない
+  const handleComposeSelectSuggestion = useCallback((scenarioId: string) => {
+    const entry = searchIndex.find(e => e.templateId === scenarioId)
+    if (!entry) {
+      setComposeSearch('')
+      return
+    }
+    const targetModule = allModules.find(m => m.moduleId === entry.moduleId) ?? moduleData
+    const sc = targetModule.scenarios.find(s => s.globalId === entry.templateId)
+    if (!sc) {
+      setComposeSearch('')
+      return
+    }
+
+    // ノード用の drugLabel を解決
+    const q = normalizeText(composeSearch)
+    let matchedBrand: string | undefined
+    if (q) {
+      for (const brand of entry.brandNames) {
+        if (normalizeText(brand) === q) { matchedBrand = brand; break }
+      }
+      if (!matchedBrand) {
+        for (const brand of entry.brandNames) {
+          if (normalizeText(brand).startsWith(q)) { matchedBrand = brand; break }
+        }
+      }
+    }
+    const drugLabel = matchedBrand
+      ?? targetModule.drug?.brandNames?.[0]
+      ?? targetModule.drug?.search?.primaryDisplayName
+      ?? targetModule.moduleId
+
+    // MergedBlock を構築
+    const base = buildSoapFromScenario(sc)
+    // followup を適用
+    const result = { ...base }
+    for (const key of ['S', 'P'] as const) {
+      const followupRef = sc.followupRef
+      let appendText: string | null | undefined
+      if (followupRef) {
+        const profile = targetModule.defaults?.followupProfiles?.[followupRef]
+        if (profile) appendText = (profile as Record<string, string | null>)[key]
+      } else {
+        const followupVal = (sc.followup as Record<string, string> | undefined)?.[key]
+        if (followupVal === 'default') {
+          appendText = (targetModule.defaults?.followup as Record<string, string> | undefined)?.[key]
+        }
+      }
+      if (appendText) {
+        result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
+      }
+    }
+    const closingText = resolveClosingText(sc, targetModule.defaults)
+
+    const block: MergedBlock = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      templateLabel: sc.title,
+      fields: result,
+      symptomCodes: sc.sComposition?.symptomCodes,
+      closingText,
+    }
+
+    const newNode: ComposeNode = {
+      id: `node-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      moduleId: targetModule.moduleId,
+      scenarioId: sc.globalId,
+      block,
+      drugLabel,
+    }
+
+    setComposeNodes(prev => {
+      const updated = [...prev, newNode]
+      // SOAP を再合成して manualFields に反映
+      const currentClosing = selectedScenario
+        ? resolveClosingText(selectedScenario, activeModuleData.defaults)
+        : undefined
+      const baseLabel = selectedScenario?.title ?? ''
+      const merged = mergeBlocks(
+        updated.map(n => n.block),
+        fields,
+        baseLabel,
+        currentClosing,
+      )
+      setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
+      return updated
+    })
+
+    setComposeSearch('')
+  }, [searchIndex, allModules, moduleData, composeSearch, selectedScenario, activeModuleData.defaults, fields])
+
+  // ── 合成ノード削除 ────────────────────────────────────────
+  const handleRemoveComposeNode = useCallback((nodeId: string) => {
+    setComposeNodes(prev => {
+      const updated = prev.filter(n => n.id !== nodeId)
+      if (updated.length === 0) {
+        // ノードが全削除 → 1剤目の状態に戻す
+        setManualFields({})
+        return updated
+      }
+      // 残りのノードで再合成
+      const currentClosing = selectedScenario
+        ? resolveClosingText(selectedScenario, activeModuleData.defaults)
+        : undefined
+      const baseLabel = selectedScenario?.title ?? ''
+      // 1剤目の computedFieldsWithFollowup をベースに再合成
+      const merged = mergeBlocks(
+        updated.map(n => n.block),
+        computedFieldsWithFollowup,
+        baseLabel,
+        currentClosing,
+      )
+      setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
+      return updated
+    })
+  }, [selectedScenario, activeModuleData.defaults, computedFieldsWithFollowup])
+
+  // ── 合成ノード全削除 ──────────────────────────────────────
+  const handleResetCompose = useCallback(() => {
+    setComposeNodes([])
+    setManualFields({})
+  }, [])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     setManualFields(prev => ({ ...prev, [key]: value }))
   }, [])
 
   const handleSubcategorySelect = useCallback((label: string) => {
-    setSearch(label)
+    setComposeSearch(label)
   }, [])
 
   // アドオントグル
-  // addonKey: addons.items の "group:id" 形式キー
-  //
-  // 【仕様】アドオン ON/OFF はそのセクションを「再構成」する操作。
-  //   合成順: base(scenario.S/O/A/P) → addonTexts → followup
-  //   アドオン操作前にユーザーが手修正していた場合、その内容は失われる。
-  //   運用上は「アドオン操作を先に確定 → その後で手修正」を前提とする。
-  //   手修正保持（ユーザー追記領域の分離）は今回スコープ外。
   const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
     setSelectedAddonIds(prev => {
       const next = new Set(prev)
@@ -329,9 +449,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         next.add(addonKey)
       }
 
-      // next が確定した addon ids をもとに、各 targetSection を再合成する
       if (activeModuleData.addons && selectedScenario) {
-        // targetSection → activeAddonKeys のマップを作る
         const sectionAddonMap = new Map<string, string[]>()
         for (const key of next) {
           const item = activeModuleData.addons.items[key]
@@ -341,38 +459,33 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           sectionAddonMap.get(sec)!.push(item.text)
         }
 
-        // 各セクションを再合成して manualFields に反映
-        const resolveFollowupText = (sec: 'S' | 'P'): string => {
+        const resolveFollowupTextLocal = (sec: 'S' | 'P'): string => {
           const followupRef = selectedScenario.followupRef
           if (followupRef) {
-            return activeModuleData.defaults?.followupProfiles?.[followupRef]?.[sec] ?? ''
+            return (activeModuleData.defaults?.followupProfiles?.[followupRef] as Record<string, string> | undefined)?.[sec] ?? ''
           }
-          const followupVal = selectedScenario.followup?.[sec]
+          const followupVal = (selectedScenario.followup as Record<string, string> | undefined)?.[sec]
           return followupVal === 'default'
-            ? (activeModuleData.defaults?.followup?.[sec] ?? '')
+            ? ((activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[sec] ?? '')
             : ''
         }
         setManualFields(prevFields => {
           const updated = { ...prevFields }
           for (const [sec, addonTexts] of sectionAddonMap) {
             const base = computedFields[sec as keyof typeof computedFields] ?? ''
-            // followup があるセクション (P, S) は末尾に追加
-            const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupText(sec) : ''
+            const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec as 'S' | 'P') : ''
             const parts = [base, ...addonTexts].filter(Boolean)
             if (followupText) parts.push(followupText)
             updated[sec as keyof typeof updated] = parts.join('\n')
           }
-          // sectionAddonMap に含まれないセクションで、以前 addon が付いていた場合も
-          // 再合成が必要なセクション（addon が全解除になった場合）を処理する
           for (const sec of ['S', 'O', 'A', 'P'] as const) {
             if (!sectionAddonMap.has(sec)) {
-              // このセクションへの addon が全解除 → base + followup のみに戻す
               const hasAnyAddonForSec = [...next].some(
                 k => activeModuleData.addons?.items[k]?.targetSection === sec,
               )
               if (!hasAnyAddonForSec) {
                 const base = computedFields[sec] ?? ''
-                const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupText(sec) : ''
+                const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec) : ''
                 const parts = [base].filter(Boolean)
                 if (followupText) parts.push(followupText)
                 updated[sec] = parts.join('\n')
@@ -397,66 +510,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setManualFields(prev => ({ ...prev, S: updated }))
   }, [fields.S])
 
-  // 保持（合成）機能
-  const handleMerge = useCallback(() => {
-    if (!selectedScenario) return
-
-    const currentLabel = selectedScenario.title
-    const currentFields = { ...fields }
-
-    // P末尾 closing テキストを解決（followup テキスト）
-    const resolveClosingText = (): string | undefined => {
-      const followupRef = selectedScenario.followupRef
-      if (followupRef) {
-        return activeModuleData.defaults?.followupProfiles?.[followupRef]?.P ?? undefined
-      }
-      const followupVal = selectedScenario.followup?.P
-      if (followupVal === 'default') {
-        return activeModuleData.defaults?.followup?.P ?? undefined
-      }
-      return undefined
-    }
-    const currentClosingText = resolveClosingText()
-
-    const newBlock: MergedBlock = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      templateLabel: currentLabel,
-      fields: currentFields,
-      symptomCodes: selectedScenario.sComposition?.symptomCodes,
-      closingText: currentClosingText,
-    }
-
-    const updatedBlocks = [...mergedBlocks, newBlock]
-    setMergedBlocks(updatedBlocks)
-
-    const merged = mergeBlocks(
-      updatedBlocks.slice(0, -1),
-      currentFields,
-      currentLabel,
-      currentClosingText,
-    )
-    setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
-
-    setSelectedScenarioId(null)
-    setSelectedGroup(null)
-    setSPrefix('none')
-    setSStatus('stable')
-  }, [selectedScenario, fields, mergedBlocks, activeModuleData.defaults])
-
-  const handleResetMerge = useCallback(() => {
-    setMergedBlocks([])
-    setManualFields({})
-    setSelectedScenarioId(null)
-    setSelectedGroup(null)
-    setSPrefix('none')
-    setSStatus('stable')
-  }, [])
-
   // ── NLP モード: モード切替 ────────────────────────────────
-  /**
-   * 手動選択モード → 自然言語生成モードへ切替。
-   * 既存の選択・手動入力はリセットする。
-   */
   const handleSwitchToNlp = useCallback(() => {
     setUiMode('nlp')
     setSelectedScenarioId(null)
@@ -465,16 +519,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
-    setMergedBlocks([])
+    setComposeNodes([])
     setNlpValidation(null)
     setNlpSelectorReason('')
     setNlpConfidence(0)
   }, [])
 
-  /**
-   * 自然言語生成モード → 手動選択モードへ切替。
-   * NLP 結果はリセットする。
-   */
   const handleSwitchToManual = useCallback(() => {
     setUiMode('manual')
     setManualFields({})
@@ -484,58 +534,36 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [])
 
   // ── NLP モード: SOAP 生成 ─────────────────────────────────
-  /**
-   * createSoapFromInput() を呼び、結果を状態に反映する。
-   *
-   * 呼び出し元: NlpInputPanel.onGenerate
-   * 生成結果:
-   *   - validation.valid=false → manualFields をクリア（エラー表示のみ）
-   *   - scenarioId=null        → manualFields をクリア（シナリオ未特定）
-   *   - soap が存在する場合    → manualFields に反映して SoapEditor に表示
-   *
-   * DashboardClient → createSoapFromInput（lib/createSoapFromInput.ts）
-   *                     ├─ scenarioSelector（lib/scenarioSelector.ts）
-   *                     ├─ validationRunner（lib/validationRunner.ts）
-   *                     │    ├─ validateModule（lib/moduleValidator.ts）
-   *                     │    └─ validateAllScenarios（lib/scenarioValidator.ts）
-   *                     ├─ jsonScenarioBuilder（lib/jsonScenarioBuilder.ts）
-   *                     └─ soapComposer（lib/soapComposer.ts）
-   */
   const handleNlpGenerate = useCallback(
     (patientInput: string) => {
       setNlpIsGenerating(true)
-
-      // createSoapFromInput は同期関数（現時点では非同期APIなし）
       const result = createSoapFromInput(activeModuleData, patientInput)
-
       setNlpValidation(result.validation)
       setNlpSelectorReason(result.selectorReason)
       setNlpConfidence(result.confidence)
-
       if (result.soap) {
-        // SOAP 生成成功: SoapEditor に表示
         setManualFields({
           S: result.soap.S,
           O: result.soap.O,
           A: result.soap.A,
           P: result.soap.P,
         })
-        // 選択シナリオIDも反映（templateLabel 表示に使う）
         if (result.scenarioId) {
           setSelectedScenarioId(result.scenarioId)
           const sc = activeModuleData.scenarios.find(s => s.globalId === result.scenarioId)
           if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
         }
       } else {
-        // 生成失敗: フィールドをクリア
         setManualFields({})
         setSelectedScenarioId(null)
       }
-
       setNlpIsGenerating(false)
     },
     [activeModuleData],
   )
+
+  // recomposeSoap を deps に含めるため宣言済み（実際には composeNodes 変更時のみ使う）
+  void recomposeSoap
 
   // ── レンダリング ─────────────────────────────────────────
   return (
@@ -544,9 +572,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         title="SOAP Engine"
         badge={badge}
         activeDrugLabel={activeBrandName != null || selectedScenarioId !== null ? activeDrugLabel : undefined}
-        searchValue={search}
-        onSearchChange={setSearch}
-        suggestions={suggestions}
+        searchValue={mainSearch}
+        onSearchChange={setMainSearch}
+        suggestions={mainSuggestions}
         onSelectSuggestion={handleSelectSuggestion}
         routeFilter={routeFilter}
         onRouteFilterChange={setRouteFilter}
@@ -560,10 +588,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           onSelectGroup={handleSelectGroup}
         />
 
-        {/* Col 2: テンプレ一覧（常時表示・選択中のみハイライト）＋アドオン */}
-        {/*        自然言語生成モード時は NLP モード切替ボタンのみ表示 */}
+        {/* Col 2: テンプレ一覧 + アドオン */}
         <div className={s.secondaryCol}>
-          {/* モード切替ボタン（常時表示） */}
+          {/* モード切替ボタン */}
           <div className={s.modeToggleBar}>
             <button
               className={[
@@ -619,7 +646,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         </div>
 
         {/* Col 3:
-            手動選択モード → ThirdPanel（Sボタン / 薬剤追加 / 診療領域）
+            手動選択モード → ThirdPanel（Sボタン / 合成薬剤追加 / 診療領域）
             自然言語生成モード → NlpInputPanel
         */}
         {uiMode === 'manual' ? (
@@ -629,10 +656,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             currentSPrefix={sPrefix}
             currentSStatus={sStatus}
             onSAction={handleSToggle}
-            searchValue={search}
-            onSearchChange={setSearch}
-            suggestions={suggestions}
-            onSelectSuggestion={handleSelectSuggestion}
+            searchValue={composeSearch}
+            onSearchChange={setComposeSearch}
+            suggestions={composeSuggestions}
+            onSelectSuggestion={handleComposeSelectSuggestion}
             onSubcategorySelect={handleSubcategorySelect}
           />
         ) : (
@@ -650,15 +677,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         )}
 
         {/* Col 4: SOAPエディター */}
-        <SoapEditor
-          fields={fields}
-          onChange={handleFieldChange}
-          templateLabel={selectedScenario?.title ?? ''}
-          mergedBlockCount={mergedBlocks.length}
-          onMerge={handleMerge}
-          onResetMerge={handleResetMerge}
-          canMerge={!!selectedScenario}
-        />
+        <div className={s.editorCol}>
+          {/* 合成ノードバー（2剤目以降のノード表示） */}
+          <ComposeNodeBar
+            nodes={composeNodes}
+            onRemove={handleRemoveComposeNode}
+            onReset={handleResetCompose}
+          />
+
+          <SoapEditor
+            fields={fields}
+            onChange={handleFieldChange}
+            templateLabel={selectedScenario?.title ?? ''}
+            mergedBlockCount={0}
+            onMerge={() => { /* 合成ノードUIに移行したため保持ボタンは非使用 */ }}
+            onResetMerge={handleResetCompose}
+            canMerge={false}
+          />
+        </div>
       </div>
     </div>
   )
