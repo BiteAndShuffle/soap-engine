@@ -16,6 +16,8 @@
  *   9)  scenarios[].followup が defaults.followup と重複（警告扱い）
  *   10) scenarios[].situationFilter が必須・非空・許可値のみ
  *   11) scenarios[].sideEffectPresence の値チェック（必須・許可値のみ）
+ *   12) scenario 競合制御メタデータの型チェック（priority / exclusiveGroup / combinable）
+ *   13) drug.brandNames と drug.brandCatalog のキーが集合として一致
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -38,6 +40,7 @@ export type ModuleValidationErrorCode =
   | 'SCENARIO_PRIORITY_INVALID'       // scenario.priority が不正（負値・number以外）（警告）
   | 'SCENARIO_EXCLUSIVE_GROUP_INVALID' // scenario.exclusiveGroup が string/null 以外（警告）
   | 'SCENARIO_COMBINABLE_INVALID'     // scenario.combinable が boolean/null 以外（警告）
+  | 'BRAND_CATALOG_MISMATCH'          // drug.brandNames と drug.brandCatalog のキーが不一致
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -80,6 +83,74 @@ function findForbiddenWord(text: string | null | undefined): string | null {
     if (text.includes(word)) return word
   }
   return null
+}
+
+// ─────────────────────────────────────────────────────────────
+// brandNames / brandCatalog 整合チェック
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * drug.brandNames と drug.brandCatalog のキーの整合性を検証する。
+ *
+ * ## 設計メモ
+ * brandCatalog を持つモジュールでは、brandNames は brandCatalog の表示順リストとして機能する。
+ * - 集合一致（必須）: brandNames ↔ brandCatalog のキーが過不足なく一致すること
+ * - 順序一致（任意）: checkOrder=true のとき、brandNames の並びが brandCatalog の挿入順と一致すること
+ *
+ * 将来的に順序が表示順として意味を持つ場合は、呼び出し側で checkOrder: true を渡すことで有効化できる。
+ * brandCatalog が存在しない場合はチェック全体をスキップする（injection以外のモジュールへの影響なし）。
+ *
+ * @param checkOrder - true のとき、集合一致に加えて順序一致も検証する（デフォルト: false）
+ */
+function validateBrandConsistency(
+  drug: Record<string, unknown>,
+  checkOrder = false,
+): ModuleValidationError | null {
+  const brandNames = (drug.brandNames as string[] | undefined) ?? []
+  const brandCatalog = drug.brandCatalog as Record<string, unknown> | undefined
+  if (!brandCatalog) return null
+
+  const catalogKeys = Object.keys(brandCatalog)
+
+  // ── 集合一致チェック（必須）──
+  const missingInCatalog = brandNames.filter(b => !catalogKeys.includes(b))
+  const missingInBrandNames = catalogKeys.filter(b => !brandNames.includes(b))
+
+  const lines: string[] = []
+
+  if (missingInCatalog.length > 0 || missingInBrandNames.length > 0) {
+    lines.push('brandNames と brandCatalog の不整合を検出')
+    if (missingInCatalog.length > 0) {
+      lines.push(`brandNames に存在するが catalog にない: ${missingInCatalog.join(', ')}`)
+    }
+    if (missingInBrandNames.length > 0) {
+      lines.push(`catalog に存在するが brandNames にない: ${missingInBrandNames.join(', ')}`)
+    }
+  }
+
+  // ── 順序一致チェック（任意）──
+  // brandCatalog の挿入順（Object.keys の返却順）と brandNames の並びが一致するか検証する。
+  // 集合不一致がある場合は比較不能のためスキップ。
+  if (checkOrder && lines.length === 0) {
+    const outOfOrder = brandNames
+      .map((name, i) => ({ name, expected: catalogKeys[i] }))
+      .filter(({ name, expected }) => name !== expected)
+
+    if (outOfOrder.length > 0) {
+      lines.push('brandNames と brandCatalog の順序が一致しません')
+      for (const { name, expected } of outOfOrder) {
+        lines.push(`  brandNames: "${name}" / brandCatalog の期待値: "${expected}"`)
+      }
+    }
+  }
+
+  if (lines.length === 0) return null
+
+  return {
+    code: 'BRAND_CATALOG_MISMATCH',
+    detail: lines.join('\n'),
+    isWarning: false,
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -371,6 +442,12 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
         }
       }
     }
+  }
+
+  // 13) drug.brandNames と drug.brandCatalog のキー整合チェック
+  if (drug) {
+    const brandError = validateBrandConsistency(drug)
+    if (brandError) errors.push(brandError)
   }
 
   const fatalErrors = errors.filter(e => !e.isWarning)

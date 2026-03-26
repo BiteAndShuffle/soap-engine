@@ -228,17 +228,17 @@ export function formatSoapForCopy(fields: SoapFields): string {
 // 複数薬の SOAP ブロックを合成
 // ─────────────────────────────────────────────────────────────
 
-const SEPARATOR = '----'
-
 /**
  * mergeBlocks — 複数薬の SOAP ブロックを合成する。
+ *
+ * S / O / A: 本文をそのまま改行区切りで結合（ラベル行なし）。
  *
  * P フィールドの closing deduplication:
  *   各ブロックに closingText が設定されている場合、
  *   同一 closing テキストは最後に1回だけ出力する。
  *   手順:
  *   1. 各ブロックの P から closingText を末尾で除去してボディを取得
- *   2. ボディを `----\n▶ label\n...` 形式で結合
+ *   2. ボディを改行区切りで結合（ラベル行なし）
  *   3. 出現した unique closing テキストを収集し、末尾に追記
  *
  * currentClosingText: 現在選択中シナリオの closing テキスト（省略可）
@@ -264,17 +264,16 @@ export function mergeBlocks(
 
   for (const key of keys) {
     if (key !== 'P') {
-      // S / O / A: そのまま結合
+      // S / O / A: 本文のみ結合（ラベル行なし）
       const parts: string[] = []
       for (const block of all) {
         const text = block.fields[key].trim()
         if (!text) continue
-        const header = `${SEPARATOR}\n▶ ${block.templateLabel}`
-        parts.push(`${header}\n${text}`)
+        parts.push(text)
       }
       result[key] = parts.join('\n\n')
     } else {
-      // P: closing deduplication
+      // P: closing deduplication（ラベル行なし）
       const seenClosings = new Set<string>()
       const orderedClosings: string[] = []
       const parts: string[] = []
@@ -291,8 +290,7 @@ export function mergeBlocks(
           body = body.slice(0, body.length - closing.length).trimEnd()
         }
 
-        const header = `${SEPARATOR}\n▶ ${block.templateLabel}`
-        parts.push(`${header}${body ? '\n' + body : ''}`)
+        if (body) parts.push(body)
 
         // unique closing を順序付きで収集
         if (closing && !seenClosings.has(closing)) {

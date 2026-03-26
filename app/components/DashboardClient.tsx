@@ -108,6 +108,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // composeNodes は追加順を保持し、mergeBlocks の入力として使われる
   const [composeNodes, setComposeNodes] = useState<ComposeNode[]>([])
 
+  // ── 合成ノード選択中 ID ────────────────────────────────────
+  // null = 1剤目（メインモジュール）を操作中
+  // non-null = そのノードIDのシナリオを左メニューで操作中
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+
   // ── NLP モード専用状態 ─────────────────────────────────────
   const [uiMode, setUiMode] = useState<UiMode>('manual')
   const [nlpValidation, setNlpValidation] = useState<ValidationResult | null>(null)
@@ -171,10 +176,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
   }, [selectedGroup])
 
+  // ── 選択中ノードのモジュール（操作対象モジュール） ────────
+  // selectedNodeId が null → メインモジュール
+  // non-null → そのノードが属するモジュール
+  const targetModule = useMemo<ModuleData>(() => {
+    if (selectedNodeId === null) {
+      console.log('[targetModule] → activeModuleData', activeModuleData.moduleId)
+      return activeModuleData
+    }
+    const node = composeNodes.find(n => n.id === selectedNodeId)
+    if (!node) {
+      console.log('[targetModule] node not found, → activeModuleData')
+      return activeModuleData
+    }
+    const mod = allModules.find(m => m.moduleId === node.moduleId) ?? activeModuleData
+    console.log('[targetModule] → nodeModule', mod.moduleId, '(node.moduleId=', node.moduleId, ')')
+    return mod
+  }, [selectedNodeId, composeNodes, activeModuleData, allModules])
+
   // ── グループ構造 ─────────────────────────────────────────
   const allGroups = useMemo(
-    () => groupByMenuGroup(activeModuleData.scenarios),
-    [activeModuleData.scenarios],
+    () => groupByMenuGroup(targetModule.scenarios),
+    [targetModule.scenarios],
   )
   const availableGroups = useMemo<Set<MenuGroup>>(
     () => new Set(allGroups.map(g => g.group)),
@@ -184,8 +207,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const groupScenarios = useMemo(() => {
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
-    return raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
-  }, [allGroups, selectedGroup])
+    const filtered = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
+    console.log('[groupScenarios] selectedGroup=', selectedGroup, 'targetModule=', targetModule.moduleId, 'count=', filtered.length)
+    return filtered
+  }, [allGroups, selectedGroup, targetModule.moduleId])
 
   // ── サジェスト候補（検索窓別） ────────────────────────────
   // mainSuggestions: Topbar 用
@@ -239,14 +264,99 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
-    setSelectedScenarioId(null)
-    setManualFields({})
-    setSPrefix('none')
-    setSStatus('stable')
-    setSelectedAddonIds(new Set())
-  }, [])
+    // ノード選択中でない場合のみシナリオをリセット
+    if (selectedNodeId === null) {
+      setSelectedScenarioId(null)
+      setManualFields({})
+      setSPrefix('none')
+      setSStatus('stable')
+      setSelectedAddonIds(new Set())
+    }
+  }, [selectedNodeId])
+
+  // ── 合成ノードの block を再構築して更新するユーティリティ ─
+  const rebuildNodeBlock = useCallback((
+    nodeId: string,
+    newScenarioId: string,
+    nodes: ComposeNode[],
+    baseFields: SoapFields,
+    baseLabel: string,
+    baseClosing: string | undefined,
+  ): { updatedNodes: ComposeNode[]; mergedFields: SoapFields } => {
+    const node = nodes.find(n => n.id === nodeId)
+    if (!node) return { updatedNodes: nodes, mergedFields: baseFields }
+
+    const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+    const sc = mod.scenarios.find(s => s.globalId === newScenarioId)
+    if (!sc) return { updatedNodes: nodes, mergedFields: baseFields }
+
+    // followup 適用
+    const base = buildSoapFromScenario(sc)
+    const result = { ...base }
+    for (const key of ['S', 'P'] as const) {
+      let appendText: string | null | undefined
+      const followupRef = sc.followupRef
+      if (followupRef) {
+        const profile = mod.defaults?.followupProfiles?.[followupRef]
+        if (profile) appendText = (profile as Record<string, string | null>)[key]
+      } else {
+        const followupVal = (sc.followup as Record<string, string> | undefined)?.[key]
+        if (followupVal === 'default') {
+          appendText = (mod.defaults?.followup as Record<string, string> | undefined)?.[key]
+        }
+      }
+      if (appendText) {
+        result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
+      }
+    }
+    const closingText = resolveClosingText(sc, mod.defaults)
+
+    const newBlock: MergedBlock = {
+      id: node.block.id,
+      templateLabel: sc.title,
+      fields: result,
+      symptomCodes: sc.sComposition?.symptomCodes,
+      closingText,
+    }
+    const updatedNodes = nodes.map(n =>
+      n.id === nodeId ? { ...n, scenarioId: newScenarioId, block: newBlock } : n,
+    )
+    const mergedFields = mergeBlocks(
+      updatedNodes.map(n => n.block),
+      baseFields,
+      baseLabel,
+      baseClosing,
+    )
+    return { updatedNodes, mergedFields }
+  }, [allModules, moduleData])
 
   const handleSelectScenario = useCallback((id: string) => {
+    console.log('[handleSelectScenario] id=', id, 'selectedNodeId=', selectedNodeId)
+    // ノード選択中 → そのノードのシナリオを変更
+    if (selectedNodeId !== null) {
+      console.log('[handleSelectScenario] → node path, nodeId=', selectedNodeId)
+      setComposeNodes(prev => {
+        const currentClosing = selectedScenario
+          ? resolveClosingText(selectedScenario, activeModuleData.defaults)
+          : undefined
+        const baseLabel = selectedScenario?.title ?? ''
+        const { updatedNodes, mergedFields } = rebuildNodeBlock(
+          selectedNodeId,
+          id,
+          prev,
+          computedFieldsWithFollowup,
+          baseLabel,
+          currentClosing,
+        )
+        console.log('[handleSelectScenario] rebuildNodeBlock done, updatedNodes=', updatedNodes.length)
+        setManualFields({ S: mergedFields.S, O: mergedFields.O, A: mergedFields.A, P: mergedFields.P })
+        return updatedNodes
+      })
+      return
+    }
+
+    console.log('[handleSelectScenario] → main path')
+    // 通常（1剤目）操作
     setSelectedScenarioId(prev => {
       if (prev === id) {
         setManualFields({})
@@ -263,7 +373,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSelectedAddonIds(new Set())
       return id
     })
-  }, [activeModuleData.scenarios])
+  }, [selectedNodeId, activeModuleData, selectedScenario, computedFieldsWithFollowup, rebuildNodeBlock])
 
   // ── メイン検索選択: currentModule を切り替える ───────────
   const handleSelectSuggestion = useCallback((scenarioId: string) => {
@@ -399,8 +509,39 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setComposeSearch('')
   }, [searchIndex, allModules, moduleData, composeSearch, selectedScenario, activeModuleData.defaults, fields])
 
+  // ── 合成ノード選択 ────────────────────────────────────────
+  // ノードをクリック → selectedNodeId を切り替え、Sidebar グループをそのシナリオに合わせる
+  const handleSelectNode = useCallback((nodeId: string) => {
+    // updater 関数の中で副作用 (setSelectedGroup) を呼ばない
+    if (selectedNodeId === nodeId) {
+      // 同じノードをクリック → 解除して1剤目に戻る
+      console.log('[handleSelectNode] deselect', nodeId)
+      setSelectedNodeId(null)
+      setSelectedGroup(selectedScenario ? getMenuGroupFromScenario(selectedScenario) : null)
+      return
+    }
+    // 選択切替
+    console.log('[handleSelectNode] select', nodeId)
+    const node = composeNodes.find(n => n.id === nodeId)
+    if (node) {
+      const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+      const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
+      console.log('[handleSelectNode] node.moduleId=', node.moduleId, 'scenarioId=', node.scenarioId, 'sc=', sc?.title, 'group=', sc ? getMenuGroupFromScenario(sc) : null)
+      if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
+    }
+    setSelectedNodeId(nodeId)
+  }, [selectedNodeId, composeNodes, allModules, moduleData, selectedScenario])
+
   // ── 合成ノード削除 ────────────────────────────────────────
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
+    // 削除ノードが選択中なら選択解除して1剤目に戻す
+    setSelectedNodeId(prev => {
+      if (prev === nodeId) {
+        if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
+        return null
+      }
+      return prev
+    })
     setComposeNodes(prev => {
       const updated = prev.filter(n => n.id !== nodeId)
       if (updated.length === 0) {
@@ -429,6 +570,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleResetCompose = useCallback(() => {
     setComposeNodes([])
     setManualFields({})
+    setSelectedNodeId(null)
   }, [])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
@@ -586,6 +728,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           availableGroups={availableGroups}
           selectedGroup={selectedGroup}
           onSelectGroup={handleSelectGroup}
+          selectedNodeId={selectedNodeId}
+          onDeselectNode={() => {
+            // ノード選択解除 → 1剤目の操作に戻る
+            setSelectedNodeId(null)
+            if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
+          }}
         />
 
         {/* Col 2: テンプレ一覧 + アドオン */}
@@ -621,13 +769,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               ) : (
                 <>
                   <TemplateListPanel
-                    key={selectedGroup ?? 'all'}
+                    key={`${selectedNodeId ?? 'main'}-${selectedGroup ?? 'all'}`}
                     group={selectedGroup}
                     scenarios={groupScenarios}
-                    selectedScenarioId={selectedScenarioId}
+                    selectedScenarioId={
+                      selectedNodeId !== null
+                        ? (composeNodes.find(n => n.id === selectedNodeId)?.scenarioId ?? null)
+                        : selectedScenarioId
+                    }
                     onSelectScenario={handleSelectScenario}
                   />
-                  {selectedScenarioId !== null && activeModuleData.addons && (
+                  {selectedScenarioId !== null && activeModuleData.addons && selectedNodeId === null && (
                     <AddonPanel
                       addons={activeModuleData.addons}
                       selectedAddonIds={selectedAddonIds}
@@ -681,8 +833,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           {/* 合成ノードバー（2剤目以降のノード表示） */}
           <ComposeNodeBar
             nodes={composeNodes}
+            selectedNodeId={selectedNodeId}
+            onSelectNode={handleSelectNode}
             onRemove={handleRemoveComposeNode}
             onReset={handleResetCompose}
+            baseDrugLabel={activeDrugLabel}
+            baseScenarioLabel={selectedScenario?.title}
           />
 
           <SoapEditor

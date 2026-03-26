@@ -249,8 +249,6 @@
   border-right: 1px solid #2d2d4a;
   display: flex;
   flex-direction: column;
-  /* 10項目を上下端まで均等配置 */
-  justify-content: space-evenly;
   padding: 0;
   gap: 0;
   overflow-y: hidden;
@@ -258,6 +256,67 @@
   box-sizing: border-box;
 }
 .sidebar::-webkit-scrollbar { display: none; }
+
+/*
+ * メニューボタン群をラップするコンテナ。
+ * バナー有無にかかわらずボタンが均等配置されるよう
+ * flex:1 で残り高さを取り、内部で space-evenly する。
+ */
+.sidebarMenuList {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── ノード操作中バナー（横1行・極細） ── */
+.sidebarNodeModeBanner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 3px 7px;
+  background: #241a0a;
+  border-bottom: 1px solid #ff9f0a44;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.sidebarNodeModeBannerText {
+  font-size: 0.57rem;
+  font-weight: 700;
+  color: #c07020;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebarNodeModeExitBtn {
+  padding: 0.08rem 0.35rem;
+  font-family: inherit;
+  font-size: 0.55rem;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid #c0702055;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #c07020;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+.sidebarNodeModeExitBtn:hover {
+  background: #c0702018;
+  border-color: #c07020;
+  color: #e09040;
+}
 
 /* 大分類ボタン */
 .menuGroupBtn {
@@ -726,102 +785,156 @@
 .composeNodeBar {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 6px 10px;
-  background: #fff8ec;
-  border-bottom: 1.5px solid #ffd080;
+  flex-wrap: nowrap;
+  gap: 4px;
+  padding: 2px 8px 2px 6px;
+  background: #fdf8f0;
+  border-bottom: 1px solid #e8d8b0;
   flex-shrink: 0;
-  min-height: 38px;
+  overflow-x: auto;
+  min-height: 0;
+  scrollbar-width: none;
+}
+.composeNodeBar::-webkit-scrollbar {
+  display: none;
 }
 
-.composeNodeBarLabel {
-  font-size: 0.62rem;
-  font-weight: 800;
-  color: #8a5500;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
 
 .composeNodeList {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  flex-wrap: nowrap;
+  gap: 3px;
   flex: 1;
   min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  align-items: center;
+}
+.composeNodeList::-webkit-scrollbar {
+  display: none;
 }
 
-/* 各ノードチップ */
+/* 各ノードチップ共通ベース */
 .composeNode {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 6px 3px 8px;
-  background: #fff3d0;
-  border: 1.5px solid #ffc040;
+  gap: 3px;
+  padding: 1px 5px 1px 6px;
   border-radius: 20px;
-  font-size: 0.72rem;
-  color: #6a3800;
+  font-size: 0.67rem;
+  font-family: inherit;
   white-space: nowrap;
-  max-width: 260px;
+  max-width: 200px;
+  line-height: 1.4;
+}
+
+/* 1剤目ベースチップ（クリック不可・控えめな表示） */
+.composeNodeBase {
+  background: #f0f0f4;
+  border: 1px solid #c8c8d8;
+  color: #555570;
+  cursor: default;
+  opacity: 0.85;
+}
+
+/* 1剤目が「現在操作中」のとき（selectedNodeId === null）は少し明るく */
+.composeNodeBaseActive {
+  background: #e8e8f4;
+  border-color: #a0a0c0;
+  color: #3a3a5a;
+  opacity: 1;
+}
+
+/* 2剤目以降チップ（クリック可） */
+.composeNode:not(.composeNodeBase) {
+  background: #fff3d0;
+  border: 1.5px solid #e0b840;
+  color: #5a3000;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, box-shadow 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.composeNode:not(.composeNodeBase):hover {
+  background: #ffeaa0;
+  border-color: #c09000;
+}
+
+/* 選択中ノード — 明確なオレンジ強調 */
+.composeNodeSelected {
+  background: #ffc820 !important;
+  border-color: #a06000 !important;
+  box-shadow: 0 0 0 2px #ff9f0a66 !important;
+  color: #2a1400 !important;
+  font-weight: 800;
+}
+.composeNodeSelected:hover {
+  background: #ffb800 !important;
+  border-color: #905200 !important;
 }
 
 .composeNodeDrug {
-  font-weight: 800;
+  font-weight: 700;
   flex-shrink: 0;
 }
 
 .composeNodeScenario {
-  font-weight: 500;
-  color: #8a5500;
+  font-weight: 400;
+  opacity: 0.75;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 140px;
+  max-width: 100px;
+}
+
+/* ✎ 編集中アイコン（選択中ノードの左端） */
+.composeNodeEditIcon {
+  font-size: 0.62rem;
+  flex-shrink: 0;
+  opacity: 0.8;
+  margin-right: 1px;
 }
 
 .composeNodeRemoveBtn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   padding: 0;
-  background: #ffc040;
-  border: none;
+  background: #d8b060;
   border-radius: 50%;
-  font-size: 0.72rem;
+  font-size: 0.6rem;
   font-weight: 900;
-  color: #6a3800;
+  color: #fff;
   cursor: pointer;
   line-height: 1;
   flex-shrink: 0;
-  transition: background 0.1s, color 0.1s;
+  transition: background 0.1s;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  margin-left: 1px;
 }
 .composeNodeRemoveBtn:hover {
-  background: #ff453a;
-  color: #fff;
+  background: #e03030;
 }
 
 .composeNodeResetBtn {
-  padding: 0.18rem 0.5rem;
+  padding: 0.08rem 0.38rem;
   font-family: inherit;
-  font-size: 0.65rem;
-  font-weight: 700;
+  font-size: 0.6rem;
+  font-weight: 600;
   background: transparent;
-  border: 1.5px solid #ffc040;
-  border-radius: 6px;
+  border: 1px solid #c8c0a0;
+  border-radius: 4px;
   cursor: pointer;
-  color: #8a5500;
-  transition: background 0.1s, color 0.1s;
+  color: #7a6840;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
   flex-shrink: 0;
 }
 .composeNodeResetBtn:hover {
   background: #fdecea;
-  border-color: #ff453a;
+  border-color: #e04030;
   color: #b91c1c;
 }
 
@@ -835,6 +948,8 @@
   padding: 0.35rem 0.6rem 0.2rem;
   gap: 0;
   min-height: 0;
+  /* editorCol の残り高さをすべて取る */
+  flex: 1;
 }
 
 .editorEmpty {
