@@ -527,7 +527,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
       const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
       console.log('[handleSelectNode] node.moduleId=', node.moduleId, 'scenarioId=', node.scenarioId, 'sc=', sc?.title, 'group=', sc ? getMenuGroupFromScenario(sc) : null)
-      if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
+      if (sc) {
+        setSelectedGroup(getMenuGroupFromScenario(sc))
+      } else {
+        // シナリオが見つからない場合はモジュールの最初のグループにフォールバック
+        const firstGroup = groupByMenuGroup(mod.scenarios)[0]?.group ?? null
+        console.log('[handleSelectNode] sc not found, fallback to first group:', firstGroup)
+        setSelectedGroup(firstGroup)
+      }
     }
     setSelectedNodeId(nodeId)
   }, [selectedNodeId, composeNodes, allModules, moduleData, selectedScenario])
@@ -764,9 +771,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
           {uiMode === 'manual' && (
             <>
-              {groupScenarios.length === 0 ? (
-                <div className={s.secondaryEmpty} aria-hidden="true" />
-              ) : (
+              {/* ノード選択中でもシナリオ一覧を表示（groupScenarios が空でも TemplateListPanel を出す） */}
+              {(groupScenarios.length > 0 || selectedNodeId !== null) && selectedGroup !== null ? (
                 <>
                   <TemplateListPanel
                     key={`${selectedNodeId ?? 'main'}-${selectedGroup ?? 'all'}`}
@@ -788,6 +794,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     />
                   )}
                 </>
+              ) : (
+                <div className={s.secondaryEmpty} aria-hidden="true" />
               )}
             </>
           )}
