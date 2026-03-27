@@ -409,22 +409,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleSelectNode = useCallback((nodeId: string) => {
     const currentNodeId = selectedNodeIdRef.current
     const currentNodes = composeNodesRef.current
-    const currentScenario = selectedScenarioRef.current
 
     if (currentNodeId === nodeId) {
+      // 同じノードを再クリック → 選択解除。group は null に戻す（左メニューのみに）
       setSelectedNodeId(null)
-      setSelectedGroup(currentScenario ? getMenuGroupFromScenario(currentScenario) : null)
+      setSelectedGroup(null)
       return
     }
     const node = currentNodes.find(n => n.id === nodeId)
     if (node) {
       const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
       const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
-      if (sc) {
-        setSelectedGroup(getMenuGroupFromScenario(sc))
-      } else {
-        setSelectedGroup(groupByMenuGroup(mod.scenarios)[0]?.group ?? null)
-      }
+      // シナリオ確定済みノードならそのグループへ、未確定なら null（自動選択しない）
+      setSelectedGroup(sc ? getMenuGroupFromScenario(sc) : null)
     }
     setSelectedNodeId(nodeId)
   }, [allModules, moduleData])
@@ -575,8 +572,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   void recomposeSoap
 
   // ── 表示条件 ─────────────────────────────────────────────
-  // セカンダリ: 薬剤選択済み + 左メニュー選択後
-  const showSecondary = drugSelected && selectedGroup !== null
+  // セカンダリ: 左メニューでグループを選んだときだけ表示
+  const showSecondary = selectedGroup !== null
 
   // ThirdPanel: 1剤目のシナリオ選択後のみ（薬剤選択・左メニュー選択・ノード追加だけでは出さない）
   const thirdPanelEnabled = selectedScenarioId !== null
