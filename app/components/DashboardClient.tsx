@@ -204,14 +204,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [allGroups],
   )
 
-  // selectedGroup が新ノードの availableGroups に存在しない場合は先頭グループに補正
-  useEffect(() => {
-    if (selectedGroup !== null && !availableGroups.has(selectedGroup)) {
-      const first = allGroups[0]?.group ?? null
-      setSelectedGroup(first)
-    }
-  }, [availableGroups, allGroups, selectedGroup])
-
   const groupScenarios = useMemo(() => {
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
@@ -401,10 +393,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setComposeNodes(prev => [...prev, newNode])
     setPendingNodeIds(prev => new Set([...prev, nodeId]))
     setSelectedNodeId(nodeId)
-
-    // そのモジュールの最初のグループを左メニューに設定
-    const firstGroup = groupByMenuGroup(targetMod.scenarios)[0]?.group ?? null
-    setSelectedGroup(firstGroup)
+    // group / scenario は未選択のまま（左メニューを押すまで何も出さない）
+    setSelectedGroup(null)
+    setSelectedScenarioId(null)
 
     setComposeSearch('')
   }, [allModules, moduleData])
@@ -578,12 +569,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   void recomposeSoap
 
   // ── 表示条件 ─────────────────────────────────────────────
-  // セカンダリ: 薬剤選択済み + 左メニュー選択（pendingノード操作中も表示してシナリオを選べるようにする）
+  // セカンダリ: 薬剤選択済み + 左メニュー選択後
   const showSecondary = drugSelected && selectedGroup !== null
 
-  // ThirdPanel: シナリオ確定 or ノード操作中（pending含む）
+  // ThirdPanel: シナリオ選択後のみ（薬剤選択・左メニュー選択だけでは出さない）
   const thirdPanelEnabled = selectedScenarioId !== null
-    || selectedNodeId !== null
+    || (selectedNodeId !== null && composeNodes.some(
+        n => n.id === selectedNodeId && n.scenarioId !== ''
+      ))
 
   return (
     <div className={s.layout}>
