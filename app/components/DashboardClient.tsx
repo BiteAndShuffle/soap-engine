@@ -386,22 +386,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       drugLabel,
     }
 
+    // 既存SOAPを先に丸コピー固定（selectedScenarioId=null後に消えないように）
+    const snapshot = computedFieldsWithFollowupRef.current
+    setManualFields({
+      S: snapshot.S,
+      O: snapshot.O,
+      A: snapshot.A,
+      P: snapshot.P,
+    })
+
     setComposeNodes(prev => [...prev, newNode])
     setPendingNodeIds(prev => new Set([...prev, nodeId]))
     setSelectedNodeId(nodeId)
     // group / scenario は未選択のまま（左メニューを押すまで何も出さない）
     setSelectedGroup(null)
     setSelectedScenarioId(null)
-    // 既存SOAPを manualFields に退避して消えないようにする
-    setManualFields(prev => {
-      const current = computedFieldsWithFollowupRef.current
-      return {
-        S: prev.S ?? current.S,
-        O: prev.O ?? current.O,
-        A: prev.A ?? current.A,
-        P: prev.P ?? current.P,
-      }
-    })
 
     setComposeSearch('')
   }, [allModules, moduleData])
@@ -411,21 +410,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const currentNodes = composeNodesRef.current
 
     if (currentNodeId === nodeId) {
-      // 同じノードを再クリック → 選択解除。group は null に戻す（左メニューのみに）
+      // 同じノードを再クリック → 選択解除
       setSelectedNodeId(null)
       setSelectedGroup(null)
       return
     }
     const node = currentNodes.find(n => n.id === nodeId)
     if (node) {
-      const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
-      const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
-      // 確定済み・未確定問わず null（group はユーザーが左メニューを押した時のみ入る）
-      void sc
+      // group は常に null（左メニューをユーザーが押すまで出さない）
       setSelectedGroup(null)
+      // 確定済みノード: scenarioId を復元してサードパネルが再び開けるようにする
+      if (node.scenarioId) {
+        setSelectedScenarioId(node.scenarioId)
+        // block.fields をそのまま manualFields に反映してSOAPを復元
+        const f = node.block.fields
+        setManualFields({ S: f.S, O: f.O, A: f.A, P: f.P })
+      } else {
+        // pending ノード: scenarioId なし・SOAPはそのまま維持
+        setSelectedScenarioId(null)
+      }
     }
     setSelectedNodeId(nodeId)
-  }, [allModules, moduleData])
+  }, [])
 
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
     const currentNodeId = selectedNodeIdRef.current

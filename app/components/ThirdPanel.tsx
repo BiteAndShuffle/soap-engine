@@ -236,8 +236,8 @@ export default function ThirdPanel({
     return (
       <div className={s.thirdPanel}>
         <div className={s.thirdPanelInner}>
-          {/* 薬剤追加窓は常設（シナリオ未選択でも使える） */}
-          {onComposeSearchChange && onSelectComposeDrug && (
+          {/* シナリオ未選択時: 薬剤追加検索のみ表示（診療領域・Sボタンは出さない） */}
+          {onComposeSearchChange && onSelectComposeDrug ? (
             <div className={s.thirdPanelScrollArea}>
               <div className={s.thirdSection}>
                 <div className={s.sActionHeading}>薬剤追加</div>
@@ -248,15 +248,10 @@ export default function ThirdPanel({
                   onSelectDrug={onSelectComposeDrug}
                 />
               </div>
-              <div className={s.thirdSection}>
-                <div className={s.sActionHeading}>診療領域</div>
-                <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
-              </div>
             </div>
-          )}
-          {(!onComposeSearchChange || !onSelectComposeDrug) && (
+          ) : (
             <div className={s.thirdPanelGuide}>
-              左のテンプレを選択すると、ここに機能が表示されます
+              シナリオを選択すると、ここに機能が表示されます
             </div>
           )}
         </div>
