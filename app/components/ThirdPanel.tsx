@@ -232,37 +232,13 @@ export default function ThirdPanel({
     }
   }, [onSubcategorySelect, onComposeSearchChange])
 
-  if (!thirdPanelEnabled) {
-    return (
-      <div className={s.thirdPanel}>
-        <div className={s.thirdPanelInner}>
-          {/* シナリオ未選択時: 薬剤追加検索のみ表示（診療領域・Sボタンは出さない） */}
-          {onComposeSearchChange && onSelectComposeDrug ? (
-            <div className={s.thirdPanelScrollArea}>
-              <div className={s.thirdSection}>
-                <div className={s.sActionHeading}>薬剤追加</div>
-                <DrugInlineSearch
-                  searchValue={composeSearchValue}
-                  onSearchChange={onComposeSearchChange}
-                  suggestions={composeDrugSuggestions}
-                  onSelectDrug={onSelectComposeDrug}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className={s.thirdPanelGuide}>
-              シナリオを選択すると、ここに機能が表示されます
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
+  // 合成窓は thirdPanelEnabled に関係なく常時表示
+  // 診療領域・Sボタンはシナリオ選択後のみ
   return (
     <div className={s.thirdPanel}>
       <div className={s.thirdPanelInner}>
         <div className={s.thirdPanelScrollArea}>
+          {/* 薬剤追加: 常に上部固定 */}
           {onComposeSearchChange && onSelectComposeDrug && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>薬剤追加</div>
@@ -274,12 +250,17 @@ export default function ThirdPanel({
               />
             </div>
           )}
-          <div className={s.thirdSection}>
-            <div className={s.sActionHeading}>診療領域</div>
-            <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
-          </div>
+
+          {/* 診療領域: シナリオ選択後のみ */}
+          {thirdPanelEnabled && (
+            <div className={s.thirdSection}>
+              <div className={s.sActionHeading}>診療領域</div>
+              <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
+            </div>
+          )}
         </div>
 
+        {/* S先頭文ボタン: シナリオ選択後 + 対象グループのみ */}
         {showSButtons && (
           <div className={s.thirdPanelStickyBottom}>
             <div className={s.sActionHeading}>S 先頭文</div>

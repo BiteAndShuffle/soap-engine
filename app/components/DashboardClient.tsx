@@ -126,6 +126,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const composeNodesRef = useRef<ComposeNode[]>([])
   const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
   const selectedScenarioRef = useRef<typeof selectedScenario>(undefined)
+  // レンダリング時の実表示値（manualFields優先）を常時保持
+  const fieldsRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
 
   const [uiMode, setUiMode] = useState<UiMode>('manual')
   const [nlpValidation, setNlpValidation] = useState<ValidationResult | null>(null)
@@ -175,6 +177,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     A: manualFields.A ?? computedFieldsWithFollowup.A,
     P: manualFields.P ?? computedFieldsWithFollowup.P,
   }
+  // 実表示値を常時保持（ノード追加・合成時のベースとして使う）
+  fieldsRef.current = fields
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(activeModuleData.addons, selectedScenario),
@@ -306,7 +310,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     if (nodeId !== null) {
       const sc = selectedScenarioRef.current
-      const baseFields = computedFieldsWithFollowupRef.current
+      // ノード合成時のベースは「現在画面に表示されている1剤目SOAP」
+      const baseFields = fieldsRef.current
       const currentClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
       const baseLabel = sc?.title ?? ''
 
@@ -386,8 +391,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       drugLabel,
     }
 
-    // 既存SOAPを先に丸コピー固定（selectedScenarioId=null後に消えないように）
-    const snapshot = computedFieldsWithFollowupRef.current
+    // 現在の実表示値を丸コピー固定（ノード追加後にSOAPが消えないように）
+    const snapshot = fieldsRef.current
     setManualFields({
       S: snapshot.S,
       O: snapshot.O,
