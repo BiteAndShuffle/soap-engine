@@ -119,17 +119,24 @@ export default function SoapEditor({
       aria-label="SOAPノート編集"
       role="region"
     >
+      {/* ノードバースロット: SOAP内容に関係なく常時表示 */}
+      {nodeBarSlot && (
+        <div className={s.editorTopBar}>
+          <div className={s.editorTopBarLeft}>
+            {nodeBarSlot}
+          </div>
+        </div>
+      )}
+
       {isNoContent ? (
         <div className={s.editorEmpty}>
           左のカテゴリ → 右のテンプレートを選択してください
         </div>
       ) : (
         <>
-          {/* 上部エリア: ノードバースロット（左） + 全文コピーボタン（右） */}
+          {/* 上部エリア: 全文コピーボタン（右） */}
           <div className={s.editorTopBar}>
-            <div className={s.editorTopBarLeft}>
-              {nodeBarSlot}
-            </div>
+            <div className={s.editorTopBarLeft} />
             <button
               className={[s.copyAllBtn, allCopied ? s.copyAllBtnDone : ''].join(' ')}
               onClick={copyAll}

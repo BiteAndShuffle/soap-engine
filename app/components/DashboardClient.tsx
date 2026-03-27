@@ -249,13 +249,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
-    if (selectedNodeIdRef.current === null) {
-      setSelectedScenarioId(null)
-      setManualFields({})
-      setSPrefix('none')
-      setSStatus('stable')
-      setSelectedAddonIds(new Set())
-    }
+    // 1剤目操作中: シナリオ選択は維持しつつグループだけ変える
+    // manualFields はクリアしない（SOAPを消さないため）
+    // ノード操作中(selectedNodeId !== null)の場合も同様に何もしない
   }, [])
 
   const rebuildNodeBlock = useCallback((
@@ -396,6 +392,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // group / scenario は未選択のまま（左メニューを押すまで何も出さない）
     setSelectedGroup(null)
     setSelectedScenarioId(null)
+    // 既存SOAPを manualFields に退避して消えないようにする
+    setManualFields(prev => {
+      const current = computedFieldsWithFollowupRef.current
+      return {
+        S: prev.S ?? current.S,
+        O: prev.O ?? current.O,
+        A: prev.A ?? current.A,
+        P: prev.P ?? current.P,
+      }
+    })
 
     setComposeSearch('')
   }, [allModules, moduleData])
@@ -572,11 +578,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // セカンダリ: 薬剤選択済み + 左メニュー選択後
   const showSecondary = drugSelected && selectedGroup !== null
 
-  // ThirdPanel: シナリオ選択後のみ（薬剤選択・左メニュー選択だけでは出さない）
+  // ThirdPanel: 1剤目のシナリオ選択後のみ（薬剤選択・左メニュー選択・ノード追加だけでは出さない）
   const thirdPanelEnabled = selectedScenarioId !== null
-    || (selectedNodeId !== null && composeNodes.some(
-        n => n.id === selectedNodeId && n.scenarioId !== ''
-      ))
 
   return (
     <div className={s.layout}>
