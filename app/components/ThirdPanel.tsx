@@ -132,10 +132,16 @@ function DrugInlineSearch({
   }, [onSelectDrug, onSearchChange])
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (suggestions.length === 0) return
+      const target = focusedIdx >= 0 ? suggestions[focusedIdx] : suggestions[0]
+      if (target) commit(target)
+      return
+    }
     if (!showDropdown) return
     if (e.key === 'ArrowDown') { e.preventDefault(); setFocusedIdx(i => Math.min(i + 1, suggestions.length - 1)) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setFocusedIdx(i => Math.max(i - 1, 0)) }
-    else if (e.key === 'Enter') { e.preventDefault(); if (focusedIdx >= 0 && suggestions[focusedIdx]) commit(suggestions[focusedIdx]) }
     else if (e.key === 'Escape') { setIsOpen(false); setFocusedIdx(-1) }
   }
 

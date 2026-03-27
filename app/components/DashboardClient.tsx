@@ -204,6 +204,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [allGroups],
   )
 
+  // selectedGroup が新ノードの availableGroups に存在しない場合は先頭グループに補正
+  useEffect(() => {
+    if (selectedGroup !== null && !availableGroups.has(selectedGroup)) {
+      const first = allGroups[0]?.group ?? null
+      setSelectedGroup(first)
+    }
+  }, [availableGroups, allGroups, selectedGroup])
+
   const groupScenarios = useMemo(() => {
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
@@ -570,13 +578,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   void recomposeSoap
 
   // ── 表示条件 ─────────────────────────────────────────────
-  // セカンダリ: 薬剤選択済み + 左メニュー選択 + 非pendingノード操作中
+  // セカンダリ: 薬剤選択済み + 左メニュー選択（pendingノード操作中も表示してシナリオを選べるようにする）
   const showSecondary = drugSelected && selectedGroup !== null
-    && (selectedNodeId === null || !pendingNodeIds.has(selectedNodeId))
 
-  // ThirdPanel: シナリオ確定 or 非pendingノード操作中
+  // ThirdPanel: シナリオ確定 or ノード操作中（pending含む）
   const thirdPanelEnabled = selectedScenarioId !== null
-    || (selectedNodeId !== null && !pendingNodeIds.has(selectedNodeId))
+    || selectedNodeId !== null
 
   return (
     <div className={s.layout}>
