@@ -420,8 +420,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (node) {
       const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
       const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
-      // シナリオ確定済みノードならそのグループへ、未確定なら null（自動選択しない）
-      setSelectedGroup(sc ? getMenuGroupFromScenario(sc) : null)
+      // 確定済み・未確定問わず null（group はユーザーが左メニューを押した時のみ入る）
+      void sc
+      setSelectedGroup(null)
     }
     setSelectedNodeId(nodeId)
   }, [allModules, moduleData])
