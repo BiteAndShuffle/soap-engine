@@ -329,6 +329,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setManualFields({ S: mergedFields.S, O: mergedFields.O, A: mergedFields.A, P: mergedFields.P })
         return updatedNodes
       })
+
+      // ノードのシナリオ確定 → selectedScenarioId に反映してサードパネルを開く
+      setSelectedScenarioId(id)
       return
     }
 

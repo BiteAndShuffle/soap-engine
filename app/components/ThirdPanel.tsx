@@ -238,8 +238,8 @@ export default function ThirdPanel({
     <div className={s.thirdPanel}>
       <div className={s.thirdPanelInner}>
         <div className={s.thirdPanelScrollArea}>
-          {/* 薬剤追加: 常に上部固定 */}
-          {onComposeSearchChange && onSelectComposeDrug && (
+          {/* シナリオ確定後のみ表示（合成窓・診療領域ともに） */}
+          {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>薬剤追加</div>
               <DrugInlineSearch
@@ -251,7 +251,6 @@ export default function ThirdPanel({
             </div>
           )}
 
-          {/* 診療領域: シナリオ選択後のみ */}
           {thirdPanelEnabled && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>診療領域</div>

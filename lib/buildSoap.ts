@@ -252,14 +252,16 @@ export function mergeBlocks(
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   const result: SoapFields = { S: '', O: '', A: '', P: '' }
 
+  // currentFields（1剤目ベース）を先頭、blocks（2剤目以降）をその後に並べる
+  // → 操作順（先に確定した薬剤が上）でSOAPが出力される
   const all: Array<MergedBlock & { isCurrent?: boolean }> = [
-    ...blocks,
     {
       id: 'current',
       templateLabel: currentLabel,
       fields: currentFields,
       closingText: currentClosingText,
     },
+    ...blocks,
   ]
 
   for (const key of keys) {
