@@ -333,6 +333,11 @@ export interface MergedBlock {
    * mergeBlocks で同一の closing が複数ある場合、最後の1件のみ出力。
    */
   closingText?: string
+  /**
+   * S欄ドメイン別まとめ用。
+   * composition.domain → categoryPath[1] → categoryPath[0] → moduleId の優先順で決定。
+   */
+  domain?: string
 }
 
 // ─────────────────────────────────────────────────────────────

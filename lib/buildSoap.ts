@@ -247,9 +247,11 @@ function normalizeLines(text: string): string {
 /**
  * 締め文の重複行を排除する。
  *
- * 「次回」「確認」を含む行を "closing 行" とみなし、
+ * 「次回」で始まる行のみを "closing 行" とみなす。
+ * 本文中に「確認」が含まれる行を誤判定しないよう、先頭マッチに限定する。
  * 同一文字列の closing 行が複数あれば最後の1件だけ残す。
- * 異なる締め文（例: 「次回、BP確認」と「次回、体重確認」）は別扱いでそれぞれ残す。
+ * 異なる締め文（例: 「次回、副作用の有無を確認。」と「次回、治療経過を確認。」）は
+ * 別扱いでそれぞれ残す。
  */
 function dedupeClosingLines(text: string): string {
   const lines = text.split('\n')
@@ -258,7 +260,8 @@ function dedupeClosingLines(text: string): string {
   const reversed: string[] = []
   for (let i = lines.length - 1; i >= 0; i--) {
     const line = lines[i]
-    const isClosing = line.includes('次回') || line.includes('確認')
+    // 「次回」で始まる行のみを締め文とみなす（本文中の「確認」は対象外）
+    const isClosing = line.trimStart().startsWith('次回')
     if (isClosing) {
       if (seen.has(line)) continue   // 重複: スキップ
       seen.add(line)
@@ -268,10 +271,83 @@ function dedupeClosingLines(text: string): string {
   return reversed.reverse().join('\n')
 }
 
+// ─────────────────────────────────────────────────────────────
+// S欄ドメイン別まとめユーティリティ
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * S欄の各ブロックテキストをドメイン別にグループ化し、
+ * 同一 domain 内で文型が一致する行を自然文にまとめる。
+ *
+ * 「まとめる」条件（すべて満たす場合のみ）:
+ *   1. 同一 domain のブロックが2件以上ある
+ *   2. 各ブロックの S がそれぞれ「単一行」である（複数行は個別維持）
+ *   3. 末尾の文型が一致する（「〜が出て薬が追加になりました。」等）
+ *      → 文末 suffix を抽出し、先頭の「症状語」だけを置換してまとめる
+ *
+ * 上記に該当しない場合は各ブロックの S をそのまま改行区切りで返す。
+ */
+function groupSentencesS(
+  entries: Array<{ domain: string | undefined; text: string }>,
+): string {
+  if (entries.length === 0) return ''
+  if (entries.length === 1) return entries[0].text
+
+  // domain ごとにグループ化
+  const domainMap = new Map<string, string[]>()
+  for (const e of entries) {
+    const key = e.domain ?? '__none__'
+    if (!domainMap.has(key)) domainMap.set(key, [])
+    domainMap.get(key)!.push(e.text)
+  }
+
+  const resultLines: string[] = []
+
+  for (const [, texts] of domainMap) {
+    if (texts.length === 1) {
+      resultLines.push(texts[0])
+      continue
+    }
+
+    // すべてが「単一行」かつ文末 suffix が一致するときだけまとめる
+    const singleLines = texts.filter(t => !t.includes('\n'))
+    if (singleLines.length !== texts.length) {
+      // 複数行が混在 → 個別維持
+      resultLines.push(...texts)
+      continue
+    }
+
+    // 共通 suffix を検出（最短一致）
+    // 例: 「痰が出て薬が追加になりました。」「咳が出て薬が追加になりました。」
+    //     → suffix = 「が出て薬が追加になりました。」、prefix = 「痰」「咳」
+    const suffixes = singleLines.map(t => {
+      // 「〜が〜」「〜で〜」「〜は〜」のような助詞で文を2分割
+      const m = t.match(/^(.+?)([がではをにもと].+)$/)
+      return m ? m[2] : null
+    })
+    const allSameSuffix = suffixes[0] !== null && suffixes.every(s => s === suffixes[0])
+
+    if (!allSameSuffix) {
+      // 文型不一致 → 個別維持
+      resultLines.push(...texts)
+      continue
+    }
+
+    // 文型一致 → 先頭語を「・」で結合してまとめる
+    const suffix = suffixes[0]!
+    const prefixes = singleLines.map(t => t.replace(suffix, ''))
+    const joined = prefixes.join('・') + suffix
+    resultLines.push(joined)
+  }
+
+  return resultLines.join('\n')
+}
+
 /**
  * mergeBlocks — 複数薬の SOAP ブロックを合成する。
  *
  * S / O / A: 本文をそのまま改行区切りで結合（ラベル行なし）。
+ *   S 欄のみ、同一 domain かつ同一文型のブロックを自然文にまとめる（groupSentencesS）。
  *
  * P フィールドの closing deduplication:
  *   各ブロックに closingText が設定されている場合、
@@ -292,6 +368,7 @@ export function mergeBlocks(
   currentFields: SoapFields,
   currentLabel: string,
   currentClosingText?: string,
+  currentDomain?: string,
 ): SoapFields {
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   const result: SoapFields = { S: '', O: '', A: '', P: '' }
@@ -304,13 +381,20 @@ export function mergeBlocks(
       templateLabel: currentLabel,
       fields: currentFields,
       closingText: currentClosingText,
+      domain: currentDomain,
     },
     ...blocks,
   ]
 
   for (const key of keys) {
-    if (key !== 'P') {
-      // S / O / A: 本文のみ結合（ラベル行なし）
+    if (key === 'S') {
+      // S: ドメイン別まとめ（同一文型のときのみ統合）
+      const entries = all
+        .map(block => ({ domain: block.domain, text: block.fields.S.trim() }))
+        .filter(e => e.text)
+      result.S = groupSentencesS(entries)
+    } else if (key !== 'P') {
+      // O / A: 本文のみ結合（ラベル行なし）
       const parts: string[] = []
       for (const block of all) {
         const text = block.fields[key].trim()

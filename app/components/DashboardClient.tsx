@@ -297,12 +297,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (appendText) result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
     }
     const closingText = resolveClosingText(sc, mod.defaults)
+    // domain: composition.domain → categoryPath[1] → categoryPath[0] → moduleId の優先順
+    const domain = mod.composition?.domain
+      ?? mod.categoryPath?.[1]
+      ?? mod.categoryPath?.[0]
+      ?? mod.moduleId
     const newBlock: MergedBlock = {
       id: node.block.id,
       templateLabel: sc.title,
       fields: result,
       symptomCodes: sc.sComposition?.symptomCodes,
       closingText,
+      domain,
     }
     const updatedNodes = nodes.map(n =>
       n.id === nodeId ? { ...n, scenarioId: newScenarioId, block: newBlock } : n,
