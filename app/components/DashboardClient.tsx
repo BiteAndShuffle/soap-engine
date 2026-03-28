@@ -122,6 +122,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // nodeId → true: 薬剤だけ追加されてシナリオが未確定のノード
   const [pendingNodeIds, setPendingNodeIds] = useState<Set<string>>(new Set())
 
+  // 1剤目（メイン薬）の確定SOAP。2剤目以降の合成では常にこれをベースにする。
+  // 2剤目以降のノード確定・再編集では絶対に更新しない。
+  const [primaryBaseFields, setPrimaryBaseFields] = useState<SoapFields>(EMPTY_FIELDS)
+  const primaryBaseFieldsRef = useRef<SoapFields>(EMPTY_FIELDS)
+
   const selectedNodeIdRef = useRef<string | null>(null)
   const composeNodesRef = useRef<ComposeNode[]>([])
   const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
@@ -170,6 +175,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   composeNodesRef.current = composeNodes
   computedFieldsWithFollowupRef.current = computedFieldsWithFollowup
   selectedScenarioRef.current = selectedScenario
+  primaryBaseFieldsRef.current = primaryBaseFields
 
   const fields: SoapFields = {
     S: manualFields.S ?? computedFieldsWithFollowup.S,
@@ -191,6 +197,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSStatus('stable')
     }
   }, [selectedGroup])
+
+  // 1剤目シナリオが確定/変更されたときに primaryBaseFields を同期する
+  // selectedNodeId === null のとき（1剤目操作中）のみ更新。ノード操作中は絶対に触らない。
+  useEffect(() => {
+    if (selectedNodeId !== null) return   // ノード操作中: 無視
+    if (selectedScenarioId !== null) {
+      setPrimaryBaseFields(computedFieldsWithFollowup)
+    } else {
+      setPrimaryBaseFields(EMPTY_FIELDS)
+    }
+  }, [selectedScenarioId, selectedNodeId, computedFieldsWithFollowup])
 
   const targetModule = useMemo<ModuleData>(() => {
     if (selectedNodeId === null) return activeModuleData
@@ -309,9 +326,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const nodeId = selectedNodeIdRef.current
 
     if (nodeId !== null) {
+      // ── ノード（2剤目以降）シナリオ確定 ──────────────────
+      // baseFields は必ず primaryBaseFields（1剤目のSOAPのみ）を使う
+      // display中の合成済みSOAPは絶対に使わない
       const sc = selectedScenarioRef.current
-      // ノード合成時のベースは「現在画面に表示されている1剤目SOAP」
-      const baseFields = fieldsRef.current
+      const baseFields = primaryBaseFieldsRef.current
       const currentClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
       const baseLabel = sc?.title ?? ''
 
@@ -335,8 +354,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       return
     }
 
+    // ── 1剤目シナリオ確定 ─────────────────────────────────
+    // primaryBaseFields の更新は useEffect（selectedScenarioId / computedFieldsWithFollowup 依存）が担う
     setSelectedScenarioId(prev => {
       if (prev === id) {
+        // 同じシナリオを再タップ → 解除
         setManualFields({})
         setSPrefix('none')
         setSStatus('stable')
@@ -427,24 +449,36 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (node) {
       // group は常に null（左メニューをユーザーが押すまで出さない）
       setSelectedGroup(null)
-      // 確定済みノード: scenarioId を復元してサードパネルが再び開けるようにする
       if (node.scenarioId) {
+        // 確定済みノード: primaryBaseFields + 全ノード を再合成してSOAPを復元
+        // block.fields を直接使わず mergeBlocks で再構成することで二重合成を防ぐ
+        const baseFields = primaryBaseFieldsRef.current
+        const sc = selectedScenarioRef.current
+        const baseLabel = sc?.title ?? ''
+        const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+        const confirmedNodes = currentNodes.filter(n => n.scenarioId)
+        if (confirmedNodes.length > 0) {
+          const merged = mergeBlocks(
+            confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+          )
+          setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
+        } else {
+          setManualFields({ S: baseFields.S, O: baseFields.O, A: baseFields.A, P: baseFields.P })
+        }
         setSelectedScenarioId(node.scenarioId)
-        // block.fields をそのまま manualFields に反映してSOAPを復元
-        const f = node.block.fields
-        setManualFields({ S: f.S, O: f.O, A: f.A, P: f.P })
       } else {
         // pending ノード: scenarioId なし・SOAPはそのまま維持
         setSelectedScenarioId(null)
       }
     }
     setSelectedNodeId(nodeId)
-  }, [])
+  }, [activeModuleData.defaults])
 
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
     const currentNodeId = selectedNodeIdRef.current
     const currentScenario = selectedScenarioRef.current
-    const baseFields = computedFieldsWithFollowupRef.current
+    // ノード削除後の再合成も primaryBaseFields をベースにする
+    const baseFields = primaryBaseFieldsRef.current
 
     if (currentNodeId === nodeId) {
       setSelectedNodeId(null)
