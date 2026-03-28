@@ -611,6 +611,18 @@
   min-height: 0;
 }
 
+/* ThirdPanel 表示状態: シナリオ未確定（合成窓のみ） */
+.collapsedPanel {
+  background: #f4f5f7;
+  border-right-color: #e8eaf0;
+}
+
+/* ThirdPanel 表示状態: シナリオ確定後（全コンテンツ表示） */
+.expandedPanel {
+  background: #f8f9fb;
+  border-right-color: #dde0e8;
+}
+
 /*
  * ThirdPanel 内側レイアウト
  * 構造:
