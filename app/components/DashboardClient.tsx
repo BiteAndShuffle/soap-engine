@@ -117,7 +117,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(new Set())
 
   const [composeNodes, setComposeNodes] = useState<ComposeNode[]>([])
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
+  // editingNodeId: 現在編集/選択中のノードID。null = 1剤目操作中。
+  const [editingNodeId, setEditingNodeId] = useState<string | null>(null)
 
   // nodeId → true: 薬剤だけ追加されてシナリオが未確定のノード
   const [pendingNodeIds, setPendingNodeIds] = useState<Set<string>>(new Set())
@@ -127,7 +128,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [primaryBaseFields, setPrimaryBaseFields] = useState<SoapFields>(EMPTY_FIELDS)
   const primaryBaseFieldsRef = useRef<SoapFields>(EMPTY_FIELDS)
 
-  const selectedNodeIdRef = useRef<string | null>(null)
+  const editingNodeIdRef = useRef<string | null>(null)
   const composeNodesRef = useRef<ComposeNode[]>([])
   const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
   const selectedScenarioRef = useRef<typeof selectedScenario>(undefined)
@@ -171,7 +172,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     return result
   }, [selectedScenario, activeModuleData.defaults])
 
-  selectedNodeIdRef.current = selectedNodeId
+  editingNodeIdRef.current = editingNodeId
   composeNodesRef.current = composeNodes
   computedFieldsWithFollowupRef.current = computedFieldsWithFollowup
   selectedScenarioRef.current = selectedScenario
@@ -199,22 +200,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [selectedGroup])
 
   // 1剤目シナリオが確定/変更されたときに primaryBaseFields を同期する
-  // selectedNodeId === null のとき（1剤目操作中）のみ更新。ノード操作中は絶対に触らない。
+  // editingNodeId === null のとき（1剤目操作中）のみ更新。ノード操作中は絶対に触らない。
   useEffect(() => {
-    if (selectedNodeId !== null) return   // ノード操作中: 無視
+    if (editingNodeId !== null) return   // ノード操作中: 無視
     if (selectedScenarioId !== null) {
       setPrimaryBaseFields(computedFieldsWithFollowup)
     } else {
       setPrimaryBaseFields(EMPTY_FIELDS)
     }
-  }, [selectedScenarioId, selectedNodeId, computedFieldsWithFollowup])
+  }, [selectedScenarioId, editingNodeId, computedFieldsWithFollowup])
 
   const targetModule = useMemo<ModuleData>(() => {
-    if (selectedNodeId === null) return activeModuleData
-    const node = composeNodes.find(n => n.id === selectedNodeId)
+    if (editingNodeId === null) return activeModuleData
+    const node = composeNodes.find(n => n.id === editingNodeId)
     if (!node) return activeModuleData
     return allModules.find(m => m.moduleId === node.moduleId) ?? activeModuleData
-  }, [selectedNodeId, composeNodes, activeModuleData, allModules])
+  }, [editingNodeId, composeNodes, activeModuleData, allModules])
 
   const allGroups = useMemo(
     () => groupByMenuGroup(targetModule.scenarios),
@@ -258,21 +259,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     ? `${resolvedBrand}（${resolvedGenericName}）`
     : resolvedBrand ?? resolvedGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
 
-  const recomposeSoap = useCallback((
-    baseFields: SoapFields,
-    baseClosingText: string | undefined,
-    baseLabel: string,
-    nodes: ComposeNode[],
-  ): SoapFields => {
-    if (nodes.length === 0) return baseFields
-    return mergeBlocks(nodes.map(n => n.block), baseFields, baseLabel, baseClosingText)
-  }, [])
-
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
     // 1剤目操作中: シナリオ選択は維持しつつグループだけ変える
     // manualFields はクリアしない（SOAPを消さないため）
-    // ノード操作中(selectedNodeId !== null)の場合も同様に何もしない
+    // ノード操作中(editingNodeId !== null)の場合も同様に何もしない
   }, [])
 
   const rebuildNodeBlock = useCallback((
@@ -323,18 +314,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [allModules, moduleData])
 
   const handleSelectScenario = useCallback((id: string) => {
-    const nodeId = selectedNodeIdRef.current
+    const nodeId = editingNodeIdRef.current
 
     if (nodeId !== null) {
-      // ── ノード（2剤目以降）シナリオ確定 ──────────────────
+      // ── ノード（2剤目以降）シナリオ確定 / 再編集 ────────
       // baseFields は必ず primaryBaseFields（1剤目のSOAPのみ）を使う
-      // display中の合成済みSOAPは絶対に使わない
       const sc = selectedScenarioRef.current
       const baseFields = primaryBaseFieldsRef.current
       const currentClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
       const baseLabel = sc?.title ?? ''
 
-      // シナリオが確定 → pending から外す
+      // シナリオ確定 → pending から外す（既確定ノードの再編集でも無害）
       setPendingNodeIds(prev => {
         const next = new Set(prev)
         next.delete(nodeId)
@@ -391,7 +381,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSelectedAddonIds(new Set())
     setMainSearch('')
     setComposeNodes([])
-    setSelectedNodeId(null)
+    setEditingNodeId(null)
     setPendingNodeIds(new Set())
   }, [allModules, moduleData])
 
@@ -427,7 +417,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     setComposeNodes(prev => [...prev, newNode])
     setPendingNodeIds(prev => new Set([...prev, nodeId]))
-    setSelectedNodeId(nodeId)
+    setEditingNodeId(nodeId)
     // group / scenario は未選択のまま（左メニューを押すまで何も出さない）
     setSelectedGroup(null)
     setSelectedScenarioId(null)
@@ -436,52 +426,67 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [allModules, moduleData])
 
   const handleSelectNode = useCallback((nodeId: string) => {
-    const currentNodeId = selectedNodeIdRef.current
+    const currentNodeId = editingNodeIdRef.current
     const currentNodes = composeNodesRef.current
 
     if (currentNodeId === nodeId) {
-      // 同じノードを再クリック → 選択解除
-      setSelectedNodeId(null)
+      // 同じノードを再クリック → 選択解除（1剤目操作モードに戻る）
+      setEditingNodeId(null)
       setSelectedGroup(null)
+      // SOAPを全ノード再合成で復元（1剤目 + 全確定ノード）
+      const baseFields = primaryBaseFieldsRef.current
+      const sc = selectedScenarioRef.current
+      const baseLabel = sc?.title ?? ''
+      const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+      const confirmedNodes = currentNodes.filter(n => n.scenarioId)
+      if (confirmedNodes.length > 0) {
+        const merged = mergeBlocks(
+          confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+        )
+        setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
+      } else {
+        setManualFields({ S: baseFields.S, O: baseFields.O, A: baseFields.A, P: baseFields.P })
+      }
+      // 1剤目のシナリオIDに戻す（selectedScenarioId は 1剤目専用なので変えない）
       return
     }
+
     const node = currentNodes.find(n => n.id === nodeId)
-    if (node) {
-      // group は常に null（左メニューをユーザーが押すまで出さない）
-      setSelectedGroup(null)
-      if (node.scenarioId) {
-        // 確定済みノード: primaryBaseFields + 全ノード を再合成してSOAPを復元
-        // block.fields を直接使わず mergeBlocks で再構成することで二重合成を防ぐ
-        const baseFields = primaryBaseFieldsRef.current
-        const sc = selectedScenarioRef.current
-        const baseLabel = sc?.title ?? ''
-        const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
-        const confirmedNodes = currentNodes.filter(n => n.scenarioId)
-        if (confirmedNodes.length > 0) {
-          const merged = mergeBlocks(
-            confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
-          )
-          setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
-        } else {
-          setManualFields({ S: baseFields.S, O: baseFields.O, A: baseFields.A, P: baseFields.P })
-        }
-        setSelectedScenarioId(node.scenarioId)
-      } else {
-        // pending ノード: scenarioId なし・SOAPはそのまま維持
-        setSelectedScenarioId(null)
+    if (!node) return
+
+    // ノード選択 → 編集モードへ
+    setEditingNodeId(nodeId)
+    setSelectedGroup(null)   // 左メニューはユーザーが押すまで出さない
+
+    if (node.scenarioId) {
+      // 確定済みノード: SOAPを再合成で復元してセカンダリ開放
+      const baseFields = primaryBaseFieldsRef.current
+      const sc = selectedScenarioRef.current
+      const baseLabel = sc?.title ?? ''
+      const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+      const confirmedNodes = currentNodes.filter(n => n.scenarioId)
+      if (confirmedNodes.length > 0) {
+        const merged = mergeBlocks(
+          confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+        )
+        setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
       }
+      // selectedScenarioId にノードの確定シナリオIDをセット → セカンダリ（ThirdPanel）が開く
+      setSelectedScenarioId(node.scenarioId)
+    } else {
+      // pending ノード: シナリオ未確定・SOAPはそのまま維持・ThirdPanel閉
+      setSelectedScenarioId(null)
     }
-    setSelectedNodeId(nodeId)
   }, [activeModuleData.defaults])
 
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
-    const currentNodeId = selectedNodeIdRef.current
+    const currentNodeId = editingNodeIdRef.current
     const currentScenario = selectedScenarioRef.current
     // ノード削除後の再合成も primaryBaseFields をベースにする
     const baseFields = primaryBaseFieldsRef.current
 
     if (currentNodeId === nodeId) {
-      setSelectedNodeId(null)
+      setEditingNodeId(null)
       if (currentScenario) setSelectedGroup(getMenuGroupFromScenario(currentScenario))
     }
     setPendingNodeIds(prev => {
@@ -505,7 +510,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleResetCompose = useCallback(() => {
     setComposeNodes([])
     setManualFields({})
-    setSelectedNodeId(null)
+    setEditingNodeId(null)
     setPendingNodeIds(new Set())
   }, [])
 
@@ -618,8 +623,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpIsGenerating(false)
   }, [activeModuleData])
 
-  void recomposeSoap
-
   // ── 表示条件 ─────────────────────────────────────────────
   // セカンダリ: 左メニューでグループを選んだときだけ表示
   const showSecondary = selectedGroup !== null
@@ -646,9 +649,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           availableGroups={drugSelected ? availableGroups : new Set()}
           selectedGroup={selectedGroup}
           onSelectGroup={handleSelectGroup}
-          selectedNodeId={selectedNodeId}
+          selectedNodeId={editingNodeId}
           onDeselectNode={() => {
-            setSelectedNodeId(null)
+            setEditingNodeId(null)
             if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
           }}
         />
@@ -676,17 +679,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               {showSecondary && groupScenarios.length > 0 ? (
                 <>
                   <TemplateListPanel
-                    key={`${selectedNodeId ?? 'main'}-${selectedGroup ?? 'all'}`}
+                    key={`${editingNodeId ?? 'main'}-${selectedGroup ?? 'all'}`}
                     group={selectedGroup!}
                     scenarios={groupScenarios}
                     selectedScenarioId={
-                      selectedNodeId !== null
-                        ? (composeNodes.find(n => n.id === selectedNodeId)?.scenarioId ?? null)
+                      editingNodeId !== null
+                        ? (composeNodes.find(n => n.id === editingNodeId)?.scenarioId ?? null)
                         : selectedScenarioId
                     }
                     onSelectScenario={handleSelectScenario}
                   />
-                  {selectedScenarioId !== null && activeModuleData.addons && selectedNodeId === null && (
+                  {selectedScenarioId !== null && activeModuleData.addons && editingNodeId === null && (
                     <AddonPanel
                       addons={activeModuleData.addons}
                       selectedAddonIds={selectedAddonIds}
@@ -738,7 +741,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             nodeBarSlot={
               <ComposeNodeBar
                 nodes={composeNodes}
-                selectedNodeId={selectedNodeId}
+                selectedNodeId={editingNodeId}
                 onSelectNode={handleSelectNode}
                 onRemove={handleRemoveComposeNode}
                 onReset={handleResetCompose}

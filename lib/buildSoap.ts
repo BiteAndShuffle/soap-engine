@@ -228,6 +228,46 @@ export function formatSoapForCopy(fields: SoapFields): string {
 // 複数薬の SOAP ブロックを合成
 // ─────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────
+// mergeBlocks 内部ユーティリティ
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 空行を除去して行を詰める（O / A / P 用）。
+ * 各行のトリミングと空行フィルタのみ行い、改行コードで再結合する。
+ */
+function normalizeLines(text: string): string {
+  return text
+    .split('\n')
+    .map(l => l.trimEnd())
+    .filter(l => l !== '')
+    .join('\n')
+}
+
+/**
+ * 締め文の重複行を排除する。
+ *
+ * 「次回」「確認」を含む行を "closing 行" とみなし、
+ * 同一文字列の closing 行が複数あれば最後の1件だけ残す。
+ * 異なる締め文（例: 「次回、BP確認」と「次回、体重確認」）は別扱いでそれぞれ残す。
+ */
+function dedupeClosingLines(text: string): string {
+  const lines = text.split('\n')
+  // 末尾から走査して「すでに見た closing 行」を除去する
+  const seen = new Set<string>()
+  const reversed: string[] = []
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i]
+    const isClosing = line.includes('次回') || line.includes('確認')
+    if (isClosing) {
+      if (seen.has(line)) continue   // 重複: スキップ
+      seen.add(line)
+    }
+    reversed.push(line)
+  }
+  return reversed.reverse().join('\n')
+}
+
 /**
  * mergeBlocks — 複数薬の SOAP ブロックを合成する。
  *
@@ -240,6 +280,10 @@ export function formatSoapForCopy(fields: SoapFields): string {
  *   1. 各ブロックの P から closingText を末尾で除去してボディを取得
  *   2. ボディを改行区切りで結合（ラベル行なし）
  *   3. 出現した unique closing テキストを収集し、末尾に追記
+ *
+ * 後処理（全フィールド共通）:
+ *   - 空行を除去して行を詰める（normalizeLines）
+ *   - 締め文の重複行を排除する（dedupeClosingLines）
  *
  * currentClosingText: 現在選択中シナリオの closing テキスト（省略可）
  */
@@ -273,7 +317,7 @@ export function mergeBlocks(
         if (!text) continue
         parts.push(text)
       }
-      result[key] = parts.join('\n\n')
+      result[key] = parts.join('\n')
     } else {
       // P: closing deduplication（ラベル行なし）
       const seenClosings = new Set<string>()
@@ -301,13 +345,18 @@ export function mergeBlocks(
         }
       }
 
-      let merged = parts.join('\n\n')
+      let merged = parts.join('\n')
       if (orderedClosings.length > 0) {
         const closingBlock = orderedClosings.join('\n')
-        merged = merged ? `${merged}\n\n${closingBlock}` : closingBlock
+        merged = merged ? `${merged}\n${closingBlock}` : closingBlock
       }
       result.P = merged
     }
+  }
+
+  // 後処理: 全フィールドを正規化（空行除去 + 締め文重複排除）
+  for (const key of keys) {
+    result[key] = dedupeClosingLines(normalizeLines(result[key]))
   }
 
   return result
