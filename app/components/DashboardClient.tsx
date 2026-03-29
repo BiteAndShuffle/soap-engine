@@ -128,6 +128,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [primaryBaseFields, setPrimaryBaseFields] = useState<SoapFields>(EMPTY_FIELDS)
   const primaryBaseFieldsRef = useRef<SoapFields>(EMPTY_FIELDS)
 
+  // 1剤目の addon 選択状態。ノード操作では更新しない。
+  // ノード選択解除時にこの値を selectedAddonIds に復元する。
+  const [primarySelectedAddonIds, setPrimarySelectedAddonIds] = useState<Set<string>>(new Set())
+  const primarySelectedAddonIdsRef = useRef<Set<string>>(new Set())
+
   const editingNodeIdRef = useRef<string | null>(null)
   const composeNodesRef = useRef<ComposeNode[]>([])
   const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
@@ -179,6 +184,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   computedFieldsWithFollowupRef.current = computedFieldsWithFollowup
   selectedScenarioRef.current = selectedScenario
   primaryBaseFieldsRef.current = primaryBaseFields
+  primarySelectedAddonIdsRef.current = primarySelectedAddonIds
   selectedAddonIdsRef.current = selectedAddonIds
 
   const fields: SoapFields = {
@@ -374,6 +380,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setSPrefix('none')
         setSStatus('stable')
         setSelectedAddonIds(new Set())
+        setPrimarySelectedAddonIds(new Set())
         return null
       }
       const sc = activeModuleData.scenarios.find(s => s.globalId === id)
@@ -382,6 +389,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSPrefix('none')
       setSStatus('stable')
       setSelectedAddonIds(new Set())
+      setPrimarySelectedAddonIds(new Set())
       return id
     })
   }, [activeModuleData, rebuildNodeBlock])
@@ -400,6 +408,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
+    setPrimarySelectedAddonIds(new Set())
     setMainSearch('')
     setComposeNodes([])
     setEditingNodeId(null)
@@ -463,8 +472,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // 同じノードを再クリック → 選択解除（1剤目操作モードに戻る）
       setEditingNodeId(null)
       setSelectedGroup(null)
-      // 1剤目に戻るので addon UI もリセット（1剤目の addon 状態は別管理していないため空に）
-      setSelectedAddonIds(new Set())
+      // 1剤目の addon 選択状態を復元
+      setSelectedAddonIds(primarySelectedAddonIdsRef.current)
       // SOAPを全ノード再合成で復元（1剤目 + 全確定ノード）
       // mergeBlocks の currentLabel/currentClosing は 1剤目専用
       const primaryFields = primaryBaseFieldsRef.current
@@ -525,6 +534,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     if (currentNodeId === nodeId) {
       setEditingNodeId(null)
+      // 1剤目の addon 選択状態を復元
+      setSelectedAddonIds(primarySelectedAddonIdsRef.current)
       if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
     }
     setPendingNodeIds(prev => {
@@ -616,6 +627,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
       } else {
         // ── 1剤目操作中: 既存ロジック（computedFields ベース） ──────────
+        // addon 変更を primarySelectedAddonIds にも反映する（ノード解除時の復元用）
+        setPrimarySelectedAddonIds(next)
         if (activeModuleData.addons && selectedScenarioRef.current) {
           const sc = selectedScenarioRef.current
           const sectionAddonMap = new Map<string, string[]>()
@@ -683,6 +696,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSPrefix('none')
     setSStatus('stable')
     setSelectedAddonIds(new Set())
+    setPrimarySelectedAddonIds(new Set())
     setComposeNodes([])
     setNlpValidation(null)
     setNlpSelectorReason('')
@@ -746,7 +760,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           selectedNodeId={editingNodeId}
           onDeselectNode={() => {
             setEditingNodeId(null)
-            setSelectedAddonIds(new Set())
+            // 1剤目の addon 選択状態を復元
+            setSelectedAddonIds(primarySelectedAddonIds)
             if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
           }}
         />
