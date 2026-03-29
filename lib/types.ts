@@ -305,10 +305,16 @@ export interface ComposeNode {
   moduleId: string
   /** scenario.globalId */
   scenarioId: string
-  /** SOAP スナップショット（P closing dedup 用メタデータ含む） */
+  /** SOAP スナップショット（addon 込み確定済み。P closing dedup 用メタデータ含む） */
   block: MergedBlock
   /** ノード表示用薬剤ラベル */
   drugLabel: string
+  /**
+   * このノードで確定した addon キーの一覧。
+   * ノードクリック時に UI（selectedAddonIds）へ復元する。
+   * addon なしで確定した場合は空配列。
+   */
+  selectedAddonIds: string[]
 }
 
 // ─────────────────────────────────────────────────────────────

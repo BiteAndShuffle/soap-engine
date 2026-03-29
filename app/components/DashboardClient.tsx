@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
-import { buildSoapFromScenario, mergeBlocks } from '../../lib/buildSoap'
+import { buildSoapFromScenario, buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../../lib/search'
 import type { DrugSuggestionItem } from '../../lib/search'
 import {
@@ -132,6 +132,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const composeNodesRef = useRef<ComposeNode[]>([])
   const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
   const selectedScenarioRef = useRef<typeof selectedScenario>(undefined)
+  // selectedAddonIds の最新値を常時保持（stale closure 防止）
+  const selectedAddonIdsRef = useRef<Set<string>>(new Set())
   // レンダリング時の実表示値（manualFields優先）を常時保持
   const fieldsRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
 
@@ -177,6 +179,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   computedFieldsWithFollowupRef.current = computedFieldsWithFollowup
   selectedScenarioRef.current = selectedScenario
   primaryBaseFieldsRef.current = primaryBaseFields
+  selectedAddonIdsRef.current = selectedAddonIds
 
   const fields: SoapFields = {
     S: manualFields.S ?? computedFieldsWithFollowup.S,
@@ -273,6 +276,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     baseFields: SoapFields,
     baseLabel: string,
     baseClosing: string | undefined,
+    addonIds: string[] = [],
   ): { updatedNodes: ComposeNode[]; mergedFields: SoapFields } => {
     const node = nodes.find(n => n.id === nodeId)
     if (!node) return { updatedNodes: nodes, mergedFields: baseFields }
@@ -280,23 +284,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const sc = mod.scenarios.find(s => s.globalId === newScenarioId)
     if (!sc) return { updatedNodes: nodes, mergedFields: baseFields }
 
-    const base = buildSoapFromScenario(sc)
-    const result = { ...base }
-    for (const key of ['S', 'P'] as const) {
-      let appendText: string | null | undefined
-      const followupRef = sc.followupRef
-      if (followupRef) {
-        const profile = mod.defaults?.followupProfiles?.[followupRef]
-        if (profile) appendText = (profile as Record<string, string | null>)[key]
-      } else {
-        const followupVal = (sc.followup as Record<string, string> | undefined)?.[key]
-        if (followupVal === 'default') {
-          appendText = (mod.defaults?.followup as Record<string, string> | undefined)?.[key]
-        }
-      }
-      if (appendText) result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
-    }
-    const closingText = resolveClosingText(sc, mod.defaults)
+    // buildNodeFields: シナリオ + followup + addon を一括解決
+    const { fields: result, closingText } = buildNodeFields(sc, mod, addonIds)
+
     // domain: composition.domain → categoryPath[1] → categoryPath[0] → moduleId の優先順
     const domain = mod.composition?.domain
       ?? mod.categoryPath?.[1]
@@ -311,7 +301,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       domain,
     }
     const updatedNodes = nodes.map(n =>
-      n.id === nodeId ? { ...n, scenarioId: newScenarioId, block: newBlock } : n,
+      n.id === nodeId
+        ? { ...n, scenarioId: newScenarioId, block: newBlock, selectedAddonIds: addonIds }
+        : n,
     )
     const mergedFields = mergeBlocks(
       updatedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
@@ -329,6 +321,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const baseFields = primaryBaseFieldsRef.current
       const currentClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
       const baseLabel = sc?.title ?? ''
+      // 確定時点の addon スナップショット（UI state から取得）
+      const currentAddonIds = [...selectedAddonIdsRef.current]
 
       // シナリオ確定 → pending から外す（既確定ノードの再編集でも無害）
       setPendingNodeIds(prev => {
@@ -339,7 +333,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       setComposeNodes(prev => {
         const { updatedNodes, mergedFields } = rebuildNodeBlock(
-          nodeId, id, prev, baseFields, baseLabel, currentClosing,
+          nodeId, id, prev, baseFields, baseLabel, currentClosing, currentAddonIds,
         )
         setManualFields({ S: mergedFields.S, O: mergedFields.O, A: mergedFields.A, P: mergedFields.P })
         return updatedNodes
@@ -410,6 +404,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       scenarioId: '',
       block: dummyBlock,
       drugLabel,
+      selectedAddonIds: [],
     }
 
     // 現在の実表示値を丸コピー固定（ノード追加後にSOAPが消えないように）
@@ -427,6 +422,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // group / scenario は未選択のまま（左メニューを押すまで何も出さない）
     setSelectedGroup(null)
     setSelectedScenarioId(null)
+    // 新ノードの addon 状態は空からスタート
+    setSelectedAddonIds(new Set())
 
     setComposeSearch('')
   }, [allModules, moduleData])
@@ -479,9 +476,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
       // selectedScenarioId にノードの確定シナリオIDをセット → セカンダリ（ThirdPanel）が開く
       setSelectedScenarioId(node.scenarioId)
+      // ノードの addon スナップショットを UI に復元
+      setSelectedAddonIds(new Set(node.selectedAddonIds ?? []))
     } else {
       // pending ノード: シナリオ未確定・SOAPはそのまま維持・ThirdPanel閉
       setSelectedScenarioId(null)
+      setSelectedAddonIds(new Set())
     }
   }, [activeModuleData.defaults])
 
@@ -532,52 +532,100 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSelectedAddonIds(prev => {
       const next = new Set(prev)
       if (next.has(addonKey)) { next.delete(addonKey) } else { next.add(addonKey) }
+      const newAddonIds = [...next]
 
-      if (activeModuleData.addons && selectedScenario) {
-        const sectionAddonMap = new Map<string, string[]>()
-        for (const key of next) {
-          const item = activeModuleData.addons.items[key]
-          if (!item) continue
-          const sec = item.targetSection
-          if (!sectionAddonMap.has(sec)) sectionAddonMap.set(sec, [])
-          sectionAddonMap.get(sec)!.push(item.text)
-        }
-        const resolveFollowupTextLocal = (sec: 'S' | 'P'): string => {
-          const followupRef = selectedScenario.followupRef
-          if (followupRef) {
-            return (activeModuleData.defaults?.followupProfiles?.[followupRef] as Record<string, string> | undefined)?.[sec] ?? ''
+      const nodeId = editingNodeIdRef.current
+
+      if (nodeId !== null) {
+        // ── ノード編集中: ノードの block を再構成して全体 merge ──────────
+        const currentNodes = composeNodesRef.current
+        const node = currentNodes.find(n => n.id === nodeId)
+        if (node) {
+          const nodeMod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+          const nodeSc = nodeMod.scenarios.find(s => s.globalId === node.scenarioId)
+          if (nodeSc) {
+            const { fields: newFields, closingText } = buildNodeFields(nodeSc, nodeMod, newAddonIds)
+            const domain = nodeMod.composition?.domain
+              ?? nodeMod.categoryPath?.[1]
+              ?? nodeMod.categoryPath?.[0]
+              ?? nodeMod.moduleId
+            const newBlock: MergedBlock = {
+              ...node.block,
+              fields: newFields,
+              closingText,
+              domain,
+            }
+            const updatedNodes = currentNodes.map(n =>
+              n.id === nodeId
+                ? { ...n, block: newBlock, selectedAddonIds: newAddonIds }
+                : n,
+            )
+            // composeNodes の更新は setComposeNodes でまとめて行う
+            // ここでは mergedFields を計算してから setComposeNodes の functional update に渡す
+            const baseFields = primaryBaseFieldsRef.current
+            const sc = selectedScenarioRef.current
+            const baseLabel = sc?.title ?? ''
+            const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+            const confirmedNodes = updatedNodes.filter(n => n.scenarioId)
+            const merged = mergeBlocks(
+              confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+            )
+            setComposeNodes(updatedNodes)
+            setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
           }
-          const followupVal = (selectedScenario.followup as Record<string, string> | undefined)?.[sec]
-          return followupVal === 'default'
-            ? ((activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[sec] ?? '') : ''
         }
-        setManualFields(prevFields => {
-          const updated = { ...prevFields }
-          for (const [sec, addonTexts] of sectionAddonMap) {
-            const base = computedFields[sec as keyof typeof computedFields] ?? ''
-            const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec as 'S' | 'P') : ''
-            const parts = [base, ...addonTexts].filter(Boolean)
-            if (followupText) parts.push(followupText)
-            updated[sec as keyof typeof updated] = parts.join('\n')
+      } else {
+        // ── 1剤目操作中: 既存ロジック（computedFields ベース） ──────────
+        if (activeModuleData.addons && selectedScenarioRef.current) {
+          const sc = selectedScenarioRef.current
+          const sectionAddonMap = new Map<string, string[]>()
+          for (const key of next) {
+            const item = activeModuleData.addons.items[key]
+            if (!item) continue
+            const sec = item.targetSection
+            if (!sectionAddonMap.has(sec)) sectionAddonMap.set(sec, [])
+            sectionAddonMap.get(sec)!.push(item.text)
           }
-          for (const sec of ['S', 'O', 'A', 'P'] as const) {
-            if (!sectionAddonMap.has(sec)) {
-              const hasAnyAddonForSec = [...next].some(k => activeModuleData.addons?.items[k]?.targetSection === sec)
-              if (!hasAnyAddonForSec) {
-                const base = computedFields[sec] ?? ''
-                const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec) : ''
-                const parts = [base].filter(Boolean)
-                if (followupText) parts.push(followupText)
-                updated[sec] = parts.join('\n')
+          const resolveFollowupTextLocal = (sec: 'S' | 'P'): string => {
+            const followupRef = sc.followupRef
+            if (followupRef) {
+              return (activeModuleData.defaults?.followupProfiles?.[followupRef] as Record<string, string> | undefined)?.[sec] ?? ''
+            }
+            const followupVal = (sc.followup as Record<string, string> | undefined)?.[sec]
+            return followupVal === 'default'
+              ? ((activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[sec] ?? '') : ''
+          }
+          setManualFields(prevFields => {
+            const updated = { ...prevFields }
+            for (const [sec, addonTexts] of sectionAddonMap) {
+              const base = computedFieldsWithFollowupRef.current[sec as keyof SoapFields] ?? ''
+              // computedFieldsWithFollowup は既に followup 込みなので follow テキストは重複しない
+              // ただし addon の targetSection ごとに追記する
+              const baseScenario = buildSoapFromScenario(sc)
+              const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec as 'S' | 'P') : ''
+              const parts = [baseScenario[sec as keyof typeof baseScenario], ...addonTexts].filter(Boolean)
+              if (followupText) parts.push(followupText)
+              updated[sec as keyof typeof updated] = parts.join('\n')
+            }
+            for (const sec of ['S', 'O', 'A', 'P'] as const) {
+              if (!sectionAddonMap.has(sec)) {
+                const hasAnyAddonForSec = [...next].some(k => activeModuleData.addons?.items[k]?.targetSection === sec)
+                if (!hasAnyAddonForSec) {
+                  const baseScenario = buildSoapFromScenario(sc)
+                  const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec) : ''
+                  const parts = [baseScenario[sec]].filter(Boolean)
+                  if (followupText) parts.push(followupText)
+                  updated[sec] = parts.join('\n')
+                }
               }
             }
-          }
-          return updated
-        })
+            return updated
+          })
+        }
       }
       return next
     })
-  }, [activeModuleData.addons, activeModuleData.defaults, selectedScenario, computedFields])
+  }, [activeModuleData.addons, activeModuleData.defaults, allModules, moduleData])
 
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
     setSPrefix(prefix)

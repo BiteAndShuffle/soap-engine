@@ -27,6 +27,78 @@ function resolveAddonText(key: string, addonsData: AddonsData): string {
 }
 
 /**
+ * ノード確定用: シナリオ + followup + addon を組み合わせて SoapFields を構築する。
+ * rebuildNodeBlock / handleAddonToggle の両方から呼ぶ共通ロジック。
+ *
+ * @param scenario      対象シナリオ
+ * @param mod           対象モジュール（followup / addon 解決に使用）
+ * @param addonIds      このノードで選択された addon キー配列（確定時点のスナップショット）
+ * @returns             fields（addon 込み完成済み） と closingText
+ */
+export function buildNodeFields(
+  scenario: Scenario,
+  mod: ModuleData,
+  addonIds: string[],
+): { fields: SoapFields; closingText: string | undefined } {
+  // 1. シナリオ本文
+  const result: SoapFields = {
+    S: scenario.S ?? '',
+    O: scenario.O ?? '',
+    A: scenario.A ?? '',
+    P: scenario.P ?? '',
+  }
+
+  // 2. followup（S / P のみ）
+  for (const key of ['S', 'P'] as const) {
+    let appendText: string | null | undefined
+    const followupRef = scenario.followupRef
+    if (followupRef) {
+      const profile = mod.defaults?.followupProfiles?.[followupRef]
+      if (profile) appendText = (profile as Record<string, string | null>)[key]
+    } else {
+      const followupVal = (scenario.followup as Record<string, string> | undefined)?.[key]
+      if (followupVal === 'default') {
+        appendText = (mod.defaults?.followup as Record<string, string> | undefined)?.[key]
+      }
+    }
+    if (appendText) result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
+  }
+
+  // 3. addon テキストを targetSection に追記
+  if (mod.addons && addonIds.length > 0) {
+    // section ごとに addon テキストを集める
+    const sectionMap = new Map<string, string[]>()
+    for (const key of addonIds) {
+      const item = mod.addons.items[key]
+      if (!item) continue
+      const sec = item.targetSection
+      if (!sectionMap.has(sec)) sectionMap.set(sec, [])
+      sectionMap.get(sec)!.push(item.text)
+    }
+    for (const [sec, texts] of sectionMap) {
+      const k = sec as SoapKey
+      result[k] = result[k] ? `${result[k]}\n${texts.join('\n')}` : texts.join('\n')
+    }
+  }
+
+  // 4. closingText（P dedup 用）
+  const closingText = (() => {
+    const followupRef = scenario.followupRef
+    if (followupRef) {
+      const profile = mod.defaults?.followupProfiles?.[followupRef]
+      return (profile as Record<string, string> | undefined)?.P ?? undefined
+    }
+    const followupVal = (scenario.followup as Record<string, string> | undefined)?.P
+    if (followupVal === 'default') {
+      return (mod.defaults?.followup as Record<string, string> | undefined)?.P ?? undefined
+    }
+    return undefined
+  })()
+
+  return { fields: result, closingText }
+}
+
+/**
  * Scenario + addonsRef + followup + emergencyFlag を考慮して
  * SOAP フィールドを完全構築する。
  *
