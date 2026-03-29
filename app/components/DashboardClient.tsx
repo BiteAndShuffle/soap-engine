@@ -273,16 +273,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     nodeId: string,
     newScenarioId: string,
     nodes: ComposeNode[],
-    baseFields: SoapFields,
-    baseLabel: string,
-    baseClosing: string | undefined,
+    /** 1剤目の確定SOAP（mergeBlocks のベース）。primaryBaseFieldsRef.current を渡す。 */
+    primaryFields: SoapFields,
+    /** 1剤目のシナリオタイトル（mergeBlocks の currentLabel 用）。1剤目専用。 */
+    primaryLabel: string,
+    /** 1剤目の closing テキスト（mergeBlocks の currentClosingText 用）。1剤目専用。 */
+    primaryClosing: string | undefined,
     addonIds: string[] = [],
   ): { updatedNodes: ComposeNode[]; mergedFields: SoapFields } => {
     const node = nodes.find(n => n.id === nodeId)
-    if (!node) return { updatedNodes: nodes, mergedFields: baseFields }
+    if (!node) return { updatedNodes: nodes, mergedFields: primaryFields }
     const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
     const sc = mod.scenarios.find(s => s.globalId === newScenarioId)
-    if (!sc) return { updatedNodes: nodes, mergedFields: baseFields }
+    if (!sc) return { updatedNodes: nodes, mergedFields: primaryFields }
 
     // buildNodeFields: シナリオ + followup + addon を一括解決
     const { fields: result, closingText } = buildNodeFields(sc, mod, addonIds)
@@ -292,6 +295,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       ?? mod.categoryPath?.[1]
       ?? mod.categoryPath?.[0]
       ?? mod.moduleId
+
     const newBlock: MergedBlock = {
       id: node.block.id,
       templateLabel: sc.title,
@@ -302,11 +306,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
     const updatedNodes = nodes.map(n =>
       n.id === nodeId
-        ? { ...n, scenarioId: newScenarioId, block: newBlock, selectedAddonIds: addonIds }
+        ? {
+            ...n,
+            scenarioId: newScenarioId,
+            block: newBlock,
+            selectedAddonIds: addonIds,
+            // ノード固有の主語情報を保存。他ノード/1剤目の state に依存しない。
+            baseLabel: sc.title,
+            baseDomain: domain,
+          }
         : n,
     )
     const mergedFields = mergeBlocks(
-      updatedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+      updatedNodes.map(n => n.block), primaryFields, primaryLabel, primaryClosing,
     )
     return { updatedNodes, mergedFields }
   }, [allModules, moduleData])
@@ -316,11 +328,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     if (nodeId !== null) {
       // ── ノード（2剤目以降）シナリオ確定 / 再編集 ────────
-      // baseFields は必ず primaryBaseFields（1剤目のSOAPのみ）を使う
-      const sc = selectedScenarioRef.current
-      const baseFields = primaryBaseFieldsRef.current
-      const currentClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
-      const baseLabel = sc?.title ?? ''
+      // primaryFields/primaryLabel/primaryClosing は「1剤目専用」のSOAP文脈。
+      // ノード固有の baseLabel は rebuildNodeBlock 内でシナリオから解決して node に保存する。
+      const primarySc = selectedScenarioRef.current  // 1剤目シナリオ（mergeBlocks currentLabel 用のみ）
+      const primaryFields = primaryBaseFieldsRef.current
+      const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
+      const primaryLabel = primarySc?.title ?? ''
       // 確定時点の addon スナップショット（UI state から取得）
       const currentAddonIds = [...selectedAddonIdsRef.current]
 
@@ -333,7 +346,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       setComposeNodes(prev => {
         const { updatedNodes, mergedFields } = rebuildNodeBlock(
-          nodeId, id, prev, baseFields, baseLabel, currentClosing, currentAddonIds,
+          nodeId, id, prev, primaryFields, primaryLabel, primaryClosing, currentAddonIds,
         )
         setManualFields({ S: mergedFields.S, O: mergedFields.O, A: mergedFields.A, P: mergedFields.P })
         return updatedNodes
@@ -405,6 +418,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       block: dummyBlock,
       drugLabel,
       selectedAddonIds: [],
+      // シナリオ確定前は空。rebuildNodeBlock 呼び出し時に上書きされる。
+      baseLabel: '',
+      baseDomain: targetMod.composition?.domain
+        ?? targetMod.categoryPath?.[1]
+        ?? targetMod.categoryPath?.[0]
+        ?? targetMod.moduleId,
     }
 
     // 現在の実表示値を丸コピー固定（ノード追加後にSOAPが消えないように）
@@ -437,18 +456,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setEditingNodeId(null)
       setSelectedGroup(null)
       // SOAPを全ノード再合成で復元（1剤目 + 全確定ノード）
-      const baseFields = primaryBaseFieldsRef.current
-      const sc = selectedScenarioRef.current
-      const baseLabel = sc?.title ?? ''
-      const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+      // mergeBlocks の currentLabel/currentClosing は 1剤目専用
+      const primaryFields = primaryBaseFieldsRef.current
+      const primarySc = selectedScenarioRef.current   // 1剤目シナリオ
+      const primaryLabel = primarySc?.title ?? ''
+      const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const confirmedNodes = currentNodes.filter(n => n.scenarioId)
       if (confirmedNodes.length > 0) {
         const merged = mergeBlocks(
-          confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+          confirmedNodes.map(n => n.block), primaryFields, primaryLabel, primaryClosing,
         )
         setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
       } else {
-        setManualFields({ S: baseFields.S, O: baseFields.O, A: baseFields.A, P: baseFields.P })
+        setManualFields({ S: primaryFields.S, O: primaryFields.O, A: primaryFields.A, P: primaryFields.P })
       }
       // 1剤目のシナリオIDに戻す（selectedScenarioId は 1剤目専用なので変えない）
       return
@@ -463,14 +483,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     if (node.scenarioId) {
       // 確定済みノード: SOAPを再合成で復元してセカンダリ開放
-      const baseFields = primaryBaseFieldsRef.current
-      const sc = selectedScenarioRef.current
-      const baseLabel = sc?.title ?? ''
-      const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+      // mergeBlocks の currentLabel/currentClosing は 1剤目専用
+      const primaryFields = primaryBaseFieldsRef.current
+      const primarySc = selectedScenarioRef.current   // 1剤目シナリオ
+      const primaryLabel = primarySc?.title ?? ''
+      const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const confirmedNodes = currentNodes.filter(n => n.scenarioId)
       if (confirmedNodes.length > 0) {
         const merged = mergeBlocks(
-          confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+          confirmedNodes.map(n => n.block), primaryFields, primaryLabel, primaryClosing,
         )
         setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
       }
@@ -487,13 +508,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
     const currentNodeId = editingNodeIdRef.current
-    const currentScenario = selectedScenarioRef.current
+    // primarySc は 1剤目シナリオ。mergeBlocks の currentLabel/currentClosing 用のみ。
+    const primarySc = selectedScenarioRef.current
     // ノード削除後の再合成も primaryBaseFields をベースにする
-    const baseFields = primaryBaseFieldsRef.current
+    const primaryFields = primaryBaseFieldsRef.current
 
     if (currentNodeId === nodeId) {
       setEditingNodeId(null)
-      if (currentScenario) setSelectedGroup(getMenuGroupFromScenario(currentScenario))
+      if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
     }
     setPendingNodeIds(prev => {
       const next = new Set(prev)
@@ -503,10 +525,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setComposeNodes(prev => {
       const updated = prev.filter(n => n.id !== nodeId)
       if (updated.length === 0) { setManualFields({}); return updated }
-      const currentClosing = currentScenario
-        ? resolveClosingText(currentScenario, activeModuleData.defaults) : undefined
+      const primaryClosing = primarySc
+        ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const merged = mergeBlocks(
-        updated.map(n => n.block), baseFields, currentScenario?.title ?? '', currentClosing,
+        updated.map(n => n.block), primaryFields, primarySc?.title ?? '', primaryClosing,
       )
       setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
       return updated
@@ -538,6 +560,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       if (nodeId !== null) {
         // ── ノード編集中: ノードの block を再構成して全体 merge ──────────
+        // selectedScenarioRef（1剤目）はノード固有の文脈には使わない。
+        // ノードのシナリオ・モジュールから直接解決する。
         const currentNodes = composeNodesRef.current
         const node = currentNodes.find(n => n.id === nodeId)
         if (node) {
@@ -557,18 +581,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             }
             const updatedNodes = currentNodes.map(n =>
               n.id === nodeId
-                ? { ...n, block: newBlock, selectedAddonIds: newAddonIds }
+                ? {
+                    ...n,
+                    block: newBlock,
+                    selectedAddonIds: newAddonIds,
+                    // addon 変更後もノード固有の主語情報を最新化
+                    baseLabel: nodeSc.title,
+                    baseDomain: domain,
+                  }
                 : n,
             )
-            // composeNodes の更新は setComposeNodes でまとめて行う
-            // ここでは mergedFields を計算してから setComposeNodes の functional update に渡す
-            const baseFields = primaryBaseFieldsRef.current
-            const sc = selectedScenarioRef.current
-            const baseLabel = sc?.title ?? ''
-            const baseClosing = sc ? resolveClosingText(sc, activeModuleData.defaults) : undefined
+            // 1剤目の文脈（mergeBlocks の currentLabel/currentClosing 用）
+            const primaryFields = primaryBaseFieldsRef.current
+            const primarySc = selectedScenarioRef.current  // 1剤目専用
+            const primaryLabel = primarySc?.title ?? ''
+            const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
             const confirmedNodes = updatedNodes.filter(n => n.scenarioId)
             const merged = mergeBlocks(
-              confirmedNodes.map(n => n.block), baseFields, baseLabel, baseClosing,
+              confirmedNodes.map(n => n.block), primaryFields, primaryLabel, primaryClosing,
             )
             setComposeNodes(updatedNodes)
             setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })

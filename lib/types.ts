@@ -315,6 +315,16 @@ export interface ComposeNode {
    * addon なしで確定した場合は空配列。
    */
   selectedAddonIds: string[]
+  /**
+   * このノードの確定シナリオタイトル（mergeBlocks の currentLabel に使用）。
+   * selectedScenario（1剤目）を参照せずにノード固有の主語を保持するため。
+   */
+  baseLabel: string
+  /**
+   * このノードの S欄ドメイン（mergeBlocks の currentDomain に使用）。
+   * composition.domain → categoryPath[1] → categoryPath[0] → moduleId の優先順。
+   */
+  baseDomain: string
 }
 
 // ─────────────────────────────────────────────────────────────
