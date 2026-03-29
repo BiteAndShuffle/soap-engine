@@ -232,14 +232,15 @@ export default function ThirdPanel({
     }
   }, [onSubcategorySelect, onComposeSearchChange])
 
-  // 合成窓は thirdPanelEnabled に関係なく常時表示
-  // 診療領域・Sボタンはシナリオ選択後のみ
+  // 合成窓: 1剤目シナリオ確定後（thirdPanelEnabled）のみ表示
+  // 初期状態・薬剤未選択・シナリオ未選択では非表示
+  // 診療領域・Sボタンも同様にシナリオ確定後のみ
   return (
     <div className={[s.thirdPanel, thirdPanelEnabled ? s.expandedPanel : s.collapsedPanel].join(' ')}>
       <div className={s.thirdPanelInner}>
         <div className={s.thirdPanelScrollArea}>
-          {/* 合成窓: 常時表示 */}
-          {onComposeSearchChange && onSelectComposeDrug && (
+          {/* 合成窓: thirdPanelEnabled（シナリオ確定後）のみ表示 */}
+          {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>薬剤追加</div>
               <DrugInlineSearch

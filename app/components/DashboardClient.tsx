@@ -490,12 +490,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (currentNodeId === nodeId) {
       // 同じノードを再クリック → 選択解除（1剤目操作モードに戻る）
       setEditingNodeId(null)
-      setSelectedGroup(null)
+      // 1剤目のグループを復元
+      const primarySc = primaryScenarioRef.current
+      if (primarySc) {
+        setSelectedGroup(getMenuGroupFromScenario(primarySc))
+      } else {
+        setSelectedGroup(null)
+      }
       // 1剤目の addon 選択状態を復元
       setSelectedAddonIds(primarySelectedAddonIdsRef.current)
       // SOAPを全ノード再合成で復元（1剤目 + 全確定ノード）
       const primaryFields = primaryBaseFieldsRef.current
-      const primarySc = primaryScenarioRef.current
       const primaryLabel = primarySc?.title ?? ''
       const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const confirmedNodes = currentNodes.filter(n => n.scenarioId)
@@ -516,10 +521,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     // ノード選択 → 編集モードへ
     setEditingNodeId(nodeId)
-    setSelectedGroup(null)
 
     if (node.scenarioId) {
-      // 確定済みノード: SOAPを再合成で復元
+      // 確定済みノード: ノードのシナリオからグループを自動復元してシナリオリストを表示
+      const nodeMod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+      const nodeSc = nodeMod.scenarios.find(sc => sc.globalId === node.scenarioId)
+      if (nodeSc) {
+        setSelectedGroup(getMenuGroupFromScenario(nodeSc))
+      } else {
+        setSelectedGroup(null)
+      }
+      // SOAPを再合成で復元
       const primaryFields = primaryBaseFieldsRef.current
       const primarySc = primaryScenarioRef.current
       const primaryLabel = primarySc?.title ?? ''
@@ -534,11 +546,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // selectedScenarioId は 1剤目専用: 変更しない
       setSelectedAddonIds(new Set(node.selectedAddonIds ?? []))
     } else {
-      // pending ノード: シナリオ未確定
+      // pending ノード: シナリオ未確定 → グループ未選択状態で左メニューを待つ
+      setSelectedGroup(null)
       // selectedScenarioId は 1剤目専用: 変更しない
       setSelectedAddonIds(new Set())
     }
-  }, [activeModuleData.defaults])
+  }, [activeModuleData.defaults, allModules, moduleData])
 
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
     const currentNodeId = editingNodeIdRef.current
