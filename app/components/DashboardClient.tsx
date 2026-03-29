@@ -682,6 +682,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeModuleData.addons, activeModuleData.defaults, allModules, moduleData])
 
   const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
+    // ノード編集中はSトグル操作を無効化（1剤目S専用のUI）
+    if (editingNodeIdRef.current !== null) return
     setSPrefix(prefix)
     setSStatus(status)
     const newFirst = buildSFirstSentence(prefix, status)
@@ -735,19 +737,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── 表示条件 ─────────────────────────────────────────────────
 
+  // ── currentScenarioId ────────────────────────────────────────
+  // 「今編集対象のシナリオID」を表す唯一の窓口。
+  // editingNodeId で操作対象を100%決め、selectedScenarioId を分岐条件に使わない。
+  //   ノード編集中  → 編集中ノードの scenarioId（空文字 = pending）
+  //   1剤目操作中  → selectedScenarioId（1剤目専用 state）
+  const currentScenarioId: string | null =
+    editingNodeId !== null
+      ? (composeNodes.find(n => n.id === editingNodeId)?.scenarioId || null)
+      : selectedScenarioId
+
   // セカンダリ: 左メニューでグループを選んだときだけ表示
   const showSecondary = selectedGroup !== null
 
-  // ThirdPanel: 1剤目のシナリオ選択後、またはノード編集中は確定済みノードがある場合に表示
-  // selectedScenarioId は 1剤目専用なので、ノード編集中は composeNodes で判定する
-  const thirdPanelEnabled = editingNodeId !== null
-    ? ((composeNodes.find(n => n.id === editingNodeId)?.scenarioId ?? '') !== '')
-    : selectedScenarioId !== null
+  // ThirdPanel: currentScenarioId が確定済み（非null・非空）なら表示
+  const thirdPanelEnabled = currentScenarioId !== null && currentScenarioId !== ''
 
   // SOAPエディター表示条件:
-  //   1剤目が確定済み（selectedScenarioId !== null）または合成ノードが1件以上ある
-  //   初期状態（薬剤未選択・シナリオ未選択）はガイドを表示する
-  const showSoapEditor = selectedScenarioId !== null || composeNodes.length > 0
+  //   1剤目が確定済み、またはシナリオが確定済みのノードが1件以上ある
+  //   pending のみ（薬剤追加直後・シナリオ未選択）は引き続きガイドを表示
+  const hasValidComposeNodes = composeNodes.some(n => n.scenarioId !== '' && n.scenarioId != null)
+  const showSoapEditor = selectedScenarioId !== null || hasValidComposeNodes
 
   return (
     <div className={s.layout}>
@@ -802,28 +812,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     key={`${editingNodeId ?? 'main'}-${selectedGroup ?? 'all'}`}
                     group={selectedGroup!}
                     scenarios={groupScenarios}
-                    selectedScenarioId={
-                      editingNodeId !== null
-                        ? (composeNodes.find(n => n.id === editingNodeId)?.scenarioId ?? null)
-                        : selectedScenarioId
-                    }
+                    selectedScenarioId={currentScenarioId}
                     onSelectScenario={handleSelectScenario}
                   />
-                  {(() => {
-                    // AddonPanel: 1剤目操作中 → selectedScenarioId 確定済み
-                    //             ノード編集中 → 編集中ノードのシナリオが確定済み
-                    const addonScenarioConfirmed = editingNodeId !== null
-                      ? ((composeNodes.find(n => n.id === editingNodeId)?.scenarioId ?? '') !== '')
-                      : selectedScenarioId !== null
-                    return addonScenarioConfirmed && targetModule.addons ? (
-                      <AddonPanel
-                        addons={targetModule.addons}
-                        selectedAddonIds={selectedAddonIds}
-                        onToggle={handleAddonToggle}
-                        visibleKeys={addonVisibleKeys}
-                      />
-                    ) : null
-                  })()}
+                  {currentScenarioId !== null && targetModule.addons && (
+                    <AddonPanel
+                      addons={targetModule.addons}
+                      selectedAddonIds={selectedAddonIds}
+                      onToggle={handleAddonToggle}
+                      visibleKeys={addonVisibleKeys}
+                    />
+                  )}
                 </>
               ) : (
                 <div className={s.secondaryEmpty} aria-hidden="true" />
