@@ -190,11 +190,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 実表示値を常時保持（ノード追加・合成時のベースとして使う）
   fieldsRef.current = fields
 
-  const addonVisibleKeys = useMemo(
-    () => getVisibleAddonKeys(activeModuleData.addons, selectedScenario),
-    [activeModuleData.addons, selectedScenario],
-  )
-
   useEffect(() => {
     if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
       setSPrefix('none')
@@ -219,6 +214,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (!node) return activeModuleData
     return allModules.find(m => m.moduleId === node.moduleId) ?? activeModuleData
   }, [editingNodeId, composeNodes, activeModuleData, allModules])
+
+  // ノード編集中はノード固有のシナリオを参照する（1剤目シナリオを使わない）
+  const addonTargetScenario = useMemo(() => {
+    if (editingNodeId === null) return selectedScenario
+    const node = composeNodes.find(n => n.id === editingNodeId)
+    if (!node?.scenarioId) return undefined
+    return targetModule.scenarios.find(sc => sc.globalId === node.scenarioId)
+  }, [editingNodeId, composeNodes, targetModule, selectedScenario])
+
+  const addonVisibleKeys = useMemo(
+    () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario),
+    [targetModule.addons, addonTargetScenario],
+  )
 
   const allGroups = useMemo(
     () => groupByMenuGroup(targetModule.scenarios),
@@ -455,6 +463,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // 同じノードを再クリック → 選択解除（1剤目操作モードに戻る）
       setEditingNodeId(null)
       setSelectedGroup(null)
+      // 1剤目に戻るので addon UI もリセット（1剤目の addon 状態は別管理していないため空に）
+      setSelectedAddonIds(new Set())
       // SOAPを全ノード再合成で復元（1剤目 + 全確定ノード）
       // mergeBlocks の currentLabel/currentClosing は 1剤目専用
       const primaryFields = primaryBaseFieldsRef.current
@@ -736,6 +746,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           selectedNodeId={editingNodeId}
           onDeselectNode={() => {
             setEditingNodeId(null)
+            setSelectedAddonIds(new Set())
             if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
           }}
         />
@@ -773,9 +784,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     }
                     onSelectScenario={handleSelectScenario}
                   />
-                  {selectedScenarioId !== null && activeModuleData.addons && editingNodeId === null && (
+                  {selectedScenarioId !== null && targetModule.addons && (
                     <AddonPanel
-                      addons={activeModuleData.addons}
+                      addons={targetModule.addons}
                       selectedAddonIds={selectedAddonIds}
                       onToggle={handleAddonToggle}
                       visibleKeys={addonVisibleKeys}
