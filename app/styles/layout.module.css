@@ -1004,6 +1004,71 @@
   padding: 2rem;
 }
 
+/* ── 初期状態ガイド（SOAPエリア非表示時） ─────────────────── */
+
+.editorGuide {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  min-height: 0;
+}
+
+.editorGuideInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  max-width: 320px;
+  text-align: center;
+}
+
+.editorGuideTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #888;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.editorGuideSteps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  counter-reset: guide-step;
+}
+
+.editorGuideSteps li {
+  counter-increment: guide-step;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.78rem;
+  color: #aaa;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.editorGuideSteps li::before {
+  content: counter(guide-step);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #e8eaf0;
+  border-radius: 50%;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #888;
+  flex-shrink: 0;
+}
+
 /* S/O/A/P の4フィールドを縦4等分（repeat(4,1fr)）で入力面積最大化 */
 .soapFields {
   display: grid;

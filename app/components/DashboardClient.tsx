@@ -102,15 +102,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [activeModuleData, setActiveModuleData] = useState<ModuleData>(moduleData)
   const [activeBrandName, setActiveBrandName] = useState<string | undefined>(undefined)
 
-  // 薬剤選択済みフラグ（初期モジュールは選択済みとみなす）
-  const [drugSelected, setDrugSelected] = useState(true)
+  // 薬剤選択済みフラグ。初期は false: 何も選択していない状態からスタート。
+  const [drugSelected, setDrugSelected] = useState(false)
 
   const [mainSearch, setMainSearch] = useState('')
   const [composeSearch, setComposeSearch] = useState('')
 
   const [routeFilter, setRouteFilter] = useState<RouteFilter>('all')
   const [selectedGroup, setSelectedGroup] = useState<MenuGroup | null>(null)
+
+  // ── 1剤目専用 state ─────────────────────────────────────────
+  // selectedScenarioId: 1剤目のシナリオID。ノード操作では絶対に書き換えない。
   const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null)
+  // primaryBaseFields: 1剤目の確定SOAP。ノード操作では絶対に書き換えない。
+  const [primaryBaseFields, setPrimaryBaseFields] = useState<SoapFields>(EMPTY_FIELDS)
+  // primarySelectedAddonIds: 1剤目のaddon選択状態。ノード操作では書き換えない。
+  const [primarySelectedAddonIds, setPrimarySelectedAddonIds] = useState<Set<string>>(new Set())
+  // ────────────────────────────────────────────────────────────
+
+  // manualFields: 最終表示結果のみ。1剤目/ノード問わず「表示すべき完成SOAP」を入れる。
   const [manualFields, setManualFields] = useState<Partial<SoapFields>>({})
   const [sPrefix, setSPrefix] = useState<SPrefix>('none')
   const [sStatus, setSStatus] = useState<SStatus>('stable')
@@ -123,23 +133,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // nodeId → true: 薬剤だけ追加されてシナリオが未確定のノード
   const [pendingNodeIds, setPendingNodeIds] = useState<Set<string>>(new Set())
 
-  // 1剤目（メイン薬）の確定SOAP。2剤目以降の合成では常にこれをベースにする。
-  // 2剤目以降のノード確定・再編集では絶対に更新しない。
-  const [primaryBaseFields, setPrimaryBaseFields] = useState<SoapFields>(EMPTY_FIELDS)
+  // ── Refs（stale closure 防止） ────────────────────────────
   const primaryBaseFieldsRef = useRef<SoapFields>(EMPTY_FIELDS)
-
-  // 1剤目の addon 選択状態。ノード操作では更新しない。
-  // ノード選択解除時にこの値を selectedAddonIds に復元する。
-  const [primarySelectedAddonIds, setPrimarySelectedAddonIds] = useState<Set<string>>(new Set())
   const primarySelectedAddonIdsRef = useRef<Set<string>>(new Set())
-
   const editingNodeIdRef = useRef<string | null>(null)
   const composeNodesRef = useRef<ComposeNode[]>([])
-  const computedFieldsWithFollowupRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
-  const selectedScenarioRef = useRef<typeof selectedScenario>(undefined)
-  // selectedAddonIds の最新値を常時保持（stale closure 防止）
+  // 1剤目シナリオの ref（mergeBlocks の currentLabel/currentClosing 用のみ）
+  const primaryScenarioRef = useRef<ReturnType<typeof activeModuleData.scenarios.find>>(undefined)
+  // selectedAddonIds の最新値を常時保持
   const selectedAddonIdsRef = useRef<Set<string>>(new Set())
-  // レンダリング時の実表示値（manualFields優先）を常時保持
+  // レンダリング時の実表示値を常時保持（ノード追加時のスナップショット用）
   const fieldsRef = useRef<SoapFields>({ S: '', O: '', A: '', P: '' })
 
   const [uiMode, setUiMode] = useState<UiMode>('manual')
@@ -148,26 +151,26 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [nlpConfidence, setNlpConfidence] = useState(0)
   const [nlpIsGenerating, setNlpIsGenerating] = useState(false)
 
-  const selectedScenario = activeModuleData.scenarios.find(
+  // 1剤目シナリオ（activeModuleData × selectedScenarioId で解決）
+  // selectedScenarioId は 1剤目専用なので、これは常に1剤目のシナリオを指す
+  const primaryScenario = activeModuleData.scenarios.find(
     sc => sc.globalId === selectedScenarioId,
   )
 
-  const computedFields = selectedScenario
-    ? buildSoapFromScenario(selectedScenario)
-    : EMPTY_FIELDS
-
-  const computedFieldsWithFollowup: SoapFields = useMemo(() => {
-    if (!selectedScenario) return EMPTY_FIELDS
-    const base = buildSoapFromScenario(selectedScenario)
+  // 1剤目の computedFields（followup込み）。1剤目操作時のベース計算に使う。
+  // ノード編集中は直接使わず、primaryBaseFields を参照すること。
+  const primaryComputedFields: SoapFields = useMemo(() => {
+    if (!primaryScenario) return EMPTY_FIELDS
+    const base = buildSoapFromScenario(primaryScenario)
     const result = { ...base }
     for (const key of ['S', 'P'] as const) {
       let appendText: string | null | undefined = undefined
-      const followupRef = selectedScenario.followupRef
+      const followupRef = primaryScenario.followupRef
       if (followupRef) {
         const profile = activeModuleData.defaults?.followupProfiles?.[followupRef]
         if (profile) appendText = (profile as Record<string, string | null>)[key]
       } else {
-        const followupVal = (selectedScenario.followup as Record<string, string> | undefined)?.[key]
+        const followupVal = (primaryScenario.followup as Record<string, string> | undefined)?.[key]
         if (followupVal === 'default') {
           appendText = (activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[key]
         }
@@ -177,25 +180,29 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
     }
     return result
-  }, [selectedScenario, activeModuleData.defaults])
+  }, [primaryScenario, activeModuleData.defaults])
 
+  // Refs を同期（render ごと）
   editingNodeIdRef.current = editingNodeId
   composeNodesRef.current = composeNodes
-  computedFieldsWithFollowupRef.current = computedFieldsWithFollowup
-  selectedScenarioRef.current = selectedScenario
+  primaryScenarioRef.current = primaryScenario
   primaryBaseFieldsRef.current = primaryBaseFields
   primarySelectedAddonIdsRef.current = primarySelectedAddonIds
   selectedAddonIdsRef.current = selectedAddonIds
 
+  // ── 表示フィールド ──────────────────────────────────────────
+  // manualFields が優先。未設定の場合は 1剤目の computedFields にフォールバック。
+  // ただしノード編集中・合成中は manualFields に完成SOAPが入っているはずなので
+  // computedFields のフォールバックに依存しない（依存すると1剤目Sが汚染される）。
   const fields: SoapFields = {
-    S: manualFields.S ?? computedFieldsWithFollowup.S,
-    O: manualFields.O ?? computedFieldsWithFollowup.O,
-    A: manualFields.A ?? computedFieldsWithFollowup.A,
-    P: manualFields.P ?? computedFieldsWithFollowup.P,
+    S: manualFields.S ?? primaryComputedFields.S,
+    O: manualFields.O ?? primaryComputedFields.O,
+    A: manualFields.A ?? primaryComputedFields.A,
+    P: manualFields.P ?? primaryComputedFields.P,
   }
-  // 実表示値を常時保持（ノード追加・合成時のベースとして使う）
   fieldsRef.current = fields
 
+  // ── S prefix/status リセット（グループ変更時） ──────────────
   useEffect(() => {
     if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
       setSPrefix('none')
@@ -203,17 +210,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
   }, [selectedGroup])
 
-  // 1剤目シナリオが確定/変更されたときに primaryBaseFields を同期する
-  // editingNodeId === null のとき（1剤目操作中）のみ更新。ノード操作中は絶対に触らない。
+  // ── 1剤目 primaryBaseFields の同期 ──────────────────────────
+  // selectedScenarioId（1剤目専用）が変わったとき、かつ 1剤目操作中のみ更新する。
+  // ノード操作中（editingNodeId !== null）は絶対に触らない。
   useEffect(() => {
-    if (editingNodeId !== null) return   // ノード操作中: 無視
+    if (editingNodeId !== null) return  // ノード操作中: 完全スキップ
     if (selectedScenarioId !== null) {
-      setPrimaryBaseFields(computedFieldsWithFollowup)
+      setPrimaryBaseFields(primaryComputedFields)
     } else {
       setPrimaryBaseFields(EMPTY_FIELDS)
     }
-  }, [selectedScenarioId, editingNodeId, computedFieldsWithFollowup])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedScenarioId, editingNodeId])
+  // ↑ primaryComputedFields は依存に入れない。
+  //   selectedScenarioId が変わったタイミングでのみ同期すれば十分。
+  //   deps に入れると addon/followup 変更のたびに primaryBaseFields が再計算されて
+  //   ノード操作に割り込むリスクがある。
+  //   addon 変更後の primaryBaseFields 更新は handleAddonToggle の1剤目ブランチで行う。
 
+  // ── targetModule: ノード編集中はノードのモジュール、1剤目操作中は activeModuleData ──
   const targetModule = useMemo<ModuleData>(() => {
     if (editingNodeId === null) return activeModuleData
     const node = composeNodes.find(n => n.id === editingNodeId)
@@ -223,11 +238,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ノード編集中はノード固有のシナリオを参照する（1剤目シナリオを使わない）
   const addonTargetScenario = useMemo(() => {
-    if (editingNodeId === null) return selectedScenario
+    if (editingNodeId === null) return primaryScenario
     const node = composeNodes.find(n => n.id === editingNodeId)
     if (!node?.scenarioId) return undefined
     return targetModule.scenarios.find(sc => sc.globalId === node.scenarioId)
-  }, [editingNodeId, composeNodes, targetModule, selectedScenario])
+  }, [editingNodeId, composeNodes, targetModule, primaryScenario])
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario),
@@ -278,11 +293,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
-    // 1剤目操作中: シナリオ選択は維持しつつグループだけ変える
-    // manualFields はクリアしない（SOAPを消さないため）
-    // ノード操作中(editingNodeId !== null)の場合も同様に何もしない
   }, [])
 
+  // ─────────────────────────────────────────────────────────────
+  // rebuildNodeBlock
+  // 対象ノードだけを再構築する。他ノード・1剤目 state は一切触らない。
+  // ─────────────────────────────────────────────────────────────
   const rebuildNodeBlock = useCallback((
     nodeId: string,
     newScenarioId: string,
@@ -318,6 +334,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       closingText,
       domain,
     }
+    // 対象ノードだけ更新。他ノードは一切変更しない。
     const updatedNodes = nodes.map(n =>
       n.id === nodeId
         ? {
@@ -325,7 +342,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             scenarioId: newScenarioId,
             block: newBlock,
             selectedAddonIds: addonIds,
-            // ノード固有の主語情報を保存。他ノード/1剤目の state に依存しない。
             baseLabel: sc.title,
             baseDomain: domain,
           }
@@ -337,21 +353,23 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     return { updatedNodes, mergedFields }
   }, [allModules, moduleData])
 
+  // ─────────────────────────────────────────────────────────────
+  // handleSelectScenario
+  // ─────────────────────────────────────────────────────────────
   const handleSelectScenario = useCallback((id: string) => {
     const nodeId = editingNodeIdRef.current
 
     if (nodeId !== null) {
       // ── ノード（2剤目以降）シナリオ確定 / 再編集 ────────
-      // primaryFields/primaryLabel/primaryClosing は「1剤目専用」のSOAP文脈。
-      // ノード固有の baseLabel は rebuildNodeBlock 内でシナリオから解決して node に保存する。
-      const primarySc = selectedScenarioRef.current  // 1剤目シナリオ（mergeBlocks currentLabel 用のみ）
+      // 1剤目の state（selectedScenarioId / primaryBaseFields）は絶対に触らない。
+      const primarySc = primaryScenarioRef.current   // 1剤目シナリオ（currentLabel 用のみ）
       const primaryFields = primaryBaseFieldsRef.current
       const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const primaryLabel = primarySc?.title ?? ''
-      // 確定時点の addon スナップショット（UI state から取得）
+      // 確定時点の addon スナップショット
       const currentAddonIds = [...selectedAddonIdsRef.current]
 
-      // シナリオ確定 → pending から外す（既確定ノードの再編集でも無害）
+      // シナリオ確定 → pending から外す
       setPendingNodeIds(prev => {
         const next = new Set(prev)
         next.delete(nodeId)
@@ -366,13 +384,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         return updatedNodes
       })
 
-      // ノードのシナリオ確定 → selectedScenarioId に反映してサードパネルを開く
-      setSelectedScenarioId(id)
+      // selectedScenarioId は 1剤目専用: ノードのシナリオ確定では変更しない
       return
     }
 
     // ── 1剤目シナリオ確定 ─────────────────────────────────
-    // primaryBaseFields の更新は useEffect（selectedScenarioId / computedFieldsWithFollowup 依存）が担う
     setSelectedScenarioId(prev => {
       if (prev === id) {
         // 同じシナリオを再タップ → 解除
@@ -381,6 +397,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setSStatus('stable')
         setSelectedAddonIds(new Set())
         setPrimarySelectedAddonIds(new Set())
+        setPrimaryBaseFields(EMPTY_FIELDS)
         return null
       }
       const sc = activeModuleData.scenarios.find(s => s.globalId === id)
@@ -395,7 +412,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeModuleData, rebuildNodeBlock])
 
   // ── メイン検索: 薬剤選択のみ ──────────────────────────────
-  // normalizeText は import 済みだが現時点では未使用のため lint 警告回避
   void normalizeText
   const handleSelectDrugSuggestion = useCallback((item: DrugSuggestionItem) => {
     const targetMod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
@@ -409,6 +425,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSStatus('stable')
     setSelectedAddonIds(new Set())
     setPrimarySelectedAddonIds(new Set())
+    setPrimaryBaseFields(EMPTY_FIELDS)
     setMainSearch('')
     setComposeNodes([])
     setEditingNodeId(null)
@@ -435,7 +452,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       block: dummyBlock,
       drugLabel,
       selectedAddonIds: [],
-      // シナリオ確定前は空。rebuildNodeBlock 呼び出し時に上書きされる。
       baseLabel: '',
       baseDomain: targetMod.composition?.domain
         ?? targetMod.categoryPath?.[1]
@@ -455,15 +471,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setComposeNodes(prev => [...prev, newNode])
     setPendingNodeIds(prev => new Set([...prev, nodeId]))
     setEditingNodeId(nodeId)
-    // group / scenario は未選択のまま（左メニューを押すまで何も出さない）
+    // group は未選択のまま（左メニューを押すまで何も出さない）
     setSelectedGroup(null)
-    setSelectedScenarioId(null)
+    // selectedScenarioId は 1剤目専用: ノード追加では変更しない
     // 新ノードの addon 状態は空からスタート
     setSelectedAddonIds(new Set())
 
     setComposeSearch('')
   }, [allModules, moduleData])
 
+  // ─────────────────────────────────────────────────────────────
+  // handleSelectNode
+  // ─────────────────────────────────────────────────────────────
   const handleSelectNode = useCallback((nodeId: string) => {
     const currentNodeId = editingNodeIdRef.current
     const currentNodes = composeNodesRef.current
@@ -475,9 +494,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // 1剤目の addon 選択状態を復元
       setSelectedAddonIds(primarySelectedAddonIdsRef.current)
       // SOAPを全ノード再合成で復元（1剤目 + 全確定ノード）
-      // mergeBlocks の currentLabel/currentClosing は 1剤目専用
       const primaryFields = primaryBaseFieldsRef.current
-      const primarySc = selectedScenarioRef.current   // 1剤目シナリオ
+      const primarySc = primaryScenarioRef.current
       const primaryLabel = primarySc?.title ?? ''
       const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const confirmedNodes = currentNodes.filter(n => n.scenarioId)
@@ -489,7 +507,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       } else {
         setManualFields({ S: primaryFields.S, O: primaryFields.O, A: primaryFields.A, P: primaryFields.P })
       }
-      // 1剤目のシナリオIDに戻す（selectedScenarioId は 1剤目専用なので変えない）
+      // selectedScenarioId は 1剤目専用: 変更しない
       return
     }
 
@@ -498,13 +516,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     // ノード選択 → 編集モードへ
     setEditingNodeId(nodeId)
-    setSelectedGroup(null)   // 左メニューはユーザーが押すまで出さない
+    setSelectedGroup(null)
 
     if (node.scenarioId) {
-      // 確定済みノード: SOAPを再合成で復元してセカンダリ開放
-      // mergeBlocks の currentLabel/currentClosing は 1剤目専用
+      // 確定済みノード: SOAPを再合成で復元
       const primaryFields = primaryBaseFieldsRef.current
-      const primarySc = selectedScenarioRef.current   // 1剤目シナリオ
+      const primarySc = primaryScenarioRef.current
       const primaryLabel = primarySc?.title ?? ''
       const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const confirmedNodes = currentNodes.filter(n => n.scenarioId)
@@ -514,27 +531,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         )
         setManualFields({ S: merged.S, O: merged.O, A: merged.A, P: merged.P })
       }
-      // selectedScenarioId にノードの確定シナリオIDをセット → セカンダリ（ThirdPanel）が開く
-      setSelectedScenarioId(node.scenarioId)
-      // ノードの addon スナップショットを UI に復元
+      // selectedScenarioId は 1剤目専用: 変更しない
       setSelectedAddonIds(new Set(node.selectedAddonIds ?? []))
     } else {
-      // pending ノード: シナリオ未確定・SOAPはそのまま維持・ThirdPanel閉
-      setSelectedScenarioId(null)
+      // pending ノード: シナリオ未確定
+      // selectedScenarioId は 1剤目専用: 変更しない
       setSelectedAddonIds(new Set())
     }
   }, [activeModuleData.defaults])
 
   const handleRemoveComposeNode = useCallback((nodeId: string) => {
     const currentNodeId = editingNodeIdRef.current
-    // primarySc は 1剤目シナリオ。mergeBlocks の currentLabel/currentClosing 用のみ。
-    const primarySc = selectedScenarioRef.current
-    // ノード削除後の再合成も primaryBaseFields をベースにする
+    const primarySc = primaryScenarioRef.current
     const primaryFields = primaryBaseFieldsRef.current
 
     if (currentNodeId === nodeId) {
       setEditingNodeId(null)
-      // 1剤目の addon 選択状態を復元
       setSelectedAddonIds(primarySelectedAddonIdsRef.current)
       if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
     }
@@ -545,7 +557,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     })
     setComposeNodes(prev => {
       const updated = prev.filter(n => n.id !== nodeId)
-      if (updated.length === 0) { setManualFields({}); return updated }
+      if (updated.length === 0) {
+        // 全ノード削除 → 1剤目のSOAPに戻す
+        setManualFields({ S: primaryFields.S, O: primaryFields.O, A: primaryFields.A, P: primaryFields.P })
+        return updated
+      }
       const primaryClosing = primarySc
         ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
       const merged = mergeBlocks(
@@ -558,9 +574,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleResetCompose = useCallback(() => {
     setComposeNodes([])
-    setManualFields({})
     setEditingNodeId(null)
     setPendingNodeIds(new Set())
+    // リセット後は 1剤目のSOAPに戻す
+    const primaryFields = primaryBaseFieldsRef.current
+    setManualFields({ S: primaryFields.S, O: primaryFields.O, A: primaryFields.A, P: primaryFields.P })
   }, [])
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
@@ -571,6 +589,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setComposeSearch(label)
   }, [])
 
+  // ─────────────────────────────────────────────────────────────
+  // handleAddonToggle
+  // ─────────────────────────────────────────────────────────────
   const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
     setSelectedAddonIds(prev => {
       const next = new Set(prev)
@@ -581,7 +602,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       if (nodeId !== null) {
         // ── ノード編集中: ノードの block を再構成して全体 merge ──────────
-        // selectedScenarioRef（1剤目）はノード固有の文脈には使わない。
+        // 1剤目 state（selectedScenarioRef / computedFieldsWithFollowup 等）は一切使わない。
         // ノードのシナリオ・モジュールから直接解決する。
         const currentNodes = composeNodesRef.current
         const node = currentNodes.find(n => n.id === nodeId)
@@ -602,19 +623,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             }
             const updatedNodes = currentNodes.map(n =>
               n.id === nodeId
-                ? {
-                    ...n,
-                    block: newBlock,
-                    selectedAddonIds: newAddonIds,
-                    // addon 変更後もノード固有の主語情報を最新化
-                    baseLabel: nodeSc.title,
-                    baseDomain: domain,
-                  }
+                ? { ...n, block: newBlock, selectedAddonIds: newAddonIds, baseLabel: nodeSc.title, baseDomain: domain }
                 : n,
             )
-            // 1剤目の文脈（mergeBlocks の currentLabel/currentClosing 用）
+            // 1剤目文脈は primaryBaseFieldsRef / primaryScenarioRef から取得
             const primaryFields = primaryBaseFieldsRef.current
-            const primarySc = selectedScenarioRef.current  // 1剤目専用
+            const primarySc = primaryScenarioRef.current
             const primaryLabel = primarySc?.title ?? ''
             const primaryClosing = primarySc ? resolveClosingText(primarySc, activeModuleData.defaults) : undefined
             const confirmedNodes = updatedNodes.filter(n => n.scenarioId)
@@ -626,11 +640,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           }
         }
       } else {
-        // ── 1剤目操作中: 既存ロジック（computedFields ベース） ──────────
-        // addon 変更を primarySelectedAddonIds にも反映する（ノード解除時の復元用）
+        // ── 1剤目操作中 ──────────────────────────────────────────────────
+        // addon 変更を primarySelectedAddonIds にも反映（ノード解除時の復元用）
         setPrimarySelectedAddonIds(next)
-        if (activeModuleData.addons && selectedScenarioRef.current) {
-          const sc = selectedScenarioRef.current
+        const sc = primaryScenarioRef.current
+        if (activeModuleData.addons && sc) {
           const sectionAddonMap = new Map<string, string[]>()
           for (const key of next) {
             const item = activeModuleData.addons.items[key]
@@ -648,32 +662,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             return followupVal === 'default'
               ? ((activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[sec] ?? '') : ''
           }
-          setManualFields(prevFields => {
-            const updated = { ...prevFields }
-            for (const [sec, addonTexts] of sectionAddonMap) {
-              const base = computedFieldsWithFollowupRef.current[sec as keyof SoapFields] ?? ''
-              // computedFieldsWithFollowup は既に followup 込みなので follow テキストは重複しない
-              // ただし addon の targetSection ごとに追記する
-              const baseScenario = buildSoapFromScenario(sc)
-              const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec as 'S' | 'P') : ''
-              const parts = [baseScenario[sec as keyof typeof baseScenario], ...addonTexts].filter(Boolean)
-              if (followupText) parts.push(followupText)
-              updated[sec as keyof typeof updated] = parts.join('\n')
-            }
-            for (const sec of ['S', 'O', 'A', 'P'] as const) {
-              if (!sectionAddonMap.has(sec)) {
-                const hasAnyAddonForSec = [...next].some(k => activeModuleData.addons?.items[k]?.targetSection === sec)
-                if (!hasAnyAddonForSec) {
-                  const baseScenario = buildSoapFromScenario(sc)
-                  const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec) : ''
-                  const parts = [baseScenario[sec]].filter(Boolean)
-                  if (followupText) parts.push(followupText)
-                  updated[sec] = parts.join('\n')
-                }
-              }
-            }
-            return updated
-          })
+          // addon を反映した完成フィールドを計算して primaryBaseFields も同時更新
+          const baseScenario = buildSoapFromScenario(sc)
+          const newPrimaryFields: SoapFields = { S: '', O: '', A: '', P: '' }
+          for (const sec of ['S', 'O', 'A', 'P'] as const) {
+            const addonTexts = sectionAddonMap.get(sec) ?? []
+            const followupText = (sec === 'S' || sec === 'P') ? resolveFollowupTextLocal(sec) : ''
+            const parts = [baseScenario[sec], ...addonTexts].filter(Boolean)
+            if (followupText) parts.push(followupText)
+            newPrimaryFields[sec] = parts.join('\n')
+          }
+          // primaryBaseFields を addon 込みで更新（ノード合成時のベースが常に最新になるように）
+          setPrimaryBaseFields(newPrimaryFields)
+          setManualFields({ ...newPrimaryFields })
         }
       }
       return next
@@ -697,6 +698,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSStatus('stable')
     setSelectedAddonIds(new Set())
     setPrimarySelectedAddonIds(new Set())
+    setPrimaryBaseFields(EMPTY_FIELDS)
     setComposeNodes([])
     setNlpValidation(null)
     setNlpSelectorReason('')
@@ -731,12 +733,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpIsGenerating(false)
   }, [activeModuleData])
 
-  // ── 表示条件 ─────────────────────────────────────────────
+  // ── 表示条件 ─────────────────────────────────────────────────
+
   // セカンダリ: 左メニューでグループを選んだときだけ表示
   const showSecondary = selectedGroup !== null
 
-  // ThirdPanel: 1剤目のシナリオ選択後のみ（薬剤選択・左メニュー選択・ノード追加だけでは出さない）
-  const thirdPanelEnabled = selectedScenarioId !== null
+  // ThirdPanel: 1剤目のシナリオ選択後、またはノード編集中は確定済みノードがある場合に表示
+  // selectedScenarioId は 1剤目専用なので、ノード編集中は composeNodes で判定する
+  const thirdPanelEnabled = editingNodeId !== null
+    ? ((composeNodes.find(n => n.id === editingNodeId)?.scenarioId ?? '') !== '')
+    : selectedScenarioId !== null
+
+  // SOAPエディター表示条件:
+  //   1剤目が確定済み（selectedScenarioId !== null）または合成ノードが1件以上ある
+  //   初期状態（薬剤未選択・シナリオ未選択）はガイドを表示する
+  const showSoapEditor = selectedScenarioId !== null || composeNodes.length > 0
 
   return (
     <div className={s.layout}>
@@ -760,9 +771,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           selectedNodeId={editingNodeId}
           onDeselectNode={() => {
             setEditingNodeId(null)
-            // 1剤目の addon 選択状態を復元
             setSelectedAddonIds(primarySelectedAddonIds)
-            if (selectedScenario) setSelectedGroup(getMenuGroupFromScenario(selectedScenario))
+            if (primaryScenario) setSelectedGroup(getMenuGroupFromScenario(primaryScenario))
           }}
         />
 
@@ -799,14 +809,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     }
                     onSelectScenario={handleSelectScenario}
                   />
-                  {selectedScenarioId !== null && targetModule.addons && (
-                    <AddonPanel
-                      addons={targetModule.addons}
-                      selectedAddonIds={selectedAddonIds}
-                      onToggle={handleAddonToggle}
-                      visibleKeys={addonVisibleKeys}
-                    />
-                  )}
+                  {(() => {
+                    // AddonPanel: 1剤目操作中 → selectedScenarioId 確定済み
+                    //             ノード編集中 → 編集中ノードのシナリオが確定済み
+                    const addonScenarioConfirmed = editingNodeId !== null
+                      ? ((composeNodes.find(n => n.id === editingNodeId)?.scenarioId ?? '') !== '')
+                      : selectedScenarioId !== null
+                    return addonScenarioConfirmed && targetModule.addons ? (
+                      <AddonPanel
+                        addons={targetModule.addons}
+                        selectedAddonIds={selectedAddonIds}
+                        onToggle={handleAddonToggle}
+                        visibleKeys={addonVisibleKeys}
+                      />
+                    ) : null
+                  })()}
                 </>
               ) : (
                 <div className={s.secondaryEmpty} aria-hidden="true" />
@@ -845,21 +862,34 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         )}
 
         <div className={s.editorCol}>
-          <SoapEditor
-            fields={fields}
-            onChange={handleFieldChange}
-            nodeBarSlot={
-              <ComposeNodeBar
-                nodes={composeNodes}
-                selectedNodeId={editingNodeId}
-                onSelectNode={handleSelectNode}
-                onRemove={handleRemoveComposeNode}
-                onReset={handleResetCompose}
-                baseDrugLabel={resolveNodeLabel(activeModuleData)}
-                pendingNodeIds={pendingNodeIds}
-              />
-            }
-          />
+          {showSoapEditor ? (
+            <SoapEditor
+              fields={fields}
+              onChange={handleFieldChange}
+              nodeBarSlot={
+                <ComposeNodeBar
+                  nodes={composeNodes}
+                  selectedNodeId={editingNodeId}
+                  onSelectNode={handleSelectNode}
+                  onRemove={handleRemoveComposeNode}
+                  onReset={handleResetCompose}
+                  baseDrugLabel={resolveNodeLabel(activeModuleData)}
+                  pendingNodeIds={pendingNodeIds}
+                />
+              }
+            />
+          ) : (
+            <div className={s.editorGuide}>
+              <div className={s.editorGuideInner}>
+                <p className={s.editorGuideTitle}>SOAPノートの作成</p>
+                <ol className={s.editorGuideSteps}>
+                  <li>トップバーの検索窓で薬剤を選択</li>
+                  <li>左のカテゴリメニューでグループを選択</li>
+                  <li>中央のテンプレート一覧からシナリオを選択</li>
+                </ol>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
