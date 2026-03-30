@@ -216,6 +216,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 2剤目以降ノードのリスト（scenarioId / block / selectedAddonIds を持つ）
   const [composeNodes, setComposeNodes] = useState<ComposeNode[]>([])
 
+  // 1剤目再編集モード（true のとき 1剤目のグループ・シナリオを再選択中）
+  const [editingPrimary, setEditingPrimary] = useState(false)
+
   // 現在編集中ノードID（null = 1剤目操作中）
   const [editingNodeId, setEditingNodeId] = useState<string | null>(null)
 
@@ -233,6 +236,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const primaryAddonIdsRef    = useRef<Set<string>>(new Set())
   const selectedAddonIdsRef   = useRef<Set<string>>(new Set())
   const editingNodeIdRef      = useRef<string | null>(null)
+  const editingPrimaryRef     = useRef(false)
   const composeNodesRef       = useRef<ComposeNode[]>([])
   const primaryScenarioRef    = useRef<ModuleData['scenarios'][number] | undefined>(undefined)
 
@@ -275,6 +279,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   primaryAddonIdsRef.current   = primaryAddonIds
   selectedAddonIdsRef.current  = selectedAddonIds
   editingNodeIdRef.current     = editingNodeId
+  editingPrimaryRef.current    = editingPrimary
   composeNodesRef.current      = composeNodes
   primaryScenarioRef.current   = primaryScenario
 
@@ -409,6 +414,32 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [allModules, moduleData])
 
   // ─────────────────────────────────────────────────────────────
+  // handleSelectPrimaryNode（1剤目チップクリック: primary 編集モードのトグル）
+  //
+  // editingPrimary === true  → 解除（通常状態へ）
+  // editingPrimary === false → primary 編集モードへ（editingNodeId をクリア）
+  // ─────────────────────────────────────────────────────────────
+
+  const handleSelectPrimaryNode = useCallback(() => {
+    if (editingPrimaryRef.current) {
+      // 解除: primary 編集モードを終了
+      setEditingPrimary(false)
+      // グループは primaryScenario のものに戻す（既に primary 操作中と同じ状態）
+      const primarySc = primaryScenarioRef.current
+      if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
+      setSelectedAddonIds(primaryAddonIdsRef.current)
+    } else {
+      // primary 編集モードへ
+      setEditingPrimary(true)
+      setEditingNodeId(null)
+      // グループを 1剤目シナリオのものに復元
+      const primarySc = primaryScenarioRef.current
+      if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
+      setSelectedAddonIds(primaryAddonIdsRef.current)
+    }
+  }, [])
+
+  // ─────────────────────────────────────────────────────────────
   // handleSelectScenario
   //   primary   → selectedScenarioId を更新（useEffect が primaryBaseFields を追従）
   //   node      → そのノードの block を再構築して composeNodes を更新
@@ -432,6 +463,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
 
     // ── primary ブランチ ─────────────────────────────────────
+    // editingPrimary 中にシナリオを選んだら編集モードを終了
+    if (editingPrimaryRef.current) setEditingPrimary(false)
     setSelectedScenarioId(prev => {
       if (prev === id) {
         // 同じシナリオを再タップ → 解除
@@ -470,6 +503,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setMainSearch('')
     setComposeNodes([])
     setEditingNodeId(null)
+    setEditingPrimary(false)
     setPendingNodeIds(new Set())
   }, [allModules, moduleData])
 
@@ -500,6 +534,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setComposeNodes(prev => [...prev, newNode])
     setPendingNodeIds(prev => new Set([...prev, nodeId]))
     setEditingNodeId(nodeId)
+    setEditingPrimary(false)
     setSelectedGroup(null)
     setSelectedAddonIds(new Set())
     setComposeSearch('')
@@ -526,6 +561,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (!node) return
 
     setEditingNodeId(nodeId)
+    setEditingPrimary(false)  // ノード選択時は primary 編集モードを解除
 
     if (node.scenarioId) {
       // 確定済みノード: シナリオのグループを自動復元
@@ -556,7 +592,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setPendingNodeIds(prev => { const n = new Set(prev); n.delete(nodeId); return n })
     setComposeNodes(prev => prev.filter(n => n.id !== nodeId))
     // displayFields は computeDisplayFields が自動再計算
-  }, [])
+  }, [])  // editingPrimary は remove 操作に影響しない
 
   // ─────────────────────────────────────────────────────────────
   // handleResetCompose（全ノードリセット）
@@ -565,6 +601,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleResetCompose = useCallback(() => {
     setComposeNodes([])
     setEditingNodeId(null)
+    setEditingPrimary(false)
     setPendingNodeIds(new Set())
     const primarySc = primaryScenarioRef.current
     setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
@@ -705,6 +742,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSPrefix('none')
     setSStatus('stable')
     setComposeNodes([])
+    setEditingNodeId(null)
+    setEditingPrimary(false)
     setNlpValidation(null)
     setNlpSelectorReason('')
     setNlpConfidence(0)
@@ -779,6 +818,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           selectedNodeId={editingNodeId}
           onDeselectNode={() => {
             setEditingNodeId(null)
+            setEditingPrimary(false)
             setSelectedAddonIds(primaryAddonIds)
             if (primaryScenario) setSelectedGroup(getMenuGroupFromScenario(primaryScenario))
           }}
@@ -867,7 +907,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                 <ComposeNodeBar
                   nodes={composeNodes}
                   selectedNodeId={editingNodeId}
+                  editingPrimary={editingPrimary}
                   onSelectNode={handleSelectNode}
+                  onSelectPrimary={handleSelectPrimaryNode}
                   onRemove={handleRemoveComposeNode}
                   onReset={handleResetCompose}
                   baseDrugLabel={resolveNodeLabel(activeModuleData)}

@@ -10,10 +10,14 @@ import s from '../styles/layout.module.css'
 interface ComposeNodeBarProps {
   /** 合成対象ノード一覧（2剤目以降） */
   nodes: ComposeNode[]
-  /** 選択中ノードID（null = 1剤目操作中） */
+  /** 選択中ノードID（null = 1剤目操作中 or primary 編集中） */
   selectedNodeId: string | null
-  /** ノード選択ハンドラ */
+  /** 1剤目を編集中かどうか（primary 編集モード） */
+  editingPrimary: boolean
+  /** ノード選択ハンドラ（2剤目以降） */
   onSelectNode: (nodeId: string) => void
+  /** 1剤目チップ選択ハンドラ */
+  onSelectPrimary: () => void
   /** ノード削除ハンドラ */
   onRemove: (nodeId: string) => void
   /** 全リセットハンドラ */
@@ -29,16 +33,19 @@ interface ComposeNodeBarProps {
 //
 // ノードが0件のときは何も表示しない。
 // ノードが1件以上のとき:
-//   [1剤目ベースチップ(固定・グレー)] [2剤目チップ(クリックで選択)] ...
-//   選択中チップはハイライト + ✎ アイコンで「編集中」を示す。
+//   [1剤目チップ(クリックで primary 編集モード)] [2剤目チップ(クリックで選択)] ...
 //
-// 表示ラベル: scenario.title は非表示。薬剤ラベルのみ（最大6文字）。
+// editingPrimary === true のとき: 1剤目チップが選択状態（オレンジ強調）
+// selectedNodeId が non-null のとき: 対応する 2剤目チップが選択状態
+// 両方同時に true にはならない（DashboardClient で排他制御）
 // ─────────────────────────────────────────────────────────────
 
 export default function ComposeNodeBar({
   nodes,
   selectedNodeId,
+  editingPrimary,
   onSelectNode,
+  onSelectPrimary,
   onRemove,
   onReset,
   baseDrugLabel,
@@ -49,18 +56,25 @@ export default function ComposeNodeBar({
   return (
     <div className={s.composeNodeBar} role="region" aria-label="合成対象薬剤">
       <div className={s.composeNodeList}>
-        {/* ── 1剤目ベースチップ（クリック不可・グレー） ── */}
+        {/* ── 1剤目チップ（クリックで primary 編集モード） ── */}
         {baseDrugLabel && (
-          <div
+          <button
             className={[
               s.composeNode,
               s.composeNodeBase,
-              selectedNodeId === null ? s.composeNodeBaseActive : '',
+              editingPrimary ? s.composeNodeSelected : '',
             ].join(' ')}
-            title={baseDrugLabel}
+            onClick={onSelectPrimary}
+            aria-pressed={editingPrimary}
+            title={
+              editingPrimary
+                ? `${baseDrugLabel} のシナリオを変更中 — クリックで解除`
+                : `${baseDrugLabel} — クリックしてシナリオを変更`
+            }
           >
+            {editingPrimary && <span className={s.composeNodeEditIcon}>✎</span>}
             <span className={s.composeNodeDrug}>{baseDrugLabel}</span>
-          </div>
+          </button>
         )}
 
         {/* ── 2剤目以降チップ（クリックで選択/解除） ── */}
