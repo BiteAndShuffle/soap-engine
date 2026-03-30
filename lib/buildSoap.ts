@@ -348,24 +348,97 @@ function dedupeClosingLines(text: string): string {
 // ─────────────────────────────────────────────────────────────
 
 /**
+ * S欄の各行を文型で分類する。
+ *
+ * reason      — 薬追加・導入理由文 (「〜ため薬が追加となった。」)
+ * observation — 症状観察文 (「使用して、症状は落ち着いている。〜」)
+ * decision    — 薬剤判断文 (増量・減量・中止・変更)
+ * other       — その他
+ */
+type SLineType = 'reason' | 'observation' | 'decision' | 'other'
+
+function classifySLine(text: string): SLineType {
+  if (/(?:増量|中止|変更)(?:となった|になった|ました|となり)/.test(text)) return 'decision'
+  if (/(?:減量|希望)(?:となった|になった|なりました|された)/.test(text)) return 'decision'
+  if (/(?:追加|導入)となった/.test(text)) return 'reason'
+  if (/^使用して、症状は落ち着いている。/.test(text)) return 'observation'
+  return 'other'
+}
+
+/** observation 文から「使用して、症状は落ち着いている。」プレフィックスを除いた本体を返す */
+function observationBody(text: string): string {
+  return text.replace(/^使用して、症状は落ち着いている。/, '')
+}
+
+/**
+ * S欄行リストを文型分類に基づいて整形する。
+ *
+ * 整形ルール:
+ *   1. reason + observation →「reason文 + observationの本体」を1行に結合
+ *      observation が複数ある場合は全 body を連結（重複 body は除外）
+ *   2. observation のみ複数 →「使用して、症状は落ち着いている。body1body2...」に統合
+ *      全て同一 body の場合は1行に縮約
+ *   3. decision / other はそのまま末尾に保持（suffix merge は後段で処理）
+ *
+ * 出力: 整形済み行の配列
+ */
+function reformatSLines(lines: string[]): string[] {
+  if (lines.length === 0) return []
+
+  const classified = lines.map(text => ({ text, type: classifySLine(text) }))
+  const reasons      = classified.filter(c => c.type === 'reason')
+  const observations = classified.filter(c => c.type === 'observation')
+  const rest         = classified.filter(c => c.type !== 'reason' && c.type !== 'observation')
+
+  const result: string[] = []
+
+  if (reasons.length > 0 && observations.length > 0) {
+    // reason + observation を結合（observation body は重複を除去）
+    const seenBodies = new Set<string>()
+    const dedupedBodies = observations
+      .map(o => observationBody(o.text))
+      .filter(b => { if (seenBodies.has(b)) return false; seenBodies.add(b); return true })
+    result.push(reasons[0].text + dedupedBodies.join(''))
+    for (let i = 1; i < reasons.length; i++) result.push(reasons[i].text)
+  } else if (reasons.length > 0) {
+    for (const r of reasons) result.push(r.text)
+  } else if (observations.length === 1) {
+    result.push(observations[0].text)
+  } else if (observations.length > 1) {
+    // observation のみ複数: body を重複除去して統合
+    const seenBodies = new Set<string>()
+    const dedupedBodies = observations
+      .map(o => observationBody(o.text))
+      .filter(b => { if (seenBodies.has(b)) return false; seenBodies.add(b); return true })
+    if (dedupedBodies.length === 1) {
+      // 全て同一 → 1行に縮約
+      result.push(observations[0].text)
+    } else {
+      result.push('使用して、症状は落ち着いている。' + dedupedBodies.join(''))
+    }
+  }
+
+  for (const o of rest) result.push(o.text)
+  return result
+}
+
+/**
  * S欄の各ブロックテキストを文型（suffix）ベースでまとめる。
  *
- * 設計方針:
+ * 処理の流れ:
+ *   1. reformatSLines: 文型分類 → reason/observation の結合
+ *   2. groupSentencesS（suffix merge）: decision/other 系の同一文型エントリを統合
+ *
+ * suffix merge ルール:
  *   - domain 一致は不要。文型（助詞以降の suffix）の一致のみを判定する。
  *   - 同一 suffix を持つ単一行エントリを「先頭語・先頭語 + suffix」にまとめる。
- *   - 複数行テキストは個別維持（まとめ対象外）。
- *   - suffix が取れないテキスト（助詞なし）も個別維持。
+ *   - 複数行テキストは個別維持。suffix が取れないテキストも個別維持。
  *   - まとめる対象が1件のみの suffix グループは個別維持。
  *
- * 例:
- *   「GLP-1受容体作動薬(内服)の副作用はとくに認められていない。」
- *   「インスリンの副作用はとくに認められていない。」
- *   → suffix = 「はとくに認められていない。」が一致
- *   → 「GLP-1受容体作動薬(内服)の副作用・インスリンの副作用はとくに認められていない。」
- *
- *   「GLP-1受容体作動薬(内服)の副作用はとくに認められていない。」（suffix = は〜）
- *   「血糖値が高いため薬が追加となった。」（suffix = が〜、異なる）
- *   → suffix 不一致 → 個別改行で出力
+ * 例（suffix merge）:
+ *   「GLP-1受容体作動薬(内服)は、効果が実感できないので増量となった。」
+ *   「GLP-1受容体作動薬(注射)は、効果が実感できないので増量となった。」
+ *   → 「GLP-1受容体作動薬(内服)・GLP-1受容体作動薬(注射)は、効果が実感できないので増量となった。」
  */
 function groupSentencesS(
   entries: Array<{ domain: string | undefined; text: string }>,
@@ -373,16 +446,21 @@ function groupSentencesS(
   if (entries.length === 0) return ''
   if (entries.length === 1) return entries[0].text
 
-  // suffix 抽出（単一行のみ対象）
+  // ── ステップ1: 文型整形 ──────────────────────────────────
+  const inputLines = entries.map(e => e.text).filter(Boolean)
+  const reformatted = reformatSLines(inputLines)
+  if (reformatted.length === 0) return ''
+  if (reformatted.length === 1) return reformatted[0]
+
+  // ── ステップ2: suffix merge ──────────────────────────────
   type Entry = { text: string; suffix: string | null; isSingleLine: boolean }
-  const annotated: Entry[] = entries.map(e => {
-    const isSingleLine = !e.text.includes('\n')
-    if (!isSingleLine) return { text: e.text, suffix: null, isSingleLine: false }
-    const m = e.text.match(/^(.+?)([がではをにもと].+)$/)
-    return { text: e.text, suffix: m ? m[2] : null, isSingleLine: true }
+  const annotated: Entry[] = reformatted.map(text => {
+    const isSingleLine = !text.includes('\n')
+    if (!isSingleLine) return { text, suffix: null, isSingleLine: false }
+    const m = text.match(/^(.+?)([がではをにもと].+)$/)
+    return { text, suffix: m ? m[2] : null, isSingleLine: true }
   })
 
-  // suffix ごとにグループ化（複数行 or suffix なし は '__individual__' キーに入れる）
   const suffixMap = new Map<string, Entry[]>()
   for (const entry of annotated) {
     const key = (entry.isSingleLine && entry.suffix !== null) ? entry.suffix : '__individual__'
@@ -390,7 +468,6 @@ function groupSentencesS(
     suffixMap.get(key)!.push(entry)
   }
 
-  // 出力順を入力順に保つため、最初に出現した suffix の順で処理する
   const seen = new Set<string>()
   const orderedKeys: string[] = []
   for (const entry of annotated) {
@@ -399,15 +476,12 @@ function groupSentencesS(
   }
 
   const resultLines: string[] = []
-
   for (const key of orderedKeys) {
     const group = suffixMap.get(key)!
     if (key === '__individual__' || group.length === 1) {
-      // 個別維持
       resultLines.push(...group.map(e => e.text))
       continue
     }
-    // suffix 一致・複数件 → 先頭語を「・」で結合
     const suffix = key
     const prefixes = group.map(e => e.text.replace(suffix, ''))
     resultLines.push(prefixes.join('・') + suffix)
