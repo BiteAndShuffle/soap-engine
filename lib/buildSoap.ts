@@ -344,20 +344,28 @@ function dedupeClosingLines(text: string): string {
 }
 
 // ─────────────────────────────────────────────────────────────
-// S欄ドメイン別まとめユーティリティ
+// S欄文型別まとめユーティリティ
 // ─────────────────────────────────────────────────────────────
 
 /**
- * S欄の各ブロックテキストをドメイン別にグループ化し、
- * 同一 domain 内で文型が一致する行を自然文にまとめる。
+ * S欄の各ブロックテキストを文型（suffix）ベースでまとめる。
  *
- * 「まとめる」条件（すべて満たす場合のみ）:
- *   1. 同一 domain のブロックが2件以上ある
- *   2. 各ブロックの S がそれぞれ「単一行」である（複数行は個別維持）
- *   3. 末尾の文型が一致する（「〜が出て薬が追加になりました。」等）
- *      → 文末 suffix を抽出し、先頭の「症状語」だけを置換してまとめる
+ * 設計方針:
+ *   - domain 一致は不要。文型（助詞以降の suffix）の一致のみを判定する。
+ *   - 同一 suffix を持つ単一行エントリを「先頭語・先頭語 + suffix」にまとめる。
+ *   - 複数行テキストは個別維持（まとめ対象外）。
+ *   - suffix が取れないテキスト（助詞なし）も個別維持。
+ *   - まとめる対象が1件のみの suffix グループは個別維持。
  *
- * 上記に該当しない場合は各ブロックの S をそのまま改行区切りで返す。
+ * 例:
+ *   「GLP-1受容体作動薬(内服)の副作用はとくに認められていない。」
+ *   「インスリンの副作用はとくに認められていない。」
+ *   → suffix = 「はとくに認められていない。」が一致
+ *   → 「GLP-1受容体作動薬(内服)の副作用・インスリンの副作用はとくに認められていない。」
+ *
+ *   「GLP-1受容体作動薬(内服)の副作用はとくに認められていない。」（suffix = は〜）
+ *   「血糖値が高いため薬が追加となった。」（suffix = が〜、異なる）
+ *   → suffix 不一致 → 個別改行で出力
  */
 function groupSentencesS(
   entries: Array<{ domain: string | undefined; text: string }>,
@@ -365,51 +373,44 @@ function groupSentencesS(
   if (entries.length === 0) return ''
   if (entries.length === 1) return entries[0].text
 
-  // domain ごとにグループ化
-  const domainMap = new Map<string, string[]>()
-  for (const e of entries) {
-    const key = e.domain ?? '__none__'
-    if (!domainMap.has(key)) domainMap.set(key, [])
-    domainMap.get(key)!.push(e.text)
+  // suffix 抽出（単一行のみ対象）
+  type Entry = { text: string; suffix: string | null; isSingleLine: boolean }
+  const annotated: Entry[] = entries.map(e => {
+    const isSingleLine = !e.text.includes('\n')
+    if (!isSingleLine) return { text: e.text, suffix: null, isSingleLine: false }
+    const m = e.text.match(/^(.+?)([がではをにもと].+)$/)
+    return { text: e.text, suffix: m ? m[2] : null, isSingleLine: true }
+  })
+
+  // suffix ごとにグループ化（複数行 or suffix なし は '__individual__' キーに入れる）
+  const suffixMap = new Map<string, Entry[]>()
+  for (const entry of annotated) {
+    const key = (entry.isSingleLine && entry.suffix !== null) ? entry.suffix : '__individual__'
+    if (!suffixMap.has(key)) suffixMap.set(key, [])
+    suffixMap.get(key)!.push(entry)
+  }
+
+  // 出力順を入力順に保つため、最初に出現した suffix の順で処理する
+  const seen = new Set<string>()
+  const orderedKeys: string[] = []
+  for (const entry of annotated) {
+    const key = (entry.isSingleLine && entry.suffix !== null) ? entry.suffix : '__individual__'
+    if (!seen.has(key)) { seen.add(key); orderedKeys.push(key) }
   }
 
   const resultLines: string[] = []
 
-  for (const [, texts] of domainMap) {
-    if (texts.length === 1) {
-      resultLines.push(texts[0])
+  for (const key of orderedKeys) {
+    const group = suffixMap.get(key)!
+    if (key === '__individual__' || group.length === 1) {
+      // 個別維持
+      resultLines.push(...group.map(e => e.text))
       continue
     }
-
-    // すべてが「単一行」かつ文末 suffix が一致するときだけまとめる
-    const singleLines = texts.filter(t => !t.includes('\n'))
-    if (singleLines.length !== texts.length) {
-      // 複数行が混在 → 個別維持
-      resultLines.push(...texts)
-      continue
-    }
-
-    // 共通 suffix を検出（最短一致）
-    // 例: 「痰が出て薬が追加になりました。」「咳が出て薬が追加になりました。」
-    //     → suffix = 「が出て薬が追加になりました。」、prefix = 「痰」「咳」
-    const suffixes = singleLines.map(t => {
-      // 「〜が〜」「〜で〜」「〜は〜」のような助詞で文を2分割
-      const m = t.match(/^(.+?)([がではをにもと].+)$/)
-      return m ? m[2] : null
-    })
-    const allSameSuffix = suffixes[0] !== null && suffixes.every(s => s === suffixes[0])
-
-    if (!allSameSuffix) {
-      // 文型不一致 → 個別維持
-      resultLines.push(...texts)
-      continue
-    }
-
-    // 文型一致 → 先頭語を「・」で結合してまとめる
-    const suffix = suffixes[0]!
-    const prefixes = singleLines.map(t => t.replace(suffix, ''))
-    const joined = prefixes.join('・') + suffix
-    resultLines.push(joined)
+    // suffix 一致・複数件 → 先頭語を「・」で結合
+    const suffix = key
+    const prefixes = group.map(e => e.text.replace(suffix, ''))
+    resultLines.push(prefixes.join('・') + suffix)
   }
 
   return resultLines.join('\n')
