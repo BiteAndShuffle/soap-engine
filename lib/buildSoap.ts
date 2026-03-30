@@ -482,9 +482,16 @@ function groupSentencesS(
       resultLines.push(...group.map(e => e.text))
       continue
     }
+    // 同一 suffix を持つ複数エントリ → prefix を unique 化して「・」結合
+    // （同一主語が2回渡された場合でも重複しない）
     const suffix = key
-    const prefixes = group.map(e => e.text.replace(suffix, ''))
-    resultLines.push(prefixes.join('・') + suffix)
+    const prefixSeen = new Set<string>()
+    const uniquePrefixes: string[] = []
+    for (const e of group) {
+      const p = e.text.replace(suffix, '')
+      if (!prefixSeen.has(p)) { prefixSeen.add(p); uniquePrefixes.push(p) }
+    }
+    resultLines.push(uniquePrefixes.join('・') + suffix)
   }
 
   return resultLines.join('\n')
@@ -496,13 +503,11 @@ function groupSentencesS(
  * S / O / A: 本文をそのまま改行区切りで結合（ラベル行なし）。
  *   S 欄のみ、同一 domain かつ同一文型のブロックを自然文にまとめる（groupSentencesS）。
  *
- * P フィールドの closing deduplication:
- *   各ブロックに closingText が設定されている場合、
- *   同一 closing テキストは最後に1回だけ出力する。
- *   手順:
- *   1. 各ブロックの P から closingText を末尾で除去してボディを取得
- *   2. ボディを改行区切りで結合（ラベル行なし）
- *   3. 出現した unique closing テキストを収集し、末尾に追記
+ * P フィールドの body dedupe + closing deduplication:
+ *   各ブロックの P テキストから closingText を末尾で除去してボディを取得する。
+ *   ボディを正規化（行末トリム + 空行除去）し、完全一致で dedupe してから結合する。
+ *   同一内容のブロック（内服/注射で末尾改行違いなど）は1回のみ出力する。
+ *   unique closing テキストを収集し、末尾に追記する。
  *
  * 後処理（全フィールド共通）:
  *   - 空行を除去して行を詰める（normalizeLines）
@@ -550,10 +555,19 @@ export function mergeBlocks(
       }
       result[key] = parts.join('\n')
     } else {
-      // P: closing deduplication（ラベル行なし）
+      // P: body dedupe + closing deduplication
+      //
+      // 処理手順:
+      //   1. 各ブロックの P から closingText を末尾で除去してボディを取得
+      //   2. ボディを正規化（行末トリム + 空行除去）して完全一致 dedupe
+      //   3. unique closing を収集して末尾に追記
+      //
+      // 「正規化後一致」で dedupe するため、内服/注射で末尾改行の違いなどがあっても
+      // 実質同一のブロックを重複出力しない。
+      const seenBodies   = new Set<string>()
       const seenClosings = new Set<string>()
+      const orderedBodies:   string[] = []
       const orderedClosings: string[] = []
-      const parts: string[] = []
 
       for (const block of all) {
         const rawText = block.fields.P.trim()
@@ -567,7 +581,17 @@ export function mergeBlocks(
           body = body.slice(0, body.length - closing.length).trimEnd()
         }
 
-        if (body) parts.push(body)
+        // body を正規化（行末空白除去 + 空行除去）して dedupe キーに使用
+        const normalizedBody = body
+          .split('\n')
+          .map(l => l.trimEnd())
+          .filter(l => l.length > 0)
+          .join('\n')
+
+        if (normalizedBody && !seenBodies.has(normalizedBody)) {
+          seenBodies.add(normalizedBody)
+          orderedBodies.push(normalizedBody)
+        }
 
         // unique closing を順序付きで収集
         if (closing && !seenClosings.has(closing)) {
@@ -576,7 +600,7 @@ export function mergeBlocks(
         }
       }
 
-      let merged = parts.join('\n')
+      let merged = orderedBodies.join('\n')
       if (orderedClosings.length > 0) {
         const closingBlock = orderedClosings.join('\n')
         merged = merged ? `${merged}\n${closingBlock}` : closingBlock
