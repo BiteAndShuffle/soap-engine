@@ -477,14 +477,49 @@ type PEntry = {
   body: string
   closing: string | null
   category: PBlockType
+  semanticKey: string
+}
+
+/**
+ * body 先頭の「薬剤名(剤形)」トークンを抽出する。
+ *
+ * 抽出ルール（優先順）:
+ *   1. 「〜(内服)」「〜(注射)」など括弧付き剤形トークン → 括弧閉じまで
+ *   2. 先頭から最初の助詞（は・が・の）の前まで
+ *   3. fallback: 先頭 20 文字
+ */
+function extractDrugToken(body: string): string {
+  const m = body.match(/^(.+?[（(][^）)]*[）)])/)
+  if (m) return m[1]
+  const m2 = body.match(/^(.+?)[はがの]/)
+  if (m2) return m2[1]
+  return body.slice(0, 20)
+}
+
+/**
+ * semanticKey を生成する: `薬剤名トークン_category`
+ *
+ * 例:
+ *   GLP-1受容体作動薬(内服)_medication_instruction
+ *   GLP-1受容体作動薬(注射)_side_effect
+ *   GLP-1受容体作動薬(内服)_discontinuation
+ *
+ * 同じ category でも薬剤名が異なれば別キーとなるため、
+ * 内服と注射の同カテゴリブロックは共存できる。
+ * 同一薬剤・同一 category の重複エントリは初出のみ残す。
+ */
+function makeSemanticKey(body: string, category: PBlockType): string {
+  return extractDrugToken(body) + '_' + category
 }
 
 /**
  * 複数ブロックの P テキストを構造ベースで合成する。
  *
  * 処理:
- *   1. 各ブロックの body を正規化・分類して PEntry[] を作成
- *   2. body 完全一致 dedupe（closing は初出 entry に紐づけたまま保持）
+ *   1. 各ブロックの body を正規化・分類し semanticKey を付与して PEntry[] を作成
+ *   2. semanticKey による dedupe（同一薬剤×同一 category は初出のみ残す）
+ *      ※ body が完全一致でなくても同 semanticKey なら統合対象
+ *      ※ 同 body でも semanticKey が異なれば（薬剤名違い）両方残る
  *   3. 固定順 (medication_instruction → side_effect → other → discontinuation) で並べ替え
  *   4. 各 entry の closing は body 直後に出力（closing を一括末尾に寄せない）
  *
@@ -492,9 +527,8 @@ type PEntry = {
  * 意味順が自然に保たれる。
  */
 function buildP(pEntries: Array<{ body: string; closing: string | null }>): string {
-  const seenBodies = new Set<string>()
+  const seenKeys = new Set<string>()
   const entries: PEntry[] = []
-
   const orphanClosings: string[] = []   // body 空で closing のみのケース用
 
   for (const entry of pEntries) {
@@ -509,9 +543,11 @@ function buildP(pEntries: Array<{ body: string; closing: string | null }>): stri
       if (c) orphanClosings.push(c)
       continue
     }
-    if (seenBodies.has(norm)) continue   // body 完全一致は初出のみ残す
-    seenBodies.add(norm)
-    entries.push({ body: norm, closing: c, category: classifyPBlock(norm) })
+    const category = classifyPBlock(norm)
+    const semanticKey = makeSemanticKey(norm, category)
+    if (seenKeys.has(semanticKey)) continue   // 同一薬剤×同一 category は初出のみ残す
+    seenKeys.add(semanticKey)
+    entries.push({ body: norm, closing: c, category, semanticKey })
   }
 
   // category の固定順でソート（入力順を安定的に保持するため stable sort）
