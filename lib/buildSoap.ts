@@ -454,7 +454,13 @@ function buildS(sTexts: string[]): string {
 
 type PBlockType = 'medication_instruction' | 'side_effect' | 'discontinuation' | 'other'
 
-const P_ORDER: PBlockType[] = ['medication_instruction', 'side_effect', 'discontinuation', 'other']
+/**
+ * 出力順: medication_instruction → side_effect → other → discontinuation
+ *
+ * discontinuation を最後にすることで、継続薬の follow_up が
+ * 終了後説明より前に自然に来る。
+ */
+const P_ORDER: PBlockType[] = ['medication_instruction', 'side_effect', 'other', 'discontinuation']
 
 function classifyPBlock(body: string): PBlockType {
   const head = body.slice(0, 150)
@@ -467,20 +473,29 @@ function classifyPBlock(body: string): PBlockType {
   return 'other'
 }
 
+type PEntry = {
+  body: string
+  closing: string | null
+  category: PBlockType
+}
+
 /**
  * 複数ブロックの P テキストを構造ベースで合成する。
  *
  * 処理:
- *   1. 各ブロックの body を正規化・分類
- *   2. 完全一致 dedupe
- *   3. 固定順 (medication_instruction → side_effect → discontinuation → other) で出力
- *   4. closing を末尾に追記
+ *   1. 各ブロックの body を正規化・分類して PEntry[] を作成
+ *   2. body 完全一致 dedupe（closing は初出 entry に紐づけたまま保持）
+ *   3. 固定順 (medication_instruction → side_effect → other → discontinuation) で並べ替え
+ *   4. 各 entry の closing は body 直後に出力（closing を一括末尾に寄せない）
+ *
+ * これにより「継続薬の follow_up → 終了後説明 → 終了後 follow_up」という
+ * 意味順が自然に保たれる。
  */
 function buildP(pEntries: Array<{ body: string; closing: string | null }>): string {
-  const byType = new Map<PBlockType, string[]>(P_ORDER.map(t => [t, []]))
-  const seenBodies   = new Set<string>()
-  const seenClosings = new Set<string>()
-  const closings: string[] = []
+  const seenBodies = new Set<string>()
+  const entries: PEntry[] = []
+
+  const orphanClosings: string[] = []   // body 空で closing のみのケース用
 
   for (const entry of pEntries) {
     const norm = entry.body
@@ -488,17 +503,27 @@ function buildP(pEntries: Array<{ body: string; closing: string | null }>): stri
       .map(l => l.trimEnd())
       .filter(l => l.length > 0)
       .join('\n')
-    if (norm && !seenBodies.has(norm)) {
-      seenBodies.add(norm)
-      byType.get(classifyPBlock(norm))!.push(norm)
+    const c = entry.closing?.trim() || null
+    if (!norm) {
+      // body がないが closing はある → 末尾に孤立 closing として保持
+      if (c) orphanClosings.push(c)
+      continue
     }
-    const c = (entry.closing ?? '').trim()
-    if (c && !seenClosings.has(c)) { seenClosings.add(c); closings.push(c) }
+    if (seenBodies.has(norm)) continue   // body 完全一致は初出のみ残す
+    seenBodies.add(norm)
+    entries.push({ body: norm, closing: c, category: classifyPBlock(norm) })
   }
 
+  // category の固定順でソート（入力順を安定的に保持するため stable sort）
+  const categoryIndex = (c: PBlockType) => P_ORDER.indexOf(c)
+  entries.sort((a, b) => categoryIndex(a.category) - categoryIndex(b.category))
+
   const parts: string[] = []
-  for (const type of P_ORDER) for (const block of byType.get(type)!) parts.push(block)
-  for (const c of closings) parts.push(c)
+  for (const entry of entries) {
+    parts.push(entry.body)
+    if (entry.closing) parts.push(entry.closing)
+  }
+  for (const c of orphanClosings) parts.push(c)
 
   return parts.join('\n')
 }
