@@ -359,11 +359,22 @@ function classifySLine(text: string): SLineType {
   return 'other'
 }
 
+/** subject の最大文字数（これを超える場合は先頭で打ち切る） */
+const SUBJECT_MAX_LEN = 30
+
 function splitDecision(text: string): { subject: string; predicate: string } {
+  // 「は、」「は,」形式で最初に一致する位置を探す
   const m = text.match(/^(.+?)(は[、,].+)$/)
-  if (m) return { subject: m[1], predicate: m[2] }
+  if (m) {
+    const subj = m[1].length <= SUBJECT_MAX_LEN ? m[1] : m[1].slice(0, SUBJECT_MAX_LEN)
+    return { subject: subj, predicate: text.slice(subj.length) }
+  }
+  // 「が〜」形式
   const m2 = text.match(/^(.+?)(が.+)$/)
-  if (m2) return { subject: m2[1], predicate: m2[2] }
+  if (m2) {
+    const subj = m2[1].length <= SUBJECT_MAX_LEN ? m2[1] : m2[1].slice(0, SUBJECT_MAX_LEN)
+    return { subject: subj, predicate: text.slice(subj.length) }
+  }
   return { subject: text, predicate: '' }
 }
 
