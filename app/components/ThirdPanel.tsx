@@ -190,12 +190,23 @@ function DrugInlineSearch({
 // Props
 // ─────────────────────────────────────────────────────────────
 
+/** 単剤フラグ */
+export interface SingleDrugFlags {
+  noSideEffect: boolean
+  goodCompliance: boolean
+}
+
 interface ThirdPanelProps {
   selectedGroup: MenuGroup | null
   thirdPanelEnabled: boolean
+  /** 単剤モードかどうか（false の場合フラグ・S先頭文ボタンを非表示） */
+  isSingleDrug: boolean
   currentSPrefix: SPrefix
   currentSStatus: SStatus
   onSAction: (prefix: SPrefix, status: SStatus) => void
+  /** 単剤フラグ（副作用なし / コンプライアンス良好） */
+  singleDrugFlags: SingleDrugFlags
+  onFlagChange: (flags: SingleDrugFlags) => void
   /** 合成薬剤追加検索クエリ */
   composeSearchValue?: string
   onComposeSearchChange?: (v: string) => void
@@ -213,16 +224,20 @@ interface ThirdPanelProps {
 export default function ThirdPanel({
   selectedGroup,
   thirdPanelEnabled,
+  isSingleDrug,
   currentSPrefix,
   currentSStatus,
   onSAction,
+  singleDrugFlags,
+  onFlagChange,
   composeSearchValue = '',
   onComposeSearchChange,
   composeDrugSuggestions = [],
   onSelectComposeDrug,
   onSubcategorySelect,
 }: ThirdPanelProps) {
-  const showSButtons = thirdPanelEnabled && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  // S先頭文ボタン・フラグ: 単剤 + 対象グループのみ表示
+  const showSButtons = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
 
   const handleSubcategorySelect = useCallback((label: string) => {
     if (onSubcategorySelect) {
@@ -261,9 +276,27 @@ export default function ThirdPanel({
           )}
         </div>
 
-        {/* S先頭文ボタン: シナリオ選択後 + 対象グループのみ */}
+        {/* フラグ + S先頭文ボタン: 単剤 + 対象グループのみ */}
         {showSButtons && (
           <div className={s.thirdPanelStickyBottom}>
+            {/* フラグ（副作用なし / コンプライアンス良好） */}
+            <div className={s.sActionHeading}>S フラグ</div>
+            <div className={s.sActionBtnGrid}>
+              <button
+                className={[s.sActionBtn, singleDrugFlags.noSideEffect ? s.sActionBtnActive : ''].join(' ')}
+                aria-pressed={singleDrugFlags.noSideEffect}
+                onClick={() => onFlagChange({ ...singleDrugFlags, noSideEffect: !singleDrugFlags.noSideEffect })}
+              >
+                副作用なし
+              </button>
+              <button
+                className={[s.sActionBtn, singleDrugFlags.goodCompliance ? s.sActionBtnActive : ''].join(' ')}
+                aria-pressed={singleDrugFlags.goodCompliance}
+                onClick={() => onFlagChange({ ...singleDrugFlags, goodCompliance: !singleDrugFlags.goodCompliance })}
+              >
+                CP良好
+              </button>
+            </div>
             <div className={s.sActionHeading}>S 先頭文</div>
             {SECTIONS.map(sec => (
               <div key={sec.prefix} className={s.sActionSection}>

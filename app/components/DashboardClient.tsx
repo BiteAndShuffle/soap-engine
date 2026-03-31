@@ -13,7 +13,7 @@ import {
   getMenuGroupFromScenario,
 } from '../../lib/menuGroups'
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
-import { S_BUTTON_GROUPS } from './ThirdPanel'
+import { S_BUTTON_GROUPS, type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
 import type { ValidationResult } from '../../lib/validationRunner'
 
@@ -200,6 +200,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [sPrefix, setSPrefix] = useState<SPrefix>('none')
   const [sStatus, setSStatus] = useState<SStatus>('stable')
 
+  // ── 単剤フラグ（副作用なし / CP良好）: 単剤時のみ有効 ──────
+  const [singleDrugFlags, setSingleDrugFlags] = useState<SingleDrugFlags>({
+    noSideEffect: false,
+    goodCompliance: false,
+  })
+
   // ══════════════════════════════════════════════════════════════
   // SOURCE OF TRUTH
   // ══════════════════════════════════════════════════════════════
@@ -347,12 +353,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // EFFECTS
   // ══════════════════════════════════════════════════════════════
 
-  // S prefix/status リセット（グループ変更時）
+  // S prefix/status・フラグリセット（グループ変更時）
   useEffect(() => {
     if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
       setSPrefix('none')
       setSStatus('stable')
     }
+    // グループが変わったらフラグもリセット（S欄の内容はシナリオ切替で上書きされるため）
+    setSingleDrugFlags({ noSideEffect: false, goodCompliance: false })
   }, [selectedGroup])
 
   // 1剤目シナリオ切替時に primaryBaseFields を初期化（addon なし素の状態）
@@ -721,6 +729,30 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [displayFields.S])
 
   // ─────────────────────────────────────────────────────────────
+  // handleFlagChange（単剤フラグ: 副作用なし / CP良好）
+  //
+  // フラグ行を S 末尾に追加/除去する。
+  // 単剤時のみ呼ばれるため多剤チェックは不要。
+  // フラグ行は buildS が observation として処理し、
+  // OBS_PREFIX 付きの observation バケットには入らないため
+  // 「副作用は認めない。」「コンプライアンス良好。」は other に分類される。
+  // ─────────────────────────────────────────────────────────────
+
+  const handleFlagChange = useCallback((flags: SingleDrugFlags) => {
+    setSingleDrugFlags(flags)
+    setPrimaryBaseFields(prev => {
+      // 現在のフラグ行を除去してから再挿入する
+      const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
+      const baseLines = prev.S
+        .split('\n')
+        .filter(l => !FLAG_LINES.includes(l.trim()))
+      if (flags.noSideEffect)    baseLines.push('副作用は認めない。')
+      if (flags.goodCompliance)  baseLines.push('コンプライアンス良好。')
+      return { ...prev, S: baseLines.join('\n') }
+    })
+  }, [])
+
+  // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect
   // ─────────────────────────────────────────────────────────────
 
@@ -788,8 +820,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ThirdPanel（合成窓・Sボタン）: シナリオ確定後のみ有効
   const thirdPanelEnabled = currentScenarioId !== null && currentScenarioId !== ''
 
+  // 単剤モード: 1剤目のみ確定済みかつ composeNodes が空（フラグ・S先頭文の有効条件）
+  const confirmedComposeCount = composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null).length
+  const isSingleDrug = selectedScenarioId !== null && confirmedComposeCount === 0
+
   // SOAPエディター: 1剤目確定 or 確定済みノードあり（pending のみは不可）
-  const hasValidComposeNodes = composeNodes.some(n => n.scenarioId !== '' && n.scenarioId != null)
+  const hasValidComposeNodes = confirmedComposeCount > 0
   const showSoapEditor = selectedScenarioId !== null || hasValidComposeNodes
 
   // ══════════════════════════════════════════════════════════════
@@ -875,9 +911,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           <ThirdPanel
             selectedGroup={selectedGroup}
             thirdPanelEnabled={thirdPanelEnabled}
+            isSingleDrug={isSingleDrug}
             currentSPrefix={sPrefix}
             currentSStatus={sStatus}
             onSAction={handleSToggle}
+            singleDrugFlags={singleDrugFlags}
+            onFlagChange={handleFlagChange}
             composeSearchValue={composeSearch}
             onComposeSearchChange={setComposeSearch}
             composeDrugSuggestions={composeDrugSuggestions}
