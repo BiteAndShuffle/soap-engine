@@ -449,119 +449,54 @@ function buildS(sTexts: string[]): string {
 }
 
 // ─────────────────────────────────────────────────────────────
-// P欄 構造ベース合成
+// P欄 合成
 // ─────────────────────────────────────────────────────────────
 
-type PBlockType = 'medication_instruction' | 'side_effect' | 'discontinuation' | 'other'
-
 /**
- * 出力順: medication_instruction → side_effect → other → discontinuation
+ * 複数ブロックの P テキストを合成する。
  *
- * discontinuation を最後にすることで、継続薬の follow_up が
- * 終了後説明より前に自然に来る。
- */
-const P_ORDER: PBlockType[] = ['medication_instruction', 'side_effect', 'other', 'discontinuation']
-
-function classifyPBlock(body: string): PBlockType {
-  const head = body.slice(0, 150)
-  if (/(?:終了後|中止により|変更により|減量後も|の中止|の変更)/.test(head))
-    return 'discontinuation'
-  if (/(?:継続中に|の継続中|副作用|低血糖症状|消化器症状|食欲低下|吐き気|下痢|便秘|腹痛|膵炎|増量により|減量により|注射部|症状が(?:軽|強))/.test(head))
-    return 'side_effect'
-  if (/(?:血糖値を改善|服用後30分|PTPシート|起床後すぐ|継続してください|継続投与|血糖コントロール|将来の合併症予防のため継続|指導せん|注射の具体的|手技)/.test(head))
-    return 'medication_instruction'
-  return 'other'
-}
-
-type PEntry = {
-  body: string
-  closing: string | null
-  category: PBlockType
-  semanticKey: string
-}
-
-/**
- * body 先頭の「薬剤名(剤形)」トークンを抽出する。
+ * 方針: 「P本文は消さない・まとめすぎない」
  *
- * 抽出ルール（優先順）:
- *   1. 「〜(内服)」「〜(注射)」など括弧付き剤形トークン → 括弧閉じまで
- *   2. 先頭から最初の助詞（は・が・の）の前まで
- *   3. fallback: 先頭 20 文字
- */
-function extractDrugToken(body: string): string {
-  const m = body.match(/^(.+?[（(][^）)]*[）)])/)
-  if (m) return m[1]
-  const m2 = body.match(/^(.+?)[はがの]/)
-  if (m2) return m2[1]
-  return body.slice(0, 20)
-}
-
-/**
- * semanticKey を生成する: `薬剤名トークン_category`
+ *   body: 入力順のまま全て出力する。dedupe しない。
+ *   closing: 同一 closing が連続している間は body だけ積み上げ、
+ *            closing が変わる（または終端に達する）タイミングで1回出力する。
+ *            異なる closing はそのまま残す。
  *
- * 例:
- *   GLP-1受容体作動薬(内服)_medication_instruction
- *   GLP-1受容体作動薬(注射)_side_effect
- *   GLP-1受容体作動薬(内服)_discontinuation
- *
- * 同じ category でも薬剤名が異なれば別キーとなるため、
- * 内服と注射の同カテゴリブロックは共存できる。
- * 同一薬剤・同一 category の重複エントリは初出のみ残す。
- */
-function makeSemanticKey(body: string, category: PBlockType): string {
-  return extractDrugToken(body) + '_' + category
-}
-
-/**
- * 複数ブロックの P テキストを構造ベースで合成する。
- *
- * 処理:
- *   1. 各ブロックの body を正規化・分類し semanticKey を付与して PEntry[] を作成
- *   2. semanticKey による dedupe（同一薬剤×同一 category は初出のみ残す）
- *      ※ body が完全一致でなくても同 semanticKey なら統合対象
- *      ※ 同 body でも semanticKey が異なれば（薬剤名違い）両方残る
- *   3. 固定順 (medication_instruction → side_effect → other → discontinuation) で並べ替え
- *   4. 各 entry の closing は body 直後に出力（closing を一括末尾に寄せない）
- *
- * これにより「継続薬の follow_up → 終了後説明 → 終了後 follow_up」という
- * 意味順が自然に保たれる。
+ * 出力イメージ:
+ *   本文A           ← closing「次回A」
+ *   本文B           ← closing「次回A」（同一 → まだ出さない）
+ *   次回A           ← closing が変わるタイミングで出力
+ *   本文C           ← closing「次回B」
+ *   次回B           ← 終端でそのまま出力
  */
 function buildP(pEntries: Array<{ body: string; closing: string | null }>): string {
-  const seenKeys = new Set<string>()
-  const entries: PEntry[] = []
-  const orphanClosings: string[] = []   // body 空で closing のみのケース用
+  const out: string[] = []
+  let pendingClosing: string | null = null
 
   for (const entry of pEntries) {
-    const norm = entry.body
+    const body = entry.body
       .split('\n')
       .map(l => l.trimEnd())
       .filter(l => l.length > 0)
       .join('\n')
-    const c = entry.closing?.trim() || null
-    if (!norm) {
-      // body がないが closing はある → 末尾に孤立 closing として保持
-      if (c) orphanClosings.push(c)
-      continue
+    const closing = entry.closing?.trim() || null
+
+    // closing が前の entry と変わったら、積み上げた pending closing を先に出力
+    if (pendingClosing !== null && closing !== pendingClosing) {
+      out.push(pendingClosing)
+      pendingClosing = null
     }
-    const category = classifyPBlock(norm)
-    const semanticKey = makeSemanticKey(norm, category)
-    if (seenKeys.has(semanticKey)) continue   // 同一薬剤×同一 category は初出のみ残す
-    seenKeys.add(semanticKey)
-    entries.push({ body: norm, closing: c, category, semanticKey })
+
+    if (body) out.push(body)
+
+    // closing を pending に積む（まだ出力しない）
+    pendingClosing = closing
   }
 
-  // category の固定順でソート（入力順を安定的に保持するため stable sort）
-  const categoryIndex = (c: PBlockType) => P_ORDER.indexOf(c)
-  entries.sort((a, b) => categoryIndex(a.category) - categoryIndex(b.category))
+  // 末尾の pending closing を出力
+  if (pendingClosing !== null) out.push(pendingClosing)
 
-  const parts: string[] = []
-  for (const entry of entries) {
-    parts.push(entry.body)
-    if (entry.closing) parts.push(entry.closing)
-  }
-  for (const c of orphanClosings) parts.push(c)
-
-  return parts.join('\n')
+  return out.join('\n')
 }
 
 /**
