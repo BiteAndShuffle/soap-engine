@@ -344,170 +344,172 @@ function dedupeClosingLines(text: string): string {
 }
 
 // ─────────────────────────────────────────────────────────────
-// S欄文型別まとめユーティリティ
+// S欄 構造ベース合成
 // ─────────────────────────────────────────────────────────────
 
-/**
- * S欄の各行を文型で分類する。
- *
- * reason      — 薬追加・導入理由文 (「〜ため薬が追加となった。」)
- * observation — 症状観察文 (「使用して、症状は落ち着いている。〜」)
- * decision    — 薬剤判断文 (増量・減量・中止・変更)
- * other       — その他
- */
+const OBS_PREFIX = '使用して、症状は落ち着いている。'
+
 type SLineType = 'reason' | 'observation' | 'decision' | 'other'
 
 function classifySLine(text: string): SLineType {
   if (/(?:増量|中止|変更)(?:となった|になった|ました|となり)/.test(text)) return 'decision'
   if (/(?:減量|希望)(?:となった|になった|なりました|された)/.test(text)) return 'decision'
   if (/(?:追加|導入)となった/.test(text)) return 'reason'
-  if (/^使用して、症状は落ち着いている。/.test(text)) return 'observation'
+  if (text.startsWith(OBS_PREFIX)) return 'observation'
   return 'other'
 }
 
-/** observation 文から「使用して、症状は落ち着いている。」プレフィックスを除いた本体を返す */
-function observationBody(text: string): string {
-  return text.replace(/^使用して、症状は落ち着いている。/, '')
+function splitDecision(text: string): { subject: string; predicate: string } {
+  const m = text.match(/^(.+?)(は[、,].+)$/)
+  if (m) return { subject: m[1], predicate: m[2] }
+  const m2 = text.match(/^(.+?)(が.+)$/)
+  if (m2) return { subject: m2[1], predicate: m2[2] }
+  return { subject: text, predicate: '' }
 }
 
 /**
- * S欄行リストを文型分類に基づいて整形する。
+ * 複数ブロックの S テキストを構造ベースで合成する。
  *
- * 整形ルール:
- *   1. reason + observation →「reason文 + observationの本体」を1行に結合
- *      observation が複数ある場合は全 body を連結（重複 body は除外）
- *   2. observation のみ複数 →「使用して、症状は落ち着いている。body1body2...」に統合
- *      全て同一 body の場合は1行に縮約
- *   3. decision / other はそのまま末尾に保持（suffix merge は後段で処理）
- *
- * 出力: 整形済み行の配列
+ * 処理:
+ *   1. 各テキストを SLineType に分類（reason / observation / decision / other）
+ *   2. バケット単位で dedupe
+ *   3. 固定順で再生成
+ *      reason + obs → reason[0] + obs bodies を1行に結合
+ *      decision → predicate ごとに subject を「・」結合
  */
-function reformatSLines(lines: string[]): string[] {
-  if (lines.length === 0) return []
+function buildS(sTexts: string[]): string {
+  if (sTexts.length === 0) return ''
 
-  const classified = lines.map(text => ({ text, type: classifySLine(text) }))
-  const reasons      = classified.filter(c => c.type === 'reason')
-  const observations = classified.filter(c => c.type === 'observation')
-  const rest         = classified.filter(c => c.type !== 'reason' && c.type !== 'observation')
+  const reasons: string[] = []
+  const observations: string[] = []
+  const decisions: string[] = []
+  const others: string[] = []
 
+  for (const text of sTexts) {
+    const t = text.trim()
+    if (!t) continue
+    const type = classifySLine(t)
+    if      (type === 'reason')      reasons.push(t)
+    else if (type === 'observation') observations.push(t)
+    else if (type === 'decision')    decisions.push(t)
+    else                             others.push(t)
+  }
+
+  // ① reason: 完全 dedupe（入力順保持）
+  const uniqueReasons = [...new Set(reasons)]
+
+  // ② observation: prefix を除いた body を unique 化
+  const obsBodySeen = new Set<string>()
+  const uniqueObsBodies: string[] = []
+  for (const obs of observations) {
+    const body = obs.startsWith(OBS_PREFIX) ? obs.slice(OBS_PREFIX.length) : obs
+    if (!obsBodySeen.has(body)) { obsBodySeen.add(body); uniqueObsBodies.push(body) }
+  }
+
+  // ③ decision: predicate ごとにグループ化し subject を unique 結合
+  const decisionByPredicate = new Map<string, Set<string>>()
+  const predicateOrder: string[] = []
+  for (const dec of decisions) {
+    const { subject, predicate } = splitDecision(dec)
+    if (!decisionByPredicate.has(predicate)) {
+      decisionByPredicate.set(predicate, new Set())
+      predicateOrder.push(predicate)
+    }
+    decisionByPredicate.get(predicate)!.add(subject)
+  }
+  const uniqueDecisions: string[] = []
+  for (const predicate of predicateOrder) {
+    const subjects = [...decisionByPredicate.get(predicate)!]
+    uniqueDecisions.push(subjects.join('・') + predicate)
+  }
+
+  // ④ other: 完全 dedupe（入力順保持）
+  const uniqueOthersSeen = new Set<string>()
+  const uniqueOthers: string[] = []
+  for (const o of others) {
+    if (!uniqueOthersSeen.has(o)) { uniqueOthersSeen.add(o); uniqueOthers.push(o) }
+  }
+
+  // ⑤ 生成（reason + obs → 1行結合）
   const result: string[] = []
-
-  if (reasons.length > 0 && observations.length > 0) {
-    // reason + observation を結合（observation body は重複を除去）
-    const seenBodies = new Set<string>()
-    const dedupedBodies = observations
-      .map(o => observationBody(o.text))
-      .filter(b => { if (seenBodies.has(b)) return false; seenBodies.add(b); return true })
-    result.push(reasons[0].text + dedupedBodies.join(''))
-    for (let i = 1; i < reasons.length; i++) result.push(reasons[i].text)
-  } else if (reasons.length > 0) {
-    for (const r of reasons) result.push(r.text)
-  } else if (observations.length === 1) {
-    result.push(observations[0].text)
-  } else if (observations.length > 1) {
-    // observation のみ複数: body を重複除去して統合
-    const seenBodies = new Set<string>()
-    const dedupedBodies = observations
-      .map(o => observationBody(o.text))
-      .filter(b => { if (seenBodies.has(b)) return false; seenBodies.add(b); return true })
-    if (dedupedBodies.length === 1) {
-      // 全て同一 → 1行に縮約
-      result.push(observations[0].text)
+  if (uniqueReasons.length > 0) {
+    if (uniqueObsBodies.length > 0) {
+      result.push(uniqueReasons[0] + uniqueObsBodies.join(''))
+      for (let i = 1; i < uniqueReasons.length; i++) result.push(uniqueReasons[i])
     } else {
-      result.push('使用して、症状は落ち着いている。' + dedupedBodies.join(''))
+      for (const r of uniqueReasons) result.push(r)
     }
+  } else if (uniqueObsBodies.length > 0) {
+    result.push(OBS_PREFIX + uniqueObsBodies.join(''))
   }
+  for (const d of uniqueDecisions) result.push(d)
+  for (const o of uniqueOthers) result.push(o)
 
-  for (const o of rest) result.push(o.text)
-  return result
+  return result.join('\n')
+}
+
+// ─────────────────────────────────────────────────────────────
+// P欄 構造ベース合成
+// ─────────────────────────────────────────────────────────────
+
+type PBlockType = 'medication_instruction' | 'side_effect' | 'discontinuation' | 'other'
+
+const P_ORDER: PBlockType[] = ['medication_instruction', 'side_effect', 'discontinuation', 'other']
+
+function classifyPBlock(body: string): PBlockType {
+  const head = body.slice(0, 150)
+  if (/(?:終了後|中止により|変更により|減量後も|の中止|の変更)/.test(head))
+    return 'discontinuation'
+  if (/(?:継続中に|の継続中|副作用|低血糖症状|消化器症状|食欲低下|吐き気|下痢|便秘|腹痛|膵炎|増量により|減量により|注射部|症状が(?:軽|強))/.test(head))
+    return 'side_effect'
+  if (/(?:血糖値を改善|服用後30分|PTPシート|起床後すぐ|継続してください|継続投与|血糖コントロール|将来の合併症予防のため継続|指導せん|注射の具体的|手技)/.test(head))
+    return 'medication_instruction'
+  return 'other'
 }
 
 /**
- * S欄の各ブロックテキストを文型（suffix）ベースでまとめる。
+ * 複数ブロックの P テキストを構造ベースで合成する。
  *
- * 処理の流れ:
- *   1. reformatSLines: 文型分類 → reason/observation の結合
- *   2. groupSentencesS（suffix merge）: decision/other 系の同一文型エントリを統合
- *
- * suffix merge ルール:
- *   - domain 一致は不要。文型（助詞以降の suffix）の一致のみを判定する。
- *   - 同一 suffix を持つ単一行エントリを「先頭語・先頭語 + suffix」にまとめる。
- *   - 複数行テキストは個別維持。suffix が取れないテキストも個別維持。
- *   - まとめる対象が1件のみの suffix グループは個別維持。
- *
- * 例（suffix merge）:
- *   「GLP-1受容体作動薬(内服)は、効果が実感できないので増量となった。」
- *   「GLP-1受容体作動薬(注射)は、効果が実感できないので増量となった。」
- *   → 「GLP-1受容体作動薬(内服)・GLP-1受容体作動薬(注射)は、効果が実感できないので増量となった。」
+ * 処理:
+ *   1. 各ブロックの body を正規化・分類
+ *   2. 完全一致 dedupe
+ *   3. 固定順 (medication_instruction → side_effect → discontinuation → other) で出力
+ *   4. closing を末尾に追記
  */
-function groupSentencesS(
-  entries: Array<{ domain: string | undefined; text: string }>,
-): string {
-  if (entries.length === 0) return ''
-  if (entries.length === 1) return entries[0].text
+function buildP(pEntries: Array<{ body: string; closing: string | null }>): string {
+  const byType = new Map<PBlockType, string[]>(P_ORDER.map(t => [t, []]))
+  const seenBodies   = new Set<string>()
+  const seenClosings = new Set<string>()
+  const closings: string[] = []
 
-  // ── ステップ1: 文型整形 ──────────────────────────────────
-  const inputLines = entries.map(e => e.text).filter(Boolean)
-  const reformatted = reformatSLines(inputLines)
-  if (reformatted.length === 0) return ''
-  if (reformatted.length === 1) return reformatted[0]
-
-  // ── ステップ2: suffix merge ──────────────────────────────
-  type Entry = { text: string; suffix: string | null; isSingleLine: boolean }
-  const annotated: Entry[] = reformatted.map(text => {
-    const isSingleLine = !text.includes('\n')
-    if (!isSingleLine) return { text, suffix: null, isSingleLine: false }
-    const m = text.match(/^(.+?)([がではをにもと].+)$/)
-    return { text, suffix: m ? m[2] : null, isSingleLine: true }
-  })
-
-  const suffixMap = new Map<string, Entry[]>()
-  for (const entry of annotated) {
-    const key = (entry.isSingleLine && entry.suffix !== null) ? entry.suffix : '__individual__'
-    if (!suffixMap.has(key)) suffixMap.set(key, [])
-    suffixMap.get(key)!.push(entry)
-  }
-
-  const seen = new Set<string>()
-  const orderedKeys: string[] = []
-  for (const entry of annotated) {
-    const key = (entry.isSingleLine && entry.suffix !== null) ? entry.suffix : '__individual__'
-    if (!seen.has(key)) { seen.add(key); orderedKeys.push(key) }
-  }
-
-  const resultLines: string[] = []
-  for (const key of orderedKeys) {
-    const group = suffixMap.get(key)!
-    if (key === '__individual__' || group.length === 1) {
-      resultLines.push(...group.map(e => e.text))
-      continue
+  for (const entry of pEntries) {
+    const norm = entry.body
+      .split('\n')
+      .map(l => l.trimEnd())
+      .filter(l => l.length > 0)
+      .join('\n')
+    if (norm && !seenBodies.has(norm)) {
+      seenBodies.add(norm)
+      byType.get(classifyPBlock(norm))!.push(norm)
     }
-    // 同一 suffix を持つ複数エントリ → prefix を unique 化して「・」結合
-    // （同一主語が2回渡された場合でも重複しない）
-    const suffix = key
-    const prefixSeen = new Set<string>()
-    const uniquePrefixes: string[] = []
-    for (const e of group) {
-      const p = e.text.replace(suffix, '')
-      if (!prefixSeen.has(p)) { prefixSeen.add(p); uniquePrefixes.push(p) }
-    }
-    resultLines.push(uniquePrefixes.join('・') + suffix)
+    const c = (entry.closing ?? '').trim()
+    if (c && !seenClosings.has(c)) { seenClosings.add(c); closings.push(c) }
   }
 
-  return resultLines.join('\n')
+  const parts: string[] = []
+  for (const type of P_ORDER) for (const block of byType.get(type)!) parts.push(block)
+  for (const c of closings) parts.push(c)
+
+  return parts.join('\n')
 }
 
 /**
  * mergeBlocks — 複数薬の SOAP ブロックを合成する。
  *
- * S / O / A: 本文をそのまま改行区切りで結合（ラベル行なし）。
- *   S 欄のみ、同一 domain かつ同一文型のブロックを自然文にまとめる（groupSentencesS）。
- *
- * P フィールドの body dedupe + closing deduplication:
- *   各ブロックの P テキストから closingText を末尾で除去してボディを取得する。
- *   ボディを正規化（行末トリム + 空行除去）し、完全一致で dedupe してから結合する。
- *   同一内容のブロック（内服/注射で末尾改行違いなど）は1回のみ出力する。
- *   unique closing テキストを収集し、末尾に追記する。
+ * S: buildS による構造ベース合成（reason/observation/decision/other に分類 → dedupe → 再生成）
+ * O / A: 本文をそのまま改行区切りで結合（ラベル行なし）
+ * P: buildP による構造ベース合成（medication_instruction/side_effect/discontinuation/other に分類
+ *    → 完全一致 dedupe → 固定順出力 → closing 末尾）
  *
  * 後処理（全フィールド共通）:
  *   - 空行を除去して行を詰める（normalizeLines）
@@ -540,11 +542,9 @@ export function mergeBlocks(
 
   for (const key of keys) {
     if (key === 'S') {
-      // S: ドメイン別まとめ（同一文型のときのみ統合）
-      const entries = all
-        .map(block => ({ domain: block.domain, text: block.fields.S.trim() }))
-        .filter(e => e.text)
-      result.S = groupSentencesS(entries)
+      // S: 構造ベース合成（buildS）
+      const sTexts = all.map(block => block.fields.S.trim()).filter(Boolean)
+      result.S = buildS(sTexts)
     } else if (key !== 'P') {
       // O / A: 本文のみ結合（ラベル行なし）
       const parts: string[] = []
@@ -555,57 +555,19 @@ export function mergeBlocks(
       }
       result[key] = parts.join('\n')
     } else {
-      // P: body dedupe + closing deduplication
-      //
-      // 処理手順:
-      //   1. 各ブロックの P から closingText を末尾で除去してボディを取得
-      //   2. ボディを正規化（行末トリム + 空行除去）して完全一致 dedupe
-      //   3. unique closing を収集して末尾に追記
-      //
-      // 「正規化後一致」で dedupe するため、内服/注射で末尾改行の違いなどがあっても
-      // 実質同一のブロックを重複出力しない。
-      const seenBodies   = new Set<string>()
-      const seenClosings = new Set<string>()
-      const orderedBodies:   string[] = []
-      const orderedClosings: string[] = []
-
-      for (const block of all) {
-        const rawText = block.fields.P.trim()
-        if (!rawText) continue
-
-        const closing = block.closingText?.trim() ?? ''
-        let body = rawText
-
-        // closing が設定されており P の末尾に一致する場合に除去
-        if (closing && body.endsWith(closing)) {
-          body = body.slice(0, body.length - closing.length).trimEnd()
-        }
-
-        // body を正規化（行末空白除去 + 空行除去）して dedupe キーに使用
-        const normalizedBody = body
-          .split('\n')
-          .map(l => l.trimEnd())
-          .filter(l => l.length > 0)
-          .join('\n')
-
-        if (normalizedBody && !seenBodies.has(normalizedBody)) {
-          seenBodies.add(normalizedBody)
-          orderedBodies.push(normalizedBody)
-        }
-
-        // unique closing を順序付きで収集
-        if (closing && !seenClosings.has(closing)) {
-          seenClosings.add(closing)
-          orderedClosings.push(closing)
-        }
-      }
-
-      let merged = orderedBodies.join('\n')
-      if (orderedClosings.length > 0) {
-        const closingBlock = orderedClosings.join('\n')
-        merged = merged ? `${merged}\n${closingBlock}` : closingBlock
-      }
-      result.P = merged
+      // P: 構造ベース合成（buildP）
+      const pEntries = all
+        .filter(block => block.fields.P.trim())
+        .map(block => {
+          const rawText = block.fields.P.trim()
+          const closing = block.closingText?.trim() ?? ''
+          let body = rawText
+          if (closing && body.endsWith(closing)) {
+            body = body.slice(0, body.length - closing.length).trimEnd()
+          }
+          return { body, closing: closing || null }
+        })
+      result.P = buildP(pEntries)
     }
   }
 
