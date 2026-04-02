@@ -15,6 +15,7 @@ import {
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { S_BUTTON_GROUPS, type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
+import { applyPersonaToFields, type PersonaId } from '../../lib/applyPersona'
 import type { ValidationResult } from '../../lib/validationRunner'
 
 import Topbar, { type RouteFilter } from './Topbar'
@@ -206,6 +207,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     goodCompliance: false,
   })
 
+  // ── ペルソナ（文体切替）: 表示変換のみ、医療ロジック不変 ──
+  const [personaEnabled, setPersonaEnabled] = useState(false)
+  const [selectedPersona, setSelectedPersona] = useState<PersonaId>('default')
+  const [personaModalOpen, setPersonaModalOpen] = useState(false)
+
   // ══════════════════════════════════════════════════════════════
   // SOURCE OF TRUTH
   // ══════════════════════════════════════════════════════════════
@@ -278,6 +284,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const displayFields = useMemo(
     () => computeDisplayFields(primaryBaseFields, primaryScenario, composeNodes, activeModuleData.defaults),
     [primaryBaseFields, primaryScenario, composeNodes, activeModuleData.defaults],
+  )
+
+  // ── finalFields: displayFields にペルソナ変換を適用した最終表示用 ──
+  // buildSoap / composeNodes / primaryBaseFields には一切影響しない（derived のみ）
+  const finalFields = useMemo(
+    () => applyPersonaToFields(displayFields, personaEnabled, selectedPersona),
+    [displayFields, personaEnabled, selectedPersona],
   )
 
   // ── Refs を render ごとに同期 ──────────────────────────────
@@ -813,6 +826,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpIsGenerating(false)
   }, [activeModuleData])
 
+  // ── 自然言語ボタン表示フラグ（false = 非表示。将来の復活用定数） ──
+  const showNlpButton = false
+
   // ══════════════════════════════════════════════════════════════
   // 表示条件（derived）
   // ══════════════════════════════════════════════════════════════
@@ -845,6 +861,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         onSelectDrugSuggestion={handleSelectDrugSuggestion}
         routeFilter={routeFilter}
         onRouteFilterChange={setRouteFilter}
+        personaEnabled={personaEnabled}
+        onPersonaToggle={() => setPersonaEnabled(v => !v)}
+        onPersonaSettingsOpen={() => setPersonaModalOpen(true)}
       />
 
       <div className={s.body}>
@@ -870,13 +889,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             >
               手動選択
             </button>
-            <button
-              className={[s.modeToggleBtn, uiMode === 'nlp' ? s.modeToggleBtnActive : ''].join(' ')}
-              onClick={() => uiMode !== 'nlp' && handleSwitchToNlp()}
-              aria-pressed={uiMode === 'nlp'}
-            >
-              🤖 自然言語
-            </button>
+            {showNlpButton && (
+              <button
+                className={[s.modeToggleBtn, uiMode === 'nlp' ? s.modeToggleBtnActive : ''].join(' ')}
+                onClick={() => uiMode !== 'nlp' && handleSwitchToNlp()}
+                aria-pressed={uiMode === 'nlp'}
+              >
+                🤖 自然言語
+              </button>
+            )}
           </div>
 
           {uiMode === 'manual' && (
@@ -941,7 +962,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         <div className={s.editorCol}>
           {showSoapEditor ? (
             <SoapEditor
-              fields={displayFields}
+              fields={finalFields}
               onChange={handleFieldChange}
               nodeBarSlot={
                 <ComposeNodeBar
@@ -971,6 +992,39 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           )}
         </div>
       </div>
+
+      {/* ── ペルソナ設定モーダル ── */}
+      {personaModalOpen && (
+        <div
+          className={s.personaModalOverlay}
+          onClick={() => setPersonaModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="ペルソナ設定"
+        >
+          <div className={s.personaModal} onClick={e => e.stopPropagation()}>
+            <h2 className={s.personaModalTitle}>ペルソナ設定</h2>
+            {(['default', 'polite'] as PersonaId[]).map(p => (
+              <label key={p} className={s.personaModalOption}>
+                <input
+                  type="radio"
+                  name="persona"
+                  value={p}
+                  checked={selectedPersona === p}
+                  onChange={() => setSelectedPersona(p)}
+                />
+                {p === 'default' ? '標準' : '丁寧'}
+              </label>
+            ))}
+            <button
+              className={s.personaModalClose}
+              onClick={() => setPersonaModalOpen(false)}
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

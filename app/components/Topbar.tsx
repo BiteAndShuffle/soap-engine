@@ -18,6 +18,11 @@ interface TopbarProps {
   onSelectDrugSuggestion: (item: DrugSuggestionItem) => void
   routeFilter: RouteFilter
   onRouteFilterChange: (f: RouteFilter) => void
+  /** ペルソナトグル */
+  personaEnabled: boolean
+  onPersonaToggle: () => void
+  /** ペルソナ設定モーダルを開く */
+  onPersonaSettingsOpen: () => void
 }
 
 const ROUTE_LABELS: Record<RouteFilter, string> = {
@@ -36,6 +41,9 @@ export default function Topbar({
   onSelectDrugSuggestion,
   routeFilter,
   onRouteFilterChange,
+  personaEnabled,
+  onPersonaToggle,
+  onPersonaSettingsOpen,
 }: TopbarProps) {
   const listId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -105,7 +113,28 @@ export default function Topbar({
         <span className={s.topbarDrugLabel}>{activeDrugLabel}</span>
       )}
 
+      {/* ① ペルソナトグル（Topbar中央） */}
+      <button
+        className={[s.personaToggleBtn, personaEnabled ? s.personaToggleBtnActive : ''].join(' ')}
+        onClick={onPersonaToggle}
+        aria-pressed={personaEnabled}
+        title="ペルソナ（文体切替）"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/persona-icon.svg" alt="" aria-hidden="true" className={s.personaIcon} />
+        ペルソナ
+      </button>
+
       <div className={s.searchArea}>
+        {/* ② 設定ボタン（searchArea左端） */}
+        <button
+          className={s.personaSettingsBtn}
+          onClick={onPersonaSettingsOpen}
+          aria-label="ペルソナ設定"
+          title="ペルソナ設定"
+        >
+          ⚙️
+        </button>
         <div className={s.routeToggle} role="group" aria-label="剤形フィルタ">
           {(['all', 'internal', 'topical'] as RouteFilter[]).map(f => (
             <button

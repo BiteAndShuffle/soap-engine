@@ -1812,3 +1812,112 @@
   margin-top: 0.1rem;
   font-style: italic;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ペルソナ UI
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ①ペルソナトグルボタン (Topbar中央) ── */
+.personaToggleBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.28rem 0.7rem;
+  border: 1.5px solid #3a3a5c;
+  border-radius: 8px;
+  background: #22223a;
+  color: #a0a0c8;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.personaToggleBtn:hover {
+  border-color: #0a84ff;
+  color: #e8e8ff;
+}
+.personaToggleBtnActive {
+  background: rgba(10, 132, 255, 0.13);
+  border-color: #0a84ff;
+  color: #e8e8ff;
+}
+.personaIcon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* ── ②設定ボタン (searchArea左端) ── */
+.personaSettingsBtn {
+  padding: 0.28rem 0.52rem;
+  border: 1.5px solid #3a3a5c;
+  border-radius: 8px;
+  background: #22223a;
+  color: #a0a0c8;
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s;
+}
+.personaSettingsBtn:hover {
+  border-color: #0a84ff;
+  color: #e8e8ff;
+}
+
+/* ── ペルソナ設定モーダル ── */
+.personaModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.personaModal {
+  background: #1e1e38;
+  border: 1.5px solid #3d3d5c;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.personaModalTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e8e8ff;
+  margin: 0;
+}
+.personaModalOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #c0c0e0;
+  cursor: pointer;
+}
+.personaModalClose {
+  margin-top: 0.25rem;
+  padding: 0.4rem 1rem;
+  border: 1.5px solid #3a3a5c;
+  border-radius: 8px;
+  background: #22223a;
+  color: #a0a0c8;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: border-color 0.15s, color 0.15s;
+}
+.personaModalClose:hover {
+  border-color: #0a84ff;
+  color: #e8e8ff;
+}
