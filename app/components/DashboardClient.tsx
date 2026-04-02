@@ -820,12 +820,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ThirdPanel（合成窓・Sボタン）: シナリオ確定後のみ有効
   const thirdPanelEnabled = currentScenarioId !== null && currentScenarioId !== ''
 
-  // 単剤モード: 1剤目のみ確定済みかつ composeNodes が空（フラグ・S先頭文の有効条件）
-  const confirmedComposeCount = composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null).length
-  const isSingleDrug = selectedScenarioId !== null && confirmedComposeCount === 0
+  // 単剤モード: 1剤目が確定済みかつ composeNodes が空
+  // composeNodes は pending 含む全ての2剤目以降ノードを保持するため、
+  // length === 0 で「薬剤が1剤のみ」を判定する
+  const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0
 
   // SOAPエディター: 1剤目確定 or 確定済みノードあり（pending のみは不可）
-  const hasValidComposeNodes = confirmedComposeCount > 0
+  const hasValidComposeNodes = composeNodes.some(n => n.scenarioId !== '' && n.scenarioId != null)
   const showSoapEditor = selectedScenarioId !== null || hasValidComposeNodes
 
   // ══════════════════════════════════════════════════════════════
