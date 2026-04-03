@@ -1,23 +1,96 @@
 // ─────────────────────────────────────────────────────────────
-// applyPersona — SOAP テキストへのペルソナ変換
+// applyPersona — SOAP テキストへのペルソナ変換（軸ベース設計）
 //
-// 【重要】この関数は「表示テキストの変換のみ」を担当する。
-//   - buildSoap / composeNodes / primaryBaseFields には一切触れない
-//   - displayFields の最終表示直前（DashboardClient の finalFields）でのみ使用する
-//   - 医療ロジック・S/P構造・主語分解には影響しない
+// 【設計方針】
+//   - 変換軸（AxisWeights）で人格を表現する。人格ごとの if 分岐なし。
+//   - 人格を追加する場合は PERSONA_PROFILES にエントリを追加するだけ。
+//     既存のルールセット・型定義・applyPersona 関数は変更不要。
 //
-// P欄の申し送り・closing 系定型文（次回〜確認。／〜ことを説明。）は
-// 変換対象外とする。isMedicalRecord() で識別して除外する。
+// 【変換軸】
+//   formality  : 0.0（常体）→ 1.0（丁寧体）  ── 文末を敬体に変換
+//   softness   : 0.0（直接）→ 1.0（柔らか）  ── 指示表現を和らげる
+//   density    : 0.0（詳細）→ 1.0（簡潔）    ── 現時点では将来拡張用
+//   directness : 0.0（やわ）→ 1.0（直接）    ── 現時点では将来拡張用
+//
+// 【適用ルール】
+//   formality >= THRESHOLD.formality → 丁寧体ルールを適用
+//   softness  >= THRESHOLD.softness  → 柔らかい表現ルールを追加適用
+//
+// 【除外ライン】
+//   isMedicalRecord() に該当する行はペルソナ変換対象外:
+//     - 「次回〜確認。」系（記録・申し送り定型文）
+//     - 「〜ことを説明。」系（指導記録）
+//     - 「〜について指導。」「〜よう助言。」系
 // ─────────────────────────────────────────────────────────────
 
-/** ペルソナ種別。ON時は必ずどちらかが適用される。 */
-export type PersonaId = 'polite' | 'gentle'
+// ─────────────────────────────────────────────────────────────
+// 変換軸の型定義
+// ─────────────────────────────────────────────────────────────
+
+export interface AxisWeights {
+  /** 丁寧度: 0.0（常体）→ 1.0（丁寧体）*/
+  formality: number
+  /** 柔らかさ: 0.0（直接）→ 1.0（柔らか）*/
+  softness: number
+  /** 情報密度: 0.0（詳細）→ 1.0（簡潔）— 将来拡張用 */
+  density: number
+  /** 命令強度: 0.0（やわらかい）→ 1.0（直接）— 将来拡張用 */
+  directness: number
+}
+
+// ─────────────────────────────────────────────────────────────
+// ペルソナ種別
+// ─────────────────────────────────────────────────────────────
+
+/** ペルソナ種別 */
+export type PersonaId = 'polite' | 'concise' | 'gentle'
 
 /** ペルソナ表示ラベル */
 export const PERSONA_LABELS: Record<PersonaId, string> = {
-  polite: '丁寧',
-  gentle: 'やさしい',
+  polite:  '丁寧',
+  concise: '簡潔',
+  gentle:  'やさしい',
 }
+
+// ─────────────────────────────────────────────────────────────
+// ペルソナ定義（軸の重みマップ）
+//
+// 人格を追加する場合: ここにエントリを追加し、PersonaId に型を追加するだけ。
+// applyPersona / AxisWeights / ルールセットは変更不要。
+// ─────────────────────────────────────────────────────────────
+
+const PERSONA_PROFILES: Record<PersonaId, AxisWeights> = {
+  /** 丁寧（baseline）: 常体を敬体に変換。柔らかさなし。 */
+  polite: {
+    formality:  1.0,
+    softness:   0.0,
+    density:    0.0,
+    directness: 0.5,
+  },
+  /** 簡潔: 敬体変換なし・柔らかさなし。現時点では表示変換なし（将来の density ルール用）。 */
+  concise: {
+    formality:  0.0,
+    softness:   0.0,
+    density:    1.0,
+    directness: 1.0,
+  },
+  /** やさしい: 丁寧ベース + 柔らかい表現。 */
+  gentle: {
+    formality:  1.0,
+    softness:   1.0,
+    density:    0.0,
+    directness: 0.0,
+  },
+}
+
+// ─────────────────────────────────────────────────────────────
+// 軸適用閾値
+// ─────────────────────────────────────────────────────────────
+
+const THRESHOLD = {
+  formality: 0.5,
+  softness:  0.5,
+} as const
 
 // ─────────────────────────────────────────────────────────────
 // 申し送り・closing 定型文の識別
@@ -52,66 +125,90 @@ function transformLines(text: string, transform: (line: string) => string): stri
 }
 
 // ─────────────────────────────────────────────────────────────
-// 丁寧変換ルール（polite）
+// 軸別ルールセット
 //
-// 方針: 体言止め・常体を丁寧体に。医療現場として不自然にならない範囲。
+// 各ルールセットは独立した文字列変換の配列。
+// 適用順序: formality → softness（softness は formality 後の文字列に適用）
 // ─────────────────────────────────────────────────────────────
 
-function politeTransform(line: string): string {
-  return line
-    // ── 文末動詞 ───────────────────────────────────────────
-    // 〜した → 〜しました
-    .replace(/した。/g, 'しました。')
-    // 〜である → 〜です
-    .replace(/である。/g, 'です。')
-    // 〜と考える → 〜と考えます
-    .replace(/と考える。/g, 'と考えます。')
-    // 〜認める → 〜認めます
-    .replace(/を認める。/g, 'を認めます。')
-    .replace(/は認める。/g, 'は認めます。')
-    // 〜認めない → 〜認めません
-    .replace(/を認めない。/g, 'を認めません。')
-    .replace(/は認めない。/g, 'は認めません。')
-    // 〜必要 → 〜必要です
-    .replace(/が必要。/g, 'が必要です。')
-    .replace(/は必要。/g, 'は必要です。')
-    // 〜継続する → 〜継続します
-    .replace(/継続する。/g, '継続します。')
-    // 〜確認する → 〜確認いたします
-    .replace(/確認する。/g, '確認いたします。')
-    // 〜注意する → 〜注意します
-    .replace(/注意する。/g, '注意します。')
-    // 〜できない → 〜できません
-    .replace(/できない。/g, 'できません。')
-    // 〜なる → 〜なります（変動・上昇などに続く）
-    .replace(/可能性がある。/g, '可能性があります。')
-    // 〜ある → 〜あります（「〜の可能性がある」以外の用法）
-    .replace(/ことがある。/g, 'ことがあります。')
-    .replace(/場合がある。/g, '場合があります。')
-    // 〜となる → 〜となります
-    .replace(/となる。/g, 'となります。')
-    // 〜重要 → 〜重要です
-    .replace(/が重要。/g, 'が重要です。')
+type ReplacePair = [RegExp | string, string]
+
+/** formality ルール: 常体 → 丁寧体 */
+const FORMALITY_RULES: ReplacePair[] = [
+  // 〜した → 〜しました
+  [/した。/g, 'しました。'],
+  // 〜である → 〜です
+  [/である。/g, 'です。'],
+  // 〜と考える → 〜と考えます
+  [/と考える。/g, 'と考えます。'],
+  // 〜認める → 〜認めます
+  [/を認める。/g, 'を認めます。'],
+  [/は認める。/g, 'は認めます。'],
+  // 〜認めない → 〜認めません
+  [/を認めない。/g, 'を認めません。'],
+  [/は認めない。/g, 'は認めません。'],
+  // 〜必要 → 〜必要です
+  [/が必要。/g, 'が必要です。'],
+  [/は必要。/g, 'は必要です。'],
+  // 〜継続する → 〜継続します
+  [/継続する。/g, '継続します。'],
+  // 〜確認する → 〜確認いたします
+  [/確認する。/g, '確認いたします。'],
+  // 〜注意する → 〜注意します
+  [/注意する。/g, '注意します。'],
+  // 〜できない → 〜できません
+  [/できない。/g, 'できません。'],
+  // 〜可能性がある → 〜可能性があります
+  [/可能性がある。/g, '可能性があります。'],
+  // 〜ことがある / 〜場合がある → 〜ことがあります / 〜場合があります
+  [/ことがある。/g, 'ことがあります。'],
+  [/場合がある。/g, '場合があります。'],
+  // 〜となる → 〜となります
+  [/となる。/g, 'となります。'],
+  // 〜重要 → 〜重要です
+  [/が重要。/g, 'が重要です。'],
+]
+
+/** softness ルール: formality 適用後の文字列に追加適用 */
+const SOFTNESS_RULES: ReplacePair[] = [
+  // 〜ご相談ください → お気軽にご相談ください（先頭にお気軽にがない場合のみ）
+  [/(?<!お気軽に)ご相談ください。/g, 'お気軽にご相談ください。'],
+  // 〜確認いたします → 〜確認していきます（formality後の文字列に適用）
+  [/確認いたします。/g, '確認していきます。'],
+  // 〜注意します → 〜お気をつけください
+  [/注意します。/g, 'お気をつけください。'],
+  // 〜受診してください → 〜受診いただくことをおすすめします
+  [/受診してください。/g, '受診いただくことをおすすめします。'],
+]
+
+// ─────────────────────────────────────────────────────────────
+// ルールセットを1行に適用するユーティリティ
+// ─────────────────────────────────────────────────────────────
+
+function applyRules(line: string, rules: ReplacePair[]): string {
+  let result = line
+  for (const [pattern, replacement] of rules) {
+    result = result.replace(pattern as RegExp, replacement)
+  }
+  return result
 }
 
 // ─────────────────────────────────────────────────────────────
-// やさしい変換ルール（gentle）
+// 軸ベース変換（コア）
 //
-// 方針: 丁寧ベース + 柔らかい表現。医療記録として浮かない範囲。
+// 人格ごとの if 分岐なし。
+// AxisWeights の値と THRESHOLD で適用ルールセットを決定する。
 // ─────────────────────────────────────────────────────────────
 
-function gentleTransform(line: string): string {
-  // まず丁寧変換を適用
-  let t = politeTransform(line)
-  // 〜ご相談ください → お気軽にご相談ください
-  t = t.replace(/(?<!お気軽に)ご相談ください。/g, 'お気軽にご相談ください。')
-  // 〜確認いたします → 〜確認していきます
-  t = t.replace(/確認いたします。/g, '確認していきます。')
-  // 〜注意します → 〜お気をつけください
-  t = t.replace(/注意します。/g, 'お気をつけください。')
-  // 〜受診してください → 〜受診いただくことをおすすめします
-  t = t.replace(/受診してください。/g, '受診いただくことをおすすめします。')
-  return t
+function applyAxes(line: string, weights: AxisWeights): string {
+  let result = line
+  if (weights.formality >= THRESHOLD.formality) {
+    result = applyRules(result, FORMALITY_RULES)
+  }
+  if (weights.softness >= THRESHOLD.softness) {
+    result = applyRules(result, SOFTNESS_RULES)
+  }
+  return result
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -122,13 +219,12 @@ function gentleTransform(line: string): string {
  * 単一テキストにペルソナ変換を適用する。
  * - 行単位で変換。isMedicalRecord() に該当する行はスキップ。
  * - ON時は必ずどちらかのペルソナが適用される（OFF は呼び出し元で制御）。
+ * - 人格ごとの if 分岐なし。PERSONA_PROFILES の軸重みを参照して変換。
  */
 export function applyPersona(text: string, persona: PersonaId): string {
   if (!text) return text
-  switch (persona) {
-    case 'polite': return transformLines(text, politeTransform)
-    case 'gentle': return transformLines(text, gentleTransform)
-  }
+  const weights = PERSONA_PROFILES[persona]
+  return transformLines(text, line => applyAxes(line, weights))
 }
 
 /**

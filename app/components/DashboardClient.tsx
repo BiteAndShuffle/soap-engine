@@ -986,7 +986,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         >
           <div className={s.personaModal} onClick={e => e.stopPropagation()}>
             <h2 className={s.personaModalTitle}>ペルソナ設定</h2>
-            {(['polite', 'gentle'] as PersonaId[]).map(p => (
+            {(['polite', 'concise', 'gentle'] as PersonaId[]).map(p => (
               <label key={p} className={s.personaModalOption}>
                 <input
                   type="radio"
@@ -995,7 +995,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                   checked={selectedPersona === p}
                   onChange={() => setSelectedPersona(p)}
                 />
-                {p === 'polite' ? '丁寧' : 'やさしい'}
+                {p === 'polite' ? '丁寧' : p === 'concise' ? '簡潔' : 'やさしい'}
               </label>
             ))}
             <button
