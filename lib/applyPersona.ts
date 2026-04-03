@@ -9,12 +9,18 @@
 // 【変換軸】
 //   formality  : 0.0（常体）→ 1.0（丁寧体）  ── 文末を敬体に変換
 //   softness   : 0.0（直接）→ 1.0（柔らか）  ── 指示表現を和らげる
-//   density    : 0.0（詳細）→ 1.0（簡潔）    ── 現時点では将来拡張用
+//   density    : 0.0（詳細）→ 1.0（簡潔）    ── 敬体→体言止め・冗長表現を圧縮
 //   directness : 0.0（やわ）→ 1.0（直接）    ── 現時点では将来拡張用
 //
 // 【適用ルール】
 //   formality >= THRESHOLD.formality → 丁寧体ルールを適用
 //   softness  >= THRESHOLD.softness  → 柔らかい表現ルールを追加適用
+//   density   >= THRESHOLD.density   → 簡潔圧縮ルールを適用（formality と排他）
+//
+// 【density の位置づけ】
+//   density >= 閾値の場合、formality ルールは適用しない（両立しない）。
+//   density は文末を体言止め・短縮形に変換し、冗長な助動詞を除去する。
+//   医療的意味の変更・文の削除は行わない。
 //
 // 【除外ライン】
 //   isMedicalRecord() に該当する行はペルソナ変換対象外:
@@ -32,7 +38,7 @@ export interface AxisWeights {
   formality: number
   /** 柔らかさ: 0.0（直接）→ 1.0（柔らか）*/
   softness: number
-  /** 情報密度: 0.0（詳細）→ 1.0（簡潔）— 将来拡張用 */
+  /** 情報密度: 0.0（詳細）→ 1.0（簡潔）— 体言止め・冗長語除去 */
   density: number
   /** 命令強度: 0.0（やわらかい）→ 1.0（直接）— 将来拡張用 */
   directness: number
@@ -67,7 +73,7 @@ const PERSONA_PROFILES: Record<PersonaId, AxisWeights> = {
     density:    0.0,
     directness: 0.5,
   },
-  /** 簡潔: 敬体変換なし・柔らかさなし。現時点では表示変換なし（将来の density ルール用）。 */
+  /** 簡潔: 体言止め・冗長語除去。敬体変換なし・柔らかさなし。 */
   concise: {
     formality:  0.0,
     softness:   0.0,
@@ -90,6 +96,7 @@ const PERSONA_PROFILES: Record<PersonaId, AxisWeights> = {
 const THRESHOLD = {
   formality: 0.5,
   softness:  0.5,
+  density:   0.5,
 } as const
 
 // ─────────────────────────────────────────────────────────────
@@ -135,8 +142,8 @@ type ReplacePair = [RegExp | string, string]
 
 /** formality ルール: 常体 → 丁寧体 */
 const FORMALITY_RULES: ReplacePair[] = [
-  // 〜した → 〜しました
-  [/した。/g, 'しました。'],
+  // 〜した → 〜しました（「〜ました。」は除外: 直前が「ま」= 既に敬体）
+  [/(?<!ま)した。/g, 'しました。'],
   // 〜である → 〜です
   [/である。/g, 'です。'],
   // 〜と考える → 〜と考えます
@@ -169,6 +176,65 @@ const FORMALITY_RULES: ReplacePair[] = [
   [/が重要。/g, 'が重要です。'],
 ]
 
+/**
+ * density ルール: 敬体・冗長表現を体言止め・短縮形に圧縮する
+ *
+ * 適用方針:
+ *   - 文末の助動詞「〜です」「〜ます」系を削除または体言止めに短縮
+ *   - 「〜があります」「〜があった」→「〜あり」
+ *   - 「〜可能性があります」「〜可能性がある」→「〜可能性あり」
+ *   - 「〜必要があります」「〜必要がある」→「〜必要あり」
+ *   - 「〜となりました」→「〜となった」（常体簡潔形）
+ *   - formality と density は排他（density >= threshold → formality 非適用）
+ *
+ * 禁止:
+ *   - 文の削除
+ *   - 医療的意味の変更
+ *   - closing / follow-up 行の変換（isMedicalRecord() で除外済み）
+ */
+const DENSITY_RULES: ReplacePair[] = [
+  // 可能性があります。→ 可能性あり。
+  [/可能性があります。/g, '可能性あり。'],
+  // 可能性がある。→ 可能性あり。
+  [/可能性がある。/g, '可能性あり。'],
+  // 必要があります。→ 必要あり。
+  [/必要があります。/g, '必要あり。'],
+  // 必要がある。→ 必要あり。
+  [/必要がある。/g, '必要あり。'],
+  // ことがあります。→ ことあり。
+  [/ことがあります。/g, 'ことあり。'],
+  // ことがある。→ ことあり。
+  [/ことがある。/g, 'ことあり。'],
+  // 場合があります。→ 場合あり。
+  [/場合があります。/g, '場合あり。'],
+  // 場合がある。→ 場合あり。
+  [/場合がある。/g, '場合あり。'],
+  // 〜があります。→ 〜あり。（汎用: 残存する「があります。」を短縮）
+  [/があります。/g, 'あり。'],
+  // 〜となりました。→ 〜となった。
+  [/となりました。/g, 'となった。'],
+  // 〜になりました。→ 〜になった。
+  [/になりました。/g, 'になった。'],
+  // 〜しました。→ 〜した。
+  [/しました。/g, 'した。'],
+  // 〜です。→ 削除（体言止め）
+  [/です。/g, '。'],
+  // 〜ます。→ 〜る。（終止形に戻す: 継続します→継続する、など）
+  [/継続します。/g, '継続。'],
+  [/確認します。/g, '確認。'],
+  [/確認いたします。/g, '確認。'],
+  [/注意します。/g, '注意。'],
+  [/と考えます。/g, 'と考える。'],
+  [/を認めます。/g, 'を認める。'],
+  [/は認めます。/g, 'は認める。'],
+  [/を認めません。/g, '認めず。'],
+  [/は認めません。/g, '認めず。'],
+  [/できません。/g, '不可。'],
+  [/となります。/g, 'となる。'],
+  // 残存する「〜ます。」→「〜る。」（汎用フォールバック）
+  [/ます。/g, 'る。'],
+]
+
 /** softness ルール: formality 適用後の文字列に追加適用 */
 const SOFTNESS_RULES: ReplacePair[] = [
   // 〜ご相談ください → お気軽にご相談ください（先頭にお気軽にがない場合のみ）
@@ -198,15 +264,28 @@ function applyRules(line: string, rules: ReplacePair[]): string {
 //
 // 人格ごとの if 分岐なし。
 // AxisWeights の値と THRESHOLD で適用ルールセットを決定する。
+//
+// 適用順序:
+//   1. density >= threshold → DENSITY_RULES のみ（formality は非適用）
+//   2. density <  threshold かつ formality >= threshold → FORMALITY_RULES
+//   3. softness >= threshold → SOFTNESS_RULES（density と排他: density適用時は非適用）
+//
+// density と formality は排他: density が高い場合（簡潔モード）は敬体化しない。
 // ─────────────────────────────────────────────────────────────
 
 function applyAxes(line: string, weights: AxisWeights): string {
   let result = line
-  if (weights.formality >= THRESHOLD.formality) {
-    result = applyRules(result, FORMALITY_RULES)
-  }
-  if (weights.softness >= THRESHOLD.softness) {
-    result = applyRules(result, SOFTNESS_RULES)
+  if (weights.density >= THRESHOLD.density) {
+    // 簡潔モード: 体言止め・冗長語除去（formality・softness は非適用）
+    result = applyRules(result, DENSITY_RULES)
+  } else {
+    // 丁寧/やさしいモード
+    if (weights.formality >= THRESHOLD.formality) {
+      result = applyRules(result, FORMALITY_RULES)
+    }
+    if (weights.softness >= THRESHOLD.softness) {
+      result = applyRules(result, SOFTNESS_RULES)
+    }
   }
   return result
 }
