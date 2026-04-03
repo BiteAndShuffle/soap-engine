@@ -113,16 +113,16 @@ export default function Topbar({
         <span className={s.topbarDrugLabel}>{activeDrugLabel}</span>
       )}
 
-      {/* ① ペルソナトグル（Topbar中央） */}
+      {/* ① ペルソナトグル（Topbar中央）: アイコンのみ表示 */}
       <button
         className={[s.personaToggleBtn, personaEnabled ? s.personaToggleBtnActive : ''].join(' ')}
         onClick={onPersonaToggle}
         aria-pressed={personaEnabled}
+        aria-label="ペルソナ"
         title="ペルソナ（文体切替）"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/persona-icon.webp" alt="" aria-hidden="true" className={s.personaIcon} />
-        ペルソナ
+        <img src="/persona-icon.webp" alt="ペルソナ" className={s.personaIcon} />
       </button>
 
       <div className={s.searchArea}>
