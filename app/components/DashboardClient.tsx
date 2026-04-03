@@ -208,8 +208,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   })
 
   // ── ペルソナ（文体切替）: 表示変換のみ、医療ロジック不変 ──
+  // ON時は必ず selectedPersona（初期値: 丁寧）が適用される
   const [personaEnabled, setPersonaEnabled] = useState(false)
-  const [selectedPersona, setSelectedPersona] = useState<PersonaId>('default')
+  const [selectedPersona, setSelectedPersona] = useState<PersonaId>('polite')
   const [personaModalOpen, setPersonaModalOpen] = useState(false)
 
   // ══════════════════════════════════════════════════════════════
@@ -881,8 +882,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         />
 
         <div className={s.secondaryCol}>
-          {/* modeToggleBar: 将来の復活用に state・ロジックは保持、UI のみ非表示 */}
-
           {uiMode === 'manual' && (
             <>
               {selectedGroup !== null && groupScenarios.length > 0 ? (
@@ -987,7 +986,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         >
           <div className={s.personaModal} onClick={e => e.stopPropagation()}>
             <h2 className={s.personaModalTitle}>ペルソナ設定</h2>
-            {(['default', 'polite'] as PersonaId[]).map(p => (
+            {(['polite', 'gentle'] as PersonaId[]).map(p => (
               <label key={p} className={s.personaModalOption}>
                 <input
                   type="radio"
@@ -996,7 +995,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                   checked={selectedPersona === p}
                   onChange={() => setSelectedPersona(p)}
                 />
-                {p === 'default' ? '標準' : '丁寧'}
+                {p === 'polite' ? '丁寧' : 'やさしい'}
               </label>
             ))}
             <button

@@ -121,7 +121,7 @@ export default function Topbar({
         title="ペルソナ（文体切替）"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/persona-icon.svg" alt="" aria-hidden="true" className={s.personaIcon} />
+        <img src="/persona-icon.webp" alt="" aria-hidden="true" className={s.personaIcon} />
         ペルソナ
       </button>
 
