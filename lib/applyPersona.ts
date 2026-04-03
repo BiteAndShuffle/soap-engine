@@ -24,10 +24,10 @@ export const PERSONA_LABELS: Record<PersonaId, string> = {
  */
 export function applyPersona(text: string, persona: PersonaId): string {
   if (persona === 'default' || !text) return text
-  // 将来の実装例:
-  //   .replace(/します。/g, 'いたします。')
-  //   .replace(/ください。/g, 'くださいませ。')
-  // 現時点では変換なし（拡張用構造のみ確立）
+  if (persona === 'polite') {
+    // 仮実装: 文末「。」→「です。」（後で改善前提）
+    return text.replace(/。/g, 'です。')
+  }
   return text
 }
 

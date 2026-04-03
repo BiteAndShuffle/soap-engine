@@ -881,24 +881,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         />
 
         <div className={s.secondaryCol}>
-          <div className={s.modeToggleBar}>
-            <button
-              className={[s.modeToggleBtn, uiMode === 'manual' ? s.modeToggleBtnActive : ''].join(' ')}
-              onClick={() => uiMode !== 'manual' && handleSwitchToManual()}
-              aria-pressed={uiMode === 'manual'}
-            >
-              手動選択
-            </button>
-            {showNlpButton && (
-              <button
-                className={[s.modeToggleBtn, uiMode === 'nlp' ? s.modeToggleBtnActive : ''].join(' ')}
-                onClick={() => uiMode !== 'nlp' && handleSwitchToNlp()}
-                aria-pressed={uiMode === 'nlp'}
-              >
-                🤖 自然言語
-              </button>
-            )}
-          </div>
+          {/* modeToggleBar: 将来の復活用に state・ロジックは保持、UI のみ非表示 */}
 
           {uiMode === 'manual' && (
             <>
