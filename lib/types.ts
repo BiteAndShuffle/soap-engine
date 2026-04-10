@@ -135,6 +135,65 @@ export interface Scenario {
    * 現時点では buildSoap に影響しない。
    */
   combinable?: boolean | null
+  /**
+   * 合成ポリシー（S/O/A/P ごとの挙動を宣言）。
+   * buildSoap.ts の mergeBlocks で参照される。
+   * 省略時は旧来の固定ロジック（append / buildS / buildP）にフォールバック。
+   */
+  mergePolicy?: ScenarioMergePolicy
+}
+
+// ─────────────────────────────────────────────────────────────
+// ScenarioMergePolicy（scenarios[].mergePolicy 型）
+// ─────────────────────────────────────────────────────────────
+
+export interface ScenarioMergePolicyS {
+  domain?: string
+  behavior?: string
+  /**
+   * S欄グルーピングキー。同一 groupKey + 同一 clinicalDomain のブロック間でのみ
+   * reason 結合を許可する。異なる groupKey は分離される。
+   */
+  groupKey?: string
+  mergeLevel?: string
+  sectionRole?: string
+}
+
+export interface ScenarioMergePolicyP {
+  behavior?: string
+  mergeLevel?: string
+  /**
+   * closing の扱い。
+   *
+   *   "dedupe_or_last"（唯一の実運用値）:
+   *     同一 closing が連続している間は body だけ積み上げ、
+   *     closing が変わるタイミングで1回だけ出力する。
+   *     後処理の dedupeClosingLines() により「次回」始まりの重複行も除去される。
+   *     省略時もこの挙動が適用される。
+   *
+   *   "append_all"（将来拡張予約値 — 現在は未サポート・未使用）:
+   *     buildP 内に分岐は存在するが、後処理 dedupeClosingLines() との
+   *     組み合わせで意図どおりに動作しないことが確認されている。
+   *     現行 JSON では使用不可。正式サポート前に dedupeClosingLines の
+   *     挙動との整合を取る必要がある。
+   *
+   * ⚠️ JSON に "append_all" を設定しないこと。
+   */
+  closingBehavior?: 'dedupe_or_last' | 'append_all'
+  sectionRole?: string
+}
+
+export interface ScenarioMergePolicyOA {
+  behavior?: string
+  mergeLevel?: string
+  sectionRole?: string
+}
+
+export interface ScenarioMergePolicy {
+  S?: ScenarioMergePolicyS
+  O?: ScenarioMergePolicyOA
+  A?: ScenarioMergePolicyOA
+  P?: ScenarioMergePolicyP
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -325,6 +384,18 @@ export interface ComposeNode {
    * composition.domain → categoryPath[1] → categoryPath[0] → moduleId の優先順。
    */
   baseDomain: string
+  /**
+   * サジェスト時にユーザーが選択したブランド名。
+   * {{drug_subject}} スロット解決の最優先値として使用。
+   * 未確定ノード（pending）では undefined の場合がある。
+   */
+  matchedBrandName?: string
+  /**
+   * 解決済み薬剤名（{{drug_subject}} の代入値）。
+   * matchedBrandName → drug.brandNames[0] → drug.genericName の順で解決済み。
+   * buildNodeFields / handleAddonToggle から参照される。
+   */
+  resolvedDrugName?: string
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -350,10 +421,33 @@ export interface MergedBlock {
    */
   closingText?: string
   /**
+   * P closing の重複排除挙動（scenario.mergePolicy.P.closingBehavior スナップショット）。
+   *
+   *   "dedupe_or_last"（実運用値）:
+   *     同一 closing を最後の1件のみ出力する。省略時もこの挙動。
+   *
+   *   "append_all"（将来拡張予約値 — 現在は未サポート・未使用）:
+   *     ScenarioMergePolicyP.closingBehavior の注記を参照。
+   *     現行 JSON では使用不可。
+   *
+   * ⚠️ JSON に "append_all" を設定しないこと。
+   */
+  closingBehavior?: 'dedupe_or_last' | 'append_all'
+  /**
    * S欄ドメイン別まとめ用。
    * composition.domain → categoryPath[1] → categoryPath[0] → moduleId の優先順で決定。
    */
   domain?: string
+  /**
+   * S欄のグルーピングキー（scenario.mergePolicy.S.groupKey スナップショット）。
+   * 異なる groupKey 間では reason 結合を行わない。
+   */
+  groupKey?: string
+  /**
+   * 臨床ドメイン（composition.clinicalDomain スナップショット）。
+   * 異なる clinicalDomain 間では S を統合しない。
+   */
+  clinicalDomain?: string
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -433,6 +527,18 @@ export interface ModuleData {
     priority?: number
     /** ノードバーに表示する短縮ラベル（未指定時は NODE_LABEL_MAP / categoryPath[1] / brandNames[0] で決定） */
     nodeLabel?: string
+    /** ノードバーに表示する短縮ラベル（canonical source: composition.nodeLabelShort） */
+    nodeLabelShort?: string
+    /**
+     * 臨床ドメイン識別子。S欄合成時に異なるドメイン間の統合を防ぐために使用。
+     * 例: "diabetes", "respiratory"
+     */
+    clinicalDomain?: string
+    /**
+     * S統合ドメイン識別子。将来の S 統合分離ロジックで使用予定。
+     * 現時点では MergedBlock への伝播のみ行い、合成判定には未使用。
+     */
+    sMergeDomain?: string
   }
   drug?: Drug
   drugResolution?: DrugResolution

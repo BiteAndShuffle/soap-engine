@@ -1,6 +1,6 @@
 {
   "moduleId": "dm_glp1ra_semaglutide_oral",
-  "moduleVersion": "1.0.4",
+  "moduleVersion": "1.0.9",
   "regulatory": {
     "psychotropicClass": "not_applicable",
     "controlledSubstance": "not_applicable",
@@ -17,7 +17,42 @@
   ],
   "composition": {
     "domain": "diabetes",
-    "priority": "chronic"
+    "priority": "chronic",
+    "clinicalDomain": "diabetes",
+    "searchDomain": "diabetes",
+    "sMergeDomain": "diabetes",
+    "nodeLabelShort": "GLP1",
+    "nodeLabelLong": "GLP-1受容体作動薬",
+    "nodeKey": "glp1",
+    "defaultSMergeLevel": "clinical_domain",
+    "canonicalSource": {
+      "nodeIdentity": "composition",
+      "displayProjection": "display",
+      "scenarioMergePolicy": "scenarios[].mergePolicy"
+    },
+    "domainPolicy": {
+      "clinicalDomainUnit": "disease_area",
+      "sMergeDomainUnit": "disease_area",
+      "defaultSGrouping": "clinical_domain"
+    },
+    "groupKeyRegistry": [
+      "hyperglycemia_management",
+      "glycemic_control_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "treatment_end",
+      "lifestyle_guidance",
+      "sickday"
+    ],
+    "sMergePolicy": {
+      "unit": "clinical_domain",
+      "conflictStrategy": "separate_by_domain",
+      "withinDomainStrategy": "groupKey_based_replace"
+    },
+    "nodeIdentityPolicy": {
+      "source": "composition",
+      "overrideAllowed": false
+    }
   },
   "drug": {
     "genericName": "GLP-1受容体作動薬",
@@ -37,6 +72,18 @@
     ],
     "search": {
       "primaryDisplayName": "リベルサス",
+      "exactAliases": [
+        "リベルサス"
+      ],
+      "prefixAliases": [
+        "りべるさす",
+        "りべ",
+        "りべるさ",
+        "りべるさすじょう",
+        "せまぐるちど",
+        "せまぐ",
+        "せま"
+      ],
       "nameAliases": [
         "りべるさす",
         "りべ",
@@ -45,7 +92,14 @@
         "せまぐるちど",
         "せまぐ",
         "せま"
-      ]
+      ],
+      "keywords": [],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
     },
     "brandCatalog": {
       "リベルサス": {
@@ -126,7 +180,9 @@
   "risks": {
     "primary": [
       "dehydration_risk",
-      "gastrointestinal_symptoms"
+      "gastrointestinal_symptoms",
+      "pancreatitis_risk",
+      "appetite_loss_risk"
     ],
     "secondary": [
       "hypoglycemia_risk"
@@ -183,7 +239,22 @@
       "水分が摂れない",
       "脱水",
       "低血糖",
-      "倦怠感"
+      "倦怠感",
+      "悪心",
+      "吐き気",
+      "便秘",
+      "食欲不振",
+      "食欲低下",
+      "膵炎",
+      "腹痛",
+      "背部痛",
+      "使用忘れ",
+      "自己判断",
+      "受診遅延",
+      "起床後",
+      "30分",
+      "PTP",
+      "湿気"
     ],
     "normalizedTokens": [
       "りべるさす",
@@ -210,7 +281,22 @@
       "すいぶんがとれない",
       "だっすい",
       "ていけっとう",
-      "けんたいかん"
+      "けんたいかん",
+      "あくしん",
+      "はきけ",
+      "べんぴ",
+      "しょくよくふしん",
+      "しょくよくていか",
+      "すいえん",
+      "ふくつう",
+      "はいぶつう",
+      "しようわすれ",
+      "じこはんだん",
+      "じゅしんちえん",
+      "きしょうご",
+      "さんじゅっぷん",
+      "ぴーてぃーぴー",
+      "しっけ"
     ],
     "facets": {
       "route": "oral",
@@ -231,9 +317,14 @@
     "crushable": null,
     "lightSensitive": null,
     "oneDosePackaging": null,
-    "hygroscopic": null,
+    "hygroscopic": true,
     "storage": null,
-    "administration": null,
+    "administration": {
+      "timing": "起床後すぐ・最初の1錠として",
+      "water": "コップ半分（120mL以下）の水で服用",
+      "fastingRequired": "服用後30分は飲食・他剤服用を避ける。30分以上空けてから朝食をとる",
+      "packagingNote": "湿気に弱いため、PTPシートはミシン目以外で切り離さない"
+    },
     "interactions": null,
     "renalDose": null,
     "hepaticDose": null,
@@ -243,7 +334,10 @@
     "title": "GLP-1受容体作動薬（内服）",
     "subtitle": "リベルサス（セマグルチド）",
     "drugClassLabel": "GLP-1受容体作動薬",
-    "drugGeneric": "セマグルチド"
+    "drugGeneric": "セマグルチド",
+    "nodeLabelShort": "GLP1",
+    "nodeLabelLong": "GLP-1受容体作動薬",
+    "nodeKey": "glp1"
   },
   "defaults": {
     "followup": {
@@ -251,6 +345,10 @@
       "P": "次回、引き続き使用できているか、副作用の有無を確認。"
     },
     "followupProfiles": {
+      "default_followup": {
+        "S": null,
+        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+      },
       "se_followup": {
         "S": null,
         "P": "次回、治療経過および副作用の有無を確認。",
@@ -305,6 +403,43 @@
     ],
     "defaultPanelId": "panel_1"
   },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "drug_effect_explanation",
+      "side_effect_attention",
+      "gi_symptom_attention",
+      "hypoglycemia_attention",
+      "pancreatitis_attention",
+      "dose_increase_explanation",
+      "dose_decrease_explanation",
+      "treatment_end_explanation",
+      "lifestyle_guidance",
+      "adherence_support",
+      "sickday_guidance",
+      "urgent_consult_advice",
+      "followup_monitoring",
+      "administration_instruction",
+      "concomitant_drug_attention"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
+  "evidenceCatalog": [],
   "addons": {
     "items": {
       "addon_glycemic_guidance": {
@@ -313,15 +448,32 @@
         "title": "血糖指導",
         "group": "counseling",
         "targetSection": "P",
-        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症を生じる可能性があります。食事療法および運動療法の重要性について指導。間食はカロリーオフ・ノンシュガー食品への置き換えを提案。血糖改善に伴い低血糖症状が出現する可能性について注意喚起。"
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。間食はカロリーオフ・ノンシュガー食品への置き換えを取り入れてみてください。血糖が改善してきた際には低血糖症状が出ることがあります。気になる症状があればご相談ください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance",
+          "hypoglycemia_attention"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
       "addon_oral_ribelsus_admin": {
         "key": "addon_oral_ribelsus_admin",
         "id": "addon_oral_ribelsus_admin",
-        "title": "リベルサス（セマグルチド）説明",
+        "title": "リベルサス(セマグルチド)説明",
         "group": "oral",
         "targetSection": "P",
-        "text": "湿気に弱いため、PTPシートはミシン目以外で切り離さないでください。起床後すぐ、最初の1錠としてコップ半分（120mL以下）の水で服用してください。服用後30分は、飲食や他の薬の服用は避けてください。30分以上空けてから朝食をとってください。"
+        "text": "湿気に弱いため、PTPシートはミシン目以外で切り離さないでください。起床後すぐ、最初の1錠としてコップ半分（120mL以下）の水で服用してください。服用後30分は、飲食や他の薬の服用を避けてください。30分以上空けてから朝食をとってください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "administration_instruction"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
       "addon_se_hypoglycemia_guidance": {
         "key": "addon_se_hypoglycemia_guidance",
@@ -329,7 +481,15 @@
         "title": "副作用注意喚起（低血糖）",
         "group": "sideEffects",
         "targetSection": "P",
-        "text": "他の糖尿病薬と併用している場合は、ふらつき・動悸などの低血糖症状が出ることがあります。低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取するよう指導。"
+        "text": "他の糖尿病薬と併用している場合は、ふらつき・動悸などの低血糖症状が出ることがあります。低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "hypoglycemia_attention"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
       "addon_adherence_alarm_suggestion": {
         "key": "addon_adherence_alarm_suggestion",
@@ -337,15 +497,47 @@
         "title": "服薬忘れ対策（アラーム）",
         "group": "adherence",
         "targetSection": "P",
-        "text": "忘れ防止策としてアラーム設定を提案。"
+        "text": "飲み忘れを防ぐ方法の一つとして、アラームを服用時間に合わせて設定しておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
-      "addon_adherence_prep_before_meal_habit": {
-        "key": "addon_adherence_prep_before_meal_habit",
-        "id": "addon_adherence_prep_before_meal_habit",
-        "title": "服薬忘れ対策（事前準備）",
+      "addon_adherence_prep_previous_night": {
+        "key": "addon_adherence_prep_previous_night",
+        "id": "addon_adherence_prep_previous_night",
+        "title": "服薬忘れ対策（事前準備　前日）",
         "group": "adherence",
         "targetSection": "P",
-        "text": "忘れ防止策として、使用前に薬剤を準備する習慣づけを提案。"
+        "text": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_prep_before_meal": {
+        "key": "addon_adherence_prep_before_meal",
+        "id": "addon_adherence_prep_before_meal",
+        "title": "服薬忘れ対策（事前準備　食事前）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
       "addon_sickday_hold_sglt2_metformin": {
         "key": "addon_sickday_hold_sglt2_metformin",
@@ -353,18 +545,45 @@
         "title": "シックデイ時併用薬注意",
         "group": "sickday",
         "targetSection": "P",
-        "text": "併用中のSGLT2阻害薬やメトホルミンは脱水時は中止が必要な場合があります。自己判断で中止せず、処方医へご相談ください。"
+        "text": "併用中のSGLT2阻害薬やメトホルミンは、脱水時は休薬が必要な場合があります。自己判断で中止せず、処方医へご相談ください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "concomitant_drug_attention",
+          "sickday_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_initial_sickday_guidance": {
+        "key": "addon_initial_sickday_guidance",
+        "id": "addon_initial_sickday_guidance",
+        "title": "初回シックデイ",
+        "group": "sickday",
+        "targetSection": "P",
+        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。血糖測定が可能であれば行ってください。水分は少量ずつこまめに摂取してください。服用継続の可否は体調や摂取状況によって異なります。自己判断せず、処方医に相談してください。嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "sickday_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       }
     },
     "orderPresets": {
       "initial_default": [
         "addon_glycemic_guidance",
         "addon_oral_ribelsus_admin",
-        "addon_se_hypoglycemia_guidance"
+        "addon_se_hypoglycemia_guidance",
+        "addon_initial_sickday_guidance"
       ],
       "cp_poor_missed_doses_default": [
         "addon_adherence_alarm_suggestion",
-        "addon_adherence_prep_before_meal_habit"
+        "addon_adherence_prep_previous_night",
+        "addon_adherence_prep_before_meal"
       ],
       "sickday_default": [
         "addon_sickday_hold_sglt2_metformin"
@@ -396,20 +615,40 @@
           "血糖値が高い"
         ]
       },
-      "S": "血糖値が高いため薬が追加となった。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)は血糖コントロール不十分のため追加。血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。血糖改善および体重減少（体重管理の補助）を目的とする。",
-      "P": "GLP-1受容体作動薬(内服)は血糖値を改善する薬です。悪心や食欲不振などの副作用があればご相談ください。",
+      "S": "血糖値が高いため、薬が追加となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ薬剤である。\n血糖改善および体重管理の補助を目的として使用する。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_glycemic_guidance",
           "addon_oral_ribelsus_admin",
-          "addon_se_hypoglycemia_guidance"
+          "addon_se_hypoglycemia_guidance",
+          "addon_initial_sickday_guidance"
         ]
       },
-      "followup": {
-        "P": "default"
-      }
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "hyperglycemia_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "dose_increase_low_perceived_effect",
@@ -433,21 +672,40 @@
           "low_perceived_effect"
         ],
         "symptoms": [
-          "効果の実感がない"
+          "効果の実感が乏しい"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、効果が実感できないので増量となった。",
-      "O": "GLP-1受容体作動薬(内服)増量",
-      "A": "GLP-1受容体作動薬(内服)は、効果不十分のため増量。副作用増強の可能性に注意。",
-      "P": "GLP-1受容体作動薬(内服)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。消化器症状が強い場合はご相談ください。",
+      "S": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
+      "O": "GLP-1受容体作動薬(内服)　増量",
+      "A": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。\n消化器症状が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_se_hypoglycemia_guidance"
         ]
       },
-      "followup": {
-        "P": "default"
-      }
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_increase_explanation",
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "dose_increase_no_lab_improvement",
@@ -471,21 +729,40 @@
           "no_lab_improvement"
         ],
         "symptoms": [
-          "検査値改善なし"
+          "検査値が改善しない"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、検査値が改善しないため増量となった。",
-      "O": "GLP-1受容体作動薬(内服)増量",
-      "A": "GLP-1受容体作動薬(内服)は、効果不十分のため増量。副作用増強の可能性に注意。",
-      "P": "GLP-1受容体作動薬(内服)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。消化器症状が強い場合はご相談ください。",
+      "S": "{{drug_subject}}は、検査値が改善しないため増量となった。",
+      "O": "GLP-1受容体作動薬(内服)　増量",
+      "A": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。\n消化器症状が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_se_hypoglycemia_guidance"
         ]
       },
-      "followup": {
-        "P": "default"
-      }
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_increase_explanation",
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "dose_increase_due_to_other_med_adjustment",
@@ -508,18 +785,37 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "GLP-1受容体作動薬(内服)は、他剤変更に伴い調整のため増量となった。",
-      "O": "GLP-1受容体作動薬(内服)増量",
-      "A": "GLP-1受容体作動薬(内服)は、他剤変更に伴い調整のため増量。副作用増強の可能性に注意。",
-      "P": "GLP-1受容体作動薬(内服)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。消化器症状が強い場合はご相談ください。",
+      "S": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。",
+      "O": "GLP-1受容体作動薬(内服)　増量",
+      "A": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。\n消化器症状が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_se_hypoglycemia_guidance"
         ]
       },
-      "followup": {
-        "P": "default"
-      }
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_increase_explanation",
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "dose_decrease_improved",
@@ -543,16 +839,35 @@
           "lab_improved"
         ],
         "symptoms": [
-          "検査値改善"
+          "検査値が改善した"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、検査値が良くなって減量となった。",
-      "O": "GLP-1受容体作動薬(内服)減量",
-      "A": "GLP-1受容体作動薬(内服)は血糖推移を踏まえ減量。減量に伴う血糖上昇の可能性に注意。",
-      "P": "GLP-1受容体作動薬(内服)は、減量により血糖値が上がることがあります。気になる変化があればご相談ください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "{{drug_subject}}は、検査値が改善したため減量となった。",
+      "O": "GLP-1受容体作動薬(内服)　減量",
+      "A": "{{drug_subject}}は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、減量により血糖値が上がることがあります。\n気になる変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "dose_decrease_low_perceived_effect",
@@ -579,13 +894,32 @@
           "効果の実感が乏しい"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、効果の実感が乏しいため減量を希望された。",
-      "O": "GLP-1受容体作動薬(内服)減量",
-      "A": "GLP-1受容体作動薬(内服)は患者希望を踏まえ減量。減量後の血糖推移に注意。",
-      "P": "GLP-1受容体作動薬(内服)は、減量により血糖値が上昇する可能性があります。体調変化があればご相談ください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "{{drug_subject}}は、効果の実感が乏しいため減量を希望された。",
+      "O": "GLP-1受容体作動薬(内服)　減量",
+      "A": "{{drug_subject}}は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。",
+      "P": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "dose_decrease_due_to_other_med_adjustment",
@@ -608,18 +942,37 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "GLP-1受容体作動薬(内服)は、他剤変更に伴い調整のため減量となった。",
-      "O": "GLP-1受容体作動薬(内服)減量",
-      "A": "GLP-1受容体作動薬(内服)は併用薬変更に伴う血糖調整目的で減量。血糖推移に注意。",
-      "P": "GLP-1受容体作動薬(内服)は、減量により血糖値が上昇する可能性があります。体調変化があればご相談ください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "{{drug_subject}}は、他剤変更に伴う調整のため減量となった。",
+      "O": "GLP-1受容体作動薬(内服)　減量",
+      "A": "{{drug_subject}}は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。",
+      "P": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_hypo_none",
       "globalId": "dm_glp1ra_semaglutide_oral.se_hypo_none",
-      "title": "GLP-1受容体作動薬(内服) 低血糖（症状なし）",
+      "title": "GLP-1受容体作動薬(内服) 副作用なし（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -638,18 +991,36 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "使用して、症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)による低血糖は現時点で認めず、治療継続可能。",
-      "P": "GLP-1受容体作動薬(内服)の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。出現時は糖分摂取等で対応し、改善しない場合はご相談ください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "使用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は糖分を摂取してください。改善しない場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "hypoglycemia_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_nausea_diarrhea_none",
       "globalId": "dm_glp1ra_semaglutide_oral.se_nausea_diarrhea_none",
-      "title": "GLP-1受容体作動薬(内服) 悪心・下痢（症状なし）",
+      "title": "GLP-1受容体作動薬(内服) 副作用なし（悪心・下痢）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -668,18 +1039,36 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "使用して、症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)による消化器症状は現時点で認めず、治療継続可能。",
-      "P": "GLP-1受容体作動薬(内服)の継続中に吐き気・下痢などが出ることがあります。続く場合はご相談ください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "使用して症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に吐き気・下痢などが出ることがあります。\n症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_appetite_loss_none",
       "globalId": "dm_glp1ra_semaglutide_oral.se_appetite_loss_none",
-      "title": "GLP-1受容体作動薬(内服) 食欲不振（症状なし）",
+      "title": "GLP-1受容体作動薬(内服) 副作用なし（食欲不振）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -699,18 +1088,36 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "使用して、症状は落ち着いている。食欲低下は認めない。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)による食欲低下は現時点で認めず、治療継続可能。",
-      "P": "GLP-1受容体作動薬(内服)の継続中に食欲低下が出ることがあります。食事量が落ちる・体重が急に減るなどの症状があればご相談ください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "使用して症状は落ち着いている。食欲低下は認めない。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に食欲低下が出ることがあります。\n食事量が落ちる・体重が急に減るなどの変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_pancreatitis_none",
       "globalId": "dm_glp1ra_semaglutide_oral.se_pancreatitis_none",
-      "title": "GLP-1受容体作動薬(内服) 膵炎（症状なし）",
+      "title": "GLP-1受容体作動薬(内服) 副作用なし（膵炎）",
       "scenarioType": "side_effect",
       "scenarioGroup": "pancreatitis",
       "scenarioTags": [
@@ -729,18 +1136,37 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "使用して、症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)による膵炎は現時点で認めず、治療継続可能。",
-      "P": "GLP-1受容体作動薬(内服)の継続中に、強い腹痛や背中に響く痛みなどの症状が出ることがあります。強い腹痛や背中に響く痛みが続く場合は膵炎の可能性があるため、痛みが強い・発熱を伴う・我慢できない場合は救急受診も検討してください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "使用して症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "pancreatitis_attention",
+        "urgent_consult_advice"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "cp_good",
       "globalId": "dm_glp1ra_semaglutide_oral.cp_good",
-      "title": "GLP-1受容体作動薬(内服) コンプライアンス良好",
+      "title": "GLP-1受容体作動薬(内服) CP良好",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_good",
       "scenarioTags": [
@@ -757,18 +1183,36 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "使用して、症状は落ち着いている。使用は継続できている。",
-      "O": "GLP-1受容体作動薬(内服)使用中",
-      "A": "コンプライアンス良好。治療継続可能。",
-      "P": "将来の合併症予防のため継続してください。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "使用して症状は落ち着いており、継続できている。",
+      "O": "GLP-1受容体作動薬(内服)　使用中",
+      "A": "{{drug_subject}}のコンプライアンスは良好で、治療継続は可能である。",
+      "P": "引き続き用法を守って服用することで、血糖コントロールの維持および合併症予防が期待できます。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "cp_poor_missed_doses",
       "globalId": "dm_glp1ra_semaglutide_oral.cp_poor_missed_doses",
-      "title": "GLP-1受容体作動薬(内服) コンプライアンス不良（使用忘れ）",
+      "title": "GLP-1受容体作動薬(内服) CP不良（使用忘れ）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -790,24 +1234,43 @@
           "使用忘れ"
         ]
       },
-      "S": "使用を忘れることがある様子。",
-      "O": "GLP-1受容体作動薬(内服)使用中",
-      "A": "コンプライアンス不良。服薬指導実施。",
-      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。使用忘れにより血糖値が変動し、十分な治療効果が得られない可能性があります。",
+      "S": "使用忘れがみられる。",
+      "O": "GLP-1受容体作動薬(内服)　使用中",
+      "A": "{{drug_subject}}のコンプライアンスは不良で、使用忘れがみられる。",
+      "P": "継続して服用することで血糖コントロールが安定し、合併症予防につながります。\n使用忘れが続くと血糖値が変動し、十分な治療効果が得られない可能性があります。",
       "addonsRef": {
         "P": [
           "addon_adherence_alarm_suggestion",
-          "addon_adherence_prep_before_meal_habit"
+          "addon_adherence_prep_previous_night",
+          "addon_adherence_prep_before_meal"
         ]
       },
-      "followup": {
-        "P": "default"
-      }
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "cp_poor_self_adjust",
       "globalId": "dm_glp1ra_semaglutide_oral.cp_poor_self_adjust",
-      "title": "GLP-1受容体作動薬(内服) コンプライアンス不良（自己判断）",
+      "title": "GLP-1受容体作動薬(内服) CP不良（自己判断）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -826,21 +1289,40 @@
           "self_adjustment"
         ],
         "symptoms": [
-          "自己判断での調整"
+          "自己判断での使用調整"
         ]
       },
-      "S": "自己判断で使用を調整していた様子。",
-      "O": "GLP-1受容体作動薬(内服)使用中",
-      "A": "コンプライアンス不良。服薬指導実施。",
-      "P": "継続投与により血糖コントロールの安定および合併症予防につながることを説明。自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があることを説明。有害事象や体調変化がある場合は、自己調整せず医療機関へ相談するよう指導。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "自己判断での使用調整がみられる。",
+      "O": "GLP-1受容体作動薬(内服)　使用中",
+      "A": "{{drug_subject}}のコンプライアンスは不良で、自己判断による調整がみられる。",
+      "P": "継続して服用することで血糖コントロールが安定し、合併症予防につながります。\n自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があります。\n体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "adherence_support",
+        "urgent_consult_advice"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "cp_poor_visit_delay",
       "globalId": "dm_glp1ra_semaglutide_oral.cp_poor_visit_delay",
-      "title": "GLP-1受容体作動薬(内服) コンプライアンス不良（受診遅延）",
+      "title": "GLP-1受容体作動薬(内服) CP不良（受診遅延）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -859,16 +1341,34 @@
           "visit_delay"
         ],
         "symptoms": [
-          "受診遅延"
+          "受診遅延がみられる"
         ]
       },
-      "S": "都合で受診できなかった様子。",
-      "O": "GLP-1受容体作動薬(内服)使用中",
-      "A": "コンプライアンス不良。服薬指導実施。",
-      "P": "継続投与が血糖コントロール維持および合併症予防に重要であることを説明。治療中断により血糖値悪化の可能性があることを説明。受診が困難な場合は、事前に医療機関へ相談するよう助言。",
-      "followup": {
-        "P": "default"
-      }
+      "S": "都合により受診遅延がみられる。",
+      "O": "GLP-1受容体作動薬(内服)　使用中",
+      "A": "{{drug_subject}}のコンプライアンスは不良で、受診遅延がみられる。",
+      "P": "継続的な服用が血糖コントロールの維持と合併症予防につながります。\n治療が中断すると血糖値が悪化する可能性があります。\n次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "end_improved",
@@ -891,14 +1391,34 @@
           "glycemic_improved"
         ],
         "symptoms": [
-          "血糖改善"
+          "血糖コントロールが改善した"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、血糖コントロールが改善したため中止となった。",
-      "O": "GLP-1受容体作動薬(内服)処方終了",
-      "A": "GLP-1受容体作動薬(内服)は血糖改善のため終了。終了に伴う血糖変動に注意。",
-      "P": "GLP-1受容体作動薬(内服)終了後、血糖上昇や体調変化がある場合は受診するよう説明。",
-      "followupRef": "end_followup"
+      "S": "{{drug_subject}}は、血糖コントロールが改善したため中止となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方終了",
+      "A": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}終了後、血糖上昇や体調変化がある場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "end_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "end_insufficient_effect",
@@ -924,11 +1444,31 @@
           "効果不十分"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、効果不十分のため中止となった。",
-      "O": "GLP-1受容体作動薬(内服)処方終了",
-      "A": "GLP-1受容体作動薬(内服)は効果不十分のため終了。血糖管理の再評価が必要。",
-      "P": "GLP-1受容体作動薬(内服)終了後、血糖上昇の可能性あり。処方医の指示に従い、次の治療について相談するよう説明。",
-      "followupRef": "end_followup"
+      "S": "{{drug_subject}}は、効果不十分のため中止となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方終了",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
+      "P": "{{drug_subject}}終了後、血糖が上昇する可能性があります。\n次の治療方針については処方医にご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "end_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "end_ineffective",
@@ -951,14 +1491,34 @@
           "ineffective"
         ],
         "symptoms": [
-          "無効"
+          "効果が認められない"
         ]
       },
-      "S": "GLP-1受容体作動薬(内服)は、効果が認められなかったため中止となった。",
-      "O": "GLP-1受容体作動薬(内服)処方終了",
-      "A": "GLP-1受容体作動薬(内服)は無効と判断し終了。治療方針の変更が必要。",
-      "P": "GLP-1受容体作動薬(内服)終了後、血糖上昇の可能性あり。代替治療について処方医と相談するよう説明。",
-      "followupRef": "end_followup"
+      "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方終了",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+      "P": "{{drug_subject}}終了後、血糖が上昇する可能性があります。\n代替治療については処方医にご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "end_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_mild_continue",
@@ -991,11 +1551,31 @@
           "便秘"
         ]
       },
-      "S": "吐き気／下痢／便秘などがあるが、日常生活は可能。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)による消化器症状を軽度認めるが、治療継続可能。",
-      "P": "症状が軽い場合は、食事量を無理せず、脂っこいものを控えるなどで改善することがあります。便秘が続く・下痢が続くなど強い場合は調整が必要なことがあるためご相談ください。",
-      "followupRef": "se_followup"
+      "S": "吐き気・下痢・便秘などがあるが、日常生活は送れている。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
+      "P": "症状が軽い場合は、食事量を無理せず脂っこいものを控えるなどで改善することがあります。\n便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。ご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "se_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_moderate_consider_dr",
@@ -1028,11 +1608,32 @@
           "便秘"
         ]
       },
-      "S": "吐き気／下痢／便秘が強く、辛いことがあるが、日常生活は可能。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "GLP-1受容体作動薬(内服)による消化器症状が強く、継続困難の可能性あり。",
-      "P": "症状が強い場合は減量や薬の変更、便秘薬など追加が必要なことがあります。処方医へご相談ください。",
-      "followupRef": "se_followup"
+      "S": "吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
+      "P": "症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。\n処方医へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "se_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "gi_symptom_attention",
+        "urgent_consult_advice"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_change_due_to_gi_symptoms",
@@ -1064,11 +1665,32 @@
           "便秘"
         ]
       },
-      "S": "吐き気／下痢／便秘出現のため他剤へ変更となった。",
-      "O": "GLP-1受容体作動薬(内服)処方変更",
-      "A": "GLP-1受容体作動薬(内服)の使用による消化器症状出現のため変更。",
-      "P": "GLP-1受容体作動薬(内服)の変更により血糖上昇や体調変化があればご相談ください。",
-      "followupRef": "se_followup"
+      "S": "吐き気・下痢・便秘が出現したため、他剤へ変更となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方変更",
+      "A": "{{drug_subject}}の使用による消化器症状が出現したため、他剤への変更となった。",
+      "P": "{{drug_subject}}の変更後、血糖上昇や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "se_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_dose_decrease_due_to_gi_symptoms",
@@ -1100,11 +1722,32 @@
           "便秘"
         ]
       },
-      "S": "吐き気／下痢／便秘がひどいので減量になりました。",
-      "O": "GLP-1受容体作動薬(内服)減量",
-      "A": "GLP-1受容体作動薬(内服)の使用による消化器症状がみられたため減量。今後の血糖変動に注意。",
-      "P": "GLP-1受容体作動薬(内服)の減量後も、消化器症状があればご相談ください。",
-      "followupRef": "se_followup"
+      "S": "吐き気・下痢・便秘がひどいため、減量となった。",
+      "O": "GLP-1受容体作動薬(内服)　減量",
+      "A": "{{drug_subject}}の使用による消化器症状がみられたため減量となった。減量後の血糖変動に注意が必要である。",
+      "P": "{{drug_subject}}の減量後も消化器症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "se_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "gi_symptom_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "se_stop_due_to_gi_symptoms",
@@ -1136,11 +1779,32 @@
           "便秘"
         ]
       },
-      "S": "吐き気／下痢／便秘がひどいので中止となった。",
-      "O": "GLP-1受容体作動薬(内服)処方中止",
-      "A": "GLP-1受容体作動薬(内服)の使用による消化器症状出現のため中止。",
-      "P": "GLP-1受容体作動薬(内服)の中止により血糖上昇や体調変化があればご相談ください。",
-      "followupRef": "se_followup"
+      "S": "吐き気・下痢・便秘がひどいため、中止となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方中止",
+      "A": "{{drug_subject}}の使用による消化器症状が出現したため中止となった。",
+      "P": "{{drug_subject}}の中止後、血糖上昇や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "se_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "lifestyle_guidance",
@@ -1163,14 +1827,35 @@
           "poor_glycemic_control"
         ],
         "symptoms": [
-          "血糖値が下がらない"
+          "血糖値が改善しない"
         ]
       },
-      "S": "薬はちゃんと使用していますが、血糖値がなかなか下がりません。",
-      "O": "GLP-1受容体作動薬(内服)処方",
-      "A": "血糖改善不十分のため生活指導が必要。",
-      "P": "高血糖が続くと眼・腎・神経障害のリスクがあります。薬物療法に加え食事・運動療法が重要です。間食は控え、代替食品の活用を提案。血糖改善時は低血糖にも注意。",
-      "followupRef": "se_followup"
+      "S": "薬は服用しているが、血糖値がなかなか改善しない。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "血糖改善が不十分であり、生活指導が必要である。",
+      "P": "高血糖が続くと、眼・腎・神経障害などのリスクが高まります。\n薬物療法に加え、食事・運動療法も血糖コントロールに重要です。\n間食は控え、カロリーオフ・ノンシュガー食品への置き換えが効果的です。\n血糖が改善してきた際には低血糖症状が出ることがあります。気になる症状があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "se_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "lifestyle_guidance",
+        "hypoglycemia_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     },
     {
       "id": "sickday",
@@ -1189,24 +1874,47 @@
         "intent": "status_report",
         "template": "symptom_based",
         "symptomCodes": [
-          "cold_like_symptoms"
+          "fever",
+          "vomiting",
+          "diarrhea"
         ],
         "symptoms": [
-          "風邪気味"
+          "発熱",
+          "嘔吐",
+          "下痢"
         ]
       },
-      "S": "風邪気味です。",
-      "O": "GLP-1受容体作動薬(内服)使用中",
-      "A": "食事摂取低下および消化器症状により脱水リスク上昇。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要。",
-      "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は脱水や低血糖のリスクが高まります。血糖測定が可能であれば行ってください。水分は少量ずつこまめに摂取してください。服用継続の可否は体調や摂取状況により異なるため、自己判断せず処方医に相談してください。嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+      "S": "発熱・嘔吐・下痢などの体調不良がみられる。",
+      "O": "GLP-1受容体作動薬(内服)　使用中",
+      "A": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
+      "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n服用継続の可否は体調や摂取状況によって異なります。自己判断せず、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
       "addonsRef": {
         "P": [
           "addon_sickday_hold_sglt2_metformin"
         ]
       },
-      "followup": {
-        "P": "default"
-      }
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "sickday",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": { "behavior": "append", "mergeLevel": "section_line", "sectionRole": "objective" },
+        "A": { "behavior": "append", "mergeLevel": "section_block", "sectionRole": "assessment" },
+        "P": { "behavior": "append", "mergeLevel": "section_block", "closingBehavior": "dedupe_or_last", "sectionRole": "plan" }
+      },
+      "followupRef": "default_followup",
+      "phrasing": null,
+      "evidenceRefs": [],
+      "intentTags": [
+        "sickday_guidance",
+        "urgent_consult_advice"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
     }
   ]
 }

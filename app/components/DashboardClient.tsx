@@ -5,6 +5,7 @@ import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
 import { buildSoapFromScenario, buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
+import { resolveDrugSubject, resolveDrugName } from '../../lib/drugSubject'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../../lib/search'
 import type { DrugSuggestionItem } from '../../lib/search'
 import {
@@ -52,6 +53,7 @@ const NODE_LABEL_MAP: Record<string, string> = {
 }
 
 function resolveNodeLabel(mod: ModuleData): string {
+  if (mod.composition?.nodeLabelShort) return mod.composition.nodeLabelShort
   if (mod.composition?.nodeLabel) return mod.composition.nodeLabel
   const cat1 = mod.categoryPath?.[1]
   if (cat1 && NODE_LABEL_MAP[cat1]) return NODE_LABEL_MAP[cat1]
@@ -80,6 +82,7 @@ interface DashboardClientProps {
 function computePrimaryFields(
   scenario: ModuleData['scenarios'][number],
   defaults: ModuleData['defaults'],
+  drugName = '',
 ): SoapFields {
   const base = buildSoapFromScenario(scenario)
   const result = { ...base }
@@ -96,7 +99,8 @@ function computePrimaryFields(
     }
     if (appendText) result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
   }
-  return result
+  // {{drug_subject}} スロットを解決（S / A / P のみ。O は変更しない）
+  return resolveDrugSubject(result, drugName)
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -384,7 +388,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   useEffect(() => {
     if (editingNodeId !== null) return
     if (selectedScenarioId !== null && primaryScenario) {
-      setPrimaryBaseFields(computePrimaryFields(primaryScenario, activeModuleData.defaults))
+      // activeBrandName が primary の matchedBrandName に相当する
+      // resolveDrugName は DashboardClient スコープ外のため、ここでは直接フォールバック順を適用
+      const primaryDrugName = activeBrandName
+        ?? activeModuleData.drug?.brandNames?.[0]
+        ?? activeModuleData.drug?.genericName
+        ?? ''
+      setPrimaryBaseFields(computePrimaryFields(primaryScenario, activeModuleData.defaults, primaryDrugName))
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
     } else if (selectedScenarioId === null) {
@@ -412,11 +422,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     node: ComposeNode,
     newScenarioId: string,
     addonIds: string[],
+    matchedBrandName?: string,
   ): ComposeNode | null => {
     const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
     const sc = mod.scenarios.find(s => s.globalId === newScenarioId)
     if (!sc) return null
-    const { fields, closingText } = buildNodeFields(sc, mod, addonIds)
+    // ノード固有の薬剤名を解決（matchedBrandName → brandNames[0] → genericName の順）
+    const drugName = resolveDrugName(mod.drug, matchedBrandName)
+    const { fields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, addonIds, drugName)
     const domain = resolveDomain(mod)
     return {
       ...node,
@@ -428,6 +441,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         symptomCodes: sc.sComposition?.symptomCodes,
         closingText,
         domain,
+        groupKey,
+        clinicalDomain,
+        closingBehavior,
       },
       selectedAddonIds: addonIds,
       baseLabel: sc.title,
@@ -477,7 +493,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setComposeNodes(prev => {
         const node = prev.find(n => n.id === nodeId)
         if (!node) return prev
-        const updated = buildUpdatedNode(node, id, addonIds)
+        // node.matchedBrandName を渡して {{drug_subject}} を即時解決
+        const updated = buildUpdatedNode(node, id, addonIds, node.matchedBrandName)
         if (!updated) return prev
         return prev.map(n => n.id === nodeId ? updated : n)
       })
@@ -536,6 +553,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleComposeDrugSelect = useCallback((item: DrugSuggestionItem) => {
     const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
     const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
+    // matchedBrandName をノードに保持（シナリオ確定時の {{drug_subject}} 解決に使用）
+    const nodeDrugName = resolveDrugName(mod.drug, item.matchedBrandName)
     const newNode: ComposeNode = {
       id: nodeId,
       moduleId: mod.moduleId,
@@ -547,6 +566,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         closingText: undefined,
       },
       drugLabel: resolveNodeLabel(mod),
+      matchedBrandName: item.matchedBrandName,
+      resolvedDrugName: nodeDrugName,
       selectedAddonIds: [],
       baseLabel: '',
       baseDomain: resolveDomain(mod),
@@ -673,12 +694,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
           const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
           if (sc) {
-            const { fields, closingText } = buildNodeFields(sc, mod, newAddonIds)
+            // node.resolvedDrugName を渡して {{drug_subject}} を再解決
+            const { fields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, newAddonIds, node.resolvedDrugName ?? '')
             const domain = resolveDomain(mod)
             setComposeNodes(nodes.map(n =>
               n.id !== nodeId ? n : {
                 ...n,
-                block: { ...n.block, fields, closingText, domain },
+                block: { ...n.block, fields, closingText, domain, groupKey, clinicalDomain, closingBehavior },
                 selectedAddonIds: newAddonIds,
                 baseLabel: sc.title,
                 baseDomain: domain,
@@ -688,44 +710,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
       } else {
         // ── primary ブランチ ─────────────────────────────────
+        // buildNodeFields に一元化（addon + followup + {{drug_subject}} 解決を同一コードパスで処理）
         setPrimaryAddonIds(next)
         const sc = primaryScenarioRef.current
-        if (activeModuleData.addons && sc) {
-          // addon 込みの primaryBaseFields を再計算
-          const sectionMap = new Map<string, string[]>()
-          for (const key of next) {
-            const item = activeModuleData.addons.items[key]
-            if (!item) continue
-            const sec = item.targetSection
-            if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-            sectionMap.get(sec)!.push(item.text)
-          }
-          const resolveFollowup = (sec: 'S' | 'P'): string => {
-            if (sc.followupRef) {
-              return (activeModuleData.defaults?.followupProfiles?.[sc.followupRef] as Record<string, string> | undefined)?.[sec] ?? ''
-            }
-            const val = (sc.followup as Record<string, string> | undefined)?.[sec]
-            return val === 'default'
-              ? ((activeModuleData.defaults?.followup as Record<string, string> | undefined)?.[sec] ?? '')
-              : ''
-          }
-          const base = buildSoapFromScenario(sc)
-          const newFields: SoapFields = { S: '', O: '', A: '', P: '' }
-          for (const sec of ['S', 'O', 'A', 'P'] as const) {
-            const addonTexts = sectionMap.get(sec) ?? []
-            const parts = [base[sec], ...addonTexts].filter(Boolean)
-            if (sec === 'S' || sec === 'P') {
-              const followup = resolveFollowup(sec)
-              if (followup) parts.push(followup)
-            }
-            newFields[sec] = parts.join('\n')
-          }
-          setPrimaryBaseFields(newFields)
+        if (sc) {
+          const primaryDrugName = activeBrandName
+            ?? activeModuleData.drug?.brandNames?.[0]
+            ?? activeModuleData.drug?.genericName
+            ?? ''
+          const { fields } = buildNodeFields(sc, activeModuleData, newAddonIds, primaryDrugName)
+          setPrimaryBaseFields(fields)
         }
       }
       return next
     })
-  }, [activeModuleData.addons, activeModuleData.defaults, allModules, moduleData])
+  }, [activeModuleData, activeBrandName, allModules, moduleData])
 
   // ─────────────────────────────────────────────────────────────
   // handleSToggle（S先頭文トグル）

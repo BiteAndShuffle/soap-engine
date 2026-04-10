@@ -1,4 +1,17 @@
 import type { Scenario, SoapFields, SoapKey, MergedBlock, AddonsData, ModuleData } from './types'
+import { resolveDrugSubject } from './drugSubject'
+
+// ─────────────────────────────────────────────────────────────
+// buildS 用エントリ型（S 欄の合成メタデータ付きテキスト）
+// ─────────────────────────────────────────────────────────────
+
+interface SEntry {
+  text: string
+  /** scenario.mergePolicy.S.groupKey スナップショット */
+  groupKey?: string
+  /** composition.clinicalDomain スナップショット */
+  clinicalDomain?: string
+}
 
 // ─────────────────────────────────────────────────────────────
 // SOAP フィールド構築（新スキーマ: Scenario）
@@ -33,13 +46,23 @@ function resolveAddonText(key: string, addonsData: AddonsData): string {
  * @param scenario      対象シナリオ
  * @param mod           対象モジュール（followup / addon 解決に使用）
  * @param addonIds      このノードで選択された addon キー配列（確定時点のスナップショット）
- * @returns             fields（addon 込み完成済み） と closingText
+ * @param drugName      {{drug_subject}} スロットに代入するブランド名または一般名。
+ *                      空文字の場合はスロットをそのまま残す。
+ * @returns             fields（addon 込み・{{drug_subject}} 解決済み）、closingText、groupKey、
+ *                      clinicalDomain、closingBehavior（現行 JSON では常に "dedupe_or_last" または undefined）
  */
 export function buildNodeFields(
   scenario: Scenario,
   mod: ModuleData,
   addonIds: string[],
-): { fields: SoapFields; closingText: string | undefined } {
+  drugName = '',
+): {
+  fields: SoapFields
+  closingText: string | undefined
+  groupKey: string | undefined
+  clinicalDomain: string | undefined
+  closingBehavior: 'dedupe_or_last' | 'append_all' | undefined
+} {
   // 1. シナリオ本文
   const result: SoapFields = {
     S: scenario.S ?? '',
@@ -95,7 +118,15 @@ export function buildNodeFields(
     return undefined
   })()
 
-  return { fields: result, closingText }
+  // 5. mergePolicy メタデータをスナップショットとして取得
+  const groupKey = scenario.mergePolicy?.S?.groupKey
+  const clinicalDomain = mod.composition?.clinicalDomain
+  const closingBehavior = scenario.mergePolicy?.P?.closingBehavior
+
+  // 6. {{drug_subject}} スロットを解決（S / A / P のみ。O は変更しない）
+  const resolvedFields = resolveDrugSubject(result, drugName)
+
+  return { fields: resolvedFields, closingText, groupKey, clinicalDomain, closingBehavior }
 }
 
 /**
@@ -387,27 +418,47 @@ function splitDecision(text: string): { subject: string; predicate: string } {
  *   3. 固定順で再生成
  *      reason + obs → reason[0] + obs bodies を1行に結合
  *      decision → predicate ごとに subject を「・」結合
+ *
+ * groupKey ルール:
+ *   - reason 結合は「同一 groupKey かつ同一 clinicalDomain」のエントリ間のみ許可
+ *   - groupKey が異なる reason は other として個別出力する
+ *   - clinicalDomain による分離は mergeBlocks 側で行う（buildS に渡る時点で同一ドメイン保証済み）
  */
-function buildS(sTexts: string[]): string {
-  if (sTexts.length === 0) return ''
+function buildS(sEntries: SEntry[]): string {
+  if (sEntries.length === 0) return ''
 
   const reasons: string[] = []
+  const reasonGroupKeys: string[] = []   // reasons[i] に対応する groupKey
   const observations: string[] = []
   const decisions: string[] = []
   const others: string[] = []
 
-  for (const text of sTexts) {
-    const t = text.trim()
+  for (const entry of sEntries) {
+    const t = entry.text.trim()
     if (!t) continue
     const type = classifySLine(t)
-    if      (type === 'reason')      reasons.push(t)
+    if      (type === 'reason')      { reasons.push(t); reasonGroupKeys.push(entry.groupKey ?? '') }
     else if (type === 'observation') observations.push(t)
     else if (type === 'decision')    decisions.push(t)
     else                             others.push(t)
   }
 
-  // ① reason: 完全 dedupe（入力順保持）
-  const uniqueReasons = [...new Set(reasons)]
+  // ① reason: groupKey 単位で分類してから dedupe
+  // 先頭 reason の groupKey を「基準キー」とし、一致するものだけ結合対象とする。
+  // 異なる groupKey の reason は others 末尾に追加して個別出力（結合禁止）。
+  const baseGroupKey = reasonGroupKeys[0] ?? ''
+  const reasonsForMerge: string[] = []
+  const reasonsOtherGroupKey: string[] = []
+  for (let i = 0; i < reasons.length; i++) {
+    if (reasonGroupKeys[i] === baseGroupKey) {
+      reasonsForMerge.push(reasons[i])
+    } else {
+      reasonsOtherGroupKey.push(reasons[i])
+    }
+  }
+  const uniqueReasons = [...new Set(reasonsForMerge)]
+  // 異なる groupKey の reason を others に追加（重複のみ排除）
+  for (const r of new Set(reasonsOtherGroupKey)) others.push(r)
 
   // ② observation: prefix を除いた body を unique 化
   const obsBodySeen = new Set<string>()
@@ -469,18 +520,33 @@ function buildS(sTexts: string[]): string {
  * 方針: 「P本文は消さない・まとめすぎない」
  *
  *   body: 入力順のまま全て出力する。dedupe しない。
- *   closing: 同一 closing が連続している間は body だけ積み上げ、
- *            closing が変わる（または終端に達する）タイミングで1回出力する。
- *            異なる closing はそのまま残す。
+ *   closing: closingBehavior に従って処理する。
  *
- * 出力イメージ:
+ *   "dedupe_or_last"（実運用値・省略時もこの挙動）:
+ *     同一 closing が連続している間は body だけ積み上げ、
+ *     closing が変わるタイミングで1回出力する。
+ *     後処理 dedupeClosingLines() によって「次回」始まりの重複行も除去される。
+ *
+ *   "append_all"（将来拡張予約値 — 現在は未サポート）:
+ *     分岐は実装済みだが、後処理 dedupeClosingLines() との組み合わせで
+ *     意図どおりに動作しないことが確認されている（TC-P-03 参照）。
+ *     現行 JSON では使用不可。正式サポート前に dedupeClosingLines との
+ *     整合を取ること。
+ *
+ * 出力イメージ（dedupe_or_last）:
  *   本文A           ← closing「次回A」
  *   本文B           ← closing「次回A」（同一 → まだ出さない）
  *   次回A           ← closing が変わるタイミングで出力
  *   本文C           ← closing「次回B」
  *   次回B           ← 終端でそのまま出力
  */
-function buildP(pEntries: Array<{ body: string; closing: string | null }>): string {
+function buildP(
+  pEntries: Array<{
+    body: string
+    closing: string | null
+    closingBehavior?: 'dedupe_or_last' | 'append_all'
+  }>,
+): string {
   const out: string[] = []
   let pendingClosing: string | null = null
 
@@ -491,17 +557,29 @@ function buildP(pEntries: Array<{ body: string; closing: string | null }>): stri
       .filter(l => l.length > 0)
       .join('\n')
     const closing = entry.closing?.trim() || null
+    const behavior = entry.closingBehavior ?? 'dedupe_or_last'
 
-    // closing が前の entry と変わったら、積み上げた pending closing を先に出力
-    if (pendingClosing !== null && closing !== pendingClosing) {
-      out.push(pendingClosing)
-      pendingClosing = null
+    if (behavior === 'append_all') {
+      // ⚠️ append_all: 将来拡張予約値。現在は未サポート・現行 JSON での使用不可。
+      // 後処理 dedupeClosingLines() によって意図どおりに動作しないことが確認済み。
+      // 分岐は将来の正式サポート時の起点として残置する（動作保証なし）。
+      if (pendingClosing !== null) {
+        out.push(pendingClosing)
+        pendingClosing = null
+      }
+      if (body) out.push(body)
+      if (closing) out.push(closing)
+    } else {
+      // dedupe_or_last（実運用値・デフォルト）: 従来ロジックを維持
+      // closing が前の entry と変わったら、積み上げた pending closing を先に出力
+      if (pendingClosing !== null && closing !== pendingClosing) {
+        out.push(pendingClosing)
+        pendingClosing = null
+      }
+      if (body) out.push(body)
+      // closing を pending に積む（まだ出力しない）
+      pendingClosing = closing
     }
-
-    if (body) out.push(body)
-
-    // closing を pending に積む（まだ出力しない）
-    pendingClosing = closing
   }
 
   // 末尾の pending closing を出力
@@ -550,8 +628,37 @@ export function mergeBlocks(
   for (const key of keys) {
     if (key === 'S') {
       // S: 構造ベース合成（buildS）
-      const sTexts = all.map(block => block.fields.S.trim()).filter(Boolean)
-      result.S = buildS(sTexts)
+      //
+      // clinicalDomain 分離ルール:
+      //   clinicalDomain が定義されているブロックが存在する場合、
+      //   clinicalDomain ごとにグループ化して buildS を個別呼び出しし、
+      //   結果を改行区切りで結合する。
+      //   clinicalDomain が未定義のブロックは単一グループとして扱う。
+      //
+      // groupKey は buildS 内に SEntry として渡し、reason 結合の制限に使う。
+
+      // clinicalDomain でグループ化
+      const domainGroups = new Map<string, SEntry[]>()
+      const NO_DOMAIN = '__none__'
+      for (const block of all) {
+        const text = block.fields.S.trim()
+        if (!text) continue
+        const cd = block.clinicalDomain ?? NO_DOMAIN
+        if (!domainGroups.has(cd)) domainGroups.set(cd, [])
+        domainGroups.get(cd)!.push({
+          text,
+          groupKey: block.groupKey,
+          clinicalDomain: block.clinicalDomain,
+        })
+      }
+
+      const sResults: string[] = []
+      for (const entries of domainGroups.values()) {
+        const s = buildS(entries)
+        if (s) sResults.push(s)
+      }
+      result.S = sResults.join('\n')
+
     } else if (key !== 'P') {
       // O / A: 本文のみ結合（ラベル行なし）
       const parts: string[] = []
@@ -563,6 +670,7 @@ export function mergeBlocks(
       result[key] = parts.join('\n')
     } else {
       // P: 構造ベース合成（buildP）
+      // closingBehavior は MergedBlock に格納された値を渡す（未定義時は "dedupe_or_last"）
       const pEntries = all
         .filter(block => block.fields.P.trim())
         .map(block => {
@@ -572,7 +680,11 @@ export function mergeBlocks(
           if (closing && body.endsWith(closing)) {
             body = body.slice(0, body.length - closing.length).trimEnd()
           }
-          return { body, closing: closing || null }
+          return {
+            body,
+            closing: closing || null,
+            closingBehavior: block.closingBehavior,
+          }
         })
       result.P = buildP(pEntries)
     }
