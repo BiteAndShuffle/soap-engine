@@ -419,6 +419,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
+    // グループ切り替え時に前シナリオの addon 残留を防ぐ。
+    // editingNodeId !== null（node 編集中）や editingPrimary（1剤目の別グループ切替）は
+    // selectedScenarioId をリセットしない。
+    if (editingNodeIdRef.current === null && !editingPrimaryRef.current) {
+      setSelectedScenarioId(null)
+      setPrimaryBaseFields(EMPTY_FIELDS)
+      setPrimaryAddonIds(new Set())
+      setSelectedAddonIds(new Set())
+    }
   }, [])
 
   // ─────────────────────────────────────────────────────────────
@@ -899,7 +908,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     selectedScenarioId={currentScenarioId}
                     onSelectScenario={handleSelectScenario}
                   />
-                  {currentScenarioId !== null && targetModule.addons && (
+                  {currentScenarioId !== null && targetModule.addons && addonVisibleKeys.length > 0 && (
                     <AddonPanel
                       addons={targetModule.addons}
                       selectedAddonIds={selectedAddonIds}
