@@ -137,14 +137,21 @@ function computeDisplayFields(
   primaryScenario: ModuleData['scenarios'][number] | undefined,
   composeNodes: ComposeNode[],
   defaults: ModuleData['defaults'],
+  primaryMod: ModuleData,
 ): SoapFields {
   const confirmedNodes = composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null)
   if (confirmedNodes.length === 0) return { ...primaryBaseFields }
+  // 1剤目の groupKey / clinicalDomain を渡して reason 統合の同一性判定を正しく行う
+  const currentGroupKey     = primaryScenario?.mergePolicy?.S?.groupKey
+  const currentClinicalDomain = primaryMod.composition?.clinicalDomain
   return mergeBlocks(
     confirmedNodes.map(n => n.block),
     primaryBaseFields,
     primaryScenario?.title ?? '',
     primaryScenario ? resolveClosingText(primaryScenario, defaults) : undefined,
+    undefined,           // currentDomain（旧引数: 未使用のまま維持）
+    currentGroupKey,
+    currentClinicalDomain,
   )
 }
 
@@ -287,8 +294,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ══════════════════════════════════════════════════════════════
 
   const displayFields = useMemo(
-    () => computeDisplayFields(primaryBaseFields, primaryScenario, composeNodes, activeModuleData.defaults),
-    [primaryBaseFields, primaryScenario, composeNodes, activeModuleData.defaults],
+    () => computeDisplayFields(primaryBaseFields, primaryScenario, composeNodes, activeModuleData.defaults, activeModuleData),
+    [primaryBaseFields, primaryScenario, composeNodes, activeModuleData],
   )
 
   // ── finalFields: displayFields にペルソナ変換を適用した最終表示用 ──

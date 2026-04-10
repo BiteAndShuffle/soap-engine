@@ -420,15 +420,30 @@ function splitDecision(text: string): { subject: string; predicate: string } {
  *      decision → predicate ごとに subject を「・」結合
  *
  * groupKey ルール:
- *   - reason 結合は「同一 groupKey かつ同一 clinicalDomain」のエントリ間のみ許可
- *   - groupKey が異なる reason は other として個別出力する
+ *   - reason は「clinicalDomain × groupKey」単位で最初の1件のみ採用する
+ *   - 同一 groupKey の2件目以降はテキストが異なっても切り捨てる
+ *   - groupKey が '' の場合は各エントリを独立キーとして扱い、すべて個別出力（結合禁止）
  *   - clinicalDomain による分離は mergeBlocks 側で行う（buildS に渡る時点で同一ドメイン保証済み）
+ *
+ * 出力順:
+ *   - reason は最初に出現した groupKey の順を保持する
+ *   - observation / decision / other は reason の後
  */
 function buildS(sEntries: SEntry[]): string {
   if (sEntries.length === 0) return ''
 
-  const reasons: string[] = []
-  const reasonGroupKeys: string[] = []   // reasons[i] に対応する groupKey
+  // ① reason: groupKey ごとに「最初の1件のみ」採用する
+  //
+  // 採用ルール:
+  //   - groupKey が非空文字: そのキーで最初に出現したテキストを確定、以降の同一キーは捨てる
+  //   - groupKey が '' または undefined: キーとしてエントリごとのユニークIDを使い個別出力
+  //     （groupKey 未設定の reason は統合しない）
+  //
+  // 出力順: groupKey が最初に出現した順
+  const reasonByGroupKey = new Map<string, string>()  // groupKey → 採用テキスト（最初の1件）
+  const reasonGroupKeyOrder: string[]           = []  // groupKey の出現順（重複なし）
+  let anonymousReasonCounter                    = 0   // groupKey='' エントリの連番キー
+
   const observations: string[] = []
   const decisions: string[] = []
   const others: string[] = []
@@ -437,28 +452,27 @@ function buildS(sEntries: SEntry[]): string {
     const t = entry.text.trim()
     if (!t) continue
     const type = classifySLine(t)
-    if      (type === 'reason')      { reasons.push(t); reasonGroupKeys.push(entry.groupKey ?? '') }
-    else if (type === 'observation') observations.push(t)
-    else if (type === 'decision')    decisions.push(t)
-    else                             others.push(t)
-  }
 
-  // ① reason: groupKey 単位で分類してから dedupe
-  // 先頭 reason の groupKey を「基準キー」とし、一致するものだけ結合対象とする。
-  // 異なる groupKey の reason は others 末尾に追加して個別出力（結合禁止）。
-  const baseGroupKey = reasonGroupKeys[0] ?? ''
-  const reasonsForMerge: string[] = []
-  const reasonsOtherGroupKey: string[] = []
-  for (let i = 0; i < reasons.length; i++) {
-    if (reasonGroupKeys[i] === baseGroupKey) {
-      reasonsForMerge.push(reasons[i])
+    if (type === 'reason') {
+      const gk = entry.groupKey && entry.groupKey !== ''
+        ? entry.groupKey
+        : `__anon_${anonymousReasonCounter++}__`   // 空 groupKey → 独立キーとして個別出力
+      if (!reasonByGroupKey.has(gk)) {
+        reasonByGroupKey.set(gk, t)
+        reasonGroupKeyOrder.push(gk)
+      }
+      // 同一 groupKey の2件目以降は無視（最初の1件が確定済み）
+    } else if (type === 'observation') {
+      observations.push(t)
+    } else if (type === 'decision') {
+      decisions.push(t)
     } else {
-      reasonsOtherGroupKey.push(reasons[i])
+      others.push(t)
     }
   }
-  const uniqueReasons = [...new Set(reasonsForMerge)]
-  // 異なる groupKey の reason を others に追加（重複のみ排除）
-  for (const r of new Set(reasonsOtherGroupKey)) others.push(r)
+
+  // 採用された reason を出現順に並べる（groupKey ごとに1件確定済み）
+  const uniqueReasons = reasonGroupKeyOrder.map(gk => reasonByGroupKey.get(gk)!)
 
   // ② observation: prefix を除いた body を unique 化
   const obsBodySeen = new Set<string>()
@@ -601,6 +615,8 @@ function buildP(
  *   - 締め文の重複行を排除する（dedupeClosingLines）
  *
  * currentClosingText: 現在選択中シナリオの closing テキスト（省略可）
+ * currentGroupKey: 1剤目シナリオの mergePolicy.S.groupKey（S合成の reason dedupe に使用）
+ * currentClinicalDomain: 1剤目モジュールの composition.clinicalDomain（S合成のドメイン分離に使用）
  */
 export function mergeBlocks(
   blocks: MergedBlock[],
@@ -608,6 +624,8 @@ export function mergeBlocks(
   currentLabel: string,
   currentClosingText?: string,
   currentDomain?: string,
+  currentGroupKey?: string,
+  currentClinicalDomain?: string,
 ): SoapFields {
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   const result: SoapFields = { S: '', O: '', A: '', P: '' }
@@ -621,6 +639,8 @@ export function mergeBlocks(
       fields: currentFields,
       closingText: currentClosingText,
       domain: currentDomain,
+      groupKey: currentGroupKey,
+      clinicalDomain: currentClinicalDomain,
     },
     ...blocks,
   ]
