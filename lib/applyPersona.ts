@@ -493,6 +493,39 @@ function applyAxes(line: string, weights: AxisWeights): string {
 }
 
 // ─────────────────────────────────────────────────────────────
+// preservePhrases 保護ユーティリティ
+//
+// guard.preservePhrases に含まれる語句が変換前の行に存在し、
+// 変換後の行で消失または変化した場合、行全体を変換前に差し戻す。
+//
+// 【設計方針】
+//   語句の一部だけを保護するより「行全体を差し戻す」のが安全。
+//   false negative（保護漏れ）を排除するため、部分文字列マッチを使用する。
+// ─────────────────────────────────────────────────────────────
+
+function applyPreservePhrases(
+  original: string,
+  transformed: string,
+  preservePhrases: string[],
+): string {
+  const origLines = original.split('\n')
+  const transLines = transformed.split('\n')
+  return origLines
+    .map((origLine, i) => {
+      const transLine = transLines[i] ?? origLine
+      // 変換前行にpreservePhraseが含まれるなら変換後に同語句が存在するか確認
+      for (const phrase of preservePhrases) {
+        if (origLine.includes(phrase) && !transLine.includes(phrase)) {
+          // 保護語句が変換によって失われた → 元の行に差し戻し
+          return origLine
+        }
+      }
+      return transLine
+    })
+    .join('\n')
+}
+
+// ─────────────────────────────────────────────────────────────
 // 公開 API
 // ─────────────────────────────────────────────────────────────
 
@@ -557,5 +590,67 @@ export function applyPersonaToFields(
     O: applyPersona(fields.O, persona),
     A: applyPersona(fields.A, persona),
     P: applyPersona(fields.P, persona),
+  }
+}
+
+/**
+ * PersonaGuard を参照してフィールド単位・行単位の変換制御を行う。
+ *
+ * applyPersonaToFields の guard 対応版。
+ * guard.conciseAllowed / softnessAllowed に基づき AxisWeights を調整し、
+ * guard.preservePhrases で保護語句の変換を差し戻す。
+ *
+ * 【guard フラグの効果】
+ *   conciseAllowed = false → density を 0 に強制（density ルール不適用）
+ *   softnessAllowed = false → softness を 0 に強制（SOFTNESS_RULES 不適用）
+ *   personaSensitive = true かつ density モード → A 欄は density を適用しない
+ *     （critical シナリオの A 欄を体言止め変換から保護）
+ *   preservePhrases → 変換後に含まれなければ行全体を変換前に差し戻し
+ *
+ * 【呼び出し元の責務】
+ *   enabled=false の場合は fields をそのまま返す（参照同一）。
+ *   guard は derivePersonaGuard(scenario, urgentFlag) で生成すること。
+ *
+ * @param fields   変換対象の SOAP フィールド
+ * @param enabled  ペルソナ ON/OFF
+ * @param persona  適用するペルソナ ID
+ * @param guard    PersonaGuard（derivePersonaGuard で生成）
+ */
+export function applyPersonaToFieldsWithGuard(
+  fields: { S: string; O: string; A: string; P: string },
+  enabled: boolean,
+  persona: PersonaId,
+  guard: import('./personaGuard').PersonaGuard,
+): { S: string; O: string; A: string; P: string } {
+  if (!enabled) return fields
+
+  const baseWeights = PERSONA_PROFILES[persona]
+
+  // guard に基づき軸重みを調整する
+  const weights: AxisWeights = {
+    ...baseWeights,
+    density:  guard.conciseAllowed  ? baseWeights.density  : 0,
+    softness: guard.softnessAllowed ? baseWeights.softness : 0,
+  }
+
+  // A 欄保護: personaSensitive かつ density モードの場合は A 欄に density を適用しない
+  const aWeights: AxisWeights =
+    guard.personaSensitive && weights.density >= THRESHOLD.density
+      ? { ...weights, density: 0 }
+      : weights
+
+  const applyWithGuard = (text: string, w: AxisWeights): string => {
+    if (!text) return text
+    const transformed = transformLines(text, line => applyAxes(line, w))
+    return guard.preservePhrases.length > 0
+      ? applyPreservePhrases(text, transformed, guard.preservePhrases)
+      : transformed
+  }
+
+  return {
+    S: applyWithGuard(fields.S, weights),
+    O: applyWithGuard(fields.O, weights),
+    A: applyWithGuard(fields.A, aWeights),
+    P: applyWithGuard(fields.P, weights),
   }
 }

@@ -16,7 +16,8 @@ import {
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { S_BUTTON_GROUPS, type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
-import { applyPersonaToFields, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
+import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
+import { derivePersonaGuard } from '../../lib/personaGuard'
 import type { ValidationResult } from '../../lib/validationRunner'
 
 import Topbar, { type RouteFilter } from './Topbar'
@@ -300,10 +301,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── finalFields: displayFields にペルソナ変換を適用した最終表示用 ──
   // buildSoap / composeNodes / primaryBaseFields には一切影響しない（derived のみ）
-  const finalFields = useMemo(
-    () => applyPersonaToFields(displayFields, personaEnabled, selectedPersona),
-    [displayFields, personaEnabled, selectedPersona],
-  )
+  const finalFields = useMemo(() => {
+    const guard = derivePersonaGuard(
+      primaryScenario ?? { scenarioType: 'standard', sideEffectPresence: 'absent_or_not_observed' as const, intentTags: [] },
+      activeModuleData.template?.urgentFlag,
+    )
+    return applyPersonaToFieldsWithGuard(displayFields, personaEnabled, selectedPersona, guard)
+  }, [displayFields, personaEnabled, selectedPersona, primaryScenario, activeModuleData.template])
 
   // ── Refs を render ごとに同期 ──────────────────────────────
   primaryBaseFieldsRef.current = primaryBaseFields
