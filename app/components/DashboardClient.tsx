@@ -246,6 +246,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // useEffect / useCallback 内で stale closure を踏まずに persona 状態を参照するための ref
   const personaEnabledRef     = useRef(false)
   const selectedPersonaRef    = useRef<PersonaId>('polite')
+  // NLP モード中は selectedScenarioId 変化による useEffect の上書きをスキップするための ref
+  const uiModeRef             = useRef<UiMode>('manual')
 
   // ── 1剤目シナリオ（render ごとに解決） ──────────────────────
   const primaryScenario = useMemo(
@@ -296,6 +298,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   primaryScenarioRef.current   = primaryScenario
   personaEnabledRef.current    = personaEnabled
   selectedPersonaRef.current   = selectedPersona
+  uiModeRef.current            = uiMode
 
   // ── targetModule: activeContext のモジュール ─────────────────
   const targetModule = useMemo<ModuleData>(() => {
@@ -377,6 +380,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // - addon 込みの更新は handleAddonToggle の primary ブランチで行う
   useEffect(() => {
     if (editingNodeId !== null) return
+    // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
+    // selectedScenarioId 変化による上書きをスキップする
+    if (uiModeRef.current === 'nlp') return
     if (selectedScenarioId !== null && primaryScenario) {
       // activeBrandName が primary の matchedBrandName に相当する
       // resolveDrugName は DashboardClient スコープ外のため、ここでは直接フォールバック順を適用
@@ -856,18 +862,37 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpSelectorReason(result.selectorReason)
     setNlpConfidence(result.confidence)
     if (result.soap) {
-      // NLP 結果を primaryBaseFields に直接セット（useEffect の依存競合を避けるため
-      // selectedScenarioId より先に primaryBaseFields を確定させる）
+      // NLP 結果を primaryBaseFields に直接セット。
+      // uiModeRef.current === 'nlp' のため、後続の selectedScenarioId 変化による
+      // useEffect は rawFields/primaryBaseFields を上書きしない（uiModeRef ガード済み）。
       const nlpFields: SoapFields = {
         S: result.soap.S, O: result.soap.O, A: result.soap.A, P: result.soap.P,
       }
-      setPrimaryBaseFields(nlpFields)
+      // guard 生成: result.scenarioId から scenario を特定できるときはその guard を使う。
+      // NLP の SOAP テキストは soapComposer 由来（buildNodeFields とは別経路）なので、
+      // rawFields = nlpFields（NLP生成テキストそのもの）とし、
+      // guard はシナリオの importance / intentTags から安全側に派生させる。
+      // scenario が特定できない場合は guard を null にして reapplyPersonaToAllBlocks を抑制する。
+      const sc = result.scenarioId
+        ? activeModuleData.scenarios.find(s => s.globalId === result.scenarioId)
+        : undefined
+      const guard = sc
+        ? derivePersonaGuard(sc, activeModuleData.template?.urgentFlag)
+        : null
+      rawPrimaryFieldsRef.current = nlpFields
+      primaryGuardRef.current = guard
+      // persona が ON かつ guard がある場合は変換済みフィールドを表示する
+      const displayableFields = (personaEnabledRef.current && guard)
+        ? applyPersonaToFieldsWithGuard(nlpFields, true, selectedPersonaRef.current, guard)
+        : nlpFields
+      setPrimaryBaseFields(displayableFields)
       if (result.scenarioId) {
         setSelectedScenarioId(result.scenarioId)
-        const sc = activeModuleData.scenarios.find(s => s.globalId === result.scenarioId)
         if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
       }
     } else {
+      rawPrimaryFieldsRef.current = EMPTY_FIELDS
+      primaryGuardRef.current = null
       setPrimaryBaseFields(EMPTY_FIELDS)
       setSelectedScenarioId(null)
     }
