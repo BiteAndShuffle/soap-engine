@@ -16,7 +16,7 @@ import {
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { S_BUTTON_GROUPS, type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
-import { applyPersonaToFields, type PersonaId } from '../../lib/applyPersona'
+import { applyPersonaToFields, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
 import type { ValidationResult } from '../../lib/validationRunner'
 
 import Topbar, { type RouteFilter } from './Topbar'
@@ -1001,7 +1001,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         >
           <div className={s.personaModal} onClick={e => e.stopPropagation()}>
             <h2 className={s.personaModalTitle}>ペルソナ設定</h2>
-            {(['polite', 'concise', 'gentle'] as PersonaId[]).map(p => (
+            {(Object.keys(PERSONA_LABELS) as PersonaId[]).map(p => (
               <label key={p} className={s.personaModalOption}>
                 <input
                   type="radio"
@@ -1010,7 +1010,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                   checked={selectedPersona === p}
                   onChange={() => setSelectedPersona(p)}
                 />
-                {p === 'polite' ? '丁寧' : p === 'concise' ? '簡潔' : 'やさしい'}
+                {PERSONA_LABELS[p]}
               </label>
             ))}
             <button
