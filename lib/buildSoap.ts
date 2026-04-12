@@ -71,20 +71,20 @@ export function buildNodeFields(
     P: scenario.P ?? '',
   }
 
-  // 2. followup（S / P のみ）
-  for (const key of ['S', 'P'] as const) {
+  // 2. followup S のみ先に追記（P は addon の後に追記するため分離）
+  {
     let appendText: string | null | undefined
     const followupRef = scenario.followupRef
     if (followupRef) {
       const profile = mod.defaults?.followupProfiles?.[followupRef]
-      if (profile) appendText = (profile as Record<string, string | null>)[key]
+      if (profile) appendText = (profile as Record<string, string | null>)['S']
     } else {
-      const followupVal = (scenario.followup as Record<string, string> | undefined)?.[key]
+      const followupVal = (scenario.followup as Record<string, string> | undefined)?.['S']
       if (followupVal === 'default') {
-        appendText = (mod.defaults?.followup as Record<string, string> | undefined)?.[key]
+        appendText = (mod.defaults?.followup as Record<string, string> | undefined)?.['S']
       }
     }
-    if (appendText) result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
+    if (appendText) result['S'] = result['S'] ? `${result['S']}\n${appendText}` : appendText
   }
 
   // 3. addon テキストを targetSection に追記
@@ -102,6 +102,23 @@ export function buildNodeFields(
       const k = sec as SoapKey
       result[k] = result[k] ? `${result[k]}\n${texts.join('\n')}` : texts.join('\n')
     }
+  }
+
+  // 3b. followup P を addon の後に追記（P の組み立て順: scenario.P → addon → followup.P）
+  // closing は常に P の末尾に来る必要があるため、addon より後に追記する。
+  {
+    let appendText: string | null | undefined
+    const followupRef = scenario.followupRef
+    if (followupRef) {
+      const profile = mod.defaults?.followupProfiles?.[followupRef]
+      if (profile) appendText = (profile as Record<string, string | null>)['P']
+    } else {
+      const followupVal = (scenario.followup as Record<string, string> | undefined)?.['P']
+      if (followupVal === 'default') {
+        appendText = (mod.defaults?.followup as Record<string, string> | undefined)?.['P']
+      }
+    }
+    if (appendText) result['P'] = result['P'] ? `${result['P']}\n${appendText}` : appendText
   }
 
   // 4. closingText（P dedup 用）

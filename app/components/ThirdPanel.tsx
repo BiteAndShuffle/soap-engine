@@ -7,6 +7,15 @@ import type { SPrefix, SStatus } from './SoapEditor'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
+// Feature flags（開発用 UI の表示制御）
+//   true  → 表示する（開発時）
+//   false → 非表示（デフォルト）
+// ─────────────────────────────────────────────────────────────
+
+/** S フラグ / S先頭文ボタンの表示制御 */
+const FEATURE_S_BUTTONS = false
+
+// ─────────────────────────────────────────────────────────────
 // 仕様定数
 // ─────────────────────────────────────────────────────────────
 
@@ -236,8 +245,8 @@ export default function ThirdPanel({
   onSelectComposeDrug,
   onSubcategorySelect,
 }: ThirdPanelProps) {
-  // S先頭文ボタン・フラグ: 単剤 + 対象グループのみ表示
-  const showSButtons = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  // S先頭文ボタン・フラグ: 単剤 + 対象グループ + FEATURE_S_BUTTONS のみ表示
+  const showSButtons = FEATURE_S_BUTTONS && thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
 
   const handleSubcategorySelect = useCallback((label: string) => {
     if (onSubcategorySelect) {
