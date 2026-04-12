@@ -448,6 +448,18 @@ export interface MergedBlock {
    * 異なる clinicalDomain 間では S を統合しない。
    */
   clinicalDomain?: string
+  /**
+   * persona 変換前の原文フィールド（再計算ソース）。
+   * persona ON/OFF 切替や persona 変更時に rawFields から再変換する。
+   * persona 未適用時は fields と同値（参照一致でなくてもよい）。
+   */
+  rawFields?: SoapFields
+  /**
+   * このブロックのシナリオから派生した PersonaGuard。
+   * block 単位の persona 変換制御に使用する。
+   * rawFields と常にセットで保存すること。
+   */
+  guard?: import('./personaGuard').PersonaGuard
 }
 
 // ─────────────────────────────────────────────────────────────

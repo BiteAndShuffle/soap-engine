@@ -264,6 +264,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const editingPrimaryRef     = useRef(false)
   const composeNodesRef       = useRef<ComposeNode[]>([])
   const primaryScenarioRef    = useRef<ModuleData['scenarios'][number] | undefined>(undefined)
+  // persona 再計算用: 1剤目の rawFields / guard を保持
+  const rawPrimaryFieldsRef   = useRef<SoapFields>(EMPTY_FIELDS)
+  const primaryGuardRef       = useRef<ReturnType<typeof derivePersonaGuard> | null>(null)
 
   // ── 1剤目シナリオ（render ごとに解決） ──────────────────────
   const primaryScenario = useMemo(
@@ -299,15 +302,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [primaryBaseFields, primaryScenario, composeNodes, activeModuleData],
   )
 
-  // ── finalFields: displayFields にペルソナ変換を適用した最終表示用 ──
-  // buildSoap / composeNodes / primaryBaseFields には一切影響しない（derived のみ）
-  const finalFields = useMemo(() => {
-    const guard = derivePersonaGuard(
-      primaryScenario ?? { scenarioType: 'standard', sideEffectPresence: 'absent_or_not_observed' as const, intentTags: [] },
-      activeModuleData.template?.urgentFlag,
-    )
-    return applyPersonaToFieldsWithGuard(displayFields, personaEnabled, selectedPersona, guard)
-  }, [displayFields, personaEnabled, selectedPersona, primaryScenario, activeModuleData.template])
+  // ── finalFields: block 単位で persona 変換済みの fields を merge した結果 ──
+  // persona 変換は primaryBaseFields / block.fields に焼き込み済みのため後がけ不要。
+  // displayFields = computeDisplayFields(persona変換済み fields) がそのまま最終表示値。
+  const finalFields = displayFields
 
   // ── Refs を render ごとに同期 ──────────────────────────────
   primaryBaseFieldsRef.current = primaryBaseFields
@@ -405,10 +403,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
-      setPrimaryBaseFields(computePrimaryFields(primaryScenario, activeModuleData.defaults, primaryDrugName))
+      const rawFields = computePrimaryFields(primaryScenario, activeModuleData.defaults, primaryDrugName)
+      const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
+      rawPrimaryFieldsRef.current = rawFields
+      primaryGuardRef.current = guard
+      // addon なし初期化なので persona 変換は不要（addon 追加時に handleAddonToggle で再変換）
+      setPrimaryBaseFields(rawFields)
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
     } else if (selectedScenarioId === null) {
+      rawPrimaryFieldsRef.current = EMPTY_FIELDS
+      primaryGuardRef.current = null
       setPrimaryBaseFields(EMPTY_FIELDS)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -449,7 +454,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (!sc) return null
     // ノード固有の薬剤名を解決（matchedBrandName → brandNames[0] → genericName の順）
     const drugName = resolveDrugName(mod.drug, matchedBrandName)
-    const { fields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, addonIds, drugName)
+    const { fields: rawFields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, addonIds, drugName)
+    const guard = derivePersonaGuard(sc, mod.template?.urgentFlag)
+    const fields = personaEnabled
+      ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
+      : rawFields
     const domain = resolveDomain(mod)
     return {
       ...node,
@@ -458,6 +467,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         id: node.block.id,
         templateLabel: sc.title,
         fields,
+        rawFields,
+        guard,
         symptomCodes: sc.sComposition?.symptomCodes,
         closingText,
         domain,
@@ -469,7 +480,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       baseLabel: sc.title,
       baseDomain: domain,
     }
-  }, [allModules, moduleData])
+  }, [allModules, moduleData, personaEnabled, selectedPersona])
 
   // ─────────────────────────────────────────────────────────────
   // handleSelectPrimaryNode（1剤目チップクリック: primary 編集モードのトグル）
@@ -715,12 +726,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
           if (sc) {
             // node.resolvedDrugName を渡して {{drug_subject}} を再解決
-            const { fields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, newAddonIds, node.resolvedDrugName ?? '')
+            const { fields: rawFields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, newAddonIds, node.resolvedDrugName ?? '')
+            const guard = derivePersonaGuard(sc, mod.template?.urgentFlag)
+            const fields = personaEnabled
+              ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
+              : rawFields
             const domain = resolveDomain(mod)
             setComposeNodes(nodes.map(n =>
               n.id !== nodeId ? n : {
                 ...n,
-                block: { ...n.block, fields, closingText, domain, groupKey, clinicalDomain, closingBehavior },
+                block: { ...n.block, fields, rawFields, guard, closingText, domain, groupKey, clinicalDomain, closingBehavior },
                 selectedAddonIds: newAddonIds,
                 baseLabel: sc.title,
                 baseDomain: domain,
@@ -738,13 +753,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             ?? activeModuleData.drug?.brandNames?.[0]
             ?? activeModuleData.drug?.genericName
             ?? ''
-          const { fields } = buildNodeFields(sc, activeModuleData, newAddonIds, primaryDrugName)
+          const { fields: rawFields } = buildNodeFields(sc, activeModuleData, newAddonIds, primaryDrugName)
+          const guard = derivePersonaGuard(sc, activeModuleData.template?.urgentFlag)
+          rawPrimaryFieldsRef.current = rawFields
+          primaryGuardRef.current = guard
+          const fields = personaEnabled
+            ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
+            : rawFields
           setPrimaryBaseFields(fields)
         }
       }
       return next
     })
-  }, [activeModuleData, activeBrandName, allModules, moduleData])
+  }, [activeModuleData, activeBrandName, allModules, moduleData, personaEnabled, selectedPersona])
 
   // ─────────────────────────────────────────────────────────────
   // handleSToggle（S先頭文トグル）
@@ -846,6 +867,41 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpIsGenerating(false)
   }, [activeModuleData])
 
+  // ─────────────────────────────────────────────────────────────
+  // reapplyPersonaToAllBlocks
+  //
+  // persona ON/OFF 切替・persona 変更時に全ブロックを再変換する。
+  // 1剤目: rawPrimaryFieldsRef + primaryGuardRef から再計算して setPrimaryBaseFields
+  // 2剤目以降: node.block.rawFields + node.block.guard から再計算して setComposeNodes
+  //
+  // nextEnabled / nextPersona: 変更後の値（setState の前に呼ぶため引数で受け取る）
+  // ─────────────────────────────────────────────────────────────
+
+  const reapplyPersonaToAllBlocks = useCallback((nextEnabled: boolean, nextPersona: PersonaId) => {
+    // 1剤目の再計算
+    const rawPrimary = rawPrimaryFieldsRef.current
+    const primaryGuard = primaryGuardRef.current
+    if (primaryGuard) {
+      const fields = nextEnabled
+        ? applyPersonaToFieldsWithGuard(rawPrimary, true, nextPersona, primaryGuard)
+        : rawPrimary
+      setPrimaryBaseFields(fields)
+    }
+    // 2剤目以降: rawFields / guard がある block のみ再計算
+    setComposeNodes(prev => prev.map(node => {
+      if (!node.block.rawFields || !node.block.guard) return node
+      return {
+        ...node,
+        block: {
+          ...node.block,
+          fields: nextEnabled
+            ? applyPersonaToFieldsWithGuard(node.block.rawFields, true, nextPersona, node.block.guard)
+            : node.block.rawFields,
+        },
+      }
+    }))
+  }, [])
+
   // ── 自然言語ボタン表示フラグ（false = 非表示。将来の復活用定数） ──
   const showNlpButton = false
 
@@ -882,7 +938,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         routeFilter={routeFilter}
         onRouteFilterChange={setRouteFilter}
         personaEnabled={personaEnabled}
-        onPersonaToggle={() => setPersonaEnabled(v => !v)}
+        onPersonaToggle={() => {
+          const nextEnabled = !personaEnabled
+          setPersonaEnabled(nextEnabled)
+          reapplyPersonaToAllBlocks(nextEnabled, selectedPersona)
+        }}
         onPersonaSettingsOpen={() => setPersonaModalOpen(true)}
       />
 
@@ -1012,7 +1072,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                   name="persona"
                   value={p}
                   checked={selectedPersona === p}
-                  onChange={() => setSelectedPersona(p)}
+                  onChange={() => {
+                    setSelectedPersona(p)
+                    reapplyPersonaToAllBlocks(personaEnabled, p)
+                  }}
                 />
                 {PERSONA_LABELS[p]}
               </label>
