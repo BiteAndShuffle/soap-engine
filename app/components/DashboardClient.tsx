@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
-import { buildSoapFromScenario, buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
+import { buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
 import { resolveDrugSubject, resolveDrugName } from '../../lib/drugSubject'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../../lib/search'
 import type { DrugSuggestionItem } from '../../lib/search'
@@ -79,30 +79,6 @@ interface DashboardClientProps {
 // ─────────────────────────────────────────────────────────────
 // ユーティリティ: 1剤目シナリオ + followup から primaryBaseFields を計算
 // ─────────────────────────────────────────────────────────────
-
-function computePrimaryFields(
-  scenario: ModuleData['scenarios'][number],
-  defaults: ModuleData['defaults'],
-  drugName = '',
-): SoapFields {
-  const base = buildSoapFromScenario(scenario)
-  const result = { ...base }
-  for (const key of ['S', 'P'] as const) {
-    let appendText: string | null | undefined
-    if (scenario.followupRef) {
-      const profile = defaults?.followupProfiles?.[scenario.followupRef]
-      if (profile) appendText = (profile as Record<string, string | null>)[key]
-    } else {
-      const val = (scenario.followup as Record<string, string> | undefined)?.[key]
-      if (val === 'default') {
-        appendText = (defaults?.followup as Record<string, string> | undefined)?.[key]
-      }
-    }
-    if (appendText) result[key] = result[key] ? `${result[key]}\n${appendText}` : appendText
-  }
-  // {{drug_subject}} スロットを解決（S / A / P のみ。O は変更しない）
-  return resolveDrugSubject(result, drugName)
-}
 
 // ─────────────────────────────────────────────────────────────
 // ユーティリティ: followup closing テキストを解決
@@ -267,6 +243,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // persona 再計算用: 1剤目の rawFields / guard を保持
   const rawPrimaryFieldsRef   = useRef<SoapFields>(EMPTY_FIELDS)
   const primaryGuardRef       = useRef<ReturnType<typeof derivePersonaGuard> | null>(null)
+  // useEffect / useCallback 内で stale closure を踏まずに persona 状態を参照するための ref
+  const personaEnabledRef     = useRef(false)
+  const selectedPersonaRef    = useRef<PersonaId>('polite')
 
   // ── 1剤目シナリオ（render ごとに解決） ──────────────────────
   const primaryScenario = useMemo(
@@ -315,6 +294,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   editingPrimaryRef.current    = editingPrimary
   composeNodesRef.current      = composeNodes
   primaryScenarioRef.current   = primaryScenario
+  personaEnabledRef.current    = personaEnabled
+  selectedPersonaRef.current   = selectedPersona
 
   // ── targetModule: activeContext のモジュール ─────────────────
   const targetModule = useMemo<ModuleData>(() => {
@@ -403,12 +384,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
-      const rawFields = computePrimaryFields(primaryScenario, activeModuleData.defaults, primaryDrugName)
+      const { fields: rawFields } = buildNodeFields(primaryScenario, activeModuleData, [], primaryDrugName)
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
-      // addon なし初期化なので persona 変換は不要（addon 追加時に handleAddonToggle で再変換）
-      setPrimaryBaseFields(rawFields)
+      // persona が ON の場合は初期表示から変換済みフィールドを使用する
+      // personaEnabled / selectedPersona は ref 経由で参照（effect の deps に加えない）
+      const displayableFields = personaEnabledRef.current
+        ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard)
+        : rawFields
+      setPrimaryBaseFields(displayableFields)
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
     } else if (selectedScenarioId === null) {
@@ -699,7 +684,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         },
       ))
     } else {
-      setPrimaryBaseFields(prev => ({ ...prev, [key]: value }))
+      // rawPrimaryFieldsRef も同時に更新する。
+      // persona 切替時に reapplyPersonaToAllBlocks が rawPrimaryFieldsRef から再計算するため、
+      // ここで更新しないと手動編集内容が persona 切替後に上書きされて消える。
+      const updatedRaw = { ...rawPrimaryFieldsRef.current, [key]: value }
+      rawPrimaryFieldsRef.current = updatedRaw
+      setPrimaryBaseFields({ ...updatedRaw })
     }
   }, [])
 
