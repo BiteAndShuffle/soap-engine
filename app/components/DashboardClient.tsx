@@ -677,13 +677,30 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
     const nodeId = editingNodeIdRef.current
     if (nodeId !== null) {
-      setComposeNodes(prev => prev.map(n =>
-        n.id !== nodeId ? n : {
+      // ── node ブランチ ────────────────────────────────────────
+      // rawFields を先に更新し、guard + persona を通して fields を再計算する。
+      // rawFields を更新しないと persona 切替時に reapplyPersonaToAllBlocks が
+      // 古い rawFields から再計算して手動編集内容を上書きしてしまう。
+      //
+      // block.guard が未設定（pending ノード）の場合はフォールバック:
+      //   fields のみ更新し rawFields は変更しない（persona 適用前のシナリオ未確定状態）。
+      setComposeNodes(prev => prev.map(n => {
+        if (n.id !== nodeId) return n
+        const updatedRaw = { ...(n.block.rawFields ?? n.block.fields), [key]: value }
+        const updatedFields = (n.block.guard && personaEnabledRef.current)
+          ? applyPersonaToFieldsWithGuard(updatedRaw, true, selectedPersonaRef.current, n.block.guard)
+          : updatedRaw
+        return {
           ...n,
-          block: { ...n.block, fields: { ...n.block.fields, [key]: value } },
-        },
-      ))
+          block: {
+            ...n.block,
+            rawFields: updatedRaw,
+            fields: updatedFields,
+          },
+        }
+      }))
     } else {
+      // ── primary ブランチ ─────────────────────────────────────
       // rawPrimaryFieldsRef も同時に更新する。
       // persona 切替時に reapplyPersonaToAllBlocks が rawPrimaryFieldsRef から再計算するため、
       // ここで更新しないと手動編集内容が persona 切替後に上書きされて消える。
