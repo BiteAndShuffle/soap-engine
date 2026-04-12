@@ -21,9 +21,10 @@
     "clinicalDomain": "diabetes",
     "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
-    "nodeLabelShort": "GLP1",
-    "nodeLabelLong": "GLP-1受容体作動薬",
-    "nodeKey": "glp1",
+    "nodeLabelShort": "GLP1内服",
+    "nodeLabelLong": "GLP-1受容体作動薬（内服）",
+    "nodeKey": "glp1ra_oral",
+    "classKey": "glp1ra",
     "defaultSMergeLevel": "clinical_domain",
     "canonicalSource": {
       "nodeIdentity": "composition",
@@ -335,9 +336,9 @@
     "subtitle": "リベルサス（セマグルチド）",
     "drugClassLabel": "GLP-1受容体作動薬",
     "drugGeneric": "セマグルチド",
-    "nodeLabelShort": "GLP1",
-    "nodeLabelLong": "GLP-1受容体作動薬",
-    "nodeKey": "glp1"
+    "nodeLabelShort": "GLP1内服",
+    "nodeLabelLong": "GLP-1受容体作動薬（内服）",
+    "nodeKey": "glp1ra_oral"
   },
   "defaults": {
     "followup": {

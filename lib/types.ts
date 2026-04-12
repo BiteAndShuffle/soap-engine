@@ -529,6 +529,19 @@ export interface ModuleData {
     nodeLabel?: string
     /** ノードバーに表示する短縮ラベル（canonical source: composition.nodeLabelShort） */
     nodeLabelShort?: string
+    /** ノードバーに表示する長ラベル（canonical source: composition.nodeLabelLong） */
+    nodeLabelLong?: string
+    /**
+     * 剤形単位のノード識別子。合成ロジック・persona・UI grouping で使用。
+     * 例: "glp1ra_oral", "glp1ra_injection"（旧互換値: "glp1"）
+     * 未定義のモジュールは旧設計扱いとしてフォールバック処理する。
+     */
+    nodeKey?: string
+    /**
+     * 薬効クラス識別子。nodeKey より上位の概念で、剤形をまたいだクラス統合に使用。
+     * 例: "glp1ra"。未定義モジュールは旧互換として無視される。
+     */
+    classKey?: string
     /**
      * 臨床ドメイン識別子。S欄合成時に異なるドメイン間の統合を防ぐために使用。
      * 例: "diabetes", "respiratory"
@@ -542,7 +555,18 @@ export interface ModuleData {
   }
   drug?: Drug
   drugResolution?: DrugResolution
-  display?: { title: string; subtitle: string; drugClassLabel?: string }
+  display?: {
+    title: string
+    subtitle: string
+    drugClassLabel?: string
+    drugGeneric?: string
+    /** composition.nodeLabelShort の表示側 projection（canonical source は composition） */
+    nodeLabelShort?: string
+    /** composition.nodeLabelLong の表示側 projection */
+    nodeLabelLong?: string
+    /** composition.nodeKey の表示側 projection */
+    nodeKey?: string
+  }
   template?: ModuleTemplate
   risks?: ModuleRisks
   searchConfig?: ModuleSearchConfig

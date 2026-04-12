@@ -16,9 +16,10 @@
     "clinicalDomain": "diabetes",
     "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
-    "nodeLabelShort": "GLP1",
-    "nodeLabelLong": "GLP-1受容体作動薬",
-    "nodeKey": "glp1",
+    "nodeLabelShort": "GLP1注射",
+    "nodeLabelLong": "GLP-1受容体作動薬（注射）",
+    "nodeKey": "glp1ra_injection",
+    "classKey": "glp1ra",
     "defaultSMergeLevel": "clinical_domain",
     "canonicalSource": {
       "nodeIdentity": "composition",
@@ -409,9 +410,9 @@
     "subtitle": "GLP-1受容体作動薬（注射）",
     "drugClassLabel": "GLP-1受容体作動薬",
     "drugGeneric": "GLP-1受容体作動薬",
-    "nodeLabelShort": "GLP1",
-    "nodeLabelLong": "GLP-1受容体作動薬",
-    "nodeKey": "glp1"
+    "nodeLabelShort": "GLP1注射",
+    "nodeLabelLong": "GLP-1受容体作動薬（注射）",
+    "nodeKey": "glp1ra_injection"
   },
   "defaults": {
     "followup": {
