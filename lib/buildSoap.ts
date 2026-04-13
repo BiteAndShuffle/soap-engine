@@ -554,22 +554,23 @@ function buildS(sEntries: SEntry[]): string {
  *   closing: closingBehavior に従って処理する。
  *
  *   "dedupe_or_last"（実運用値・省略時もこの挙動）:
- *     同一 closing が連続している間は body だけ積み上げ、
- *     closing が変わるタイミングで1回出力する。
- *     後処理 dedupeClosingLines() によって「次回」始まりの重複行も除去される。
+ *     連続する同一 closing を1グループとして扱う。
+ *     グループ内の body をすべて先に出力し、グループ末尾に closing を1回だけ出力する。
+ *     closing が変わった時点（= グループ境界）で現グループを確定し、
+ *     新しい closing のグループを開始する。
+ *     非連続の同一 closing は別グループとして扱い、再度 closing を出力する。
  *
  *   "append_all"（将来拡張予約値 — 現在は未サポート）:
- *     分岐は実装済みだが、後処理 dedupeClosingLines() との組み合わせで
- *     意図どおりに動作しないことが確認されている（TC-P-03 参照）。
- *     現行 JSON では使用不可。正式サポート前に dedupeClosingLines との
- *     整合を取ること。
+ *     分岐は実装済みだが、現行 JSON での使用不可。
  *
  * 出力イメージ（dedupe_or_last）:
- *   本文A           ← closing「次回A」
- *   本文B           ← closing「次回A」（同一 → まだ出さない）
- *   次回A           ← closing が変わるタイミングで出力
- *   本文C           ← closing「次回B」
- *   次回B           ← 終端でそのまま出力
+ *   本文A           ┐ closing=「次回A」
+ *   本文B           ┘ ← 同一 closing が連続 → グループ化
+ *   次回A           ← グループ末尾に closing を1回出力
+ *   本文C           ← closing=「次回C」（別グループ）
+ *   次回C
+ *   本文D           ← closing=「次回A」（非連続 → 再度出力）
+ *   次回A
  */
 function buildP(
   pEntries: Array<{
@@ -579,7 +580,19 @@ function buildP(
   }>,
 ): string {
   const out: string[] = []
-  let pendingClosing: string | null = null
+  // 現在グループの body 群と closing を保持する
+  const groupBodies: string[] = []
+  let groupClosing: string | null = null
+
+  /** 現グループを out に flush する */
+  function flushGroup(): void {
+    for (const b of groupBodies) {
+      if (b) out.push(b)
+    }
+    if (groupClosing !== null) out.push(groupClosing)
+    groupBodies.length = 0
+    groupClosing = null
+  }
 
   for (const entry of pEntries) {
     const body = entry.body
@@ -592,29 +605,24 @@ function buildP(
 
     if (behavior === 'append_all') {
       // ⚠️ append_all: 将来拡張予約値。現在は未サポート・現行 JSON での使用不可。
-      // 後処理 dedupeClosingLines() によって意図どおりに動作しないことが確認済み。
-      // 分岐は将来の正式サポート時の起点として残置する（動作保証なし）。
-      if (pendingClosing !== null) {
-        out.push(pendingClosing)
-        pendingClosing = null
-      }
+      // dedupe_or_last グループが pending の場合は先に flush してから処理する。
+      flushGroup()
       if (body) out.push(body)
       if (closing) out.push(closing)
     } else {
-      // dedupe_or_last（実運用値・デフォルト）: 従来ロジックを維持
-      // closing が前の entry と変わったら、積み上げた pending closing を先に出力
-      if (pendingClosing !== null && closing !== pendingClosing) {
-        out.push(pendingClosing)
-        pendingClosing = null
+      // dedupe_or_last（実運用値・デフォルト）
+      // closing が変わったタイミングでグループ境界とみなし現グループを flush する。
+      // 同一 closing が連続する間はグループを継続し body を積み上げる。
+      if (closing !== groupClosing) {
+        flushGroup()
+        groupClosing = closing
       }
-      if (body) out.push(body)
-      // closing を pending に積む（まだ出力しない）
-      pendingClosing = closing
+      if (body) groupBodies.push(body)
     }
   }
 
-  // 末尾の pending closing を出力
-  if (pendingClosing !== null) out.push(pendingClosing)
+  // 最後のグループを flush
+  flushGroup()
 
   return out.join('\n')
 }
