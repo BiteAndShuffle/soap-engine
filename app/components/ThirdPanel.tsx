@@ -245,8 +245,10 @@ export default function ThirdPanel({
   onSelectComposeDrug,
   onSubcategorySelect,
 }: ThirdPanelProps) {
-  // S先頭文ボタン・フラグ: 単剤 + 対象グループ + FEATURE_S_BUTTONS のみ表示
-  const showSButtons = FEATURE_S_BUTTONS && thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  // Sフラグ（副作用なし / CP良好）: 単剤 + 対象グループのみ表示（FEATURE_S_BUTTONS に依存しない）
+  const showSFlags   = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  // S先頭文ボタン: 単剤 + 対象グループ + FEATURE_S_BUTTONS のみ表示（開発用 UI）
+  const showSButtons = FEATURE_S_BUTTONS && showSFlags
 
   const handleSubcategorySelect = useCallback((label: string) => {
     if (onSubcategorySelect) {
@@ -285,10 +287,10 @@ export default function ThirdPanel({
           )}
         </div>
 
-        {/* フラグ + S先頭文ボタン: 単剤 + 対象グループのみ */}
-        {showSButtons && (
+        {/* Sフラグ（副作用なし / CP良好）+ S先頭文ボタン: 単剤 + 対象グループのみ */}
+        {showSFlags && (
           <div className={s.thirdPanelStickyBottom}>
-            {/* フラグ（副作用なし / コンプライアンス良好） */}
+            {/* フラグ（副作用なし / コンプライアンス良好）: 常に表示 */}
             <div className={s.sActionHeading}>S フラグ</div>
             <div className={s.sActionBtnGrid}>
               <button
@@ -306,27 +308,32 @@ export default function ThirdPanel({
                 CP良好
               </button>
             </div>
-            <div className={s.sActionHeading}>S 先頭文</div>
-            {SECTIONS.map(sec => (
-              <div key={sec.prefix} className={s.sActionSection}>
-                <div className={s.sActionSectionLabel}>{sec.label}</div>
-                <div className={s.sActionBtnGrid}>
-                  {STATUSES.map(st => {
-                    const isActive = currentSPrefix === sec.prefix && currentSStatus === st.status
-                    return (
-                      <button
-                        key={st.status}
-                        className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
-                        onClick={() => onSAction(sec.prefix, st.status)}
-                        aria-pressed={isActive}
-                      >
-                        {st.label}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+            {/* S先頭文ボタン: FEATURE_S_BUTTONS=true のときのみ表示（開発用 UI） */}
+            {showSButtons && (
+              <>
+                <div className={s.sActionHeading}>S 先頭文</div>
+                {SECTIONS.map(sec => (
+                  <div key={sec.prefix} className={s.sActionSection}>
+                    <div className={s.sActionSectionLabel}>{sec.label}</div>
+                    <div className={s.sActionBtnGrid}>
+                      {STATUSES.map(st => {
+                        const isActive = currentSPrefix === sec.prefix && currentSStatus === st.status
+                        return (
+                          <button
+                            key={st.status}
+                            className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
+                            onClick={() => onSAction(sec.prefix, st.status)}
+                            aria-pressed={isActive}
+                          >
+                            {st.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         )}
       </div>
