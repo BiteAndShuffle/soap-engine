@@ -196,9 +196,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   })
 
   // ── ペルソナ（文体切替）: 表示変換のみ、医療ロジック不変 ──
-  // ON時は必ず selectedPersona（初期値: 丁寧）が適用される
-  const [personaEnabled, setPersonaEnabled] = useState(false)
-  const [selectedPersona, setSelectedPersona] = useState<PersonaId>('polite')
+  // デフォルトは concise（簡潔）で表示。plain を選ぶと rawFields 相当の無変換になる。
+  const [personaEnabled, setPersonaEnabled] = useState(true)
+  const [selectedPersona, setSelectedPersona] = useState<PersonaId>('concise')
   const [personaModalOpen, setPersonaModalOpen] = useState(false)
 
   // ══════════════════════════════════════════════════════════════

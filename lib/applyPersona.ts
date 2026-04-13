@@ -106,12 +106,13 @@ export interface AxisWeights {
 // ─────────────────────────────────────────────────────────────
 
 /** ペルソナ種別 */
-export type PersonaId = 'polite' | 'concise' | 'gentle'
+export type PersonaId = 'polite' | 'concise' | 'gentle' | 'plain'
 
 /** ペルソナ表示ラベル */
 export const PERSONA_LABELS: Record<PersonaId, string> = {
-  polite:  '丁寧',
+  plain:   'JSONそのまま',
   concise: '簡潔',
+  polite:  '丁寧',
   gentle:  'やさしい',
 }
 
@@ -124,6 +125,18 @@ export const PERSONA_LABELS: Record<PersonaId, string> = {
 // ─────────────────────────────────────────────────────────────
 
 const PERSONA_PROFILES: Record<PersonaId, AxisWeights> = {
+  /**
+   * JSONそのまま（開発・検証用）
+   * 全軸=0 のため変換ルールが一切適用されない。
+   * rawFields の内容をそのまま表示する。
+   * personaEnabled=true にしたまま無変換状態を確認したい場合に使用する。
+   */
+  plain: {
+    formality:  0.0,
+    softness:   0.0,
+    density:    0.0,
+    directness: 0.0,
+  },
   /**
    * 丁寧（baseline）
    * 常体を敬体に変換する。患者・家族への説明文書に近い文体。
