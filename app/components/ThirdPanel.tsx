@@ -12,8 +12,10 @@ import s from '../styles/layout.module.css'
 //   false → 非表示（デフォルト）
 // ─────────────────────────────────────────────────────────────
 
-/** S フラグ / S先頭文ボタンの表示制御 */
-const FEATURE_S_BUTTONS = false
+/** S先頭文ボタン群（体調状態ボタン）の表示制御 */
+const FEATURE_S_BUTTONS = true
+/** Sフラグ（副作用なし / CP良好）の表示制御 */
+const FEATURE_S_FLAGS = false
 
 // ─────────────────────────────────────────────────────────────
 // 仕様定数
@@ -245,10 +247,12 @@ export default function ThirdPanel({
   onSelectComposeDrug,
   onSubcategorySelect,
 }: ThirdPanelProps) {
-  // Sフラグ（副作用なし / CP良好）: 単剤 + 対象グループのみ表示（FEATURE_S_BUTTONS に依存しない）
-  const showSFlags   = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
-  // S先頭文ボタン: 単剤 + 対象グループ + FEATURE_S_BUTTONS のみ表示（開発用 UI）
-  const showSButtons = FEATURE_S_BUTTONS && showSFlags
+  // 単剤 + 対象グループの基底条件
+  const inSGroup     = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  // Sフラグ（副作用なし / CP良好）: FEATURE_S_FLAGS で制御
+  const showSFlags   = FEATURE_S_FLAGS && inSGroup
+  // S先頭文ボタン群: FEATURE_S_BUTTONS で制御
+  const showSButtons = FEATURE_S_BUTTONS && inSGroup
 
   const handleSubcategorySelect = useCallback((label: string) => {
     if (onSubcategorySelect) {
@@ -288,7 +292,7 @@ export default function ThirdPanel({
         </div>
 
         {/* Sフラグ（副作用なし / CP良好）+ S先頭文ボタン: 単剤 + 対象グループのみ */}
-        {showSFlags && (
+        {(showSFlags || showSButtons) && (
           <div className={s.thirdPanelStickyBottom}>
             {/* フラグ（副作用なし / コンプライアンス良好）: 常に表示 */}
             <div className={s.sActionHeading}>S フラグ</div>
