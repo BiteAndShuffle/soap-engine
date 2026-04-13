@@ -14,8 +14,6 @@ import s from '../styles/layout.module.css'
 
 /** S先頭文ボタン群（体調状態ボタン）の表示制御 */
 const FEATURE_S_BUTTONS = true
-/** Sフラグ（副作用なし / CP良好）の表示制御 */
-const FEATURE_S_FLAGS = false
 
 // ─────────────────────────────────────────────────────────────
 // 仕様定数
@@ -249,8 +247,6 @@ export default function ThirdPanel({
 }: ThirdPanelProps) {
   // 単剤 + 対象グループの基底条件
   const inSGroup     = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
-  // Sフラグ（副作用なし / CP良好）: FEATURE_S_FLAGS で制御
-  const showSFlags   = FEATURE_S_FLAGS && inSGroup
   // S先頭文ボタン群: FEATURE_S_BUTTONS で制御
   const showSButtons = FEATURE_S_BUTTONS && inSGroup
 
@@ -291,53 +287,30 @@ export default function ThirdPanel({
           )}
         </div>
 
-        {/* Sフラグ（副作用なし / CP良好）+ S先頭文ボタン: 単剤 + 対象グループのみ */}
-        {(showSFlags || showSButtons) && (
+        {/* S先頭文ボタン: 単剤 + 対象グループのみ */}
+        {showSButtons && (
           <div className={s.thirdPanelStickyBottom}>
-            {/* フラグ（副作用なし / コンプライアンス良好）: 常に表示 */}
-            <div className={s.sActionHeading}>S フラグ</div>
-            <div className={s.sActionBtnGrid}>
-              <button
-                className={[s.sActionBtn, singleDrugFlags.noSideEffect ? s.sActionBtnActive : ''].join(' ')}
-                aria-pressed={singleDrugFlags.noSideEffect}
-                onClick={() => onFlagChange({ ...singleDrugFlags, noSideEffect: !singleDrugFlags.noSideEffect })}
-              >
-                副作用なし
-              </button>
-              <button
-                className={[s.sActionBtn, singleDrugFlags.goodCompliance ? s.sActionBtnActive : ''].join(' ')}
-                aria-pressed={singleDrugFlags.goodCompliance}
-                onClick={() => onFlagChange({ ...singleDrugFlags, goodCompliance: !singleDrugFlags.goodCompliance })}
-              >
-                CP良好
-              </button>
-            </div>
-            {/* S先頭文ボタン: FEATURE_S_BUTTONS=true のときのみ表示（開発用 UI） */}
-            {showSButtons && (
-              <>
-                <div className={s.sActionHeading}>S 先頭文</div>
-                {SECTIONS.map(sec => (
-                  <div key={sec.prefix} className={s.sActionSection}>
-                    <div className={s.sActionSectionLabel}>{sec.label}</div>
-                    <div className={s.sActionBtnGrid}>
-                      {STATUSES.map(st => {
-                        const isActive = currentSPrefix === sec.prefix && currentSStatus === st.status
-                        return (
-                          <button
-                            key={st.status}
-                            className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
-                            onClick={() => onSAction(sec.prefix, st.status)}
-                            aria-pressed={isActive}
-                          >
-                            {st.label}
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </>
-            )}
+            <div className={s.sActionHeading}>S 先頭文</div>
+            {SECTIONS.map(sec => (
+              <div key={sec.prefix} className={s.sActionSection}>
+                <div className={s.sActionSectionLabel}>{sec.label}</div>
+                <div className={s.sActionBtnGrid}>
+                  {STATUSES.map(st => {
+                    const isActive = currentSPrefix === sec.prefix && currentSStatus === st.status
+                    return (
+                      <button
+                        key={st.status}
+                        className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
+                        onClick={() => onSAction(sec.prefix, st.status)}
+                        aria-pressed={isActive}
+                      >
+                        {st.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>
