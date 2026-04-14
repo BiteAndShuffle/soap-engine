@@ -27,8 +27,8 @@ import AddonPanel from './AddonPanel'
 import ThirdPanel from './ThirdPanel'
 import NlpInputPanel from './NlpInputPanel'
 import SoapEditor, {
-  type SPrefix,
-  type SStatus,
+  type SRelation,
+  type SCondition,
   buildSFirstSentence,
   replaceSFirstSentence,
 } from './SoapEditor'
@@ -185,9 +185,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [nlpConfidence, setNlpConfidence] = useState(0)
   const [nlpIsGenerating, setNlpIsGenerating] = useState(false)
 
-  // ── S prefix/status ─────────────────────────────────────────
-  const [sPrefix, setSPrefix] = useState<SPrefix>('none')
-  const [sStatus, setSStatus] = useState<SStatus>('stable')
+  // ── S relation/condition ─────────────────────────────────────
+  const [sRelation, setSRelation] = useState<SRelation>('continued_do')
+  const [sCondition, setSCondition] = useState<SCondition>('stable')
 
   // ── 単剤フラグ（副作用なし / CP良好）: 単剤時のみ有効 ──────
   const [singleDrugFlags, setSingleDrugFlags] = useState<SingleDrugFlags>({
@@ -367,8 +367,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // S prefix/status・フラグリセット（グループ変更時）
   useEffect(() => {
     if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
-      setSPrefix('none')
-      setSStatus('stable')
+      setSRelation('continued_do')
+      setSCondition('stable')
     }
     // グループが変わったらフラグもリセット（S欄の内容はシナリオ切替で上書きされるため）
     setSingleDrugFlags({ noSideEffect: false, goodCompliance: false })
@@ -532,14 +532,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setPrimaryBaseFields(EMPTY_FIELDS)
         setPrimaryAddonIds(new Set())
         setSelectedAddonIds(new Set())
-        setSPrefix('none')
-        setSStatus('stable')
+        setSRelation('continued_do')
+        setSCondition('stable')
         return null
       }
       const sc = activeModuleData.scenarios.find(s => s.globalId === id)
       if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
-      setSPrefix('none')
-      setSStatus('stable')
+      setSRelation('continued_do')
+      setSCondition('stable')
       // primaryBaseFields は useEffect(selectedScenarioId) で同期される
       return id
     })
@@ -559,8 +559,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setPrimaryAddonIds(new Set())
     setSelectedAddonIds(new Set())
     setSelectedGroup(null)
-    setSPrefix('none')
-    setSStatus('stable')
+    setSRelation('continued_do')
+    setSCondition('stable')
     setMainSearch('')
     setComposeNodes([])
     setEditingNodeId(null)
@@ -786,21 +786,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ノード編集中は1剤目の S を変更しない（ノード側に S トグルは現時点では非対応）
   // ─────────────────────────────────────────────────────────────
 
-  const handleSToggle = useCallback((prefix: SPrefix, status: SStatus) => {
+  const handleSToggle = useCallback((relation: SRelation, condition: SCondition) => {
     if (editingNodeIdRef.current !== null) return
-    setSPrefix(prefix)
-    setSStatus(status)
-    // 副作用なし系シナリオ（scenarioGroup === 'side_effect'）のみ薬剤名を先頭文に保持する。
-    // CP系（adherence_good / adherence_poor）は薬剤名不要のため drugName を渡さない。
-    const sc = primaryScenarioRef.current
-    const isSideEffect = sc?.scenarioGroup === 'side_effect'
-    const drugName = isSideEffect
-      ? (activeBrandName ?? activeModuleData.drug?.brandNames?.[0] ?? activeModuleData.drug?.genericName ?? '')
-      : undefined
-    const newFirst = buildSFirstSentence(prefix, status, drugName || undefined)
+    setSRelation(relation)
+    setSCondition(condition)
+    const newFirst = buildSFirstSentence(relation, condition)
     const updated = replaceSFirstSentence(displayFields.S, newFirst)
     setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
-  }, [displayFields.S, activeBrandName, activeModuleData])
+  }, [displayFields.S])
 
   // ─────────────────────────────────────────────────────────────
   // handleFlagChange（単剤フラグ: 副作用なし / CP良好）
@@ -845,8 +838,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setPrimaryAddonIds(new Set())
     setSelectedAddonIds(new Set())
     setSelectedGroup(null)
-    setSPrefix('none')
-    setSStatus('stable')
+    setSRelation('continued_do')
+    setSCondition('stable')
     setComposeNodes([])
     setEditingNodeId(null)
     setEditingPrimary(false)
@@ -1034,8 +1027,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             selectedGroup={selectedGroup}
             thirdPanelEnabled={thirdPanelEnabled}
             isSingleDrug={isSingleDrug}
-            currentSPrefix={sPrefix}
-            currentSStatus={sStatus}
+            currentSRelation={sRelation}
+            currentSCondition={sCondition}
             onSAction={handleSToggle}
             singleDrugFlags={singleDrugFlags}
             onFlagChange={handleFlagChange}

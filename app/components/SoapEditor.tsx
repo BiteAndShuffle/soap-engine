@@ -19,57 +19,62 @@ interface SoapEditorProps {
 }
 
 // ─────────────────────────────────────────────────────────────
-// S欄トグル型定義
+// S欄先頭文: relation × condition の2軸
 // ─────────────────────────────────────────────────────────────
 
-/** 接頭句バリアント */
-export type SPrefix = 'none' | 'new_drug' | 'changed_drug'
+/**
+ * 前回との関係性（新規追加 / 薬変更 / Do継続）
+ * UI上の「前回、新薬追加」「前回、薬変更」「前回、Do」に対応する。
+ */
+export type SRelation = 'new_addition' | 'med_changed' | 'continued_do'
 
-/** 状態バリアント */
-export type SStatus = 'stable' | 'better' | 'unchanged' | 'not_better'
+/**
+ * 体調状態（落ち着いている / 改善 / 変わりない / 改善不十分）
+ * UI上の4ボタンに対応する。
+ */
+export type SCondition = 'stable' | 'improved' | 'unchanged' | 'not_improved'
 
-/** 接頭句の表示ラベル */
-export const S_PREFIX_LABELS: Record<SPrefix, string> = {
-  none:         'なし',
-  new_drug:     '新しく使用して',
-  changed_drug: '変更になって',
+// 後方互換エイリアス（既存の import を壊さないため残す）
+export type SPrefix = SRelation
+export type SStatus = SCondition
+
+/** relation の表示ラベル */
+export const S_RELATION_LABELS: Record<SRelation, string> = {
+  new_addition:  '新規追加',
+  med_changed:   '薬変更',
+  continued_do:  'Do',
 }
 
-/** 状態の表示ラベル */
-export const S_STATUS_LABELS: Record<SStatus, string> = {
-  stable:     '落ち着いている',
-  better:     '良くなってきた',
-  unchanged:  '変わりない',
-  not_better: 'あまり良くなっていない',
+/** condition の表示ラベル */
+export const S_CONDITION_LABELS: Record<SCondition, string> = {
+  stable:       '落ち着いている',
+  improved:     '良くなってきた',
+  unchanged:    '変わりない',
+  not_improved: 'あまり良くなっていない',
 }
 
 /**
- * prefix + status から「S欄先頭文」を生成する。
+ * relation × condition から「S欄先頭文」を汎用生成する。
  *
- * drugName を渡すと、副作用なし系シナリオ向けに薬剤名を含む文を生成する。
- * 省略時（または空文字時）は generic な「薬を使用して」形式を維持する（CP系など）。
+ * 糖尿病・感染症・整形など診療科を問わず使用できる汎用関数。
+ * シナリオ種別（副作用なし系/CP系など）による分岐は行わない。
+ * シナリオ固有の観察文（「低血糖症状は認めない」等）は
+ * replaceSFirstSentence により先頭文の後ろに連結される。
  */
-export function buildSFirstSentence(prefix: SPrefix, status: SStatus, drugName?: string): string {
-  const st = S_STATUS_LABELS[status]
-  if (drugName) {
-    // 副作用なし系: 薬剤名を保持した先頭文
-    switch (prefix) {
-      case 'none':
-        return `使用して、症状は${st}。`
-      case 'new_drug':
-        return `前回から新しく${drugName}を使用して${st}。`
-      case 'changed_drug':
-        return `前回から${drugName}に変更になって使用して${st}。`
-    }
-  }
-  // generic（CP系・薬剤名不要なシナリオ）
-  switch (prefix) {
-    case 'none':
-      return `使用して、症状は${st}。`
-    case 'new_drug':
-      return `前回から新しく薬を使用して${st}。`
-    case 'changed_drug':
-      return `前回から薬が変更になって使用して${st}。`
+export function buildSFirstSentence(relation: SRelation, condition: SCondition): string {
+  const cond = S_CONDITION_LABELS[condition]
+  switch (relation) {
+    case 'new_addition':
+      return `前回から新しく薬を使用して${cond}。`
+    case 'med_changed':
+      return `前回から薬が変更になって使用して${cond}。`
+    case 'continued_do':
+      switch (condition) {
+        case 'stable':       return `引き続き服用しており、体調は落ち着いている。`
+        case 'improved':     return `引き続き服用しており、体調は良くなってきた。`
+        case 'unchanged':    return `引き続き服用しているが、体調は変わりない。`
+        case 'not_improved': return `引き続き服用しているが、十分な改善はみられない。`
+      }
   }
 }
 

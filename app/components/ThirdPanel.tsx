@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback, useId } from 'react'
 import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
-import type { SPrefix, SStatus } from './SoapEditor'
+import type { SRelation, SCondition } from './SoapEditor'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
@@ -56,20 +56,20 @@ const MEDICAL_AREAS: MedicalArea[] = [
 // S状態ボタン定義
 // ─────────────────────────────────────────────────────────────
 
-interface SectionDef { label: string; prefix: SPrefix }
-interface StatusDef  { label: string; status: SStatus }
+interface SectionDef { label: string; relation: SRelation }
+interface StatusDef  { label: string; condition: SCondition }
 
 const SECTIONS: SectionDef[] = [
-  { label: '前回、新薬追加', prefix: 'new_drug'      },
-  { label: '前回、薬変更',   prefix: 'changed_drug'  },
-  { label: '前回、Do',       prefix: 'none'           },
+  { label: '前回、新薬追加', relation: 'new_addition'  },
+  { label: '前回、薬変更',   relation: 'med_changed'   },
+  { label: '前回、Do',       relation: 'continued_do'  },
 ]
 
 const STATUSES: StatusDef[] = [
-  { label: '体調落ち着いている', status: 'stable'    },
-  { label: '体調改善',           status: 'better'    },
-  { label: '体調変わりない',     status: 'unchanged' },
-  { label: '体調良くなってない', status: 'not_better'},
+  { label: '体調落ち着いている', condition: 'stable'      },
+  { label: '体調改善',           condition: 'improved'    },
+  { label: '体調変わりない',     condition: 'unchanged'   },
+  { label: '体調良くなってない', condition: 'not_improved'},
 ]
 
 // ─────────────────────────────────────────────────────────────
@@ -210,9 +210,9 @@ interface ThirdPanelProps {
   thirdPanelEnabled: boolean
   /** 単剤モードかどうか（false の場合フラグ・S先頭文ボタンを非表示） */
   isSingleDrug: boolean
-  currentSPrefix: SPrefix
-  currentSStatus: SStatus
-  onSAction: (prefix: SPrefix, status: SStatus) => void
+  currentSRelation: SRelation
+  currentSCondition: SCondition
+  onSAction: (relation: SRelation, condition: SCondition) => void
   /** 単剤フラグ（副作用なし / コンプライアンス良好） */
   singleDrugFlags: SingleDrugFlags
   onFlagChange: (flags: SingleDrugFlags) => void
@@ -234,8 +234,8 @@ export default function ThirdPanel({
   selectedGroup,
   thirdPanelEnabled,
   isSingleDrug,
-  currentSPrefix,
-  currentSStatus,
+  currentSRelation,
+  currentSCondition,
   onSAction,
   singleDrugFlags,
   onFlagChange,
@@ -292,16 +292,16 @@ export default function ThirdPanel({
           <div className={s.thirdPanelStickyBottom}>
             <div className={s.sActionHeading}>S 先頭文</div>
             {SECTIONS.map(sec => (
-              <div key={sec.prefix} className={s.sActionSection}>
+              <div key={sec.relation} className={s.sActionSection}>
                 <div className={s.sActionSectionLabel}>{sec.label}</div>
                 <div className={s.sActionBtnGrid}>
                   {STATUSES.map(st => {
-                    const isActive = currentSPrefix === sec.prefix && currentSStatus === st.status
+                    const isActive = currentSRelation === sec.relation && currentSCondition === st.condition
                     return (
                       <button
-                        key={st.status}
+                        key={st.condition}
                         className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
-                        onClick={() => onSAction(sec.prefix, st.status)}
+                        onClick={() => onSAction(sec.relation, st.condition)}
                         aria-pressed={isActive}
                       >
                         {st.label}
