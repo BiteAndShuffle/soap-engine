@@ -365,30 +365,33 @@ function normalizeLines(text: string): string {
 }
 
 /**
- * 締め文の重複行を排除する。
+ * Pセクション末尾に連続して出現する締め文を整理する。
  *
  * 「次回」で始まる行のみを "closing 行" とみなす。
- * 本文中に「確認」が含まれる行を誤判定しないよう、先頭マッチに限定する。
- * 同一文字列の closing 行が複数あれば最後の1件だけ残す。
- * 異なる締め文（例: 「次回、副作用の有無を確認。」と「次回、治療経過を確認。」）は
- * 別扱いでそれぞれ残す。
+ * 末尾から連続している closing 行ブロックを特定し、その中から最後の1行だけを残す。
+ * 連続ブロックの外（本文）には一切手を加えない。
+ * 連続していない場合（締め文が末尾にない）は何もしない。
  */
 function dedupeClosingLines(text: string): string {
   const lines = text.split('\n')
-  // 末尾から走査して「すでに見た closing 行」を除去する
-  const seen = new Set<string>()
-  const reversed: string[] = []
-  for (let i = lines.length - 1; i >= 0; i--) {
-    const line = lines[i]
-    // 「次回」で始まる行のみを締め文とみなす（本文中の「確認」は対象外）
-    const isClosing = line.trimStart().startsWith('次回')
-    if (isClosing) {
-      if (seen.has(line)) continue   // 重複: スキップ
-      seen.add(line)
-    }
-    reversed.push(line)
+
+  // 末尾行が closing でなければ何もしない（最重要ガード）
+  const lastLine = lines[lines.length - 1]
+  if (!lastLine.trimStart().startsWith('次回')) return text
+
+  // 末尾から連続する closing 行ブロックの先頭インデックスを探す
+  let tailStart = lines.length - 1
+  while (tailStart > 0 && lines[tailStart - 1].trimStart().startsWith('次回')) {
+    tailStart--
   }
-  return reversed.reverse().join('\n')
+
+  // closing 行が末尾に1行のみ → 重複なし、何もしない
+  if (tailStart === lines.length - 1) return text
+
+  // 連続 closing ブロックの最後の1行だけ残す（後勝ち）
+  const body = lines.slice(0, tailStart)
+  const lastClosing = lines[lines.length - 1]
+  return [...body, lastClosing].join('\n')
 }
 
 // ─────────────────────────────────────────────────────────────
