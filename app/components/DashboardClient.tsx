@@ -12,6 +12,7 @@ import {
   type MenuGroup,
   groupByMenuGroup,
   getMenuGroupFromScenario,
+  sortSideEffectScenarios,
 } from '../../lib/menuGroups'
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { S_BUTTON_GROUPS, type SingleDrugFlags } from './ThirdPanel'
@@ -330,7 +331,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const groupScenarios = useMemo(() => {
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
-    return raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
+    const filtered = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
+    return selectedGroup === '副作用あり' ? sortSideEffectScenarios(filtered) : filtered
   }, [allGroups, selectedGroup])
 
   // ── 薬剤サジェスト ───────────────────────────────────────────

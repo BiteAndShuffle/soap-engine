@@ -196,6 +196,37 @@ export function displayTitleForCol2(title: string, group: MenuGroup): string {
 }
 
 // ─────────────────────────────────────────────────────────────
+// 副作用ありシナリオのソート
+//
+// 表示順:
+//   アクション軸（継続 < 減量 < 変更 < 中止）× 部位軸（消化器 < 注射部位）
+//
+// sideEffectPresence でアクション順を決める。
+// 同一アクション内では id に "_injection_site_" を含む場合を後方（注射部位）に回す。
+// ─────────────────────────────────────────────────────────────
+
+const SEP_ACTION_ORDER: Record<string, number> = {
+  present_mild:           0,  // 継続（軽症）
+  present_moderate:       1,  // 継続（中等度）
+  present_dose_decrease:  2,  // 減量
+  present_change:         3,  // 変更
+  present_stop:           4,  // 中止
+}
+
+/** 副作用ありグループ内のシナリオを「アクション × 部位」順にソートする */
+export function sortSideEffectScenarios(scenarios: Scenario[]): Scenario[] {
+  return [...scenarios].sort((a, b) => {
+    const aAction = SEP_ACTION_ORDER[a.sideEffectPresence ?? ''] ?? 99
+    const bAction = SEP_ACTION_ORDER[b.sideEffectPresence ?? ''] ?? 99
+    if (aAction !== bAction) return aAction - bAction
+    // 同一アクション内: 注射部位（id に "_injection_site_" 含む）を後方に
+    const aIsInjSite = a.id.includes('_injection_site_') ? 1 : 0
+    const bIsInjSite = b.id.includes('_injection_site_') ? 1 : 0
+    return aIsInjSite - bIsInjSite
+  })
+}
+
+// ─────────────────────────────────────────────────────────────
 // ラベル短縮ユーティリティ（後方互換）
 // ─────────────────────────────────────────────────────────────
 

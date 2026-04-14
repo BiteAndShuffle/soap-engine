@@ -568,29 +568,22 @@ function buildS(sEntries: SEntry[]): string {
 /**
  * 複数ブロックの P テキストを合成する。
  *
- * 方針: 「P本文は消さない・まとめすぎない」
+ * 方針: 「全 body を入力順に先出し、closing を末尾に1回だけ出力する」
  *
- *   body: 入力順のまま全て出力する。dedupe しない。
- *   closing: closingBehavior に従って処理する。
- *
- *   "dedupe_or_last"（実運用値・省略時もこの挙動）:
- *     連続する同一 closing を1グループとして扱う。
- *     グループ内の body をすべて先に出力し、グループ末尾に closing を1回だけ出力する。
- *     closing が変わった時点（= グループ境界）で現グループを確定し、
- *     新しい closing のグループを開始する。
- *     非連続の同一 closing は別グループとして扱い、再度 closing を出力する。
+ *   body: 全エントリの本文を入力順で出力する。dedupe しない。
+ *   closing: 「次回、」で始まる行はすべて末尾に集約する。
+ *     - 同一内容の closing は1件に dedup する。
+ *     - 異なる closing が複数ある場合はすべて末尾に並べる。
+ *     - 出現順を保持する（最初に出現した closing を先に出す）。
  *
  *   "append_all"（将来拡張予約値 — 現在は未サポート）:
  *     分岐は実装済みだが、現行 JSON での使用不可。
  *
- * 出力イメージ（dedupe_or_last）:
- *   本文A           ┐ closing=「次回A」
- *   本文B           ┘ ← 同一 closing が連続 → グループ化
- *   次回A           ← グループ末尾に closing を1回出力
- *   本文C           ← closing=「次回C」（別グループ）
- *   次回C
- *   本文D           ← closing=「次回A」（非連続 → 再度出力）
- *   次回A
+ * 出力イメージ:
+ *   本文A（A薬）
+ *   本文B（A薬 addon）
+ *   本文C（B薬）
+ *   次回、〜確認。   ← 末尾に1回だけ出力（重複は dedup）
  */
 function buildP(
   pEntries: Array<{
@@ -599,20 +592,9 @@ function buildP(
     closingBehavior?: 'dedupe_or_last' | 'append_all'
   }>,
 ): string {
-  const out: string[] = []
-  // 現在グループの body 群と closing を保持する
-  const groupBodies: string[] = []
-  let groupClosing: string | null = null
-
-  /** 現グループを out に flush する */
-  function flushGroup(): void {
-    for (const b of groupBodies) {
-      if (b) out.push(b)
-    }
-    if (groupClosing !== null) out.push(groupClosing)
-    groupBodies.length = 0
-    groupClosing = null
-  }
+  const bodyLines: string[] = []
+  const closingsSeen = new Set<string>()
+  const closingsOrdered: string[] = []
 
   for (const entry of pEntries) {
     const body = entry.body
@@ -625,26 +607,21 @@ function buildP(
 
     if (behavior === 'append_all') {
       // ⚠️ append_all: 将来拡張予約値。現在は未サポート・現行 JSON での使用不可。
-      // dedupe_or_last グループが pending の場合は先に flush してから処理する。
-      flushGroup()
-      if (body) out.push(body)
-      if (closing) out.push(closing)
+      if (body) bodyLines.push(body)
+      if (closing) bodyLines.push(closing)  // append_all は closing も即出力
     } else {
       // dedupe_or_last（実運用値・デフォルト）
-      // closing が変わったタイミングでグループ境界とみなし現グループを flush する。
-      // 同一 closing が連続する間はグループを継続し body を積み上げる。
-      if (closing !== groupClosing) {
-        flushGroup()
-        groupClosing = closing
+      // body は入力順で蓄積し、closing は末尾に集約する。
+      if (body) bodyLines.push(body)
+      if (closing && !closingsSeen.has(closing)) {
+        closingsSeen.add(closing)
+        closingsOrdered.push(closing)
       }
-      if (body) groupBodies.push(body)
     }
   }
 
-  // 最後のグループを flush
-  flushGroup()
-
-  return out.join('\n')
+  const all = [...bodyLines, ...closingsOrdered]
+  return all.join('\n')
 }
 
 /**
@@ -652,8 +629,7 @@ function buildP(
  *
  * S: buildS による構造ベース合成（reason/observation/decision/other に分類 → dedupe → 再生成）
  * O / A: 本文をそのまま改行区切りで結合（ラベル行なし）
- * P: buildP による構造ベース合成（medication_instruction/side_effect/discontinuation/other に分類
- *    → 完全一致 dedupe → 固定順出力 → closing 末尾）
+ * P: buildP による合成（全 body を入力順に先出し → closing を末尾に集約・dedup）
  *
  * 後処理（全フィールド共通）:
  *   - 空行を除去して行を詰める（normalizeLines）
