@@ -790,10 +790,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (editingNodeIdRef.current !== null) return
     setSPrefix(prefix)
     setSStatus(status)
-    const newFirst = buildSFirstSentence(prefix, status)
+    // 副作用なし系シナリオ（scenarioGroup === 'side_effect'）のみ薬剤名を先頭文に保持する。
+    // CP系（adherence_good / adherence_poor）は薬剤名不要のため drugName を渡さない。
+    const sc = primaryScenarioRef.current
+    const isSideEffect = sc?.scenarioGroup === 'side_effect'
+    const drugName = isSideEffect
+      ? (activeBrandName ?? activeModuleData.drug?.brandNames?.[0] ?? activeModuleData.drug?.genericName ?? '')
+      : undefined
+    const newFirst = buildSFirstSentence(prefix, status, drugName || undefined)
     const updated = replaceSFirstSentence(displayFields.S, newFirst)
     setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
-  }, [displayFields.S])
+  }, [displayFields.S, activeBrandName, activeModuleData])
 
   // ─────────────────────────────────────────────────────────────
   // handleFlagChange（単剤フラグ: 副作用なし / CP良好）

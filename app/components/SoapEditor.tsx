@@ -45,15 +45,31 @@ export const S_STATUS_LABELS: Record<SStatus, string> = {
 
 /**
  * prefix + status から「S欄先頭文」を生成する。
+ *
+ * drugName を渡すと、副作用なし系シナリオ向けに薬剤名を含む文を生成する。
+ * 省略時（または空文字時）は generic な「薬を使用して」形式を維持する（CP系など）。
  */
-export function buildSFirstSentence(prefix: SPrefix, status: SStatus): string {
+export function buildSFirstSentence(prefix: SPrefix, status: SStatus, drugName?: string): string {
+  const st = S_STATUS_LABELS[status]
+  if (drugName) {
+    // 副作用なし系: 薬剤名を保持した先頭文
+    switch (prefix) {
+      case 'none':
+        return `使用して、症状は${st}。`
+      case 'new_drug':
+        return `前回から新しく${drugName}を使用して${st}。`
+      case 'changed_drug':
+        return `前回から${drugName}に変更になって使用して${st}。`
+    }
+  }
+  // generic（CP系・薬剤名不要なシナリオ）
   switch (prefix) {
     case 'none':
-      return `使用して、症状は${S_STATUS_LABELS[status]}。`
+      return `使用して、症状は${st}。`
     case 'new_drug':
-      return `前回から新しく薬を使用して${S_STATUS_LABELS[status]}。`
+      return `前回から新しく薬を使用して${st}。`
     case 'changed_drug':
-      return `前回から薬が変更になって使用して${S_STATUS_LABELS[status]}。`
+      return `前回から薬が変更になって使用して${st}。`
   }
 }
 
