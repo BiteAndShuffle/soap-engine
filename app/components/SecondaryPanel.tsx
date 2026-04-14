@@ -20,6 +20,22 @@ const CHIP_CLASS: Record<ChipColor, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
+// 副作用ありグループ内のアクションヘッダー
+//
+// sideEffectPresence → アクション表示名のマップ。
+// 同一アクション内で連続するシナリオをまとめる見出しとして使う。
+// sortSideEffectScenarios() で既にソート済みの配列が渡ることを前提とする。
+// ─────────────────────────────────────────────────────────────
+
+const SEP_ACTION_LABEL: Partial<Record<string, string>> = {
+  present_mild:           '継続',
+  present_moderate:       '継続',
+  present_dose_decrease:  '減量',
+  present_change:         '変更',
+  present_stop:           '中止',
+}
+
+// ─────────────────────────────────────────────────────────────
 // テンプレ一覧パネル（大分類選択時）
 // 【仕様】選択済みシナリオも含め全候補を常時表示。
 //         selectedScenarioId と一致するボタンのみ選択色を当てる（トグル可）。
@@ -76,32 +92,48 @@ export function TemplateListPanel({
         const isActive = sc.globalId === selectedScenarioId
         const label = displayTitleForCol2(sc.title, group ?? getMenuGroupFromScenario(sc))
         const isMismatch = group ? getMenuGroupFromScenario(sc) !== group : false
+
+        // 副作用ありグループ時のみ、アクションが切り替わるタイミングでヘッダーを挿入する
+        const showActionHeader = group === '副作用あり' && (() => {
+          const thisAction = SEP_ACTION_LABEL[sc.sideEffectPresence ?? '']
+          if (!thisAction) return false
+          if (i === 0) return true
+          const prevAction = SEP_ACTION_LABEL[scenarios[i - 1].sideEffectPresence ?? '']
+          return thisAction !== prevAction
+        })()
+
         return (
-          <button
-            key={sc.id}
-            className={[
-              s.secondaryBtn,
-              chipClass,
-              isActive ? s.secondaryBtnActive : '',
-              s.secondaryItemAnim,
-            ].join(' ')}
-            style={{
-              animationDelay: `${i * 30}ms`,
-              ...(isMismatch ? { outline: '2px solid #ff453a', outlineOffset: '-2px' } : {}),
-            }}
-            onClick={() => onSelectScenario(sc.globalId)}
-            aria-pressed={isActive}
-            title={isMismatch
-              ? `⚠️ 混入: sep=${sc.sideEffectPresence} → ${getMenuGroupFromScenario(sc)}`
-              : label}
-          >
-            {label}
-            {isMismatch && (
-              <span style={{ marginLeft: 4, fontSize: '0.6rem', color: '#ff453a' }}>
-                ⚠️{sc.sideEffectPresence}
-              </span>
+          <div key={sc.id}>
+            {showActionHeader && (
+              <div className={s.secondaryHeading} style={{ marginTop: i === 0 ? 0 : 8 }}>
+                {SEP_ACTION_LABEL[sc.sideEffectPresence ?? '']}
+              </div>
             )}
-          </button>
+            <button
+              className={[
+                s.secondaryBtn,
+                chipClass,
+                isActive ? s.secondaryBtnActive : '',
+                s.secondaryItemAnim,
+              ].join(' ')}
+              style={{
+                animationDelay: `${i * 30}ms`,
+                ...(isMismatch ? { outline: '2px solid #ff453a', outlineOffset: '-2px' } : {}),
+              }}
+              onClick={() => onSelectScenario(sc.globalId)}
+              aria-pressed={isActive}
+              title={isMismatch
+                ? `⚠️ 混入: sep=${sc.sideEffectPresence} → ${getMenuGroupFromScenario(sc)}`
+                : label}
+            >
+              {label}
+              {isMismatch && (
+                <span style={{ marginLeft: 4, fontSize: '0.6rem', color: '#ff453a' }}>
+                  ⚠️{sc.sideEffectPresence}
+                </span>
+              )}
+            </button>
+          </div>
         )
       })}
     </div>
