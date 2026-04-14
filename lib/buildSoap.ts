@@ -365,6 +365,23 @@ function normalizeLines(text: string): string {
 }
 
 /**
+ * P本文中で隣接する完全一致行を除去する（P専用）。
+ *
+ * 連続して同じ行が出たときのみ後者を削除する。
+ * 連続していない重複（離れた位置）は残す。
+ * 意味解釈・言い換え統合は一切行わない。
+ */
+function dedupeAdjacentLines(text: string): string {
+  const lines = text.split('\n')
+  const result: string[] = []
+  for (let i = 0; i < lines.length; i++) {
+    if (i > 0 && lines[i] === lines[i - 1]) continue
+    result.push(lines[i])
+  }
+  return result.join('\n')
+}
+
+/**
  * Pセクション末尾に連続して出現する締め文を整理する。
  *
  * 「次回」で始まる行のみを "closing 行" とみなす。
@@ -739,8 +756,12 @@ export function mergeBlocks(
   }
 
   // 後処理: 全フィールドを正規化（空行除去 + 締め文重複排除）
+  // P のみ追加で隣接重複行も除去する（完全一致行が連続した場合のみ）
   for (const key of keys) {
-    result[key] = dedupeClosingLines(normalizeLines(result[key]))
+    const normalized = normalizeLines(result[key])
+    result[key] = dedupeClosingLines(
+      key === 'P' ? dedupeAdjacentLines(normalized) : normalized
+    )
   }
 
   return result
