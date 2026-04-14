@@ -69,12 +69,9 @@ export function buildSFirstSentence(relation: SRelation, condition: SCondition):
     case 'med_changed':
       return `前回から薬が変更になって使用して${cond}。`
     case 'continued_do':
-      switch (condition) {
-        case 'stable':       return `引き続き服用しており、体調は落ち着いている。`
-        case 'improved':     return `引き続き服用しており、体調は良くなってきた。`
-        case 'unchanged':    return `引き続き服用しているが、体調は変わりない。`
-        case 'not_improved': return `引き続き服用しているが、十分な改善はみられない。`
-      }
+      return condition === 'not_improved'
+        ? `引き続き使用しているが、十分な改善はみられない。`
+        : `引き続き使用して${cond}。`
   }
 }
 
