@@ -67,7 +67,9 @@ export function buildSFirstSentence(relation: SRelation, condition: SCondition):
     case 'new_addition':
       return `前回から新しく薬を使用して${cond}。`
     case 'med_changed':
-      return `前回から薬が変更になり、使用して${cond}。`
+      return condition === 'not_improved'
+        ? `前回から薬が変更となったが、十分な改善はみられない。`
+        : `前回から薬が変更となり、${cond}。`
     case 'continued_do':
       return condition === 'not_improved'
         ? `引き続き使用しているが、十分な改善はみられない。`

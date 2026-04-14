@@ -797,7 +797,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // その安全な場面に限り、generic な「薬」を解決済み薬剤名に置換する。
     // relation ごとに薬剤名置換パターンを分ける。
     //   new_addition: 「薬を」→「{drug}を」
-    //   med_changed:  「薬が変更になり、」→「{drug}に変更になり、」
+    //   med_changed:  「薬が変更と」→「{drug}に変更と」（stable/improved/unchanged/not_improved 共通）
     //   continued_do: 薬剤名なし（「引き続き使用して〜」は主語省略が自然）
     const drugName = activeBrandName
       ?? activeModuleData.drug?.brandNames?.[0]
@@ -806,7 +806,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const resolvedFirst = (() => {
       if (!drugName) return newFirst
       if (relation === 'new_addition') return newFirst.replace('薬を', `${drugName}を`)
-      if (relation === 'med_changed')  return newFirst.replace('薬が変更になり、', `${drugName}に変更になり、`)
+      if (relation === 'med_changed')  return newFirst.replace('薬が変更と', `${drugName}に変更と`)
       return newFirst  // continued_do: 薬剤名なしが自然
     })()
     const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
