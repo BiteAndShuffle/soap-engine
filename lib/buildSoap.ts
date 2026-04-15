@@ -589,6 +589,19 @@ function buildS(sEntries: SEntry[]): string {
  *   本文4（A薬再追加）
  *   次回、A薬の確認。   ← 塊3 closing（非連続再登場 → 別塊）
  */
+/**
+ * closing テキストを chunk 判定用に正規化する。
+ * 表示文は変えず、比較キーのみを統一する。
+ *
+ * 現在の正規化:
+ *   「服用できているか」→「使用できているか」
+ *   （oral モジュールの「服用」と injection モジュールの「使用」を同一塊に入れるため）
+ */
+function normalizeClosingKey(text: string | null): string | null {
+  if (!text) return text
+  return text.replace('服用できているか', '使用できているか')
+}
+
 function buildP(
   pEntries: Array<{
     body: string
@@ -599,7 +612,10 @@ function buildP(
   const output: string[] = []
 
   // 現在蓄積中の塊
+  // currentClosing: 出力用 original text
+  // currentClosingKey: chunk 判定用 normalized key
   let currentClosing: string | null = undefined as unknown as string | null
+  let currentClosingKey: string | null = undefined as unknown as string | null
   let currentBodies: string[] = []
 
   const flushChunk = () => {
@@ -608,6 +624,7 @@ function buildP(
     if (currentClosing) output.push(currentClosing)
     currentBodies = []
     currentClosing = undefined as unknown as string | null
+    currentClosingKey = undefined as unknown as string | null
   }
 
   let initialized = false
@@ -619,6 +636,7 @@ function buildP(
       .filter(l => l.length > 0)
       .join('\n')
     const closing = entry.closing?.trim() || null
+    const closingKey = normalizeClosingKey(closing)
     const behavior = entry.closingBehavior ?? 'dedupe_or_last'
 
     if (behavior === 'append_all') {
@@ -635,18 +653,20 @@ function buildP(
     if (!initialized) {
       currentBodies = body ? [body] : []
       currentClosing = closing
+      currentClosingKey = closingKey
       initialized = true
       continue
     }
 
-    if (closing === currentClosing) {
-      // 同じ closing → 同じ塊に body を追加
+    if (closingKey === currentClosingKey) {
+      // 同じ closing（正規化後一致）→ 同じ塊に body を追加
       if (body) currentBodies.push(body)
     } else {
       // closing が変わった → 現在の塊を flush して新しい塊を開始
       flushChunk()
       currentBodies = body ? [body] : []
       currentClosing = closing
+      currentClosingKey = closingKey
     }
   }
 
