@@ -809,8 +809,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (!drugName) return newFirst
       if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
       if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
-      if (relation === 'dose_increased') return newFirst.replace('薬が増量と', `${drugName}が増量と`)
-      if (relation === 'dose_decreased') return newFirst.replace('薬が減量と', `${drugName}が減量と`)
+      if (relation === 'dose_increased') return newFirst
+        .replace('薬が増量となり', `${drugName}が増量となり`)
+        .replace('薬が増量となったが', `${drugName}が増量となったが`)
+      if (relation === 'dose_decreased') return newFirst
+        .replace('薬が減量となり', `${drugName}が減量となり`)
+        .replace('薬が減量となったが', `${drugName}が減量となったが`)
       return newFirst  // continued_do: 薬剤名なしが自然
     })()
     const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
