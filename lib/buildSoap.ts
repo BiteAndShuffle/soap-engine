@@ -568,22 +568,21 @@ function buildS(sEntries: SEntry[]): string {
 /**
  * 複数ブロックの P テキストを合成する。
  *
- * 方針: 「全 body を入力順に先出し、closing を末尾に1回だけ出力する」
+ * 方針: 「ブロック単位で body + closing をまとめて出力する」
  *
- *   body: 全エントリの本文を入力順で出力する。dedupe しない。
- *   closing: 「次回、」で始まる行はすべて末尾に集約する。
- *     - 同一内容の closing は1件に dedup する。
- *     - 異なる closing が複数ある場合はすべて末尾に並べる。
- *     - 出現順を保持する（最初に出現した closing を先に出す）。
+ *   各エントリ（= 1シナリオ = 1文脈塊）を順に処理し、
+ *   body の直後にその塊の closing を置く。
+ *   同一ブロック内で同一 closing が重複する場合のみ dedup する。
+ *   異なるブロック間では closing を統合しない（文脈の塊を壊さない）。
  *
  *   "append_all"（将来拡張予約値 — 現在は未サポート）:
  *     分岐は実装済みだが、現行 JSON での使用不可。
  *
  * 出力イメージ:
  *   本文A（A薬）
- *   本文B（A薬 addon）
- *   本文C（B薬）
- *   次回、〜確認。   ← 末尾に1回だけ出力（重複は dedup）
+ *   次回、A薬の確認。   ← A薬塊の closing
+ *   本文B（B薬）
+ *   次回、B薬の確認。   ← B薬塊の closing
  */
 function buildP(
   pEntries: Array<{
@@ -592,9 +591,7 @@ function buildP(
     closingBehavior?: 'dedupe_or_last' | 'append_all'
   }>,
 ): string {
-  const bodyLines: string[] = []
-  const closingsSeen = new Set<string>()
-  const closingsOrdered: string[] = []
+  const chunks: string[] = []
 
   for (const entry of pEntries) {
     const body = entry.body
@@ -607,21 +604,18 @@ function buildP(
 
     if (behavior === 'append_all') {
       // ⚠️ append_all: 将来拡張予約値。現在は未サポート・現行 JSON での使用不可。
-      if (body) bodyLines.push(body)
-      if (closing) bodyLines.push(closing)  // append_all は closing も即出力
+      if (body) chunks.push(body)
+      if (closing) chunks.push(closing)
     } else {
       // dedupe_or_last（実運用値・デフォルト）
-      // body は入力順で蓄積し、closing は末尾に集約する。
-      if (body) bodyLines.push(body)
-      if (closing && !closingsSeen.has(closing)) {
-        closingsSeen.add(closing)
-        closingsOrdered.push(closing)
-      }
+      // body の直後に closing を置く（ブロック単位の塊として出力）。
+      // 同一ブロック内で closing が body に既に含まれている場合は追加しない。
+      if (body) chunks.push(body)
+      if (closing && !body.includes(closing)) chunks.push(closing)
     }
   }
 
-  const all = [...bodyLines, ...closingsOrdered]
-  return all.join('\n')
+  return chunks.join('\n')
 }
 
 /**
