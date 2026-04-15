@@ -590,12 +590,12 @@ function buildS(sEntries: SEntry[]): string {
  *   次回、A薬の確認。   ← 塊3 closing（非連続再登場 → 別塊）
  */
 /**
- * closing テキストを chunk 判定用に正規化する。
- * 表示文は変えず、比較キーのみを統一する。
+ * closing テキストを正規化する。
+ * chunk 判定（比較キー）と表示文（canonical text）の両方に使用する。
  *
- * 現在の正規化:
+ * 正規化内容:
  *   「服用できているか」→「使用できているか」
- *   （oral モジュールの「服用」と injection モジュールの「使用」を同一塊に入れるため）
+ *   （oral モジュールの「服用」と injection モジュールの「使用」を同一塊・同一表示に寄せるため）
  */
 function normalizeClosingKey(text: string | null): string | null {
   if (!text) return text
@@ -645,14 +645,14 @@ function buildP(
       flushChunk()
       initialized = false
       if (body) output.push(body)
-      if (closing) output.push(closing)
+      if (closing) output.push(normalizeClosingKey(closing)!)
       continue
     }
 
     // 初回エントリ: 塊を開始する
     if (!initialized) {
       currentBodies = body ? [body] : []
-      currentClosing = closing
+      currentClosing = normalizeClosingKey(closing)
       currentClosingKey = closingKey
       initialized = true
       continue
@@ -665,7 +665,7 @@ function buildP(
       // closing が変わった → 現在の塊を flush して新しい塊を開始
       flushChunk()
       currentBodies = body ? [body] : []
-      currentClosing = closing
+      currentClosing = normalizeClosingKey(closing)
       currentClosingKey = closingKey
     }
   }
