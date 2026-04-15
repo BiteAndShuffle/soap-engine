@@ -23,10 +23,10 @@ interface SoapEditorProps {
 // ─────────────────────────────────────────────────────────────
 
 /**
- * 前回との関係性（新規追加 / 薬変更 / Do継続）
- * UI上の「前回、新薬追加」「前回、薬変更」「前回、Do」に対応する。
+ * 前回との関係性（新規追加 / 薬変更 / 増量 / 減量 / Do継続）
+ * UI上の「前回、新薬追加」「前回、薬変更」「前回、増量」「前回、減量」「前回、Do」に対応する。
  */
-export type SRelation = 'new_addition' | 'med_changed' | 'continued_do'
+export type SRelation = 'new_addition' | 'med_changed' | 'dose_increased' | 'dose_decreased' | 'continued_do'
 
 /**
  * 体調状態（落ち着いている / 改善 / 変わりない / 改善不十分）
@@ -40,9 +40,11 @@ export type SStatus = SCondition
 
 /** relation の表示ラベル */
 export const S_RELATION_LABELS: Record<SRelation, string> = {
-  new_addition:  '新規追加',
-  med_changed:   '薬変更',
-  continued_do:  'Do',
+  new_addition:   '新規追加',
+  med_changed:    '薬変更',
+  dose_increased: '増量',
+  dose_decreased: '減量',
+  continued_do:   'Do',
 }
 
 /** condition の表示ラベル */
@@ -70,6 +72,14 @@ export function buildSFirstSentence(relation: SRelation, condition: SCondition):
       return condition === 'not_improved'
         ? `前回から薬が変更となったが、十分な改善はみられない。`
         : `前回から薬が変更となり、${cond}。`
+    case 'dose_increased':
+      return condition === 'not_improved'
+        ? `前回から薬が増量となったが、十分な改善はみられない。`
+        : `前回から薬が増量となり${cond}。`
+    case 'dose_decreased':
+      return condition === 'not_improved'
+        ? `前回から薬が減量となったが、十分な改善はみられない。`
+        : `前回から薬が減量となり${cond}。`
     case 'continued_do':
       return condition === 'not_improved'
         ? `引き続き使用しているが、十分な改善はみられない。`

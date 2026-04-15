@@ -60,9 +60,11 @@ interface SectionDef { label: string; relation: SRelation }
 interface StatusDef  { label: string; condition: SCondition }
 
 const SECTIONS: SectionDef[] = [
-  { label: '前回、新薬追加', relation: 'new_addition'  },
-  { label: '前回、薬変更',   relation: 'med_changed'   },
-  { label: '前回、Do',       relation: 'continued_do'  },
+  { label: '前回、新薬追加', relation: 'new_addition'   },
+  { label: '前回、薬変更',   relation: 'med_changed'    },
+  { label: '前回、増量',     relation: 'dose_increased' },
+  { label: '前回、減量',     relation: 'dose_decreased' },
+  { label: '前回、Do',       relation: 'continued_do'   },
 ]
 
 const STATUSES: StatusDef[] = [
