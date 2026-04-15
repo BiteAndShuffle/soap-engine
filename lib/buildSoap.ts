@@ -568,21 +568,26 @@ function buildS(sEntries: SEntry[]): string {
 /**
  * 複数ブロックの P テキストを合成する。
  *
- * 方針: 「ブロック単位で body + closing をまとめて出力する」
+ * 方針: 「連続して同じ closing を持つ entry 群を1塊にまとめ、塊末尾に closing を1回置く」
  *
- *   各エントリ（= 1シナリオ = 1文脈塊）を順に処理し、
- *   body の直後にその塊の closing を置く。
- *   同一ブロック内で同一 closing が重複する場合のみ dedup する。
- *   異なるブロック間では closing を統合しない（文脈の塊を壊さない）。
+ *   entry を順に走査し、closing が同じ間は body を同じ塊に蓄積する。
+ *   closing が変わった時点で現在の塊を flush（body群 + closing）する。
+ *   非連続で同じ closing が再登場した場合は別塊として扱う（全文統合しない）。
+ *
+ *   closing が null のエントリ同士も「null === null」で連続扱いになり1塊にまとまる。
  *
  *   "append_all"（将来拡張予約値 — 現在は未サポート）:
- *     分岐は実装済みだが、現行 JSON での使用不可。
+ *     分岐は実装済みだが、現行 JSON での使用不可。append_all エントリは
+ *     連続 closing 塊を一度 flush したうえで即時出力する。
  *
- * 出力イメージ:
- *   本文A（A薬）
- *   次回、A薬の確認。   ← A薬塊の closing
- *   本文B（B薬）
- *   次回、B薬の確認。   ← B薬塊の closing
+ * 出力イメージ（closing A → A → B → A の場合）:
+ *   本文1（A薬継続）
+ *   本文2（A薬継続）
+ *   次回、A薬の確認。   ← 塊1 closing
+ *   本文3（B薬中止）
+ *   次回、B薬の確認。   ← 塊2 closing
+ *   本文4（A薬再追加）
+ *   次回、A薬の確認。   ← 塊3 closing（非連続再登場 → 別塊）
  */
 function buildP(
   pEntries: Array<{
@@ -591,7 +596,21 @@ function buildP(
     closingBehavior?: 'dedupe_or_last' | 'append_all'
   }>,
 ): string {
-  const chunks: string[] = []
+  const output: string[] = []
+
+  // 現在蓄積中の塊
+  let currentClosing: string | null = undefined as unknown as string | null
+  let currentBodies: string[] = []
+
+  const flushChunk = () => {
+    if (currentBodies.length === 0 && !currentClosing) return
+    for (const b of currentBodies) output.push(b)
+    if (currentClosing) output.push(currentClosing)
+    currentBodies = []
+    currentClosing = undefined as unknown as string | null
+  }
+
+  let initialized = false
 
   for (const entry of pEntries) {
     const body = entry.body
@@ -604,18 +623,37 @@ function buildP(
 
     if (behavior === 'append_all') {
       // ⚠️ append_all: 将来拡張予約値。現在は未サポート・現行 JSON での使用不可。
-      if (body) chunks.push(body)
-      if (closing) chunks.push(closing)
+      // 現在の塊を flush してから即時出力する。
+      flushChunk()
+      initialized = false
+      if (body) output.push(body)
+      if (closing) output.push(closing)
+      continue
+    }
+
+    // 初回エントリ: 塊を開始する
+    if (!initialized) {
+      currentBodies = body ? [body] : []
+      currentClosing = closing
+      initialized = true
+      continue
+    }
+
+    if (closing === currentClosing) {
+      // 同じ closing → 同じ塊に body を追加
+      if (body) currentBodies.push(body)
     } else {
-      // dedupe_or_last（実運用値・デフォルト）
-      // body の直後に closing を置く（ブロック単位の塊として出力）。
-      // 同一ブロック内で closing が body に既に含まれている場合は追加しない。
-      if (body) chunks.push(body)
-      if (closing && !body.includes(closing)) chunks.push(closing)
+      // closing が変わった → 現在の塊を flush して新しい塊を開始
+      flushChunk()
+      currentBodies = body ? [body] : []
+      currentClosing = closing
     }
   }
 
-  return chunks.join('\n')
+  // 最後の塊を flush
+  flushChunk()
+
+  return output.join('\n')
 }
 
 /**

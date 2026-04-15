@@ -679,6 +679,8 @@
 /* 下部固定エリア（Sボタン） */
 .thirdPanelStickyBottom {
   flex-shrink: 0;
+  max-height: 55vh;
+  overflow-y: auto;
   border-top: 1.5px solid #dde0e8;
   background: #f0f2f7;
   padding: 0.3rem 0.4rem 0.4rem;
