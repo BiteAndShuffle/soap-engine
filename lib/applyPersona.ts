@@ -431,6 +431,11 @@ const DENSITY_RULES: ReplacePair[] = [
   // 「セマグルチド皮下注に変更となります。」→「変更となる。」
   // 前半（薬剤名）は保持される。「となる。」→ 体言止めは前半欠損リスクがあるため禁止。
   [/となります。/g, 'となる。'],
+
+  // 「〜ご相談ください。」→「〜ご相談を。」
+  // 「気になる症状があればご相談ください。」→「気になる症状があればご相談を。」
+  // 「〜があればご相談を。」等、前半の条件節は保持される。
+  [/ご相談ください。/g, 'ご相談を。'],
 ]
 
 // ─────────────────────────────────────────────────────────────
@@ -549,6 +554,31 @@ function applyPreservePhrases(
 }
 
 // ─────────────────────────────────────────────────────────────
+// デバッグ: P フィールドへのペルソナタグ付与
+//
+// enabled=false → [JSON]
+// enabled=true, persona=plain    → [JSON]
+// enabled=true, persona=concise  → [簡潔]
+// enabled=true, persona=polite   → [丁寧]
+// enabled=true, persona=gentle   → [やさしい]
+// ─────────────────────────────────────────────────────────────
+
+const DEBUG_PERSONA_TAGS = true
+
+const PERSONA_DEBUG_TAG: Record<PersonaId, string> = {
+  plain:   '[JSON]',
+  concise: '[簡潔]',
+  polite:  '[丁寧]',
+  gentle:  '[やさしい]',
+}
+
+function addDebugPersonaTag(p: string, enabled: boolean, persona: PersonaId): string {
+  if (!DEBUG_PERSONA_TAGS) return p
+  const tag = enabled ? PERSONA_DEBUG_TAG[persona] : '[JSON]'
+  return p ? `${tag}\n${p}` : tag
+}
+
+// ─────────────────────────────────────────────────────────────
 // 公開 API
 // ─────────────────────────────────────────────────────────────
 
@@ -645,7 +675,10 @@ export function applyPersonaToFieldsWithGuard(
   persona: PersonaId,
   guard: import('./personaGuard').PersonaGuard,
 ): { S: string; O: string; A: string; P: string } {
-  if (!enabled) return fields
+  if (!enabled) {
+    if (!DEBUG_PERSONA_TAGS) return fields
+    return { ...fields, P: addDebugPersonaTag(fields.P, false, persona) }
+  }
 
   const baseWeights = PERSONA_PROFILES[persona]
 
@@ -670,10 +703,11 @@ export function applyPersonaToFieldsWithGuard(
       : transformed
   }
 
+  const pResult = applyWithGuard(fields.P, weights)
   return {
     S: applyWithGuard(fields.S, weights),
     O: applyWithGuard(fields.O, weights),
     A: applyWithGuard(fields.A, aWeights),
-    P: applyWithGuard(fields.P, weights),
+    P: addDebugPersonaTag(pResult, enabled, persona),
   }
 }
