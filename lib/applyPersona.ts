@@ -563,7 +563,7 @@ function applyPreservePhrases(
 // enabled=true, persona=gentle   → [やさしい]
 // ─────────────────────────────────────────────────────────────
 
-const DEBUG_PERSONA_TAGS = true
+const DEBUG_PERSONA_TAGS = false
 
 const PERSONA_DEBUG_TAG: Record<PersonaId, string> = {
   plain:   '[JSON]',
