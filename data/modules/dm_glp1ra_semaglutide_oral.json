@@ -836,9 +836,9 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-          "role": "side_effect_assessment",
+          "role": "treatment_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -963,9 +963,9 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-          "role": "side_effect_assessment",
+          "role": "treatment_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -1086,9 +1086,9 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-          "role": "side_effect_assessment",
+          "role": "treatment_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -1591,12 +1591,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "fixed",
+          "transform": "minimal",
           "safety": "high",
           "lockTerms": [
             "低血糖"
           ],
-          "notes": null
+          "notes": "high-risk absence assessment; wording freedom limited"
         }
       ],
       "PStructured": [
@@ -1724,10 +1724,10 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
-          "notes": null
+          "notes": "absence assessment; non-directive"
         }
       ],
       "PStructured": [
@@ -1843,11 +1843,11 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
-          "role": "treatment_assessment",
-          "transform": "minimal",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
-          "notes": null
+          "notes": "absence assessment; non-directive"
         }
       ],
       "PStructured": [
@@ -1966,12 +1966,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "fixed",
+          "transform": "minimal",
           "safety": "critical",
           "lockTerms": [
             "膵炎"
           ],
-          "notes": null
+          "notes": "high-risk absence assessment; wording freedom limited"
         }
       ],
       "PStructured": [
@@ -3039,10 +3039,10 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
-          "notes": null
+          "notes": "mild SE; non-directive continuation judgment"
         }
       ],
       "PStructured": [
@@ -3169,7 +3169,7 @@
           "text": "{{drug_subject}}による消化器症状が強く、継続困難の可能性がある。減量または薬剤変更を含む対応が必要である。",
           "role": "side_effect_assessment",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [
             "減量",
             "薬剤変更",
@@ -3304,8 +3304,8 @@
           "id": "a_1",
           "text": "{{drug_subject}}の服用による消化器症状を認め、他剤変更の適応があった。",
           "role": "treatment_end_assessment",
-          "transform": "minimal",
-          "safety": "low",
+          "transform": "fixed",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3829,13 +3829,13 @@
           "id": "a_1",
           "text": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
           "role": "sickday_assessment",
-          "transform": "fixed",
+          "transform": "minimal",
           "safety": "critical",
           "lockTerms": [
             "低血糖",
             "脱水"
           ],
-          "notes": null
+          "notes": "sickday risk assessment; state evaluation not action directive"
         }
       ],
       "PStructured": [
