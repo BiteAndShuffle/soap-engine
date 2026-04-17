@@ -712,13 +712,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "血糖値が高いため、薬が追加となった。",
-          "role": "subjective_complaint",
+          "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -729,7 +730,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。",
-          "role": "clinical_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -738,7 +739,7 @@
         {
           "id": "a_2",
           "text": "血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。",
-          "role": "clinical_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -747,7 +748,7 @@
         {
           "id": "a_3",
           "text": "血糖改善および体重管理の補助を目的として使用する。",
-          "role": "clinical_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -758,7 +759,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、血糖値を改善する薬です。",
-          "role": "counseling",
+          "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -767,19 +768,23 @@
         {
           "id": "p_2",
           "text": "悪心や食欲不振などの副作用が出た場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         },
         {
           "id": "p_3",
           "text": "注射手技については指導せんで説明しています。不安がある場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "administration_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -853,13 +858,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
-          "role": "subjective_complaint",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -870,8 +876,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-          "role": "risk_note",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -881,8 +887,8 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。",
-          "role": "counseling",
-          "transform": "moderate",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -890,10 +896,12 @@
         {
           "id": "p_2",
           "text": "消化器症状が強い場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -967,13 +975,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、検査値が改善しないため増量となった。",
-          "role": "subjective_complaint",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -984,8 +993,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-          "role": "risk_note",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -995,8 +1004,8 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。",
-          "role": "counseling",
-          "transform": "moderate",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1004,10 +1013,12 @@
         {
           "id": "p_2",
           "text": "消化器症状が強い場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1081,13 +1092,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他剤変更に伴う調整により増量となった。",
-          "role": "subjective_complaint",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1098,8 +1110,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-          "role": "risk_note",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1109,8 +1121,8 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。",
-          "role": "counseling",
-          "transform": "moderate",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1118,10 +1130,12 @@
         {
           "id": "p_2",
           "text": "消化器症状が強い場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1190,16 +1204,19 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、検査値が改善したため減量となった。",
-          "role": "subjective_complaint",
+          "role": "dose_adjustment_reason",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -1207,10 +1224,13 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。",
-          "role": "risk_note",
+          "role": "risk_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量",
+            "血糖が上昇"
+          ],
           "notes": null
         }
       ],
@@ -1218,19 +1238,24 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、減量により血糖値が上がることがあります。",
-          "role": "counseling",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "体調変化があればご相談ください。",
-          "role": "consult_invitation",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1299,16 +1324,19 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果の実感が乏しいため減量を希望された。",
-          "role": "subjective_complaint",
+          "role": "dose_adjustment_reason",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -1316,10 +1344,12 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。",
-          "role": "risk_note",
+          "role": "risk_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -1327,19 +1357,24 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。",
-          "role": "counseling",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "体調変化があればご相談ください。",
-          "role": "consult_invitation",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1408,16 +1443,19 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他剤変更に伴う調整のため減量となった。",
-          "role": "subjective_complaint",
+          "role": "dose_adjustment_reason",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -1425,10 +1463,12 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。",
-          "role": "risk_note",
+          "role": "risk_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -1436,19 +1476,24 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。",
-          "role": "counseling",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "体調変化があればご相談ください。",
-          "role": "consult_invitation",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1517,14 +1562,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。注射部位が硬くなるような変化は認めない。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1534,8 +1580,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による注射部位反応は現時点で認められず、治療継続が可能である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1545,7 +1591,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に、注射部位が硬くなることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1554,7 +1600,7 @@
         {
           "id": "p_2",
           "text": "毎回注射部位を変えることで予防できます。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1563,10 +1609,12 @@
         {
           "id": "p_3",
           "text": "気になる症状があればご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "followup_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1635,13 +1683,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
-          "role": "subjective_complaint",
+          "role": "symptom_absence_check",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -1654,7 +1703,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
-          "role": "clinical_assessment",
+          "role": "side_effect_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -1667,7 +1716,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。",
-          "role": "medical_consult",
+          "role": "side_effect_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -1678,7 +1727,7 @@
         {
           "id": "p_2",
           "text": "単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。",
-          "role": "medical_consult",
+          "role": "side_effect_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -1689,10 +1738,12 @@
         {
           "id": "p_3",
           "text": "症状が出た場合は糖分を摂取してください。改善しない場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1761,14 +1812,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "acute_condition_status",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1778,8 +1830,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1789,7 +1841,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に吐き気・下痢などが出ることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1798,10 +1850,13 @@
         {
           "id": "p_2",
           "text": "症状が続く場合はご相談ください。",
-          "role": "consult_invitation",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "症状が続く",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1871,14 +1926,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。食欲低下は認めない。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1888,8 +1944,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "treatment_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1899,7 +1955,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に食欲低下が出ることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1908,10 +1964,12 @@
         {
           "id": "p_2",
           "text": "食事量が落ちる・体重が急に減るなどの変化があればご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "lifestyle_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -1981,18 +2039,18 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
-          "role": "subjective_complaint",
+          "role": "acute_condition_status",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
             "強い腹痛",
-            "腹痛",
             "背部痛"
           ],
           "notes": null
@@ -2002,7 +2060,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
-          "role": "clinical_assessment",
+          "role": "side_effect_assessment",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
@@ -2015,30 +2073,31 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。",
-          "role": "urgent_action",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
             "強い腹痛",
-            "腹痛"
+            "腹痛や背中"
           ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "こうした症状が続く場合は膵炎の可能性があります。",
-          "role": "urgent_action",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "膵炎"
+            "膵炎",
+            "症状が続く"
           ],
           "notes": null
         },
         {
           "id": "p_3",
           "text": "痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
-          "role": "urgent_action",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
@@ -2046,7 +2105,6 @@
             "救急",
             "発熱を伴う",
             "我慢できない",
-            "受診",
             "発熱"
           ],
           "notes": null
@@ -2115,14 +2173,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "薬を使用して症状は落ち着いている。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2130,7 +2189,7 @@
         {
           "id": "s_2",
           "text": "継続して使用できている。",
-          "role": "subjective_complaint",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2141,7 +2200,7 @@
         {
           "id": "a_1",
           "text": "コンプライアンスは良好である。治療継続に問題はない。",
-          "role": "clinical_assessment",
+          "role": "adherence_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2152,7 +2211,7 @@
         {
           "id": "p_1",
           "text": "引き続き用法を守って使用することで、血糖コントロールの維持および合併症予防が期待できます。",
-          "role": "counseling",
+          "role": "adherence_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2161,7 +2220,7 @@
         {
           "id": "p_2",
           "text": "今後も継続して使用できるようにすること。",
-          "role": "counseling",
+          "role": "adherence_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2239,13 +2298,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "使用忘れがみられる。",
-          "role": "subjective_complaint",
+          "role": "adherence_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2254,7 +2314,7 @@
         {
           "id": "s_2",
           "text": "継続して使用できていない。",
-          "role": "subjective_complaint",
+          "role": "adherence_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2265,7 +2325,7 @@
         {
           "id": "a_1",
           "text": "コンプライアンスは不良で、使用忘れがみられる。",
-          "role": "clinical_assessment",
+          "role": "adherence_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2276,7 +2336,7 @@
         {
           "id": "p_1",
           "text": "継続して使用することで血糖コントロールの維持が期待されます。",
-          "role": "adherence_instruction",
+          "role": "adherence_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2285,8 +2345,8 @@
         {
           "id": "p_2",
           "text": "使用忘れが続くと血糖値が不安定となる可能性があります。",
-          "role": "counseling",
-          "transform": "moderate",
+          "role": "followup_guidance",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2294,7 +2354,7 @@
         {
           "id": "p_3",
           "text": "忘れを防ぐため、毎日同じ時間に使用する習慣をつけることが大切です。",
-          "role": "counseling",
+          "role": "adherence_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2366,13 +2426,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "自己判断での使用調整がみられる。",
-          "role": "subjective_complaint",
+          "role": "adherence_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2381,7 +2442,7 @@
         {
           "id": "s_2",
           "text": "用法どおりの継続使用ができていない。",
-          "role": "subjective_complaint",
+          "role": "adherence_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2392,7 +2453,7 @@
         {
           "id": "a_1",
           "text": "コンプライアンスは不良で、自己判断による調整がみられる。",
-          "role": "clinical_assessment",
+          "role": "adherence_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2403,7 +2464,7 @@
         {
           "id": "p_1",
           "text": "継続して使用することで血糖コントロールが安定し、合併症予防につながります。",
-          "role": "adherence_instruction",
+          "role": "adherence_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2412,7 +2473,7 @@
         {
           "id": "p_2",
           "text": "自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があります。",
-          "role": "medical_consult",
+          "role": "followup_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -2423,11 +2484,15 @@
         {
           "id": "p_3",
           "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
-          "role": "medical_consult",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "医療機関"
+            "医療機関へご相談",
+            "医療機関へ",
+            "自己判断せず",
+            "体調変化",
+            "ご相談ください"
           ],
           "notes": null
         }
@@ -2496,24 +2561,23 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "都合により受診遅延がみられる。",
-          "role": "subjective_complaint",
-          "transform": "fixed",
+          "role": "visit_status",
+          "transform": "moderate",
           "safety": "high",
-          "lockTerms": [
-            "受診"
-          ],
+          "lockTerms": [],
           "notes": null
         },
         {
           "id": "s_2",
           "text": "継続した使用に不安がある。",
-          "role": "subjective_complaint",
+          "role": "visit_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2524,12 +2588,10 @@
         {
           "id": "a_1",
           "text": "コンプライアンスは不良で、受診遅延がみられる。",
-          "role": "clinical_assessment",
-          "transform": "fixed",
+          "role": "adherence_assessment",
+          "transform": "moderate",
           "safety": "high",
-          "lockTerms": [
-            "受診"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2537,7 +2599,7 @@
         {
           "id": "p_1",
           "text": "継続的な使用が血糖コントロールの維持と合併症予防につながります。",
-          "role": "adherence_instruction",
+          "role": "lifestyle_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2546,8 +2608,8 @@
         {
           "id": "p_2",
           "text": "治療が中断すると血糖値が悪化する可能性があります。",
-          "role": "counseling",
-          "transform": "moderate",
+          "role": "followup_guidance",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2555,12 +2617,12 @@
         {
           "id": "p_3",
           "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
-          "role": "medical_consult",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "受診",
-            "医療機関"
+            "医療機関へご連絡",
+            "医療機関へ"
           ],
           "notes": null
         }
@@ -2628,13 +2690,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、血糖コントロールが改善したため中止となった。",
-          "role": "subjective_complaint",
+          "role": "treatment_end_reason",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -2647,10 +2710,12 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
-          "role": "risk_note",
-          "transform": "moderate",
+          "role": "treatment_end_assessment",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "終了後"
+          ],
           "notes": null
         }
       ],
@@ -2658,10 +2723,15 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖上昇や体調変化がある場合はご相談ください。",
-          "role": "consult_invitation",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "終了後",
+            "体調変化",
+            "ご相談ください",
+            "血糖上昇"
+          ],
           "notes": null
         }
       ]
@@ -2728,13 +2798,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果不十分のため中止となった。",
-          "role": "subjective_complaint",
+          "role": "treatment_end_reason",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -2747,8 +2818,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "treatment_end_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2758,20 +2829,25 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
-          "role": "counseling",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "終了後",
+            "血糖が上昇"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "次の治療方針については処方医にご相談ください。",
-          "role": "medical_consult",
+          "role": "treatment_end_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "処方医"
+            "処方医にご相談",
+            "処方医",
+            "ご相談ください"
           ],
           "notes": null
         }
@@ -2839,13 +2915,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果が認められなかったため中止となった。",
-          "role": "subjective_complaint",
+          "role": "treatment_end_reason",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -2858,8 +2935,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "treatment_end_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2869,20 +2946,25 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
-          "role": "counseling",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "終了後",
+            "血糖が上昇"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "代替治療については処方医にご相談ください。",
-          "role": "medical_consult",
+          "role": "treatment_end_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "処方医"
+            "処方医にご相談",
+            "処方医",
+            "ご相談ください"
           ],
           "notes": null
         }
@@ -2953,14 +3035,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "acute_condition_status",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2970,8 +3053,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2981,7 +3064,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}による症状が軽い場合は、食事量を無理せず脂っこいものを控えるなどで改善することがあります。",
-          "role": "counseling",
+          "role": "lifestyle_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2990,10 +3073,13 @@
         {
           "id": "p_2",
           "text": "便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。ご相談ください。",
-          "role": "consult_invitation",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "症状が強く",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -3064,14 +3150,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "acute_condition_status",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -3081,10 +3168,15 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状が強く、継続困難の可能性がある。減量または薬剤変更を含む対応が必要である。",
-          "role": "clinical_assessment",
+          "role": "side_effect_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量",
+            "薬剤変更",
+            "症状が強く",
+            "継続困難"
+          ],
           "notes": null
         }
       ],
@@ -3092,20 +3184,24 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "処方医へご相談ください。",
-          "role": "medical_consult",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "処方医"
+            "処方医へご相談",
+            "処方医",
+            "ご相談ください"
           ],
           "notes": null
         }
@@ -3176,14 +3272,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘が出現したため、他剤へ変更となった。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "acute_condition_status",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -3193,8 +3290,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の使用による消化器症状を認め、他剤変更の適応があった。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "treatment_end_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -3204,10 +3301,15 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の変更後、血糖上昇や体調変化があればご相談ください。",
-          "role": "consult_invitation",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "変更後",
+            "体調変化",
+            "ご相談ください",
+            "血糖上昇"
+          ],
           "notes": null
         }
       ]
@@ -3277,16 +3379,19 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘がひどいため、減量となった。",
-          "role": "subjective_complaint",
+          "role": "acute_condition_status",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -3294,10 +3399,12 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の使用による消化器症状を認め、減量が妥当と判断された。減量後の血糖変動に注意が必要である。",
-          "role": "risk_note",
+          "role": "side_effect_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -3305,10 +3412,14 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の減量後も消化器症状が続く場合はご相談ください。",
-          "role": "consult_invitation",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量",
+            "症状が続く",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -3378,13 +3489,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘がひどいため、中止となった。",
-          "role": "subjective_complaint",
+          "role": "acute_condition_status",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -3397,7 +3509,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の使用による消化器症状を認め、中止が妥当と判断された。",
-          "role": "clinical_assessment",
+          "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -3410,11 +3522,15 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の中止後、血糖上昇や体調変化があればご相談ください。",
-          "role": "medical_consult",
+          "role": "dose_adjustment_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "中止"
+            "中止",
+            "中止後",
+            "体調変化",
+            "ご相談ください",
+            "血糖上昇"
           ],
           "notes": null
         }
@@ -3483,13 +3599,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "血糖値がなかなか改善しない。",
-          "role": "subjective_complaint",
+          "role": "lifestyle_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3500,7 +3617,7 @@
         {
           "id": "a_1",
           "text": "血糖コントロールが不十分であり、生活習慣の改善が重要である。食事・運動療法の継続が必要である。",
-          "role": "clinical_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3511,7 +3628,7 @@
         {
           "id": "p_1",
           "text": "高血糖が続くと、眼・腎・神経障害などのリスクが高まります。",
-          "role": "counseling",
+          "role": "lifestyle_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3520,7 +3637,7 @@
         {
           "id": "p_2",
           "text": "薬物療法に加え、食事・運動療法も血糖コントロールにおいて重要です。",
-          "role": "counseling",
+          "role": "lifestyle_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3529,7 +3646,7 @@
         {
           "id": "p_3",
           "text": "間食は控え、カロリーオフ・ノンシュガー食品への置き換えが有効です。",
-          "role": "counseling",
+          "role": "lifestyle_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3538,7 +3655,7 @@
         {
           "id": "p_4",
           "text": "血糖コントロールの改善に伴い、低血糖症状が出ることがあります。",
-          "role": "medical_consult",
+          "role": "side_effect_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -3549,10 +3666,12 @@
         {
           "id": "p_5",
           "text": "気になる症状があればご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "followup_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -3624,14 +3743,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "発熱・嘔吐・下痢などの体調不良がみられる。",
-          "role": "subjective_complaint",
-          "transform": "fixed",
+          "role": "acute_condition_status",
+          "transform": "minimal",
           "safety": "high",
           "lockTerms": [
             "発熱"
@@ -3643,12 +3763,12 @@
         {
           "id": "a_1",
           "text": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
-          "role": "risk_note",
+          "role": "sickday_assessment",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "脱水",
-            "低血糖"
+            "低血糖",
+            "脱水"
           ],
           "notes": null
         }
@@ -3657,12 +3777,12 @@
         {
           "id": "p_1",
           "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。",
-          "role": "urgent_action",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "脱水",
             "低血糖",
+            "脱水",
             "発熱"
           ],
           "notes": null
@@ -3670,7 +3790,7 @@
         {
           "id": "p_2",
           "text": "血糖測定が可能であれば行ってください。",
-          "role": "counseling",
+          "role": "sickday_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3679,7 +3799,7 @@
         {
           "id": "p_3",
           "text": "水分は少量ずつこまめに摂取してください。",
-          "role": "counseling",
+          "role": "sickday_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3688,26 +3808,26 @@
         {
           "id": "p_4",
           "text": "治療継続の可否は体調や摂取状況によって異なります。自己判断せず、処方医に相談してください。",
-          "role": "medical_consult",
+          "role": "sickday_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "処方医"
+            "処方医に相談",
+            "処方医",
+            "自己判断せず"
           ],
           "notes": null
         },
         {
           "id": "p_5",
           "text": "嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
-          "role": "urgent_action",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "水分が摂れない",
-            "尿量が減る",
             "受診してください",
-            "強い倦怠感",
-            "受診",
+            "尿量が減る",
+            "水分が摂れない",
             "嘔吐が続く"
           ],
           "notes": null
@@ -3773,13 +3893,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "注射手技に不安がみられる。",
-          "role": "subjective_complaint",
+          "role": "adherence_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3790,7 +3911,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の注射手技の確認が必要である。",
-          "role": "clinical_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3801,7 +3922,7 @@
         {
           "id": "p_1",
           "text": "注射の具体的な手技については、指導せんを用いて改めて説明しています。",
-          "role": "counseling",
+          "role": "administration_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3810,8 +3931,8 @@
         {
           "id": "p_2",
           "text": "同じ部位に繰り返し注射すると、皮膚が硬くなることがあります。",
-          "role": "counseling",
-          "transform": "moderate",
+          "role": "followup_guidance",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -3819,7 +3940,7 @@
         {
           "id": "p_3",
           "text": "注射部位は毎回適切に変えながら使用してください。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3828,10 +3949,12 @@
         {
           "id": "p_4",
           "text": "不安が残る場合はご相談ください。",
-          "role": "consult_invitation",
-          "transform": "moderate",
+          "role": "followup_guidance",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -3912,14 +4035,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "symptom_presence_check",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -3929,8 +4053,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による注射部位反応を軽度認めるが、治療継続が可能である。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -3940,7 +4064,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}により注射部位に軽い痛みやしこりが出ることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3949,7 +4073,7 @@
         {
           "id": "p_2",
           "text": "毎回注射部位を変えることで予防や軽減につながります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3958,10 +4082,13 @@
         {
           "id": "p_3",
           "text": "症状が強くなる、長引く場合はご相談ください。",
-          "role": "consult_invitation",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "症状が強く",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -4043,14 +4170,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが強く、気になることがある。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "symptom_presence_check",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -4060,10 +4188,12 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による注射部位反応が強く、継続困難の可能性があるため対応を要する。",
-          "role": "clinical_assessment",
+          "role": "side_effect_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "継続困難"
+          ],
           "notes": null
         }
       ],
@@ -4071,7 +4201,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4080,11 +4210,14 @@
         {
           "id": "p_2",
           "text": "症状が続く場合は処方医へご相談ください。",
-          "role": "medical_consult",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "処方医"
+            "処方医へご相談",
+            "処方医",
+            "症状が続く",
+            "ご相談ください"
           ],
           "notes": null
         }
@@ -4166,14 +4299,15 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。",
-          "role": "subjective_complaint",
-          "transform": "moderate",
+          "role": "symptom_presence_check",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -4183,8 +4317,8 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の使用による注射部位反応を認め、他剤変更の適応があった。",
-          "role": "clinical_assessment",
-          "transform": "moderate",
+          "role": "treatment_end_assessment",
+          "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -4194,10 +4328,14 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の変更後、注射部位の症状や体調変化があればご相談ください。",
-          "role": "consult_invitation",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "変更後",
+            "体調変化",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ]
@@ -4278,16 +4416,19 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが強いため、減量となった。",
-          "role": "subjective_complaint",
+          "role": "symptom_presence_check",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -4295,10 +4436,12 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}による注射部位反応を認め、減量が妥当と判断された。減量後の血糖変動に注意が必要である。",
-          "role": "risk_note",
+          "role": "side_effect_assessment",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量"
+          ],
           "notes": null
         }
       ],
@@ -4306,16 +4449,20 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の減量後も注射部位の症状が続く場合はご相談ください。",
-          "role": "consult_invitation",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "減量",
+            "症状が続く",
+            "ご相談ください"
+          ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "注射部位は毎回適切に変えながら使用することで、症状の軽減につながることがあります。",
-          "role": "counseling",
+          "role": "side_effect_guidance",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4399,13 +4546,14 @@
           "S": "allow",
           "A": "allow",
           "P": "allow"
-        }
+        },
+        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
       },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが強いため、中止となった。",
-          "role": "subjective_complaint",
+          "role": "symptom_presence_check",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -4418,7 +4566,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の使用による注射部位反応を認め、中止が妥当と判断された。",
-          "role": "clinical_assessment",
+          "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -4431,12 +4579,16 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}中止後も、注射部位の症状が続く場合や悪化する場合は、医療機関へご相談ください。",
-          "role": "medical_consult",
+          "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "医療機関",
-            "中止"
+            "医療機関へご相談",
+            "医療機関へ",
+            "中止",
+            "中止後",
+            "症状が続く",
+            "ご相談ください"
           ],
           "notes": null
         }
@@ -4444,23 +4596,44 @@
     }
   ],
   "personaSchema": {
-    "version": "1.0",
+    "version": "1.1",
     "targetSections": [
       "S",
       "A",
       "P"
     ],
     "transformLevels": {
-      "fixed": "変換禁止（医療安全・危険語含む）",
-      "minimal": "最小変換のみ（語尾・接続詞のみ）",
-      "moderate": "通常変換（formality/softness/density 適用可）"
+      "fixed": "変換禁止。文意・指示強度・判断語を変えない。語尾変更も原則不可。救急受診/中止/処方医/低血糖/膵炎/脱水/強い腹痛など緊急指示・危険語含む文。",
+      "minimal": "最小変換のみ許可。語尾・接続詞の軽微変更は可。症状語・判断語・指示語は固定。",
+      "moderate": "同義範囲での文型変更、主述の組み替え、体言止め化を許可。ただし医学的意味は厳密維持。"
     },
     "safetyLevels": {
-      "critical": "救急受診・緊急対応を要する記述",
-      "high": "受診・中止・低血糖・医療機関への言及",
-      "medium": "減量・体調変化・継続困難への言及",
+      "critical": "救急受診・膵炎・脱水・強い腹痛など緊急対応を要する記述",
+      "high": "受診・中止・低血糖・医療機関・処方医への言及",
+      "medium": "減量・体調変化・継続困難・症状が続くへの言及",
       "low": "一般的な説明・情報提供"
     },
-    "designNote": "各文のtransform/safetyはapplyPersona変換前に参照。fixed文はルール適用対象外。"
+    "roleBasedPolicy": {
+      "principle": "S is not uniformly weak. Sentence role governs transform level.",
+      "S_moderate_roles": [
+        "treatment_start_reason",
+        "dose_adjustment_reason",
+        "adherence_status",
+        "adherence_problem",
+        "visit_status",
+        "lifestyle_problem"
+      ],
+      "S_minimal_roles": [
+        "symptom_absence_check",
+        "symptom_presence_check",
+        "acute_condition_status",
+        "treatment_end_reason"
+      ],
+      "A_judgment_phrases_require_minimal": true,
+      "P_urgent_roles_require_fixed": [
+        "urgent_consult_guidance"
+      ]
+    },
+    "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。受診遅延などの状態記録語は moderate のまま。"
   }
 }
