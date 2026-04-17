@@ -1578,7 +1578,7 @@
           "id": "s_1",
           "text": "{{drug_subject}}を服用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
           "role": "symptom_absence_check",
-          "transform": "fixed",
+          "transform": "minimal",
           "safety": "high",
           "lockTerms": [
             "低血糖"
