@@ -1585,7 +1585,7 @@
           "text": "{{drug_subject}}を服用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
           "role": "symptom_absence_check",
           "transform": "minimal",
-          "safety": "high",
+          "safety": "medium",
           "lockTerms": [
             "低血糖"
           ],
@@ -1597,7 +1597,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "high",
           "lockTerms": [
             "低血糖",
@@ -1731,8 +1731,8 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
-          "safety": "medium",
+          "transform": "fixed",
+          "safety": "high",
           "lockTerms": [
             "治療継続が可能"
           ],
@@ -1853,8 +1853,8 @@
           "id": "a_1",
           "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
-          "safety": "medium",
+          "transform": "fixed",
+          "safety": "high",
           "lockTerms": [
             "治療継続が可能"
           ],
@@ -1977,7 +1977,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
             "膵炎"
@@ -3055,7 +3055,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "medium",
           "lockTerms": [
             "治療継続が可能"
@@ -3852,7 +3852,7 @@
           "id": "a_1",
           "text": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
           "role": "sickday_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
             "低血糖",
