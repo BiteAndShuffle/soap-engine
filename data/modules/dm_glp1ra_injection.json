@@ -889,8 +889,10 @@
           "role": "treatment_assessment",
           "transform": "minimal",
           "safety": "high",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": [
+            "副作用が増強"
+          ],
+          "notes": "dose change with adverse effect risk mention; minimal enforced"
         }
       ],
       "PStructured": [
@@ -921,7 +923,9 @@
         "symptomCodes": [
           "low_perceived_effect"
         ],
-        "symptoms": []
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
       }
     },
     {
@@ -1014,8 +1018,10 @@
           "role": "treatment_assessment",
           "transform": "minimal",
           "safety": "high",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": [
+            "副作用が増強"
+          ],
+          "notes": "dose change with adverse effect risk mention; minimal enforced"
         }
       ],
       "PStructured": [
@@ -1046,7 +1052,9 @@
         "symptomCodes": [
           "no_lab_improvement"
         ],
-        "symptoms": []
+        "symptoms": [
+          "検査値が改善しない"
+        ]
       }
     },
     {
@@ -1139,8 +1147,10 @@
           "role": "treatment_assessment",
           "transform": "minimal",
           "safety": "high",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": [
+            "副作用が増強"
+          ],
+          "notes": "dose change with adverse effect risk mention; minimal enforced"
         }
       ],
       "PStructured": [
@@ -1297,7 +1307,9 @@
         "symptomCodes": [
           "lab_improved"
         ],
-        "symptoms": []
+        "symptoms": [
+          "検査値が改善した"
+        ]
       }
     },
     {
@@ -1424,7 +1436,9 @@
         "symptomCodes": [
           "low_perceived_effect"
         ],
-        "symptoms": []
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
       }
     },
     {
@@ -1635,10 +1649,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による注射部位反応は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "moderate",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "absence assessment; non-directive"
+          "lockTerms": [
+            "治療継続が可能"
+          ],
+          "notes": "absence assessment with continuation judgment; transform restricted to minimal"
         }
       ],
       "PStructured": [
@@ -1767,9 +1783,10 @@
           "transform": "minimal",
           "safety": "high",
           "lockTerms": [
-            "低血糖"
+            "低血糖",
+            "治療継続が可能"
           ],
-          "notes": "high-risk absence assessment; wording freedom limited"
+          "notes": "high-risk absence assessment; continuation judgment present; transform fixed at minimal"
         }
       ],
       "PStructured": [
@@ -1897,10 +1914,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "moderate",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "absence assessment; non-directive"
+          "lockTerms": [
+            "治療継続が可能"
+          ],
+          "notes": "absence assessment with continuation judgment; transform restricted to minimal"
         }
       ],
       "PStructured": [
@@ -2017,10 +2036,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "moderate",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "absence assessment; non-directive"
+          "lockTerms": [
+            "治療継続が可能"
+          ],
+          "notes": "absence assessment with continuation judgment; transform restricted to minimal"
         }
       ],
       "PStructured": [
@@ -2144,7 +2165,7 @@
           "lockTerms": [
             "膵炎"
           ],
-          "notes": "high-risk absence assessment; wording freedom limited"
+          "notes": "critical-risk absence assessment; continuation judgment present; no transform permitted"
         }
       ],
       "PStructured": [
@@ -2457,7 +2478,9 @@
         "symptomCodes": [
           "missed_doses"
         ],
-        "symptoms": []
+        "symptoms": [
+          "使用忘れ"
+        ]
       }
     },
     {
@@ -2601,7 +2624,9 @@
         "symptomCodes": [
           "self_adjustment"
         ],
-        "symptoms": []
+        "symptoms": [
+          "自己判断での使用調整"
+        ]
       }
     },
     {
@@ -2695,10 +2720,10 @@
           "id": "a_1",
           "text": "コンプライアンスは不良で、受診遅延がみられる。",
           "role": "adherence_assessment",
-          "transform": "moderate",
+          "transform": "minimal",
           "safety": "high",
           "lockTerms": [],
-          "notes": null
+          "notes": "visit behavior judgment; restricted to minimal to preserve clinical meaning"
         }
       ],
       "PStructured": [
@@ -2739,7 +2764,9 @@
         "symptomCodes": [
           "visit_delay"
         ],
-        "symptoms": []
+        "symptoms": [
+          "受診遅延がみられる"
+        ]
       }
     },
     {
@@ -2828,9 +2855,10 @@
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [
-            "終了後"
+            "終了後",
+            "血糖が変動"
           ],
-          "notes": null
+          "notes": "treatment end assessment; risk of post-termination glycemic fluctuation"
         }
       ],
       "PStructured": [
@@ -2855,7 +2883,9 @@
         "symptomCodes": [
           "glycemic_improved"
         ],
-        "symptoms": []
+        "symptoms": [
+          "血糖コントロールが改善した"
+        ]
       }
     },
     {
@@ -2942,9 +2972,11 @@
           "text": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
           "role": "treatment_end_assessment",
           "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
+          "safety": "medium",
+          "lockTerms": [
+            "再評価"
+          ],
+          "notes": "treatment end with re-evaluation judgment; safety elevated to medium"
         }
       ],
       "PStructured": [
@@ -2980,7 +3012,9 @@
         "symptomCodes": [
           "insufficient_effect"
         ],
-        "symptoms": []
+        "symptoms": [
+          "効果不十分"
+        ]
       }
     },
     {
@@ -3067,9 +3101,11 @@
           "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
           "role": "treatment_end_assessment",
           "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
+          "safety": "medium",
+          "lockTerms": [
+            "治療方針の変更"
+          ],
+          "notes": "treatment end with treatment plan change judgment; safety elevated to medium"
         }
       ],
       "PStructured": [
@@ -3105,7 +3141,9 @@
         "symptomCodes": [
           "ineffective"
         ],
-        "symptoms": []
+        "symptoms": [
+          "効果が認められない"
+        ]
       }
     },
     {
@@ -3192,10 +3230,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "moderate",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "mild SE; non-directive continuation judgment"
+          "lockTerms": [
+            "治療継続が可能"
+          ],
+          "notes": "mild SE with continuation judgment; transform restricted to minimal"
         }
       ],
       "PStructured": [
@@ -3329,7 +3369,7 @@
             "症状が強く",
             "継続困難"
           ],
-          "notes": null
+          "notes": "moderate SE with continuation difficulty judgment and treatment change suggestion; minimal enforced"
         }
       ],
       "PStructured": [
@@ -3459,8 +3499,10 @@
           "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": [
+            "他剤変更の適応"
+          ],
+          "notes": "clinical judgment: treatment change decision; fixed to prevent paraphrase"
         }
       ],
       "PStructured": [
@@ -3583,9 +3625,11 @@
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
-            "減量"
+            "減量",
+            "減量が妥当",
+            "血糖変動"
           ],
-          "notes": null
+          "notes": "clinical judgment: dose reduction decision; minimal enforced, risk direction preserved"
         }
       ],
       "PStructured": [
@@ -3707,9 +3751,10 @@
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "中止"
+            "中止",
+            "中止が妥当"
           ],
-          "notes": null
+          "notes": "clinical judgment: discontinuation decision; fixed to prevent paraphrase"
         }
       ],
       "PStructured": [
@@ -3829,7 +3874,7 @@
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
-          "notes": null
+          "notes": "lifestyle problem assessment; moderate permitted"
         }
       ],
       "PStructured": [
@@ -3986,7 +4031,9 @@
           "safety": "critical",
           "lockTerms": [
             "低血糖",
-            "脱水"
+            "低血糖リスク",
+            "脱水",
+            "脱水リスク"
           ],
           "notes": "sickday risk assessment; state evaluation not action directive"
         }
@@ -4151,7 +4198,7 @@
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
-          "notes": null
+          "notes": "administration technique assessment; moderate permitted, no clinical judgment"
         }
       ],
       "PStructured": [
@@ -4300,10 +4347,12 @@
           "id": "a_1",
           "text": "{{drug_subject}}による注射部位反応を軽度認めるが、治療継続が可能である。",
           "role": "side_effect_assessment",
-          "transform": "moderate",
+          "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "mild SE; non-directive continuation judgment"
+          "lockTerms": [
+            "治療継続が可能"
+          ],
+          "notes": "mild injection site SE with continuation judgment; transform restricted to minimal"
         }
       ],
       "PStructured": [
@@ -4440,7 +4489,7 @@
           "lockTerms": [
             "継続困難"
           ],
-          "notes": null
+          "notes": "moderate injection site SE with continuation difficulty and action required; fixed to prevent paraphrase"
         }
       ],
       "PStructured": [
@@ -4566,8 +4615,10 @@
           "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": [
+            "他剤変更の適応"
+          ],
+          "notes": "clinical judgment: treatment change decision; fixed to prevent paraphrase"
         }
       ],
       "PStructured": [
@@ -4686,9 +4737,11 @@
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
-            "減量"
+            "減量",
+            "減量が妥当",
+            "血糖変動"
           ],
-          "notes": null
+          "notes": "clinical judgment: dose reduction decision; minimal enforced"
         }
       ],
       "PStructured": [
@@ -4816,9 +4869,10 @@
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "中止"
+            "中止",
+            "中止が妥当"
           ],
-          "notes": null
+          "notes": "clinical judgment: discontinuation decision; fixed to prevent paraphrase"
         }
       ],
       "PStructured": [
@@ -4879,7 +4933,41 @@
       "P_urgent_roles_require_fixed": [
         "urgent_consult_guidance"
       ],
-      "absence_check_rule": "symptom_absence_check は transform:minimal, safety:medium が上限。fixed/critical は禁止。"
+      "absence_check_rule": "symptom_absence_check は transform:minimal, safety:medium が上限。fixed/critical は禁止。",
+      "A_moderate_roles": [
+        "treatment_assessment",
+        "adherence_assessment",
+        "administration_assessment"
+      ],
+      "A_minimal_roles": [
+        "risk_assessment",
+        "side_effect_assessment",
+        "sickday_assessment",
+        "treatment_end_assessment"
+      ],
+      "A_fixed_conditions": [
+        "safety:critical",
+        "side_effect_assessment where safety:high and judgment phrase present",
+        "treatment_end_assessment where safety:high"
+      ],
+      "judgment_phrases": [
+        "治療継続が可能",
+        "中止が妥当と判断された",
+        "減量が妥当と判断された",
+        "他剤変更の適応があった",
+        "対応を要する",
+        "再評価が必要",
+        "治療方針の変更が必要",
+        "継続困難"
+      ],
+      "A_rules": {
+        "treatment_assessment": "moderate 上限。副作用増強リスク言及は minimal。",
+        "adherence_assessment": "moderate 上限。受診遅延など受診行動への言及は minimal。",
+        "risk_assessment": "minimal のみ。リスク方向性（血糖上昇など）を保持。",
+        "side_effect_assessment": "safety:high 以上は minimal。疾患名・評価結果を保持。",
+        "sickday_assessment": "minimal。リスク複合評価を保持。",
+        "treatment_end_assessment": "minimal が基本。judgment phrase 含む場合は minimal 以上を禁止。safety:high 以上は fixed。"
+      }
     },
     "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。受診遅延などの状態記録語は moderate のまま。",
     "allowedRoles": [
