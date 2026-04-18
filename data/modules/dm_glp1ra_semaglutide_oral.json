@@ -1732,7 +1732,7 @@
           "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
             "治療継続が可能"
           ],
@@ -1854,7 +1854,7 @@
           "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
             "治療継続が可能"
           ],
@@ -2674,7 +2674,7 @@
           "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
           "role": "treatment_end_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
             "終了後",
             "血糖が変動"
@@ -3056,7 +3056,7 @@
           "text": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
             "治療継続が可能"
           ],
@@ -3621,7 +3621,7 @@
           "poor_glycemic_control"
         ],
         "symptoms": [
-          "血糖値が改善しない"
+          "血糖コントロール不良"
         ]
       },
       "S": "血糖値がなかなか改善しない。",
@@ -4065,6 +4065,14 @@
       "fixed": [
         "urgent_consult_guidance"
       ]
+    },
+    "sCompositionPolicy": {
+      "rule": "symptomCodes が空でない場合、symptoms も対応する日本語表現で埋める。symptomCodes が空の場合は symptoms も空でよい。",
+      "template_policy": {
+        "symptom_based": "症状起点のシナリオ。symptomCodes と symptoms を必ず埋める。",
+        "status_based": "状態・判断起点のシナリオ。symptomCodes がある場合は symptoms も埋める。symptomCodes が空なら symptoms も空でよい。"
+      },
+      "route_diff_allowed": "cp_poor_missed_doses など、使用/服薬 などの route 固有語は injection/oral で異なっても可。"
     }
   }
 }
