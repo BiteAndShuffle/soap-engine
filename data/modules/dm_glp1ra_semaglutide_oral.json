@@ -2673,7 +2673,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
           "role": "treatment_end_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "medium",
           "lockTerms": [
             "終了後",
@@ -2792,7 +2792,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
           "role": "treatment_end_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "medium",
           "lockTerms": [
             "再評価"
@@ -2921,7 +2921,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
           "role": "treatment_end_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "medium",
           "lockTerms": [
             "治療方針の変更"
@@ -3186,7 +3186,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}による消化器症状が強く、継続困難の可能性がある。減量または薬剤変更を含む対応が必要である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "high",
           "lockTerms": [
             "減量",
@@ -3447,7 +3447,7 @@
           "id": "a_1",
           "text": "{{drug_subject}}の服用による消化器症状を認め、減量が妥当と判断された。減量後の血糖変動に注意が必要である。",
           "role": "side_effect_assessment",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "medium",
           "lockTerms": [
             "減量",
