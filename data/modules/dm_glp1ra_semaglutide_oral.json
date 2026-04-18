@@ -3314,7 +3314,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の変更後、血糖上昇や体調変化があればご相談ください。",
-          "role": "dose_adjustment_guidance",
+          "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
@@ -3563,7 +3563,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の中止後、血糖上昇や体調変化があればご相談ください。",
-          "role": "dose_adjustment_guidance",
+          "role": "treatment_end_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -3940,6 +3940,72 @@
       ],
       "absence_check_rule": "symptom_absence_check は transform:minimal, safety:medium が上限。fixed/critical は禁止。"
     },
-    "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。受診遅延などの状態記録語は moderate のまま。"
+    "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。受診遅延などの状態記録語は moderate のまま。",
+    "allowedRoles": [
+      "treatment_start_reason",
+      "dose_adjustment_reason",
+      "symptom_absence_check",
+      "symptom_presence_check",
+      "acute_condition_status",
+      "adherence_status",
+      "adherence_problem",
+      "adherence_assessment",
+      "adherence_guidance",
+      "visit_status",
+      "lifestyle_problem",
+      "lifestyle_guidance",
+      "risk_assessment",
+      "side_effect_assessment",
+      "side_effect_guidance",
+      "sickday_assessment",
+      "sickday_guidance",
+      "treatment_assessment",
+      "treatment_end_reason",
+      "treatment_end_assessment",
+      "treatment_end_guidance",
+      "dose_adjustment_guidance",
+      "administration_problem",
+      "administration_assessment",
+      "administration_guidance",
+      "followup_guidance",
+      "drug_effect_explanation",
+      "urgent_consult_guidance"
+    ],
+    "defaultRolePolicy": {
+      "note": "各 role のデフォルト transform。個別 Structured フィールドで上書き可。danger_phrases が含まれる場合は fixed へ引き上げ。",
+      "moderate": [
+        "treatment_start_reason",
+        "dose_adjustment_reason",
+        "adherence_problem",
+        "adherence_status",
+        "visit_status",
+        "lifestyle_problem",
+        "drug_effect_explanation"
+      ],
+      "minimal": [
+        "symptom_absence_check",
+        "symptom_presence_check",
+        "acute_condition_status",
+        "treatment_end_reason",
+        "adherence_assessment",
+        "side_effect_assessment",
+        "treatment_assessment",
+        "treatment_end_assessment",
+        "risk_assessment",
+        "sickday_assessment",
+        "administration_problem",
+        "administration_assessment",
+        "dose_adjustment_guidance",
+        "lifestyle_guidance",
+        "adherence_guidance",
+        "sickday_guidance",
+        "treatment_end_guidance",
+        "administration_guidance",
+        "followup_guidance"
+      ],
+      "fixed": [
+        "urgent_consult_guidance"
+      ]
+    }
   }
 }
