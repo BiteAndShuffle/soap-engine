@@ -1819,7 +1819,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
-          "role": "acute_condition_status",
+          "role": "symptom_absence_check",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -2046,9 +2046,9 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
-          "role": "acute_condition_status",
-          "transform": "fixed",
-          "safety": "critical",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
+          "safety": "medium",
           "lockTerms": [
             "強い腹痛",
             "背部痛"
@@ -2723,7 +2723,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖上昇や体調変化がある場合はご相談ください。",
-          "role": "dose_adjustment_guidance",
+          "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
@@ -2829,7 +2829,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
-          "role": "dose_adjustment_guidance",
+          "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
@@ -2946,7 +2946,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
-          "role": "dose_adjustment_guidance",
+          "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
@@ -3042,7 +3042,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。",
-          "role": "acute_condition_status",
+          "role": "symptom_presence_check",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -3157,7 +3157,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。",
-          "role": "acute_condition_status",
+          "role": "symptom_presence_check",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -3279,7 +3279,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘が出現したため、他剤へ変更となった。",
-          "role": "acute_condition_status",
+          "role": "symptom_presence_check",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -3386,7 +3386,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘がひどいため、減量となった。",
-          "role": "acute_condition_status",
+          "role": "symptom_presence_check",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
@@ -3496,7 +3496,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により吐き気・下痢・便秘がひどいため、中止となった。",
-          "role": "acute_condition_status",
+          "role": "symptom_presence_check",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
@@ -3656,7 +3656,7 @@
           "id": "p_4",
           "text": "血糖コントロールの改善に伴い、低血糖症状が出ることがあります。",
           "role": "side_effect_guidance",
-          "transform": "fixed",
+          "transform": "minimal",
           "safety": "high",
           "lockTerms": [
             "低血糖"
@@ -3900,7 +3900,7 @@
         {
           "id": "s_1",
           "text": "注射手技に不安がみられる。",
-          "role": "adherence_problem",
+          "role": "administration_problem",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3911,7 +3911,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}の注射手技の確認が必要である。",
-          "role": "treatment_assessment",
+          "role": "administration_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4202,8 +4202,8 @@
           "id": "p_1",
           "text": "{{drug_subject}}により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。",
           "role": "side_effect_guidance",
-          "transform": "moderate",
-          "safety": "low",
+          "transform": "minimal",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -4632,7 +4632,8 @@
       "A_judgment_phrases_require_minimal": true,
       "P_urgent_roles_require_fixed": [
         "urgent_consult_guidance"
-      ]
+      ],
+      "absence_check_rule": "symptom_absence_check は transform:minimal, safety:medium が上限。fixed/critical は禁止。"
     },
     "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。受診遅延などの状態記録語は moderate のまま。"
   }
