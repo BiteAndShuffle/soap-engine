@@ -1603,7 +1603,7 @@
             "低血糖",
             "治療継続が可能"
           ],
-          "notes": "high-risk absence assessment; continuation judgment present; transform fixed at minimal"
+          "notes": "high-risk absence assessment; continuation judgment present; fixed: high-risk judgment phrase"
         }
       ],
       "PStructured": [
@@ -1736,7 +1736,7 @@
           "lockTerms": [
             "治療継続が可能"
           ],
-          "notes": "absence assessment with continuation judgment; transform restricted to minimal"
+          "notes": "absence assessment with continuation judgment; fixed: continuation judgment must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1858,7 +1858,7 @@
           "lockTerms": [
             "治療継続が可能"
           ],
-          "notes": "absence assessment with continuation judgment; transform restricted to minimal"
+          "notes": "absence assessment with continuation judgment; fixed: continuation judgment must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1982,7 +1982,7 @@
           "lockTerms": [
             "膵炎"
           ],
-          "notes": "critical-risk absence assessment; continuation judgment present; no transform permitted"
+          "notes": "critical-risk absence assessment; continuation judgment present; fixed: safety:critical, no paraphrase permitted"
         }
       ],
       "PStructured": [
@@ -2679,7 +2679,7 @@
             "終了後",
             "血糖が変動"
           ],
-          "notes": "treatment end assessment; risk of post-termination glycemic fluctuation"
+          "notes": "treatment end assessment; fixed: treatment end decision, risk of post-termination glycemic fluctuation"
         }
       ],
       "PStructured": [
@@ -2797,7 +2797,7 @@
           "lockTerms": [
             "再評価"
           ],
-          "notes": "treatment end with re-evaluation judgment; safety elevated to medium"
+          "notes": "treatment end assessment; fixed: re-evaluation judgment must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -2926,7 +2926,7 @@
           "lockTerms": [
             "治療方針の変更"
           ],
-          "notes": "treatment end with treatment plan change judgment; safety elevated to medium"
+          "notes": "treatment end assessment; fixed: treatment plan change judgment must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -3060,7 +3060,7 @@
           "lockTerms": [
             "治療継続が可能"
           ],
-          "notes": "mild SE with continuation judgment; transform restricted to minimal"
+          "notes": "mild SE with continuation judgment; fixed: continuation judgment must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -3194,7 +3194,7 @@
             "症状が強く",
             "継続困難"
           ],
-          "notes": "moderate SE with continuation difficulty judgment and treatment change suggestion; minimal enforced"
+          "notes": "moderate SE with continuation difficulty judgment and treatment change suggestion; fixed: judgment phrases present"
         }
       ],
       "PStructured": [
@@ -3454,7 +3454,7 @@
             "減量が妥当",
             "血糖変動"
           ],
-          "notes": "clinical judgment: dose reduction decision; minimal enforced, risk direction preserved"
+          "notes": "clinical judgment: dose reduction decision; fixed: judgment phrase must not be paraphrased, risk direction preserved"
         }
       ],
       "PStructured": [
@@ -3860,7 +3860,7 @@
             "脱水",
             "脱水リスク"
           ],
-          "notes": "sickday risk assessment; state evaluation not action directive"
+          "notes": "sickday risk assessment; fixed: safety:critical, composite risk evaluation must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -3959,7 +3959,6 @@
         "acute_condition_status",
         "treatment_end_reason"
       ],
-      "A_judgment_phrases_require_minimal": true,
       "P_urgent_roles_require_fixed": [
         "urgent_consult_guidance"
       ],
@@ -3970,15 +3969,14 @@
         "administration_assessment"
       ],
       "A_minimal_roles": [
-        "risk_assessment",
-        "side_effect_assessment",
-        "sickday_assessment",
-        "treatment_end_assessment"
+        "risk_assessment"
       ],
       "A_fixed_conditions": [
-        "safety:critical",
-        "side_effect_assessment where safety:high and judgment phrase present",
-        "treatment_end_assessment where safety:high"
+        "safety:critical (any role)",
+        "side_effect_assessment: judgment phrase present (治療継続が可能/継続困難/対応を要する/減量が妥当と判断された 等)",
+        "side_effect_assessment: safety:high with judgment phrase",
+        "treatment_end_assessment: all cases (treatment end decisions must not be paraphrased)",
+        "sickday_assessment: all cases (safety:critical, multi-risk composite)"
       ],
       "judgment_phrases": [
         "治療継続が可能",
@@ -3994,12 +3992,18 @@
         "treatment_assessment": "moderate 上限。副作用増強リスク言及は minimal。",
         "adherence_assessment": "moderate 上限。受診遅延など受診行動への言及は minimal。",
         "risk_assessment": "minimal のみ。リスク方向性（血糖上昇など）を保持。",
-        "side_effect_assessment": "safety:high 以上は minimal。疾患名・評価結果を保持。",
-        "sickday_assessment": "minimal。リスク複合評価を保持。",
-        "treatment_end_assessment": "minimal が基本。judgment phrase 含む場合は minimal 以上を禁止。safety:high 以上は fixed。"
-      }
+        "side_effect_assessment": "fixed 優先。judgment phrase（治療継続が可能/継続困難/対応を要する/減量が妥当など）を含む場合は必ず fixed。safety:critical は fixed。safety:high + judgment phrase は fixed。疾患名・評価結果を保持。",
+        "sickday_assessment": "fixed。safety:critical のため変換禁止。脱水・低血糖など複合リスク評価を完全保持。",
+        "treatment_end_assessment": "fixed。治療終了判断・再評価指示・治療方針変更はすべて変換禁止。"
+      },
+      "A_judgment_phrases_require_fixed": true,
+      "A_fixed_roles": [
+        "sickday_assessment",
+        "side_effect_assessment",
+        "treatment_end_assessment"
+      ]
     },
-    "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。受診遅延などの状態記録語は moderate のまま。",
+    "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。AStructured では side_effect_assessment・treatment_end_assessment・sickday_assessment は fixed を優先する。adherence_assessment は moderate/minimal を維持し fixed へは上げない。受診遅延などの状態記録語は minimal のまま。",
     "allowedRoles": [
       "treatment_start_reason",
       "dose_adjustment_reason",
@@ -4047,11 +4051,8 @@
         "acute_condition_status",
         "treatment_end_reason",
         "adherence_assessment",
-        "side_effect_assessment",
         "treatment_assessment",
-        "treatment_end_assessment",
         "risk_assessment",
-        "sickday_assessment",
         "administration_problem",
         "administration_assessment",
         "dose_adjustment_guidance",
@@ -4063,6 +4064,9 @@
         "followup_guidance"
       ],
       "fixed": [
+        "sickday_assessment",
+        "side_effect_assessment",
+        "treatment_end_assessment",
         "urgent_consult_guidance"
       ]
     },
