@@ -892,7 +892,7 @@
           "lockTerms": [
             "副作用が増強"
           ],
-          "notes": "dose change with adverse effect risk mention; minimal enforced"
+          "notes": "dose change with adverse effect risk mention; risk expression preserved"
         }
       ],
       "PStructured": [
@@ -1021,7 +1021,7 @@
           "lockTerms": [
             "副作用が増強"
           ],
-          "notes": "dose change with adverse effect risk mention; minimal enforced"
+          "notes": "dose change with adverse effect risk mention; risk expression preserved"
         }
       ],
       "PStructured": [
@@ -1150,7 +1150,7 @@
           "lockTerms": [
             "副作用が増強"
           ],
-          "notes": "dose change with adverse effect risk mention; minimal enforced"
+          "notes": "dose change with adverse effect risk mention; risk expression preserved"
         }
       ],
       "PStructured": [
@@ -2723,7 +2723,7 @@
           "transform": "minimal",
           "safety": "high",
           "lockTerms": [],
-          "notes": "visit behavior judgment; restricted to minimal to preserve clinical meaning"
+          "notes": "visit behavior judgment; minimal to preserve clinical meaning"
         }
       ],
       "PStructured": [

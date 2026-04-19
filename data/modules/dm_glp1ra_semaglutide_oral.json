@@ -343,27 +343,20 @@
   "defaults": {
     "followup": {
       "S": null,
-      "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+      "P": "次回、引き続き服用できているか、副作用の有無を確認。"
     },
     "followupProfiles": {
       "default_followup": {
         "S": null,
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
-      "se_followup": {
-        "S": null,
-        "P": "次回、治療経過および副作用の有無を確認。",
-        "tags": [
-          "side_effect",
-          "drug_effect"
-        ]
+        "P": "次回、引き続き服用できているか、副作用の有無を確認。"
       },
       "end_followup": {
         "S": null,
-        "P": "次回、治療経過および体調変化の有無を確認。",
-        "tags": [
-          "drug_effect"
-        ]
+        "P": "次回、治療経過および体調変化の有無を確認。"
+      },
+      "se_followup": {
+        "S": null,
+        "P": "次回、治療経過および副作用の有無を確認。"
       }
     }
   },
@@ -842,7 +835,7 @@
           "lockTerms": [
             "副作用が増強"
           ],
-          "notes": "dose change with adverse effect risk mention; minimal enforced"
+          "notes": "dose change with adverse effect risk mention; risk expression preserved"
         }
       ],
       "PStructured": [
@@ -971,7 +964,7 @@
           "lockTerms": [
             "副作用が増強"
           ],
-          "notes": "dose change with adverse effect risk mention; minimal enforced"
+          "notes": "dose change with adverse effect risk mention; risk expression preserved"
         }
       ],
       "PStructured": [
@@ -1096,7 +1089,7 @@
           "lockTerms": [
             "副作用が増強"
           ],
-          "notes": "dose change with adverse effect risk mention; minimal enforced"
+          "notes": "dose change with adverse effect risk mention; risk expression preserved"
         }
       ],
       "PStructured": [
@@ -2544,7 +2537,7 @@
           "transform": "minimal",
           "safety": "high",
           "lockTerms": [],
-          "notes": "visit behavior judgment; restricted to minimal to preserve clinical meaning"
+          "notes": "visit behavior judgment; minimal to preserve clinical meaning"
         }
       ],
       "PStructured": [
