@@ -3994,7 +3994,17 @@
         "sickday_assessment",
         "side_effect_assessment",
         "treatment_end_assessment"
-      ]
+      ],
+      "low_risk_relaxation_rule": {
+        "description": "低リスクシナリオでは transform:moderate まで緩和可能。ただし治療判断フレーズ（治療継続が可能/中止/継続困難など）を含む場合は fixed を維持する。",
+        "eligible_conditions": [
+          "side_effect_assessment かつ副作用なし（absence）かつ judgment phrase なし",
+          "adherence_assessment かつ良好（cp_good）",
+          "initial（treatment_assessment）"
+        ],
+        "constraint": "医学的因果関係を保持すること。治療継続/中止判断を含む文は fixed を維持する。",
+        "current_data_note": "現在の se_*_none シナリオは「治療継続が可能」を含むため fixed を維持。judgment phrase を含まない absence 文のみ moderate 適用可。"
+      }
     },
     "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。AStructured では side_effect_assessment・treatment_end_assessment・sickday_assessment は fixed を優先する。adherence_assessment は moderate/minimal を維持し fixed へは上げない。受診遅延などの状態記録語は minimal のまま。",
     "allowedRoles": [
