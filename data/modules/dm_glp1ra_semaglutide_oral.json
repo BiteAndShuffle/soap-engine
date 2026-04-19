@@ -1523,7 +1523,7 @@
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
       "O": "GLP-1受容体作動薬(内服)　処方",
-      "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+      "A": "{{drug_subject}}による低血糖は現時点で認められない。現時点で治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は糖分を摂取してください。改善しない場合はご相談ください。",
       "mergePolicy": {
         "S": {
@@ -1588,15 +1588,25 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+          "text": "{{drug_subject}}による低血糖は現時点で認められない。",
           "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": "observation: high-risk symptom absence; minimal/medium: risk term protected, light transform permitted"
+        },
+        {
+          "id": "a_2",
+          "text": "現時点で治療継続が可能である。",
+          "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "低血糖",
             "治療継続が可能"
           ],
-          "notes": "high-risk absence assessment; continuation judgment present; fixed: high-risk judgment phrase"
+          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1659,7 +1669,7 @@
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
       "O": "GLP-1受容体作動薬(内服)　処方",
-      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められない。現時点で治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に吐き気・下痢などが出ることがあります。\n症状が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
@@ -1722,14 +1732,23 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+          "text": "{{drug_subject}}による消化器症状は現時点で認められない。",
           "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "observation: low-risk symptom absence; moderate/low: persona transform permitted per low_risk_relaxation_rule"
+        },
+        {
+          "id": "a_2",
+          "text": "現時点で治療継続が可能である。",
+          "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
             "治療継続が可能"
           ],
-          "notes": "absence assessment with continuation judgment; fixed: continuation judgment must not be paraphrased"
+          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1781,7 +1800,7 @@
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。食欲低下は認めない。",
       "O": "GLP-1受容体作動薬(内服)　処方",
-      "A": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
+      "A": "{{drug_subject}}による食欲低下は現時点で認められない。現時点で治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に食欲低下が出ることがあります。\n食事量が落ちる・体重が急に減るなどの変化があればご相談ください。",
       "mergePolicy": {
         "S": {
@@ -1844,14 +1863,23 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
+          "text": "{{drug_subject}}による食欲低下は現時点で認められない。",
           "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "observation: low-risk symptom absence; moderate/low: persona transform permitted per low_risk_relaxation_rule"
+        },
+        {
+          "id": "a_2",
+          "text": "現時点で治療継続が可能である。",
+          "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
             "治療継続が可能"
           ],
-          "notes": "absence assessment with continuation judgment; fixed: continuation judgment must not be paraphrased"
+          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1901,7 +1929,7 @@
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
       "O": "GLP-1受容体作動薬(内服)　処方",
-      "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
+      "A": "{{drug_subject}}による膵炎は現時点で認められない。現時点で治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
       "mergePolicy": {
         "S": {
@@ -1968,14 +1996,26 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
+          "text": "{{drug_subject}}による膵炎は現時点で認められない。",
           "role": "side_effect_assessment",
-          "transform": "fixed",
-          "safety": "critical",
+          "transform": "minimal",
+          "safety": "high",
           "lockTerms": [
             "膵炎"
           ],
-          "notes": "critical-risk absence assessment; continuation judgment present; fixed: safety:critical, no paraphrase permitted"
+          "notes": "observation: critical-risk symptom absence; minimal/high: risk term strictly protected"
+        },
+        {
+          "id": "a_2",
+          "text": "現時点で治療継続が可能である。",
+          "role": "treatment_end_assessment",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "治療継続が可能",
+            "膵炎"
+          ],
+          "notes": "judgment: continuation under pancreatitis absence context; fixed/critical: highest-risk judgment, no paraphrase permitted"
         }
       ],
       "PStructured": [
