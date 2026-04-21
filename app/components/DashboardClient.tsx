@@ -236,6 +236,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // editedSOAP が null   = 未編集（finalFields = displayFields を使用）。
   const [editedSOAP, setEditedSOAP] = useState<SoapFields | null>(null)
 
+  // 手動編集中に再合成系操作を行うときの確認ダイアログ用。
+  // null = ダイアログ非表示。非null = ダイアログ表示中（実行予定の操作を保持）。
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+
   // ══════════════════════════════════════════════════════════════
   // REFS（stale closure 防止。callbacks 内で最新値を参照する）
   // ══════════════════════════════════════════════════════════════
@@ -455,6 +459,26 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // CALLBACKS
   // ══════════════════════════════════════════════════════════════
 
+  // ─────────────────────────────────────────────────────────────
+  // confirmDiscard — 手動編集破棄確認ヘルパー
+  //
+  // editedSOAP が存在する場合: ダイアログを表示し、ユーザーが「破棄して続行」を
+  //   選んだ後に action() を実行する（キャンセル時は何もしない）。
+  // editedSOAP が null の場合: 確認なしに action() を即実行する。
+  //
+  // 使い方: 再合成系ハンドラの先頭で confirmDiscard(() => { 本来の処理 }) を呼ぶ。
+  // ─────────────────────────────────────────────────────────────
+
+  const confirmDiscard = useCallback((action: () => void) => {
+    if (editedSOAP === null) {
+      action()
+    } else {
+      // setState に関数を直接渡すと「関数を呼び出す」ではなく「関数型の state 更新」として
+      // 解釈されるため、ラッパー（() => action）で包む。
+      setPendingAction(() => action)
+    }
+  }, [editedSOAP])
+
   const handleSelectGroup = useCallback((group: MenuGroup) => {
     setSelectedGroup(group)
     // グループ切り替え時に前シナリオの addon 残留を防ぐ。
@@ -562,87 +586,94 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
 
     // ── primary ブランチ ─────────────────────────────────────
-    // editingPrimary 中にシナリオを選んだら編集モードを終了
-    if (editingPrimaryRef.current) setEditingPrimary(false)
-    setSelectedScenarioId(prev => {
-      if (prev === id) {
-        // 同じシナリオを再タップ → 解除
-        setPrimaryBaseFields(EMPTY_FIELDS)
-        setPrimaryAddonIds(new Set())
-        setSelectedAddonIds(new Set())
+    confirmDiscard(() => {
+      // editingPrimary 中にシナリオを選んだら編集モードを終了
+      if (editingPrimaryRef.current) setEditingPrimary(false)
+      setSelectedScenarioId(prev => {
+        if (prev === id) {
+          // 同じシナリオを再タップ → 解除
+          setPrimaryBaseFields(EMPTY_FIELDS)
+          setPrimaryAddonIds(new Set())
+          setSelectedAddonIds(new Set())
+          setSRelation('continued_do')
+          setSCondition('stable')
+          return null
+        }
+        const sc = activeModuleData.scenarios.find(s => s.globalId === id)
+        if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
         setSRelation('continued_do')
         setSCondition('stable')
-        return null
-      }
-      const sc = activeModuleData.scenarios.find(s => s.globalId === id)
-      if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
-      setSRelation('continued_do')
-      setSCondition('stable')
-      // primaryBaseFields は useEffect(selectedScenarioId) で同期される
-      return id
+        // primaryBaseFields は useEffect(selectedScenarioId) で同期される
+        return id
+      })
     })
-  }, [activeModuleData.scenarios, buildUpdatedNode])
+  }, [activeModuleData.scenarios, buildUpdatedNode, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSelectDrugSuggestion（メイン検索: 薬剤切替）
   // ─────────────────────────────────────────────────────────────
 
   const handleSelectDrugSuggestion = useCallback((item: DrugSuggestionItem) => {
-    const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
-    setActiveModuleData(mod)
-    setActiveBrandName(item.matchedBrandName)
-    setDrugSelected(true)
-    setSelectedScenarioId(null)
-    setPrimaryBaseFields(EMPTY_FIELDS)
-    setPrimaryAddonIds(new Set())
-    setSelectedAddonIds(new Set())
-    setSelectedGroup(null)
-    setSRelation('continued_do')
-    setSCondition('stable')
-    setMainSearch('')
-    setComposeNodes([])
-    setEditingNodeId(null)
-    setEditingPrimary(false)
-    setPendingNodeIds(new Set())
-    setEditedSOAP(null)
-  }, [allModules, moduleData])
+    confirmDiscard(() => {
+      const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
+      setActiveModuleData(mod)
+      setActiveBrandName(item.matchedBrandName)
+      setDrugSelected(true)
+      setSelectedScenarioId(null)
+      setPrimaryBaseFields(EMPTY_FIELDS)
+      setPrimaryAddonIds(new Set())
+      setSelectedAddonIds(new Set())
+      setSelectedGroup(null)
+      setSRelation('continued_do')
+      setSCondition('stable')
+      setMainSearch('')
+      setComposeNodes([])
+      setEditingNodeId(null)
+      setEditingPrimary(false)
+      setPendingNodeIds(new Set())
+      setEditedSOAP(null)
+    })
+  }, [allModules, moduleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleComposeDrugSelect（合成検索: ノード追加）
   // ─────────────────────────────────────────────────────────────
 
   const handleComposeDrugSelect = useCallback((item: DrugSuggestionItem) => {
-    const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
-    const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
-    // matchedBrandName をノードに保持（シナリオ確定時の {{drug_subject}} 解決に使用）
-    const nodeDrugName = resolveDrugName(mod.drug, item.matchedBrandName)
-    const newNode: ComposeNode = {
-      id: nodeId,
-      moduleId: mod.moduleId,
-      scenarioId: '',
-      block: {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        templateLabel: '',
-        fields: EMPTY_FIELDS,
-        closingText: undefined,
-      },
-      drugLabel: resolveNodeLabel(mod),
-      matchedBrandName: item.matchedBrandName,
-      resolvedDrugName: nodeDrugName,
-      selectedAddonIds: [],
-      baseLabel: '',
-      baseDomain: resolveDomain(mod),
-    }
-    // pending ノードは block が EMPTY_FIELDS のため computeDisplayFields に影響しない
-    // (scenarioId が空なので confirmedNodes に含まれない)
-    setComposeNodes(prev => [...prev, newNode])
-    setPendingNodeIds(prev => new Set([...prev, nodeId]))
-    setEditingNodeId(nodeId)
-    setEditingPrimary(false)
-    setSelectedGroup(null)
-    setSelectedAddonIds(new Set())
-    setComposeSearch('')
-  }, [allModules, moduleData])
+    confirmDiscard(() => {
+      const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
+      const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      // matchedBrandName をノードに保持（シナリオ確定時の {{drug_subject}} 解決に使用）
+      const nodeDrugName = resolveDrugName(mod.drug, item.matchedBrandName)
+      const newNode: ComposeNode = {
+        id: nodeId,
+        moduleId: mod.moduleId,
+        scenarioId: '',
+        block: {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          templateLabel: '',
+          fields: EMPTY_FIELDS,
+          closingText: undefined,
+        },
+        drugLabel: resolveNodeLabel(mod),
+        matchedBrandName: item.matchedBrandName,
+        resolvedDrugName: nodeDrugName,
+        selectedAddonIds: [],
+        baseLabel: '',
+        baseDomain: resolveDomain(mod),
+      }
+      // pending ノードは block が EMPTY_FIELDS のため computeDisplayFields に影響しない
+      // (scenarioId が空なので confirmedNodes に含まれない)
+      setComposeNodes(prev => [...prev, newNode])
+      setPendingNodeIds(prev => new Set([...prev, nodeId]))
+      setEditingNodeId(nodeId)
+      setEditingPrimary(false)
+      setSelectedGroup(null)
+      setSelectedAddonIds(new Set())
+      setComposeSearch('')
+      setEditedSOAP(null)
+    })
+  }, [allModules, moduleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSelectNode
@@ -780,14 +811,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ─────────────────────────────────────────────────────────────
 
   const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
-    setSelectedAddonIds(prev => {
-      const next = new Set(prev)
-      next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
-      const newAddonIds = [...next]
-      const nodeId = editingNodeIdRef.current
+    const nodeId = editingNodeIdRef.current
 
-      if (nodeId !== null) {
-        // ── node ブランチ ────────────────────────────────────
+    if (nodeId !== null) {
+      // ── node ブランチ（確認不要: editedSOAP は primary のみ対象）─
+      setSelectedAddonIds(prev => {
+        const next = new Set(prev)
+        next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
+        const newAddonIds = [...next]
         const nodes = composeNodesRef.current
         const node = nodes.find(n => n.id === nodeId)
         if (node) {
@@ -812,30 +843,38 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             ))
           }
         }
-      } else {
-        // ── primary ブランチ ─────────────────────────────────
-        // buildNodeFields に一元化（addon + followup + {{drug_subject}} 解決を同一コードパスで処理）
-        setPrimaryAddonIds(next)
-        const sc = primaryScenarioRef.current
-        if (sc) {
-          const primaryDrugName = activeBrandName
-            ?? activeModuleData.drug?.brandNames?.[0]
-            ?? activeModuleData.drug?.genericName
-            ?? ''
-          const { fields: rawFields } = buildNodeFields(sc, activeModuleData, newAddonIds, primaryDrugName)
-          const guard = derivePersonaGuard(sc, activeModuleData.template?.urgentFlag)
-          rawPrimaryFieldsRef.current = rawFields
-          primaryGuardRef.current = guard
-          const fields = personaEnabled
-            ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
-            : rawFields
-          setPrimaryBaseFields(fields)
-          setEditedSOAP(null)
-        }
-      }
-      return next
-    })
-  }, [activeModuleData, activeBrandName, allModules, moduleData, personaEnabled, selectedPersona])
+        return next
+      })
+    } else {
+      // ── primary ブランチ（editedSOAP があれば確認する）────────
+      confirmDiscard(() => {
+        setSelectedAddonIds(prev => {
+          const next = new Set(prev)
+          next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
+          const newAddonIds = [...next]
+          // buildNodeFields に一元化（addon + followup + {{drug_subject}} 解決を同一コードパスで処理）
+          setPrimaryAddonIds(next)
+          const sc = primaryScenarioRef.current
+          if (sc) {
+            const primaryDrugName = activeBrandName
+              ?? activeModuleData.drug?.brandNames?.[0]
+              ?? activeModuleData.drug?.genericName
+              ?? ''
+            const { fields: rawFields } = buildNodeFields(sc, activeModuleData, newAddonIds, primaryDrugName)
+            const guard = derivePersonaGuard(sc, activeModuleData.template?.urgentFlag)
+            rawPrimaryFieldsRef.current = rawFields
+            primaryGuardRef.current = guard
+            const fields = personaEnabled
+              ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
+              : rawFields
+            setPrimaryBaseFields(fields)
+            setEditedSOAP(null)
+          }
+          return next
+        })
+      })
+    }
+  }, [activeModuleData, activeBrandName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSToggle（S先頭文トグル）
@@ -845,37 +884,39 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSToggle = useCallback((relation: SRelation, condition: SCondition) => {
     if (editingNodeIdRef.current !== null) return
-    setSRelation(relation)
-    setSCondition(condition)
-    // 汎用先頭文を生成（「前回から新しく薬を使用して〜」など）
-    const newFirst = buildSFirstSentence(relation, condition)
-    // この関数が呼ばれる時点で、表示条件（1剤目 + 副作用なし/CP良好）は
-    // ThirdPanel 側で既に保証されている。
-    // その安全な場面に限り、generic な「薬」を解決済み薬剤名に置換する。
-    // relation ごとに薬剤名置換パターンを分ける。
-    //   new_addition: 「薬を」→「{drug}を」
-    //   med_changed:  「薬が変更と」→「{drug}に変更と」（stable/improved/unchanged/not_improved 共通）
-    //   continued_do: 薬剤名なし（「引き続き使用して〜」は主語省略が自然）
-    const drugName = activeBrandName
-      ?? activeModuleData.drug?.brandNames?.[0]
-      ?? activeModuleData.drug?.genericName
-      ?? ''
-    const resolvedFirst = (() => {
-      if (!drugName) return newFirst
-      if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
-      if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
-      if (relation === 'dose_increased') return newFirst
-        .replace('薬が増量となり', `${drugName}が増量となり`)
-        .replace('薬が増量となったが', `${drugName}が増量となったが`)
-      if (relation === 'dose_decreased') return newFirst
-        .replace('薬が減量となり', `${drugName}が減量となり`)
-        .replace('薬が減量となったが', `${drugName}が減量となったが`)
-      return newFirst  // continued_do: 薬剤名なしが自然
-    })()
-    const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
-    setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
-    setEditedSOAP(null)
-  }, [displayFields.S, activeBrandName, activeModuleData])
+    confirmDiscard(() => {
+      setSRelation(relation)
+      setSCondition(condition)
+      // 汎用先頭文を生成（「前回から新しく薬を使用して〜」など）
+      const newFirst = buildSFirstSentence(relation, condition)
+      // この関数が呼ばれる時点で、表示条件（1剤目 + 副作用なし/CP良好）は
+      // ThirdPanel 側で既に保証されている。
+      // その安全な場面に限り、generic な「薬」を解決済み薬剤名に置換する。
+      // relation ごとに薬剤名置換パターンを分ける。
+      //   new_addition: 「薬を」→「{drug}を」
+      //   med_changed:  「薬が変更と」→「{drug}に変更と」（stable/improved/unchanged/not_improved 共通）
+      //   continued_do: 薬剤名なし（「引き続き使用して〜」は主語省略が自然）
+      const drugName = activeBrandName
+        ?? activeModuleData.drug?.brandNames?.[0]
+        ?? activeModuleData.drug?.genericName
+        ?? ''
+      const resolvedFirst = (() => {
+        if (!drugName) return newFirst
+        if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
+        if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
+        if (relation === 'dose_increased') return newFirst
+          .replace('薬が増量となり', `${drugName}が増量となり`)
+          .replace('薬が増量となったが', `${drugName}が増量となったが`)
+        if (relation === 'dose_decreased') return newFirst
+          .replace('薬が減量となり', `${drugName}が減量となり`)
+          .replace('薬が減量となったが', `${drugName}が減量となったが`)
+        return newFirst  // continued_do: 薬剤名なしが自然
+      })()
+      const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
+      setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
+      setEditedSOAP(null)
+    })
+  }, [displayFields.S, activeBrandName, activeModuleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleFlagChange（単剤フラグ: 副作用なし / CP良好）
@@ -888,19 +929,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ─────────────────────────────────────────────────────────────
 
   const handleFlagChange = useCallback((flags: SingleDrugFlags) => {
-    setSingleDrugFlags(flags)
-    setEditedSOAP(null)
-    setPrimaryBaseFields(prev => {
-      // 現在のフラグ行を除去してから再挿入する
-      const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
-      const baseLines = prev.S
-        .split('\n')
-        .filter(l => !FLAG_LINES.includes(l.trim()))
-      if (flags.noSideEffect)    baseLines.push('副作用は認めない。')
-      if (flags.goodCompliance)  baseLines.push('コンプライアンス良好。')
-      return { ...prev, S: baseLines.join('\n') }
+    confirmDiscard(() => {
+      setSingleDrugFlags(flags)
+      setEditedSOAP(null)
+      setPrimaryBaseFields(prev => {
+        // 現在のフラグ行を除去してから再挿入する
+        const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
+        const baseLines = prev.S
+          .split('\n')
+          .filter(l => !FLAG_LINES.includes(l.trim()))
+        if (flags.noSideEffect)    baseLines.push('副作用は認めない。')
+        if (flags.goodCompliance)  baseLines.push('コンプライアンス良好。')
+        return { ...prev, S: baseLines.join('\n') }
+      })
     })
-  }, [])
+  }, [confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect
@@ -925,60 +968,65 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (!sc) return
     const globalId = sc.globalId
 
-    // ref 経由で stale closure を防ぐ
-    const isPrimaryEmpty = primaryScenarioRef.current === undefined && composeNodesRef.current.length === 0
+    confirmDiscard(() => {
+      // ref 経由で stale closure を防ぐ
+      const isPrimaryEmpty = primaryScenarioRef.current === undefined && composeNodesRef.current.length === 0
 
-    if (isPrimaryEmpty) {
-      // 1剤目として追加
-      setActiveModuleData(mod)
-      setActiveBrandName(mod.drug?.brandNames?.[0])
-      setDrugSelected(true)
-      setComposeNodes([])
-      setEditingNodeId(null)
-      setEditingPrimary(false)
-      setPendingNodeIds(new Set())
-      setMainSearch('')
-      // シナリオを確定（useEffect が primaryBaseFields を追従する）
-      setSelectedScenarioId(globalId)
-      setSelectedGroup(getMenuGroupFromScenario(sc))
-      setSRelation('continued_do')
-      setSCondition('stable')
-      setPrimaryAddonIds(new Set())
-      setSelectedAddonIds(new Set())
-    } else {
-      // ノードとして追加して即時確定
-      const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      const nodeDrugName = resolveDrugName(mod.drug, undefined)
-      const newNode: import('../../lib/types').ComposeNode = {
-        id: nodeId,
-        moduleId: mod.moduleId,
-        scenarioId: '',
-        block: {
-          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          templateLabel: '',
-          fields: EMPTY_FIELDS,
-          closingText: undefined,
-        },
-        drugLabel: resolveNodeLabel(mod),
-        matchedBrandName: mod.drug?.brandNames?.[0],
-        resolvedDrugName: nodeDrugName,
-        selectedAddonIds: [],
-        baseLabel: '',
-        baseDomain: resolveDomain(mod),
+      if (isPrimaryEmpty) {
+        // 1剤目として追加
+        setActiveModuleData(mod)
+        setActiveBrandName(mod.drug?.brandNames?.[0])
+        setDrugSelected(true)
+        setComposeNodes([])
+        setEditingNodeId(null)
+        setEditingPrimary(false)
+        setPendingNodeIds(new Set())
+        setMainSearch('')
+        // シナリオを確定（useEffect が primaryBaseFields を追従する）
+        setSelectedScenarioId(globalId)
+        setSelectedGroup(getMenuGroupFromScenario(sc))
+        setSRelation('continued_do')
+        setSCondition('stable')
+        setPrimaryAddonIds(new Set())
+        setSelectedAddonIds(new Set())
+        setEditedSOAP(null)
+      } else {
+        // ノードとして追加して即時確定
+        const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
+        const nodeDrugName = resolveDrugName(mod.drug, undefined)
+        const newNode: import('../../lib/types').ComposeNode = {
+          id: nodeId,
+          moduleId: mod.moduleId,
+          scenarioId: '',
+          block: {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            templateLabel: '',
+            fields: EMPTY_FIELDS,
+            closingText: undefined,
+          },
+          drugLabel: resolveNodeLabel(mod),
+          matchedBrandName: mod.drug?.brandNames?.[0],
+          resolvedDrugName: nodeDrugName,
+          selectedAddonIds: [],
+          baseLabel: '',
+          baseDomain: resolveDomain(mod),
+        }
+        // ノードを追加してから即時確定する
+        setComposeNodes(prev => {
+          const updated = buildUpdatedNode(newNode, globalId, [], newNode.matchedBrandName)
+          if (!updated) return [...prev, newNode]
+          return [...prev, updated]
+        })
+        setEditingNodeId(null)
+        setEditingPrimary(false)
+        setEditedSOAP(null)
       }
-      // ノードを追加してから即時確定する
-      setComposeNodes(prev => {
-        const updated = buildUpdatedNode(newNode, globalId, [], newNode.matchedBrandName)
-        if (!updated) return [...prev, newNode]
-        return [...prev, updated]
-      })
-      setEditingNodeId(null)
-      setEditingPrimary(false)
-    }
+    })
   }, [
     allModules,
     moduleData,
     buildUpdatedNode,
+    confirmDiscard,
   ])
 
   // ─────────────────────────────────────────────────────────────
@@ -1275,6 +1323,41 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             >
               閉じる
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── 手動編集破棄確認ダイアログ ── */}
+      {pendingAction !== null && (
+        <div
+          className={s.discardDialogOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="編集内容の破棄確認"
+        >
+          <div className={s.discardDialog}>
+            <p className={s.discardDialogMessage}>
+              現在SOAPを手動編集しています。このまま再合成すると手動編集内容は破棄されます。続行しますか？
+            </p>
+            <div className={s.discardDialogActions}>
+              <button
+                className={s.discardDialogCancel}
+                onClick={() => setPendingAction(null)}
+              >
+                キャンセル
+              </button>
+              <button
+                className={s.discardDialogConfirm}
+                onClick={() => {
+                  const action = pendingAction
+                  setPendingAction(null)
+                  setEditedSOAP(null)
+                  action()
+                }}
+              >
+                破棄して続行
+              </button>
+            </div>
           </div>
         </div>
       )}

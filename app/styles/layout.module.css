@@ -1950,3 +1950,69 @@
   border-color: #0a84ff;
   color: #e8e8ff;
 }
+
+/* ── 手動編集破棄確認ダイアログ ─────────────────────────────────── */
+
+.discardDialogOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.discardDialog {
+  background: #1e1e38;
+  border: 1.5px solid #3d3d5c;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 280px;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.discardDialogMessage {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #c0c0e0;
+  margin: 0;
+}
+.discardDialogActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.discardDialogCancel {
+  padding: 0.4rem 1rem;
+  border: 1.5px solid #3a3a5c;
+  border-radius: 8px;
+  background: #22223a;
+  color: #a0a0c8;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.discardDialogCancel:hover {
+  border-color: #6060a0;
+  color: #e8e8ff;
+}
+.discardDialogConfirm {
+  padding: 0.4rem 1rem;
+  border: 1.5px solid #c0392b;
+  border-radius: 8px;
+  background: #2a1a1a;
+  color: #e87070;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.discardDialogConfirm:hover {
+  border-color: #e74c3c;
+  background: #3a1a1a;
+  color: #ffaaaa;
+}
