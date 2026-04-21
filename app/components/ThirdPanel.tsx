@@ -207,6 +207,16 @@ export interface SingleDrugFlags {
   goodCompliance: boolean
 }
 
+/** エクスプレス候補アイテム */
+export interface ExpressCandidate {
+  moduleId: string
+  category: string
+  subCategory?: string
+  label: string
+  defaultScenarioId: string
+  sortOrder: number
+}
+
 interface ThirdPanelProps {
   selectedGroup: MenuGroup | null
   thirdPanelEnabled: boolean
@@ -226,6 +236,10 @@ interface ThirdPanelProps {
   /** 薬剤選択ハンドラ */
   onSelectComposeDrug?: (item: DrugSuggestionItem) => void
   onSubcategorySelect?: (label: string) => void
+  /** エクスプレス候補リスト（expressMode.enabled===true のモジュール） */
+  expressCandidates?: ExpressCandidate[]
+  /** エクスプレス追加ハンドラ */
+  onExpressAdd?: (moduleId: string, defaultScenarioId: string) => void
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -246,6 +260,8 @@ export default function ThirdPanel({
   composeDrugSuggestions = [],
   onSelectComposeDrug,
   onSubcategorySelect,
+  expressCandidates = [],
+  onExpressAdd,
 }: ThirdPanelProps) {
   // 単剤 + 対象グループの基底条件
   const inSGroup     = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
@@ -267,6 +283,25 @@ export default function ThirdPanel({
     <div className={[s.thirdPanel, thirdPanelEnabled ? s.expandedPanel : s.collapsedPanel].join(' ')}>
       <div className={s.thirdPanelInner}>
         <div className={s.thirdPanelScrollArea}>
+          {/* エクスプレス: enabled モジュールがある場合のみ表示（常時） */}
+          {expressCandidates.length > 0 && onExpressAdd && (
+            <div className={s.thirdSection}>
+              <div className={s.sActionHeading}>エクスプレス追加</div>
+              <div className={s.expressGrid}>
+                {expressCandidates.map(c => (
+                  <button
+                    key={c.moduleId}
+                    className={s.expressBtn}
+                    onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId)}
+                    title={c.subCategory ?? c.category}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* 合成窓: thirdPanelEnabled（シナリオ確定後）のみ表示 */}
           {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (
             <div className={s.thirdSection}>

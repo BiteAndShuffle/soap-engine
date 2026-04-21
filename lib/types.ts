@@ -609,6 +609,21 @@ export interface ModuleData {
   scenarios: Scenario[]
   /** 新スキーマ: addons は items + orderPresets（旧フォーマットでもクラッシュしないよう optional） */
   addons?: AddonsData
+  /** エクスプレスモード参照枠。enabled:true のモジュールのみ候補に表示される */
+  expressMode?: {
+    /** エクスプレス候補に表示するか */
+    enabled: boolean
+    /** 疾患カテゴリ: common_cold / pollinosis / orthopedics / ophthalmology / dermatology / dm など */
+    category: string
+    /** サブカテゴリ（省略可）: antitussive / expectorant / antihistamine / nsaid / eyedrop / nasal など */
+    subCategory?: string
+    /** エクスプレス候補ボタンに表示するラベル */
+    label: string
+    /** デフォルトで追加する scenario.id（通常 "initial"） */
+    defaultScenarioId: string
+    /** 同カテゴリ内での表示順 */
+    sortOrder?: number
+  }
 }
 
 // ─────────────────────────────────────────────────────────────

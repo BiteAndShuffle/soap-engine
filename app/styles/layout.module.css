@@ -1583,6 +1583,33 @@
 }
 .medSubcatBtn:hover { background: #dce8ff; border-color: #0a84ff; color: #003da0; }
 
+/* ─────────────────────────────────────────────────────────────
+   エクスプレス追加ボタン
+───────────────────────────────────────────────────────────── */
+.expressGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.expressBtn {
+  padding: 0.25rem 0.55rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #eefaf3;
+  border: 1.5px solid #7ecba1;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #1a6640;
+  transition: background 0.08s, color 0.08s, border-color 0.08s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  line-height: 1.4;
+  min-height: 28px;
+}
+.expressBtn:hover { background: #d0f0e0; border-color: #2e9e60; color: #0e4428; }
+.expressBtn:active { background: #b8e8d0; }
+
 /* ══════════════════════════════════════════════════════════════
    モード切替バー（Col 2 上部: 手動選択 ↔ 自然言語生成）
    ══════════════════════════════════════════════════════════════ */

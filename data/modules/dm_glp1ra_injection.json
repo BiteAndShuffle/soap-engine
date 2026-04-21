@@ -424,23 +424,6 @@
       ]
     }
   },
-  "drugKnowledge": {
-    "duration": null,
-    "crushable": null,
-    "lightSensitive": null,
-    "oneDosePackaging": null,
-    "hygroscopic": null,
-    "storage": null,
-    "administration": {
-      "route": "injection",
-      "injectionSiteRotation": "毎回注射部位を変え、同じ部位に繰り返し注射しないようにする",
-      "techniqueReference": "指導せん"
-    },
-    "interactions": null,
-    "renalDose": null,
-    "hepaticDose": null,
-    "pregnancyLactation": null
-  },
   "display": {
     "title": "GLP-1受容体作動薬（注射）",
     "subtitle": "GLP-1受容体作動薬（注射）",
@@ -543,7 +526,6 @@
     "counselingTags": [],
     "workflowTags": []
   },
-  "evidenceCatalog": [],
   "addons": {
     "items": {
       "addon_glycemic_guidance": {
@@ -552,7 +534,7 @@
         "title": "血糖指導",
         "group": "counseling",
         "targetSection": "P",
-        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食はカロリーオフ・ノンシュガー食品への置き換えを取り入れてみてください。\n血糖が改善してきた際には低血糖症状が出ることがあります。気になる症状があればご相談ください。",
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食はカロリーオフ・ノンシュガー食品への置き換えを取り入れてみてください。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になる症状があればご相談ください。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -634,7 +616,7 @@
         "title": "初回シックデイ",
         "group": "sickday",
         "targetSection": "P",
-        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なります。自己判断せず、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なります。\n自己判断せず、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -677,6 +659,13 @@
       ]
     }
   },
+  "expressMode": {
+    "enabled": false,
+    "category": "dm",
+    "label": "GLP-1（注射）",
+    "defaultScenarioId": "initial",
+    "sortOrder": 99
+  },
   "scenarios": [
     {
       "id": "initial",
@@ -695,7 +684,7 @@
       "S": "血糖値が高いため、薬が追加となった。",
       "O": "GLP-1受容体作動薬(注射)　処方",
       "A": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。\n血糖改善および体重管理の補助を目的として使用する。",
-      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出た場合はご相談ください。\n注射手技については指導せんで説明しています。不安がある場合はご相談ください。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出た場合はご相談ください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_glycemic_guidance",
@@ -729,8 +718,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "drug_effect_explanation",
         "side_effect_attention"
@@ -738,19 +725,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -814,7 +788,16 @@
         },
         {
           "id": "p_3",
-          "text": "注射手技については指導せんで説明しています。不安がある場合はご相談ください。",
+          "text": "注射の具体的な手技については、指導せんを用いて説明しています。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "注射方法や使用手順に不安がある場合はご相談ください。",
           "role": "administration_guidance",
           "transform": "minimal",
           "safety": "low",
@@ -885,8 +868,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_increase_explanation",
         "gi_symptom_attention"
@@ -894,19 +875,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1014,8 +982,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_increase_explanation",
         "gi_symptom_attention"
@@ -1023,19 +989,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1143,8 +1096,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_increase_explanation",
         "gi_symptom_attention"
@@ -1152,19 +1103,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1263,8 +1201,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_decrease_explanation",
         "followup_monitoring"
@@ -1272,19 +1208,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1393,8 +1316,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_decrease_explanation",
         "followup_monitoring"
@@ -1402,19 +1323,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1522,8 +1430,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_decrease_explanation",
         "followup_monitoring"
@@ -1531,19 +1437,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1618,9 +1511,9 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
-      "S": "{{drug_subject}}を使用して症状は落ち着いている。注射部位が硬くなるような変化は認めない。",
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n注射部位が硬くなるような変化は認めない。",
       "O": "GLP-1受容体作動薬(注射)　処方",
-      "A": "{{drug_subject}}による注射部位反応は現時点で認められない。現時点で治療継続が可能である。",
+      "A": "{{drug_subject}}による注射部位反応は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、注射部位が硬くなることがあります。\n毎回注射部位を変えることで予防できます。\n気になる症状があればご相談ください。",
       "mergePolicy": {
         "S": {
@@ -1648,31 +1541,25 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "administration_instruction"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}を使用して症状は落ち着いている。注射部位が硬くなるような変化は認めない。",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "注射部位が硬くなるような変化は認めない。",
           "role": "symptom_absence_check",
           "transform": "minimal",
           "safety": "low",
@@ -1683,23 +1570,12 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による注射部位反応は現時点で認められない。",
+          "text": "{{drug_subject}}による注射部位反応は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": "observation: low-risk symptom absence; moderate/low: persona transform permitted per low_risk_relaxation_rule"
-        },
-        {
-          "id": "a_2",
-          "text": "現時点で治療継続が可能である。",
-          "role": "treatment_end_assessment",
-          "transform": "fixed",
-          "safety": "high",
-          "lockTerms": [
-            "治療継続が可能"
-          ],
-          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1756,10 +1632,10 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
-      "S": "{{drug_subject}}を使用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\nふらつき・冷汗・動悸などの低血糖症状は認めない。",
       "O": "GLP-1受容体作動薬(注射)　処方",
-      "A": "{{drug_subject}}による低血糖は現時点で認められない。現時点で治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は糖分を摂取してください。改善しない場合はご相談ください。",
+      "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は糖分を摂取してください。\n改善しない場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1786,31 +1662,25 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "hypoglycemia_attention"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}を使用して症状は落ち着いている。ふらつき・冷汗・動悸などの低血糖症状は認めない。",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "ふらつき・冷汗・動悸などの低血糖症状は認めない。",
           "role": "symptom_absence_check",
           "transform": "minimal",
           "safety": "medium",
@@ -1823,7 +1693,7 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による低血糖は現時点で認められない。",
+          "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "minimal",
           "safety": "medium",
@@ -1831,17 +1701,6 @@
             "低血糖"
           ],
           "notes": "observation: high-risk symptom absence; minimal/medium: risk term protected, light transform permitted"
-        },
-        {
-          "id": "a_2",
-          "text": "現時点で治療継続が可能である。",
-          "role": "treatment_end_assessment",
-          "transform": "fixed",
-          "safety": "high",
-          "lockTerms": [
-            "治療継続が可能"
-          ],
-          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -1869,8 +1728,17 @@
         },
         {
           "id": "p_3",
-          "text": "症状が出た場合は糖分を摂取してください。改善しない場合はご相談ください。",
+          "text": "症状が出た場合は糖分を摂取してください。",
           "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "改善しない場合はご相談ください。",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [
@@ -1902,9 +1770,9 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
-      "S": "{{drug_subject}}を使用して症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n悪心・下痢などの消化器症状は認めない。",
       "O": "GLP-1受容体作動薬(注射)　処方",
-      "A": "{{drug_subject}}による消化器症状は現時点で認められない。現時点で治療継続が可能である。",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に吐き気・下痢などが出ることがあります。\n症状が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
@@ -1932,31 +1800,25 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "gi_symptom_attention"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}を使用して症状は落ち着いている。悪心・下痢などの消化器症状は認めない。",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "悪心・下痢などの消化器症状は認めない。",
           "role": "symptom_absence_check",
           "transform": "minimal",
           "safety": "low",
@@ -1967,23 +1829,12 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による消化器症状は現時点で認められない。",
+          "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": "observation: low-risk symptom absence; moderate/low: persona transform permitted per low_risk_relaxation_rule"
-        },
-        {
-          "id": "a_2",
-          "text": "現時点で治療継続が可能である。",
-          "role": "treatment_end_assessment",
-          "transform": "fixed",
-          "safety": "high",
-          "lockTerms": [
-            "治療継続が可能"
-          ],
-          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -2033,9 +1884,9 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
-      "S": "{{drug_subject}}を使用して症状は落ち着いている。食欲低下は認めない。",
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n食欲低下は認めない。",
       "O": "GLP-1受容体作動薬(注射)　処方",
-      "A": "{{drug_subject}}による食欲低下は現時点で認められない。現時点で治療継続が可能である。",
+      "A": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に食欲低下が出ることがあります。\n食事量が落ちる・体重が急に減るなどの変化があればご相談ください。",
       "mergePolicy": {
         "S": {
@@ -2063,31 +1914,25 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "gi_symptom_attention"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}を使用して症状は落ち着いている。食欲低下は認めない。",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "食欲低下は認めない。",
           "role": "symptom_absence_check",
           "transform": "minimal",
           "safety": "low",
@@ -2098,23 +1943,12 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による食欲低下は現時点で認められない。",
+          "text": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": "observation: low-risk symptom absence; moderate/low: persona transform permitted per low_risk_relaxation_rule"
-        },
-        {
-          "id": "a_2",
-          "text": "現時点で治療継続が可能である。",
-          "role": "treatment_end_assessment",
-          "transform": "fixed",
-          "safety": "high",
-          "lockTerms": [
-            "治療継続が可能"
-          ],
-          "notes": "judgment: continuation decision; fixed: must not be paraphrased"
         }
       ],
       "PStructured": [
@@ -2162,9 +1996,9 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
-      "S": "{{drug_subject}}を使用して症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n強い腹痛や背部痛などの症状は認めない。",
       "O": "GLP-1受容体作動薬(注射)　処方",
-      "A": "{{drug_subject}}による膵炎は現時点で認められない。現時点で治療継続が可能である。",
+      "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
       "mergePolicy": {
         "S": {
@@ -2192,8 +2026,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "pancreatitis_attention",
         "urgent_consult_advice"
@@ -2201,23 +2033,19 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}を使用して症状は落ち着いている。強い腹痛や背部痛などの症状は認めない。",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "symptom_absence_check",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "強い腹痛や背部痛などの症状は認めない。",
           "role": "symptom_absence_check",
           "transform": "minimal",
           "safety": "medium",
@@ -2231,7 +2059,7 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による膵炎は現時点で認められない。",
+          "text": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "minimal",
           "safety": "high",
@@ -2239,18 +2067,6 @@
             "膵炎"
           ],
           "notes": "observation: critical-risk symptom absence; minimal/high: risk term strictly protected"
-        },
-        {
-          "id": "a_2",
-          "text": "現時点で治療継続が可能である。",
-          "role": "treatment_end_assessment",
-          "transform": "fixed",
-          "safety": "critical",
-          "lockTerms": [
-            "治療継続が可能",
-            "膵炎"
-          ],
-          "notes": "judgment: continuation under pancreatitis absence context; fixed/critical: highest-risk judgment, no paraphrase permitted"
         }
       ],
       "PStructured": [
@@ -2318,7 +2134,7 @@
       "S": "薬を使用して症状は落ち着いている。\n継続して使用できている。",
       "O": "GLP-1受容体作動薬(注射)　使用中",
       "A": "コンプライアンスは良好である。治療継続に問題はない。",
-      "P": "引き続き用法を守って使用することで、血糖コントロールの維持および合併症予防が期待できます。\n今後も継続して使用できるようにすること。",
+      "P": "引き続き用法を守って使用することで、血糖コントロールの維持および合併症予防が期待できます。\n今後も継続して使用できるようにすることが大切です。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2345,27 +2161,12 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "adherence_support"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -2409,7 +2210,7 @@
         },
         {
           "id": "p_2",
-          "text": "今後も継続して使用できるようにすること。",
+          "text": "今後も継続して使用できるようにすることが大切です。",
           "role": "adherence_guidance",
           "transform": "moderate",
           "safety": "low",
@@ -2442,7 +2243,7 @@
       "S": "使用忘れがみられる。\n継続して使用できていない。",
       "O": "GLP-1受容体作動薬(注射)　使用中",
       "A": "コンプライアンスは不良で、使用忘れがみられる。",
-      "P": "継続して使用することで血糖コントロールの維持が期待されます。\n使用忘れが続くと血糖値が不安定となる可能性があります。\n忘れを防ぐため、毎日同じ時間に使用する習慣をつけることが大切です。",
+      "P": "継続して使用することで血糖コントロールの維持が期待されます。\n使用忘れが続くと血糖値が不安定となる可能性があります。",
       "addonsRef": {
         "P": [
           "addon_adherence_alarm_suggestion",
@@ -2476,27 +2277,12 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "adherence_support"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -2543,15 +2329,6 @@
           "text": "使用忘れが続くと血糖値が不安定となる可能性があります。",
           "role": "followup_guidance",
           "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_3",
-          "text": "忘れを防ぐため、毎日同じ時間に使用する習慣をつけることが大切です。",
-          "role": "adherence_guidance",
-          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2613,8 +2390,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "adherence_support",
         "urgent_consult_advice"
@@ -2622,19 +2397,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -2759,27 +2521,12 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "adherence_support"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -2898,27 +2645,12 @@
         }
       },
       "followupRef": "end_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3017,27 +2749,12 @@
         }
       },
       "followupRef": "end_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3146,27 +2863,12 @@
         }
       },
       "followupRef": "end_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3251,7 +2953,7 @@
       "S": "{{drug_subject}}の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。",
       "O": "GLP-1受容体作動薬(注射)　処方",
       "A": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
-      "P": "{{drug_subject}}による症状が軽い場合は、食事量を無理せず脂っこいものを控えるなどで改善することがあります。\n便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。ご相談ください。",
+      "P": "{{drug_subject}}による症状が軽い場合は、食事量を無理せず脂っこいものを控えるなどで改善することがあります。\n便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。\nご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -3278,27 +2980,12 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "gi_symptom_attention"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3335,12 +3022,22 @@
         },
         {
           "id": "p_2",
-          "text": "便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。ご相談ください。",
+          "text": "便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
-            "症状が強く",
+            "症状が強く"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "ご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
             "ご相談ください"
           ],
           "notes": null
@@ -3380,7 +3077,7 @@
       "sideEffectPresence": "present_moderate",
       "S": "{{drug_subject}}の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。",
       "O": "GLP-1受容体作動薬(注射)　処方",
-      "A": "{{drug_subject}}による消化器症状が強く、継続困難の可能性がある。減量または薬剤変更を含む対応が必要である。",
+      "A": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
       "P": "{{drug_subject}}による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。\n処方医へご相談ください。",
       "mergePolicy": {
         "S": {
@@ -3408,8 +3105,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "gi_symptom_attention",
         "urgent_consult_advice"
@@ -3417,19 +3112,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3444,17 +3126,16 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による消化器症状が強く、継続困難の可能性がある。減量または薬剤変更を含む対応が必要である。",
+          "text": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
           "role": "side_effect_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "減量",
-            "薬剤変更",
             "症状が強く",
-            "継続困難"
+            "継続困難",
+            "対応を要する"
           ],
-          "notes": "moderate SE with continuation difficulty judgment and treatment change suggestion; fixed: judgment phrases present"
+          "notes": "moderate SE with continuation difficulty judgment and need for intervention; fixed: judgment phrases present"
         }
       ],
       "PStructured": [
@@ -3544,8 +3225,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation",
         "followup_monitoring"
@@ -3553,19 +3232,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3667,8 +3333,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_decrease_explanation",
         "gi_symptom_attention"
@@ -3676,19 +3340,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3793,8 +3444,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation",
         "followup_monitoring"
@@ -3802,19 +3451,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -3918,8 +3554,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "lifestyle_guidance",
         "hypoglycemia_attention"
@@ -3927,19 +3561,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4040,7 +3661,7 @@
       "S": "発熱・嘔吐・下痢などの体調不良がみられる。",
       "O": "GLP-1受容体作動薬(注射)　使用中",
       "A": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
-      "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なります。自己判断せず、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+      "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なります。\n自己判断せず、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
       "addonsRef": {
         "P": [
           "addon_sickday_hold_sglt2_metformin"
@@ -4072,8 +3693,6 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "sickday_guidance",
         "urgent_consult_advice"
@@ -4081,19 +3700,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4157,7 +3763,16 @@
         },
         {
           "id": "p_4",
-          "text": "治療継続の可否は体調や摂取状況によって異なります。自己判断せず、処方医に相談してください。",
+          "text": "治療継続の可否は体調や摂取状況によって異なります。",
+          "role": "sickday_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_5",
+          "text": "自己判断せず、処方医に相談してください。",
           "role": "sickday_guidance",
           "transform": "fixed",
           "safety": "high",
@@ -4169,7 +3784,7 @@
           "notes": null
         },
         {
-          "id": "p_5",
+          "id": "p_6",
           "text": "嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
           "role": "urgent_consult_guidance",
           "transform": "fixed",
@@ -4243,27 +3858,12 @@
         }
       },
       "followupRef": "default_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "administration_instruction"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4395,27 +3995,12 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "administration_instruction"
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4531,8 +4116,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "administration_instruction",
         "urgent_consult_advice"
@@ -4540,19 +4123,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4660,8 +4230,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation",
         "followup_monitoring"
@@ -4669,19 +4237,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4779,8 +4334,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "dose_decrease_explanation",
         "administration_instruction"
@@ -4788,19 +4341,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4911,8 +4451,6 @@
         }
       },
       "followupRef": "se_followup",
-      "phrasing": null,
-      "evidenceRefs": [],
       "intentTags": [
         "treatment_end_explanation",
         "followup_monitoring"
@@ -4920,19 +4458,6 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
-      "personaControl": {
-        "enabledSections": [
-          "S",
-          "A",
-          "P"
-        ],
-        "sectionPolicy": {
-          "S": "allow",
-          "A": "allow",
-          "P": "allow"
-        },
-        "highRiskSentencePolicy": "fixed_sentences_are_excluded_from_persona_transform"
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -4979,169 +4504,5 @@
         }
       ]
     }
-  ],
-  "personaSchema": {
-    "version": "1.1",
-    "targetSections": [
-      "S",
-      "A",
-      "P"
-    ],
-    "transformLevels": {
-      "fixed": "変換禁止。文意・指示強度・判断語を変えない。語尾変更も原則不可。救急受診/中止/処方医/低血糖/膵炎/脱水/強い腹痛など緊急指示・危険語含む文。",
-      "minimal": "最小変換のみ許可。語尾・接続詞の軽微変更は可。症状語・判断語・指示語は固定。",
-      "moderate": "同義範囲での文型変更、主述の組み替え、体言止め化を許可。ただし医学的意味は厳密維持。"
-    },
-    "safetyLevels": {
-      "critical": "救急受診・膵炎・脱水・強い腹痛など緊急対応を要する記述",
-      "high": "受診・中止・低血糖・医療機関・処方医への言及",
-      "medium": "減量・体調変化・継続困難・症状が続くへの言及",
-      "low": "一般的な説明・情報提供"
-    },
-    "roleBasedPolicy": {
-      "principle": "S is not uniformly weak. Sentence role governs transform level.",
-      "S_moderate_roles": [
-        "treatment_start_reason",
-        "dose_adjustment_reason",
-        "adherence_status",
-        "adherence_problem",
-        "visit_status",
-        "lifestyle_problem"
-      ],
-      "S_minimal_roles": [
-        "symptom_absence_check",
-        "symptom_presence_check",
-        "acute_condition_status",
-        "treatment_end_reason"
-      ],
-      "P_urgent_roles_require_fixed": [
-        "urgent_consult_guidance"
-      ],
-      "absence_check_rule": "symptom_absence_check は transform:minimal, safety:medium が上限。fixed/critical は禁止。",
-      "A_moderate_roles": [
-        "treatment_assessment",
-        "adherence_assessment",
-        "administration_assessment"
-      ],
-      "A_minimal_roles": [
-        "risk_assessment"
-      ],
-      "A_fixed_conditions": [
-        "safety:critical (any role)",
-        "side_effect_assessment: judgment phrase present (治療継続が可能/継続困難/対応を要する/減量が妥当と判断された 等)",
-        "side_effect_assessment: safety:high with judgment phrase",
-        "treatment_end_assessment: all cases (treatment end decisions must not be paraphrased)",
-        "sickday_assessment: all cases (safety:critical, multi-risk composite)"
-      ],
-      "judgment_phrases": [
-        "治療継続が可能",
-        "中止が妥当と判断された",
-        "減量が妥当と判断された",
-        "他剤変更の適応があった",
-        "対応を要する",
-        "再評価が必要",
-        "治療方針の変更が必要",
-        "継続困難"
-      ],
-      "A_rules": {
-        "treatment_assessment": "moderate 上限。副作用増強リスク言及は minimal。",
-        "adherence_assessment": "moderate 上限。受診遅延など受診行動への言及は minimal。",
-        "risk_assessment": "minimal のみ。リスク方向性（血糖上昇など）を保持。",
-        "side_effect_assessment": "fixed 優先。judgment phrase（治療継続が可能/継続困難/対応を要する/減量が妥当など）を含む場合は必ず fixed。safety:critical は fixed。safety:high + judgment phrase は fixed。疾患名・評価結果を保持。",
-        "sickday_assessment": "fixed。safety:critical のため変換禁止。脱水・低血糖など複合リスク評価を完全保持。",
-        "treatment_end_assessment": "fixed。治療終了判断・再評価指示・治療方針変更はすべて変換禁止。"
-      },
-      "A_judgment_phrases_require_fixed": true,
-      "A_fixed_roles": [
-        "sickday_assessment",
-        "side_effect_assessment",
-        "treatment_end_assessment"
-      ],
-      "low_risk_relaxation_rule": {
-        "description": "低リスクシナリオでは transform:moderate まで緩和可能。ただし治療判断フレーズ（治療継続が可能/中止/継続困難など）を含む場合は fixed を維持する。",
-        "eligible_conditions": [
-          "side_effect_assessment かつ副作用なし（absence）かつ judgment phrase なし",
-          "adherence_assessment かつ良好（cp_good）",
-          "initial（treatment_assessment）"
-        ],
-        "constraint": "医学的因果関係を保持すること。治療継続/中止判断を含む文は fixed を維持する。",
-        "current_data_note": "現在の se_*_none シナリオは「治療継続が可能」を含むため fixed を維持。judgment phrase を含まない absence 文のみ moderate 適用可。"
-      }
-    },
-    "designNote": "S は一律 weak にしない。文ごとの role に基づき transform を決定。danger_phrases（救急受診/中止/処方医など直接指示語）は role より優先して fixed に引き上げる。AStructured では side_effect_assessment・treatment_end_assessment・sickday_assessment は fixed を優先する。adherence_assessment は moderate/minimal を維持し fixed へは上げない。受診遅延などの状態記録語は minimal のまま。",
-    "allowedRoles": [
-      "treatment_start_reason",
-      "dose_adjustment_reason",
-      "symptom_absence_check",
-      "symptom_presence_check",
-      "acute_condition_status",
-      "adherence_status",
-      "adherence_problem",
-      "adherence_assessment",
-      "adherence_guidance",
-      "visit_status",
-      "lifestyle_problem",
-      "lifestyle_guidance",
-      "risk_assessment",
-      "side_effect_assessment",
-      "side_effect_guidance",
-      "sickday_assessment",
-      "sickday_guidance",
-      "treatment_assessment",
-      "treatment_end_reason",
-      "treatment_end_assessment",
-      "treatment_end_guidance",
-      "dose_adjustment_guidance",
-      "administration_problem",
-      "administration_assessment",
-      "administration_guidance",
-      "followup_guidance",
-      "drug_effect_explanation",
-      "urgent_consult_guidance"
-    ],
-    "defaultRolePolicy": {
-      "note": "各 role のデフォルト transform。個別 Structured フィールドで上書き可。danger_phrases が含まれる場合は fixed へ引き上げ。",
-      "moderate": [
-        "treatment_start_reason",
-        "dose_adjustment_reason",
-        "adherence_problem",
-        "adherence_status",
-        "visit_status",
-        "lifestyle_problem",
-        "drug_effect_explanation"
-      ],
-      "minimal": [
-        "symptom_absence_check",
-        "symptom_presence_check",
-        "acute_condition_status",
-        "treatment_end_reason",
-        "adherence_assessment",
-        "treatment_assessment",
-        "risk_assessment",
-        "administration_problem",
-        "administration_assessment",
-        "dose_adjustment_guidance",
-        "lifestyle_guidance",
-        "adherence_guidance",
-        "sickday_guidance",
-        "treatment_end_guidance",
-        "administration_guidance",
-        "followup_guidance"
-      ],
-      "fixed": [
-        "sickday_assessment",
-        "side_effect_assessment",
-        "treatment_end_assessment",
-        "urgent_consult_guidance"
-      ]
-    },
-    "sCompositionPolicy": {
-      "rule": "symptomCodes が空でない場合、symptoms も対応する日本語表現で埋める。symptomCodes が空の場合は symptoms も空でよい。",
-      "template_policy": {
-        "symptom_based": "症状起点のシナリオ。symptomCodes と symptoms を必ず埋める。",
-        "status_based": "状態・判断起点のシナリオ。symptomCodes がある場合は symptoms も埋める。symptomCodes が空なら symptoms も空でよい。"
-      },
-      "route_diff_allowed": "cp_poor_missed_doses など、使用/服薬 などの route 固有語は injection/oral で異なっても可。"
-    }
-  }
+  ]
 }

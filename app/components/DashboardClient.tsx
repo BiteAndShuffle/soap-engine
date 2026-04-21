@@ -197,8 +197,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   })
 
   // ── ペルソナ（文体切替）: 表示変換のみ、医療ロジック不変 ──
-  // デフォルトは concise（簡潔）で表示。plain を選ぶと rawFields 相当の無変換になる。
-  const [personaEnabled, setPersonaEnabled] = useState(true)
+  // デフォルトは無変換（JSONそのまま）。ペルソナ切替ボタンで有効化できる。
+  const [personaEnabled, setPersonaEnabled] = useState(false)
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>('concise')
   const [personaModalOpen, setPersonaModalOpen] = useState(false)
 
@@ -344,6 +344,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const composeDrugSuggestions = useMemo<DrugSuggestionItem[]>(
     () => getDrugSuggestions(composeSearch, searchIndex),
     [composeSearch, searchIndex],
+  )
+
+  // ── エクスプレス候補（expressMode.enabled === true のモジュールのみ） ──
+  const expressCandidates = useMemo(
+    () => allModules
+      .filter(m => m.expressMode?.enabled === true)
+      .map(m => ({
+        moduleId: m.moduleId,
+        category:  m.expressMode!.category,
+        subCategory: m.expressMode!.subCategory,
+        label:     m.expressMode!.label,
+        defaultScenarioId: m.expressMode!.defaultScenarioId,
+        sortOrder: m.expressMode!.sortOrder ?? 99,
+      }))
+      .sort((a, b) => a.sortOrder - b.sortOrder),
+    [allModules],
   )
 
   // ── トップバー表示用ラベル ───────────────────────────────────
@@ -854,6 +870,77 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [])
 
   // ─────────────────────────────────────────────────────────────
+  // handleExpressAdd
+  //
+  // エクスプレスモードから呼ばれる。
+  // 1剤目未確定 → そのモジュールを1剤目として選択 + シナリオ確定
+  // 1剤目確定済み → ノードとして追加 + シナリオを即時確定
+  // ─────────────────────────────────────────────────────────────
+
+  const handleExpressAdd = useCallback((targetModuleId: string, defaultScenarioId: string) => {
+    const mod = allModules.find(m => m.moduleId === targetModuleId) ?? moduleData
+    // defaultScenarioId は scenario.id（非 globalId）なので globalId に変換する
+    const sc = mod.scenarios.find(s => s.id === defaultScenarioId)
+    if (!sc) return
+    const globalId = sc.globalId
+
+    // ref 経由で stale closure を防ぐ
+    const isPrimaryEmpty = primaryScenarioRef.current === undefined && composeNodesRef.current.length === 0
+
+    if (isPrimaryEmpty) {
+      // 1剤目として追加
+      setActiveModuleData(mod)
+      setActiveBrandName(mod.drug?.brandNames?.[0])
+      setDrugSelected(true)
+      setComposeNodes([])
+      setEditingNodeId(null)
+      setEditingPrimary(false)
+      setPendingNodeIds(new Set())
+      setMainSearch('')
+      // シナリオを確定（useEffect が primaryBaseFields を追従する）
+      setSelectedScenarioId(globalId)
+      setSelectedGroup(getMenuGroupFromScenario(sc))
+      setSRelation('continued_do')
+      setSCondition('stable')
+      setPrimaryAddonIds(new Set())
+      setSelectedAddonIds(new Set())
+    } else {
+      // ノードとして追加して即時確定
+      const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const nodeDrugName = resolveDrugName(mod.drug, undefined)
+      const newNode: import('../../lib/types').ComposeNode = {
+        id: nodeId,
+        moduleId: mod.moduleId,
+        scenarioId: '',
+        block: {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          templateLabel: '',
+          fields: EMPTY_FIELDS,
+          closingText: undefined,
+        },
+        drugLabel: resolveNodeLabel(mod),
+        matchedBrandName: mod.drug?.brandNames?.[0],
+        resolvedDrugName: nodeDrugName,
+        selectedAddonIds: [],
+        baseLabel: '',
+        baseDomain: resolveDomain(mod),
+      }
+      // ノードを追加してから即時確定する
+      setComposeNodes(prev => {
+        const updated = buildUpdatedNode(newNode, globalId, [], newNode.matchedBrandName)
+        if (!updated) return [...prev, newNode]
+        return [...prev, updated]
+      })
+      setEditingNodeId(null)
+      setEditingPrimary(false)
+    }
+  }, [
+    allModules,
+    moduleData,
+    buildUpdatedNode,
+  ])
+
+  // ─────────────────────────────────────────────────────────────
   // NLP モード
   // ─────────────────────────────────────────────────────────────
 
@@ -1063,6 +1150,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             composeDrugSuggestions={composeDrugSuggestions}
             onSelectComposeDrug={handleComposeDrugSelect}
             onSubcategorySelect={handleSubcategorySelect}
+            expressCandidates={expressCandidates}
+            onExpressAdd={handleExpressAdd}
           />
         ) : (
           <div className={s.thirdPanel}>
