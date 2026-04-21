@@ -230,6 +230,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // UI 側の addon 選択表示（activeContext が切り替わると差し替える）
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(new Set())
 
+  // ユーザー手入力状態（null = 未編集。シナリオ変更でリセットされる）
+  // 生成ロジック（primaryBaseFields / composeNodes）とは完全に分離する。
+  // editedSOAP が非null = 編集中（finalFields = editedSOAP を使用）。
+  // editedSOAP が null   = 未編集（finalFields = displayFields を使用）。
+  const [editedSOAP, setEditedSOAP] = useState<SoapFields | null>(null)
+
   // ══════════════════════════════════════════════════════════════
   // REFS（stale closure 防止。callbacks 内で最新値を参照する）
   // ══════════════════════════════════════════════════════════════
@@ -249,6 +255,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const selectedPersonaRef    = useRef<PersonaId>('polite')
   // NLP モード中は selectedScenarioId 変化による useEffect の上書きをスキップするための ref
   const uiModeRef             = useRef<UiMode>('manual')
+  // handleFieldChange で editedSOAP の一致判定に使う（stale closure 防止）
+  const displayFieldsRef      = useRef<SoapFields>(EMPTY_FIELDS)
+  // 編集開始時点の finalFields スナップショット（一度確定したら次の編集開始まで変化しない）
+  // handleFieldChange の primary ブランチで prev===null のときここから初期値を取る。
+  // ref なので「updater 実行タイミングのずれ」による displayFields の値変化の影響を受けない。
+  const editSnapshotRef       = useRef<SoapFields>(EMPTY_FIELDS)
 
   // ── 1剤目シナリオ（render ごとに解決） ──────────────────────
   const primaryScenario = useMemo(
@@ -284,10 +296,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [primaryBaseFields, primaryScenario, composeNodes, activeModuleData],
   )
 
-  // ── finalFields: block 単位で persona 変換済みの fields を merge した結果 ──
-  // persona 変換は primaryBaseFields / block.fields に焼き込み済みのため後がけ不要。
-  // displayFields = computeDisplayFields(persona変換済み fields) がそのまま最終表示値。
-  const finalFields = displayFields
+  // ── finalFields: ユーザー手入力中は editedSOAP、未編集時は displayFields ──
+  // editedSOAP が null のとき = 未編集（scenario生成値をそのまま表示）。
+  // editedSOAP が非null のとき = ユーザーが手入力中（編集値を表示）。
+  // displayFields（生成ロジック）には一切触れない。
+  const finalFields = editedSOAP ?? displayFields
 
   // ── Refs を render ごとに同期 ──────────────────────────────
   primaryBaseFieldsRef.current = primaryBaseFields
@@ -300,6 +313,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   personaEnabledRef.current    = personaEnabled
   selectedPersonaRef.current   = selectedPersona
   uiModeRef.current            = uiMode
+  displayFieldsRef.current     = displayFields
+  // 未編集状態のときだけスナップショットを追従させる。
+  // editedSOAP が非null（編集中）のときは固定したまま更新しない。
+  // これにより、mergeBlocks/addon の再計算が editSnapshotRef を汚染しない。
+  if (editedSOAP === null) editSnapshotRef.current = displayFields
 
   // ── targetModule: activeContext のモジュール ─────────────────
   const targetModule = useMemo<ModuleData>(() => {
@@ -420,10 +438,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryBaseFields(displayableFields)
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
+      setEditedSOAP(null)
     } else if (selectedScenarioId === null) {
       rawPrimaryFieldsRef.current = EMPTY_FIELDS
       primaryGuardRef.current = null
       setPrimaryBaseFields(EMPTY_FIELDS)
+      setEditedSOAP(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedScenarioId, editingNodeId])
@@ -584,6 +604,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setEditingNodeId(null)
     setEditingPrimary(false)
     setPendingNodeIds(new Set())
+    setEditedSOAP(null)
   }, [allModules, moduleData])
 
   // ─────────────────────────────────────────────────────────────
@@ -695,7 +716,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // handleFieldChange（テキスト直接編集）
   //
   //   node    → そのノードの block.fields を更新（composeNodes を書き換え）
-  //   primary → primaryBaseFields を更新
+  //   primary → editedSOAP に書き込む（primaryBaseFields / 生成ロジックは不変）
+  //             editedSOAP が displayFields と完全一致したら null に戻す
   // ─────────────────────────────────────────────────────────────
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
@@ -725,12 +747,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }))
     } else {
       // ── primary ブランチ ─────────────────────────────────────
-      // rawPrimaryFieldsRef も同時に更新する。
-      // persona 切替時に reapplyPersonaToAllBlocks が rawPrimaryFieldsRef から再計算するため、
-      // ここで更新しないと手動編集内容が persona 切替後に上書きされて消える。
-      const updatedRaw = { ...rawPrimaryFieldsRef.current, [key]: value }
-      rawPrimaryFieldsRef.current = updatedRaw
-      setPrimaryBaseFields({ ...updatedRaw })
+      // 生成ロジック（primaryBaseFields / rawPrimaryFieldsRef）には触れない。
+      // ユーザー編集は editedSOAP にのみ反映する。
+      //
+      // 初期値に editSnapshotRef を使う理由:
+      //   displayFieldsRef は render 毎に更新されるため、
+      //   useState updater の非同期実行タイミングによっては
+      //   「編集開始後の再計算済み displayFields」を拾ってしまう。
+      //   editSnapshotRef は「editedSOAP === null の間だけ」追従し、
+      //   編集開始後（editedSOAP !== null）は固定されるため安全。
+      //
+      // 一致判定は editSnapshotRef（編集開始時の固定スナップショット）と比較する。
+      // displayFieldsRef（再計算値）と比較すると、編集中に displayFields が変化した場合に
+      // ユーザーが元の文字列に戻しても null に戻れない問題が発生するため使わない。
+      setEditedSOAP(prev => {
+        const base = prev ?? editSnapshotRef.current
+        const next = { ...base, [key]: value }
+        const snap = editSnapshotRef.current
+        const isIdentical =
+          next.S === snap.S && next.O === snap.O &&
+          next.A === snap.A && next.P === snap.P
+        return isIdentical ? null : next
+      })
     }
   }, [])
 
@@ -792,6 +830,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
             : rawFields
           setPrimaryBaseFields(fields)
+          setEditedSOAP(null)
         }
       }
       return next
@@ -835,6 +874,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     })()
     const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
     setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
+    setEditedSOAP(null)
   }, [displayFields.S, activeBrandName, activeModuleData])
 
   // ─────────────────────────────────────────────────────────────
@@ -849,6 +889,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleFlagChange = useCallback((flags: SingleDrugFlags) => {
     setSingleDrugFlags(flags)
+    setEditedSOAP(null)
     setPrimaryBaseFields(prev => {
       // 現在のフラグ行を除去してから再挿入する
       const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
@@ -959,6 +1000,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpValidation(null)
     setNlpSelectorReason('')
     setNlpConfidence(0)
+    setEditedSOAP(null)
   }, [])
 
   const handleSwitchToManual = useCallback(() => {
