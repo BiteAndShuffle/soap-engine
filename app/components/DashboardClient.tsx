@@ -237,8 +237,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [editedSOAP, setEditedSOAP] = useState<SoapFields | null>(null)
 
   // 手動編集中に再合成系操作を行うときの確認ダイアログ用。
-  // null = ダイアログ非表示。非null = ダイアログ表示中（実行予定の操作を保持）。
-  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null)
+  // pendingActionRef: 実行予定の操作を ref で保持（stale closure / バッチ更新の影響を受けない）。
+  // discardDialogOpen: ダイアログの表示制御のみに使う state（ref と必ず対にして操作する）。
+  const pendingActionRef = useRef<(() => void) | null>(null)
+  const [discardDialogOpen, setDiscardDialogOpen] = useState(false)
 
   // ══════════════════════════════════════════════════════════════
   // REFS（stale closure 防止。callbacks 内で最新値を参照する）
@@ -473,9 +475,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (editedSOAP === null) {
       action()
     } else {
-      // setState に関数を直接渡すと「関数を呼び出す」ではなく「関数型の state 更新」として
-      // 解釈されるため、ラッパー（() => action）で包む。
-      setPendingAction(() => action)
+      pendingActionRef.current = action
+      setDiscardDialogOpen(true)
     }
   }, [editedSOAP])
 
@@ -719,88 +720,71 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const currentId = editingNodeIdRef.current
     const primarySc = primaryScenarioRef.current
 
-    if (currentId === nodeId) {
-      setEditingNodeId(null)
-      setSelectedAddonIds(primaryAddonIdsRef.current)
-      setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
-    }
-    setPendingNodeIds(prev => { const n = new Set(prev); n.delete(nodeId); return n })
-    setComposeNodes(prev => prev.filter(n => n.id !== nodeId))
-    // displayFields は computeDisplayFields が自動再計算
-  }, [])  // editingPrimary は remove 操作に影響しない
+    confirmDiscard(() => {
+      if (currentId === nodeId) {
+        setEditingNodeId(null)
+        setSelectedAddonIds(primaryAddonIdsRef.current)
+        setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
+      }
+      setPendingNodeIds(prev => { const n = new Set(prev); n.delete(nodeId); return n })
+      setComposeNodes(prev => prev.filter(n => n.id !== nodeId))
+      setEditedSOAP(null)
+      // displayFields は computeDisplayFields が自動再計算
+    })
+  }, [confirmDiscard])  // editingPrimary は remove 操作に影響しない
 
   // ─────────────────────────────────────────────────────────────
   // handleResetCompose（全ノードリセット）
   // ─────────────────────────────────────────────────────────────
 
   const handleResetCompose = useCallback(() => {
-    setComposeNodes([])
-    setEditingNodeId(null)
-    setEditingPrimary(false)
-    setPendingNodeIds(new Set())
-    const primarySc = primaryScenarioRef.current
-    setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
-    setSelectedAddonIds(primaryAddonIdsRef.current)
-  }, [])
+    confirmDiscard(() => {
+      setComposeNodes([])
+      setEditingNodeId(null)
+      setEditingPrimary(false)
+      setPendingNodeIds(new Set())
+      const primarySc = primaryScenarioRef.current
+      setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
+      setSelectedAddonIds(primaryAddonIdsRef.current)
+      setEditedSOAP(null)
+    })
+  }, [confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleFieldChange（テキスト直接編集）
   //
-  //   node    → そのノードの block.fields を更新（composeNodes を書き換え）
-  //   primary → editedSOAP に書き込む（primaryBaseFields / 生成ロジックは不変）
-  //             editedSOAP が displayFields と完全一致したら null に戻す
+  // editingNodeId の有無にかかわらず、常に editedSOAP に書き込む。
+  //
+  // 理由:
+  //   ユーザーが見ているのは finalFields（合成後の表示全体）であり、
+  //   editingNodeId は「左パネルでどのノードのシナリオを選択中か」を示すUIフラグ。
+  //   手動編集は「今画面に表示されているSOAP全体を直接編集する」操作であり、
+  //   editingNodeId の状態（node操作中 / primary操作中）と直交する。
+  //
+  //   旧実装の node ブランチ（setComposeNodes への書き込み）は、
+  //   composeNodes → displayFields → finalFields の再計算を誘発し、
+  //   2剤目合成後の手動編集で表示が崩れる原因となっていた。
+  //
+  // スナップショット戦略:
+  //   editSnapshotRef は「editedSOAP === null の間だけ」追従し、
+  //   編集開始後は固定される。これにより displayFields の再計算が
+  //   編集中のテキストに混入しない。
+  //
+  // 一致判定は editSnapshotRef（編集開始時の固定スナップショット）と比較する。
+  // displayFieldsRef（再計算値）と比較すると、編集中に displayFields が変化した場合に
+  // ユーザーが元の文字列に戻しても null に戻れない問題が発生するため使わない。
   // ─────────────────────────────────────────────────────────────
 
   const handleFieldChange = useCallback((key: SoapKey, value: string) => {
-    const nodeId = editingNodeIdRef.current
-    if (nodeId !== null) {
-      // ── node ブランチ ────────────────────────────────────────
-      // rawFields を先に更新し、guard + persona を通して fields を再計算する。
-      // rawFields を更新しないと persona 切替時に reapplyPersonaToAllBlocks が
-      // 古い rawFields から再計算して手動編集内容を上書きしてしまう。
-      //
-      // block.guard が未設定（pending ノード）の場合はフォールバック:
-      //   fields のみ更新し rawFields は変更しない（persona 適用前のシナリオ未確定状態）。
-      setComposeNodes(prev => prev.map(n => {
-        if (n.id !== nodeId) return n
-        const updatedRaw = { ...(n.block.rawFields ?? n.block.fields), [key]: value }
-        const updatedFields = (n.block.guard && personaEnabledRef.current)
-          ? applyPersonaToFieldsWithGuard(updatedRaw, true, selectedPersonaRef.current, n.block.guard)
-          : updatedRaw
-        return {
-          ...n,
-          block: {
-            ...n.block,
-            rawFields: updatedRaw,
-            fields: updatedFields,
-          },
-        }
-      }))
-    } else {
-      // ── primary ブランチ ─────────────────────────────────────
-      // 生成ロジック（primaryBaseFields / rawPrimaryFieldsRef）には触れない。
-      // ユーザー編集は editedSOAP にのみ反映する。
-      //
-      // 初期値に editSnapshotRef を使う理由:
-      //   displayFieldsRef は render 毎に更新されるため、
-      //   useState updater の非同期実行タイミングによっては
-      //   「編集開始後の再計算済み displayFields」を拾ってしまう。
-      //   editSnapshotRef は「editedSOAP === null の間だけ」追従し、
-      //   編集開始後（editedSOAP !== null）は固定されるため安全。
-      //
-      // 一致判定は editSnapshotRef（編集開始時の固定スナップショット）と比較する。
-      // displayFieldsRef（再計算値）と比較すると、編集中に displayFields が変化した場合に
-      // ユーザーが元の文字列に戻しても null に戻れない問題が発生するため使わない。
-      setEditedSOAP(prev => {
-        const base = prev ?? editSnapshotRef.current
-        const next = { ...base, [key]: value }
-        const snap = editSnapshotRef.current
-        const isIdentical =
-          next.S === snap.S && next.O === snap.O &&
-          next.A === snap.A && next.P === snap.P
-        return isIdentical ? null : next
-      })
-    }
+    setEditedSOAP(prev => {
+      const base = prev ?? editSnapshotRef.current
+      const next = { ...base, [key]: value }
+      const snap = editSnapshotRef.current
+      const isIdentical =
+        next.S === snap.S && next.O === snap.O &&
+        next.A === snap.A && next.P === snap.P
+      return isIdentical ? null : next
+    })
   }, [])
 
   // ─────────────────────────────────────────────────────────────
@@ -1034,22 +1018,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ─────────────────────────────────────────────────────────────
 
   const handleSwitchToNlp = useCallback(() => {
-    setUiMode('nlp')
-    setSelectedScenarioId(null)
-    setPrimaryBaseFields(EMPTY_FIELDS)
-    setPrimaryAddonIds(new Set())
-    setSelectedAddonIds(new Set())
-    setSelectedGroup(null)
-    setSRelation('continued_do')
-    setSCondition('stable')
-    setComposeNodes([])
-    setEditingNodeId(null)
-    setEditingPrimary(false)
-    setNlpValidation(null)
-    setNlpSelectorReason('')
-    setNlpConfidence(0)
-    setEditedSOAP(null)
-  }, [])
+    confirmDiscard(() => {
+      setUiMode('nlp')
+      setSelectedScenarioId(null)
+      setPrimaryBaseFields(EMPTY_FIELDS)
+      setPrimaryAddonIds(new Set())
+      setSelectedAddonIds(new Set())
+      setSelectedGroup(null)
+      setSRelation('continued_do')
+      setSCondition('stable')
+      setComposeNodes([])
+      setEditingNodeId(null)
+      setEditingPrimary(false)
+      setNlpValidation(null)
+      setNlpSelectorReason('')
+      setNlpConfidence(0)
+      setEditedSOAP(null)
+    })
+  }, [confirmDiscard])
 
   const handleSwitchToManual = useCallback(() => {
     setUiMode('manual')
@@ -1328,7 +1314,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       )}
 
       {/* ── 手動編集破棄確認ダイアログ ── */}
-      {pendingAction !== null && (
+      {discardDialogOpen && (
         <div
           className={s.discardDialogOverlay}
           role="dialog"
@@ -1342,17 +1328,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             <div className={s.discardDialogActions}>
               <button
                 className={s.discardDialogCancel}
-                onClick={() => setPendingAction(null)}
+                onClick={() => {
+                  pendingActionRef.current = null
+                  setDiscardDialogOpen(false)
+                }}
               >
                 キャンセル
               </button>
               <button
                 className={s.discardDialogConfirm}
                 onClick={() => {
-                  const action = pendingAction
-                  setPendingAction(null)
+                  // 処理順を安全に保つ:
+                  // 1. action を ref から退避（setDiscardDialogOpen 後も参照できるよう）
+                  // 2. ref をクリア
+                  // 3. ダイアログを閉じる
+                  // 4. editedSOAP をクリア
+                  // 5. action 実行
+                  const action = pendingActionRef.current
+                  pendingActionRef.current = null
+                  setDiscardDialogOpen(false)
                   setEditedSOAP(null)
-                  action()
+                  action?.()
                 }}
               >
                 破棄して続行
