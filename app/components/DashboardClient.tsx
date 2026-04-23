@@ -545,22 +545,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectPrimaryNode = useCallback(() => {
     if (editingPrimaryRef.current) {
-      // 解除: primary 編集モードを終了
+      // 解除: primary 編集モードを終了（SOAPは変わらないので確認不要）
       setEditingPrimary(false)
-      // グループは primaryScenario のものに戻す（既に primary 操作中と同じ状態）
       const primarySc = primaryScenarioRef.current
       if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
       setSelectedAddonIds(primaryAddonIdsRef.current)
     } else {
-      // primary 編集モードへ
-      setEditingPrimary(true)
-      setEditingNodeId(null)
-      // グループを 1剤目シナリオのものに復元
-      const primarySc = primaryScenarioRef.current
-      if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
-      setSelectedAddonIds(primaryAddonIdsRef.current)
+      // primary 編集モードへ: editingNodeId が変わるだけで SOAP は再生成しない。
+      // ただしユーザーは「別コンテキストに移った」と感じるので確認する。
+      confirmDiscard(() => {
+        setEditingPrimary(true)
+        setEditingNodeId(null)
+        const primarySc = primaryScenarioRef.current
+        if (primarySc) setSelectedGroup(getMenuGroupFromScenario(primarySc))
+        setSelectedAddonIds(primaryAddonIdsRef.current)
+        setEditedSOAP(null)
+      })
     }
-  }, [])
+  }, [confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSelectScenario
@@ -685,32 +687,37 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const nodes = composeNodesRef.current
 
     if (currentId === nodeId) {
-      // 同じノード再クリック → 1剤目操作モードへ
-      setEditingNodeId(null)
-      const primarySc = primaryScenarioRef.current
-      setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
-      setSelectedAddonIds(primaryAddonIdsRef.current)
+      // 同じノード再クリック → 1剤目操作モードへ（コンテキスト移動なので確認する）
+      confirmDiscard(() => {
+        setEditingNodeId(null)
+        const primarySc = primaryScenarioRef.current
+        setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
+        setSelectedAddonIds(primaryAddonIdsRef.current)
+        setEditedSOAP(null)
+      })
       return
     }
 
     const node = nodes.find(n => n.id === nodeId)
     if (!node) return
 
-    setEditingNodeId(nodeId)
-    setEditingPrimary(false)  // ノード選択時は primary 編集モードを解除
+    // 別ノードへの切替（コンテキスト移動なので確認する）
+    confirmDiscard(() => {
+      setEditingNodeId(nodeId)
+      setEditingPrimary(false)
 
-    if (node.scenarioId) {
-      // 確定済みノード: シナリオのグループを自動復元
-      const nodeMod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
-      const nodeSc = nodeMod.scenarios.find(sc => sc.globalId === node.scenarioId)
-      setSelectedGroup(nodeSc ? getMenuGroupFromScenario(nodeSc) : null)
-      setSelectedAddonIds(new Set(node.selectedAddonIds ?? []))
-    } else {
-      // pending ノード: 左メニューで選ぶまで待機
-      setSelectedGroup(null)
-      setSelectedAddonIds(new Set())
-    }
-  }, [allModules, moduleData])
+      if (node.scenarioId) {
+        const nodeMod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+        const nodeSc = nodeMod.scenarios.find(sc => sc.globalId === node.scenarioId)
+        setSelectedGroup(nodeSc ? getMenuGroupFromScenario(nodeSc) : null)
+        setSelectedAddonIds(new Set(node.selectedAddonIds ?? []))
+      } else {
+        setSelectedGroup(null)
+        setSelectedAddonIds(new Set())
+      }
+      setEditedSOAP(null)
+    })
+  }, [allModules, moduleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleRemoveComposeNode
@@ -1173,12 +1180,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           selectedGroup={selectedGroup}
           onSelectGroup={handleSelectGroup}
           selectedNodeId={editingNodeId}
-          onDeselectNode={() => {
+          onDeselectNode={() => confirmDiscard(() => {
             setEditingNodeId(null)
             setEditingPrimary(false)
             setSelectedAddonIds(primaryAddonIds)
             if (primaryScenario) setSelectedGroup(getMenuGroupFromScenario(primaryScenario))
-          }}
+            setEditedSOAP(null)
+          })}
         />
 
         <div className={s.secondaryCol}>
