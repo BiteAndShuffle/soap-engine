@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { SoapFields, SoapKey } from '../../lib/types'
 import { SOAP_KEYS } from '../../lib/types'
@@ -112,6 +112,63 @@ const FIELD_LABEL: Record<SoapKey, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
+// SoapTextarea — IME composition ガード付き textarea
+//
+// React の controlled textarea は onChange が IME 変換中にも発火するため、
+// 日本語入力時に value を外部から書き換えると IME の状態が壊れ、
+// カーソル位置がずれたり文字が途中に挿入される問題が生じる。
+//
+// onCompositionStart/End で変換中フラグを管理し、
+// 変換確定（compositionend）後のみ親の onChange を呼ぶ。
+// 変換中は内部 localValue で文字を保持し、
+// 外部からの value 変化（= SOAP再生成）は変換中は無視する。
+// ─────────────────────────────────────────────────────────────
+
+interface SoapTextareaProps {
+  id: string
+  value: string
+  onChange: (value: string) => void
+  ariaLabel: string
+  placeholder: string
+  className: string
+}
+
+function SoapTextarea({ id, value, onChange, ariaLabel, placeholder, className }: SoapTextareaProps) {
+  const isComposingRef = useRef(false)
+  // IME変換中は内部で文字を保持する。変換中でない場合は外部 value をそのまま使う。
+  const localValueRef = useRef(value)
+
+  // 外部 value が変化（SOAP再生成など）した場合、変換中でなければ追従する
+  if (!isComposingRef.current) {
+    localValueRef.current = value
+  }
+
+  return (
+    <textarea
+      id={id}
+      className={className}
+      value={isComposingRef.current ? localValueRef.current : value}
+      aria-label={ariaLabel}
+      placeholder={placeholder}
+      onCompositionStart={() => {
+        isComposingRef.current = true
+      }}
+      onCompositionEnd={e => {
+        isComposingRef.current = false
+        // compositionend 時点の value を確定値として親に通知する
+        onChange((e.target as HTMLTextAreaElement).value)
+      }}
+      onChange={e => {
+        localValueRef.current = e.target.value
+        if (!isComposingRef.current) {
+          onChange(e.target.value)
+        }
+      }}
+    />
+  )
+}
+
+// ─────────────────────────────────────────────────────────────
 // SoapEditor 本体
 // ─────────────────────────────────────────────────────────────
 
@@ -180,12 +237,12 @@ export default function SoapEditor({
           <div className={s.soapFields}>
             {SOAP_KEYS.map(key => (
               <div key={key} className={s.soapField}>
-                <textarea
+                <SoapTextarea
                   id={`soap-${key}`}
                   className={s.soapTextarea}
                   value={fields[key]}
-                  onChange={e => onChange(key, e.target.value)}
-                  aria-label={`SOAP ${key}フィールド`}
+                  onChange={v => onChange(key, v)}
+                  ariaLabel={`SOAP ${key}フィールド`}
                   placeholder={`${key}欄を入力...`}
                 />
                 {/* 右カラム: S/O/A/Pラベル（上）+ copyBtn（下） */}
