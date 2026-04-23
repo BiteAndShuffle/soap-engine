@@ -134,20 +134,27 @@ interface SoapTextareaProps {
 }
 
 function SoapTextarea({ id, value, onChange, ariaLabel, placeholder, className }: SoapTextareaProps) {
+  // 「保存の遅延」と「表示の遅延」を分離する:
+  //   localValue (state) — textarea に表示する値。composition中も毎keystrokeで更新し、
+  //                         変換中文字列を常に画面に見せる。
+  //   isComposingRef     — composition中フラグ。親への通知タイミング制御のみに使う。
+  //
+  // 外部 value（親の editedSOAP / displayFields）が変化したとき:
+  //   composition中でなければ localValue を外部値に追従させる（再生成時の反映）。
+  //   composition中であれば追従しない（変換候補を壊さない）。
+  const [localValue, setLocalValue] = useState(value)
   const isComposingRef = useRef(false)
-  // IME変換中は内部で文字を保持する。変換中でない場合は外部 value をそのまま使う。
-  const localValueRef = useRef(value)
 
-  // 外部 value が変化（SOAP再生成など）した場合、変換中でなければ追従する
-  if (!isComposingRef.current) {
-    localValueRef.current = value
+  // 外部 value が変化し、かつ composition 中でない場合は表示を外部値に同期する
+  if (!isComposingRef.current && localValue !== value) {
+    setLocalValue(value)
   }
 
   return (
     <textarea
       id={id}
       className={className}
-      value={isComposingRef.current ? localValueRef.current : value}
+      value={localValue}
       aria-label={ariaLabel}
       placeholder={placeholder}
       onCompositionStart={() => {
@@ -155,11 +162,15 @@ function SoapTextarea({ id, value, onChange, ariaLabel, placeholder, className }
       }}
       onCompositionEnd={e => {
         isComposingRef.current = false
-        // compositionend 時点の value を確定値として親に通知する
-        onChange((e.target as HTMLTextAreaElement).value)
+        const confirmed = (e.target as HTMLTextAreaElement).value
+        setLocalValue(confirmed)
+        // compositionend 確定値を親に通知（ここで初めて editedSOAP が更新される）
+        onChange(confirmed)
       }}
       onChange={e => {
-        localValueRef.current = e.target.value
+        // composition中・非composition中を問わず表示は常に更新する（変換候補を見せる）
+        setLocalValue(e.target.value)
+        // composition中でなければ（英数字など）即座に親へ通知する
         if (!isComposingRef.current) {
           onChange(e.target.value)
         }
