@@ -694,7 +694,16 @@
         },
         {
           "id": "p_2",
-          "text": "悪心や食欲不振などの副作用が出た場合はご相談ください。",
+          "text": "悪心や食欲不振などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "副作用が出た場合はご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
