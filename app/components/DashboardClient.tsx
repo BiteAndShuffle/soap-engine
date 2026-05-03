@@ -338,9 +338,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     return targetModule.scenarios.find(sc => sc.globalId === activeNode.scenarioId)
   }, [activeNode, targetModule, primaryScenario])
 
+  // 選択中ブランドの handlingTags を取得してaddonフィルタに渡す。
+  // brandCatalog がないモジュール（GLP-1等）は undefined → フィルタスキップ（後方互換）。
+  const addonBrandHandlingTags = useMemo<string[] | undefined>(() => {
+    const brandCatalog = activeModuleData.drug?.brandCatalog
+    if (!brandCatalog) return undefined
+    const resolvedBrand = activeBrandName ?? activeModuleData.drug?.brandNames?.[0]
+    if (!resolvedBrand) return undefined
+    return brandCatalog[resolvedBrand]?.handlingTags
+  }, [activeModuleData, activeBrandName])
+
   const addonVisibleKeys = useMemo(
-    () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario),
-    [targetModule.addons, addonTargetScenario],
+    () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),
+    [targetModule.addons, addonTargetScenario, addonBrandHandlingTags],
   )
 
   // ── allGroups / availableGroups / groupScenarios ────────────
@@ -1187,6 +1197,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             if (primaryScenario) setSelectedGroup(getMenuGroupFromScenario(primaryScenario))
             setEditedSOAP(null)
           })}
+          menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
         />
 
         <div className={s.secondaryCol}>

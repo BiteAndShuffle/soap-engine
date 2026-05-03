@@ -295,6 +295,12 @@ export interface BrandEntry {
   genericName: string
   aliases: string[]
   normalizedAliases: string[]
+  /** ブランド固有の取り扱いタグ（遮光保存・懸濁など）。addonFilter で使用 */
+  handlingTags?: string[]
+  /** 製剤タイプ: solution / suspension など */
+  formulationType?: string
+  /** 保管タイプ: room_temperature / light_protection / cold_storage など */
+  storageType?: string
 }
 
 export interface Drug {
@@ -578,6 +584,13 @@ export interface ModuleData {
     nodeLabelLong?: string
     /** composition.nodeKey の表示側 projection */
     nodeKey?: string
+    /**
+     * 左メニューの MenuGroup 表示ラベルをモジュール単位でオーバーライドする。
+     * キーは MenuGroup の標準値、値は表示したいラベル文字列。
+     * 省略されたキーはデフォルト値をそのまま使用する。
+     * 例: { "増量": "回数増", "減量": "回数減" }
+     */
+    menuGroupLabels?: Record<string, string>
   }
   template?: ModuleTemplate
   risks?: ModuleRisks

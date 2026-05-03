@@ -96,6 +96,7 @@ export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
   if (sg === 'adherence_poor') return 'コンプライアンス不良'
   if (sg === 'adherence') {
     if (sid.startsWith('cp_good')) return 'コンプライアンス良好'
+    if (sid.includes('self_adjust')) return '自己調整'
     if (sid.startsWith('cp_poor')) return 'コンプライアンス不良'
     return 'その他'  // as_needed_* は保留
   }

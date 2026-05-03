@@ -30,6 +30,12 @@ interface SidebarProps {
   selectedNodeId?: string | null
   /** ノード選択を解除するコールバック（バナーのタップ/クリック） */
   onDeselectNode?: () => void
+  /**
+   * MenuGroup の表示ラベルをモジュール単位でオーバーライドする。
+   * キーは標準の MenuGroup 値、値は代替表示文字列。
+   * 例: { "増量": "回数増", "減量": "回数減" }
+   */
+  menuGroupLabelOverrides?: Record<string, string>
 }
 
 export default function Sidebar({
@@ -38,6 +44,7 @@ export default function Sidebar({
   onSelectGroup,
   selectedNodeId,
   onDeselectNode,
+  menuGroupLabelOverrides,
 }: SidebarProps) {
   const isNodeMode = selectedNodeId !== null && selectedNodeId !== undefined
 
@@ -63,6 +70,7 @@ export default function Sidebar({
           const isActive = group === selectedGroup
           const hasTemplates = availableGroups.has(group)
           const accent = GROUP_ACCENT[group]
+          const label = menuGroupLabelOverrides?.[group] ?? group
           return (
             <button
               key={group}
@@ -79,9 +87,9 @@ export default function Sidebar({
               onClick={() => hasTemplates && onSelectGroup(group)}
               aria-pressed={isActive}
               aria-disabled={!hasTemplates}
-              title={!hasTemplates ? `${group}（データなし）` : group}
+              title={!hasTemplates ? `${label}（データなし）` : label}
             >
-              {group}
+              {label}
             </button>
           )
         })}

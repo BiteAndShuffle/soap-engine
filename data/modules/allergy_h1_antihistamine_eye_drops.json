@@ -345,7 +345,11 @@
     "drugGeneric": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
     "nodeLabelShort": "H1点眼",
     "nodeLabelLong": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
-    "nodeKey": "h1_antihistamine_eye_drops"
+    "nodeKey": "h1_antihistamine_eye_drops",
+    "menuGroupLabels": {
+      "増量": "回数増",
+      "減量": "回数減"
+    }
   },
   "defaults": {
     "followup": {
