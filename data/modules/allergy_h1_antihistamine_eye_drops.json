@@ -1,0 +1,2769 @@
+{
+  "moduleId": "allergy_h1_antihistamine_eye_drops",
+  "moduleVersion": "1.0.1",
+  "categoryPath": [
+    "アレルギー",
+    "抗アレルギー点眼薬",
+    "ヒスタミンH1受容体拮抗薬",
+    "外用",
+    "点眼"
+  ],
+  "composition": {
+    "nodeKey": "h1_antihistamine_eye_drops",
+    "nodeLabelShort": "H1点眼",
+    "nodeLabelLong": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+    "domain": "allergy",
+    "priority": "chronic",
+    "clinicalDomain": "allergy",
+    "searchDomain": "allergy",
+    "sMergeDomain": "allergy",
+    "classKey": "h1_antihistamine",
+    "groupKeyRegistry": [
+      "treatment_start",
+      "treatment_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "treatment_end",
+      "lifestyle_guidance"
+    ],
+    "sMergePolicy": {
+      "unit": "clinical_domain",
+      "conflictStrategy": "separate_by_domain",
+      "withinDomainStrategy": "groupKey_based_replace"
+    }
+  },
+  "drug": {
+    "genericName": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+    "brandNames": [
+      "アレジオン点眼液",
+      "ザジテン点眼液",
+      "パタノール点眼液",
+      "リボスチン点眼液"
+    ],
+    "drugClass": [
+      "H1_ANTIHISTAMINE_EYE_DROPS"
+    ],
+    "route": "ophthalmic",
+    "dosageForms": [
+      "eye_drop"
+    ],
+    "drugSpecificTags": [
+      "h1_antihistamine",
+      "antihistamine_eye_drop",
+      "antiallergic",
+      "eye_drops",
+      "ophthalmic",
+      "allergy",
+      "ocular_allergy",
+      "external_use",
+      "storage_instruction",
+      "formulation_instruction",
+      "contact_lens_caution"
+    ],
+    "search": {
+      "primaryDisplayName": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+      "exactAliases": [
+        "アレジオン点眼液",
+        "ザジテン点眼液",
+        "パタノール点眼液",
+        "リボスチン点眼液",
+        "エピナスチン点眼液",
+        "ケトチフェン点眼液",
+        "オロパタジン点眼液",
+        "レボカバスチン点眼液",
+        "エピナスチン",
+        "ケトチフェン",
+        "オロパタジン",
+        "レボカバスチン"
+      ],
+      "prefixAliases": [
+        "あれじおんてんがん",
+        "あれじおん",
+        "えぴなすちんてんがん",
+        "えぴなすちん",
+        "ざじてんてんがん",
+        "ざじてん",
+        "けとちふぇんてんがん",
+        "けとちふぇん",
+        "ぱたのーるてんがん",
+        "ぱたのーる",
+        "おろぱたじんてんがん",
+        "おろぱたじん",
+        "りぼすちんてんがん",
+        "りぼすちん",
+        "れぼかばすちんてんがん",
+        "れぼかばすちん"
+      ],
+      "nameAliases": [
+        "あれじおんてんがん",
+        "あれじおん",
+        "えぴなすちんてんがん",
+        "えぴなすちん",
+        "ざじてんてんがん",
+        "ざじてん",
+        "けとちふぇんてんがん",
+        "けとちふぇん",
+        "ぱたのーるてんがん",
+        "ぱたのーる",
+        "おろぱたじんてんがん",
+        "おろぱたじん",
+        "りぼすちんてんがん",
+        "りぼすちん",
+        "れぼかばすちんてんがん",
+        "れぼかばすちん"
+      ],
+      "keywords": [
+        "花粉症",
+        "アレルギー性結膜炎",
+        "目のかゆみ",
+        "目の充血",
+        "涙目",
+        "点眼",
+        "目薬"
+      ],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
+    },
+    "brandCatalog": {
+      "アレジオン点眼液": {
+        "displayName": "アレジオン点眼液",
+        "genericName": "エピナスチン",
+        "storageType": "room_temperature",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "product_specific",
+        "bakStatus": "product_specific",
+        "handlingTags": [
+          "room_temperature_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_caution_product_specific",
+          "bak_status_product_specific"
+        ],
+        "aliases": [
+          "あれじおんてんがん",
+          "あれじおん",
+          "えぴなすちんてんがん",
+          "えぴなすちん"
+        ],
+        "normalizedAliases": [
+          "あれじおんてんがん",
+          "あれじおん",
+          "えぴなすちんてんがん",
+          "えぴなすちん"
+        ]
+      },
+      "ザジテン点眼液": {
+        "displayName": "ザジテン点眼液",
+        "genericName": "ケトチフェン",
+        "storageType": "room_temperature",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "room_temperature_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "ざじてんてんがん",
+          "ざじてん",
+          "けとちふぇんてんがん",
+          "けとちふぇん"
+        ],
+        "normalizedAliases": [
+          "ざじてんてんがん",
+          "ざじてん",
+          "けとちふぇんてんがん",
+          "けとちふぇん"
+        ]
+      },
+      "パタノール点眼液": {
+        "displayName": "パタノール点眼液",
+        "genericName": "オロパタジン",
+        "storageType": "light_protection",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "light_protection_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "ぱたのーるてんがん",
+          "ぱたのーる",
+          "おろぱたじんてんがん",
+          "おろぱたじん"
+        ],
+        "normalizedAliases": [
+          "ぱたのーるてんがん",
+          "ぱたのーる",
+          "おろぱたじんてんがん",
+          "おろぱたじん"
+        ]
+      },
+      "リボスチン点眼液": {
+        "displayName": "リボスチン点眼液",
+        "genericName": "レボカバスチン",
+        "storageType": "room_temperature",
+        "formulationType": "suspension",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "room_temperature_storage",
+          "suspension_eye_drop",
+          "shake_before_use",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "りぼすちんてんがん",
+          "りぼすちん",
+          "れぼかばすちんてんがん",
+          "れぼかばすちん"
+        ],
+        "normalizedAliases": [
+          "りぼすちんてんがん",
+          "りぼすちん",
+          "れぼかばすちんてんがん",
+          "れぼかばすちん"
+        ]
+      }
+    },
+    "aliasToBrand": {
+      "あれじおんてんがん": "アレジオン点眼液",
+      "あれじおん": "アレジオン点眼液",
+      "えぴなすちんてんがん": "アレジオン点眼液",
+      "えぴなすちん": "アレジオン点眼液",
+      "ざじてんてんがん": "ザジテン点眼液",
+      "ざじてん": "ザジテン点眼液",
+      "けとちふぇんてんがん": "ザジテン点眼液",
+      "けとちふぇん": "ザジテン点眼液",
+      "ぱたのーるてんがん": "パタノール点眼液",
+      "ぱたのーる": "パタノール点眼液",
+      "おろぱたじんてんがん": "パタノール点眼液",
+      "おろぱたじん": "パタノール点眼液",
+      "りぼすちんてんがん": "リボスチン点眼液",
+      "りぼすちん": "リボスチン点眼液",
+      "れぼかばすちんてんがん": "リボスチン点眼液",
+      "れぼかばすちん": "リボスチン点眼液"
+    }
+  },
+  "drugResolution": {
+    "brandToTags": {
+      "アレジオン点眼液": [
+        "room_temperature_storage",
+        "solution_eye_drop",
+        "contact_lens_caution",
+        "contact_lens_caution_product_specific",
+        "bak_status_product_specific"
+      ],
+      "ザジテン点眼液": [
+        "room_temperature_storage",
+        "solution_eye_drop",
+        "contact_lens_caution",
+        "contact_lens_remove_before_use",
+        "bak_status_contains_bak"
+      ],
+      "パタノール点眼液": [
+        "light_protection_storage",
+        "solution_eye_drop",
+        "contact_lens_caution",
+        "contact_lens_remove_before_use",
+        "bak_status_contains_bak"
+      ],
+      "リボスチン点眼液": [
+        "room_temperature_storage",
+        "suspension_eye_drop",
+        "shake_before_use",
+        "contact_lens_caution",
+        "contact_lens_remove_before_use",
+        "bak_status_contains_bak"
+      ]
+    }
+  },
+  "regulatory": {
+    "psychotropicClass": "not_applicable",
+    "controlledSubstance": "not_applicable",
+    "notes": null
+  },
+  "topical": {
+    "steroidPotency": "not_applicable",
+    "notes": null
+  },
+  "template": {
+    "templateId": "allergy_h1_antihistamine_eye_drops_v1",
+    "templateVersion": "1.0.0",
+    "situationTags": [
+      "general",
+      "seasonal",
+      "ocular_allergy"
+    ],
+    "severityTags": [
+      "mild",
+      "moderate",
+      "severe"
+    ],
+    "storageTags": [
+      "room_temperature_storage",
+      "light_protection_storage",
+      "cold_storage",
+      "storage_product_specific"
+    ],
+    "formulationTags": [
+      "solution_eye_drop",
+      "suspension_eye_drop"
+    ],
+    "handlingTags": [
+      "shake_before_use",
+      "contact_lens_caution",
+      "contact_lens_caution_product_specific",
+      "contact_lens_remove_before_use",
+      "bak_status_contains_bak",
+      "bak_status_bak_free",
+      "bak_status_product_specific",
+      "bak_status_unknown"
+    ]
+  },
+  "display": {
+    "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+    "subtitle": "アレルギー性結膜炎・目のかゆみに対する点眼治療",
+    "drugClassLabel": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+    "drugGeneric": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+    "nodeLabelShort": "H1点眼",
+    "nodeLabelLong": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+    "nodeKey": "h1_antihistamine_eye_drops"
+  },
+  "defaults": {
+    "followup": {
+      "S": null,
+      "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+    },
+    "followupProfiles": {
+      "default_followup": {
+        "S": null,
+        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+      },
+      "end_followup": {
+        "S": null,
+        "P": "次回、治療経過および体調変化の有無を確認。"
+      },
+      "se_followup": {
+        "S": null,
+        "P": "次回、治療経過および副作用の有無を確認。"
+      }
+    }
+  },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "initial",
+      "globalId": "allergy_h1_antihistamine_eye_drops.initial",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 初回",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "eye_itching"
+        ],
+        "symptoms": [
+          "目のかゆみ"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "initial"
+      ],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "S": "目のかゆみが気になるため、薬が追加となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状の改善を目的として追加となった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状を改善する薬です。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "dose_increase_low_perceived_effect",
+      "globalId": "allergy_h1_antihistamine_eye_drops.dose_increase_low_perceived_effect",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "increase",
+        "low_perceived_effect"
+      ],
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しいため使用回数が増えた。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用回数増",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため使用回数増となった。\n使用回数の増加後は、刺激感や異物感などの副作用に注意が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、使用回数が増えると、刺激感や異物感が出ることがあります。\n刺激感や異物感が強い場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "dose_increase_due_to_other_med_adjustment",
+      "globalId": "allergy_h1_antihistamine_eye_drops.dose_increase_due_to_other_med_adjustment",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "increase",
+        "other_med_adjustment"
+      ],
+      "intentTags": [
+        "dose_increase_explanation",
+        "concomitant_drug_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により使用回数が増えた。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用回数増",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため使用回数増となった。\n使用回数の増加後は、刺激感や異物感などの副作用に注意が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、使用回数が増えると、刺激感や異物感が出ることがあります。\n刺激感や異物感が強い場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "dose_decrease_improved",
+      "globalId": "allergy_h1_antihistamine_eye_drops.dose_decrease_improved",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状が改善した"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease",
+        "symptom_improved"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため使用回数減となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用回数減",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状改善を踏まえ使用回数減となった。\n使用回数減後に症状が再燃する可能性があるため、注意が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、使用回数が減ると、症状が再燃することがあります。\n症状の変化があればご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "dose_decrease_low_perceived_effect",
+      "globalId": "allergy_h1_antihistamine_eye_drops.dose_decrease_low_perceived_effect",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease",
+        "low_perceived_effect"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しく、使用継続に不安があるため使用回数減となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用回数減",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果実感の乏しさと患者希望を踏まえ使用回数減となった。\n使用回数減後の症状変化について経過確認を要する。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、使用回数が減ると、症状が再燃することがあります。\n症状の変化があればご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "dose_decrease_due_to_other_med_adjustment",
+      "globalId": "allergy_h1_antihistamine_eye_drops.dose_decrease_due_to_other_med_adjustment",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease",
+        "other_med_adjustment"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "concomitant_drug_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により使用回数減となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用回数減",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため使用回数減となった。\n使用回数減後の症状再燃に注意が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、使用回数が減ると、症状が再燃することがあります。\n症状の変化があればご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_irritation_none",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_irritation_none",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 副作用なし（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。\n刺激感は認めない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感は現時点で認められず、治療継続が可能である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に刺激感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_foreign_body_sensation_none",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_foreign_body_sensation_none",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 副作用なし（異物感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "foreign_body_sensation",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。\n異物感は認めない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による異物感は現時点で認められず、治療継続が可能である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に異物感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_pruritus_none",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_pruritus_none",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 副作用なし（掻痒感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "pruritus",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。\n掻痒感は認めない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による掻痒感は現時点で認められず、治療継続が可能である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に掻痒感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_eye_redness_none",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_eye_redness_none",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 副作用なし（充血）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "eye_redness",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。\n充血は認めない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による充血は現時点で認められず、治療継続が可能である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に充血が出ることがあります。\n症状が続く場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_eye_discharge_none",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_eye_discharge_none",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 副作用なし（目やに）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "eye_discharge",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。\n目やには認めない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による目やには現時点で認められず、治療継続が可能である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に目やにが出ることがあります。\n症状が続く場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_good",
+      "globalId": "allergy_h1_antihistamine_eye_drops.cp_good",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 CP良好",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "good"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "薬を使用して症状は落ち着いている。\n継続して使用できている。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
+      "A": "コンプライアンスは良好である。治療継続に問題はない。",
+      "P": "引き続き用法を守って使用することで、アレルギー症状改善が期待できます。\n今後も継続して使用できるようにすることが大切です。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_poor_missed_doses",
+      "globalId": "allergy_h1_antihistamine_eye_drops.cp_poor_missed_doses",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 CP不良（使用忘れ）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "missed_doses"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "使用忘れがみられる。\n継続して使用できていない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
+      "A": "コンプライアンスは不良で、使用忘れがみられる。",
+      "P": "継続して使用することでアレルギー症状改善が期待されます。\n使用忘れが続くとアレルギー症状が悪化する可能性があります。",
+      "addonsRef": {
+        "P": [
+          "addon_adherence_alarm_suggestion",
+          "addon_adherence_prep_previous_night",
+          "addon_adherence_prep_before_meal"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_poor_self_adjust",
+      "globalId": "allergy_h1_antihistamine_eye_drops.cp_poor_self_adjust",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 CP不良（自己判断）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "self_adjust"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "自己判断での使用調整がみられる。\n用法どおりの継続使用ができていない。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
+      "A": "コンプライアンスは不良で、自己判断による調整がみられる。",
+      "P": "継続して使用することでアレルギー症状の改善が期待されます。\n自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。\n体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_poor_visit_delay",
+      "globalId": "allergy_h1_antihistamine_eye_drops.cp_poor_visit_delay",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 CP不良（受診遅延）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "visit_delay"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "都合により受診遅延がみられる。\n継続した使用に不安がある。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
+      "A": "コンプライアンスは不良で、受診遅延がみられる。",
+      "P": "継続的な使用が治療効果の維持と症状悪化の予防につながります。\n治療が中断すると症状が悪化する可能性があります。\n次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "as_needed_refill_needed",
+      "globalId": "allergy_h1_antihistamine_eye_drops.as_needed_refill_needed",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 頓用使用（処方あり）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "as_needed",
+        "refill_needed"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に使用している。\n使用により残薬が少なくなったため、継続処方となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に、指示された用法に従って使用してください。\n使用後も症状が改善しない場合や、使用頻度が増えている場合はご相談ください。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が気になる場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "as_needed_refill_not_needed",
+      "globalId": "allergy_h1_antihistamine_eye_drops.as_needed_refill_not_needed",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 頓用使用（処方なし）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "as_needed",
+        "refill_not_needed"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に使用している。\n残薬があるため、今回は処方なしとなった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に、指示された用法に従って使用してください。\n症状が続く場合や、使用頻度が増える場合はご相談ください。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が気になる場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "end_improved",
+      "globalId": "allergy_h1_antihistamine_eye_drops.end_improved",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（改善）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状が改善した"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "improved"
+      ],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため中止となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方終了",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状改善により終了となった。\n終了後に症状が悪化する可能性があるため、注意が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の終了後、目の症状の悪化や変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "end_insufficient_effect",
+      "globalId": "allergy_h1_antihistamine_eye_drops.end_insufficient_effect",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（効果不十分）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "insufficient_effect"
+      ],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため中止となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方終了",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため終了となった。症状管理の再評価が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の終了後、目の症状が悪化する可能性があります。\n次の治療方針については処方医にご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "end_ineffective",
+      "globalId": "allergy_h1_antihistamine_eye_drops.end_ineffective",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（無効）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "ineffective"
+        ],
+        "symptoms": [
+          "効果が認められなかった"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "ineffective"
+      ],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果が認められなかったため中止となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方終了",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の終了後、目の症状が悪化する可能性があります。\n代替治療については処方医にご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_mild_continue",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_mild_continue",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE継続（軽症）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_mild",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "present",
+        "mild"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感があるが、日常生活は送れている。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感の副作用を軽度認めるが、治療継続が可能である。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感が軽い場合は経過をみて、刺激感が強くなる場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_moderate_consider_dr",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_moderate_consider_dr",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE継続（中等度）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_moderate",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "present",
+        "moderate"
+      ],
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感が強く、継続困難の可能性があるため対応を要する。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感の副作用が強い場合は、使用回数を減らすことや薬の変更が必要になることがあります。\n処方医へご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_change_due_to_irritation",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_change_due_to_irritation",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE変更（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_change",
+      "sComposition": {
+        "intent": "stop",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "present",
+        "change"
+      ],
+      "intentTags": [
+        "treatment_end_explanation",
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が出現したため、他剤へ変更となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方変更",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、他剤変更後の経過確認を要する。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の変更後、目の症状の悪化や変化があればご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_dose_decrease_due_to_irritation",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_dose_decrease_due_to_irritation",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE減量（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_dose_decrease",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "present",
+        "dose_decrease"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強いため、使用回数減となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用回数減",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、使用回数減後の経過確認を要する。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用回数が減った後も刺激感が続く場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_stop_due_to_irritation",
+      "globalId": "allergy_h1_antihistamine_eye_drops.se_stop_due_to_irritation",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE中止（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_stop",
+      "sComposition": {
+        "intent": "stop",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "present",
+        "stop"
+      ],
+      "intentTags": [
+        "treatment_end_explanation",
+        "side_effect_attention"
+      ],
+      "S": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強いため、中止となった。",
+      "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方中止",
+      "A": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、中止後の経過確認を要する。",
+      "P": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の中止後、目の症状の悪化や変化があればご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_tip_contamination",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_tip_contamination",
+      "title": "使用方法説明（接触使用）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "tip_contamination"
+        ],
+        "symptoms": [
+          "点眼薬先端の接触使用"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "tip_contamination"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬の先端を、目や瞼などに触れて使用しています。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の使い方の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬の先端を、目や瞼などに触れると汚染されてしまいます。\n先端部分に触れないように使用してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_interval",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_interval",
+      "title": "使用方法説明（間隔不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "insufficient_interval"
+        ],
+        "symptoms": [
+          "使用間隔が不十分"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "insufficient_interval"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬と点眼薬の使用間隔は、十分あけないで使用しています。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、目に十分行き渡るまでに時間がかかります。\n点眼後5〜10分程度あけてから、次の目薬を使用してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_after_opening_expiry",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_after_opening_expiry",
+      "title": "使用方法説明（開封後一ヶ月以上使用）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "after_opening_expiry"
+        ],
+        "symptoms": [
+          "開封後使用期限超過"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "after_opening_expiry"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、開封後一ヶ月以上経過後も使用を続けている。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、衛生面を考慮し、開封後1ヶ月を目安に使用を終了し、残っていても処分してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_suspension_shake",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_suspension_shake",
+      "title": "使用方法説明（懸濁不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "insufficient_shaking"
+        ],
+        "symptoms": [
+          "懸濁不十分"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "insufficient_shaking"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、振らないまま使用を続けている。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。\n使用する前に、よく振り混ぜてから使用してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_storage_light_protection",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_storage_light_protection",
+      "title": "保管方法説明（遮光不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "insufficient_light_protection"
+        ],
+        "symptoms": [
+          "遮光不十分"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "insufficient_light_protection"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、遮光せずに使用している。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_storage_cold",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_storage_cold",
+      "title": "保管方法説明（冷所保存不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "insufficient_cold_storage"
+        ],
+        "symptoms": [
+          "冷所保存不十分"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "insufficient_cold_storage"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、冷所に保管せず、常温で保管している。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、温度の影響により、効果が十分に出ない可能性があります。\n使用していない間は、冷所で保管してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_storage_upright",
+      "globalId": "allergy_h1_antihistamine_eye_drops.lifestyle_guidance_storage_upright",
+      "title": "保管方法説明（懸濁　目詰まり）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "storage_upright_issue"
+        ],
+        "symptoms": [
+          "保管方向不適切による目詰まり"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_upright_issue"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、向きを気にせず保管していた。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、先端部分を上にして保管することで、目詰まりを防ぐことができます。\n保管するときは向きに注意してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    }
+  ],
+  "addons": {
+    "items": {
+      "addon_eye_drop_tip_contamination": {
+        "key": "addon_eye_drop_tip_contamination",
+        "id": "addon_eye_drop_tip_contamination",
+        "title": "使用方法説明",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "目薬の先端が、目や瞼などに触れると汚染されることがあります。\n先端部分に触れないように使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_after_opening_expiry": {
+        "key": "addon_eye_drop_after_opening_expiry",
+        "id": "addon_eye_drop_after_opening_expiry",
+        "title": "使用方法説明（開封後1ヶ月まで）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "開封後の目薬は、衛生面を考慮し、1ヶ月を目安に処分してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_interval": {
+        "key": "addon_eye_drop_interval",
+        "id": "addon_eye_drop_interval",
+        "title": "使用方法説明（間隔）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "複数の目薬を使用する場合は、5分以上あけて使用してください。\n（懸濁のものがある場合は、懸濁が最後になるようにしてください。）",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_suspension_shake": {
+        "key": "addon_eye_drop_suspension_shake",
+        "id": "addon_eye_drop_suspension_shake",
+        "title": "使用方法説明（懸濁性）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。\n使用する前に、よく振り混ぜてから使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_storage_upright": {
+        "key": "addon_eye_drop_storage_upright",
+        "id": "addon_eye_drop_storage_upright",
+        "title": "保管方法説明（懸濁性）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_storage_light_protection": {
+        "key": "addon_eye_drop_storage_light_protection",
+        "id": "addon_eye_drop_storage_light_protection",
+        "title": "保管方法説明（遮光性）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_storage_cold": {
+        "key": "addon_eye_drop_storage_cold",
+        "id": "addon_eye_drop_storage_cold",
+        "title": "保管方法説明（冷所保管）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "温度の影響により、効果が十分に出ない可能性があります。\n使用していない間は、冷所で保管してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_adherence_alarm_suggestion": {
+        "key": "addon_adherence_alarm_suggestion",
+        "id": "addon_adherence_alarm_suggestion",
+        "title": "使用忘れ対策（アラーム）",
+        "group": "adherence_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、使用予定の時間に合わせてアラームを設定しておく方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_prep_previous_night": {
+        "key": "addon_adherence_prep_previous_night",
+        "id": "addon_adherence_prep_previous_night",
+        "title": "使用忘れ対策（事前準備　前日）",
+        "group": "adherence_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、前夜のうちに翌朝使う目薬を確認し、使用予定を分かりやすくしておくことも役立ちます。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_prep_before_meal": {
+        "key": "addon_adherence_prep_before_meal",
+        "id": "addon_adherence_prep_before_meal",
+        "title": "使用忘れ対策（事前準備　食事前）",
+        "group": "adherence_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、使用前に確認しやすい場所へ予定を記録しておく方法も役立ちます。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      }
+    },
+    "orderPresets": {}
+  },
+  "ui": {
+    "panels": [
+      {
+        "id": "panel_1",
+        "title": "基本",
+        "sections": [
+          "display",
+          "categoryPath",
+          "drug",
+          "template"
+        ]
+      },
+      {
+        "id": "panel_2",
+        "title": "指導（アドオン）",
+        "sections": [
+          "addons"
+        ]
+      },
+      {
+        "id": "panel_3",
+        "title": "SOAP（シナリオ）",
+        "sections": [
+          "scenarios"
+        ]
+      }
+    ],
+    "panelOrder": [
+      "panel_1",
+      "panel_2",
+      "panel_3"
+    ],
+    "defaultPanelId": "panel_1"
+  },
+  "risks": {
+    "primary": [],
+    "secondary": [],
+    "conditional": []
+  },
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "index": {
+    "searchableText": [
+      "アレジオン点眼液",
+      "ザジテン点眼液",
+      "パタノール点眼液",
+      "リボスチン点眼液",
+      "エピナスチン点眼液",
+      "ケトチフェン点眼液",
+      "オロパタジン点眼液",
+      "レボカバスチン点眼液",
+      "エピナスチン",
+      "ケトチフェン",
+      "オロパタジン",
+      "レボカバスチン",
+      "あれじおんてんがん",
+      "あれじおん",
+      "えぴなすちんてんがん",
+      "えぴなすちん",
+      "ざじてんてんがん",
+      "ざじてん",
+      "けとちふぇんてんがん",
+      "けとちふぇん",
+      "ぱたのーるてんがん",
+      "ぱたのーる",
+      "おろぱたじんてんがん",
+      "おろぱたじん",
+      "りぼすちんてんがん",
+      "りぼすちん",
+      "れぼかばすちんてんがん",
+      "れぼかばすちん",
+      "花粉症",
+      "アレルギー性結膜炎",
+      "目のかゆみ",
+      "目の充血",
+      "涙目",
+      "点眼",
+      "目薬",
+      "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
+      "アレルギー",
+      "抗アレルギー点眼薬",
+      "ヒスタミンH1受容体拮抗薬",
+      "外用"
+    ],
+    "normalizedTokens": [
+      "あれじおんてんがんえき",
+      "ざじてんてんがんえき",
+      "ぱたのーるてんがんえき",
+      "りぼすちんてんがんえき",
+      "えぴなすちんてんがんえき",
+      "けとちふぇんてんがんえき",
+      "おろぱたじんてんがんえき",
+      "れぼかばすちんてんがんえき",
+      "えぴなすちん",
+      "けとちふぇん",
+      "おろぱたじん",
+      "れぼかばすちん",
+      "あれじおんてんがん",
+      "あれじおん",
+      "えぴなすちんてんがん",
+      "ざじてんてんがん",
+      "ざじてん",
+      "けとちふぇんてんがん",
+      "ぱたのーるてんがん",
+      "ぱたのーる",
+      "おろぱたじんてんがん",
+      "りぼすちんてんがん",
+      "りぼすちん",
+      "れぼかばすちんてんがん",
+      "かふんしょう",
+      "あれるぎーせいけつまくえん",
+      "めのかゆみ",
+      "めのじゅうけつ",
+      "なみだめ",
+      "てんがん",
+      "めぐすり",
+      "ひすたみんh1じゅようたいきっこうやくけいこうあれるぎーてんがんやく",
+      "あれるぎー",
+      "こうあれるぎーてんがんやく",
+      "ひすたみんh1じゅようたいきっこうやく",
+      "がいよう"
+    ],
+    "facets": {}
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "drug_effect_explanation",
+      "side_effect_attention",
+      "dose_increase_explanation",
+      "dose_decrease_explanation",
+      "treatment_end_explanation",
+      "adherence_support",
+      "administration_instruction",
+      "concomitant_drug_attention",
+      "followup_monitoring"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
+  "expressMode": {
+    "enabled": false,
+    "category": "allergy",
+    "label": "H1点眼",
+    "defaultScenarioId": "initial",
+    "sortOrder": 99
+  }
+}

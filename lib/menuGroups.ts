@@ -81,14 +81,26 @@ export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
   const sid = scenario.id
 
   if (sg === 'start_or_change') return '初回'
+  if (sg === 'treatment_start') return '初回'
   if (sg === 'dose_change') {
     // 増量 vs 減量は id で区別（dose_increase_ で始まる id も含む）
     if (sid.startsWith('dose_increase')) return '増量'
     return '減量'  // dose_decrease_* は全て減量
   }
+  if (sg === 'treatment_adjustment') {
+    if (sid.startsWith('dose_increase')) return '増量'
+    if (sid.startsWith('dose_decrease')) return '減量'
+    return 'その他'
+  }
   if (sg === 'adherence_good') return 'コンプライアンス良好'
   if (sg === 'adherence_poor') return 'コンプライアンス不良'
+  if (sg === 'adherence') {
+    if (sid.startsWith('cp_good')) return 'コンプライアンス良好'
+    if (sid.startsWith('cp_poor')) return 'コンプライアンス不良'
+    return 'その他'  // as_needed_* は保留
+  }
   if (sg.startsWith('end_')) return '終了'
+  if (sg === 'treatment_end') return '終了'
   if (sg === 'lifestyle_guidance') return 'その他'
   if (sg === 'sickday') return 'その他'
 
