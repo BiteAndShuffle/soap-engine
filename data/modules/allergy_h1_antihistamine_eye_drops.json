@@ -2766,7 +2766,7 @@
     "workflowTags": []
   },
   "expressMode": {
-    "enabled": false,
+    "enabled": true,
     "category": "allergy",
     "label": "H1点眼",
     "defaultScenarioId": "initial",
