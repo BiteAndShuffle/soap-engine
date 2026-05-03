@@ -214,6 +214,12 @@ export interface ExpressCandidate {
   subCategory?: string
   label: string
   defaultScenarioId: string
+  /**
+   * Express 追加時に使用する既定ブランド名。
+   * ModuleData.expressMode.defaultBrandName をそのまま引き継ぐ。
+   * 省略時は DashboardClient 側で brandNames[0] にフォールバックする。
+   */
+  defaultBrandName?: string
   sortOrder: number
 }
 
@@ -239,7 +245,7 @@ interface ThirdPanelProps {
   /** エクスプレス候補リスト（expressMode.enabled===true のモジュール） */
   expressCandidates?: ExpressCandidate[]
   /** エクスプレス追加ハンドラ */
-  onExpressAdd?: (moduleId: string, defaultScenarioId: string) => void
+  onExpressAdd?: (moduleId: string, defaultScenarioId: string, defaultBrandName?: string) => void
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -292,7 +298,7 @@ export default function ThirdPanel({
                   <button
                     key={c.moduleId}
                     className={s.expressBtn}
-                    onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId)}
+                    onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
                     title={c.subCategory ?? c.category}
                   >
                     {c.label}

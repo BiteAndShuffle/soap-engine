@@ -390,6 +390,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         subCategory: m.expressMode!.subCategory,
         label:     m.expressMode!.label,
         defaultScenarioId: m.expressMode!.defaultScenarioId,
+        defaultBrandName: m.expressMode!.defaultBrandName,
         sortOrder: m.expressMode!.sortOrder ?? 99,
       }))
       .sort((a, b) => a.sortOrder - b.sortOrder),
@@ -962,7 +963,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 1剤目確定済み → ノードとして追加 + シナリオを即時確定
   // ─────────────────────────────────────────────────────────────
 
-  const handleExpressAdd = useCallback((targetModuleId: string, defaultScenarioId: string) => {
+  const handleExpressAdd = useCallback((targetModuleId: string, defaultScenarioId: string, defaultBrandName?: string) => {
     const mod = allModules.find(m => m.moduleId === targetModuleId) ?? moduleData
     // defaultScenarioId は scenario.id（非 globalId）なので globalId に変換する
     const sc = mod.scenarios.find(s => s.id === defaultScenarioId)
@@ -976,7 +977,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (isPrimaryEmpty) {
         // 1剤目として追加
         setActiveModuleData(mod)
-        setActiveBrandName(mod.drug?.brandNames?.[0])
+        setActiveBrandName(defaultBrandName ?? mod.drug?.brandNames?.[0])
         setDrugSelected(true)
         setComposeNodes([])
         setEditingNodeId(null)
@@ -994,7 +995,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       } else {
         // ノードとして追加して即時確定
         const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
-        const nodeDrugName = resolveDrugName(mod.drug, undefined)
+        const nodeDrugName = resolveDrugName(mod.drug, defaultBrandName)
         const newNode: import('../../lib/types').ComposeNode = {
           id: nodeId,
           moduleId: mod.moduleId,
@@ -1006,7 +1007,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             closingText: undefined,
           },
           drugLabel: resolveNodeLabel(mod),
-          matchedBrandName: mod.drug?.brandNames?.[0],
+          matchedBrandName: defaultBrandName ?? mod.drug?.brandNames?.[0],
           resolvedDrugName: nodeDrugName,
           selectedAddonIds: [],
           baseLabel: '',

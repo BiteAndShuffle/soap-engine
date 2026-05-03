@@ -634,6 +634,14 @@ export interface ModuleData {
     label: string
     /** デフォルトで追加する scenario.id（通常 "initial"） */
     defaultScenarioId: string
+    /**
+     * Express 追加時に使用する既定ブランド名。
+     * 値は必ず drug.brandCatalog のキーと完全一致させること。
+     * 省略時は drug.brandNames[0] にフォールバックする（後方互換）。
+     * addonFilter の handlingTags 解決にも使用されるため、
+     * 複数ブランドを持つモジュールでは必ず明示すること。
+     */
+    defaultBrandName?: string
     /** 同カテゴリ内での表示順 */
     sortOrder?: number
   }
