@@ -2772,5 +2772,47 @@
     "defaultScenarioId": "initial",
     "defaultBrandName": "アレジオン点眼液",
     "sortOrder": 99
-  }
+  },
+  "expressModes": [
+    {
+      "enabled": true,
+      "expressCategory": "眼科",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "抗H1点眼液",
+      "label": "アレジオン点眼液",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "アレジオン点眼液",
+      "sortOrder": 1
+    },
+    {
+      "enabled": true,
+      "expressCategory": "眼科",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "抗H1点眼液",
+      "label": "ザジテン点眼液",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "ザジテン点眼液",
+      "sortOrder": 2
+    },
+    {
+      "enabled": true,
+      "expressCategory": "眼科",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "抗H1点眼液",
+      "label": "パタノール点眼液",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "パタノール点眼液",
+      "sortOrder": 3
+    },
+    {
+      "enabled": true,
+      "expressCategory": "眼科",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "抗H1点眼液",
+      "label": "リボスチン点眼液",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "リボスチン点眼液",
+      "sortOrder": 4
+    }
+  ]
 }

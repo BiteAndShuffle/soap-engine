@@ -380,20 +380,49 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [composeSearch, searchIndex],
   )
 
-  // ── エクスプレス候補（expressMode.enabled === true のモジュールのみ） ──
+  // ── エクスプレス候補 ──
+  // expressModes（配列）が存在するモジュールはそちらを優先して展開する。
+  // expressModes がないモジュールは従来の expressMode 単数構造にフォールバック。
+  // 候補キーは moduleId + defaultBrandName で生成し、モジュール単位での衝突を避ける。
   const expressCandidates = useMemo(
-    () => allModules
-      .filter(m => m.expressMode?.enabled === true)
-      .map(m => ({
-        moduleId: m.moduleId,
-        category:  m.expressMode!.category,
-        subCategory: m.expressMode!.subCategory,
-        label:     m.expressMode!.label,
-        defaultScenarioId: m.expressMode!.defaultScenarioId,
-        defaultBrandName: m.expressMode!.defaultBrandName,
-        sortOrder: m.expressMode!.sortOrder ?? 99,
-      }))
-      .sort((a, b) => a.sortOrder - b.sortOrder),
+    () => {
+      const entries: import('../../app/components/ThirdPanel').ExpressCandidate[] = []
+      for (const m of allModules) {
+        if (m.expressModes && m.expressModes.length > 0) {
+          // expressModes 配列優先
+          for (const e of m.expressModes) {
+            if (!e.enabled) continue
+            entries.push({
+              moduleId: m.moduleId,
+              category: e.expressCategory,
+              subCategory: e.expressGroup,
+              expressCategory: e.expressCategory,
+              expressGroup: e.expressGroup,
+              expressSubGroup: e.expressSubGroup,
+              label: e.label,
+              defaultScenarioId: e.defaultScenarioId,
+              defaultBrandName: e.defaultBrandName,
+              sortOrder: e.sortOrder ?? 99,
+            })
+          }
+        } else if (m.expressMode?.enabled === true) {
+          // フォールバック: 旧 expressMode 単数構造
+          entries.push({
+            moduleId: m.moduleId,
+            category: m.expressMode.category,
+            subCategory: m.expressMode.subCategory,
+            expressCategory: m.expressMode.category,
+            expressGroup: m.expressMode.subCategory ?? m.expressMode.category,
+            expressSubGroup: m.expressMode.subCategory ?? '',
+            label: m.expressMode.label,
+            defaultScenarioId: m.expressMode.defaultScenarioId,
+            defaultBrandName: m.expressMode.defaultBrandName,
+            sortOrder: m.expressMode.sortOrder ?? 99,
+          })
+        }
+      }
+      return entries.sort((a, b) => a.sortOrder - b.sortOrder)
+    },
     [allModules],
   )
 

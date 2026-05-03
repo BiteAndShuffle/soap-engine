@@ -210,14 +210,19 @@ export interface SingleDrugFlags {
 /** エクスプレス候補アイテム */
 export interface ExpressCandidate {
   moduleId: string
+  /** 旧 expressMode 互換フィールド（category / subCategory） */
   category: string
   subCategory?: string
+  /** 3階層分類（expressModes 配列構造）。将来のアコーディオンUI用に保持 */
+  expressCategory: string
+  expressGroup: string
+  expressSubGroup: string
   label: string
   defaultScenarioId: string
   /**
    * Express 追加時に使用する既定ブランド名。
-   * ModuleData.expressMode.defaultBrandName をそのまま引き継ぐ。
-   * 省略時は DashboardClient 側で brandNames[0] にフォールバックする。
+   * drug.brandCatalog のキーと完全一致させること。
+   * expressModes 側では必須。expressMode 単数フォールバック時のみ省略可。
    */
   defaultBrandName?: string
   sortOrder: number
@@ -289,24 +294,42 @@ export default function ThirdPanel({
     <div className={[s.thirdPanel, thirdPanelEnabled ? s.expandedPanel : s.collapsedPanel].join(' ')}>
       <div className={s.thirdPanelInner}>
         <div className={s.thirdPanelScrollArea}>
-          {/* エクスプレス: enabled モジュールがある場合のみ表示（常時） */}
-          {expressCandidates.length > 0 && onExpressAdd && (
-            <div className={s.thirdSection}>
-              <div className={s.sActionHeading}>エクスプレス追加</div>
-              <div className={s.expressGrid}>
-                {expressCandidates.map(c => (
-                  <button
-                    key={c.moduleId}
-                    className={s.expressBtn}
-                    onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
-                    title={c.subCategory ?? c.category}
-                  >
-                    {c.label}
-                  </button>
+          {/* エクスプレス: 候補がある場合のみ表示（常時） */}
+          {expressCandidates.length > 0 && onExpressAdd && (() => {
+            // expressSubGroup 単位でグループ化（出現順を維持）
+            const subGroupOrder: string[] = []
+            const subGroupMap: Record<string, ExpressCandidate[]> = {}
+            for (const c of expressCandidates) {
+              const key = c.expressSubGroup || c.subCategory || c.category
+              if (!subGroupMap[key]) {
+                subGroupOrder.push(key)
+                subGroupMap[key] = []
+              }
+              subGroupMap[key].push(c)
+            }
+            return (
+              <div className={s.thirdSection}>
+                <div className={s.sActionHeading}>エクスプレス追加</div>
+                {subGroupOrder.map(groupKey => (
+                  <div key={groupKey} className={s.expressSubGroup}>
+                    {groupKey && <div className={s.expressSubGroupLabel}>{groupKey}</div>}
+                    <div className={s.expressGrid}>
+                      {subGroupMap[groupKey].map(c => (
+                        <button
+                          key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                          className={s.expressBtn}
+                          onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                          title={c.expressGroup || c.subCategory || c.category}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
-            </div>
-          )}
+            )
+          })()}
 
           {/* 合成窓: thirdPanelEnabled（シナリオ確定後）のみ表示 */}
           {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (

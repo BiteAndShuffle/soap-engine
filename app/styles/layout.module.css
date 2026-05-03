@@ -1609,6 +1609,18 @@
 }
 .expressBtn:hover { background: #d0f0e0; border-color: #2e9e60; color: #0e4428; }
 .expressBtn:active { background: #b8e8d0; }
+.expressSubGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.4rem;
+}
+.expressSubGroupLabel {
+  font-size: 0.7rem;
+  color: #6b7280;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
 
 /* ══════════════════════════════════════════════════════════════
    モード切替バー（Col 2 上部: 手動選択 ↔ 自然言語生成）

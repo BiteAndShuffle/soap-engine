@@ -645,6 +645,40 @@ export interface ModuleData {
     /** 同カテゴリ内での表示順 */
     sortOrder?: number
   }
+  /**
+   * エクスプレス候補リスト（配列版）。
+   * expressModes が存在する場合は expressMode 単数より優先して使用する。
+   * ブランド単位のエントリを持ち、1モジュールから複数候補を出せる。
+   */
+  expressModes?: ExpressModeEntry[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// ExpressModeEntry（expressModes 配列の各エントリ）
+// ─────────────────────────────────────────────────────────────
+
+export interface ExpressModeEntry {
+  /** エクスプレス候補に表示するか */
+  enabled: boolean
+  /** 診療領域（ThirdPanel 第1階層、将来アコーディオン用）: "眼科" / "感染症" / "整形" など */
+  expressCategory: string
+  /** 薬効大分類（第2階層）: "抗アレルギー" / "抗菌" など */
+  expressGroup: string
+  /** 剤形・薬効サブ分類（第3階層・ボタングループ境界）: "抗H1点眼液" / "抗H1眼軟膏" など */
+  expressSubGroup: string
+  /** ボタン表示名（原則 brandCatalog の displayName と一致させる） */
+  label: string
+  /** デフォルトで追加する scenario.id（通常 "initial"） */
+  defaultScenarioId: string
+  /**
+   * Express 追加時に使用する既定ブランド名（必須）。
+   * 値は必ず drug.brandCatalog のキーと完全一致させること。
+   * Express追加時の {{drug_subject}} 解決および addonFilter の handlingTags 解決に使用。
+   * expressModes では複数ブランド誤作動防止のため省略不可。
+   */
+  defaultBrandName: string
+  /** 同サブグループ内での表示順 */
+  sortOrder?: number
 }
 
 // ─────────────────────────────────────────────────────────────
