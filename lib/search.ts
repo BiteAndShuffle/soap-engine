@@ -66,9 +66,14 @@ export interface SearchEntry {
   priority: number
   /**
    * ブランド名リスト（drug.brandNames）。
-   * getSuggestions でクエリと照合し、どのブランドにヒットしたか特定するために使用。
+   * resolveBrandName でクエリと照合し、どのブランドにヒットしたか特定するために使用。
    */
   brandNames: string[]
+  /**
+   * ブランド名 → 正規化エイリアスリスト（brandCatalog[brand].aliases から構築）。
+   * resolveBrandName でブランド固有エイリアス（一般名ひらがな等）との照合に使用。
+   */
+  brandCatalogAliasMap: Record<string, string[]>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -115,6 +120,14 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const exampleDrugName = drug?.brandNames?.[0]
   const brandNames = drug?.brandNames ?? []
 
+  // brandCatalog[brand].aliases を正規化してマップ化（matchedBrandName 精度向上用）
+  const brandCatalogAliasMap: Record<string, string[]> = {}
+  const brandCatalog = drug?.brandCatalog ?? {}
+  for (const [brand, entry] of Object.entries(brandCatalog)) {
+    const aliases = (entry as { aliases?: string[] }).aliases ?? []
+    brandCatalogAliasMap[brand] = aliases.map(normalizeText).filter(Boolean)
+  }
+
   const suppressOnExactHit =
     drugSearch?.matchPolicy?.suppressCrossModuleSuggestionsOnExactHit ?? false
   const priority = drugSearch?.priority ?? 0
@@ -146,6 +159,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       suppressOnExactHit,
       priority,
       brandNames,
+      brandCatalogAliasMap,
     }
   })
 }
@@ -167,6 +181,42 @@ export interface SuggestionItem {
    * ブランド特定できない場合は undefined（DashboardClient 側でフォールバック）。
    */
   matchedBrandName?: string
+}
+
+/**
+ * クエリに最も近いブランド名を特定する。
+ *
+ * 照合順:
+ *   1) brandNames[i] の正規化 === q
+ *   2) brandCatalogAliasMap[brand] のいずれかの正規化 === q
+ *   3) brandNames[i] の正規化.startsWith(q)
+ *   4) brandCatalogAliasMap[brand] のいずれかの正規化.startsWith(q)
+ *   5) brandNames[i] の正規化.includes(q)
+ */
+function resolveBrandName(entry: SearchEntry, q: string): string | undefined {
+  // 1. brandNames 完全一致
+  for (const brand of entry.brandNames) {
+    if (normalizeText(brand) === q) return brand
+  }
+  // 2. brandCatalog aliases 完全一致
+  for (const brand of entry.brandNames) {
+    const aliases = entry.brandCatalogAliasMap[brand] ?? []
+    if (aliases.some(a => a === q)) return brand
+  }
+  // 3. brandNames 前方一致
+  for (const brand of entry.brandNames) {
+    if (normalizeText(brand).startsWith(q)) return brand
+  }
+  // 4. brandCatalog aliases 前方一致
+  for (const brand of entry.brandNames) {
+    const aliases = entry.brandCatalogAliasMap[brand] ?? []
+    if (aliases.some(a => a.startsWith(q))) return brand
+  }
+  // 5. brandNames 部分一致
+  for (const brand of entry.brandNames) {
+    if (normalizeText(brand).includes(q)) return brand
+  }
+  return undefined
 }
 
 function scoreEntry(entry: SearchEntry, q: string): number {
@@ -240,24 +290,6 @@ export function getSuggestions(
     if (seenShortLabels.has(entry.shortLabel)) continue
     seenShortLabels.add(entry.shortLabel)
 
-    // クエリに最も近いブランド名を特定する
-    // 優先順: exactAlias完全一致 → aliasToken前方一致 → aliasToken部分一致
-    let matchedBrandName: string | undefined
-    for (const brand of entry.brandNames) {
-      const norm = normalizeText(brand)
-      if (norm === q) { matchedBrandName = brand; break }
-    }
-    if (!matchedBrandName) {
-      for (const brand of entry.brandNames) {
-        if (normalizeText(brand).startsWith(q)) { matchedBrandName = brand; break }
-      }
-    }
-    if (!matchedBrandName) {
-      for (const brand of entry.brandNames) {
-        if (normalizeText(brand).includes(q)) { matchedBrandName = brand; break }
-      }
-    }
-
     results.push({
       templateId: entry.templateId,
       moduleId: entry.moduleId,
@@ -265,7 +297,7 @@ export function getSuggestions(
       shortLabel: entry.shortLabel,
       groupLabel: entry.groupLabel,
       drugDisplayLabel: entry.drugDisplayLabel,
-      matchedBrandName,
+      matchedBrandName: resolveBrandName(entry, q),
     })
   }
 
@@ -326,26 +358,10 @@ export function getDrugSuggestions(
     if (seenModules.has(entry.moduleId)) continue
     seenModules.add(entry.moduleId)
 
-    // マッチしたブランド名を特定
-    let matchedBrandName: string | undefined
-    for (const brand of entry.brandNames) {
-      if (normalizeText(brand) === q) { matchedBrandName = brand; break }
-    }
-    if (!matchedBrandName) {
-      for (const brand of entry.brandNames) {
-        if (normalizeText(brand).startsWith(q)) { matchedBrandName = brand; break }
-      }
-    }
-    if (!matchedBrandName) {
-      for (const brand of entry.brandNames) {
-        if (normalizeText(brand).includes(q)) { matchedBrandName = brand; break }
-      }
-    }
-
     results.push({
       moduleId: entry.moduleId,
       drugDisplayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
-      matchedBrandName,
+      matchedBrandName: resolveBrandName(entry, q),
       representativeTemplateId: entry.templateId,
     })
   }
