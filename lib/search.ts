@@ -290,14 +290,15 @@ export function getSuggestions(
     if (seenShortLabels.has(entry.shortLabel)) continue
     seenShortLabels.add(entry.shortLabel)
 
+    const matchedBrandName = resolveBrandName(entry, q)
     results.push({
       templateId: entry.templateId,
       moduleId: entry.moduleId,
       label: entry.label,
       shortLabel: entry.shortLabel,
       groupLabel: entry.groupLabel,
-      drugDisplayLabel: entry.drugDisplayLabel,
-      matchedBrandName: resolveBrandName(entry, q),
+      drugDisplayLabel: matchedBrandName ?? entry.drugDisplayLabel,
+      matchedBrandName,
     })
   }
 
@@ -358,10 +359,11 @@ export function getDrugSuggestions(
     if (seenModules.has(entry.moduleId)) continue
     seenModules.add(entry.moduleId)
 
+    const matchedBrandName = resolveBrandName(entry, q)
     results.push({
       moduleId: entry.moduleId,
-      drugDisplayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
-      matchedBrandName: resolveBrandName(entry, q),
+      drugDisplayLabel: matchedBrandName ?? entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
+      matchedBrandName,
       representativeTemplateId: entry.templateId,
     })
   }
