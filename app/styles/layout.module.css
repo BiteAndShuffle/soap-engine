@@ -667,6 +667,37 @@
   color: #003da0;
   letter-spacing: 0.02em;
 }
+.expressPopupControls {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+/* GE / 先発 トグル */
+.expressGEToggle {
+  display: flex;
+  border: 1.5px solid #c0caff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.expressGEBtn {
+  padding: 0.1rem 0.35rem;
+  font-family: inherit;
+  font-size: 0.6rem;
+  font-weight: 600;
+  background: #f5f7ff;
+  border: none;
+  cursor: pointer;
+  color: #556;
+  line-height: 1.4;
+  transition: background 0.08s, color 0.08s;
+}
+.expressGEBtn + .expressGEBtn {
+  border-left: 1.5px solid #c0caff;
+}
+.expressGEBtnActive {
+  background: #0a84ff;
+  color: #fff;
+}
 .expressPopupClose {
   background: none;
   border: none;

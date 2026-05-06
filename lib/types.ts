@@ -689,6 +689,11 @@ export interface ExpressModeEntry {
   expressSubGroup: string
   /** ボタン表示名（原則 brandCatalog の displayName と一致させる） */
   label: string
+  /**
+   * GEモード時のボタン表示名（例: "エピナスチン点眼薬"）。
+   * 省略時は label（先発名）をそのまま使用する。
+   */
+  genericDisplayName?: string
   /** デフォルトで追加する scenario.id（通常 "initial"） */
   defaultScenarioId: string
   /**

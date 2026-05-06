@@ -233,7 +233,15 @@ export interface ExpressCandidate {
   expressCategory: string
   expressGroup: string
   expressSubGroup: string
+  /** 先発ブランド名（デフォルト表示・SOAP合成時のブランド解決に使用） */
   label: string
+  /**
+   * GEモード時の表示名（例: "エピナスチン点眼薬"）。
+   * 省略時は label をそのまま使用する。
+   * GEモードで追加した場合も、SOAP合成は defaultBrandName を維持しつつ
+   * 画面表示名のみ genericLabel に切り替える（将来拡張用）。
+   */
+  genericLabel?: string
   defaultScenarioId: string
   /** scenario.globalId（activeExpressKeys のキーと照合するために使用） */
   defaultScenarioGlobalId: string
@@ -354,6 +362,8 @@ export default function ThirdPanel({
   // 現在ポップアップ表示中のサブカテゴリ（null = 非表示）
   const [expressPopupSubcat, setExpressPopupSubcat] = useState<string | null>(null)
   const expressPopupRef = useRef<HTMLDivElement>(null)
+  // GE / 先発 切替（true = GEモード）
+  const [expressUseGE, setExpressUseGE] = useState(true)
 
   // ポップアップ外クリックで閉じる
   useEffect(() => {
@@ -418,34 +428,58 @@ export default function ThirdPanel({
           <div ref={expressPopupRef} className={s.expressPopup} role="dialog" aria-label="Express候補">
             <div className={s.expressPopupHeader}>
               <span className={s.expressPopupTitle}>{expressPopupSubcat}</span>
-              <button
-                className={s.expressPopupClose}
-                onClick={() => setExpressPopupSubcat(null)}
-                aria-label="閉じる"
-              >×</button>
-            </div>
-            {popupCandidates.map(({ grp, sub, candidates }) => (
-              <div key={`${grp}__${sub}`} className={s.expressSubGroup}>
-                <div className={s.expressSubGroupLabel}>{sub}</div>
-                <div className={s.expressGrid}>
-                  {candidates.map(c => {
-                    const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
-                    const isActive = activeExpressKeys?.has(expressKey) ?? false
-                    return (
-                      <button
-                        key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
-                        className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
-                        onClick={() => handleExpressAddAndClose(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
-                        title={`${grp} › ${sub}`}
-                        aria-pressed={isActive}
-                      >
-                        {c.label}
-                      </button>
-                    )
-                  })}
+              <div className={s.expressPopupControls}>
+                {/* GE / 先発 切替 */}
+                <div className={s.expressGEToggle}>
+                  <button
+                    className={[s.expressGEBtn, expressUseGE ? s.expressGEBtnActive : ''].join(' ')}
+                    onClick={() => setExpressUseGE(true)}
+                    aria-pressed={expressUseGE}
+                  >GE</button>
+                  <button
+                    className={[s.expressGEBtn, !expressUseGE ? s.expressGEBtnActive : ''].join(' ')}
+                    onClick={() => setExpressUseGE(false)}
+                    aria-pressed={!expressUseGE}
+                  >先発</button>
                 </div>
+                <button
+                  className={s.expressPopupClose}
+                  onClick={() => setExpressPopupSubcat(null)}
+                  aria-label="閉じる"
+                >×</button>
               </div>
-            ))}
+            </div>
+            {popupCandidates.map(({ grp, sub, candidates }) => {
+              // GEモード時はGE名でソート、先発モード時はlabel（先発名）でソート
+              const sorted = [...candidates].sort((a, b) => {
+                const nameA = expressUseGE ? (a.genericLabel ?? a.label) : a.label
+                const nameB = expressUseGE ? (b.genericLabel ?? b.label) : b.label
+                return nameA.localeCompare(nameB, 'ja')
+              })
+              return (
+                <div key={`${grp}__${sub}`} className={s.expressSubGroup}>
+                  <div className={s.expressSubGroupLabel}>{sub}</div>
+                  <div className={s.expressGrid}>
+                    {sorted.map(c => {
+                      const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
+                      const isActive = activeExpressKeys?.has(expressKey) ?? false
+                      const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
+                      return (
+                        <button
+                          key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                          className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                          onClick={() => handleExpressAddAndClose(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                          title={expressUseGE && c.genericLabel ? `${c.genericLabel}（${c.label}）` : c.label}
+                          aria-pressed={isActive}
+                        >
+                          {displayName}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
 

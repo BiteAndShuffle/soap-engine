@@ -414,6 +414,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               expressGroup: e.expressGroup,
               expressSubGroup: e.expressSubGroup,
               label: e.label,
+              genericLabel: e.genericDisplayName,
               defaultScenarioId: e.defaultScenarioId,
               defaultScenarioGlobalId: sc?.globalId ?? '',
               defaultBrandName: e.defaultBrandName,
