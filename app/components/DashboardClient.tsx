@@ -15,7 +15,7 @@ import {
   sortSideEffectScenarios,
 } from '../../lib/menuGroups'
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
-import { S_BUTTON_GROUPS, type SingleDrugFlags } from './ThirdPanel'
+import { type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
 import { derivePersonaGuard } from '../../lib/personaGuard'
@@ -339,14 +339,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeNode, targetModule, primaryScenario])
 
   // 選択中ブランドの handlingTags を取得してaddonフィルタに渡す。
+  // ノード編集中は activeNode.matchedBrandName を優先する（Express追加ブランドを反映）。
   // brandCatalog がないモジュール（GLP-1等）は undefined → フィルタスキップ（後方互換）。
   const addonBrandHandlingTags = useMemo<string[] | undefined>(() => {
-    const brandCatalog = activeModuleData.drug?.brandCatalog
+    const brandCatalog = targetModule.drug?.brandCatalog
     if (!brandCatalog) return undefined
-    const resolvedBrand = activeBrandName ?? activeModuleData.drug?.brandNames?.[0]
+    // ノード編集中: そのノードの matchedBrandName を優先
+    // 1剤目操作中: activeBrandName（主薬剤の選択ブランド）を使用
+    const resolvedBrand = activeNode !== null
+      ? (activeNode.matchedBrandName ?? targetModule.drug?.brandNames?.[0])
+      : (activeBrandName ?? activeModuleData.drug?.brandNames?.[0])
     if (!resolvedBrand) return undefined
     return brandCatalog[resolvedBrand]?.handlingTags
-  }, [activeModuleData, activeBrandName])
+  }, [targetModule, activeNode, activeBrandName, activeModuleData])
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),
@@ -368,6 +373,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const filtered = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
     return selectedGroup === '副作用あり' ? sortSideEffectScenarios(filtered) : filtered
   }, [allGroups, selectedGroup])
+
+  // ── アクティブExpressキーセット ─────────────────────────────
+  // 追加済みノードの "moduleId__brandName__scenarioId" をキーとして保持。
+  // ThirdPanel でボタンのアクティブ状態を表示するために使用する。
+  const activeExpressKeys = useMemo<Set<string>>(
+    () => new Set(composeNodes.map(n => `${n.moduleId}__${n.matchedBrandName ?? ''}__${n.scenarioId}`)),
+    [composeNodes],
+  )
 
   // ── 薬剤サジェスト ───────────────────────────────────────────
   void normalizeText  // tree-shaking 抑止
@@ -392,6 +405,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           // expressModes 配列優先
           for (const e of m.expressModes) {
             if (!e.enabled) continue
+            const sc = m.scenarios.find(s => s.id === e.defaultScenarioId)
             entries.push({
               moduleId: m.moduleId,
               category: e.expressCategory,
@@ -401,12 +415,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               expressSubGroup: e.expressSubGroup,
               label: e.label,
               defaultScenarioId: e.defaultScenarioId,
+              defaultScenarioGlobalId: sc?.globalId ?? '',
               defaultBrandName: e.defaultBrandName,
               sortOrder: e.sortOrder ?? 99,
             })
           }
         } else if (m.expressMode?.enabled === true) {
           // フォールバック: 旧 expressMode 単数構造
+          const sc = m.scenarios.find(s => s.id === m.expressMode!.defaultScenarioId)
           entries.push({
             moduleId: m.moduleId,
             category: m.expressMode.category,
@@ -416,6 +432,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             expressSubGroup: m.expressMode.subCategory ?? '',
             label: m.expressMode.label,
             defaultScenarioId: m.expressMode.defaultScenarioId,
+            defaultScenarioGlobalId: sc?.globalId ?? '',
             defaultBrandName: m.expressMode.defaultBrandName,
             sortOrder: m.expressMode.sortOrder ?? 99,
           })
@@ -446,15 +463,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // EFFECTS
   // ══════════════════════════════════════════════════════════════
 
-  // S prefix/status・フラグリセット（グループ変更時）
+  // S prefix/status・フラグリセット（シナリオ変更時）
+  // thirdPanelSPlacement.enabled === true のシナリオに切り替わった場合のみ
+  // sRelation / sCondition を初期値にリセットする。
   useEffect(() => {
-    if (selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)) {
+    if (primaryScenario?.thirdPanelSPlacement?.enabled === true) {
       setSRelation('continued_do')
       setSCondition('stable')
     }
-    // グループが変わったらフラグもリセット（S欄の内容はシナリオ切替で上書きされるため）
+    // シナリオが変わったらフラグもリセット（S欄の内容はシナリオ切替で上書きされるため）
     setSingleDrugFlags({ noSideEffect: false, goodCompliance: false })
-  }, [selectedGroup])
+  }, [primaryScenario])
 
   // 1剤目シナリオ切替時に primaryBaseFields を初期化（addon なし素の状態）
   // - selectedScenarioId 変化時のみ走る
@@ -1022,6 +1041,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setSelectedAddonIds(new Set())
         setEditedSOAP(null)
       } else {
+        // トグル: moduleId + matchedBrandName + scenarioId が一致するノードが既にあれば削除
+        const existingNode = composeNodesRef.current.find(
+          n => n.moduleId === targetModuleId &&
+               n.matchedBrandName === (defaultBrandName ?? mod.drug?.brandNames?.[0]) &&
+               n.scenarioId === globalId,
+        )
+        if (existingNode) {
+          // 同じExpress候補を再押し → ノード削除（トグルオフ）
+          const currentId = editingNodeIdRef.current
+          const primarySc = primaryScenarioRef.current
+          if (currentId === existingNode.id) {
+            setEditingNodeId(null)
+            setSelectedAddonIds(primaryAddonIdsRef.current)
+            setSelectedGroup(primarySc ? getMenuGroupFromScenario(primarySc) : null)
+          }
+          setPendingNodeIds(prev => { const n = new Set(prev); n.delete(existingNode.id); return n })
+          setComposeNodes(prev => prev.filter(n => n.id !== existingNode.id))
+          setEditedSOAP(null)
+          return
+        }
+
         // ノードとして追加して即時確定
         const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
         const nodeDrugName = resolveDrugName(mod.drug, defaultBrandName)
@@ -1265,6 +1305,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             selectedGroup={selectedGroup}
             thirdPanelEnabled={thirdPanelEnabled}
             isSingleDrug={isSingleDrug}
+            primaryScenario={primaryScenario}
             currentSRelation={sRelation}
             currentSCondition={sCondition}
             onSAction={handleSToggle}
@@ -1276,6 +1317,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             onSelectComposeDrug={handleComposeDrugSelect}
             onSubcategorySelect={handleSubcategorySelect}
             expressCandidates={expressCandidates}
+            activeExpressKeys={activeExpressKeys}
             onExpressAdd={handleExpressAdd}
           />
         ) : (

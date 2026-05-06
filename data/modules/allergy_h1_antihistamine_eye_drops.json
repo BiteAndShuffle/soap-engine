@@ -23,6 +23,7 @@
       "treatment_adjustment",
       "side_effect_monitoring",
       "adherence",
+      "as_needed",
       "treatment_end",
       "lifestyle_guidance"
     ],
@@ -826,6 +827,12 @@
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
       "A": "{{drug_subject}}による刺激感は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に刺激感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -887,6 +894,12 @@
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
       "A": "{{drug_subject}}による異物感は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に異物感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -948,6 +961,12 @@
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
       "A": "{{drug_subject}}による掻痒感は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に掻痒感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -1009,6 +1028,12 @@
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
       "A": "{{drug_subject}}による充血は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に充血が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -1070,6 +1095,12 @@
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
       "A": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に目やにが出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -1130,6 +1161,12 @@
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
       "A": "コンプライアンスは良好である。治療継続に問題はない。",
       "P": "引き続き用法を守って使用することで、アレルギー症状改善が期待できます。\n今後も継続して使用できるようにすることが大切です。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -1354,8 +1391,8 @@
       "id": "as_needed_refill_needed",
       "globalId": "allergy_h1_antihistamine_eye_drops.as_needed_refill_needed",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 頓用使用（処方あり）",
-      "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioType": "usage",
+      "scenarioGroup": "as_needed",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "continue",
@@ -1370,12 +1407,12 @@
       "counselingTags": [],
       "workflowTags": [],
       "scenarioTags": [
-        "adherence",
+        "usage",
         "as_needed",
         "refill_needed"
       ],
       "intentTags": [
-        "adherence_support"
+        "usage_guidance"
       ],
       "S": "{{drug_subject}}は、症状が出た時に使用している。\n使用により残薬が少なくなったため、継続処方となった。",
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方",
@@ -1386,7 +1423,7 @@
         "S": {
           "domain": "allergy",
           "behavior": "replace",
-          "groupKey": "adherence",
+          "groupKey": "as_needed",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -1415,8 +1452,8 @@
       "id": "as_needed_refill_not_needed",
       "globalId": "allergy_h1_antihistamine_eye_drops.as_needed_refill_not_needed",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 頓用使用（処方なし）",
-      "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioType": "usage",
+      "scenarioGroup": "as_needed",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "continue",
@@ -1431,12 +1468,12 @@
       "counselingTags": [],
       "workflowTags": [],
       "scenarioTags": [
-        "adherence",
+        "usage",
         "as_needed",
         "refill_not_needed"
       ],
       "intentTags": [
-        "adherence_support"
+        "usage_guidance"
       ],
       "S": "{{drug_subject}}は、症状が出た時に使用している。\n残薬があるため、今回は処方なしとなった。",
       "O": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中",
@@ -1447,7 +1484,7 @@
         "S": {
           "domain": "allergy",
           "behavior": "replace",
-          "groupKey": "adherence",
+          "groupKey": "as_needed",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -2508,6 +2545,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
+        "requiredTags": ["suspension_eye_drop", "shake_before_use"],
         "text": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。\n使用する前に、よく振り混ぜてから使用してください。",
         "intentTags": [
           "administration_instruction"
@@ -2524,6 +2562,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
+        "requiredTags": ["suspension_eye_drop", "shake_before_use"],
         "text": "保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。",
         "intentTags": [
           "administration_instruction"
@@ -2540,6 +2579,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
+        "requiredTags": ["light_protection_storage"],
         "text": "光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。",
         "intentTags": [
           "administration_instruction"
@@ -2556,6 +2596,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
+        "requiredTags": ["cold_storage"],
         "text": "温度の影響により、効果が十分に出ない可能性があります。\n使用していない間は、冷所で保管してください。",
         "intentTags": [
           "administration_instruction"
@@ -2757,6 +2798,7 @@
       "dose_decrease_explanation",
       "treatment_end_explanation",
       "adherence_support",
+      "usage_guidance",
       "administration_instruction",
       "concomitant_drug_attention",
       "followup_monitoring"
@@ -2764,14 +2806,6 @@
     "clinicalTags": [],
     "counselingTags": [],
     "workflowTags": []
-  },
-  "expressMode": {
-    "enabled": true,
-    "category": "allergy",
-    "label": "H1点眼",
-    "defaultScenarioId": "initial",
-    "defaultBrandName": "アレジオン点眼液",
-    "sortOrder": 99
   },
   "expressModes": [
     {

@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useId } from 'react'
 import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
+import type { Scenario } from '../../lib/types'
 import type { SRelation, SCondition } from './SoapEditor'
 import s from '../styles/layout.module.css'
 
@@ -14,15 +15,6 @@ import s from '../styles/layout.module.css'
 
 /** S先頭文ボタン群（体調状態ボタン）の表示制御 */
 const FEATURE_S_BUTTONS = true
-
-// ─────────────────────────────────────────────────────────────
-// 仕様定数
-// ─────────────────────────────────────────────────────────────
-
-export const S_BUTTON_GROUPS = new Set<MenuGroup>([
-  '副作用なし',
-  'コンプライアンス良好',
-])
 
 // ─────────────────────────────────────────────────────────────
 // 診療領域定義
@@ -219,6 +211,8 @@ export interface ExpressCandidate {
   expressSubGroup: string
   label: string
   defaultScenarioId: string
+  /** scenario.globalId（activeExpressKeys のキーと照合するために使用） */
+  defaultScenarioGlobalId: string
   /**
    * Express 追加時に使用する既定ブランド名。
    * drug.brandCatalog のキーと完全一致させること。
@@ -233,6 +227,11 @@ interface ThirdPanelProps {
   thirdPanelEnabled: boolean
   /** 単剤モードかどうか（false の場合フラグ・S先頭文ボタンを非表示） */
   isSingleDrug: boolean
+  /**
+   * 現在選択中の1剤目シナリオ。
+   * thirdPanelSPlacement.enabled の判定に使用する。
+   */
+  primaryScenario?: Scenario
   currentSRelation: SRelation
   currentSCondition: SCondition
   onSAction: (relation: SRelation, condition: SCondition) => void
@@ -249,6 +248,11 @@ interface ThirdPanelProps {
   onSubcategorySelect?: (label: string) => void
   /** エクスプレス候補リスト（expressMode.enabled===true のモジュール） */
   expressCandidates?: ExpressCandidate[]
+  /**
+   * 追加済みノードのキーセット（"moduleId__brandName__scenarioGlobalId" 形式）。
+   * Express ボタンのアクティブ状態表示に使用する。
+   */
+  activeExpressKeys?: Set<string>
   /** エクスプレス追加ハンドラ */
   onExpressAdd?: (moduleId: string, defaultScenarioId: string, defaultBrandName?: string) => void
 }
@@ -261,6 +265,7 @@ export default function ThirdPanel({
   selectedGroup,
   thirdPanelEnabled,
   isSingleDrug,
+  primaryScenario,
   currentSRelation,
   currentSCondition,
   onSAction,
@@ -272,12 +277,17 @@ export default function ThirdPanel({
   onSelectComposeDrug,
   onSubcategorySelect,
   expressCandidates = [],
+  activeExpressKeys,
   onExpressAdd,
 }: ThirdPanelProps) {
-  // 単剤 + 対象グループの基底条件
-  const inSGroup     = thirdPanelEnabled && isSingleDrug && selectedGroup !== null && S_BUTTON_GROUPS.has(selectedGroup)
+  // S先頭文ボタン群: scenario.thirdPanelSPlacement.enabled === true かつ単剤時のみ
+  const sPlacementEnabled =
+    thirdPanelEnabled &&
+    isSingleDrug &&
+    primaryScenario?.thirdPanelSPlacement?.enabled === true &&
+    primaryScenario.thirdPanelSPlacement.trigger === 'single_drug_only'
   // S先頭文ボタン群: FEATURE_S_BUTTONS で制御
-  const showSButtons = FEATURE_S_BUTTONS && inSGroup
+  const showSButtons = FEATURE_S_BUTTONS && sPlacementEnabled
 
   const handleSubcategorySelect = useCallback((label: string) => {
     if (onSubcategorySelect) {
@@ -294,53 +304,56 @@ export default function ThirdPanel({
     <div className={[s.thirdPanel, thirdPanelEnabled ? s.expandedPanel : s.collapsedPanel].join(' ')}>
       <div className={s.thirdPanelInner}>
         <div className={s.thirdPanelScrollArea}>
-          {/* エクスプレス: 候補がある場合のみ表示（常時） */}
-          {expressCandidates.length > 0 && onExpressAdd && (() => {
-            // expressSubGroup 単位でグループ化（出現順を維持）
-            const subGroupOrder: string[] = []
-            const subGroupMap: Record<string, ExpressCandidate[]> = {}
-            for (const c of expressCandidates) {
-              const key = c.expressSubGroup || c.subCategory || c.category
-              if (!subGroupMap[key]) {
-                subGroupOrder.push(key)
-                subGroupMap[key] = []
-              }
-              subGroupMap[key].push(c)
-            }
-            return (
-              <div className={s.thirdSection}>
-                <div className={s.sActionHeading}>エクスプレス追加</div>
-                {subGroupOrder.map(groupKey => (
+          {/* 薬剤追加セクション: Express候補 + インライン検索を統合 */}
+          {(expressCandidates.length > 0 || (thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug)) && (
+            <div className={s.thirdSection}>
+              <div className={s.sActionHeading}>薬剤追加</div>
+
+              {/* Express候補: 常時表示 */}
+              {expressCandidates.length > 0 && onExpressAdd && (() => {
+                const subGroupOrder: string[] = []
+                const subGroupMap: Record<string, ExpressCandidate[]> = {}
+                for (const c of expressCandidates) {
+                  const key = c.expressSubGroup || c.subCategory || c.category
+                  if (!subGroupMap[key]) {
+                    subGroupOrder.push(key)
+                    subGroupMap[key] = []
+                  }
+                  subGroupMap[key].push(c)
+                }
+                return subGroupOrder.map(groupKey => (
                   <div key={groupKey} className={s.expressSubGroup}>
                     {groupKey && <div className={s.expressSubGroupLabel}>{groupKey}</div>}
                     <div className={s.expressGrid}>
-                      {subGroupMap[groupKey].map(c => (
-                        <button
-                          key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
-                          className={s.expressBtn}
-                          onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
-                          title={c.expressGroup || c.subCategory || c.category}
-                        >
-                          {c.label}
-                        </button>
-                      ))}
+                      {subGroupMap[groupKey].map(c => {
+                        const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
+                        const isActive = activeExpressKeys?.has(expressKey) ?? false
+                        return (
+                          <button
+                            key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                            className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                            onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                            title={c.expressGroup || c.subCategory || c.category}
+                            aria-pressed={isActive}
+                          >
+                            {c.label}
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
-                ))}
-              </div>
-            )
-          })()}
+                ))
+              })()}
 
-          {/* 合成窓: thirdPanelEnabled（シナリオ確定後）のみ表示 */}
-          {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (
-            <div className={s.thirdSection}>
-              <div className={s.sActionHeading}>薬剤追加</div>
-              <DrugInlineSearch
-                searchValue={composeSearchValue}
-                onSearchChange={onComposeSearchChange}
-                suggestions={composeDrugSuggestions}
-                onSelectDrug={onSelectComposeDrug}
-              />
+              {/* インライン検索: シナリオ確定後のみ */}
+              {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (
+                <DrugInlineSearch
+                  searchValue={composeSearchValue}
+                  onSearchChange={onComposeSearchChange}
+                  suggestions={composeDrugSuggestions}
+                  onSelectDrug={onSelectComposeDrug}
+                />
+              )}
             </div>
           )}
 

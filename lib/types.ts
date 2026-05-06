@@ -136,6 +136,21 @@ export interface Scenario {
    */
   combinable?: boolean | null
   /**
+   * サードパネルS配置制御。
+   * enabled: true の scenario を単剤選択中のときのみ、S先頭文置換UIを表示する。
+   * trigger: "single_drug_only" — composeNodes.length === 0 の単剤時のみ有効。
+   * mode: "replace" — 先頭文を置換する（現状唯一のモード）。
+   * persistAsCompositionBase: true — 置換後Sを primaryBaseFields.S に保持し、
+   *   2剤目追加時の mergeBlocks ベースとして使用する。
+   * 省略時は表示しない。
+   */
+  thirdPanelSPlacement?: {
+    enabled: boolean
+    trigger: 'single_drug_only'
+    mode: 'replace'
+    persistAsCompositionBase: boolean
+  }
+  /**
    * 合成ポリシー（S/O/A/P ごとの挙動を宣言）。
    * buildSoap.ts の mergeBlocks で参照される。
    * 省略時は旧来の固定ロジック（append / buildS / buildP）にフォールバック。
@@ -217,6 +232,12 @@ export interface AddonItem {
   counselingTags?: string[]
   /** ワークフロータグ（将来拡張用） */
   workflowTags?: string[]
+  /**
+   * 表示に必要な handlingTags（AND条件）。
+   * brandCatalog[brand].handlingTags がこの配列の全要素を含む場合に表示する。
+   * 未定義または空配列の場合は常時表示。
+   */
+  requiredTags?: string[]
 }
 
 /**

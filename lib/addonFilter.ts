@@ -10,34 +10,20 @@
  *   addonsRef なし → 空配列（アドオンパネル非表示）
  *
  * ブランドフィルタ:
- *   brandHandlingTags が指定されている場合、ADDON_TAG_REQUIREMENTS に
- *   必要タグが定義されているアドオンは、ブランドの handlingTags に
- *   必要タグが1つも含まれない場合は非表示にする。
- *   必要タグが未定義（空配列または定義なし）のアドオンは常に表示する。
+ *   brandHandlingTags が指定されている場合、addon.requiredTags に
+ *   条件が定義されているアドオンは、ブランドの handlingTags が
+ *   requiredTags の全要素を含まない場合は非表示にする（AND条件）。
+ *   requiredTags が未定義または空配列のアドオンは常に表示する。
  *   brandHandlingTags が undefined の場合はフィルタをスキップする（後方互換）。
  *
  * 廃止:
  *   GROUP_RULES（scenarioType/scenarioGroup ベースの自動選択）は廃止。
  *   addonsRef のないシナリオにアドオンを自動表示しない。
+ *   ADDON_TAG_REQUIREMENTS（コード側ハードコード）は廃止。
+ *   addon.requiredTags（JSON側）に移行済み。
  */
 
 import type { Scenario, AddonsData } from './types'
-
-// ─────────────────────────────────────────────────────────────
-// ADDON_TAG_REQUIREMENTS
-//
-// アドオンキー → 表示に必要な handlingTags（いずれか1つ一致で表示）。
-// 空配列 = 条件なし（常に表示）。
-// このマップにないアドオンキーも条件なしとして扱う。
-// ─────────────────────────────────────────────────────────────
-
-const ADDON_TAG_REQUIREMENTS: Record<string, string[]> = {
-  addon_eye_drop_storage_light_protection: ['light_protection_storage'],
-  addon_eye_drop_storage_upright:          ['suspension_eye_drop', 'shake_before_use'],
-  addon_eye_drop_storage_cold:             ['cold_storage'],
-  addon_eye_drop_suspension_shake:         ['suspension_eye_drop', 'shake_before_use'],
-  // addon_eye_drop_tip_contamination は条件なし（常に表示）
-}
 
 // ─────────────────────────────────────────────────────────────
 // getVisibleAddonKeys — 表示するアドオンキー配列を返す純関数
@@ -80,10 +66,10 @@ export function getVisibleAddonKeys(
   if (brandHandlingTags === undefined) return deduped
 
   return deduped.filter(key => {
-    const required = ADDON_TAG_REQUIREMENTS[key]
-    // required が未定義または空配列 → 条件なし（常に表示）
+    const required = addons.items[key]?.requiredTags
+    // requiredTags が未定義または空配列 → 条件なし（常に表示）
     if (!required || required.length === 0) return true
-    // required のいずれか1つでもブランドが持っていれば表示
-    return required.some(tag => brandHandlingTags.includes(tag))
+    // requiredTags の全要素をブランドが持っていれば表示（AND条件）
+    return required.every(tag => brandHandlingTags.includes(tag))
   })
 }

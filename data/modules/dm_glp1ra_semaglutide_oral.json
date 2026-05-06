@@ -565,13 +565,18 @@
       ]
     }
   },
-  "expressMode": {
-    "enabled": false,
-    "category": "dm",
-    "label": "GLP-1（内服）",
-    "defaultScenarioId": "initial",
-    "sortOrder": 99
-  },
+  "expressModes": [
+    {
+      "enabled": true,
+      "expressCategory": "内科",
+      "expressGroup": "糖尿病",
+      "expressSubGroup": "GLP-1内服",
+      "label": "GLP-1（内服）",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "リベルサス",
+      "sortOrder": 99
+    }
+  ],
   "scenarios": [
     {
       "id": "initial",
@@ -1407,6 +1412,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "sComposition": {
         "intent": "side_effect_check",
         "template": "status_based",
@@ -1545,6 +1556,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "sComposition": {
         "intent": "side_effect_check",
         "template": "status_based",
@@ -1659,6 +1676,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "sComposition": {
         "intent": "side_effect_check",
         "template": "status_based",
@@ -1771,6 +1794,12 @@
         "sickday"
       ],
       "sideEffectPresence": "absent_or_not_observed",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "sComposition": {
         "intent": "side_effect_check",
         "template": "status_based",
@@ -1906,6 +1935,12 @@
         "general"
       ],
       "sideEffectPresence": "not_applicable",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "sComposition": {
         "intent": "continue",
         "template": "status_based",
@@ -2986,7 +3021,7 @@
       },
       "S": "{{drug_subject}}の服用により吐き気・下痢・便秘が出現したため、他剤へ変更となった。",
       "O": "GLP-1受容体作動薬(内服)　処方変更",
-      "A": "{{drug_subject}}の服用による消化器症状を認め、他剤変更の適応があった。",
+      "A": "{{drug_subject}}の服用による消化器症状を認め、他剤変更後の経過確認を要する。",
       "P": "{{drug_subject}}の変更後、血糖上昇や体調変化があればご相談ください。",
       "mergePolicy": {
         "S": {
@@ -3035,14 +3070,14 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}の服用による消化器症状を認め、他剤変更の適応があった。",
+          "text": "{{drug_subject}}の服用による消化器症状を認め、他剤変更後の経過確認を要する。",
           "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "他剤変更の適応"
+            "他剤変更後の経過確認"
           ],
-          "notes": "clinical judgment: treatment change decision; fixed to prevent paraphrase"
+          "notes": "follow-up assessment after treatment change"
         }
       ],
       "PStructured": [
@@ -3094,7 +3129,7 @@
       },
       "S": "{{drug_subject}}の服用により吐き気・下痢・便秘がひどいため、減量となった。",
       "O": "GLP-1受容体作動薬(内服)　減量",
-      "A": "{{drug_subject}}の服用による消化器症状を認め、減量が妥当と判断された。減量後の血糖変動に注意が必要である。",
+      "A": "{{drug_subject}}の服用による消化器症状を認め、減量後の経過確認を要する。",
       "P": "{{drug_subject}}の減量後も消化器症状が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
@@ -3145,16 +3180,14 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}の服用による消化器症状を認め、減量が妥当と判断された。減量後の血糖変動に注意が必要である。",
+          "text": "{{drug_subject}}の服用による消化器症状を認め、減量後の経過確認を要する。",
           "role": "side_effect_assessment",
           "transform": "fixed",
           "safety": "medium",
           "lockTerms": [
-            "減量",
-            "減量が妥当",
-            "血糖変動"
+            "減量後の経過確認"
           ],
-          "notes": "risk: glycemic fluctuation after dose decrease"
+          "notes": "follow-up assessment after dose decrease"
         }
       ],
       "PStructured": [
@@ -3205,7 +3238,7 @@
       },
       "S": "{{drug_subject}}の服用により吐き気・下痢・便秘がひどいため、中止となった。",
       "O": "GLP-1受容体作動薬(内服)　処方中止",
-      "A": "{{drug_subject}}の服用による消化器症状を認め、中止が妥当と判断された。",
+      "A": "{{drug_subject}}の服用による消化器症状を認め、中止後の経過確認を要する。",
       "P": "{{drug_subject}}の中止後、血糖上昇や体調変化があればご相談ください。",
       "mergePolicy": {
         "S": {
@@ -3256,15 +3289,14 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}の服用による消化器症状を認め、中止が妥当と判断された。",
+          "text": "{{drug_subject}}の服用による消化器症状を認め、中止後の経過確認を要する。",
           "role": "treatment_end_assessment",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "中止",
-            "中止が妥当"
+            "中止後の経過確認"
           ],
-          "notes": "clinical judgment: discontinuation decision; fixed to prevent paraphrase"
+          "notes": "follow-up assessment after discontinuation"
         }
       ],
       "PStructured": [
