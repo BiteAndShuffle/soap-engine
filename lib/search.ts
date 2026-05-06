@@ -184,37 +184,45 @@ export interface SuggestionItem {
 }
 
 /**
- * クエリに最も近いブランド名を特定する。
+ * クエリに最も近いブランド名を特定し、UI表示用の正式ブランド名を返す。
  *
- * 照合順:
- *   1) brandNames[i] の正規化 === q
- *   2) brandCatalogAliasMap[brand] のいずれかの正規化 === q
- *   3) brandNames[i] の正規化.startsWith(q)
- *   4) brandCatalogAliasMap[brand] のいずれかの正規化.startsWith(q)
- *   5) brandNames[i] の正規化.includes(q)
+ * 【重要】戻り値の不変条件:
+ *   - 必ず drug.brandNames[] の要素をそのまま返す（正式表示名）
+ *   - alias / normalized token / raw input / partial match string を返してはいけない
+ *   - 戻り値は drugDisplayLabel / matchedBrandName としてUIに直接表示される前提である
+ *   - 照合はクエリ（正規化済み）との比較に alias を使うが、返すのは常に正式ブランド名
+ *
+ * 照合順（優先度 高→低）:
+ *   1) brandNames[i] の正規化 === q（正式名と完全一致）
+ *   2) brandCatalogAliasMap[brand] のいずれか === q（エイリアスと完全一致）
+ *   3) brandNames[i] の正規化.startsWith(q)（正式名の前方一致）
+ *   4) brandCatalogAliasMap[brand] のいずれか.startsWith(q)（エイリアスの前方一致）
+ *   5) brandNames[i] の正規化.includes(q)（正式名の部分一致）
+ *
+ * いずれにも一致しない場合は undefined を返す（DashboardClient 側でフォールバック）。
  */
 function resolveBrandName(entry: SearchEntry, q: string): string | undefined {
-  // 1. brandNames 完全一致
-  for (const brand of entry.brandNames) {
-    if (normalizeText(brand) === q) return brand
+  // 1. 正式ブランド名と完全一致
+  for (const officialBrandName of entry.brandNames) {
+    if (normalizeText(officialBrandName) === q) return officialBrandName
   }
-  // 2. brandCatalog aliases 完全一致
-  for (const brand of entry.brandNames) {
-    const aliases = entry.brandCatalogAliasMap[brand] ?? []
-    if (aliases.some(a => a === q)) return brand
+  // 2. ブランド固有エイリアスと完全一致 → 対応する正式ブランド名を返す
+  for (const officialBrandName of entry.brandNames) {
+    const aliases = entry.brandCatalogAliasMap[officialBrandName] ?? []
+    if (aliases.some(a => a === q)) return officialBrandName
   }
-  // 3. brandNames 前方一致
-  for (const brand of entry.brandNames) {
-    if (normalizeText(brand).startsWith(q)) return brand
+  // 3. 正式ブランド名の前方一致
+  for (const officialBrandName of entry.brandNames) {
+    if (normalizeText(officialBrandName).startsWith(q)) return officialBrandName
   }
-  // 4. brandCatalog aliases 前方一致
-  for (const brand of entry.brandNames) {
-    const aliases = entry.brandCatalogAliasMap[brand] ?? []
-    if (aliases.some(a => a.startsWith(q))) return brand
+  // 4. ブランド固有エイリアスの前方一致 → 対応する正式ブランド名を返す
+  for (const officialBrandName of entry.brandNames) {
+    const aliases = entry.brandCatalogAliasMap[officialBrandName] ?? []
+    if (aliases.some(a => a.startsWith(q))) return officialBrandName
   }
-  // 5. brandNames 部分一致
-  for (const brand of entry.brandNames) {
-    if (normalizeText(brand).includes(q)) return brand
+  // 5. 正式ブランド名の部分一致
+  for (const officialBrandName of entry.brandNames) {
+    if (normalizeText(officialBrandName).includes(q)) return officialBrandName
   }
   return undefined
 }
