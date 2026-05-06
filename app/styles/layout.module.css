@@ -637,7 +637,46 @@
   /* padding は子要素に委譲 */
   padding: 0;
   box-sizing: border-box;
+  position: relative;
 }
+
+/* Express候補ポップアップ: thirdPanelInner 内上部に固定表示 */
+.expressPopup {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: #fff;
+  border-bottom: 2px solid #0a84ff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 0.4rem 0.5rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.expressPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.15rem;
+}
+.expressPopupTitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #003da0;
+  letter-spacing: 0.02em;
+}
+.expressPopupClose {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: #888;
+  cursor: pointer;
+  padding: 0 0.1rem;
+  line-height: 1;
+}
+.expressPopupClose:hover { color: #333; }
 
 /* 上部スクロール可能エリア（薬剤追加・診療領域） */
 .thirdPanelScrollArea {

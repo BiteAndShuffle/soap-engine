@@ -71,65 +71,30 @@ const STATUSES: StatusDef[] = [
 // ─────────────────────────────────────────────────────────────
 
 interface MedicalAreaAccordionProps {
+  /** サブカテゴリボタン押下時コールバック。Express候補有無に関わらず常に呼ばれる */
   onSubcategorySelect: (label: string) => void
-  expressCandidates?: ExpressCandidate[]
-  activeExpressKeys?: Set<string>
-  onExpressAdd?: (moduleId: string, defaultScenarioId: string, defaultBrandName?: string) => void
+  /** Express候補を持つサブカテゴリラベルのセット（バッジ表示用） */
+  expressSubcats?: Set<string>
+  /** 現在ポップアップ表示中のサブカテゴリ（アクティブ状態表示用） */
+  activeSubcat?: string | null
 }
 
 function MedicalAreaAccordion({
   onSubcategorySelect,
-  expressCandidates = [],
-  activeExpressKeys,
-  onExpressAdd,
+  expressSubcats,
+  activeSubcat,
 }: MedicalAreaAccordionProps) {
   const [openArea, setOpenArea] = useState<string | null>(null)
-  // 選択中のサブカテゴリ（Express候補の表示トリガー）
-  const [selectedSubcat, setSelectedSubcat] = useState<string | null>(null)
-
-  // expressCategory 単位で候補をグルーピング
-  const expressByCat: Record<string, {
-    groupOrder: string[]
-    groupMap: Record<string, { subGroupOrder: string[]; subGroupMap: Record<string, ExpressCandidate[]> }>
-  }> = {}
-  for (const c of expressCandidates) {
-    const cat = c.expressCategory || c.category
-    const grp = c.expressGroup || c.subCategory || cat
-    const sub = c.expressSubGroup || grp
-    if (!expressByCat[cat]) expressByCat[cat] = { groupOrder: [], groupMap: {} }
-    const catEntry = expressByCat[cat]
-    if (!catEntry.groupMap[grp]) {
-      catEntry.groupOrder.push(grp)
-      catEntry.groupMap[grp] = { subGroupOrder: [], subGroupMap: {} }
-    }
-    const grpEntry = catEntry.groupMap[grp]
-    if (!grpEntry.subGroupMap[sub]) {
-      grpEntry.subGroupOrder.push(sub)
-      grpEntry.subGroupMap[sub] = []
-    }
-    grpEntry.subGroupMap[sub].push(c)
-  }
-
-  function handleSubcatClick(subcatLabel: string) {
-    // 同じサブカテゴリを再押しで選択解除、別のサブカテゴリで切り替え
-    setSelectedSubcat(prev => prev === subcatLabel ? null : subcatLabel)
-    onSubcategorySelect(subcatLabel)
-  }
 
   return (
     <div className={s.medAreaWrap}>
       {MEDICAL_AREAS.map(area => {
         const isOpen = openArea === area.label
-        const expressEntry = expressByCat[area.label]
         return (
           <div key={area.label} className={s.medAreaGroup}>
             <button
               className={[s.medAreaBtn, isOpen ? s.medAreaBtnOpen : ''].join(' ')}
-              onClick={() => {
-                setOpenArea(prev => prev === area.label ? null : area.label)
-                // 別エリアを開いたらサブカテゴリ選択をリセット
-                setSelectedSubcat(null)
-              }}
+              onClick={() => setOpenArea(prev => prev === area.label ? null : area.label)}
               aria-expanded={isOpen}
             >
               <span className={s.medAreaLabel}>{area.label}</span>
@@ -137,57 +102,19 @@ function MedicalAreaAccordion({
             </button>
             {isOpen && (
               <div className={s.medSubcatWrap}>
-                {/* 通常サブカテゴリ（検索クエリ送出用）。選択中はアクティブスタイル */}
                 {area.subcategories.map(sub => {
-                  const isSelected = selectedSubcat === sub
-                  // このサブカテゴリに対応するExpress候補があるか
-                  const hasExpress = expressEntry != null && expressEntry.groupOrder.some(
-                    grp => grp === sub || expressEntry.groupMap[grp].subGroupOrder.some(sg => sg === sub)
-                  )
+                  const hasExpress = expressSubcats?.has(sub) ?? false
+                  const isActive = activeSubcat === sub
                   return (
-                    <div key={sub}>
-                      <button
-                        className={[s.medSubcatBtn, isSelected ? s.medSubcatBtnActive : ''].join(' ')}
-                        onClick={() => handleSubcatClick(sub)}
-                        aria-pressed={isSelected}
-                      >
-                        {sub}
-                        {hasExpress && <span className={s.medSubcatExpressBadge}>›</span>}
-                      </button>
-                      {/* Express候補: このサブカテゴリが選択中かつ一致するグループがある場合のみ表示 */}
-                      {isSelected && expressEntry && onExpressAdd && (() => {
-                        const matchedGroups = expressEntry.groupOrder.filter(
-                          grp => grp === sub || expressEntry.groupMap[grp].subGroupOrder.some(sg => sg === sub)
-                        )
-                        if (matchedGroups.length === 0) return null
-                        return matchedGroups.map(grp => (
-                          <div key={grp} className={s.expressGroupBlock}>
-                            {expressEntry.groupMap[grp].subGroupOrder.map(sg => (
-                              <div key={sg} className={s.expressSubGroup}>
-                                <div className={s.expressSubGroupLabel}>{sg}</div>
-                                <div className={s.expressGrid}>
-                                  {expressEntry.groupMap[grp].subGroupMap[sg].map(c => {
-                                    const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
-                                    const isActive = activeExpressKeys?.has(expressKey) ?? false
-                                    return (
-                                      <button
-                                        key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
-                                        className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
-                                        onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
-                                        title={`${area.label} › ${grp} › ${sg}`}
-                                        aria-pressed={isActive}
-                                      >
-                                        {c.label}
-                                      </button>
-                                    )
-                                  })}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        ))
-                      })()}
-                    </div>
+                    <button
+                      key={sub}
+                      className={[s.medSubcatBtn, isActive ? s.medSubcatBtnActive : ''].join(' ')}
+                      onClick={() => onSubcategorySelect(sub)}
+                      aria-pressed={isActive}
+                    >
+                      {sub}
+                      {hasExpress && <span className={s.medSubcatExpressBadge}>›</span>}
+                    </button>
                   )
                 })}
               </div>
@@ -386,13 +313,87 @@ export default function ThirdPanel({
   // S先頭文ボタン群: FEATURE_S_BUTTONS で制御
   const showSButtons = FEATURE_S_BUTTONS && sPlacementEnabled
 
+  // ── Express候補ポップアップ管理 ──────────────────────────────
+  // expressCategory/Group/SubGroup でグルーピングしたマップ（メモ化）
+  const expressByCat = useCallback(() => {
+    const map: Record<string, {
+      groupOrder: string[]
+      groupMap: Record<string, { subGroupOrder: string[]; subGroupMap: Record<string, ExpressCandidate[]> }>
+    }> = {}
+    for (const c of expressCandidates) {
+      const cat = c.expressCategory || c.category
+      const grp = c.expressGroup || c.subCategory || cat
+      const sub = c.expressSubGroup || grp
+      if (!map[cat]) map[cat] = { groupOrder: [], groupMap: {} }
+      const catEntry = map[cat]
+      if (!catEntry.groupMap[grp]) {
+        catEntry.groupOrder.push(grp)
+        catEntry.groupMap[grp] = { subGroupOrder: [], subGroupMap: {} }
+      }
+      const grpEntry = catEntry.groupMap[grp]
+      if (!grpEntry.subGroupMap[sub]) {
+        grpEntry.subGroupOrder.push(sub)
+        grpEntry.subGroupMap[sub] = []
+      }
+      grpEntry.subGroupMap[sub].push(c)
+    }
+    return map
+  }, [expressCandidates])()
+
+  // expressGroup/expressSubGroup → サブカテゴリ名のセット（バッジ表示用）
+  const expressSubcats = new Set<string>()
+  for (const catEntry of Object.values(expressByCat)) {
+    for (const grp of catEntry.groupOrder) {
+      expressSubcats.add(grp)
+      for (const sub of catEntry.groupMap[grp].subGroupOrder) {
+        expressSubcats.add(sub)
+      }
+    }
+  }
+
+  // 現在ポップアップ表示中のサブカテゴリ（null = 非表示）
+  const [expressPopupSubcat, setExpressPopupSubcat] = useState<string | null>(null)
+
+  // サブカテゴリボタン押下: Express候補があればポップアップ表示。なければ通常検索送出
   const handleSubcategorySelect = useCallback((label: string) => {
+    if (expressSubcats.has(label)) {
+      // 同じボタン再押しでポップアップを閉じる、別ボタンで切り替え
+      setExpressPopupSubcat(prev => prev === label ? null : label)
+    } else {
+      setExpressPopupSubcat(null)
+    }
     if (onSubcategorySelect) {
       onSubcategorySelect(label)
     } else {
       onComposeSearchChange?.(label)
     }
-  }, [onSubcategorySelect, onComposeSearchChange])
+  }, [expressSubcats, onSubcategorySelect, onComposeSearchChange])
+
+  // ポップアップに表示する候補を計算
+  const popupCandidates: Array<{ grp: string; sub: string; candidates: ExpressCandidate[] }> = []
+  if (expressPopupSubcat) {
+    for (const catEntry of Object.values(expressByCat)) {
+      for (const grp of catEntry.groupOrder) {
+        if (grp === expressPopupSubcat) {
+          for (const sub of catEntry.groupMap[grp].subGroupOrder) {
+            popupCandidates.push({ grp, sub, candidates: catEntry.groupMap[grp].subGroupMap[sub] })
+          }
+        } else {
+          for (const sub of catEntry.groupMap[grp].subGroupOrder) {
+            if (sub === expressPopupSubcat) {
+              popupCandidates.push({ grp, sub, candidates: catEntry.groupMap[grp].subGroupMap[sub] })
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // ブランドボタン押下: 追加してポップアップを閉じる
+  function handleExpressAddAndClose(moduleId: string, defaultScenarioId: string, defaultBrandName?: string) {
+    onExpressAdd?.(moduleId, defaultScenarioId, defaultBrandName)
+    setExpressPopupSubcat(null)
+  }
 
   // 合成窓: 1剤目シナリオ確定後（thirdPanelEnabled）のみ表示
   // 初期状態・薬剤未選択・シナリオ未選択では非表示
@@ -400,8 +401,44 @@ export default function ThirdPanel({
   return (
     <div className={[s.thirdPanel, thirdPanelEnabled ? s.expandedPanel : s.collapsedPanel].join(' ')}>
       <div className={s.thirdPanelInner}>
+        {/* Express候補ポップアップ: 診療領域サブカテゴリ押下時に上部オーバーレイ表示 */}
+        {expressPopupSubcat && popupCandidates.length > 0 && (
+          <div className={s.expressPopup} role="dialog" aria-label="Express候補">
+            <div className={s.expressPopupHeader}>
+              <span className={s.expressPopupTitle}>{expressPopupSubcat}</span>
+              <button
+                className={s.expressPopupClose}
+                onClick={() => setExpressPopupSubcat(null)}
+                aria-label="閉じる"
+              >×</button>
+            </div>
+            {popupCandidates.map(({ grp, sub, candidates }) => (
+              <div key={`${grp}__${sub}`} className={s.expressSubGroup}>
+                <div className={s.expressSubGroupLabel}>{sub}</div>
+                <div className={s.expressGrid}>
+                  {candidates.map(c => {
+                    const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
+                    const isActive = activeExpressKeys?.has(expressKey) ?? false
+                    return (
+                      <button
+                        key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                        className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                        onClick={() => handleExpressAddAndClose(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                        title={`${grp} › ${sub}`}
+                        aria-pressed={isActive}
+                      >
+                        {c.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className={s.thirdPanelScrollArea}>
-          {/* 薬剤追加セクション: インライン検索のみ（Express候補はここに表示しない） */}
+          {/* 薬剤追加セクション: インライン検索のみ */}
           {thirdPanelEnabled && onComposeSearchChange && onSelectComposeDrug && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>薬剤追加</div>
@@ -414,15 +451,14 @@ export default function ThirdPanel({
             </div>
           )}
 
-          {/* 診療領域: シナリオ確定後のみ。Express候補はアコーディオン内に統合表示 */}
+          {/* 診療領域: シナリオ確定後のみ。Express候補はポップアップで上部表示 */}
           {thirdPanelEnabled && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>診療領域</div>
               <MedicalAreaAccordion
                 onSubcategorySelect={handleSubcategorySelect}
-                expressCandidates={expressCandidates}
-                activeExpressKeys={activeExpressKeys}
-                onExpressAdd={onExpressAdd}
+                expressSubcats={expressSubcats}
+                activeSubcat={expressPopupSubcat}
               />
             </div>
           )}
