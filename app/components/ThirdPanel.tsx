@@ -84,6 +84,8 @@ function MedicalAreaAccordion({
   onExpressAdd,
 }: MedicalAreaAccordionProps) {
   const [openArea, setOpenArea] = useState<string | null>(null)
+  // 選択中のサブカテゴリ（Express候補の表示トリガー）
+  const [selectedSubcat, setSelectedSubcat] = useState<string | null>(null)
 
   // expressCategory 単位で候補をグルーピング
   const expressByCat: Record<string, {
@@ -108,6 +110,12 @@ function MedicalAreaAccordion({
     grpEntry.subGroupMap[sub].push(c)
   }
 
+  function handleSubcatClick(subcatLabel: string) {
+    // 同じサブカテゴリを再押しで選択解除、別のサブカテゴリで切り替え
+    setSelectedSubcat(prev => prev === subcatLabel ? null : subcatLabel)
+    onSubcategorySelect(subcatLabel)
+  }
+
   return (
     <div className={s.medAreaWrap}>
       {MEDICAL_AREAS.map(area => {
@@ -117,7 +125,11 @@ function MedicalAreaAccordion({
           <div key={area.label} className={s.medAreaGroup}>
             <button
               className={[s.medAreaBtn, isOpen ? s.medAreaBtnOpen : ''].join(' ')}
-              onClick={() => setOpenArea(prev => prev === area.label ? null : area.label)}
+              onClick={() => {
+                setOpenArea(prev => prev === area.label ? null : area.label)
+                // 別エリアを開いたらサブカテゴリ選択をリセット
+                setSelectedSubcat(null)
+              }}
               aria-expanded={isOpen}
             >
               <span className={s.medAreaLabel}>{area.label}</span>
@@ -125,40 +137,59 @@ function MedicalAreaAccordion({
             </button>
             {isOpen && (
               <div className={s.medSubcatWrap}>
-                {/* Express候補: このカテゴリに紐づく候補をグループ > サブグループ > ボタンで表示 */}
-                {expressEntry && onExpressAdd && expressEntry.groupOrder.map(grp => (
-                  <div key={grp} className={s.expressGroupBlock}>
-                    <div className={s.expressGroupLabel}>{grp}</div>
-                    {expressEntry.groupMap[grp].subGroupOrder.map(sub => (
-                      <div key={sub} className={s.expressSubGroup}>
-                        <div className={s.expressSubGroupLabel}>{sub}</div>
-                        <div className={s.expressGrid}>
-                          {expressEntry.groupMap[grp].subGroupMap[sub].map(c => {
-                            const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
-                            const isActive = activeExpressKeys?.has(expressKey) ?? false
-                            return (
-                              <button
-                                key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
-                                className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
-                                onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
-                                title={`${area.label} › ${grp} › ${sub}`}
-                                aria-pressed={isActive}
-                              >
-                                {c.label}
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-                {/* 通常サブカテゴリ（検索クエリ送出用） */}
-                {area.subcategories.map(sub => (
-                  <button key={sub} className={s.medSubcatBtn} onClick={() => onSubcategorySelect(sub)}>
-                    {sub}
-                  </button>
-                ))}
+                {/* 通常サブカテゴリ（検索クエリ送出用）。選択中はアクティブスタイル */}
+                {area.subcategories.map(sub => {
+                  const isSelected = selectedSubcat === sub
+                  // このサブカテゴリに対応するExpress候補があるか
+                  const hasExpress = expressEntry != null && expressEntry.groupOrder.some(
+                    grp => grp === sub || expressEntry.groupMap[grp].subGroupOrder.some(sg => sg === sub)
+                  )
+                  return (
+                    <div key={sub}>
+                      <button
+                        className={[s.medSubcatBtn, isSelected ? s.medSubcatBtnActive : ''].join(' ')}
+                        onClick={() => handleSubcatClick(sub)}
+                        aria-pressed={isSelected}
+                      >
+                        {sub}
+                        {hasExpress && <span className={s.medSubcatExpressBadge}>›</span>}
+                      </button>
+                      {/* Express候補: このサブカテゴリが選択中かつ一致するグループがある場合のみ表示 */}
+                      {isSelected && expressEntry && onExpressAdd && (() => {
+                        const matchedGroups = expressEntry.groupOrder.filter(
+                          grp => grp === sub || expressEntry.groupMap[grp].subGroupOrder.some(sg => sg === sub)
+                        )
+                        if (matchedGroups.length === 0) return null
+                        return matchedGroups.map(grp => (
+                          <div key={grp} className={s.expressGroupBlock}>
+                            {expressEntry.groupMap[grp].subGroupOrder.map(sg => (
+                              <div key={sg} className={s.expressSubGroup}>
+                                <div className={s.expressSubGroupLabel}>{sg}</div>
+                                <div className={s.expressGrid}>
+                                  {expressEntry.groupMap[grp].subGroupMap[sg].map(c => {
+                                    const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
+                                    const isActive = activeExpressKeys?.has(expressKey) ?? false
+                                    return (
+                                      <button
+                                        key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                                        className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                                        onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                                        title={`${area.label} › ${grp} › ${sg}`}
+                                        aria-pressed={isActive}
+                                      >
+                                        {c.label}
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ))
+                      })()}
+                    </div>
+                  )
+                })}
               </div>
             )}
           </div>

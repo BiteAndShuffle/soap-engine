@@ -1582,6 +1582,16 @@
   min-height: 26px;
 }
 .medSubcatBtn:hover { background: #dce8ff; border-color: #0a84ff; color: #003da0; }
+.medSubcatBtnActive {
+  background: #dce8ff;
+  border-color: #0a84ff;
+  color: #003da0;
+}
+.medSubcatExpressBadge {
+  margin-left: 0.25rem;
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
 
 /* ─────────────────────────────────────────────────────────────
    エクスプレス追加ボタン
