@@ -70,12 +70,49 @@ const STATUSES: StatusDef[] = [
 // 診療領域アコーディオン
 // ─────────────────────────────────────────────────────────────
 
-function MedicalAreaAccordion({ onSubcategorySelect }: { onSubcategorySelect: (label: string) => void }) {
+interface MedicalAreaAccordionProps {
+  onSubcategorySelect: (label: string) => void
+  expressCandidates?: ExpressCandidate[]
+  activeExpressKeys?: Set<string>
+  onExpressAdd?: (moduleId: string, defaultScenarioId: string, defaultBrandName?: string) => void
+}
+
+function MedicalAreaAccordion({
+  onSubcategorySelect,
+  expressCandidates = [],
+  activeExpressKeys,
+  onExpressAdd,
+}: MedicalAreaAccordionProps) {
   const [openArea, setOpenArea] = useState<string | null>(null)
+
+  // expressCategory 単位で候補をグルーピング
+  const expressByCat: Record<string, {
+    groupOrder: string[]
+    groupMap: Record<string, { subGroupOrder: string[]; subGroupMap: Record<string, ExpressCandidate[]> }>
+  }> = {}
+  for (const c of expressCandidates) {
+    const cat = c.expressCategory || c.category
+    const grp = c.expressGroup || c.subCategory || cat
+    const sub = c.expressSubGroup || grp
+    if (!expressByCat[cat]) expressByCat[cat] = { groupOrder: [], groupMap: {} }
+    const catEntry = expressByCat[cat]
+    if (!catEntry.groupMap[grp]) {
+      catEntry.groupOrder.push(grp)
+      catEntry.groupMap[grp] = { subGroupOrder: [], subGroupMap: {} }
+    }
+    const grpEntry = catEntry.groupMap[grp]
+    if (!grpEntry.subGroupMap[sub]) {
+      grpEntry.subGroupOrder.push(sub)
+      grpEntry.subGroupMap[sub] = []
+    }
+    grpEntry.subGroupMap[sub].push(c)
+  }
+
   return (
     <div className={s.medAreaWrap}>
       {MEDICAL_AREAS.map(area => {
         const isOpen = openArea === area.label
+        const expressEntry = expressByCat[area.label]
         return (
           <div key={area.label} className={s.medAreaGroup}>
             <button
@@ -88,6 +125,35 @@ function MedicalAreaAccordion({ onSubcategorySelect }: { onSubcategorySelect: (l
             </button>
             {isOpen && (
               <div className={s.medSubcatWrap}>
+                {/* Express候補: このカテゴリに紐づく候補をグループ > サブグループ > ボタンで表示 */}
+                {expressEntry && onExpressAdd && expressEntry.groupOrder.map(grp => (
+                  <div key={grp} className={s.expressGroupBlock}>
+                    <div className={s.expressGroupLabel}>{grp}</div>
+                    {expressEntry.groupMap[grp].subGroupOrder.map(sub => (
+                      <div key={sub} className={s.expressSubGroup}>
+                        <div className={s.expressSubGroupLabel}>{sub}</div>
+                        <div className={s.expressGrid}>
+                          {expressEntry.groupMap[grp].subGroupMap[sub].map(c => {
+                            const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
+                            const isActive = activeExpressKeys?.has(expressKey) ?? false
+                            return (
+                              <button
+                                key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                                className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                                onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                                title={`${area.label} › ${grp} › ${sub}`}
+                                aria-pressed={isActive}
+                              >
+                                {c.label}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+                {/* 通常サブカテゴリ（検索クエリ送出用） */}
                 {area.subcategories.map(sub => (
                   <button key={sub} className={s.medSubcatBtn} onClick={() => onSubcategorySelect(sub)}>
                     {sub}
@@ -317,75 +383,16 @@ export default function ThirdPanel({
             </div>
           )}
 
-          {/* 診療領域: シナリオ確定後のみ。Express候補はここに3階層で統合表示 */}
+          {/* 診療領域: シナリオ確定後のみ。Express候補はアコーディオン内に統合表示 */}
           {thirdPanelEnabled && (
             <div className={s.thirdSection}>
               <div className={s.sActionHeading}>診療領域</div>
-              {/* Express候補: expressCategory > expressGroup > expressSubGroup > ブランドボタン */}
-              {expressCandidates.length > 0 && onExpressAdd && (() => {
-                // 3階層マップを構築
-                const categoryOrder: string[] = []
-                const categoryMap: Record<string, {
-                  groupOrder: string[]
-                  groupMap: Record<string, {
-                    subGroupOrder: string[]
-                    subGroupMap: Record<string, ExpressCandidate[]>
-                  }>
-                }> = {}
-                for (const c of expressCandidates) {
-                  const cat = c.expressCategory || c.category
-                  const grp = c.expressGroup || c.subCategory || cat
-                  const sub = c.expressSubGroup || grp
-                  if (!categoryMap[cat]) {
-                    categoryOrder.push(cat)
-                    categoryMap[cat] = { groupOrder: [], groupMap: {} }
-                  }
-                  const catEntry = categoryMap[cat]
-                  if (!catEntry.groupMap[grp]) {
-                    catEntry.groupOrder.push(grp)
-                    catEntry.groupMap[grp] = { subGroupOrder: [], subGroupMap: {} }
-                  }
-                  const grpEntry = catEntry.groupMap[grp]
-                  if (!grpEntry.subGroupMap[sub]) {
-                    grpEntry.subGroupOrder.push(sub)
-                    grpEntry.subGroupMap[sub] = []
-                  }
-                  grpEntry.subGroupMap[sub].push(c)
-                }
-                return categoryOrder.map(cat => (
-                  <div key={cat} className={s.expressCategoryGroup}>
-                    <div className={s.expressCategoryLabel}>{cat}</div>
-                    {categoryMap[cat].groupOrder.map(grp => (
-                      <div key={grp} className={s.expressGroupBlock}>
-                        <div className={s.expressGroupLabel}>{grp}</div>
-                        {categoryMap[cat].groupMap[grp].subGroupOrder.map(sub => (
-                          <div key={sub} className={s.expressSubGroup}>
-                            <div className={s.expressSubGroupLabel}>{sub}</div>
-                            <div className={s.expressGrid}>
-                              {categoryMap[cat].groupMap[grp].subGroupMap[sub].map(c => {
-                                const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
-                                const isActive = activeExpressKeys?.has(expressKey) ?? false
-                                return (
-                                  <button
-                                    key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
-                                    className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
-                                    onClick={() => onExpressAdd(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
-                                    title={`${cat} › ${grp} › ${sub}`}
-                                    aria-pressed={isActive}
-                                  >
-                                    {c.label}
-                                  </button>
-                                )
-                              })}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                ))
-              })()}
-              <MedicalAreaAccordion onSubcategorySelect={handleSubcategorySelect} />
+              <MedicalAreaAccordion
+                onSubcategorySelect={handleSubcategorySelect}
+                expressCandidates={expressCandidates}
+                activeExpressKeys={activeExpressKeys}
+                onExpressAdd={onExpressAdd}
+              />
             </div>
           )}
         </div>
