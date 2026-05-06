@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useCallback, useId } from 'react'
+import { useRef, useState, useCallback, useEffect, useId } from 'react'
 import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
 import type { Scenario } from '../../lib/types'
@@ -353,6 +353,19 @@ export default function ThirdPanel({
 
   // 現在ポップアップ表示中のサブカテゴリ（null = 非表示）
   const [expressPopupSubcat, setExpressPopupSubcat] = useState<string | null>(null)
+  const expressPopupRef = useRef<HTMLDivElement>(null)
+
+  // ポップアップ外クリックで閉じる
+  useEffect(() => {
+    if (!expressPopupSubcat) return
+    function handleMouseDown(e: MouseEvent) {
+      if (expressPopupRef.current && !expressPopupRef.current.contains(e.target as Node)) {
+        setExpressPopupSubcat(null)
+      }
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [expressPopupSubcat])
 
   // サブカテゴリボタン押下: Express候補があればポップアップ表示。なければ通常検索送出
   const handleSubcategorySelect = useCallback((label: string) => {
@@ -389,10 +402,9 @@ export default function ThirdPanel({
     }
   }
 
-  // ブランドボタン押下: 追加してポップアップを閉じる
+  // ブランドボタン押下: 追加（トグル）してもポップアップは閉じない
   function handleExpressAddAndClose(moduleId: string, defaultScenarioId: string, defaultBrandName?: string) {
     onExpressAdd?.(moduleId, defaultScenarioId, defaultBrandName)
-    setExpressPopupSubcat(null)
   }
 
   // 合成窓: 1剤目シナリオ確定後（thirdPanelEnabled）のみ表示
@@ -403,7 +415,7 @@ export default function ThirdPanel({
       <div className={s.thirdPanelInner}>
         {/* Express候補ポップアップ: 診療領域サブカテゴリ押下時に上部オーバーレイ表示 */}
         {expressPopupSubcat && popupCandidates.length > 0 && (
-          <div className={s.expressPopup} role="dialog" aria-label="Express候補">
+          <div ref={expressPopupRef} className={s.expressPopup} role="dialog" aria-label="Express候補">
             <div className={s.expressPopupHeader}>
               <span className={s.expressPopupTitle}>{expressPopupSubcat}</span>
               <button
