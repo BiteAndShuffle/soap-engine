@@ -567,7 +567,7 @@
   },
   "expressModes": [
     {
-      "enabled": true,
+      "enabled": false,
       "expressCategory": "内科",
       "expressGroup": "糖尿病",
       "expressSubGroup": "GLP-1内服",

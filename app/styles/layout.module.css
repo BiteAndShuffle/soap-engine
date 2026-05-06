@@ -1615,11 +1615,33 @@
   color: #fff;
 }
 .expressBtnActive:hover { background: #247a4c; border-color: #1a5c38; color: #fff; }
+.expressCategoryGroup {
+  margin-bottom: 0.6rem;
+}
+.expressCategoryLabel {
+  font-size: 0.72rem;
+  color: #374151;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.25rem;
+}
+.expressGroupBlock {
+  margin-left: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+.expressGroupLabel {
+  font-size: 0.7rem;
+  color: #4b5563;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.2rem;
+}
 .expressSubGroup {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   margin-bottom: 0.4rem;
+  margin-left: 0.6rem;
 }
 .expressSubGroupLabel {
   font-size: 0.7rem;
