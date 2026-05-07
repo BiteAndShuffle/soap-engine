@@ -285,8 +285,14 @@ interface ThirdPanelProps {
    * Express ボタンのアクティブ状態表示に使用する。
    */
   activeExpressKeys?: Set<string>
-  /** エクスプレス追加ハンドラ */
-  onExpressAdd?: (moduleId: string, defaultScenarioId: string, defaultBrandName?: string) => void
+  /**
+   * エクスプレス追加ハンドラ。
+   * @param moduleId         対象モジュールID
+   * @param defaultScenarioId scenario.id（非 globalId）
+   * @param brandName        brandCatalog 解決キー（先発名）。handlingTags / アドオンフィルタリングに使用
+   * @param displayName      SOAP {{drug_subject}} / ノード表示名。GEモード時はGE名、先発モード時は brandName と同値
+   */
+  onExpressAdd?: (moduleId: string, defaultScenarioId: string, brandName?: string, displayName?: string) => void
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -412,13 +418,15 @@ export default function ThirdPanel({
     }
   }
 
-  // ブランドボタン押下: GE/先発モードに応じた薬剤名で追加（トグル）。ポップアップは閉じない
+  // ブランドボタン押下: ポップアップは閉じない
+  // brandName（先発名）は brandCatalog 解決キーとして常に defaultBrandName を使用する。
+  // displayName（表示/SOAP主語）だけ GE/先発モードで切り替える。
   function handleExpressBrandAdd(c: ExpressCandidate) {
-    // GEモード: genericLabel が存在すれば GE名を使用、なければ先発名にフォールバック
-    const resolvedBrand = expressUseGE
-      ? (c.genericLabel ?? c.defaultBrandName)
-      : c.defaultBrandName
-    onExpressAdd?.(c.moduleId, c.defaultScenarioId, resolvedBrand)
+    const brandName = c.defaultBrandName                             // brandCatalog キー: 常に先発名
+    const displayName = expressUseGE
+      ? (c.genericLabel ?? c.defaultBrandName)                       // GEモード: GE名（なければ先発名）
+      : c.defaultBrandName                                           // 先発モード: 先発名
+    onExpressAdd?.(c.moduleId, c.defaultScenarioId, brandName, displayName)
   }
 
   // 合成窓: 1剤目シナリオ確定後（thirdPanelEnabled）のみ表示
@@ -465,11 +473,9 @@ export default function ThirdPanel({
                   <div className={s.expressSubGroupLabel}>{sub}</div>
                   <div className={s.expressGrid}>
                     {sorted.map(c => {
-                      // アクティブキー: GE/先発モードに応じた resolvedBrand で照合
-                      const resolvedBrand = expressUseGE
-                        ? (c.genericLabel ?? c.defaultBrandName ?? '')
-                        : (c.defaultBrandName ?? '')
-                      const expressKey = `${c.moduleId}__${resolvedBrand}__${c.defaultScenarioGlobalId}`
+                      // アクティブキー: matchedBrandName は常に defaultBrandName（先発名）
+                      // GE/先発モードに関わらずここは先発名で照合する
+                      const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
                       const isActive = activeExpressKeys?.has(expressKey) ?? false
                       const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
                       return (
