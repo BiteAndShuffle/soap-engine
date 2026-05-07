@@ -688,7 +688,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
       setActiveModuleData(mod)
       setActiveBrandName(item.matchedBrandName)
-      setActiveDrugDisplayName(undefined) // 通常フローでは displayName を使わない
+      // displayName が指定されている場合（Express GEモード等）はその名前を {{drug_subject}} に使う
+      // 通常フローでは undefined（activeBrandName にフォールバック）
+      setActiveDrugDisplayName(
+        item.displayName !== undefined && item.displayName !== item.matchedBrandName
+          ? item.displayName
+          : undefined,
+      )
       setDrugSelected(true)
       setSelectedScenarioId(null)
       setPrimaryBaseFields(EMPTY_FIELDS)
@@ -1016,9 +1022,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ─────────────────────────────────────────────────────────────
   // handleExpressAdd
   //
-  // エクスプレスモードから呼ばれる。
-  // 1剤目未確定 → そのモジュールを1剤目として選択 + シナリオ確定
-  // 1剤目確定済み → ノードとして追加 + シナリオを即時確定
+  // エクスプレスモードから呼ばれる。通常フローと同じ状態を組み立てるショートカット。
+  //
+  // 1剤目未確定 → handleSelectDrugSuggestion と同じ状態遷移 + シナリオ即時確定
+  //               （通常: 検索→薬剤選択→テンプレート選択 の一括実行）
+  // 1剤目確定済み → handleComposeDrugSelect と同じ状態遷移 + シナリオ即時確定
+  //               （通常: compose検索→薬剤選択→テンプレート選択 の一括実行）
+  //
+  // brandName (先発名/brandCatalogキー) と displayName (表示名/GE名) は分離して管理する。
+  // → 詳細は handleSelectDrugSuggestion / handleComposeDrugSelect のコメント参照
   // ─────────────────────────────────────────────────────────────
 
   const handleExpressAdd = useCallback((
@@ -1043,19 +1055,26 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const isPrimaryEmpty = primaryScenarioRef.current === undefined && composeNodesRef.current.length === 0
 
       if (isPrimaryEmpty) {
-        // 1剤目として追加
-        // activeBrandName: brandCatalog 解決キー（先発名）を維持
-        // activeDrugDisplayName: GEモード時はGE名、先発モード時は undefined（activeBrandName にフォールバック）
+        // ── 1剤目として追加（handleSelectDrugSuggestion と同じ状態遷移 + シナリオ即時確定）──
+        // handleSelectDrugSuggestion との差分:
+        //   - selectedScenarioId を null にリセットせず globalId に確定
+        //   - selectedGroup を sc から解決してセット
+        //   - composeSearch をクリア（サブカテゴリ選択で設定された値をリセット）
         setActiveModuleData(mod)
         setActiveBrandName(resolvedBrandKey)
-        setActiveDrugDisplayName(displayName !== resolvedBrandKey ? displayName : undefined)
+        // displayName が指定されていて brandKey と異なる場合のみ activeDrugDisplayName に設定
+        // （handleSelectDrugSuggestion と同じロジック）
+        setActiveDrugDisplayName(
+          resolvedDisplayName !== resolvedBrandKey ? resolvedDisplayName : undefined,
+        )
         setDrugSelected(true)
         setComposeNodes([])
         setEditingNodeId(null)
         setEditingPrimary(false)
         setPendingNodeIds(new Set())
         setMainSearch('')
-        // シナリオを確定（useEffect が primaryBaseFields を追従する）
+        setComposeSearch('')  // サブカテゴリ選択でセットされた値をリセット
+        // シナリオを即時確定（通常フローでは handleSelectScenario が行う処理を一括実行）
         setSelectedScenarioId(globalId)
         setSelectedGroup(getMenuGroupFromScenario(sc))
         setSRelation('continued_do')
@@ -1085,7 +1104,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           return
         }
 
-        // ノードとして追加して即時確定し、そのノードをアクティブにしてサードパネルを開く
+        // ── ノードとして追加（handleComposeDrugSelect と同じ状態遷移 + シナリオ即時確定）──
+        // handleComposeDrugSelect との差分:
+        //   - シナリオを即時確定（buildUpdatedNode で pending を解消）
+        //   - resolvedDrugName に displayName（GE名）を使用
+        //   - selectedGroup を sc から解決してセット
+        //   - composeSearch をクリア（サブカテゴリ選択でセットされた値をリセット）
         const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
         const newNode: import('../../lib/types').ComposeNode = {
           id: nodeId,
@@ -1102,7 +1126,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           // → handlingTags / storageType 等のアドオンフィルタリングが正しく動く
           matchedBrandName: resolvedBrandKey,
           // resolvedDrugName: {{drug_subject}} と表示に使う名前（GEモードなら GE名）
-          // アドオン追加後の再合成 (line 880) でも resolvedDrugName が使われる
           resolvedDrugName: resolvedDisplayName,
           selectedAddonIds: [],
           baseLabel: '',
@@ -1113,7 +1136,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setComposeNodes(prev => {
           const updated = buildUpdatedNode(newNode, globalId, [], resolvedBrandKey)
           if (!updated) return [...prev, newNode]
-          // resolvedDrugName を displayName で上書き（GEモード対応）
           return [...prev, { ...updated, resolvedDrugName: resolvedDisplayName }]
         })
         // 追加したノードをアクティブ選択状態にする → サードパネルがそのシナリオで開く
@@ -1121,6 +1143,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setEditingPrimary(false)
         setSelectedGroup(getMenuGroupFromScenario(sc))
         setSelectedAddonIds(new Set())
+        setComposeSearch('')  // サブカテゴリ選択でセットされた値をリセット
         setEditedSOAP(null)
       }
     })

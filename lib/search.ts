@@ -328,6 +328,13 @@ export interface DrugSuggestionItem {
   drugDisplayLabel: string
   /** クエリに最もマッチしたブランド名 */
   matchedBrandName?: string
+  /**
+   * SOAP {{drug_subject}} / ノード表示に使う名前。
+   * 通常フローでは matchedBrandName と同値（undefined）。
+   * Express GEモード選択時に GE名が入る。
+   * undefined のとき matchedBrandName にフォールバックする。
+   */
+  displayName?: string
   /** モジュール代表シナリオのID（モジュール特定用） */
   representativeTemplateId: string
 }
