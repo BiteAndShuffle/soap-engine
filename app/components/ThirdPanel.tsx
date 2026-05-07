@@ -412,9 +412,13 @@ export default function ThirdPanel({
     }
   }
 
-  // ブランドボタン押下: 追加（トグル）してもポップアップは閉じない
-  function handleExpressAddAndClose(moduleId: string, defaultScenarioId: string, defaultBrandName?: string) {
-    onExpressAdd?.(moduleId, defaultScenarioId, defaultBrandName)
+  // ブランドボタン押下: GE/先発モードに応じた薬剤名で追加（トグル）。ポップアップは閉じない
+  function handleExpressBrandAdd(c: ExpressCandidate) {
+    // GEモード: genericLabel が存在すれば GE名を使用、なければ先発名にフォールバック
+    const resolvedBrand = expressUseGE
+      ? (c.genericLabel ?? c.defaultBrandName)
+      : c.defaultBrandName
+    onExpressAdd?.(c.moduleId, c.defaultScenarioId, resolvedBrand)
   }
 
   // 合成窓: 1剤目シナリオ確定後（thirdPanelEnabled）のみ表示
@@ -461,14 +465,18 @@ export default function ThirdPanel({
                   <div className={s.expressSubGroupLabel}>{sub}</div>
                   <div className={s.expressGrid}>
                     {sorted.map(c => {
-                      const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
+                      // アクティブキー: GE/先発モードに応じた resolvedBrand で照合
+                      const resolvedBrand = expressUseGE
+                        ? (c.genericLabel ?? c.defaultBrandName ?? '')
+                        : (c.defaultBrandName ?? '')
+                      const expressKey = `${c.moduleId}__${resolvedBrand}__${c.defaultScenarioGlobalId}`
                       const isActive = activeExpressKeys?.has(expressKey) ?? false
                       const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
                       return (
                         <button
                           key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
                           className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
-                          onClick={() => handleExpressAddAndClose(c.moduleId, c.defaultScenarioId, c.defaultBrandName)}
+                          onClick={() => handleExpressBrandAdd(c)}
                           title={expressUseGE && c.genericLabel ? `${c.genericLabel}（${c.label}）` : c.label}
                           aria-pressed={isActive}
                         >

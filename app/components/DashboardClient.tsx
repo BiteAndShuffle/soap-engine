@@ -1063,7 +1063,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           return
         }
 
-        // ノードとして追加して即時確定
+        // ノードとして追加して即時確定し、そのノードをアクティブにしてサードパネルを開く
         const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
         const nodeDrugName = resolveDrugName(mod.drug, defaultBrandName)
         const newNode: import('../../lib/types').ComposeNode = {
@@ -1089,8 +1089,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           if (!updated) return [...prev, newNode]
           return [...prev, updated]
         })
-        setEditingNodeId(null)
+        // 追加したノードをアクティブ選択状態にする → サードパネルがそのシナリオで開く
+        setEditingNodeId(nodeId)
         setEditingPrimary(false)
+        setSelectedGroup(getMenuGroupFromScenario(sc))
+        setSelectedAddonIds(new Set())
         setEditedSOAP(null)
       }
     })
