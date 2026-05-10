@@ -59,6 +59,15 @@ const SECTIONS: SectionDef[] = [
   { label: '前回、Do',       relation: 'continued_do'   },
 ]
 
+/**
+ * SRelation → MenuGroup の対応表。
+ * menuGroupLabels オーバーライド時に relation 経由でラベルを解決する。
+ */
+const RELATION_TO_MENU_GROUP_KEY: Partial<Record<SRelation, string>> = {
+  dose_increased: '増量',
+  dose_decreased: '減量',
+}
+
 /** SECTIONS のラベルに menuGroupLabels を適用したものを返す */
 function applyMenuGroupLabels(
   sections: SectionDef[],
@@ -66,9 +75,10 @@ function applyMenuGroupLabels(
 ): SectionDef[] {
   if (!overrides) return sections
   return sections.map(sec => {
-    // '前回、増量' → キー '増量'、'前回、減量' → キー '減量' で照合する
-    const baseKey = sec.label.replace('前回、', '')
-    const overrideLabel = overrides[baseKey]
+    // relation → MenuGroup キー → overrides でラベルを解決する
+    // 例: dose_increased → '増量' → overrides['増量'] = '回数増' → '前回、回数増'
+    const menuGroupKey = RELATION_TO_MENU_GROUP_KEY[sec.relation as SRelation]
+    const overrideLabel = menuGroupKey ? overrides[menuGroupKey] : undefined
     if (!overrideLabel) return sec
     return { ...sec, label: `前回、${overrideLabel}` }
   })

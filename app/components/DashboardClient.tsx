@@ -466,9 +466,29 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     }
     return activeModuleData.drug?.genericName
   })()
-  const activeDrugLabel = resolvedBrand && resolvedGenericName
-    ? `${resolvedBrand}（${resolvedGenericName}）`
-    : resolvedBrand ?? resolvedGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
+  // nodeLabelShort: display.nodeLabelShort → composition.nodeLabelShort の優先順
+  const nodeLabelShort =
+    activeModuleData.display?.nodeLabelShort ??
+    activeModuleData.composition?.nodeLabelShort
+  const activeDrugLabel = (() => {
+    // activeDrugDisplayName がある = GEまたは一般名選択
+    const displayName = activeDrugDisplayName
+    const shortLabel = nodeLabelShort
+    if (displayName) {
+      // GE表示: "エピナスチン（GE｜H1点眼）" / "エピナスチン（GE）"
+      return shortLabel
+        ? `${displayName}（GE｜${shortLabel}）`
+        : `${displayName}（GE）`
+    }
+    if (resolvedBrand) {
+      // 先発表示: "アレジオン点眼液（先発｜H1点眼）" / "アレジオン点眼液（先発）"
+      return shortLabel
+        ? `${resolvedBrand}（先発｜${shortLabel}）`
+        : `${resolvedBrand}（先発）`
+    }
+    // フォールバック（薬剤未選択状態では drugSelected=false で非表示になるが念のため）
+    return resolvedGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
+  })()
 
   // ══════════════════════════════════════════════════════════════
   // EFFECTS
