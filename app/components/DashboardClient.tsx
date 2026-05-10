@@ -969,7 +969,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       //   new_addition: 「薬を」→「{drug}を」
       //   med_changed:  「薬が変更と」→「{drug}に変更と」（stable/improved/unchanged/not_improved 共通）
       //   continued_do: 薬剤名なし（「引き続き使用して〜」は主語省略が自然）
-      const drugName = activeBrandName
+      const drugName = activeDrugDisplayName
+        ?? activeBrandName
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
@@ -1382,6 +1383,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             expressCandidates={expressCandidates}
             activeExpressKeys={activeExpressKeys}
             onExpressAdd={handleExpressAdd}
+            menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
           />
         ) : (
           <div className={s.thirdPanel}>

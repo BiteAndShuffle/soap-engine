@@ -140,7 +140,7 @@ export function buildNodeFields(
   const clinicalDomain = mod.composition?.clinicalDomain
   const closingBehavior = scenario.mergePolicy?.P?.closingBehavior
 
-  // 6. {{drug_subject}} スロットを解決（S / A / P のみ。O は変更しない）
+  // 6. {{drug_subject}} スロットを解決（S / O / A / P すべて対象）
   const resolvedFields = resolveDrugSubject(result, drugName)
 
   return { fields: resolvedFields, closingText, groupKey, clinicalDomain, closingBehavior }

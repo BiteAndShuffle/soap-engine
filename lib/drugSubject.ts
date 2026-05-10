@@ -4,7 +4,9 @@
  * {{drug_subject}} スロットの解決ユーティリティ。
  *
  * 設計原則:
- *   - S / A / P のみ置換対象。O は置換しない（処方ラベルは薬剤クラス名固定）。
+ *   - S / O / A / P を置換対象とする。
+ *   - O フィールドも drug_subject 解決の対象。
+ *     （系統名固定ではなく対象薬剤名寄りの表示にする方針）
  *   - 置換はできるだけ早い段階（primary 確定時・node block 構築時）で行う。
  *   - drugName が空文字の場合はスロットをそのまま残す（サイレント失敗なし）。
  *
@@ -22,7 +24,7 @@ export const DRUG_SUBJECT_SLOT = '{{drug_subject}}'
 /**
  * フィールドセット内の {{drug_subject}} を drugName で置換する。
  *
- * - S / A / P のみ置換。O は変更しない。
+ * - S / O / A / P すべてを置換対象とする。
  * - drugName が空文字の場合はフィールドをそのまま返す（スロットを残す）。
  * - replaceAll を使用するため、1フィールド内に複数あっても全件置換される。
  */
@@ -31,7 +33,7 @@ export function resolveDrugSubject(fields: SoapFields, drugName: string): SoapFi
   const replace = (s: string): string => s.replaceAll(DRUG_SUBJECT_SLOT, drugName)
   return {
     S: replace(fields.S),
-    O: fields.O,          // O は置換しない（処方ラベルは薬剤クラス名固定）
+    O: replace(fields.O),
     A: replace(fields.A),
     P: replace(fields.P),
   }

@@ -59,6 +59,21 @@ const SECTIONS: SectionDef[] = [
   { label: '前回、Do',       relation: 'continued_do'   },
 ]
 
+/** SECTIONS のラベルに menuGroupLabels を適用したものを返す */
+function applyMenuGroupLabels(
+  sections: SectionDef[],
+  overrides?: Record<string, string>,
+): SectionDef[] {
+  if (!overrides) return sections
+  return sections.map(sec => {
+    // '前回、増量' → キー '増量'、'前回、減量' → キー '減量' で照合する
+    const baseKey = sec.label.replace('前回、', '')
+    const overrideLabel = overrides[baseKey]
+    if (!overrideLabel) return sec
+    return { ...sec, label: `前回、${overrideLabel}` }
+  })
+}
+
 const STATUSES: StatusDef[] = [
   { label: '体調落ち着いている', condition: 'stable'      },
   { label: '体調改善',           condition: 'improved'    },
@@ -293,6 +308,12 @@ interface ThirdPanelProps {
    * @param displayName      SOAP {{drug_subject}} / ノード表示名。GEモード時はGE名、先発モード時は brandName と同値
    */
   onExpressAdd?: (moduleId: string, defaultScenarioId: string, brandName?: string, displayName?: string) => void
+  /**
+   * MenuGroup 表示ラベルのオーバーライド（モジュール単位）。
+   * display.menuGroupLabels から渡される。
+   * S先頭文ボタンの「前回、増量」「前回、減量」ラベルに反映する。
+   */
+  menuGroupLabelOverrides?: Record<string, string>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -317,7 +338,9 @@ export default function ThirdPanel({
   expressCandidates = [],
   activeExpressKeys,
   onExpressAdd,
+  menuGroupLabelOverrides,
 }: ThirdPanelProps) {
+  const resolvedSections = applyMenuGroupLabels(SECTIONS, menuGroupLabelOverrides)
   // S先頭文ボタン群: scenario.thirdPanelSPlacement.enabled === true かつ単剤時のみ
   const sPlacementEnabled =
     thirdPanelEnabled &&
@@ -528,7 +551,7 @@ export default function ThirdPanel({
         {showSButtons && (
           <div className={s.thirdPanelStickyBottom}>
             <div className={s.sActionHeading}>S 先頭文</div>
-            {SECTIONS.map(sec => (
+            {resolvedSections.map(sec => (
               <div key={sec.relation} className={s.sActionSection}>
                 <div className={s.sActionSectionLabel}>{sec.label}</div>
                 <div className={s.sActionBtnGrid}>

@@ -74,6 +74,11 @@ export interface SearchEntry {
    * resolveBrandName でブランド固有エイリアス（一般名ひらがな等）との照合に使用。
    */
   brandCatalogAliasMap: Record<string, string[]>
+  /**
+   * ブランド名 → 一般名（brandCatalog[brand].genericName から構築）。
+   * 一般名検索時に drugDisplayLabel を一般名寄りに解決するために使用。
+   */
+  brandCatalogGenericMap: Record<string, string>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -121,11 +126,15 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const brandNames = drug?.brandNames ?? []
 
   // brandCatalog[brand].aliases を正規化してマップ化（matchedBrandName 精度向上用）
+  // brandCatalog[brand].genericName もマップ化（一般名検索時の drugDisplayLabel 解決用）
   const brandCatalogAliasMap: Record<string, string[]> = {}
+  const brandCatalogGenericMap: Record<string, string> = {}
   const brandCatalog = drug?.brandCatalog ?? {}
   for (const [brand, entry] of Object.entries(brandCatalog)) {
-    const aliases = (entry as { aliases?: string[] }).aliases ?? []
+    const aliases = (entry as { aliases?: string[]; genericName?: string }).aliases ?? []
     brandCatalogAliasMap[brand] = aliases.map(normalizeText).filter(Boolean)
+    const genericName = (entry as { genericName?: string }).genericName
+    if (genericName) brandCatalogGenericMap[brand] = genericName
   }
 
   const suppressOnExactHit =
@@ -160,6 +169,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       priority,
       brandNames,
       brandCatalogAliasMap,
+      brandCatalogGenericMap,
     }
   })
 }
@@ -299,13 +309,20 @@ export function getSuggestions(
     seenShortLabels.add(entry.shortLabel)
 
     const matchedBrandName = resolveBrandName(entry, q)
+    const isDirectBrandMatchSug = matchedBrandName !== undefined &&
+      entry.brandNames.some(b => normalizeText(b) === q || normalizeText(b).startsWith(q))
+    const resolvedDisplayLabelSug = (() => {
+      if (!matchedBrandName) return entry.drugDisplayLabel
+      if (isDirectBrandMatchSug) return matchedBrandName
+      return entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName
+    })()
     results.push({
       templateId: entry.templateId,
       moduleId: entry.moduleId,
       label: entry.label,
       shortLabel: entry.shortLabel,
       groupLabel: entry.groupLabel,
-      drugDisplayLabel: matchedBrandName ?? entry.drugDisplayLabel,
+      drugDisplayLabel: resolvedDisplayLabelSug ?? entry.drugDisplayLabel,
       matchedBrandName,
     })
   }
@@ -375,9 +392,19 @@ export function getDrugSuggestions(
     seenModules.add(entry.moduleId)
 
     const matchedBrandName = resolveBrandName(entry, q)
+    // クエリがブランド名の正規化形と直接一致しない（alias経由ヒット = 一般名検索）場合は
+    // brandCatalogGenericMap から一般名を drugDisplayLabel として使用する。
+    // ブランド名と直接一致した場合はブランド名をそのまま使用する。
+    const isDirectBrandMatch = matchedBrandName !== undefined &&
+      entry.brandNames.some(b => normalizeText(b) === q || normalizeText(b).startsWith(q))
+    const resolvedDisplayLabel = (() => {
+      if (!matchedBrandName) return entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId
+      if (isDirectBrandMatch) return matchedBrandName
+      return entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName
+    })()
     results.push({
       moduleId: entry.moduleId,
-      drugDisplayLabel: matchedBrandName ?? entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
+      drugDisplayLabel: resolvedDisplayLabel,
       matchedBrandName,
       representativeTemplateId: entry.templateId,
     })
