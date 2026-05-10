@@ -998,16 +998,20 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
+      // menuGroupLabels により「増量」「減量」文言を上書きできる
+      const menuGroupLabels = activeModuleData.display?.menuGroupLabels as Record<string, string> | undefined
+      const labelIncreased = menuGroupLabels?.['増量'] ?? '増量'
+      const labelDecreased = menuGroupLabels?.['減量'] ?? '減量'
       const resolvedFirst = (() => {
         if (!drugName) return newFirst
         if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
         if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
         if (relation === 'dose_increased') return newFirst
-          .replace('薬が増量となり', `${drugName}が増量となり`)
-          .replace('薬が増量となったが', `${drugName}が増量となったが`)
+          .replace('薬が増量となり', `${drugName}が${labelIncreased}となり`)
+          .replace('薬が増量となったが', `${drugName}が${labelIncreased}となったが`)
         if (relation === 'dose_decreased') return newFirst
-          .replace('薬が減量となり', `${drugName}が減量となり`)
-          .replace('薬が減量となったが', `${drugName}が減量となったが`)
+          .replace('薬が減量となり', `${drugName}が${labelDecreased}となり`)
+          .replace('薬が減量となったが', `${drugName}が${labelDecreased}となったが`)
         return newFirst  // continued_do: 薬剤名なしが自然
       })()
       const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
