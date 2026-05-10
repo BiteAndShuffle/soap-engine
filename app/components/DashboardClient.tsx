@@ -695,13 +695,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
       setActiveModuleData(mod)
       setActiveBrandName(item.matchedBrandName)
-      // displayName が指定されている場合（Express GEモード等）はその名前を {{drug_subject}} に使う
-      // 通常フローでは undefined（activeBrandName にフォールバック）
-      setActiveDrugDisplayName(
+      // displayName が指定されている場合（Express GEモード等）はその名前を {{drug_subject}} に使う。
+      // 一般名検索時は drugDisplayLabel（一般名）が matchedBrandName（先発名）と異なるため、
+      // drugDisplayLabel を activeDrugDisplayName に設定して SOAP 主語・O欄に反映する。
+      // いずれも一致する場合（ブランド名検索）は undefined（activeBrandName にフォールバック）。
+      const displayNameForSubject =
         item.displayName !== undefined && item.displayName !== item.matchedBrandName
           ? item.displayName
-          : undefined,
-      )
+          : item.drugDisplayLabel !== undefined && item.drugDisplayLabel !== item.matchedBrandName
+            ? item.drugDisplayLabel
+            : undefined
+      setActiveDrugDisplayName(displayNameForSubject)
       setDrugSelected(true)
       setSelectedScenarioId(null)
       setPrimaryBaseFields(EMPTY_FIELDS)
@@ -990,7 +994,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
       setEditedSOAP(null)
     })
-  }, [displayFields.S, activeBrandName, activeModuleData, confirmDiscard])
+  }, [displayFields.S, activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleFlagChange（単剤フラグ: 副作用なし / CP良好）
