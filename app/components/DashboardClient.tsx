@@ -470,16 +470,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const nodeLabelShort =
     activeModuleData.display?.nodeLabelShort ??
     activeModuleData.composition?.nodeLabelShort
-  // brandCatalog から個別の一般名を取得（例: アレジオン点眼液 → エピナスチン）
+  // brandCatalog から表示用一般名を取得
+  // displayGenericName（表示優先）→ genericName の順で解決
   const brandCatalogGenericName = resolvedBrand
-    ? (activeModuleData.drug?.brandCatalog as Record<string, { genericName?: string }> | undefined)
-        ?.[resolvedBrand]?.genericName
+    ? (() => {
+        const entry = activeModuleData.drug?.brandCatalog?.[resolvedBrand]
+        return entry?.displayGenericName ?? entry?.genericName
+      })()
     : undefined
   const activeDrugLabel = (() => {
     const shortLabel = nodeLabelShort
     // 先発名｜一般名｜系統 形式: brandName と genericName が揃っている場合
     if (resolvedBrand) {
-      // 一般名: brandCatalog.genericName を優先、次に activeDrugDisplayName
+      // 一般名: brandCatalog.displayGenericName → genericName → activeDrugDisplayName の優先順
       const genericPart = brandCatalogGenericName ?? activeDrugDisplayName
       if (genericPart && genericPart !== resolvedBrand) {
         return shortLabel
@@ -1003,10 +1006,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
-      // menuGroupLabels により「増量」「減量」文言・文型を上書きできる
-      const menuGroupLabels = activeModuleData.display?.menuGroupLabels as Record<string, string> | undefined
-      // menuGroupLabels がある場合（例: 点眼回数調整モジュール）、dose_increased/decreased で
-      // 自然な文型を直接生成する。condition に応じて後続句を切り替える。
+      // adjustmentExpression: S先頭文生成用（menuGroupLabels はメニュー表示専用・役割分離）
+      // display.adjustmentExpression が最優先。省略時は従来の増量/減量テンプレートにフォールバック。
+      const adjustmentExpression = activeModuleData.display?.adjustmentExpression
+      // condition に応じた後続句（adjustmentExpression あり時に使用）
       const condSuffix = (() => {
         switch (condition) {
           case 'stable':       return '症状は落ち着いている。'
@@ -1020,18 +1023,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
         if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
         if (relation === 'dose_increased') {
-          if (menuGroupLabels) {
-            // 点眼回数増など menuGroupLabels あり: 自然な文型で生成
-            return `前回から${drugName}の点眼回数が増えたが、${condSuffix}`
+          if (adjustmentExpression) {
+            // adjustmentExpression あり: 「前回から{drug}の{increasePast}が、{condSuffix}」
+            return `前回から${drugName}の${adjustmentExpression.increasePast}が、${condSuffix}`
           }
           return newFirst
             .replace('薬が増量となり', `${drugName}が増量となり`)
             .replace('薬が増量となったが', `${drugName}が増量となったが`)
         }
         if (relation === 'dose_decreased') {
-          if (menuGroupLabels) {
-            // 点眼回数減など menuGroupLabels あり: 自然な文型で生成
-            return `前回から${drugName}の点眼回数が減ったが、${condSuffix}`
+          if (adjustmentExpression) {
+            // adjustmentExpression あり: 「前回から{drug}の{decreasePast}が、{condSuffix}」
+            return `前回から${drugName}の${adjustmentExpression.decreasePast}が、${condSuffix}`
           }
           return newFirst
             .replace('薬が減量となり', `${drugName}が減量となり`)

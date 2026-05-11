@@ -314,6 +314,12 @@ export interface DrugSearch {
 export interface BrandEntry {
   displayName: string
   genericName: string
+  /**
+   * Topbar や検索候補で優先表示する一般名。
+   * genericName より細粒度の表示用名称が必要な場合に設定する。
+   * 省略時は genericName を使用する。
+   */
+  displayGenericName?: string
   aliases: string[]
   normalizedAliases: string[]
   /** ブランド固有の取り扱いタグ（遮光保存・懸濁など）。addonFilter で使用 */
@@ -612,6 +618,20 @@ export interface ModuleData {
      * 例: { "増量": "回数増", "減量": "回数減" }
      */
     menuGroupLabels?: Record<string, string>
+    /**
+     * dose_increased / dose_decreased の S先頭文生成に使う動詞句。
+     * menuGroupLabels はメニュー表示用、adjustmentExpression は文生成専用として役割を分離する。
+     *
+     * increasePast — dose_increased 時に使う過去形表現（例: "点眼回数が増えた"）
+     * decreasePast — dose_decreased 時に使う過去形表現（例: "点眼回数が減った"）
+     *
+     * 省略時は従来の「増量」「減量」テンプレートを使用する。
+     * 例: { "increasePast": "点眼回数が増えた", "decreasePast": "点眼回数が減った" }
+     */
+    adjustmentExpression?: {
+      increasePast: string
+      decreasePast: string
+    }
   }
   template?: ModuleTemplate
   risks?: ModuleRisks
