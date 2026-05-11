@@ -133,8 +133,10 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   for (const [brand, entry] of Object.entries(brandCatalog)) {
     const aliases = (entry as { aliases?: string[]; genericName?: string }).aliases ?? []
     brandCatalogAliasMap[brand] = aliases.map(normalizeText).filter(Boolean)
-    const genericName = (entry as { genericName?: string }).genericName
-    if (genericName) brandCatalogGenericMap[brand] = genericName
+    // displayGenericName を優先（Topbar・S先頭文・{{drug_subject}} 解決で統一表示するため）
+    const e = entry as { displayGenericName?: string; genericName?: string }
+    const resolvedGenericName = e.displayGenericName ?? e.genericName
+    if (resolvedGenericName) brandCatalogGenericMap[brand] = resolvedGenericName
   }
 
   const suppressOnExactHit =
