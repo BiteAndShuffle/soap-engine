@@ -315,6 +315,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [primaryBaseFields, primaryScenario, composeNodes, activeModuleData],
   )
 
+  // ── targetModule: activeContext のモジュール ─────────────────
+  const targetModule = useMemo<ModuleData>(() => {
+    if (activeNode === null) return activeModuleData
+    return allModules.find(m => m.moduleId === activeNode.moduleId) ?? activeModuleData
+  }, [activeNode, activeModuleData, allModules])
+
   // ── finalFields: ユーザー手入力中は editedSOAP、未編集時は displayFields ──
   // editedSOAP が null のとき = 未編集（scenario生成値をそのまま表示）。
   // editedSOAP が非null のとき = ユーザーが手入力中（編集値を表示）。
@@ -325,15 +331,41 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // display.localInput.enabled が true かつ localSiteInput に入力があるときのみ
   // S の先頭語（最初の助詞「の/が/は/で/を」の直前まで）を localSiteInput で置換する。
   // 未入力・localInput 未定義の場合は baseFields をそのまま使う。
+  //
+  // Express 2剤目+ (activeNode !== null) の場合:
+  //   baseFields.S はすべての合成ノードがマージされた後の値であるため、
+  //   対象ノードの block.fields.S にだけ prefix を適用して再マージする。
+  // 1剤目 (activeNode === null) の場合:
+  //   baseFields.S に直接 prefix を適用する（従来通り）。
   const finalFields = (() => {
-    const localInputConfig = activeModuleData.display?.localInput
+    const localInputConfig = targetModule.display?.localInput
     if (!localInputConfig?.enabled || !localSiteInput.trim()) return baseFields
+
+    const applyPrefix = (s: string): string | null => {
+      const particleMatch = s.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
+      if (!particleMatch) return null
+      return localSiteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
+    }
+
+    if (activeNode !== null) {
+      // Express 合成ノードのSだけを差し替えて再マージ
+      const patchedNodes = composeNodes.map(n => {
+        if (n.id !== activeNode.id) return n
+        const originalS = n.block.fields.S
+        if (!originalS) return n
+        const patchedS = applyPrefix(originalS)
+        if (!patchedS) return n
+        return { ...n, block: { ...n.block, fields: { ...n.block.fields, S: patchedS } } }
+      })
+      const patched = computeDisplayFields(primaryBaseFields, primaryScenario, patchedNodes, activeModuleData.defaults, activeModuleData)
+      return editedSOAP !== null ? baseFields : patched
+    }
+
+    // 1剤目: baseFields.S に直接適用
     const s = baseFields.S
     if (!s) return baseFields
-    // 先頭から最初の助詞位置を探す
-    const particleMatch = s.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
-    if (!particleMatch) return baseFields
-    const replaced = localSiteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
+    const replaced = applyPrefix(s)
+    if (!replaced) return baseFields
     return { ...baseFields, S: replaced }
   })()
 
@@ -354,12 +386,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // editedSOAP が非null（編集中）のときは固定したまま更新しない。
   // これにより、mergeBlocks/addon の再計算が editSnapshotRef を汚染しない。
   if (editedSOAP === null) editSnapshotRef.current = displayFields
-
-  // ── targetModule: activeContext のモジュール ─────────────────
-  const targetModule = useMemo<ModuleData>(() => {
-    if (activeNode === null) return activeModuleData
-    return allModules.find(m => m.moduleId === activeNode.moduleId) ?? activeModuleData
-  }, [activeNode, activeModuleData, allModules])
 
   // ── addonTargetScenario: activeContext のシナリオ（AddonPanel 用） ─
   const addonTargetScenario = useMemo(() => {
@@ -1461,7 +1487,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             activeExpressKeys={activeExpressKeys}
             onExpressAdd={handleExpressAdd}
             menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
-            localInputConfig={activeModuleData.display?.localInput}
+            localInputConfig={targetModule.display?.localInput}
             localSiteInput={localSiteInput}
             onLocalSiteInputChange={setLocalSiteInput}
           />
