@@ -358,6 +358,13 @@
     "adjustmentExpression": {
       "increasePast": "点眼回数が増えた",
       "decreasePast": "点眼回数が減った"
+    },
+    "localInput": {
+      "enabled": true,
+      "label": "部位",
+      "placeholder": "例：右目、左目、両目",
+      "targetField": "S",
+      "insertMode": "prefix"
     }
   },
   "defaults": {
