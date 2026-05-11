@@ -361,12 +361,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       return editedSOAP !== null ? baseFields : patched
     }
 
-    // 1剤目: baseFields.S に直接適用
-    const s = baseFields.S
-    if (!s) return baseFields
-    const replaced = applyPrefix(s)
-    if (!replaced) return baseFields
-    return { ...baseFields, S: replaced }
+    // 1剤目: primaryBaseFields.S にのみ prefix を適用して再マージ
+    // baseFields.S は合成済みの場合もあるため、1剤目の S だけを差し替えて再計算する。
+    const primaryS = primaryBaseFieldsRef.current.S
+    if (!primaryS) return baseFields
+    const patchedPrimaryS = applyPrefix(primaryS)
+    if (!patchedPrimaryS) return baseFields
+    const patchedPrimaryFields = { ...primaryBaseFieldsRef.current, S: patchedPrimaryS }
+    if (composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null).length === 0) {
+      // 単剤: そのまま返す（re-merge 不要）
+      return { ...baseFields, S: patchedPrimaryS }
+    }
+    // 多剤: 1剤目Sだけを差し替えて再マージ
+    return computeDisplayFields(patchedPrimaryFields, primaryScenario, composeNodes, activeModuleData.defaults, activeModuleData)
   })()
 
   // ── Refs を render ごとに同期 ──────────────────────────────
@@ -806,8 +813,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     confirmDiscard(() => {
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
       const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      // matchedBrandName をノードに保持（シナリオ確定時の {{drug_subject}} 解決に使用）
-      const nodeDrugName = resolveDrugName(mod.drug, item.matchedBrandName)
+      // {{drug_subject}} に使う表示名を解決する。
+      // handleSelectDrugSuggestion と同じロジック:
+      //   一般名検索時 = item.drugDisplayLabel（一般名）が matchedBrandName（先発名）と異なる → 一般名を使用
+      //   先発名検索時 = matchedBrandName をそのまま使用（drugDisplayLabel と一致する）
+      // これにより、一般名で検索して合成しても {{drug_subject}} に正しい名前が入る。
+      const nodeDrugName = (() => {
+        if (item.displayName !== undefined && item.displayName !== item.matchedBrandName) return item.displayName
+        if (item.drugDisplayLabel !== undefined && item.drugDisplayLabel !== item.matchedBrandName) return item.drugDisplayLabel
+        return resolveDrugName(mod.drug, item.matchedBrandName)
+      })()
       const newNode: ComposeNode = {
         id: nodeId,
         moduleId: mod.moduleId,
@@ -1089,11 +1104,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
         return newFirst  // continued_do: 薬剤名なしが自然
       })()
-      const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
+      // primaryBaseFieldsRef を使用: displayFields.S は合成後のマージ済みSのため、
+      // 多剤合成時に使うと他の薬剤のSを primaryBaseFields に混入させてしまう。
+      // handleSToggle は isSingleDrug === true のときのみ呼ばれるが、
+      // 設計上は1剤目のS（primaryBaseFields.S）のみを差し替えるのが正しい。
+      const updated = replaceSFirstSentence(primaryBaseFieldsRef.current.S, resolvedFirst)
       setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
       setEditedSOAP(null)
     })
-  }, [displayFields.S, activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
+  }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleFlagChange（単剤フラグ: 副作用なし / CP良好）
