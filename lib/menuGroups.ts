@@ -96,10 +96,12 @@ export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
   if (sg === 'adherence_poor') return 'コンプライアンス不良'
   if (sg === 'adherence') {
     if (sid.startsWith('cp_good')) return 'コンプライアンス良好'
-    if (sid.includes('self_adjust')) return '自己調整'
+    // cp_poor_self_adjust は adherence issue（自己判断による中断/間欠使用）→ CP不良
     if (sid.startsWith('cp_poor')) return 'コンプライアンス不良'
-    return 'その他'  // as_needed_* は保留
+    return 'その他'
   }
+  // as_needed: 頓用使用は patient-driven usage → 自己調整
+  if (sg === 'as_needed') return '自己調整'
   if (sg.startsWith('end_')) return '終了'
   if (sg === 'treatment_end') return '終了'
   if (sg === 'lifestyle_guidance') return 'その他'

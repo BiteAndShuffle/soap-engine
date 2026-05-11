@@ -361,8 +361,8 @@
     },
     "localInput": {
       "enabled": true,
-      "label": "部位",
-      "placeholder": "例：右目、左目、両目",
+      "label": "外用部位（任意）",
+      "placeholder": "未入力なら自動生成（例：右目、左目、両目）",
       "targetField": "S",
       "insertMode": "prefix"
     }

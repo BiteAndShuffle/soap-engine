@@ -574,8 +574,8 @@ export default function ThirdPanel({
 
           {/* 部位入力欄: display.localInput.enabled === true かつ「初回」グループのみ */}
           {localInputConfig?.enabled && thirdPanelEnabled && selectedGroup === '初回' && (
-            <div className={s.thirdSection}>
-              <div className={s.sActionHeading}>{localInputConfig.label}</div>
+            <div className={s.localInputHighlight}>
+              <div className={s.localInputLabel}>{localInputConfig.label}</div>
               <input
                 type="text"
                 className={s.localSiteInput}
@@ -583,6 +583,7 @@ export default function ThirdPanel({
                 value={localSiteInput}
                 onChange={e => onLocalSiteInputChange?.(e.target.value)}
               />
+              <div className={s.localInputHint}>入力するとSOAPの部位表現に反映されます</div>
             </div>
           )}
         </div>
