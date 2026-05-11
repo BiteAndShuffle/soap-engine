@@ -133,6 +133,7 @@
       "アレジオン点眼液": {
         "displayName": "アレジオン点眼液",
         "genericName": "エピナスチン",
+        "displayGenericName": "エピナスチン点眼液",
         "storageType": "room_temperature",
         "formulationType": "solution",
         "contactLensCaution": true,
@@ -161,6 +162,7 @@
       "ザジテン点眼液": {
         "displayName": "ザジテン点眼液",
         "genericName": "ケトチフェン",
+        "displayGenericName": "ケトチフェン点眼液",
         "storageType": "room_temperature",
         "formulationType": "solution",
         "contactLensCaution": true,
@@ -189,6 +191,7 @@
       "パタノール点眼液": {
         "displayName": "パタノール点眼液",
         "genericName": "オロパタジン",
+        "displayGenericName": "オロパタジン点眼液",
         "storageType": "light_protection",
         "formulationType": "solution",
         "contactLensCaution": true,
@@ -217,6 +220,7 @@
       "リボスチン点眼液": {
         "displayName": "リボスチン点眼液",
         "genericName": "レボカバスチン",
+        "displayGenericName": "レボカバスチン点眼液",
         "storageType": "room_temperature",
         "formulationType": "suspension",
         "contactLensCaution": true,
@@ -350,6 +354,10 @@
     "menuGroupLabels": {
       "増量": "回数増",
       "減量": "回数減"
+    },
+    "adjustmentExpression": {
+      "increasePast": "点眼回数が増えた",
+      "decreasePast": "点眼回数が減った"
     }
   },
   "defaults": {
