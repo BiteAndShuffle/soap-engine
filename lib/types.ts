@@ -632,6 +632,23 @@ export interface ModuleData {
       increasePast: string
       decreasePast: string
     }
+    /**
+     * サードパネルに表示する任意入力欄。点眼薬・軟膏・湿布など
+     * 部位や症状部位をユーザーが入力してS欄に反映するために使用する。
+     *
+     * enabled      — true のモジュールのみ入力欄を表示する
+     * label        — 入力欄のラベル（例: "部位"）
+     * placeholder  — プレースホルダーテキスト
+     * targetField  — 反映先フィールド（現時点では "S" のみ対応）
+     * insertMode   — 挿入モード。"prefix" = Sの先頭語を置換/補完
+     */
+    localInput?: {
+      enabled: boolean
+      label: string
+      placeholder?: string
+      targetField: 'S'
+      insertMode: 'prefix'
+    }
   }
   template?: ModuleTemplate
   risks?: ModuleRisks

@@ -811,6 +811,28 @@
   white-space: nowrap;
 }
 
+/* 部位入力欄（display.localInput 対応モジュール） */
+.localSiteInput {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 5px;
+  background: #f8f9fc;
+  color: #333;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.localSiteInput:focus {
+  border-color: #0a84ff;
+  background: #fff;
+}
+.localSiteInput::placeholder {
+  color: #bbb;
+}
+
 /* 4ボタンを2×2グリッドで並べる */
 .sActionBtnGrid {
   display: grid;

@@ -196,6 +196,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [sRelation, setSRelation] = useState<SRelation>('continued_do')
   const [sCondition, setSCondition] = useState<SCondition>('stable')
 
+  // ── localSiteInput: display.localInput 対応モジュール用・部位入力 ──
+  // 入力がある場合のみ finalFields.S の先頭語に反映する（空文字なら現状維持）。
+  const [localSiteInput, setLocalSiteInput] = useState('')
+
   // ── 単剤フラグ（副作用なし / CP良好）: 単剤時のみ有効 ──────
   const [singleDrugFlags, setSingleDrugFlags] = useState<SingleDrugFlags>({
     noSideEffect: false,
@@ -315,7 +319,23 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // editedSOAP が null のとき = 未編集（scenario生成値をそのまま表示）。
   // editedSOAP が非null のとき = ユーザーが手入力中（編集値を表示）。
   // displayFields（生成ロジック）には一切触れない。
-  const finalFields = editedSOAP ?? displayFields
+  const baseFields = editedSOAP ?? displayFields
+
+  // ── localSiteInput の S prefix 適用 ──────────────────────────
+  // display.localInput.enabled が true かつ localSiteInput に入力があるときのみ
+  // S の先頭語（最初の助詞「の/が/は/で/を」の直前まで）を localSiteInput で置換する。
+  // 未入力・localInput 未定義の場合は baseFields をそのまま使う。
+  const finalFields = (() => {
+    const localInputConfig = activeModuleData.display?.localInput
+    if (!localInputConfig?.enabled || !localSiteInput.trim()) return baseFields
+    const s = baseFields.S
+    if (!s) return baseFields
+    // 先頭から最初の助詞位置を探す
+    const particleMatch = s.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
+    if (!particleMatch) return baseFields
+    const replaced = localSiteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
+    return { ...baseFields, S: replaced }
+  })()
 
   // ── Refs を render ごとに同期 ──────────────────────────────
   primaryBaseFieldsRef.current = primaryBaseFields
@@ -748,6 +768,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setEditingPrimary(false)
       setPendingNodeIds(new Set())
       setEditedSOAP(null)
+      setLocalSiteInput('')
     })
   }, [allModules, moduleData, confirmDiscard])
 
@@ -1440,6 +1461,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             activeExpressKeys={activeExpressKeys}
             onExpressAdd={handleExpressAdd}
             menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
+            localInputConfig={activeModuleData.display?.localInput}
+            localSiteInput={localSiteInput}
+            onLocalSiteInputChange={setLocalSiteInput}
           />
         ) : (
           <div className={s.thirdPanel}>

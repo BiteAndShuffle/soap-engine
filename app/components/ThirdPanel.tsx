@@ -324,6 +324,19 @@ interface ThirdPanelProps {
    * S先頭文ボタンの「前回、増量」「前回、減量」ラベルに反映する。
    */
   menuGroupLabelOverrides?: Record<string, string>
+  /**
+   * 部位入力欄の設定。display.localInput から渡される。
+   * enabled === true のモジュールのみ入力欄を表示する。
+   */
+  localInputConfig?: {
+    enabled: boolean
+    label: string
+    placeholder?: string
+  }
+  /** 部位入力の現在値 */
+  localSiteInput?: string
+  /** 部位入力変更ハンドラ */
+  onLocalSiteInputChange?: (value: string) => void
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -349,6 +362,9 @@ export default function ThirdPanel({
   activeExpressKeys,
   onExpressAdd,
   menuGroupLabelOverrides,
+  localInputConfig,
+  localSiteInput = '',
+  onLocalSiteInputChange,
 }: ThirdPanelProps) {
   const resolvedSections = applyMenuGroupLabels(SECTIONS, menuGroupLabelOverrides)
   // S先頭文ボタン群: scenario.thirdPanelSPlacement.enabled === true かつ単剤時のみ
@@ -556,6 +572,20 @@ export default function ThirdPanel({
             </div>
           )}
         </div>
+
+        {/* 部位入力欄: display.localInput.enabled === true のモジュールのみ */}
+        {localInputConfig?.enabled && thirdPanelEnabled && (
+          <div className={s.thirdSection}>
+            <div className={s.sActionHeading}>{localInputConfig.label}</div>
+            <input
+              type="text"
+              className={s.localSiteInput}
+              placeholder={localInputConfig.placeholder ?? ''}
+              value={localSiteInput}
+              onChange={e => onLocalSiteInputChange?.(e.target.value)}
+            />
+          </div>
+        )}
 
         {/* S先頭文ボタン: 単剤 + 対象グループのみ */}
         {showSButtons && (
