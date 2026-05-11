@@ -470,23 +470,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const nodeLabelShort =
     activeModuleData.display?.nodeLabelShort ??
     activeModuleData.composition?.nodeLabelShort
+  // brandCatalog から個別の一般名を取得（例: アレジオン点眼液 → エピナスチン）
+  const brandCatalogGenericName = resolvedBrand
+    ? (activeModuleData.drug?.brandCatalog as Record<string, { genericName?: string }> | undefined)
+        ?.[resolvedBrand]?.genericName
+    : undefined
   const activeDrugLabel = (() => {
-    // activeDrugDisplayName がある = GEまたは一般名選択
-    const displayName = activeDrugDisplayName
     const shortLabel = nodeLabelShort
-    if (displayName) {
-      // GE表示: "エピナスチン（GE｜H1点眼）" / "エピナスチン（GE）"
-      return shortLabel
-        ? `${displayName}（GE｜${shortLabel}）`
-        : `${displayName}（GE）`
-    }
+    // 先発名｜一般名｜系統 形式: brandName と genericName が揃っている場合
     if (resolvedBrand) {
-      // 先発表示: "アレジオン点眼液（先発｜H1点眼）" / "アレジオン点眼液（先発）"
+      // 一般名: brandCatalog.genericName を優先、次に activeDrugDisplayName
+      const genericPart = brandCatalogGenericName ?? activeDrugDisplayName
+      if (genericPart && genericPart !== resolvedBrand) {
+        return shortLabel
+          ? `${resolvedBrand}｜${genericPart}｜${shortLabel}`
+          : `${resolvedBrand}｜${genericPart}`
+      }
+      // 一般名なし（例: GLP-1 等、brandCatalog.genericName が未設定）
       return shortLabel
-        ? `${resolvedBrand}（先発｜${shortLabel}）`
-        : `${resolvedBrand}（先発）`
+        ? `${resolvedBrand}（${shortLabel}）`
+        : resolvedBrand
     }
-    // フォールバック（薬剤未選択状態では drugSelected=false で非表示になるが念のため）
+    // 薬剤未選択 or brandNames なし: フォールバック
     return resolvedGenericName ?? activeModuleData.drug?.search?.primaryDisplayName
   })()
 
@@ -998,20 +1003,40 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
-      // menuGroupLabels により「増量」「減量」文言を上書きできる
+      // menuGroupLabels により「増量」「減量」文言・文型を上書きできる
       const menuGroupLabels = activeModuleData.display?.menuGroupLabels as Record<string, string> | undefined
-      const labelIncreased = menuGroupLabels?.['増量'] ?? '増量'
-      const labelDecreased = menuGroupLabels?.['減量'] ?? '減量'
+      // menuGroupLabels がある場合（例: 点眼回数調整モジュール）、dose_increased/decreased で
+      // 自然な文型を直接生成する。condition に応じて後続句を切り替える。
+      const condSuffix = (() => {
+        switch (condition) {
+          case 'stable':       return '症状は落ち着いている。'
+          case 'improved':     return '症状は良くなってきた。'
+          case 'unchanged':    return '症状は変わりない。'
+          case 'not_improved': return '十分な改善はみられない。'
+        }
+      })()
       const resolvedFirst = (() => {
         if (!drugName) return newFirst
         if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
         if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
-        if (relation === 'dose_increased') return newFirst
-          .replace('薬が増量となり', `${drugName}が${labelIncreased}となり`)
-          .replace('薬が増量となったが', `${drugName}が${labelIncreased}となったが`)
-        if (relation === 'dose_decreased') return newFirst
-          .replace('薬が減量となり', `${drugName}が${labelDecreased}となり`)
-          .replace('薬が減量となったが', `${drugName}が${labelDecreased}となったが`)
+        if (relation === 'dose_increased') {
+          if (menuGroupLabels) {
+            // 点眼回数増など menuGroupLabels あり: 自然な文型で生成
+            return `前回から${drugName}の点眼回数が増えたが、${condSuffix}`
+          }
+          return newFirst
+            .replace('薬が増量となり', `${drugName}が増量となり`)
+            .replace('薬が増量となったが', `${drugName}が増量となったが`)
+        }
+        if (relation === 'dose_decreased') {
+          if (menuGroupLabels) {
+            // 点眼回数減など menuGroupLabels あり: 自然な文型で生成
+            return `前回から${drugName}の点眼回数が減ったが、${condSuffix}`
+          }
+          return newFirst
+            .replace('薬が減量となり', `${drugName}が減量となり`)
+            .replace('薬が減量となったが', `${drugName}が減量となったが`)
+        }
         return newFirst  // continued_do: 薬剤名なしが自然
       })()
       const updated = replaceSFirstSentence(displayFields.S, resolvedFirst)
