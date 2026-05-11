@@ -571,21 +571,21 @@ export default function ThirdPanel({
               />
             </div>
           )}
-        </div>
 
-        {/* 部位入力欄: display.localInput.enabled === true のモジュールのみ */}
-        {localInputConfig?.enabled && thirdPanelEnabled && (
-          <div className={s.thirdSection}>
-            <div className={s.sActionHeading}>{localInputConfig.label}</div>
-            <input
-              type="text"
-              className={s.localSiteInput}
-              placeholder={localInputConfig.placeholder ?? ''}
-              value={localSiteInput}
-              onChange={e => onLocalSiteInputChange?.(e.target.value)}
-            />
-          </div>
-        )}
+          {/* 部位入力欄: display.localInput.enabled === true かつ「初回」グループのみ */}
+          {localInputConfig?.enabled && thirdPanelEnabled && selectedGroup === '初回' && (
+            <div className={s.thirdSection}>
+              <div className={s.sActionHeading}>{localInputConfig.label}</div>
+              <input
+                type="text"
+                className={s.localSiteInput}
+                placeholder={localInputConfig.placeholder ?? ''}
+                value={localSiteInput}
+                onChange={e => onLocalSiteInputChange?.(e.target.value)}
+              />
+            </div>
+          )}
+        </div>
 
         {/* S先頭文ボタン: 単剤 + 対象グループのみ */}
         {showSButtons && (
