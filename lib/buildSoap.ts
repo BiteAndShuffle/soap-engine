@@ -447,39 +447,54 @@ function splitDecision(text: string): { subject: string; predicate: string } {
 }
 
 /**
+ * reason 行を「薬剤名は、本文」形式に分解する。
+ *
+ * 対象: /^(.+?)は、(.+)$/ にマッチする行のみ（drug_subject 解決済みの主語付き形式）。
+ * 非対象: 主語なし形式（例: "血糖値が高いため、薬が追加となった。"）は null を返す。
+ */
+function splitReasonSubject(text: string): { subject: string; body: string } | null {
+  const m = text.match(/^(.+?)は、(.+)$/)
+  if (!m) return null
+  return { subject: m[1], body: m[2] }
+}
+
+/**
  * 複数ブロックの S テキストを構造ベースで合成する。
  *
  * 処理:
  *   1. 各テキストを SLineType に分類（reason / observation / decision / other）
- *   2. バケット単位で dedupe
+ *   2. バケット単位で dedupe・統合
  *   3. 固定順で再生成
  *      reason + obs → reason[0] + obs bodies を1行に結合
  *      decision → predicate ごとに subject を「・」結合
  *
- * groupKey ルール:
- *   - reason は「clinicalDomain × groupKey」単位で最初の1件のみ採用する
- *   - 同一 groupKey の2件目以降はテキストが異なっても切り捨てる
- *   - groupKey が '' の場合は各エントリを独立キーとして扱い、すべて個別出力（結合禁止）
- *   - clinicalDomain による分離は mergeBlocks 側で行う（buildS に渡る時点で同一ドメイン保証済み）
+ * reason 統合ルール（groupKey × body 単位）:
+ *   - 「薬剤名は、本文」形式: groupKey と body（は、以降）が同一なら主語を「と」で結合
+ *     例: "Aは、目のかゆみ..." + "Bは、目のかゆみ..." → "AとBは、目のかゆみ..."
+ *   - 主語なし形式（"血糖値が高いため..."等）: groupKey × 全文一致のみ重複排除、
+ *     本文が異なれば別行維持
+ *   - groupKey が '' / undefined: 独立キーとして個別出力（統合しない）
+ *   - groupKey は削除キーではなく統合候補の識別キーとして使用する
  *
  * 出力順:
- *   - reason は最初に出現した groupKey の順を保持する
+ *   - reason は最初に出現した統合グループの順を保持する
  *   - observation / decision / other は reason の後
  */
 function buildS(sEntries: SEntry[]): string {
   if (sEntries.length === 0) return ''
 
-  // ① reason: groupKey ごとに「最初の1件のみ」採用する
+  // ① reason: groupKey × body 単位で主語統合する
   //
-  // 採用ルール:
-  //   - groupKey が非空文字: そのキーで最初に出現したテキストを確定、以降の同一キーは捨てる
-  //   - groupKey が '' または undefined: キーとしてエントリごとのユニークIDを使い個別出力
-  //     （groupKey 未設定の reason は統合しない）
+  // 統合キー: `${groupKey}::${body}`
+  //   - 「薬剤名は、本文」形式: body = は、以降の本文
+  //   - 主語なし形式: body = テキスト全体（統合キーにテキスト全体を使い、同一テキストのみ dedupe）
   //
-  // 出力順: groupKey が最初に出現した順
-  const reasonByGroupKey = new Map<string, string>()  // groupKey → 採用テキスト（最初の1件）
-  const reasonGroupKeyOrder: string[]           = []  // groupKey の出現順（重複なし）
-  let anonymousReasonCounter                    = 0   // groupKey='' エントリの連番キー
+  // subjects: 統合キーごとの主語リスト（空配列 = 主語なし形式）
+  // keyOrder: 統合キーの出現順
+  const reasonSubjects = new Map<string, string[]>()  // 統合キー → 主語リスト
+  const reasonBody     = new Map<string, string>()    // 統合キー → body テキスト
+  const reasonKeyOrder: string[] = []                 // 統合キーの出現順
+  let anonymousReasonCounter = 0
 
   const observations: string[] = []
   const decisions: string[] = []
@@ -493,12 +508,36 @@ function buildS(sEntries: SEntry[]): string {
     if (type === 'reason') {
       const gk = entry.groupKey && entry.groupKey !== ''
         ? entry.groupKey
-        : `__anon_${anonymousReasonCounter++}__`   // 空 groupKey → 独立キーとして個別出力
-      if (!reasonByGroupKey.has(gk)) {
-        reasonByGroupKey.set(gk, t)
-        reasonGroupKeyOrder.push(gk)
+        : `__anon_${anonymousReasonCounter++}__`   // groupKey なし → 独立キー（統合しない）
+
+      const split = splitReasonSubject(t)
+
+      let mergeKey: string
+      let subject: string | null
+      let body: string
+
+      if (split !== null) {
+        // 「薬剤名は、本文」形式: groupKey × body で統合
+        subject  = split.subject
+        body     = split.body
+        mergeKey = `${gk}::${body}`
+      } else {
+        // 主語なし形式: groupKey × 全文で重複排除のみ（統合しない）
+        subject  = null
+        body     = t
+        mergeKey = `${gk}::${t}`
       }
-      // 同一 groupKey の2件目以降は無視（最初の1件が確定済み）
+
+      if (!reasonSubjects.has(mergeKey)) {
+        reasonSubjects.set(mergeKey, subject !== null ? [subject] : [])
+        reasonBody.set(mergeKey, body)
+        reasonKeyOrder.push(mergeKey)
+      } else if (subject !== null) {
+        // 同一 mergeKey に新しい主語を追加（重複は除く）
+        const existing = reasonSubjects.get(mergeKey)!
+        if (!existing.includes(subject)) existing.push(subject)
+      }
+      // 主語なし形式の重複（subject === null）: mergeKey が既存なら何もしない（完全 dedupe）
     } else if (type === 'observation') {
       observations.push(t)
     } else if (type === 'decision') {
@@ -508,8 +547,19 @@ function buildS(sEntries: SEntry[]): string {
     }
   }
 
-  // 採用された reason を出現順に並べる（groupKey ごとに1件確定済み）
-  const uniqueReasons = reasonGroupKeyOrder.map(gk => reasonByGroupKey.get(gk)!)
+  // reason を統合キー出現順に再構築
+  const uniqueReasons: string[] = []
+  for (const key of reasonKeyOrder) {
+    const subjects = reasonSubjects.get(key)!
+    const body     = reasonBody.get(key)!
+    if (subjects.length === 0) {
+      // 主語なし形式: body がそのままテキスト全体
+      uniqueReasons.push(body)
+    } else {
+      // 「A と B と C は、本文」形式で結合
+      uniqueReasons.push(subjects.join('と') + 'は、' + body)
+    }
+  }
 
   // ② observation: prefix を除いた body を unique 化
   const obsBodySeen = new Set<string>()
