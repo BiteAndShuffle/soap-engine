@@ -364,7 +364,9 @@
       "label": "外用部位（任意）",
       "placeholder": "未入力なら自動生成（例：右目、左目、両目）",
       "targetField": "S",
-      "insertMode": "prefix"
+      "insertMode": "prefix",
+      "applyScenarioIds": ["initial"],
+      "emptyBehavior": "keep_original"
     }
   },
   "defaults": {
@@ -433,7 +435,7 @@
         "drug_effect_explanation",
         "side_effect_attention"
       ],
-      "S": "目のかゆみが気になるため、薬が追加となった。",
+      "S": "{{drug_subject}}は、目のかゆみが気になるため追加となった。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",

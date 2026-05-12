@@ -636,11 +636,16 @@ export interface ModuleData {
      * サードパネルに表示する任意入力欄。点眼薬・軟膏・湿布など
      * 部位や症状部位をユーザーが入力してS欄に反映するために使用する。
      *
-     * enabled      — true のモジュールのみ入力欄を表示する
-     * label        — 入力欄のラベル（例: "部位"）
-     * placeholder  — プレースホルダーテキスト
-     * targetField  — 反映先フィールド（現時点では "S" のみ対応）
-     * insertMode   — 挿入モード。"prefix" = Sの先頭語を置換/補完
+     * enabled          — true のモジュールのみ入力欄を表示する
+     * label            — 入力欄のラベル（例: "部位"）
+     * placeholder      — プレースホルダーテキスト
+     * targetField      — 反映先フィールド（現時点では "S" のみ対応）
+     * insertMode       — 挿入モード。"prefix" = Sの先頭語を置換/補完
+     * applyScenarioIds — 入力欄を表示・適用するシナリオIDのホワイトリスト。
+     *                    未定義または空配列の場合はすべてのシナリオで適用する。
+     * emptyBehavior    — 入力欄が空のときの挙動。
+     *                    "keep_original": 元のSをそのまま維持（プレフィックス不適用）。
+     *                    未定義時は既定動作（空なら baseFields をそのまま返す）と同じ。
      */
     localInput?: {
       enabled: boolean
@@ -648,6 +653,8 @@ export interface ModuleData {
       placeholder?: string
       targetField: 'S'
       insertMode: 'prefix'
+      applyScenarioIds?: string[]
+      emptyBehavior?: 'keep_original'
     }
   }
   template?: ModuleTemplate

@@ -332,6 +332,8 @@ interface ThirdPanelProps {
     enabled: boolean
     label: string
     placeholder?: string
+    applyScenarioIds?: string[]
+    emptyBehavior?: 'keep_original'
   }
   /** 部位入力の現在値 */
   localSiteInput?: string

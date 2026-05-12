@@ -332,16 +332,52 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // S の先頭語（最初の助詞「の/が/は/で/を」の直前まで）を localSiteInput で置換する。
   // 未入力・localInput 未定義の場合は baseFields をそのまま使う。
   //
+  // applyScenarioIds が指定されている場合、現在のシナリオ（ローカル id）が
+  // その配列に含まれていないとき、入力欄の適用をスキップして baseFields を返す。
+  // emptyBehavior === "keep_original" の場合、localSiteInput が空のとき baseFields を返す。
+  //
   // Express 2剤目+ (activeNode !== null) の場合:
   //   baseFields.S はすべての合成ノードがマージされた後の値であるため、
   //   対象ノードの block.fields.S にだけ prefix を適用して再マージする。
   // 1剤目 (activeNode === null) の場合:
-  //   baseFields.S に直接 prefix を適用する（従来通り）。
+  //   primaryBaseFields.S にのみ prefix を適用して再マージする。
   const finalFields = (() => {
     const localInputConfig = targetModule.display?.localInput
-    if (!localInputConfig?.enabled || !localSiteInput.trim()) return baseFields
+    if (!localInputConfig?.enabled) return baseFields
 
+    // applyScenarioIds チェック: 現在のシナリオのローカル id が対象か確認する
+    const applyIds = localInputConfig.applyScenarioIds
+    if (applyIds && applyIds.length > 0) {
+      // アクティブシナリオのローカル id を解決する
+      const activeLocalId = activeNode !== null
+        ? targetModule.scenarios.find(sc => sc.globalId === activeNode.scenarioId)?.id
+        : primaryScenario?.id
+      if (!activeLocalId || !applyIds.includes(activeLocalId)) return baseFields
+    }
+
+    // emptyBehavior チェック: 空入力時に keep_original なら baseFields をそのまま返す
+    if (!localSiteInput.trim()) return baseFields
+
+    // applyPrefix: S行の最初の名詞（助詞直前まで）を localSiteInput で置換する。
+    // 「薬剤名は、...」形式の S（drug_subject 解決済み）の場合:
+    //   「は、」の前の主語部分を保持し、「は、」以降に対してのみ prefix を適用する。
+    //   例: "アレジオン点眼液は、目のかゆみが気になるため追加となった。" + "両目"
+    //     → "アレジオン点眼液は、両目のかゆみが気になるため追加となった。"
+    // それ以外の形式（主語なし）の場合:
+    //   従来どおり先頭から最初の助詞までを localSiteInput で置換する。
+    //   例: "目のかゆみが気になるため、薬が追加となった。" + "両目"
+    //     → "両目のかゆみが気になるため、薬が追加となった。"
     const applyPrefix = (s: string): string | null => {
+      // 「主語は、本文」形式を検出: 先頭から「は、」または「は,」までを主語として扱う
+      const subjectMatch = s.match(/^(.+?)(は[、,])(.+)$/)
+      if (subjectMatch) {
+        const prefix = subjectMatch[1] + subjectMatch[2]  // 例: "アレジオン点眼液は、"
+        const rest   = subjectMatch[3]                    // 例: "目のかゆみが気になるため追加となった。"
+        const particleMatch = rest.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
+        if (!particleMatch) return null
+        return prefix + localSiteInput.trim() + particleMatch[2] + rest.slice(particleMatch[0].length)
+      }
+      // 主語なし形式: 先頭から最初の助詞まで置換
       const particleMatch = s.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
       if (!particleMatch) return null
       return localSiteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
