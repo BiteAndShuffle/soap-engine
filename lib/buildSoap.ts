@@ -459,6 +459,24 @@ function splitReasonSubject(text: string): { subject: string; body: string } | n
 }
 
 /**
+ * decision / reason の比較キー用に、投与経路を表す動詞のみを正規化する。
+ *
+ * 正規化対象（経口服用 ↔ 注射使用 の表記揺れのみ）:
+ *   服用により → 使用により
+ *   服用後     → 使用後
+ *   服用中     → 使用中
+ *
+ * ※ 出力テキスト自体は変更しない。比較キー生成専用。
+ * ※ 医療的に意味が異なる語句（追加/中止/減量/増量/変更/改善/悪化 等）は正規化しない。
+ */
+function normalizeAdminVerbForKey(text: string): string {
+  return text
+    .replace(/服用により/g, '使用により')
+    .replace(/服用後/g, '使用後')
+    .replace(/服用中/g, '使用中')
+}
+
+/**
  * 複数ブロックの S テキストを構造ベースで合成する。
  *
  * 処理:
@@ -506,10 +524,6 @@ function buildS(sEntries: SEntry[]): string {
     const type = classifySLine(t)
 
     if (type === 'reason') {
-      const gk = entry.groupKey && entry.groupKey !== ''
-        ? entry.groupKey
-        : `__anon_${anonymousReasonCounter++}__`   // groupKey なし → 独立キー（統合しない）
-
       const split = splitReasonSubject(t)
 
       let mergeKey: string
@@ -517,12 +531,21 @@ function buildS(sEntries: SEntry[]): string {
       let body: string
 
       if (split !== null) {
-        // 「薬剤名は、本文」形式: groupKey × body で統合
+        // 「薬剤名は、本文」形式:
+        //   groupKey が設定されていれば groupKey × body で統合。
+        //   groupKey が未設定でも同一 clinicalDomain 内・同一 body なら統合する
+        //   （Type B: 同一 reason body を持つ multi-drug initial の過剰重複を防ぐ）。
         subject  = split.subject
         body     = split.body
+        const gk = entry.groupKey && entry.groupKey !== ''
+          ? entry.groupKey
+          : `__samebody__`  // groupKey なし・主語あり形式は body で統合
         mergeKey = `${gk}::${body}`
       } else {
         // 主語なし形式: groupKey × 全文で重複排除のみ（統合しない）
+        const gk = entry.groupKey && entry.groupKey !== ''
+          ? entry.groupKey
+          : `__anon_${anonymousReasonCounter++}__`  // groupKey なし → 独立キー
         subject  = null
         body     = t
         mergeKey = `${gk}::${t}`
@@ -570,20 +593,44 @@ function buildS(sEntries: SEntry[]): string {
   }
 
   // ③ decision: predicate ごとにグループ化し subject を unique 結合
-  const decisionByPredicate = new Map<string, Set<string>>()
-  const predicateOrder: string[] = []
+  //
+  // Type A 修正: 投与経路表記（服用/使用）の差異だけで predicate が分かれないよう、
+  // 比較キー（predicateKey）は normalizeAdminVerbForKey() で正規化する。
+  // 出力テキスト（predicate）は初出のものをそのまま使用する（本文を変更しない）。
+  //
+  // 同様に subject も投与経路表記で正規化したキーで重複排除し、
+  // 初出のテキストを出力に使う。これにより oral「服用」と injection「使用」が
+  // 同一グループ・同一主語として扱われ、症状語の重複出力を防ぐ。
+  const decisionByPredicate = new Map<string, {
+    predicate: string           // 出力用 (初出テキスト)
+    subjectMap: Map<string, string>  // normalizedKey → 初出テキスト
+    subjectOrder: string[]           // normalizedKey の出現順
+  }>()
+  const predicateOrder: string[] = []   // predicateKey の出現順
   for (const dec of decisions) {
     const { subject, predicate } = splitDecision(dec)
-    if (!decisionByPredicate.has(predicate)) {
-      decisionByPredicate.set(predicate, new Set())
-      predicateOrder.push(predicate)
+    const predicateKey = normalizeAdminVerbForKey(predicate)
+    const subjectKey   = normalizeAdminVerbForKey(subject)
+    if (!decisionByPredicate.has(predicateKey)) {
+      decisionByPredicate.set(predicateKey, {
+        predicate,
+        subjectMap: new Map([[subjectKey, subject]]),
+        subjectOrder: [subjectKey],
+      })
+      predicateOrder.push(predicateKey)
+    } else {
+      const entry = decisionByPredicate.get(predicateKey)!
+      if (!entry.subjectMap.has(subjectKey)) {
+        entry.subjectMap.set(subjectKey, subject)
+        entry.subjectOrder.push(subjectKey)
+      }
     }
-    decisionByPredicate.get(predicate)!.add(subject)
   }
   const uniqueDecisions: string[] = []
-  for (const predicate of predicateOrder) {
-    const subjects = [...decisionByPredicate.get(predicate)!]
-    uniqueDecisions.push(subjects.join('・') + predicate)
+  for (const predicateKey of predicateOrder) {
+    const entry = decisionByPredicate.get(predicateKey)!
+    const subjects = entry.subjectOrder.map(k => entry.subjectMap.get(k)!)
+    uniqueDecisions.push(subjects.join('・') + entry.predicate)
   }
 
   // ④ other: 完全 dedupe（入力順保持）
