@@ -30,7 +30,7 @@
     "sMergePolicy": {
       "unit": "clinical_domain",
       "conflictStrategy": "separate_by_domain",
-      "withinDomainStrategy": "groupKey_based_replace"
+      "withinDomainStrategy": "groupKey_based_semantic_merge"
     }
   },
   "drug": {

@@ -1,6 +1,6 @@
 {
   "moduleId": "dm_glp1ra_semaglutide_oral",
-  "moduleVersion": "1.0.9",
+  "moduleVersion": "1.0.10",
   "regulatory": {
     "psychotropicClass": "not_applicable",
     "controlledSubstance": "not_applicable",
@@ -48,7 +48,7 @@
     "sMergePolicy": {
       "unit": "clinical_domain",
       "conflictStrategy": "separate_by_domain",
-      "withinDomainStrategy": "groupKey_based_replace"
+      "withinDomainStrategy": "groupKey_based_semantic_merge"
     },
     "nodeIdentityPolicy": {
       "source": "composition",
@@ -106,6 +106,7 @@
       "リベルサス": {
         "displayName": "リベルサス",
         "genericName": "セマグルチド",
+        "displayGenericName": "セマグルチド",
         "aliases": [
           "りべるさす",
           "りべ",
@@ -320,7 +321,11 @@
     "drugGeneric": "セマグルチド",
     "nodeLabelShort": "GLP1内服",
     "nodeLabelLong": "GLP-1受容体作動薬（内服）",
-    "nodeKey": "glp1ra_oral"
+    "nodeKey": "glp1ra_oral",
+    "menuGroupLabels": {
+      "増量": "増量",
+      "減量": "減量"
+    }
   },
   "defaults": {
     "followup": {
@@ -546,6 +551,22 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": []
+      },
+      "addon_hyperkalemia_guidance": {
+        "key": "addon_hyperkalemia_guidance",
+        "id": "addon_hyperkalemia_guidance",
+        "title": "生活指導（カリウム）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になる症状があればご相談ください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       }
     },
     "orderPresets": {
@@ -553,7 +574,8 @@
         "addon_glycemic_guidance",
         "addon_oral_ribelsus_admin",
         "addon_se_hypoglycemia_guidance",
-        "addon_initial_sickday_guidance"
+        "addon_initial_sickday_guidance",
+        "addon_hyperkalemia_guidance"
       ],
       "cp_poor_missed_doses_default": [
         "addon_adherence_alarm_suggestion",
@@ -602,7 +624,7 @@
           "血糖値が高い"
         ]
       },
-      "S": "血糖値が高いため、薬が追加となった。",
+      "S": "{{drug_subject}}は、血糖値が高いため追加となった。",
       "O": "GLP-1受容体作動薬(内服)　処方",
       "A": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。\n血糖改善および体重管理の補助を目的として服用する。",
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
@@ -611,7 +633,8 @@
           "addon_glycemic_guidance",
           "addon_oral_ribelsus_admin",
           "addon_se_hypoglycemia_guidance",
-          "addon_initial_sickday_guidance"
+          "addon_initial_sickday_guidance",
+          "addon_hyperkalemia_guidance"
         ]
       },
       "mergePolicy": {
@@ -650,7 +673,7 @@
       "SStructured": [
         {
           "id": "s_1",
-          "text": "血糖値が高いため、薬が追加となった。",
+          "text": "{{drug_subject}}は、血糖値が高いため追加となった。",
           "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",
@@ -2777,7 +2800,7 @@
       "S": "{{drug_subject}}の服用により吐き気・下痢・便秘などがあるが、日常生活は送れている。",
       "O": "GLP-1受容体作動薬(内服)　処方",
       "A": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
-      "P": "{{drug_subject}}による症状が軽い場合は、食事量を無理せず脂っこいものを控えるなどで改善することがあります。\n便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。\nご相談ください。",
+      "P": "{{drug_subject}}による症状が軽い場合は、食事量を無理なく調整し、脂っこいものを控えることで改善することがあります。\n便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。\nご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2837,7 +2860,7 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}による症状が軽い場合は、食事量を無理せず脂っこいものを控えるなどで改善することがあります。",
+          "text": "{{drug_subject}}による症状が軽い場合は、食事量を無理なく調整し、脂っこいものを控えることで改善することがあります。",
           "role": "lifestyle_guidance",
           "transform": "moderate",
           "safety": "low",
@@ -3318,14 +3341,14 @@
       ]
     },
     {
-      "id": "lifestyle_guidance",
-      "globalId": "dm_glp1ra_semaglutide_oral.lifestyle_guidance",
-      "title": "GLP-1受容体作動薬(内服) 生活指導",
+      "id": "lifestyle_guidance_hyperglycemia",
+      "globalId": "dm_glp1ra_semaglutide_oral.lifestyle_guidance_hyperglycemia",
+      "title": "GLP-1受容体作動薬(内服) 生活指導（血糖）",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
-        "lifestyle",
-        "guidance"
+        "lifestyle_guidance",
+        "hyperglycemia"
       ],
       "situationFilter": [
         "general"
@@ -3441,6 +3464,129 @@
         },
         {
           "id": "p_5",
+          "text": "気になる症状があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_hyperkalemia",
+      "globalId": "dm_glp1ra_semaglutide_oral.lifestyle_guidance_hyperkalemia",
+      "title": "GLP-1受容体作動薬(内服) 生活指導（カリウム）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "hyperkalemia"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperkalemia"
+        ],
+        "symptoms": [
+          "カリウム高値"
+        ]
+      },
+      "S": "カリウムの値が高いと言われた。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "カリウムコントロールが不十分であり、食事療法の継続が重要である。",
+      "P": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になる症状があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "カリウムの値が高いと言われた。",
+          "role": "lifestyle_problem",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "カリウムコントロールが不十分であり、食事療法の継続が重要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "食事療法は、カリウムのコントロールにおいて重要です。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "カリウムを多く含む食品の摂りすぎに注意しましょう。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
           "text": "気になる症状があればご相談ください。",
           "role": "followup_guidance",
           "transform": "minimal",
