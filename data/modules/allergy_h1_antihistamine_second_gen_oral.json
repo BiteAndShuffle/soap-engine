@@ -1,0 +1,3770 @@
+{
+  "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+  "moduleVersion": "1.0.0",
+  "regulatory": {
+    "psychotropicClass": "not_applicable",
+    "controlledSubstance": "not_applicable",
+    "notes": null
+  },
+  "topical": {
+    "steroidPotency": "not_applicable",
+    "notes": null
+  },
+  "categoryPath": [
+    "アレルギー",
+    "ヒスタミンH1受容体拮抗薬",
+    "第二世代",
+    "内服"
+  ],
+  "composition": {
+    "domain": "allergy",
+    "priority": "chronic",
+    "clinicalDomain": "allergy",
+    "searchDomain": "allergy",
+    "sMergeDomain": "allergy",
+    "nodeLabelShort": "抗ヒスタミン薬",
+    "nodeLabelLong": "第二世代抗ヒスタミン薬（内服）",
+    "nodeKey": "h1_antihistamine_oral",
+    "classKey": "h1_antihistamine_2nd_gen",
+    "defaultSMergeLevel": "clinical_domain",
+    "canonicalSource": {
+      "nodeIdentity": "composition",
+      "displayProjection": "display",
+      "scenarioMergePolicy": "scenarios[].mergePolicy"
+    },
+    "domainPolicy": {
+      "clinicalDomainUnit": "disease_area",
+      "sMergeDomainUnit": "disease_area",
+      "defaultSGrouping": "clinical_domain"
+    },
+    "groupKeyRegistry": [
+      "allergy_symptom_management",
+      "allergy_dose_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "treatment_end",
+      "lifestyle_guidance",
+      "as_needed"
+    ],
+    "sMergePolicy": {
+      "unit": "clinical_domain",
+      "conflictStrategy": "separate_by_domain",
+      "withinDomainStrategy": "groupKey_based_semantic_merge"
+    },
+    "nodeIdentityPolicy": {
+      "source": "composition",
+      "overrideAllowed": false
+    }
+  },
+  "drug": {
+    "genericName": "第二世代ヒスタミンH1受容体拮抗薬",
+    "brandNames": [
+      "アレグラ",
+      "クラリチン",
+      "ザイザル",
+      "ビラノア",
+      "デザレックス",
+      "アレロック",
+      "タリオン",
+      "エバステル",
+      "アレジオン"
+    ],
+    "drugClass": [
+      "H1_antihistamine_2nd_gen"
+    ],
+    "route": "oral",
+    "dosageForms": [
+      "tablet"
+    ],
+    "drugSpecificTags": [
+      "h1_antihistamine_oral",
+      "second_gen_antihistamine"
+    ],
+    "search": {
+      "primaryDisplayName": "第二世代抗ヒスタミン薬",
+      "exactAliases": [
+        "アレグラ",
+        "クラリチン",
+        "ザイザル",
+        "ビラノア",
+        "デザレックス",
+        "アレロック",
+        "タリオン",
+        "エバステル",
+        "アレジオン"
+      ],
+      "prefixAliases": [
+        "あれぐら",
+        "あれぐ",
+        "ふぇきそふぇなじん",
+        "くらりちん",
+        "くらり",
+        "ろらたじん",
+        "ざいざる",
+        "れぼせちりじん",
+        "びらのあ",
+        "びらすちん",
+        "でざれっくす",
+        "でぞろらたじん",
+        "あれろっく",
+        "おろぱたじん",
+        "たりおん",
+        "べぽたすちん",
+        "えばすてる",
+        "えばすちん",
+        "あれじおん",
+        "えぴなすちん",
+        "こうひすたみん",
+        "こうひすた",
+        "あれるぎー",
+        "はなみず",
+        "かゆみ"
+      ],
+      "nameAliases": [
+        "あれぐら",
+        "あれぐ",
+        "ふぇきそふぇなじん",
+        "くらりちん",
+        "くらり",
+        "ろらたじん",
+        "ざいざる",
+        "れぼせちりじん",
+        "びらのあ",
+        "びらすちん",
+        "でざれっくす",
+        "でぞろらたじん",
+        "あれろっく",
+        "おろぱたじん",
+        "たりおん",
+        "べぽたすちん",
+        "えばすてる",
+        "えばすちん",
+        "あれじおん",
+        "えぴなすちん",
+        "こうひすたみん",
+        "こうひすた",
+        "あれるぎー",
+        "はなみず",
+        "かゆみ"
+      ],
+      "keywords": [],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
+    },
+    "brandCatalog": {
+      "アレグラ": {
+        "displayName": "アレグラ",
+        "genericName": "フェキソフェナジン",
+        "displayGenericName": "フェキソフェナジン",
+        "aliases": [
+          "あれぐら",
+          "あれぐ",
+          "ふぇきそふぇなじん"
+        ],
+        "normalizedAliases": [
+          "あれぐら",
+          "あれぐ",
+          "ふぇきそふぇなじん"
+        ],
+        "handlingTags": [
+          "fexofenadine",
+          "fruit_juice_interaction"
+        ]
+      },
+      "クラリチン": {
+        "displayName": "クラリチン",
+        "genericName": "ロラタジン",
+        "displayGenericName": "ロラタジン",
+        "aliases": [
+          "くらりちん",
+          "くらり",
+          "ろらたじん"
+        ],
+        "normalizedAliases": [
+          "くらりちん",
+          "くらり",
+          "ろらたじん"
+        ],
+        "handlingTags": [
+          "loratadine"
+        ]
+      },
+      "ザイザル": {
+        "displayName": "ザイザル",
+        "genericName": "レボセチリジン",
+        "displayGenericName": "レボセチリジン",
+        "aliases": [
+          "ざいざる",
+          "れぼせちりじん"
+        ],
+        "normalizedAliases": [
+          "ざいざる",
+          "れぼせちりじん"
+        ],
+        "handlingTags": [
+          "levocetirizine"
+        ]
+      },
+      "ビラノア": {
+        "displayName": "ビラノア",
+        "genericName": "ビラスチン",
+        "displayGenericName": "ビラスチン",
+        "aliases": [
+          "びらのあ",
+          "びらすちん"
+        ],
+        "normalizedAliases": [
+          "びらのあ",
+          "びらすちん"
+        ],
+        "handlingTags": [
+          "bilastine",
+          "empty_stomach_required"
+        ]
+      },
+      "デザレックス": {
+        "displayName": "デザレックス",
+        "genericName": "デスロラタジン",
+        "displayGenericName": "デスロラタジン",
+        "aliases": [
+          "でざれっくす",
+          "でぞろらたじん"
+        ],
+        "normalizedAliases": [
+          "でざれっくす",
+          "でぞろらたじん"
+        ],
+        "handlingTags": [
+          "desloratadine"
+        ]
+      },
+      "アレロック": {
+        "displayName": "アレロック",
+        "genericName": "オロパタジン",
+        "displayGenericName": "オロパタジン",
+        "aliases": [
+          "あれろっく",
+          "おろぱたじん"
+        ],
+        "normalizedAliases": [
+          "あれろっく",
+          "おろぱたじん"
+        ],
+        "handlingTags": [
+          "olopatadine"
+        ]
+      },
+      "タリオン": {
+        "displayName": "タリオン",
+        "genericName": "ベポタスチン",
+        "displayGenericName": "ベポタスチン",
+        "aliases": [
+          "たりおん",
+          "べぽたすちん"
+        ],
+        "normalizedAliases": [
+          "たりおん",
+          "べぽたすちん"
+        ],
+        "handlingTags": [
+          "bepotastine"
+        ]
+      },
+      "エバステル": {
+        "displayName": "エバステル",
+        "genericName": "エバスチン",
+        "displayGenericName": "エバスチン",
+        "aliases": [
+          "えばすてる",
+          "えばすちん"
+        ],
+        "normalizedAliases": [
+          "えばすてる",
+          "えばすちん"
+        ],
+        "handlingTags": [
+          "ebastine"
+        ]
+      },
+      "アレジオン": {
+        "displayName": "アレジオン",
+        "genericName": "エピナスチン",
+        "displayGenericName": "エピナスチン",
+        "aliases": [
+          "あれじおん",
+          "えぴなすちん"
+        ],
+        "normalizedAliases": [
+          "あれじおん",
+          "えぴなすちん"
+        ],
+        "handlingTags": [
+          "epinastine"
+        ]
+      }
+    },
+    "aliasToBrand": {
+      "あれぐら": "アレグラ",
+      "あれぐ": "アレグラ",
+      "ふぇきそふぇなじん": "アレグラ",
+      "くらりちん": "クラリチン",
+      "くらり": "クラリチン",
+      "ろらたじん": "クラリチン",
+      "ざいざる": "ザイザル",
+      "れぼせちりじん": "ザイザル",
+      "びらのあ": "ビラノア",
+      "びらすちん": "ビラノア",
+      "でざれっくす": "デザレックス",
+      "でぞろらたじん": "デザレックス",
+      "あれろっく": "アレロック",
+      "おろぱたじん": "アレロック",
+      "たりおん": "タリオン",
+      "べぽたすちん": "タリオン",
+      "えばすてる": "エバステル",
+      "えばすちん": "エバステル",
+      "あれじおん": "アレジオン",
+      "えぴなすちん": "アレジオン"
+    }
+  },
+  "drugResolution": {
+    "brandToTags": {
+      "アレグラ": [
+        "fexofenadine",
+        "fruit_juice_interaction"
+      ],
+      "クラリチン": [
+        "loratadine"
+      ],
+      "ザイザル": [
+        "levocetirizine"
+      ],
+      "ビラノア": [
+        "bilastine",
+        "empty_stomach_required"
+      ],
+      "デザレックス": [
+        "desloratadine"
+      ],
+      "アレロック": [
+        "olopatadine"
+      ],
+      "タリオン": [
+        "bepotastine"
+      ],
+      "エバステル": [
+        "ebastine"
+      ],
+      "アレジオン": [
+        "epinastine"
+      ]
+    }
+  },
+  "template": {
+    "templateId": "allergy_h1_antihistamine_second_gen_oral_v1",
+    "templateVersion": "1.0.0",
+    "situationTags": [
+      "general"
+    ],
+    "severityTags": [
+      "mild",
+      "moderate",
+      "severe"
+    ],
+    "urgentFlag": false,
+    "urgentCriteria": null
+  },
+  "risks": {
+    "primary": [
+      "drowsiness_risk",
+      "liver_dysfunction_risk"
+    ],
+    "secondary": [
+      "dry_mouth_risk",
+      "abdominal_discomfort_risk"
+    ],
+    "conditional": []
+  },
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "index": {
+    "searchableText": [
+      "アレグラ",
+      "フェキソフェナジン",
+      "クラリチン",
+      "ロラタジン",
+      "ザイザル",
+      "レボセチリジン",
+      "ビラノア",
+      "ビラスチン",
+      "デザレックス",
+      "デスロラタジン",
+      "アレロック",
+      "オロパタジン",
+      "タリオン",
+      "ベポタスチン",
+      "エバステル",
+      "エバスチン",
+      "アレジオン",
+      "エピナスチン",
+      "第二世代抗ヒスタミン薬",
+      "ヒスタミンH1受容体拮抗薬",
+      "アレルギー",
+      "花粉症",
+      "鼻水",
+      "鼻炎",
+      "鼻づまり",
+      "かゆみ",
+      "蕁麻疹",
+      "アトピー",
+      "眠気",
+      "眠気が出ない",
+      "非鎮静性",
+      "口渇",
+      "倦怠感",
+      "飲み忘れ",
+      "自己判断",
+      "受診遅延",
+      "空腹時",
+      "フルーツジュース"
+    ],
+    "normalizedTokens": [
+      "あれぐら",
+      "ふぇきそふぇなじん",
+      "くらりちん",
+      "ろらたじん",
+      "ざいざる",
+      "れぼせちりじん",
+      "びらのあ",
+      "びらすちん",
+      "でざれっくす",
+      "でぞろらたじん",
+      "あれろっく",
+      "おろぱたじん",
+      "たりおん",
+      "べぽたすちん",
+      "えばすてる",
+      "えばすちん",
+      "あれじおん",
+      "えぴなすちん",
+      "だいにせだいこうひすたみんやく",
+      "ひすたみんh1じゅようたいきっこうやく",
+      "あれるぎー",
+      "かふんしょう",
+      "はなみず",
+      "はなえん",
+      "はなづまり",
+      "かゆみ",
+      "じんましん",
+      "あとぴー",
+      "ねむけ",
+      "ひちんせいせい",
+      "こうかつ",
+      "けんたいかん",
+      "のみわすれ",
+      "じこはんだん",
+      "じゅしんちえん",
+      "くうふくじ",
+      "ふるーつじゅーす"
+    ],
+    "facets": {
+      "route": "oral",
+      "dosageForms": [
+        "tablet"
+      ],
+      "situation": [
+        "general"
+      ],
+      "drugClass": [
+        "H1_antihistamine_2nd_gen"
+      ]
+    }
+  },
+  "display": {
+    "title": "第二世代抗ヒスタミン薬（内服）",
+    "subtitle": "アレグラ・クラリチン・ザイザル・ビラノア 他",
+    "drugClassLabel": "第二世代ヒスタミンH1受容体拮抗薬",
+    "drugGeneric": "フェキソフェナジン 他",
+    "nodeLabelShort": "抗ヒスタミン薬",
+    "nodeLabelLong": "第二世代抗ヒスタミン薬（内服）",
+    "nodeKey": "h1_antihistamine_oral"
+  },
+  "defaults": {
+    "followup": {
+      "S": null,
+      "P": "次回、引き続き使用できているか、症状の変化・副作用の有無を確認。"
+    },
+    "followupProfiles": {
+      "default_followup": {
+        "S": null,
+        "P": "次回、引き続き使用できているか、症状の変化・副作用の有無を確認。"
+      },
+      "end_followup": {
+        "S": null,
+        "P": "次回、治療経過および症状変化の有無を確認。"
+      },
+      "se_followup": {
+        "S": null,
+        "P": "次回、治療経過および副作用の有無を確認。"
+      }
+    }
+  },
+  "ui": {
+    "panels": [
+      {
+        "id": "panel_1",
+        "title": "基本",
+        "sections": [
+          "display",
+          "categoryPath",
+          "drug",
+          "template",
+          "risks",
+          "searchConfig",
+          "index"
+        ]
+      },
+      {
+        "id": "panel_2",
+        "title": "指導（アドオン）",
+        "sections": [
+          "addons"
+        ]
+      },
+      {
+        "id": "panel_3",
+        "title": "SOAP（シナリオ）",
+        "sections": [
+          "scenarios"
+        ]
+      }
+    ],
+    "panelOrder": [
+      "panel_1",
+      "panel_2",
+      "panel_3"
+    ],
+    "defaultPanelId": "panel_1"
+  },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "drug_effect_explanation",
+      "side_effect_attention",
+      "drowsiness_attention",
+      "liver_attention",
+      "dose_increase_explanation",
+      "dose_decrease_explanation",
+      "treatment_end_explanation",
+      "lifestyle_guidance",
+      "adherence_support",
+      "administration_instruction",
+      "followup_monitoring"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
+  "addons": {
+    "items": {
+      "addon_driving_caution_guidance": {
+        "key": "addon_driving_caution_guidance",
+        "id": "addon_driving_caution_guidance",
+        "title": "運転注意説明",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "text": "服用後に眠気や集中力の低下を感じる場合は、自動車の運転など危険を伴う作業に注意してください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_bilastine_admin": {
+        "key": "addon_bilastine_admin",
+        "id": "addon_bilastine_admin",
+        "title": "ビラノア（ビラスチン）説明",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "text": "食事の影響により、効果が減弱する可能性があります。\n1日1回空腹時（食事のおよそ1時間前または食後2時間以上あと）に服用してください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_fexofenadine_admin": {
+        "key": "addon_fexofenadine_admin",
+        "id": "addon_fexofenadine_admin",
+        "title": "アレグラ（フェキソフェナジン）説明",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "text": "フルーツジュースの影響により、効果が減弱する可能性があります。\nグレープフルーツ、リンゴ、オレンジなどのジュースは避け、水で服用してください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_liver_warning_detail": {
+        "key": "addon_liver_warning_detail",
+        "id": "addon_liver_warning_detail",
+        "title": "肝障害関連症状の補足",
+        "group": "side_effect_guidance",
+        "targetSection": "P",
+        "text": "強いだるさが続く、食欲が落ちる、皮膚や白目が黄色く見えるなどの変化がある場合は、早めに医療機関へご相談ください。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_alarm_suggestion": {
+        "key": "addon_adherence_alarm_suggestion",
+        "id": "addon_adherence_alarm_suggestion",
+        "title": "服薬忘れ対策（アラーム）",
+        "group": "adherence_guidance",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、服用予定の時間に合わせてアラームを設定しておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_prep_previous_night": {
+        "key": "addon_adherence_prep_previous_night",
+        "id": "addon_adherence_prep_previous_night",
+        "title": "服薬忘れ対策（事前準備　前日）",
+        "group": "adherence_guidance",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_prep_before_meal": {
+        "key": "addon_adherence_prep_before_meal",
+        "id": "addon_adherence_prep_before_meal",
+        "title": "服薬忘れ対策（事前準備　食事前）",
+        "group": "adherence_guidance",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      }
+    },
+    "orderPresets": {}
+  },
+  "expressModes": [],
+  "scenarios": [
+    {
+      "id": "initial_nasal",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 初回（鼻水）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "scenarioTags": [
+        "initial",
+        "treatment_start",
+        "nasal"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "nasal_discharge"
+        ],
+        "symptoms": [
+          "鼻水"
+        ]
+      },
+      "S": "{{drug_subject}}は、鼻水が気になるため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。\nヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として服用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_driving_caution_guidance"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_symptom_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "drowsiness_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、鼻水が気になるため追加となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "眠気や倦怠感などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "副作用が出た場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "initial_pruritus",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.initial_pruritus",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 初回（掻痒感）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "scenarioTags": [
+        "initial",
+        "treatment_start",
+        "pruritus"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "pruritus"
+        ],
+        "symptoms": [
+          "かゆみ"
+        ]
+      },
+      "S": "{{drug_subject}}は、かゆみが気になるため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。\nヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として服用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_driving_caution_guidance"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_symptom_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "drowsiness_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、かゆみが気になるため追加となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "眠気や倦怠感などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "副作用が出た場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "dose_increase_low_perceived_effect",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.dose_increase_low_perceived_effect",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 用量調整（増量・効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "dose_change",
+        "increase",
+        "low_perceived_effect"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
+      "O": "{{drug_subject}}　増量",
+      "A": "{{drug_subject}}は、効果不十分のため増量となった。増量後の眠気や倦怠感などの副作用に注意が必要である。",
+      "P": "{{drug_subject}}は、増量により眠気や倦怠感が出やすくなることがあります。\n眠気や倦怠感が強い場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_driving_caution_guidance"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_increase_explanation",
+        "side_effect_attention",
+        "drowsiness_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため増量となった。増量後の眠気や倦怠感などの副作用に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "副作用"
+          ],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、増量により眠気や倦怠感が出やすくなることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "眠気や倦怠感が強い場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "dose_increase_due_to_other_med_adjustment",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.dose_increase_due_to_other_med_adjustment",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 用量調整（増量・他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "dose_change",
+        "increase",
+        "other_med_adjustment"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ]
+      },
+      "S": "{{drug_subject}}は、他剤との調整により増量となった。",
+      "O": "{{drug_subject}}　増量",
+      "A": "{{drug_subject}}は、併用薬との調整のため増量となった。増量後の眠気や倦怠感などの副作用に注意が必要である。",
+      "P": "{{drug_subject}}は、増量により眠気や倦怠感が出やすくなることがあります。\n眠気や倦怠感が強い場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_driving_caution_guidance"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_increase_explanation",
+        "side_effect_attention",
+        "drowsiness_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤との調整により増量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬との調整のため増量となった。増量後の眠気や倦怠感などの副作用に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "副作用"
+          ],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、増量により眠気や倦怠感が出やすくなることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "眠気や倦怠感が強い場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "dose_decrease_improved",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.dose_decrease_improved",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 用量調整（減量・症状改善）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "dose_change",
+        "decrease",
+        "improved"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状改善"
+        ]
+      },
+      "S": "{{drug_subject}}は、症状が改善したため服用量が調整となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、症状改善を踏まえ減量となった。減量後に症状が再燃する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、減量により症状が再燃することがあります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が改善したため服用量が調整となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状改善を踏まえ減量となった。減量後に症状が再燃する可能性があるため、注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、減量により症状が再燃することがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "体調変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "dose_decrease_low_perceived_effect",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.dose_decrease_low_perceived_effect",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 用量調整（減量・効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "dose_change",
+        "decrease",
+        "low_perceived_effect"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果実感乏しい"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果の実感が乏しく、服用継続に不安があるため用量調整となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、効果実感の乏しさと患者希望を踏まえ減量となった。減量後の症状変化について経過確認を要する。",
+      "P": "{{drug_subject}}は、減量により症状が悪化する可能性があります。\n症状の変化や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しく、服用継続に不安があるため用量調整となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果実感の乏しさと患者希望を踏まえ減量となった。減量後の症状変化について経過確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、減量により症状が悪化する可能性があります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状の変化や体調変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "dose_decrease_due_to_other_med_adjustment",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.dose_decrease_due_to_other_med_adjustment",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 用量調整（減量・他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "dose_change",
+        "decrease",
+        "other_med_adjustment"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ]
+      },
+      "S": "{{drug_subject}}は、他剤との調整により減量となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、併用薬との調整のため減量となった。減量後の症状悪化に注意が必要である。",
+      "P": "{{drug_subject}}は、減量により症状が悪化する可能性があります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤との調整により減量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬との調整のため減量となった。減量後の症状悪化に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、減量により症状が悪化する可能性があります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "体調変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_drowsiness_none",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_drowsiness_none",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 副作用なし（眠気）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "drowsiness",
+        "none"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "drowsiness_none"
+        ],
+        "symptoms": [
+          "眠気なし"
+        ]
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n眠気は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による眠気は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に眠気が出ることがあります。\n症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "drowsiness_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "眠気は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による眠気は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に眠気が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_liver_symptom_none",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_liver_symptom_none",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 副作用なし（肝障害関連症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "liver",
+        "none"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "liver_symptom_none"
+        ],
+        "symptoms": [
+          "肝障害関連症状なし"
+        ]
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強い倦怠感などの明らかな体調変化は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による肝障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、強い倦怠感が出ることがあります。\n気になる症状が続く場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_liver_warning_detail"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "liver_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "強い倦怠感などの明らかな体調変化は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による肝障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、強い倦怠感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "気になる症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_dry_mouth_none",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_dry_mouth_none",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 副作用なし（口渇）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "dry_mouth",
+        "none"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "dry_mouth_none"
+        ],
+        "symptoms": [
+          "口渇なし"
+        ]
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n口渇は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による口渇は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に口渇が出ることがあります。\n症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "口渇は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による口渇は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に口渇が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_abdominal_discomfort_none",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_abdominal_discomfort_none",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 副作用なし（腹部不快感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "abdominal_discomfort",
+        "none"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "abdominal_discomfort_none"
+        ],
+        "symptoms": [
+          "腹部不快感なし"
+        ]
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n腹部不快感などの消化器症状は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に腹部不快感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "腹部不快感などの消化器症状は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に腹部不快感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "cp_good",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.cp_good",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 CP良好",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_good",
+      "scenarioTags": [
+        "adherence",
+        "good"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "good_compliance"
+        ],
+        "symptoms": [
+          "コンプライアンス良好"
+        ]
+      },
+      "S": "薬を服用して症状は落ち着いている。\n継続して服用できている。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは良好である。治療継続に問題はない。",
+      "P": "引き続き用法を守って服用することで、アレルギー症状改善が期待できます。\n今後も継続して服用できるようにすることが大切です。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "薬を服用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "継続して服用できている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは良好である。治療継続に問題はない。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "引き続き用法を守って服用することで、アレルギー症状改善が期待できます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "今後も継続して服用できるようにすることが大切です。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "cp_poor_missed_doses",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.cp_poor_missed_doses",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 CP不良（服薬忘れ）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "missed_doses"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "missed_doses"
+        ],
+        "symptoms": [
+          "服薬忘れ"
+        ]
+      },
+      "S": "服薬忘れがみられる。\n継続して服用できていない。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは不良で、服薬忘れがみられる。",
+      "P": "継続して服用することでアレルギー症状改善が期待されます。\n服薬忘れが続くとアレルギー症状が悪化する可能性があります。",
+      "addonsRef": {
+        "P": [
+          "addon_adherence_alarm_suggestion",
+          "addon_adherence_prep_previous_night",
+          "addon_adherence_prep_before_meal"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "服薬忘れがみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "継続して服用できていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、服薬忘れがみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して服用することでアレルギー症状改善が期待されます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "服薬忘れが続くとアレルギー症状が悪化する可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "cp_poor_self_adjust",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.cp_poor_self_adjust",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 CP不良（自己判断）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "self_adjust"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "self_adjustment"
+        ],
+        "symptoms": [
+          "自己判断による調整"
+        ]
+      },
+      "S": "自己判断での服用調整がみられる。\n用法どおりの継続服用ができていない。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは不良で、自己判断による調整がみられる。",
+      "P": "継続して服用することで治療効果が安定し、症状悪化の予防につながります。\n自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。\n体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "自己判断での服用調整がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "用法どおりの継続服用ができていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、自己判断による調整がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して服用することで治療効果が安定し、症状悪化の予防につながります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "cp_poor_visit_delay",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.cp_poor_visit_delay",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 CP不良（受診遅延）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "visit_delay"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "visit_delay"
+        ],
+        "symptoms": [
+          "受診遅延"
+        ]
+      },
+      "S": "都合により受診遅延がみられる。\n継続した服用に不安がある。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは不良で、受診遅延がみられる。",
+      "P": "継続的な服用が治療効果の維持と症状悪化の予防につながります。\n治療が中断すると症状が悪化する可能性があります。\n次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "都合により受診遅延がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "継続した服用に不安がある。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、受診遅延がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続的な服用が治療効果の維持と症状悪化の予防につながります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "治療が中断すると症状が悪化する可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご連絡ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "as_needed_refill_needed",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.as_needed_refill_needed",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 頓用使用（処方あり）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "as_needed",
+      "scenarioTags": [
+        "as_needed",
+        "refill_needed"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "as_needed_use",
+        "template": "status_based",
+        "symptomCodes": [
+          "as_needed_refill"
+        ],
+        "symptoms": [
+          "頓用使用・残薬不足"
+        ]
+      },
+      "S": "{{drug_subject}}は、症状が出た時に使用している。\n使用により残薬が少なくなったため、継続処方となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
+      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n使用後も症状が改善しない場合や、使用頻度が増えている場合はご相談ください。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が気になる場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "as_needed",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "drowsiness_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が出た時に使用している。",
+          "role": "as_needed_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "使用により残薬が少なくなったため、継続処方となった。",
+          "role": "as_needed_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。",
+          "role": "followup_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "使用後も症状が改善しない場合や、使用頻度が増えている場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "眠気や倦怠感などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "副作用が気になる場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "as_needed_refill_not_needed",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.as_needed_refill_not_needed",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 頓用使用（処方なし）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "as_needed",
+      "scenarioTags": [
+        "as_needed",
+        "refill_not_needed"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "as_needed_use",
+        "template": "status_based",
+        "symptomCodes": [
+          "as_needed_remaining"
+        ],
+        "symptoms": [
+          "頓用使用・残薬あり"
+        ]
+      },
+      "S": "{{drug_subject}}は、症状が出た時に使用している。\n残薬があるため、今回は処方なしとなった。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "{{drug_subject}}は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
+      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n症状が続く場合や、使用頻度が増える場合はご相談ください。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が気になる場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "as_needed",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "drowsiness_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が出た時に使用している。",
+          "role": "as_needed_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "残薬があるため、今回は処方なしとなった。",
+          "role": "as_needed_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。",
+          "role": "followup_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合や、使用頻度が増える場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "眠気や倦怠感などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "副作用が気になる場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "end_improved",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.end_improved",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 終了（改善）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "end_improved",
+      "scenarioTags": [
+        "treatment_end",
+        "improved"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状改善"
+        ]
+      },
+      "S": "{{drug_subject}}は、症状が改善したため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、症状改善により終了となった。\n終了後に症状が悪化する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}終了後、症状悪化や体調変化がある場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が改善したため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状改善により終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "終了後に症状が悪化する可能性があるため、注意が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}終了後、症状悪化や体調変化がある場合はご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "end_insufficient_effect",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.end_insufficient_effect",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 終了（効果不十分）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "end_insufficient_effect",
+      "scenarioTags": [
+        "treatment_end",
+        "insufficient_effect"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果不十分のため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。症状管理の再評価が必要である。",
+      "P": "{{drug_subject}}終了後、症状が悪化する可能性があります。\n次の治療方針については処方医にご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果不十分のため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため終了となった。症状管理の再評価が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}終了後、症状が悪化する可能性があります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "次の治療方針については処方医にご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "処方医",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "end_ineffective",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.end_ineffective",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 終了（無効）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "end_ineffective",
+      "scenarioTags": [
+        "treatment_end",
+        "ineffective"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "no_effect"
+        ],
+        "symptoms": [
+          "効果なし"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+      "P": "{{drug_subject}}終了後、症状が悪化する可能性があります。\n代替治療については処方医にご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}終了後、症状が悪化する可能性があります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "代替治療については処方医にご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "処方医",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_mild_continue",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_mild_continue",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE継続（軽症）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "mild",
+        "continue"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "present_mild",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "drowsiness_mild"
+        ],
+        "symptoms": [
+          "眠気（軽度）"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により眠気があるが、日常生活は送れている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による眠気を軽度認めるが、治療継続が可能である。",
+      "P": "{{drug_subject}}による眠気が軽い場合は、経過をみていただき、眠気が強くなる場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "drowsiness_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により眠気があるが、日常生活は送れている。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による眠気を軽度認めるが、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による眠気が軽い場合は、経過をみていただき、眠気が強くなる場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_moderate_consider_dr",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_moderate_consider_dr",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE継続（中等度）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "moderate",
+        "consult"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "present_moderate",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "drowsiness_moderate"
+        ],
+        "symptoms": [
+          "眠気（中等度）"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により眠気が強く、辛いことがあるが、日常生活は送れている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による眠気が強く、継続困難の可能性があるため対応を要する。",
+      "P": "{{drug_subject}}による眠気の副作用が強い場合は、減量や薬の変更が必要になることがあります。\n処方医へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "drowsiness_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により眠気が強く、辛いことがあるが、日常生活は送れている。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による眠気が強く、継続困難の可能性があるため対応を要する。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による眠気の副作用が強い場合は、減量や薬の変更が必要になることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "処方医へご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "処方医へ",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_change_due_to_neuropsychiatric_symptoms",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_change_due_to_neuropsychiatric_symptoms",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE変更（精神神経症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "change",
+        "neuropsychiatric"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "present_change",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "drowsiness_led_to_change"
+        ],
+        "symptoms": [
+          "眠気による薬剤変更"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により眠気が出現したため、他剤へ変更となった。",
+      "O": "{{drug_subject}}　処方変更",
+      "A": "{{drug_subject}}の服用による眠気を認め、他剤変更後の経過確認を要する。",
+      "P": "{{drug_subject}}の変更後、症状の悪化や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "drowsiness_attention",
+        "followup_monitoring"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により眠気が出現したため、他剤へ変更となった。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の服用による眠気を認め、他剤変更後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の変更後、症状の悪化や体調変化があればご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_dose_decrease_due_to_neuropsychiatric_symptoms",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_dose_decrease_due_to_neuropsychiatric_symptoms",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE減量（精神神経症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "dose_decrease",
+        "neuropsychiatric"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "drowsiness_led_to_dose_decrease"
+        ],
+        "symptoms": [
+          "眠気による減量"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により眠気がひどいため、減量となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}の服用による眠気を認め、減量後の経過確認を要する。",
+      "P": "{{drug_subject}}の減量後も眠気が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "drowsiness_attention",
+        "dose_decrease_explanation"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により眠気がひどいため、減量となった。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の服用による眠気を認め、減量後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の減量後も眠気が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "se_stop_due_to_neuropsychiatric_symptoms",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_stop_due_to_neuropsychiatric_symptoms",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE中止（精神神経症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "stop",
+        "neuropsychiatric"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "present_stop",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "drowsiness_led_to_stop"
+        ],
+        "symptoms": [
+          "眠気による中止"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により眠気がひどいため、中止となった。",
+      "O": "{{drug_subject}}　処方中止",
+      "A": "{{drug_subject}}の服用による眠気を認め、中止後の経過確認を要する。",
+      "P": "{{drug_subject}}の中止後、症状悪化や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention",
+        "drowsiness_attention",
+        "treatment_end_explanation"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により眠気がひどいため、中止となった。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の服用による眠気を認め、中止後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の中止後、症状悪化や体調変化があればご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_bilastine",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.lifestyle_guidance_bilastine",
+      "title": "ビラスチン生活指導",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "bilastine",
+        "administration"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "lifestyle_guidance",
+        "template": "status_based",
+        "symptomCodes": [
+          "incorrect_timing"
+        ],
+        "symptoms": [
+          "空腹時服用未実施"
+        ]
+      },
+      "S": "ビラスチンは空腹時に飲めていません。",
+      "O": "ビラスチン　服用中",
+      "A": "薬剤特性の理解が不十分であり、生活指導が必要である。",
+      "P": "食事の影響により、効果が減弱する可能性があります。\n食事のおよそ1時間前または食後2時間以上後に服用するようにしてください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "lifestyle_guidance",
+        "administration_instruction"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "ビラスチンは空腹時に飲めていません。",
+          "role": "lifestyle_issue",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "薬剤特性の理解が不十分であり、生活指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "食事の影響により、効果が減弱する可能性があります。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "食事のおよそ1時間前または食後2時間以上後に服用するようにしてください。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_fexofenadine",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.lifestyle_guidance_fexofenadine",
+      "title": "フェキソフェナジン生活指導",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "fexofenadine",
+        "food_interaction"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "lifestyle_guidance",
+        "template": "status_based",
+        "symptomCodes": [
+          "food_interaction"
+        ],
+        "symptoms": [
+          "フルーツジュース摂取"
+        ]
+      },
+      "S": "よくフルーツジュースを飲みます。",
+      "O": "フェキソフェナジン　服用中",
+      "A": "薬剤特性の理解が不十分であり、生活指導が必要である。",
+      "P": "フルーツジュースの影響により、効果が減弱する可能性があります。\nグレープフルーツ、リンゴ、オレンジなどのジュースは避け、水で服用してください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "lifestyle_guidance",
+        "administration_instruction"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "よくフルーツジュースを飲みます。",
+          "role": "lifestyle_issue",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "薬剤特性の理解が不十分であり、生活指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "フルーツジュースの影響により、効果が減弱する可能性があります。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "グレープフルーツ、リンゴ、オレンジなどのジュースは避け、水で服用してください。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [
+            "グレープフルーツ",
+            "リンゴ",
+            "オレンジ"
+          ],
+          "notes": null
+        }
+      ]
+    }
+  ]
+}
