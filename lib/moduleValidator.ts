@@ -351,8 +351,13 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   }
 
   // 10) addon.text の責務逸脱チェック（警告）
+  //     group='sickday' の addon はシックデイ緊急対応案内が設計目的のため対象外とする
+  const ADDON_SCOPE_EXEMPT_GROUPS = new Set(['sickday'])
+
   if (addonItems) {
     for (const [mapKey, item] of Object.entries(addonItems)) {
+      const group = (item as Record<string, unknown>).group
+      if (typeof group === 'string' && ADDON_SCOPE_EXEMPT_GROUPS.has(group)) continue
       const text = (item as Record<string, unknown>).text
       const hit = findForbiddenWord(typeof text === 'string' ? text : null)
       if (hit) {
