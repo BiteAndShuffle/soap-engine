@@ -1752,15 +1752,7 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "コンプライアンスは良好である。",
-          "role": "adherence_assessment",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": []
-        },
-        {
-          "id": "a_2",
-          "text": "治療継続に問題はない。",
+          "text": "コンプライアンスは良好である。治療継続に問題はない。",
           "role": "adherence_assessment",
           "transform": "moderate",
           "safety": "low",
