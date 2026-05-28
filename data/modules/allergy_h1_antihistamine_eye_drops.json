@@ -2340,7 +2340,12 @@
             "ご相談ください"
           ]
         }
-      ]
+      ],
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      }
     },
     {
       "id": "end_improved",
@@ -2475,7 +2480,7 @@
       ],
       "S": "{{drug_subject}}は、効果不十分のため中止となった。",
       "O": "{{drug_subject}}　処方終了",
-      "A": "{{drug_subject}}は、効果不十分のため終了となった。症状管理の再評価が必要である。",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。\n終了後は、目の症状の変化について確認を要する。",
       "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
       "followupRef": "end_followup",
       "mergePolicy": {
@@ -2524,7 +2529,7 @@
         },
         {
           "id": "a_2",
-          "text": "症状管理の再評価が必要である。",
+          "text": "終了後は、目の症状の変化について確認を要する。",
           "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
@@ -2576,7 +2581,7 @@
       ],
       "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
       "O": "{{drug_subject}}　処方終了",
-      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。\n終了後は、目の症状の変化について確認を要する。",
       "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
       "followupRef": "end_followup",
       "mergePolicy": {
@@ -2625,7 +2630,7 @@
         },
         {
           "id": "a_2",
-          "text": "治療方針の変更が必要である。",
+          "text": "終了後は、目の症状の変化について確認を要する。",
           "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
