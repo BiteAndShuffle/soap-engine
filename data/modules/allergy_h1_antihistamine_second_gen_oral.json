@@ -736,7 +736,9 @@
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -876,7 +878,9 @@
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -1016,7 +1020,9 @@
       "P": "{{drug_subject}}は、増量により眠気や倦怠感が出やすくなることがあります。\n眠気や倦怠感が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -1131,7 +1137,9 @@
       "P": "{{drug_subject}}は、増量により眠気や倦怠感が出やすくなることがあります。\n眠気や倦怠感が強い場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -2020,7 +2028,7 @@
       "situationFilter": [
         "general"
       ],
-      "sideEffectPresence": "absent_or_not_observed",
+      "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "adherence_check",
         "template": "status_based",
@@ -3822,7 +3830,9 @@
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -3962,7 +3972,9 @@
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -4102,7 +4114,9 @@
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
@@ -4242,7 +4256,9 @@
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n眠気や倦怠感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_driving_caution_guidance"
+          "addon_driving_caution_guidance",
+          "addon_bilastine_admin",
+          "addon_fexofenadine_admin"
         ]
       },
       "mergePolicy": {
