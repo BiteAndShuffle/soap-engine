@@ -1,6 +1,6 @@
 {
   "moduleId": "allergy_h1_antihistamine_eye_drops",
-  "moduleVersion": "1.0.1",
+  "moduleVersion": "1.0.10",
   "categoryPath": [
     "アレルギー",
     "抗アレルギー点眼薬",
@@ -365,7 +365,9 @@
       "placeholder": "未入力なら自動生成（例：右目、左目、両目）",
       "targetField": "S",
       "insertMode": "prefix",
-      "applyScenarioIds": ["initial"],
+      "applyScenarioIds": [
+        "initial"
+      ],
       "emptyBehavior": "keep_original"
     }
   },
@@ -438,7 +440,7 @@
       "S": "{{drug_subject}}は、目のかゆみが気になるため追加となった。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
-      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
           "addon_eye_drop_tip_contamination",
@@ -476,9 +478,64 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、目のかゆみが気になるため追加となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "ヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として使用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の改善のため、継続して使用することが大切です。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "dose_increase_low_perceived_effect",
@@ -513,8 +570,8 @@
       ],
       "S": "{{drug_subject}}は、効果の実感が乏しいため点眼回数が増えた。",
       "O": "{{drug_subject}}　点眼回数増",
-      "A": "{{drug_subject}}は、効果不十分のため点眼回数が増えた。\n点眼回数の変更後は、刺激感や異物感などの副作用に注意が必要である。",
-      "P": "{{drug_subject}}は、点眼回数が増えると、刺激感や異物感が出ることがあります。\n刺激感や異物感が強い場合はご相談ください。",
+      "A": "{{drug_subject}}は、効果不十分のため点眼回数が増えた。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n使用後に気になる症状がある場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_eye_drop_tip_contamination"
@@ -546,9 +603,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しいため点眼回数が増えた。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため点眼回数が増えた。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用後に気になる症状がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "dose_increase_due_to_other_med_adjustment",
@@ -584,8 +687,8 @@
       ],
       "S": "{{drug_subject}}は、他剤との調整により点眼回数が増えた。",
       "O": "{{drug_subject}}　点眼回数増",
-      "A": "{{drug_subject}}は、併用薬との調整のため点眼回数が増えた。\n点眼回数の変更後は、刺激感や異物感などの副作用に注意が必要である。",
-      "P": "{{drug_subject}}は、点眼回数が増えると、刺激感や異物感が出ることがあります。\n刺激感や異物感が強い場合はご相談ください。",
+      "A": "{{drug_subject}}は、併用薬との調整のため点眼回数が増えた。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n使用後に気になる症状がある場合はご相談ください。",
       "addonsRef": {
         "P": [
           "addon_eye_drop_tip_contamination"
@@ -617,9 +720,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤との調整により点眼回数が増えた。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬との調整のため点眼回数が増えた。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用後に気になる症状がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "dose_decrease_improved",
@@ -654,8 +803,8 @@
       ],
       "S": "{{drug_subject}}は、症状が改善したため点眼回数が減った。",
       "O": "{{drug_subject}}　点眼回数減",
-      "A": "{{drug_subject}}は、症状改善を踏まえ点眼回数が減った。\n点眼回数の変更後に症状が再燃する可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}は、点眼回数が減ると、症状が再燃することがあります。\n症状の変化があればご相談ください。",
+      "A": "{{drug_subject}}は、症状改善を踏まえ点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n症状や使用感に変化がある場合はご相談ください。",
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -682,9 +831,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が改善したため点眼回数が減った。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状改善を踏まえ点眼回数が減った。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状や使用感に変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "dose_decrease_low_perceived_effect",
@@ -719,8 +914,8 @@
       ],
       "S": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
       "O": "{{drug_subject}}　点眼回数減",
-      "A": "{{drug_subject}}は、効果実感の乏しさと患者希望を踏まえ点眼回数が減った。\n点眼回数の変更後は、症状変化について経過確認を要する。",
-      "P": "{{drug_subject}}は、点眼回数が減ると、症状が再燃することがあります。\n症状の変化があればご相談ください。",
+      "A": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n症状の変化がある場合はご相談ください。",
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -747,9 +942,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "dose_decrease_due_to_other_med_adjustment",
@@ -785,8 +1026,8 @@
       ],
       "S": "{{drug_subject}}は、他剤との調整により点眼回数が減った。",
       "O": "{{drug_subject}}　点眼回数減",
-      "A": "{{drug_subject}}は、併用薬との調整のため点眼回数が減った。\n点眼回数の変更後に症状が再燃する可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}は、点眼回数が減ると、症状が再燃することがあります。\n症状の変化があればご相談ください。",
+      "A": "{{drug_subject}}は、併用薬との調整のため点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n症状の変化がある場合はご相談ください。",
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -813,9 +1054,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤との調整により点眼回数が減った。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬との調整のため点眼回数が減った。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_irritation_none",
@@ -880,9 +1167,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "刺激感は認めない。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による刺激感は現時点で認められず、治療継続が可能である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に刺激感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_foreign_body_sensation_none",
@@ -947,9 +1280,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "異物感は認めない。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による異物感は現時点で認められず、治療継続が可能である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に異物感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_pruritus_none",
@@ -1014,9 +1393,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "掻痒感は認めない。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による掻痒感は現時点で認められず、治療継続が可能である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に掻痒感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_eye_redness_none",
@@ -1081,9 +1506,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "充血は認めない。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による充血は現時点で認められず、治療継続が可能である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に充血が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_eye_discharge_none",
@@ -1148,9 +1619,55 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "目やには認めない。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に目やにが出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "cp_good",
@@ -1214,9 +1731,60 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "薬を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "継続して使用できている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは良好である。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "治療継続に問題はない。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "引き続き用法を守って使用することで、アレルギー症状改善が期待できます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "今後も継続して使用できるようにすることが大切です。",
+          "role": "adherence_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "cp_poor_missed_doses",
@@ -1282,9 +1850,52 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "使用忘れがみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "継続して使用できていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、使用忘れがみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して使用することでアレルギー症状改善が期待されます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用忘れが続くとアレルギー症状が悪化する可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "cp_poor_self_adjust",
@@ -1343,9 +1954,62 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "自己判断での使用調整がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "用法どおりの継続使用ができていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、自己判断による調整がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して使用することでアレルギー症状の改善が期待されます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_3",
+          "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+          "role": "adherence_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "cp_poor_visit_delay",
@@ -1404,9 +2068,62 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "都合により受診遅延がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "継続した使用に不安がある。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、受診遅延がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続的な使用が治療効果の維持と症状悪化の予防につながります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "治療が中断すると症状が悪化する可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_3",
+          "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+          "role": "adherence_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご連絡ください"
+          ]
+        }
+      ]
     },
     {
       "id": "as_needed_refill_needed",
@@ -1438,7 +2155,7 @@
       "S": "{{drug_subject}}は、症状が出た時に使用している。\n使用により残薬が少なくなったため、継続処方となった。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
-      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n使用後も症状が改善しない場合や、使用頻度が増えている場合はご相談ください。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が気になる場合はご相談ください。",
+      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n使用頻度が増えている場合や、症状が続く場合はご相談ください。",
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -1465,9 +2182,59 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が出た時に使用している。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "使用により残薬が少なくなったため、継続処方となった。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用頻度が増えている場合や、症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ],
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      }
     },
     {
       "id": "as_needed_refill_not_needed",
@@ -1499,7 +2266,7 @@
       "S": "{{drug_subject}}は、症状が出た時に使用している。\n残薬があるため、今回は処方なしとなった。",
       "O": "{{drug_subject}}　使用中",
       "A": "{{drug_subject}}は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
-      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n症状が続く場合や、使用頻度が増える場合はご相談ください。\n刺激感や異物感などの副作用が出ることがあります。\n副作用が気になる場合はご相談ください。",
+      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n症状が続く場合や、使用頻度が増える場合はご相談ください。",
       "followupRef": "default_followup",
       "mergePolicy": {
         "S": {
@@ -1526,9 +2293,54 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が出た時に使用している。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "残薬があるため、今回は処方なしとなった。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合や、使用頻度が増える場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "end_improved",
@@ -1563,7 +2375,7 @@
       "S": "{{drug_subject}}は、症状が改善したため中止となった。",
       "O": "{{drug_subject}}　処方終了",
       "A": "{{drug_subject}}は、症状改善により終了となった。\n終了後に症状が悪化する可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}の終了後、目の症状の悪化や変化がある場合はご相談ください。",
+      "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
       "followupRef": "end_followup",
       "mergePolicy": {
         "S": {
@@ -1590,9 +2402,46 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が改善したため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状改善により終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "終了後に症状が悪化する可能性があるため、注意が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "end_insufficient_effect",
@@ -1627,7 +2476,7 @@
       "S": "{{drug_subject}}は、効果不十分のため中止となった。",
       "O": "{{drug_subject}}　処方終了",
       "A": "{{drug_subject}}は、効果不十分のため終了となった。症状管理の再評価が必要である。",
-      "P": "{{drug_subject}}の終了後、目の症状が悪化する可能性があります。\n次の治療方針については処方医にご相談ください。",
+      "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
       "followupRef": "end_followup",
       "mergePolicy": {
         "S": {
@@ -1654,9 +2503,46 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果不十分のため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "症状管理の再評価が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "end_ineffective",
@@ -1691,7 +2577,7 @@
       "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
       "O": "{{drug_subject}}　処方終了",
       "A": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
-      "P": "{{drug_subject}}の終了後、目の症状が悪化する可能性があります。\n代替治療については処方医にご相談ください。",
+      "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
       "followupRef": "end_followup",
       "mergePolicy": {
         "S": {
@@ -1718,9 +2604,46 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "治療方針の変更が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_mild_continue",
@@ -1784,9 +2707,38 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感があるが、日常生活は送れている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による刺激感の副作用を軽度認めるが、治療継続が可能である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による刺激感が軽い場合は経過をみて、刺激感が強くなる場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_moderate_consider_dr",
@@ -1851,9 +2803,46 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による刺激感が強く、継続困難の可能性があるため対応を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による刺激感の副作用が強い場合は、使用回数を減らすことや薬の変更が必要になることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "処方医へご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_change_due_to_irritation",
@@ -1918,9 +2907,38 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が出現したため、他剤へ変更となった。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の使用による刺激感を認め、他剤変更後の経過確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の変更後、目の症状の悪化や変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_dose_decrease_due_to_irritation",
@@ -1985,9 +3003,38 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が強いため、点眼回数が減った。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の使用による刺激感を認め、点眼回数変更後の経過確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の点眼回数が減った後も刺激感が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "se_stop_due_to_irritation",
@@ -2052,9 +3099,38 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が強いため、中止となった。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の使用による刺激感を認め、中止後の経過確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の中止後、目の症状の悪化や変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_tip_contamination",
@@ -2116,9 +3192,44 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬の先端を、目や瞼などに触れて使用しています。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の使い方の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬の先端を、目や瞼などに触れると汚染されてしまいます。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "先端部分に触れないように使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_interval",
@@ -2180,9 +3291,44 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬と点眼薬の使用間隔は、十分あけないで使用しています。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、目に十分行き渡るまでに時間がかかります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "点眼後5〜10分程度あけてから、次の目薬を使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_after_opening_expiry",
@@ -2244,9 +3390,36 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、開封後一ヶ月以上経過後も使用を続けている。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、衛生面を考慮し、開封後1ヶ月を目安に使用を終了し、残っていても処分してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_suspension_shake",
@@ -2308,9 +3481,44 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、振らないまま使用を続けている。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用する前に、よく振り混ぜてから使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_storage_light_protection",
@@ -2372,9 +3580,44 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、遮光せずに使用している。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、光の影響により、効果が十分に出ない可能性があります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用していない間は、遮光袋に入れて保管してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_storage_cold",
@@ -2436,9 +3679,44 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、冷所に保管せず、常温で保管している。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、温度の影響により、効果が十分に出ない可能性があります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用していない間は、冷所で保管してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     },
     {
       "id": "lifestyle_guidance_storage_upright_suspension",
@@ -2500,9 +3778,306 @@
           "sectionRole": "plan"
         }
       },
-      "SStructured": [],
-      "AStructured": [],
-      "PStructured": []
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、向きを気にせず保管していた。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "lifestyle_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、先端部分を上にして保管することで、目詰まりを防ぐことができます。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "保管するときは向きに注意してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "restart",
+      "globalId": "allergy_h1_antihistamine_eye_drops.restart",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 再開",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "eye_itching"
+        ],
+        "symptoms": [
+          "目のかゆみ"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "restart"
+      ],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}は、目のかゆみが気になるため再開となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として再開となった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_storage_upright_suspension",
+          "addon_eye_drop_storage_cold",
+          "addon_eye_drop_contact_lens_remove_before_use",
+          "addon_eye_drop_contact_lens_product_specific",
+          "addon_eye_drop_suspension_shake"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、目のかゆみが気になるため再開となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として再開となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "ヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として使用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の改善のため、継続して使用することが大切です。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "external_start",
+      "globalId": "allergy_h1_antihistamine_eye_drops.external_start",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 他所開始",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "eye_itching"
+        ],
+        "symptoms": [
+          "目のかゆみ"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "external_start"
+      ],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}は、目のかゆみに対して他院で開始され継続使用中であった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として継続使用中であった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_storage_upright_suspension",
+          "addon_eye_drop_storage_cold",
+          "addon_eye_drop_contact_lens_remove_before_use",
+          "addon_eye_drop_contact_lens_product_specific",
+          "addon_eye_drop_suspension_shake"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、目のかゆみに対して他院で開始され継続使用中であった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として継続使用中であった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "ヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として使用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の改善のため、継続して使用することが大切です。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
     }
   ],
   "addons": {
@@ -2566,7 +4141,10 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "requiredTags": ["suspension_eye_drop", "shake_before_use"],
+        "requiredTags": [
+          "suspension_eye_drop",
+          "shake_before_use"
+        ],
         "text": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。\n使用する前に、よく振り混ぜてから使用してください。",
         "intentTags": [
           "administration_instruction"
@@ -2583,7 +4161,10 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "requiredTags": ["suspension_eye_drop", "shake_before_use"],
+        "requiredTags": [
+          "suspension_eye_drop",
+          "shake_before_use"
+        ],
         "text": "保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。",
         "intentTags": [
           "administration_instruction"
@@ -2600,7 +4181,9 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "requiredTags": ["light_protection_storage"],
+        "requiredTags": [
+          "light_protection_storage"
+        ],
         "text": "光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。",
         "intentTags": [
           "administration_instruction"
@@ -2617,7 +4200,9 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "requiredTags": ["cold_storage"],
+        "requiredTags": [
+          "cold_storage"
+        ],
         "text": "温度の影響により、効果が十分に出ない可能性があります。\n使用していない間は、冷所で保管してください。",
         "intentTags": [
           "administration_instruction"

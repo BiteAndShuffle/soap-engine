@@ -3765,6 +3765,290 @@
           "notes": null
         }
       ]
+    },
+    {
+      "id": "restart",
+      "globalId": "dm_glp1ra_semaglutide_oral.restart",
+      "title": "GLP-1受容体作動薬(内服) 再開",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "restart",
+        "start_or_change"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperglycemia"
+        ],
+        "symptoms": [
+          "血糖値が高い"
+        ]
+      },
+      "S": "{{drug_subject}}は、血糖値が高いため再開となった。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}は、血糖コントロール不十分のため再開となった。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。\n血糖改善および体重管理の補助を目的として服用する。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance",
+          "addon_oral_ribelsus_admin",
+          "addon_se_hypoglycemia_guidance",
+          "addon_initial_sickday_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "hyperglycemia_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、血糖値が高いため再開となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖コントロール不十分のため再開となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "血糖改善および体重管理の補助を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、血糖値を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "悪心や食欲不振などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "副作用が出た場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": "external_start",
+      "globalId": "dm_glp1ra_semaglutide_oral.external_start",
+      "title": "GLP-1受容体作動薬(内服) 他所開始",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "external_start",
+        "start_or_change"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperglycemia"
+        ],
+        "symptoms": [
+          "血糖値が高い"
+        ]
+      },
+      "S": "{{drug_subject}}は、他院で開始され継続使用中であった。",
+      "O": "GLP-1受容体作動薬(内服)　処方",
+      "A": "{{drug_subject}}は、血糖コントロール改善を目的として使用中であった。\n血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。\n血糖改善および体重管理の補助を目的として服用する。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance",
+          "addon_oral_ribelsus_admin",
+          "addon_se_hypoglycemia_guidance",
+          "addon_initial_sickday_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      },
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "hyperglycemia_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他院で開始され継続使用中であった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖コントロール改善を目的として使用中であった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_3",
+          "text": "血糖改善および体重管理の補助を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、血糖値を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "悪心や食欲不振などの副作用が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "副作用が出た場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ]
     }
   ]
 }
