@@ -277,9 +277,12 @@ export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
  *   external_start_* → blue
  *   その他 start_or_change / treatment_start → blue
  *
- * 副作用対応系 — 赤/オレンジの差分:
- *   present_mild / present_stop    → red    （継続・中止）
- *   present_moderate / present_dose_decrease / present_change → orange （中等度・減量・変更）
+ * 副作用対応系 — 表示順に赤/オレンジ交互（SEP_ACTION_ORDER 準拠）:
+ *   present_mild(0)          → red
+ *   present_moderate(1)      → orange
+ *   present_dose_decrease(2) → red
+ *   present_change(3)        → orange
+ *   present_stop(4)          → red
  *
  * 副作用なし (absent_or_not_observed) → green
  * 増量 (dose_change increase系)       → blue
@@ -294,9 +297,11 @@ export function scenarioToColor(scenario: Scenario): ChipColor {
   const sg = scenario.scenarioGroup
   const sid = scenario.id
 
-  // ── 副作用対応系: 赤/オレンジの差分 ──────────────────────────
-  if (sep === 'present_mild' || sep === 'present_stop') return 'red'
-  if (sep === 'present_moderate' || sep === 'present_dose_decrease' || sep === 'present_change') return 'orange'
+  // ── 副作用対応系: 表示順に赤/オレンジ交互 ───────────────────
+  // SEP_ACTION_ORDER 準拠: mild(0)→red, moderate(1)→orange,
+  //   dose_decrease(2)→red, change(3)→orange, stop(4)→red
+  if (sep === 'present_mild' || sep === 'present_dose_decrease' || sep === 'present_stop') return 'red'
+  if (sep === 'present_moderate' || sep === 'present_change') return 'orange'
 
   // ── 副作用なし ────────────────────────────────────────────────
   if (sep === 'absent_or_not_observed') return 'green'
