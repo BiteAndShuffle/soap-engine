@@ -259,51 +259,38 @@ describe('P合成: GLP-1内服 + GLP-1注射 (同一followup → closing は 1 �
 
 // ─────────────────────────────────────────────────────────────
 // 5. GLP-1内服 + H1内服
-//    異なる followup → P_CLOSING は別々に残る
+//    bridge修正後: default followup が同一文字列 → 1 つに dedup
 // ─────────────────────────────────────────────────────────────
 
-describe('P合成: GLP-1内服 + H1内服 (異なるfollowup → closing は別々)', () => {
+describe('P合成: GLP-1内服 + H1内服 (bridge修正後: 同一followup → closing は 1 つ)', () => {
   const oral = oralData   as unknown as ModuleData
   const h1   = h1OralData as unknown as ModuleData
 
-  const GLP1_CLOSING = '次回、引き続き使用できているか、副作用の有無を確認。'
-  const H1_CLOSING   = '次回、引き続き使用できているか、症状の変化・副作用の有無を確認。'
+  const DEFAULT_CLOSING = '次回、引き続き使用できているか、副作用の有無を確認。'
 
-  test('GLP-1内服と H1内服の followup 文が異なること', () => {
+  test('修正後: GLP-1内服と H1内服の default_followup.P が同一であること', () => {
     const b1 = makeBlock(oral, 'initial',       'A')
     const b2 = makeBlock(h1,   'initial_nasal', 'B')
-    assert.notEqual(b1.closingText, b2.closingText,
-      `closingText should differ: glp1=${b1.closingText}, h1=${b2.closingText}`)
-    assert.equal(b1.closingText, GLP1_CLOSING)
-    assert.equal(b2.closingText, H1_CLOSING)
+    assert.equal(b1.closingText, DEFAULT_CLOSING, `GLP-1 closingText`)
+    assert.equal(b2.closingText, DEFAULT_CLOSING, `H1 closingText`)
+    assert.equal(b1.closingText, b2.closingText, 'Both modules should share the same closing')
   })
 
-  test('P には GLP-1 の closing 文が含まれる', () => {
+  test('修正後: P には closing 文が 1 回だけ現れる（dedup）', () => {
     const b1 = makeBlock(oral, 'initial',       'リベルサス')
     const b2 = makeBlock(h1,   'initial_nasal', 'ビラノア')
     const result = runMerge(b1, [b2])
-    assert.ok(result.P.includes(GLP1_CLOSING),
-      `P should contain GLP-1 closing. P:\n${result.P}`)
+    const occurrences = result.P.split(DEFAULT_CLOSING).length - 1
+    assert.equal(occurrences, 1,
+      `closing should appear exactly once, got ${occurrences}. P:\n${result.P}`)
   })
 
-  test('P には H1 の closing 文が含まれる', () => {
+  test('修正後: P には両薬剤の本文が含まれる', () => {
     const b1 = makeBlock(oral, 'initial',       'リベルサス')
     const b2 = makeBlock(h1,   'initial_nasal', 'ビラノア')
     const result = runMerge(b1, [b2])
-    assert.ok(result.P.includes(H1_CLOSING),
-      `P should contain H1 closing. P:\n${result.P}`)
-  })
-
-  test('P の 2 つの closing は別行として存在する', () => {
-    const b1 = makeBlock(oral, 'initial',       'リベルサス')
-    const b2 = makeBlock(h1,   'initial_nasal', 'ビラノア')
-    const result = runMerge(b1, [b2])
-    const lines = result.P.split('\n').filter(Boolean)
-    const glp1Line = lines.find(l => l === GLP1_CLOSING)
-    const h1Line   = lines.find(l => l === H1_CLOSING)
-    assert.ok(glp1Line, `GLP-1 closing line not found in P`)
-    assert.ok(h1Line,   `H1 closing line not found in P`)
-    assert.notEqual(glp1Line, h1Line, 'The two closing lines should be different')
+    assert.ok(result.P.includes('リベルサス'), `P should contain リベルサス`)
+    assert.ok(result.P.includes('ビラノア'),   `P should contain ビラノア`)
   })
 })
 
@@ -341,5 +328,114 @@ describe('O/A合成: 単純並列（clinicalDomain 分離なし）', () => {
     const b2A = b2.fields.A.trim()
     if (b1A) assert.ok(result.A.includes(b1A), `A should include primary block's A`)
     if (b2A) assert.ok(result.A.includes(b2A), `A should include secondary block's A`)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 7. GLP-1内服 + GLP-1注射 + H1内服
+//    全て同一 default followup → closing は 1 つに dedup
+// ─────────────────────────────────────────────────────────────
+
+describe('P合成: GLP-1内服 + GLP-1注射 + H1内服 (3剤全て同一followup → closing は 1 つ)', () => {
+  const oral = oralData   as unknown as ModuleData
+  const inj  = injData    as unknown as ModuleData
+  const h1   = h1OralData as unknown as ModuleData
+
+  const DEFAULT_CLOSING = '次回、引き続き使用できているか、副作用の有無を確認。'
+
+  test('3 剤全ての closingText が同一であること', () => {
+    const b1 = makeBlock(oral, 'initial',       'A')
+    const b2 = makeBlock(inj,  'initial',       'B')
+    const b3 = makeBlock(h1,   'initial_nasal', 'C')
+    assert.equal(b1.closingText, DEFAULT_CLOSING)
+    assert.equal(b2.closingText, DEFAULT_CLOSING)
+    assert.equal(b3.closingText, DEFAULT_CLOSING)
+  })
+
+  test('P には closing 文が 1 回だけ現れる（3 剤 dedup）', () => {
+    const b1 = makeBlock(oral, 'initial',       'リベルサス')
+    const b2 = makeBlock(inj,  'initial',       'オゼンピック')
+    const b3 = makeBlock(h1,   'initial_nasal', 'ビラノア')
+    const result = runMerge(b1, [b2, b3])
+    const occurrences = result.P.split(DEFAULT_CLOSING).length - 1
+    assert.equal(occurrences, 1,
+      `closing should appear exactly once, got ${occurrences}. P:\n${result.P}`)
+  })
+
+  test('P には 3 剤の本文が含まれる', () => {
+    const b1 = makeBlock(oral, 'initial',       'リベルサス')
+    const b2 = makeBlock(inj,  'initial',       'オゼンピック')
+    const b3 = makeBlock(h1,   'initial_nasal', 'ビラノア')
+    const result = runMerge(b1, [b2, b3])
+    assert.ok(result.P.includes('リベルサス'),   `P should contain リベルサス`)
+    assert.ok(result.P.includes('オゼンピック'), `P should contain オゼンピック`)
+    assert.ok(result.P.includes('ビラノア'),     `P should contain ビラノア`)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 8. H1内服(end) + H1点眼(end)
+//    bridge修正後: end_followup が同一文字列 → 1 つに dedup
+// ─────────────────────────────────────────────────────────────
+
+describe('P合成: H1内服(end) + H1点眼(end) (bridge修正後: end_followup が 1 つ)', () => {
+  const h1  = h1OralData as unknown as ModuleData
+  const eye = h1EyeData  as unknown as ModuleData
+
+  const END_CLOSING = '次回、治療経過および体調変化の有無を確認。'
+
+  test('修正後: H1内服と H1点眼の end_followup.P が同一であること', () => {
+    const b1 = makeBlock(h1,  'end_improved', 'ビラノア')
+    const b2 = makeBlock(eye, 'end_improved', 'アレジオン点眼')
+    assert.equal(b1.closingText, END_CLOSING, `H1内服 end closingText`)
+    assert.equal(b2.closingText, END_CLOSING, `H1点眼 end closingText`)
+    assert.equal(b1.closingText, b2.closingText, 'Both modules should share the same end closing')
+  })
+
+  test('修正後: P には end closing が 1 回だけ現れる（dedup）', () => {
+    const b1 = makeBlock(h1,  'end_improved', 'ビラノア')
+    const b2 = makeBlock(eye, 'end_improved', 'アレジオン点眼')
+    const result = runMerge(b1, [b2])
+    const occurrences = result.P.split(END_CLOSING).length - 1
+    assert.equal(occurrences, 1,
+      `end closing should appear exactly once, got ${occurrences}. P:\n${result.P}`)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 9. se_followup / end_followup — 意味が異なるので別行に残る
+// ─────────────────────────────────────────────────────────────
+
+describe('P合成: 意味が異なる followup は別行に残る', () => {
+  const h1  = h1OralData as unknown as ModuleData
+  const eye = h1EyeData  as unknown as ModuleData
+
+  const DEFAULT_CLOSING = '次回、引き続き使用できているか、副作用の有無を確認。'
+  const END_CLOSING     = '次回、治療経過および体調変化の有無を確認。'
+  const SE_CLOSING      = '次回、治療経過および副作用の有無を確認。'
+
+  test('default と se_followup は異なる文字列であること', () => {
+    assert.notEqual(DEFAULT_CLOSING, SE_CLOSING)
+  })
+
+  test('default と end_followup は異なる文字列であること', () => {
+    assert.notEqual(DEFAULT_CLOSING, END_CLOSING)
+  })
+
+  test('se_followup と end_followup は異なる文字列であること', () => {
+    assert.notEqual(SE_CLOSING, END_CLOSING)
+  })
+
+  test('H1内服(default) + H1点眼(se_followup): closing は 2 行に残る', () => {
+    // initial_nasal → default_followup / se_mild_continue → se_followup
+    const b1 = makeBlock(h1,  'initial_nasal',    'ビラノア')
+    const b2 = makeBlock(eye, 'se_mild_continue', 'アレジオン点眼')
+    const result = runMerge(b1, [b2])
+    assert.ok(result.P.includes(DEFAULT_CLOSING), `P should contain default closing`)
+    assert.ok(result.P.includes(SE_CLOSING),       `P should contain se closing`)
+    const occurrencesDefault = result.P.split(DEFAULT_CLOSING).length - 1
+    const occurrencesSE      = result.P.split(SE_CLOSING).length - 1
+    assert.equal(occurrencesDefault, 1, `default closing should appear once`)
+    assert.equal(occurrencesSE, 1,      `se closing should appear once`)
   })
 })
