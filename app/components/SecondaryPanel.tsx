@@ -46,6 +46,7 @@ interface TemplatePanelProps {
   scenarios: Scenario[]
   selectedScenarioId: string | null
   onSelectScenario: (id: string) => void
+  modulePrefix?: string
 }
 
 export function TemplateListPanel({
@@ -53,6 +54,7 @@ export function TemplateListPanel({
   scenarios,
   selectedScenarioId,
   onSelectScenario,
+  modulePrefix,
 }: TemplatePanelProps) {
   // 【混入検出SSOT】group 指定がある場合のみ一致チェック。null=全表示モードでは無効。
   const invalid = group ? scenarios.filter(sc => getMenuGroupFromScenario(sc) !== group) : []
@@ -90,7 +92,7 @@ export function TemplateListPanel({
         const color = scenarioToColor(sc)
         const chipClass = CHIP_CLASS[color]
         const isActive = sc.globalId === selectedScenarioId
-        const label = displayTitleForCol2(sc.title, group ?? getMenuGroupFromScenario(sc))
+        const label = displayTitleForCol2(sc.title, group ?? getMenuGroupFromScenario(sc), modulePrefix)
         const isMismatch = group ? getMenuGroupFromScenario(sc) !== group : false
 
         // 副作用ありグループ時のみ、アクションが切り替わるタイミングでヘッダーを挿入する

@@ -110,6 +110,14 @@ export interface Scenario {
    * 省略時は undefined（合成対象外）。
    */
   sComposition?: SComposition
+  /**
+   * シナリオ表示フィルタ用タグ。
+   * addons.items[*].requiredTags と同じ AND 条件で
+   * selectedBrand の handlingTags と照合する。
+   * 未定義または空配列 → 常時表示（ブランド非依存）。
+   * 例: ["bilastine"] → bilastine handlingTag を持つブランド選択時のみ表示。
+   */
+  scenarioRequiredTags?: string[]
   /** 意味タグ（intentTags）— 文章の意味的役割を表す */
   intentTags?: string[]
   /** 臨床タグ（将来拡張用） */

@@ -3596,6 +3596,7 @@
         "bilastine",
         "administration"
       ],
+      "scenarioRequiredTags": ["bilastine"],
       "situationFilter": [
         "general"
       ],
@@ -3701,6 +3702,7 @@
         "fexofenadine",
         "food_interaction"
       ],
+      "scenarioRequiredTags": ["fexofenadine"],
       "situationFilter": [
         "general"
       ],

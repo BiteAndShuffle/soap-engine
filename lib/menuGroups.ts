@@ -186,6 +186,11 @@ export function groupByMenuGroup(scenarios: Scenario[]): MenuGroupEntry[] {
 /**
  * セカンドパネル（Col2）に表示するラベルを生成する。
  *
+ * 【モジュールプレフィックス除去】:
+ *   modulePrefix が渡された場合、先頭の "{prefix} " を除去する。
+ *   例: "第二世代ヒスタミンH1受容体拮抗薬 初回（鼻水）" → "初回（鼻水）"
+ *   例: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（改善）" → "終了（改善）"
+ *
  * 【副作用なし】選択中:
  *   "低血糖（症状なし）" → "低血糖"  （サフィックス除去）
  *   "副作用（低血糖）"   → "低血糖"  （旧形式の剥ぎ取り）
@@ -197,17 +202,23 @@ export function groupByMenuGroup(scenarios: Scenario[]): MenuGroupEntry[] {
  * 【その他】:
  *   title をそのまま返す
  */
-export function displayTitleForCol2(title: string, group: MenuGroup): string {
+export function displayTitleForCol2(title: string, group: MenuGroup, modulePrefix?: string): string {
+  // モジュールプレフィックス除去（先頭の "{genericName} " を除く）
+  let t = title
+  if (modulePrefix && t.startsWith(modulePrefix + ' ')) {
+    t = t.slice(modulePrefix.length + 1)
+  }
+
   // 旧形式 "副作用（◯◯）" → "◯◯" に正規化（後方互換）
-  const oldFormatMatch = title.match(/^副作用[（(](.+)[）)]$/)
+  const oldFormatMatch = t.match(/^副作用[（(](.+)[）)]$/)
   if (oldFormatMatch) return oldFormatMatch[1]
 
   if (group === '副作用なし') {
     // "◯◯（症状なし）" → "◯◯"
-    return title.replace(/[（(]症状なし[）)]\s*$/, '').trim()
+    return t.replace(/[（(]症状なし[）)]\s*$/, '').trim()
   }
 
-  return title
+  return t
 }
 
 // ─────────────────────────────────────────────────────────────

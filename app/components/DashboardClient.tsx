@@ -462,16 +462,31 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     () => groupByMenuGroup(targetModule.scenarios),
     [targetModule.scenarios],
   )
-  const availableGroups = useMemo<Set<MenuGroup>>(
-    () => new Set(allGroups.map(g => g.group)),
-    [allGroups],
-  )
+  const availableGroups = useMemo<Set<MenuGroup>>(() => {
+    return new Set(
+      allGroups
+        .filter(g => g.scenarios.some(sc => {
+          const req = sc.scenarioRequiredTags
+          if (!req || req.length === 0) return true
+          if (!addonBrandHandlingTags) return false
+          return req.every(tag => addonBrandHandlingTags.includes(tag))
+        }))
+        .map(g => g.group)
+    )
+  }, [allGroups, addonBrandHandlingTags])
   const groupScenarios = useMemo(() => {
     if (!selectedGroup) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
-    const filtered = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
-    return selectedGroup === '副作用あり' ? sortSideEffectScenarios(filtered) : filtered
-  }, [allGroups, selectedGroup])
+    const byGroup = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
+    // scenarioRequiredTags フィルタ: addonBrandHandlingTags と同じ AND 条件
+    const brandFiltered = byGroup.filter(sc => {
+      const req = sc.scenarioRequiredTags
+      if (!req || req.length === 0) return true
+      if (!addonBrandHandlingTags) return false
+      return req.every(tag => addonBrandHandlingTags.includes(tag))
+    })
+    return selectedGroup === '副作用あり' ? sortSideEffectScenarios(brandFiltered) : brandFiltered
+  }, [allGroups, selectedGroup, addonBrandHandlingTags])
 
   // ── アクティブExpressキーセット ─────────────────────────────
   // 追加済みノードの "moduleId__brandName__scenarioId" をキーとして保持。
@@ -1503,6 +1518,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     scenarios={groupScenarios}
                     selectedScenarioId={currentScenarioId}
                     onSelectScenario={handleSelectScenario}
+                    modulePrefix={activeModuleData.drug?.genericName}
                   />
                   {currentScenarioId !== null && targetModule.addons && addonVisibleKeys.length > 0 && (
                     <AddonPanel

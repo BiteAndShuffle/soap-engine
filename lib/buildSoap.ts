@@ -269,35 +269,57 @@ export function buildSoapFull(
 export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
 
 /**
- * Scenario の sideEffectPresence と scenarioGroup からチップ色を決定する。
- *   副作用あり (present)              → red
- *   副作用なし (absent_or_not_observed) → green
- *   初回・増量 (start_or_change / dose_change/increase) → blue
- *   減量       (dose_change reduce系) → gray
- *   CP良好     (adherence_good)        → green
- *   CP不良     (adherence_poor)        → orange
- *   終了       (end_*)                 → purple
- *   その他                             → gray
+ * Scenario の sideEffectPresence と scenarioGroup/id からチップ色を決定する。
+ *
+ * treatment_start 系（初回・再開・他所開始）— 青/緑の差分:
+ *   initial_*      → blue
+ *   restart_*      → green
+ *   external_start_* → blue
+ *   その他 start_or_change / treatment_start → blue
+ *
+ * 副作用対応系 — 赤/オレンジの差分:
+ *   present_mild / present_stop    → red    （継続・中止）
+ *   present_moderate / present_dose_decrease / present_change → orange （中等度・減量・変更）
+ *
+ * 副作用なし (absent_or_not_observed) → green
+ * 増量 (dose_change increase系)       → blue
+ * 減量 (dose_change reduce系)         → gray
+ * CP良好 (adherence_good)             → green
+ * CP不良 (adherence_poor)             → orange
+ * 終了 (end_*)                        → purple
+ * その他                              → gray
  */
 export function scenarioToColor(scenario: Scenario): ChipColor {
-  if (
-    scenario.sideEffectPresence === 'present_mild' ||
-    scenario.sideEffectPresence === 'present_moderate' ||
-    scenario.sideEffectPresence === 'present_dose_decrease' ||
-    scenario.sideEffectPresence === 'present_change' ||
-    scenario.sideEffectPresence === 'present_stop'
-  ) return 'red'
-  if (scenario.sideEffectPresence === 'absent_or_not_observed') return 'green'
-
+  const sep = scenario.sideEffectPresence
   const sg = scenario.scenarioGroup
-  if (sg === 'start_or_change') return 'blue'
-  if (sg === 'dose_change' && scenario.id.startsWith('dose_increase')) return 'blue'
+  const sid = scenario.id
+
+  // ── 副作用対応系: 赤/オレンジの差分 ──────────────────────────
+  if (sep === 'present_mild' || sep === 'present_stop') return 'red'
+  if (sep === 'present_moderate' || sep === 'present_dose_decrease' || sep === 'present_change') return 'orange'
+
+  // ── 副作用なし ────────────────────────────────────────────────
+  if (sep === 'absent_or_not_observed') return 'green'
+
+  // ── treatment_start 系: 青/緑の差分 ──────────────────────────
+  if (sg === 'treatment_start' || sg === 'start_or_change') {
+    if (sid.startsWith('restart_')) return 'green'
+    return 'blue'  // initial_* / external_start_* / その他
+  }
+
+  // ── 増量・減量 ────────────────────────────────────────────────
+  if (sg === 'dose_change' && sid.startsWith('dose_increase')) return 'blue'
   if (sg === 'dose_change') return 'gray'
+
+  // ── アドヒアランス ────────────────────────────────────────────
   if (sg === 'adherence_good') return 'green'
   if (sg === 'adherence_poor') return 'orange'
-  if (sg.startsWith('end_')) return 'purple'
-  if (sg === 'sickday') return 'orange'
 
+  // ── 終了 ─────────────────────────────────────────────────────
+  if (sg.startsWith('end_') || sg === 'treatment_end') return 'purple'
+
+  // ── その他 ───────────────────────────────────────────────────
+  if (sg === 'sickday') return 'orange'
   return 'gray'
 }
 
