@@ -18,6 +18,9 @@
  *   11) scenarios[].sideEffectPresence の値チェック（必須・許可値のみ）
  *   12) scenario 競合制御メタデータの型チェック（priority / exclusiveGroup / combinable）
  *   13) drug.brandNames と drug.brandCatalog のキーが集合として一致
+ *   14) followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
+ *   15) addon.requiredTags のタグをいずれの brandCatalog も持たない（到達可能性、警告）
+ *   16) *Structured text 連結と S/A/P 本文の不一致（警告）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -34,6 +37,7 @@ export type ModuleValidationErrorCode =
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
   | 'PANEL_ORDER_MISMATCH'     // ui.panelOrder に存在する id が ui.panels にない
   | 'FOLLOWUP_REF_BROKEN'      // scenarios[].followupRef が defaults.followupProfiles に存在しない（警告）
+  | 'FOLLOWUP_REF_MISSING'     // followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
   | 'TAG_NOT_IN_CATALOG'       // scenario/addon の各 *Tags 値が tagCatalog に存在しない（警告）
   | 'ADDON_SCOPE_VIOLATION'    // addon.text に医療判断・受診判断を示す禁止語が含まれる（警告）
   | 'FOLLOWUP_SCOPE_VIOLATION' // defaults.followup* のテキストに同禁止語が含まれる（警告）
@@ -41,6 +45,8 @@ export type ModuleValidationErrorCode =
   | 'SCENARIO_EXCLUSIVE_GROUP_INVALID' // scenario.exclusiveGroup が string/null 以外（警告）
   | 'SCENARIO_COMBINABLE_INVALID'     // scenario.combinable が boolean/null 以外（警告）
   | 'BRAND_CATALOG_MISMATCH'          // drug.brandNames と drug.brandCatalog のキーが不一致
+  | 'ADDON_REQUIRED_TAG_UNREACHABLE'  // addon.requiredTags のタグをいずれの brandCatalog も持たない（警告）
+  | 'STRUCTURED_TEXT_MISMATCH'        // *Structured text 連結と S/A/P 本文の不一致（警告）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -453,6 +459,70 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   if (drug) {
     const brandError = validateBrandConsistency(drug)
     if (brandError) errors.push(brandError)
+  }
+
+  // 14) followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
+  if (followupProfiles && Array.isArray(scenarios)) {
+    for (const sc of scenarios as Scenario[]) {
+      if (!sc.followupRef) {
+        errors.push({
+          code: 'FOLLOWUP_REF_MISSING',
+          detail: `scenarios["${sc.id}"].followupRef が未設定です（followupProfiles が存在します）`,
+          isWarning: true,
+        })
+      }
+    }
+  }
+
+  // 15) addon.requiredTags の到達可能性チェック（警告）
+  //     requiredTags の各タグをいずれの brandCatalog エントリも持たない場合は警告
+  const brandCatalog = drug?.brandCatalog as Record<string, Record<string, unknown>> | undefined
+  if (addonItems && brandCatalog) {
+    const allBrandHandlingTags = new Set<string>(
+      Object.values(brandCatalog)
+        .flatMap(entry => (entry.handlingTags as string[] | undefined) ?? []),
+    )
+    for (const [mapKey, item] of Object.entries(addonItems)) {
+      const required = (item as Record<string, unknown>).requiredTags as string[] | undefined
+      if (!required || required.length === 0) continue
+      for (const tag of required) {
+        if (!allBrandHandlingTags.has(tag)) {
+          errors.push({
+            code: 'ADDON_REQUIRED_TAG_UNREACHABLE',
+            detail: `addons.items["${mapKey}"].requiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません`,
+            isWarning: true,
+          })
+        }
+      }
+    }
+  }
+
+  // 16) *Structured text 連結と S/A/P 本文の不一致チェック（警告）
+  //     連結時は \n 区切りで結合し、正規化後に比較する
+  if (Array.isArray(scenarios)) {
+    const normalize = (s: string) => s.replace(/\r\n/g, '\n').trim()
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const scId = String(sc.id ?? '(unknown)')
+      const pairs: Array<{ field: string; flat: unknown; structured: unknown[] }> = [
+        { field: 'S', flat: sc.S, structured: (sc.SStructured as unknown[] | undefined) ?? [] },
+        { field: 'A', flat: sc.A, structured: (sc.AStructured as unknown[] | undefined) ?? [] },
+        { field: 'P', flat: sc.P, structured: (sc.PStructured as unknown[] | undefined) ?? [] },
+      ]
+      for (const { field, flat, structured } of pairs) {
+        if (!Array.isArray(structured) || structured.length === 0) continue
+        if (typeof flat !== 'string') continue
+        const joined = (structured as Array<Record<string, unknown>>)
+          .map(item => String(item.text ?? ''))
+          .join('\n')
+        if (normalize(joined) !== normalize(flat)) {
+          errors.push({
+            code: 'STRUCTURED_TEXT_MISMATCH',
+            detail: `scenarios["${scId}"].${field}Structured text 連結が ${field} 本文と一致しません`,
+            isWarning: true,
+          })
+        }
+      }
+    }
   }
 
   const fatalErrors = errors.filter(e => !e.isWarning)

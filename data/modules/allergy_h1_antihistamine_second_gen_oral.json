@@ -622,7 +622,10 @@
         "intentTags": [],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "requiredTags": [
+          "bilastine"
+        ]
       },
       "addon_fexofenadine_admin": {
         "key": "addon_fexofenadine_admin",
@@ -636,7 +639,10 @@
         "intentTags": [],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "requiredTags": [
+          "fexofenadine"
+        ]
       },
       "addon_liver_warning_detail": {
         "key": "addon_liver_warning_detail",
@@ -836,7 +842,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "initial_pruritus",
@@ -975,7 +982,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "dose_increase_low_perceived_effect",
@@ -1089,7 +1097,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "dose_increase_due_to_other_med_adjustment",
@@ -1203,7 +1212,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "dose_decrease_improved",
@@ -1309,7 +1319,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "dose_decrease_low_perceived_effect",
@@ -1415,7 +1426,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "dose_decrease_due_to_other_med_adjustment",
@@ -1521,7 +1533,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "se_drowsiness_none",
@@ -1637,7 +1650,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "se_liver_symptom_none",
@@ -1758,7 +1772,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "se_dry_mouth_none",
@@ -1873,7 +1888,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "se_abdominal_discomfort_none",
@@ -1988,7 +2004,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "cp_good",
@@ -2100,7 +2117,8 @@
           "lockTerms": [],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "cp_poor_missed_doses",
@@ -2219,7 +2237,8 @@
           "lockTerms": [],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "cp_poor_self_adjust",
@@ -2342,7 +2361,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "cp_poor_visit_delay",
@@ -2465,7 +2485,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "as_needed_refill_needed",
@@ -2600,7 +2621,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "as_needed_refill_not_needed",
@@ -2735,7 +2757,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "end_improved",
@@ -2840,7 +2863,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "end_followup"
     },
     {
       "id": "end_insufficient_effect",
@@ -2868,8 +2892,8 @@
       },
       "S": "{{drug_subject}}は、効果不十分のため中止となった。",
       "O": "{{drug_subject}}　処方終了",
-      "A": "{{drug_subject}}は、効果不十分のため終了となった。症状管理の再評価が必要である。",
-      "P": "{{drug_subject}}終了後、症状が悪化する可能性があります。\n次の治療方針については処方医にご相談ください。",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。\n終了後は、症状の変化について確認を要する。",
+      "P": "{{drug_subject}}の終了後、症状の変化がある場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "allergy",
@@ -2916,37 +2940,34 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}は、効果不十分のため終了となった。症状管理の再評価が必要である。",
+          "text": "{{drug_subject}}は、効果不十分のため終了となった。",
           "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "終了後は、症状の変化について確認を要する。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
         }
       ],
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}終了後、症状が悪化する可能性があります。",
-          "role": "side_effect_attention",
-          "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "次の治療方針については処方医にご相談ください。",
-          "role": "treatment_end_guidance",
+          "text": "{{drug_subject}}の終了後、症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [
-            "処方医",
             "ご相談ください"
-          ],
-          "notes": null
+          ]
         }
-      ]
+      ],
+      "followupRef": "end_followup"
     },
     {
       "id": "end_ineffective",
@@ -2974,8 +2995,8 @@
       },
       "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
       "O": "{{drug_subject}}　処方終了",
-      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
-      "P": "{{drug_subject}}終了後、症状が悪化する可能性があります。\n代替治療については処方医にご相談ください。",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。\n終了後は、症状の変化について確認を要する。",
+      "P": "{{drug_subject}}の終了後、症状の変化がある場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "allergy",
@@ -3022,37 +3043,34 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。",
           "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": null
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "終了後は、症状の変化について確認を要する。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
         }
       ],
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}終了後、症状が悪化する可能性があります。",
-          "role": "side_effect_attention",
-          "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "代替治療については処方医にご相談ください。",
-          "role": "treatment_end_guidance",
+          "text": "{{drug_subject}}の終了後、症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [
-            "処方医",
             "ご相談ください"
-          ],
-          "notes": null
+          ]
         }
-      ]
+      ],
+      "followupRef": "end_followup"
     },
     {
       "id": "se_mild_continue",
@@ -3150,7 +3168,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "se_moderate_consider_dr",
@@ -3258,7 +3277,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "se_change_due_to_neuropsychiatric_symptoms",
@@ -3356,7 +3376,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "se_dose_decrease_due_to_neuropsychiatric_symptoms",
@@ -3454,7 +3475,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "se_stop_due_to_neuropsychiatric_symptoms",
@@ -3552,7 +3574,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "lifestyle_guidance_bilastine",
@@ -3656,7 +3679,8 @@
           "lockTerms": [],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "lifestyle_guidance_fexofenadine",
@@ -3764,7 +3788,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "se_followup"
     },
     {
       "id": "restart_nasal",
@@ -3903,7 +3928,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "restart_pruritus",
@@ -4042,7 +4068,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "external_start_nasal",
@@ -4181,7 +4208,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     },
     {
       "id": "external_start_pruritus",
@@ -4320,7 +4348,8 @@
           ],
           "notes": null
         }
-      ]
+      ],
+      "followupRef": "default_followup"
     }
   ]
 }
