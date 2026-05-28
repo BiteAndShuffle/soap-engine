@@ -46,7 +46,7 @@ interface TemplatePanelProps {
   scenarios: Scenario[]
   selectedScenarioId: string | null
   onSelectScenario: (id: string) => void
-  modulePrefix?: string
+  modulePrefix?: string[]
 }
 
 export function TemplateListPanel({

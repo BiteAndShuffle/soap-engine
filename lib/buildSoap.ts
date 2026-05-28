@@ -272,9 +272,8 @@ export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
  * Scenario の sideEffectPresence と scenarioGroup/id からチップ色を決定する。
  *
  * treatment_start 系（初回・再開・他所開始）— 青/緑の差分:
- *   initial_*      → blue
- *   restart_*      → green
- *   external_start_* → blue
+ *   "restart" / restart_* → green  （全モジュール共通: bare id も prefix も対応）
+ *   initial / initial_* / external_start / external_start_* → blue
  *   その他 start_or_change / treatment_start → blue
  *
  * 副作用対応系 — 表示順に赤/オレンジ交互（SEP_ACTION_ORDER 準拠）:
@@ -307,9 +306,10 @@ export function scenarioToColor(scenario: Scenario): ChipColor {
   if (sep === 'absent_or_not_observed') return 'green'
 
   // ── treatment_start 系: 青/緑の差分 ──────────────────────────
+  // 再開判定: id が "restart" または "restart_" で始まる（全モジュール共通）
   if (sg === 'treatment_start' || sg === 'start_or_change') {
-    if (sid.startsWith('restart_')) return 'green'
-    return 'blue'  // initial_* / external_start_* / その他
+    if (sid === 'restart' || sid.startsWith('restart_')) return 'green'
+    return 'blue'  // initial / initial_* / external_start / external_start_* / その他
   }
 
   // ── 増量・減量 ────────────────────────────────────────────────

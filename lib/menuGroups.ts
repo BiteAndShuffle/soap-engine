@@ -9,7 +9,7 @@
  *   - 表示順は MENU_GROUP_ORDER で一意に保証する
  */
 
-import type { Scenario, SideEffectPresence } from './types'
+import type { Scenario, SideEffectPresence, ModuleData } from './types'
 
 // ─────────────────────────────────────────────────────────────
 // 大分類の型（10カテゴリ固定）
@@ -183,13 +183,65 @@ export function groupByMenuGroup(scenarios: Scenario[]): MenuGroupEntry[] {
 // Col2 表示ラベル生成
 // ─────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────
+// モジュールプレフィックス候補の正規化
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * 全角括弧 （）→ 半角括弧 () に正規化する。
+ * scenario.title が ASCII括弧を使い display フィールドが全角括弧を使う場合に
+ * prefix マッチを成立させるため。
+ */
+function normalizeParen(s: string): string {
+  return s.replace(/（/g, '(').replace(/）/g, ')')
+}
+
+/**
+ * title から除去すべきモジュールプレフィックスを決定する。
+ * candidates の中から「正規化後に title 先頭と一致し後に空白が続く」最長のものを選ぶ。
+ */
+function longestMatchingPrefix(title: string, candidates: string[]): string | null {
+  const normTitle = normalizeParen(title)
+  let best: string | null = null
+  for (const c of candidates) {
+    if (!c) continue
+    const normC = normalizeParen(c)
+    if (normTitle.startsWith(normC + ' ') && (best === null || normC.length > normalizeParen(best).length)) {
+      best = c
+    }
+  }
+  return best
+}
+
+/**
+ * ModuleData からプレフィックス候補一覧を生成する。
+ * 表示系フィールド（drugClassLabel / nodeLabelLong / display.title / drug.genericName）を
+ * 重複排除して返す。UI側で1回だけ呼び、結果を displayTitleForCol2 に渡す。
+ *
+ * brandNames / drugGeneric（個別一般名）は prefix 候補に含めない。
+ */
+export function moduleMenuPrefixCandidates(module: Pick<ModuleData, 'drug' | 'display' | 'composition'>): string[] {
+  const seen = new Set<string>()
+  const add = (s: string | undefined | null) => { if (s) seen.add(s) }
+  add(module.display?.drugClassLabel)
+  add(module.display?.nodeLabelLong)
+  add(module.display?.title)
+  add(module.drug?.genericName)
+  add(module.composition?.nodeLabelLong)
+  return [...seen]
+}
+
 /**
  * セカンドパネル（Col2）に表示するラベルを生成する。
  *
  * 【モジュールプレフィックス除去】:
- *   modulePrefix が渡された場合、先頭の "{prefix} " を除去する。
- *   例: "第二世代ヒスタミンH1受容体拮抗薬 初回（鼻水）" → "初回（鼻水）"
- *   例: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（改善）" → "終了（改善）"
+ *   prefixCandidates が渡された場合、最長一致した候補を先頭から除去する。
+ *   括弧の全角/半角を正規化してマッチするため、display フィールドと
+ *   scenario.title の括弧種が異なっても正しく機能する。
+ *
+ *   例: "GLP-1受容体作動薬(内服) 初回"     + candidates=["GLP-1受容体作動薬（内服）"] → "初回"
+ *   例: "第二世代ヒスタミンH1受容体拮抗薬 初回（鼻水）"                              → "初回（鼻水）"
+ *   例: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（改善）"                   → "終了（改善）"
  *
  * 【副作用なし】選択中:
  *   "低血糖（症状なし）" → "低血糖"  （サフィックス除去）
@@ -202,11 +254,18 @@ export function groupByMenuGroup(scenarios: Scenario[]): MenuGroupEntry[] {
  * 【その他】:
  *   title をそのまま返す
  */
-export function displayTitleForCol2(title: string, group: MenuGroup, modulePrefix?: string): string {
-  // モジュールプレフィックス除去（先頭の "{genericName} " を除く）
+export function displayTitleForCol2(title: string, group: MenuGroup, prefixCandidates?: string[]): string {
+  // モジュールプレフィックス除去（最長一致・括弧正規化付き）
+  // 全角括弧（）と半角括弧()は Unicode コードポイント数が同じ(各1文字)なので
+  // 正規化後の文字数 = 元の文字数。normalizeParen(title) でスライス位置を計算し
+  // 元 title の同インデックスで切り出す。
   let t = title
-  if (modulePrefix && t.startsWith(modulePrefix + ' ')) {
-    t = t.slice(modulePrefix.length + 1)
+  if (prefixCandidates && prefixCandidates.length > 0) {
+    const match = longestMatchingPrefix(title, prefixCandidates)
+    if (match) {
+      const skipLen = normalizeParen(match).length + 1  // +1 for the space separator
+      t = title.slice(skipLen)
+    }
   }
 
   // 旧形式 "副作用（◯◯）" → "◯◯" に正規化（後方互換）

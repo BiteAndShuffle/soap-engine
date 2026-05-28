@@ -13,6 +13,7 @@ import {
   groupByMenuGroup,
   getMenuGroupFromScenario,
   sortSideEffectScenarios,
+  moduleMenuPrefixCandidates,
 } from '../../lib/menuGroups'
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { type SingleDrugFlags } from './ThirdPanel'
@@ -455,6 +456,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),
     [targetModule.addons, addonTargetScenario, addonBrandHandlingTags],
+  )
+
+  // ── 左メニュー表示名プレフィックス候補 ───────────────────────
+  const menuPrefixCandidates = useMemo(
+    () => moduleMenuPrefixCandidates(activeModuleData),
+    [activeModuleData],
   )
 
   // ── allGroups / availableGroups / groupScenarios ────────────
@@ -1518,7 +1525,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                     scenarios={groupScenarios}
                     selectedScenarioId={currentScenarioId}
                     onSelectScenario={handleSelectScenario}
-                    modulePrefix={activeModuleData.drug?.genericName}
+                    modulePrefix={menuPrefixCandidates}
                   />
                   {currentScenarioId !== null && targetModule.addons && addonVisibleKeys.length > 0 && (
                     <AddonPanel
