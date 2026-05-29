@@ -703,7 +703,41 @@
     },
     "orderPresets": {}
   },
-  "expressModes": [],
+  "expressModes": [
+    {
+      "enabled": true,
+      "expressCategory": "感染症",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "第二世代抗H1内服",
+      "label": "H1内服（鼻水）",
+      "genericDisplayName": "第二世代抗ヒスタミン薬（鼻水）",
+      "defaultScenarioId": "initial_nasal",
+      "defaultBrandName": "アレジオン",
+      "sortOrder": 1
+    },
+    {
+      "enabled": true,
+      "expressCategory": "眼科",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "内服（第二世代抗H1）",
+      "label": "H1内服（掻痒感）",
+      "genericDisplayName": "第二世代抗ヒスタミン薬（掻痒感）",
+      "defaultScenarioId": "initial_pruritus",
+      "defaultBrandName": "アレジオン",
+      "sortOrder": 1
+    },
+    {
+      "enabled": true,
+      "expressCategory": "皮膚科",
+      "expressGroup": "抗アレルギー",
+      "expressSubGroup": "第二世代抗H1内服",
+      "label": "H1内服（皮膚かゆみ）",
+      "genericDisplayName": "第二世代抗ヒスタミン薬（皮膚かゆみ）",
+      "defaultScenarioId": "initial_pruritus",
+      "defaultBrandName": "アレジオン",
+      "sortOrder": 1
+    }
+  ],
   "scenarios": [
     {
       "id": "initial_nasal",
