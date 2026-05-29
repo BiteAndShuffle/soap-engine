@@ -704,39 +704,33 @@
     "orderPresets": {}
   },
   "expressModes": [
-    {
-      "enabled": true,
-      "expressCategory": "感染症",
-      "expressGroup": "抗アレルギー",
-      "expressSubGroup": "第二世代抗H1内服",
-      "label": "H1内服（鼻水）",
-      "genericDisplayName": "第二世代抗ヒスタミン薬（鼻水）",
-      "defaultScenarioId": "initial_nasal",
-      "defaultBrandName": "アレジオン",
-      "sortOrder": 1
-    },
-    {
-      "enabled": true,
-      "expressCategory": "眼科",
-      "expressGroup": "抗アレルギー",
-      "expressSubGroup": "内服（第二世代抗H1）",
-      "label": "H1内服（掻痒感）",
-      "genericDisplayName": "第二世代抗ヒスタミン薬（掻痒感）",
-      "defaultScenarioId": "initial_pruritus",
-      "defaultBrandName": "アレジオン",
-      "sortOrder": 1
-    },
-    {
-      "enabled": true,
-      "expressCategory": "皮膚科",
-      "expressGroup": "抗アレルギー",
-      "expressSubGroup": "第二世代抗H1内服",
-      "label": "H1内服（皮膚かゆみ）",
-      "genericDisplayName": "第二世代抗ヒスタミン薬（皮膚かゆみ）",
-      "defaultScenarioId": "initial_pruritus",
-      "defaultBrandName": "アレジオン",
-      "sortOrder": 1
-    }
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "ビラノア",    "genericDisplayName": "ビラスチン（内服）",        "defaultScenarioId": "initial_nasal",    "defaultBrandName": "ビラノア",    "sortOrder": 1 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "アレジオン",  "genericDisplayName": "エピナスチン（内服）",      "defaultScenarioId": "initial_nasal",    "defaultBrandName": "アレジオン",  "sortOrder": 2 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "アレグラ",   "genericDisplayName": "フェキソフェナジン（内服）", "defaultScenarioId": "initial_nasal",    "defaultBrandName": "アレグラ",   "sortOrder": 3 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "アレロック",  "genericDisplayName": "オロパタジン（内服）",      "defaultScenarioId": "initial_nasal",    "defaultBrandName": "アレロック",  "sortOrder": 4 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "クラリチン",  "genericDisplayName": "ロラタジン（内服）",        "defaultScenarioId": "initial_nasal",    "defaultBrandName": "クラリチン",  "sortOrder": 5 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "ザイザル",   "genericDisplayName": "レボセチリジン（内服）",    "defaultScenarioId": "initial_nasal",    "defaultBrandName": "ザイザル",   "sortOrder": 6 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "デザレックス", "genericDisplayName": "デスロラタジン（内服）",  "defaultScenarioId": "initial_nasal",    "defaultBrandName": "デザレックス", "sortOrder": 7 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "タリオン",   "genericDisplayName": "ベポタスチン（内服）",      "defaultScenarioId": "initial_nasal",    "defaultBrandName": "タリオン",   "sortOrder": 8 },
+    { "enabled": true, "expressCategory": "感染症", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "エバステル",  "genericDisplayName": "エバスチン（内服）",        "defaultScenarioId": "initial_nasal",    "defaultBrandName": "エバステル",  "sortOrder": 9 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "ビラノア",    "genericDisplayName": "ビラスチン（内服）",        "defaultScenarioId": "initial_pruritus", "defaultBrandName": "ビラノア",    "sortOrder": 1 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "アレジオン",  "genericDisplayName": "エピナスチン（内服）",      "defaultScenarioId": "initial_pruritus", "defaultBrandName": "アレジオン",  "sortOrder": 2 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "アレグラ",   "genericDisplayName": "フェキソフェナジン（内服）", "defaultScenarioId": "initial_pruritus", "defaultBrandName": "アレグラ",   "sortOrder": 3 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "アレロック",  "genericDisplayName": "オロパタジン（内服）",      "defaultScenarioId": "initial_pruritus", "defaultBrandName": "アレロック",  "sortOrder": 4 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "クラリチン",  "genericDisplayName": "ロラタジン（内服）",        "defaultScenarioId": "initial_pruritus", "defaultBrandName": "クラリチン",  "sortOrder": 5 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "ザイザル",   "genericDisplayName": "レボセチリジン（内服）",    "defaultScenarioId": "initial_pruritus", "defaultBrandName": "ザイザル",   "sortOrder": 6 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "デザレックス", "genericDisplayName": "デスロラタジン（内服）",  "defaultScenarioId": "initial_pruritus", "defaultBrandName": "デザレックス", "sortOrder": 7 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "タリオン",   "genericDisplayName": "ベポタスチン（内服）",      "defaultScenarioId": "initial_pruritus", "defaultBrandName": "タリオン",   "sortOrder": 8 },
+    { "enabled": true, "expressCategory": "眼科",   "expressGroup": "抗アレルギー", "expressSubGroup": "内服（第二世代抗H1）", "label": "エバステル",  "genericDisplayName": "エバスチン（内服）",        "defaultScenarioId": "initial_pruritus", "defaultBrandName": "エバステル",  "sortOrder": 9 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "ビラノア",    "genericDisplayName": "ビラスチン（内服）",        "defaultScenarioId": "initial_pruritus", "defaultBrandName": "ビラノア",    "sortOrder": 1 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "アレジオン",  "genericDisplayName": "エピナスチン（内服）",      "defaultScenarioId": "initial_pruritus", "defaultBrandName": "アレジオン",  "sortOrder": 2 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "アレグラ",   "genericDisplayName": "フェキソフェナジン（内服）", "defaultScenarioId": "initial_pruritus", "defaultBrandName": "アレグラ",   "sortOrder": 3 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "アレロック",  "genericDisplayName": "オロパタジン（内服）",      "defaultScenarioId": "initial_pruritus", "defaultBrandName": "アレロック",  "sortOrder": 4 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "クラリチン",  "genericDisplayName": "ロラタジン（内服）",        "defaultScenarioId": "initial_pruritus", "defaultBrandName": "クラリチン",  "sortOrder": 5 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "ザイザル",   "genericDisplayName": "レボセチリジン（内服）",    "defaultScenarioId": "initial_pruritus", "defaultBrandName": "ザイザル",   "sortOrder": 6 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "デザレックス", "genericDisplayName": "デスロラタジン（内服）",  "defaultScenarioId": "initial_pruritus", "defaultBrandName": "デザレックス", "sortOrder": 7 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "タリオン",   "genericDisplayName": "ベポタスチン（内服）",      "defaultScenarioId": "initial_pruritus", "defaultBrandName": "タリオン",   "sortOrder": 8 },
+    { "enabled": true, "expressCategory": "皮膚科", "expressGroup": "抗アレルギー", "expressSubGroup": "第二世代抗H1内服",    "label": "エバステル",  "genericDisplayName": "エバスチン（内服）",        "defaultScenarioId": "initial_pruritus", "defaultBrandName": "エバステル",  "sortOrder": 9 }
   ],
   "scenarios": [
     {

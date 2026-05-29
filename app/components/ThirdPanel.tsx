@@ -98,6 +98,8 @@ const STATUSES: StatusDef[] = [
 interface MedicalAreaAccordionProps {
   /** サブカテゴリボタン押下時コールバック。Express候補有無に関わらず常に呼ばれる */
   onSubcategorySelect: (label: string) => void
+  /** アコーディオンのエリア開閉変化コールバック（Express候補のcategory絞り込みに使用） */
+  onAreaChange?: (area: string | null) => void
   /** Express候補を持つサブカテゴリラベルのセット（バッジ表示用） */
   expressSubcats?: Set<string>
   /** 現在ポップアップ表示中のサブカテゴリ（アクティブ状態表示用） */
@@ -106,6 +108,7 @@ interface MedicalAreaAccordionProps {
 
 function MedicalAreaAccordion({
   onSubcategorySelect,
+  onAreaChange,
   expressSubcats,
   activeSubcat,
 }: MedicalAreaAccordionProps) {
@@ -119,7 +122,11 @@ function MedicalAreaAccordion({
           <div key={area.label} className={s.medAreaGroup}>
             <button
               className={[s.medAreaBtn, isOpen ? s.medAreaBtnOpen : ''].join(' ')}
-              onClick={() => setOpenArea(prev => prev === area.label ? null : area.label)}
+              onClick={() => {
+                const next = openArea === area.label ? null : area.label
+                setOpenArea(next)
+                onAreaChange?.(next)
+              }}
               aria-expanded={isOpen}
             >
               <span className={s.medAreaLabel}>{area.label}</span>
@@ -418,6 +425,8 @@ export default function ThirdPanel({
 
   // 現在ポップアップ表示中のサブカテゴリ（null = 非表示）
   const [expressPopupSubcat, setExpressPopupSubcat] = useState<string | null>(null)
+  // 現在開いているアコーディオンエリア（Express候補をcategoryで絞り込むために使用）
+  const [expressPopupArea, setExpressPopupArea] = useState<string | null>(null)
   const expressPopupRef = useRef<HTMLDivElement>(null)
   // GE / 先発 切替（true = GEモード）
   const [expressUseGE, setExpressUseGE] = useState(true)
@@ -433,6 +442,12 @@ export default function ThirdPanel({
     document.addEventListener('mousedown', handleMouseDown)
     return () => document.removeEventListener('mousedown', handleMouseDown)
   }, [expressPopupSubcat])
+
+  // アコーディオンエリア変化: expressPopupArea を更新しポップアップを閉じる
+  const handleAreaChange = useCallback((area: string | null) => {
+    setExpressPopupArea(area)
+    setExpressPopupSubcat(null)
+  }, [])
 
   // サブカテゴリボタン押下: Express候補があればポップアップ表示。なければ通常検索送出
   const handleSubcategorySelect = useCallback((label: string) => {
@@ -450,9 +465,12 @@ export default function ThirdPanel({
   }, [expressSubcats, onSubcategorySelect, onComposeSearchChange])
 
   // ポップアップに表示する候補を計算
+  // expressPopupArea が設定されている場合、同一 expressCategory のみを対象とする
   const popupCandidates: Array<{ grp: string; sub: string; candidates: ExpressCandidate[] }> = []
   if (expressPopupSubcat) {
-    for (const catEntry of Object.values(expressByCat)) {
+    for (const [cat, catEntry] of Object.entries(expressByCat)) {
+      // expressPopupArea が設定されていれば category 絞り込みを行う
+      if (expressPopupArea && cat !== expressPopupArea) continue
       for (const grp of catEntry.groupOrder) {
         if (grp === expressPopupSubcat) {
           for (const sub of catEntry.groupMap[grp].subGroupOrder) {
@@ -568,6 +586,7 @@ export default function ThirdPanel({
               <div className={s.sActionHeading}>診療領域</div>
               <MedicalAreaAccordion
                 onSubcategorySelect={handleSubcategorySelect}
+                onAreaChange={handleAreaChange}
                 expressSubcats={expressSubcats}
                 activeSubcat={expressPopupSubcat}
               />
