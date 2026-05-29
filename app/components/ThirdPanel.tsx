@@ -28,7 +28,7 @@ interface MedicalArea {
 const MEDICAL_AREAS: MedicalArea[] = [
   {
     label: '感染症',
-    subcategories: ['抗生剤', '抗ウイルス', '去痰', '鎮咳', '解熱鎮痛', 'トローチ', '喉の痛み', '整腸', '制吐'],
+    subcategories: ['抗生剤', '抗ウイルス', '去痰', '鎮咳', '解熱鎮痛', 'トローチ', '喉の痛み', '整腸', '制吐', '抗アレルギー'],
   },
   {
     label: '整形',
@@ -40,7 +40,7 @@ const MEDICAL_AREAS: MedicalArea[] = [
   },
   {
     label: '皮膚科',
-    subcategories: ['ヘパリン', '白色ワセリン', 'ステロイド', 'モイゼルト', 'ニキビ'],
+    subcategories: ['ヘパリン', '白色ワセリン', 'ステロイド', 'モイゼルト', 'ニキビ', '抗アレルギー'],
   },
 ]
 
@@ -96,10 +96,8 @@ const STATUSES: StatusDef[] = [
 // ─────────────────────────────────────────────────────────────
 
 interface MedicalAreaAccordionProps {
-  /** サブカテゴリボタン押下時コールバック。Express候補有無に関わらず常に呼ばれる */
-  onSubcategorySelect: (label: string) => void
-  /** アコーディオンのエリア開閉変化コールバック（Express候補のcategory絞り込みに使用） */
-  onAreaChange?: (area: string | null) => void
+  /** サブカテゴリボタン押下時コールバック。エリアラベルも同時に渡す */
+  onSubcategorySelect: (label: string, areaLabel: string) => void
   /** Express候補を持つサブカテゴリラベルのセット（バッジ表示用） */
   expressSubcats?: Set<string>
   /** 現在ポップアップ表示中のサブカテゴリ（アクティブ状態表示用） */
@@ -108,7 +106,6 @@ interface MedicalAreaAccordionProps {
 
 function MedicalAreaAccordion({
   onSubcategorySelect,
-  onAreaChange,
   expressSubcats,
   activeSubcat,
 }: MedicalAreaAccordionProps) {
@@ -123,9 +120,7 @@ function MedicalAreaAccordion({
             <button
               className={[s.medAreaBtn, isOpen ? s.medAreaBtnOpen : ''].join(' ')}
               onClick={() => {
-                const next = openArea === area.label ? null : area.label
-                setOpenArea(next)
-                onAreaChange?.(next)
+                setOpenArea(prev => prev === area.label ? null : area.label)
               }}
               aria-expanded={isOpen}
             >
@@ -141,7 +136,7 @@ function MedicalAreaAccordion({
                     <button
                       key={sub}
                       className={[s.medSubcatBtn, isActive ? s.medSubcatBtnActive : ''].join(' ')}
-                      onClick={() => onSubcategorySelect(sub)}
+                      onClick={() => onSubcategorySelect(sub, area.label)}
                       aria-pressed={isActive}
                     >
                       {sub}
@@ -443,26 +438,23 @@ export default function ThirdPanel({
     return () => document.removeEventListener('mousedown', handleMouseDown)
   }, [expressPopupSubcat])
 
-  // アコーディオンエリア変化: expressPopupArea を更新しポップアップを閉じる
-  const handleAreaChange = useCallback((area: string | null) => {
-    setExpressPopupArea(area)
-    setExpressPopupSubcat(null)
-  }, [])
-
-  // サブカテゴリボタン押下: Express候補があればポップアップ表示。なければ通常検索送出
-  const handleSubcategorySelect = useCallback((label: string) => {
+  // サブカテゴリボタン押下: area と subcat を同時にセットする（アトミック）
+  // Express候補があればポップアップ表示。なければ通常検索送出
+  const handleSubcategorySelect = useCallback((label: string, areaLabel: string) => {
     if (expressSubcats.has(label)) {
-      // 同じボタン再押しでポップアップを閉じる、別ボタンで切り替え
-      setExpressPopupSubcat(prev => prev === label ? null : label)
+      // 同じボタン再押しでポップアップを閉じる、別ボタン（または別エリア）で切り替え
+      setExpressPopupSubcat(prev => (prev === label && expressPopupArea === areaLabel) ? null : label)
+      setExpressPopupArea(areaLabel)
     } else {
       setExpressPopupSubcat(null)
+      setExpressPopupArea(areaLabel)
     }
     if (onSubcategorySelect) {
       onSubcategorySelect(label)
     } else {
       onComposeSearchChange?.(label)
     }
-  }, [expressSubcats, onSubcategorySelect, onComposeSearchChange])
+  }, [expressSubcats, expressPopupArea, onSubcategorySelect, onComposeSearchChange])
 
   // ポップアップに表示する候補を計算
   // expressPopupArea が設定されている場合、同一 expressCategory のみを対象とする
@@ -532,10 +524,11 @@ export default function ThirdPanel({
             </div>
             {popupCandidates.map(({ grp, sub, candidates }) => {
               // GEモード時はGE名でソート、先発モード時はlabel（先発名）でソート
+              const jaCollator = new Intl.Collator('ja')
               const sorted = [...candidates].sort((a, b) => {
                 const nameA = expressUseGE ? (a.genericLabel ?? a.label) : a.label
                 const nameB = expressUseGE ? (b.genericLabel ?? b.label) : b.label
-                return nameA.localeCompare(nameB, 'ja')
+                return jaCollator.compare(nameA, nameB)
               })
               return (
                 <div key={`${grp}__${sub}`} className={s.expressSubGroup}>
@@ -586,7 +579,6 @@ export default function ThirdPanel({
               <div className={s.sActionHeading}>診療領域</div>
               <MedicalAreaAccordion
                 onSubcategorySelect={handleSubcategorySelect}
-                onAreaChange={handleAreaChange}
                 expressSubcats={expressSubcats}
                 activeSubcat={expressPopupSubcat}
               />
