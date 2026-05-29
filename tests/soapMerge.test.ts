@@ -439,3 +439,112 @@ describe('P合成: 意味が異なる followup は別行に残る', () => {
     assert.equal(occurrencesSE, 1,      `se closing should appear once`)
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 10. H1内服4剤合成: default / default / end / default
+//     連続する同一 closing のみ統合 → P_CLOSING は 3 行
+//     構成:
+//       1剤目 initial_nasal        → default_followup
+//       2剤目 initial_pruritus     → default_followup  （1剤目と連続同一 → 統合）
+//       3剤目 end_improved         → end_followup      （異なる → 別行）
+//       4剤目 cp_poor_missed_doses → default_followup  （end の後 → 非連続 → 別行）
+//     期待: P_CLOSING = default(1回) → end(1回) → default(1回)  計3出現
+// ─────────────────────────────────────────────────────────────
+
+describe('P合成: H1内服4剤混在 (default/default/end/default → closing は 3 行)', () => {
+  const h1 = h1OralData as unknown as ModuleData
+
+  const DEFAULT_CLOSING = '次回、引き続き使用できているか、副作用の有無を確認。'
+  const END_CLOSING     = '次回、治療経過および体調変化の有無を確認。'
+
+  // 前提確認: 各シナリオの closingText が想定通りであること
+  test('initial_nasal の closingText が default_followup であること', () => {
+    const b = makeBlock(h1, 'initial_nasal', 'A')
+    assert.equal(b.closingText, DEFAULT_CLOSING)
+  })
+
+  test('initial_pruritus の closingText が default_followup であること', () => {
+    const b = makeBlock(h1, 'initial_pruritus', 'A')
+    assert.equal(b.closingText, DEFAULT_CLOSING)
+  })
+
+  test('end_improved の closingText が end_followup であること', () => {
+    const b = makeBlock(h1, 'end_improved', 'A')
+    assert.equal(b.closingText, END_CLOSING)
+  })
+
+  test('cp_poor_missed_doses の closingText が default_followup であること', () => {
+    const b = makeBlock(h1, 'cp_poor_missed_doses', 'A')
+    assert.equal(b.closingText, DEFAULT_CLOSING)
+  })
+
+  // P_CLOSING 出現回数の検証
+  test('P に default_followup が 2 回出現する（1+2剤目統合 + 4剤目）', () => {
+    const b1 = makeBlock(h1, 'initial_nasal',       'ビラノア')
+    const b2 = makeBlock(h1, 'initial_pruritus',    'アレグラ')
+    const b3 = makeBlock(h1, 'end_improved',        'ザイザル')
+    const b4 = makeBlock(h1, 'cp_poor_missed_doses','クラリチン')
+    const result = runMerge(b1, [b2, b3, b4])
+    const count = result.P.split(DEFAULT_CLOSING).length - 1
+    assert.equal(count, 2,
+      `default closing should appear 2 times (1+2 merged, 4th separate), got ${count}. P:\n${result.P}`)
+  })
+
+  test('P に end_followup が 1 回だけ出現する', () => {
+    const b1 = makeBlock(h1, 'initial_nasal',       'ビラノア')
+    const b2 = makeBlock(h1, 'initial_pruritus',    'アレグラ')
+    const b3 = makeBlock(h1, 'end_improved',        'ザイザル')
+    const b4 = makeBlock(h1, 'cp_poor_missed_doses','クラリチン')
+    const result = runMerge(b1, [b2, b3, b4])
+    const count = result.P.split(END_CLOSING).length - 1
+    assert.equal(count, 1,
+      `end closing should appear exactly once, got ${count}. P:\n${result.P}`)
+  })
+
+  // P_CLOSING の出現順序の検証
+  test('P_CLOSING の出現順序が default → end → default であること', () => {
+    const b1 = makeBlock(h1, 'initial_nasal',       'ビラノア')
+    const b2 = makeBlock(h1, 'initial_pruritus',    'アレグラ')
+    const b3 = makeBlock(h1, 'end_improved',        'ザイザル')
+    const b4 = makeBlock(h1, 'cp_poor_missed_doses','クラリチン')
+    const result = runMerge(b1, [b2, b3, b4])
+    const firstDefault = result.P.indexOf(DEFAULT_CLOSING)
+    const firstEnd     = result.P.indexOf(END_CLOSING)
+    const lastDefault  = result.P.lastIndexOf(DEFAULT_CLOSING)
+    assert.ok(firstDefault >= 0, `P should contain default closing`)
+    assert.ok(firstEnd     >= 0, `P should contain end closing`)
+    assert.ok(firstDefault < firstEnd,
+      `first default closing should appear before end closing`)
+    assert.ok(firstEnd < lastDefault,
+      `end closing should appear before second default closing`)
+  })
+
+  // P 本文に薬剤名が含まれること
+  // cp_poor_missed_doses の P テンプレートには {{drug_subject}} がないため薬剤名は展開されない。
+  // 代わりに同シナリオ固有のテキストで確認する。
+  test('P に 3 剤の薬剤名が含まれ、cp シナリオ固有テキストが含まれる', () => {
+    const b1 = makeBlock(h1, 'initial_nasal',       'ビラノア')
+    const b2 = makeBlock(h1, 'initial_pruritus',    'アレグラ')
+    const b3 = makeBlock(h1, 'end_improved',        'ザイザル')
+    const b4 = makeBlock(h1, 'cp_poor_missed_doses','クラリチン')
+    const result = runMerge(b1, [b2, b3, b4])
+    assert.ok(result.P.includes('ビラノア'), `P should contain ビラノア`)
+    assert.ok(result.P.includes('アレグラ'), `P should contain アレグラ`)
+    assert.ok(result.P.includes('ザイザル'), `P should contain ザイザル`)
+    // cp_poor_missed_doses は {{drug_subject}} なし — シナリオ固有テキストで確認
+    assert.ok(result.P.includes('服薬忘れ'), `P should contain cp scenario text (服薬忘れ)`)
+  })
+
+  // 非連続 default_followup が全体 dedup されないことの確認
+  test('連続していない default_followup は全体 dedup されない（2 回出現を維持）', () => {
+    const b1 = makeBlock(h1, 'initial_nasal',       'ビラノア')
+    const b2 = makeBlock(h1, 'initial_pruritus',    'アレグラ')
+    const b3 = makeBlock(h1, 'end_improved',        'ザイザル')
+    const b4 = makeBlock(h1, 'cp_poor_missed_doses','クラリチン')
+    const result = runMerge(b1, [b2, b3, b4])
+    const count = result.P.split(DEFAULT_CLOSING).length - 1
+    // 全体 dedup されていれば 1 回になってしまう → 2 回であることを確認
+    assert.ok(count >= 2,
+      `Non-consecutive default closings must NOT be globally deduped: got ${count} (expected ≥2). P:\n${result.P}`)
+  })
+})
