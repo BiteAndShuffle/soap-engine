@@ -459,9 +459,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   )
 
   // ── 左メニュー表示名プレフィックス候補 ───────────────────────
+  // 2剤目以降を編集中（activeNode !== null）は targetModule が切り替わるため、
+  // activeModuleData（1剤目固定）ではなく targetModule から生成する。
   const menuPrefixCandidates = useMemo(
-    () => moduleMenuPrefixCandidates(activeModuleData),
-    [activeModuleData],
+    () => moduleMenuPrefixCandidates(targetModule),
+    [targetModule],
   )
 
   // ── allGroups / availableGroups / groupScenarios ────────────

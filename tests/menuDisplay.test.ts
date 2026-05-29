@@ -136,6 +136,142 @@ describe('displayTitleForCol2 — prefix stripping', () => {
 })
 
 // ─────────────────────────────────────────────────────────────
+// 1b. displayTitleForCol2 — 全角/半角括弧ゆれ・最長一致優先
+// ─────────────────────────────────────────────────────────────
+
+describe('displayTitleForCol2 — 全角/半角括弧ゆれ吸収', () => {
+
+  test('全角title + 半角candidate でマッチする', () => {
+    // title が全角括弧、candidate が半角括弧 → prefix 除去される
+    assert.equal(
+      displayTitleForCol2('GLP-1受容体作動薬（内服） 初回', '初回', ['GLP-1受容体作動薬(内服)']),
+      '初回'
+    )
+  })
+
+  test('半角title + 全角candidate でマッチする', () => {
+    // title が半角括弧（実際の GLP-1 title 形式）、candidate が全角括弧（display フィールド形式）
+    assert.equal(
+      displayTitleForCol2('GLP-1受容体作動薬(内服) 初回', '初回', ['GLP-1受容体作動薬（内服）']),
+      '初回'
+    )
+  })
+
+  test('注射: 半角title + 全角candidate でマッチする', () => {
+    assert.equal(
+      displayTitleForCol2('GLP-1受容体作動薬(注射) 初回', '初回', ['GLP-1受容体作動薬（注射）']),
+      '初回'
+    )
+  })
+
+  test('除去後の先頭空白がtrimされている', () => {
+    // prefix + スペース除去後の残りに先頭空白がないこと
+    const result = displayTitleForCol2('GLP-1受容体作動薬(内服) 初回', '初回', ['GLP-1受容体作動薬（内服）'])
+    assert.equal(result, result.trimStart())
+  })
+})
+
+describe('displayTitleForCol2 — 最長一致優先', () => {
+
+  test('短候補と長候補がある場合、長候補が優先される', () => {
+    // 'GLP-1受容体作動薬' も先頭一致するが、より長い '...(内服)' が勝つ
+    const candidates = ['GLP-1受容体作動薬', 'GLP-1受容体作動薬（内服）']
+    assert.equal(
+      displayTitleForCol2('GLP-1受容体作動薬（内服） 初回', '初回', candidates),
+      '初回'
+    )
+  })
+
+  test('長候補が一致しない場合は短候補にフォールバックする', () => {
+    // '...(内服)' が title 先頭と一致しない → 短い 'GLP-1受容体作動薬' でマッチ
+    const candidates = ['GLP-1受容体作動薬', 'GLP-1受容体作動薬（内服）']
+    assert.equal(
+      displayTitleForCol2('GLP-1受容体作動薬 初回', '初回', candidates),
+      '初回'
+    )
+  })
+
+  test('いずれの候補も title 先頭に一致しない場合は title をそのまま返す', () => {
+    const candidates = ['別のモジュール名', 'または（その変形）']
+    assert.equal(
+      displayTitleForCol2('GLP-1受容体作動薬(内服) 初回', '初回', candidates),
+      'GLP-1受容体作動薬(内服) 初回'
+    )
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 1c. displayTitleForCol2 — 実データ追加シナリオ
+// ─────────────────────────────────────────────────────────────
+
+describe('displayTitleForCol2 — 実データ追加シナリオ', () => {
+
+  describe('GLP-1内服: end_improved / restart', () => {
+    const mod = oralData as unknown as ModuleData
+    const candidates = moduleMenuPrefixCandidates(mod)
+
+    test('終了（改善）', () => {
+      const sc = findScenario(mod, 'end_improved')
+      assert.equal(displayTitleForCol2(sc.title, '終了', candidates), '終了（改善）')
+    })
+    test('再開', () => {
+      const sc = findScenario(mod, 'restart')
+      assert.equal(displayTitleForCol2(sc.title, '初回', candidates), '再開')
+    })
+  })
+
+  describe('GLP-1注射: end_improved / restart', () => {
+    const mod = injData as unknown as ModuleData
+    const candidates = moduleMenuPrefixCandidates(mod)
+
+    test('終了（改善）', () => {
+      const sc = findScenario(mod, 'end_improved')
+      assert.equal(displayTitleForCol2(sc.title, '終了', candidates), '終了（改善）')
+    })
+    test('再開', () => {
+      const sc = findScenario(mod, 'restart')
+      assert.equal(displayTitleForCol2(sc.title, '初回', candidates), '再開')
+    })
+  })
+
+  describe('H1内服: 掻痒感系シナリオ', () => {
+    const mod = h1OralData as unknown as ModuleData
+    const candidates = moduleMenuPrefixCandidates(mod)
+
+    test('初回（掻痒感）', () => {
+      const sc = findScenario(mod, 'initial_pruritus')
+      assert.equal(displayTitleForCol2(sc.title, '初回', candidates), '初回（掻痒感）')
+    })
+    test('再開（掻痒感）', () => {
+      const sc = findScenario(mod, 'restart_pruritus')
+      assert.equal(displayTitleForCol2(sc.title, '初回', candidates), '再開（掻痒感）')
+    })
+    test('他所開始（掻痒感）', () => {
+      const sc = findScenario(mod, 'external_start_pruritus')
+      assert.equal(displayTitleForCol2(sc.title, '初回', candidates), '他所開始（掻痒感）')
+    })
+    test('終了（改善）', () => {
+      const sc = findScenario(mod, 'end_improved')
+      assert.equal(displayTitleForCol2(sc.title, '終了', candidates), '終了（改善）')
+    })
+  })
+
+  describe('H1点眼: 再開', () => {
+    const mod = h1EyeData as unknown as ModuleData
+    const candidates = moduleMenuPrefixCandidates(mod)
+
+    test('再開', () => {
+      const sc = findScenario(mod, 'restart')
+      assert.equal(displayTitleForCol2(sc.title, '初回', candidates), '再開')
+    })
+    test('終了（改善）', () => {
+      const sc = findScenario(mod, 'end_improved')
+      assert.equal(displayTitleForCol2(sc.title, '終了', candidates), '終了（改善）')
+    })
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
 // 2. scenarioToColor — treatment_start 系の色分け
 // ─────────────────────────────────────────────────────────────
 
