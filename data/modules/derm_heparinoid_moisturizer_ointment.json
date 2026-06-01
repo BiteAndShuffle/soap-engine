@@ -224,7 +224,30 @@
       "へぱゆせいくりーむ": "ヘパリン類似物質油性クリーム"
     }
   },
-  "drugResolution": {},
+  "drugResolution": {
+    "brandToTags": {
+      "ヒルドイドソフト軟膏": [
+        "room_temperature_storage",
+        "ointment",
+        "topical_application",
+        "external_use",
+        "apply_thin_layer",
+        "avoid_mucosa",
+        "wash_hands_before_use",
+        "ointment_application"
+      ],
+      "ヘパリン類似物質油性クリーム": [
+        "room_temperature_storage",
+        "oily_cream",
+        "topical_application",
+        "external_use",
+        "apply_thin_layer",
+        "avoid_mucosa",
+        "wash_hands_before_use",
+        "cream_application"
+      ]
+    }
+  },
   "regulatory": {
     "psychotropicClass": "not_applicable",
     "controlledSubstance": "not_applicable",
