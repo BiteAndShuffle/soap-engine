@@ -49,21 +49,55 @@ export const MENU_GROUP_ORDER: MenuGroup[] = [
 // ─────────────────────────────────────────────────────────────
 
 /**
+ * 増量 / 減量を semantic fields から汎用判定する。
+ *
+ * 優先順位（JSON naming に依存せず generic に判定）:
+ *   1. scenarioTags に "increase" / "decrease"
+ *   2. sComposition.intent === "dose_increase" / "dose_decrease"
+ *   3. intentTags に "dose_increase_explanation" / "dose_decrease_explanation"
+ *   4. id prefix（後方互換 fallback）
+ *
+ * 新規モジュールは scenarioTags に "increase" / "decrease" を入れれば
+ * id naming に関係なく正しく分類される。
+ */
+function classifyDoseDirection(scenario: Scenario): '増量' | '減量' | null {
+  const tags = scenario.scenarioTags ?? []
+  if (tags.includes('increase')) return '増量'
+  if (tags.includes('decrease')) return '減量'
+
+  const intent = scenario.sComposition?.intent ?? ''
+  if (intent === 'dose_increase') return '増量'
+  if (intent === 'dose_decrease') return '減量'
+
+  const intentTags = scenario.intentTags ?? []
+  if (intentTags.includes('dose_increase_explanation')) return '増量'
+  if (intentTags.includes('dose_decrease_explanation')) return '減量'
+
+  // 後方互換 fallback: id prefix
+  const sid = scenario.id
+  if (sid.startsWith('dose_increase') || sid.startsWith('frequency_increase')) return '増量'
+  if (sid.startsWith('dose_decrease') || sid.startsWith('frequency_decrease')) return '減量'
+
+  return null
+}
+
+/**
  * 【SSOT】Scenario オブジェクトから MenuGroup を決定する。
  *
  * 副作用軸:
  *   sideEffectPresence === "absent_or_not_observed" → "副作用なし"
- *   sideEffectPresence === "present"                → "副作用あり"
+ *   sideEffectPresence === "present_*"              → "副作用あり"
  *
- * not_applicable の場合は scenarioGroup / scenarioType で分類:
- *   start_or_change    → "初回"  ※ dose_change も scenarioGroup で区別
- *   dose_change (dose_increase) → "増量"
- *   dose_change (reduce系)      → "減量"
- *   adherence_good              → "コンプライアンス良好"
- *   adherence_poor              → "コンプライアンス不良"
- *   end_*                       → "終了"
- *   lifestyle_guidance          → "その他"
- *   sickday                     → "その他"
+ * not_applicable の場合は scenarioGroup / semantic fields で分類:
+ *   start_or_change / treatment_start → "初回"
+ *   dose_change / treatment_adjustment → classifyDoseDirection() で増量/減量判定
+ *   adherence_good                    → "コンプライアンス良好"
+ *   adherence_poor                    → "コンプライアンス不良"
+ *   adherence                         → scenarioTags に "good"/"poor" で判定
+ *   end_* / treatment_end             → "終了"
+ *   lifestyle_guidance / sickday      → "その他"
+ *
+ * 増量/減量判定は classifyDoseDirection() で行う（id naming に非依存・汎用）。
  */
 export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
   // 副作用軸は sideEffectPresence が SSOT
@@ -76,28 +110,24 @@ export function getMenuGroupFromScenario(scenario: Scenario): MenuGroup {
     scenario.sideEffectPresence === 'present_stop'
   ) return '副作用あり'
 
-  // not_applicable: scenarioGroup / id で分類
+  // not_applicable: scenarioGroup / semantic fields で分類
   const sg = scenario.scenarioGroup ?? ''
   const sid = scenario.id
 
   if (sg === 'start_or_change') return '初回'
   if (sg === 'treatment_start') return '初回'
-  if (sg === 'dose_change') {
-    // 増量 vs 減量は id で区別（dose_increase_ で始まる id も含む）
-    if (sid.startsWith('dose_increase')) return '増量'
-    return '減量'  // dose_decrease_* は全て減量
-  }
-  if (sg === 'treatment_adjustment') {
-    if (sid.startsWith('dose_increase')) return '増量'
-    if (sid.startsWith('dose_decrease')) return '減量'
+  if (sg === 'dose_change' || sg === 'treatment_adjustment') {
+    // 増量/減量は semantic fields 優先（id naming に非依存）
+    const dir = classifyDoseDirection(scenario)
+    if (dir) return dir
     return 'その他'
   }
   if (sg === 'adherence_good') return 'コンプライアンス良好'
   if (sg === 'adherence_poor') return 'コンプライアンス不良'
   if (sg === 'adherence') {
-    if (sid.startsWith('cp_good')) return 'コンプライアンス良好'
-    // cp_poor_self_adjust は adherence issue（自己判断による中断/間欠使用）→ CP不良
-    if (sid.startsWith('cp_poor')) return 'コンプライアンス不良'
+    const tags = scenario.scenarioTags ?? []
+    if (tags.includes('good') || sid.startsWith('cp_good')) return 'コンプライアンス良好'
+    if (tags.includes('poor') || sid.startsWith('cp_poor')) return 'コンプライアンス不良'
     return 'その他'
   }
   // as_needed: 頓用使用は patient-driven usage → 自己調整

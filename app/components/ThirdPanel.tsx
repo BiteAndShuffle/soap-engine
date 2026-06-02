@@ -5,6 +5,7 @@ import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
 import type { Scenario } from '../../lib/types'
 import type { SRelation, SCondition } from './SoapEditor'
+import { isSReplacementEligible } from '../../lib/isSReplacementEligible'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
@@ -371,14 +372,10 @@ export default function ThirdPanel({
   onLocalSiteInputChange,
 }: ThirdPanelProps) {
   const resolvedSections = applyMenuGroupLabels(SECTIONS, menuGroupLabelOverrides)
-  // S先頭文ボタン群: scenario.thirdPanelSPlacement.enabled === true かつ単剤時のみ
-  const sPlacementEnabled =
-    thirdPanelEnabled &&
-    isSingleDrug &&
-    primaryScenario?.thirdPanelSPlacement?.enabled === true &&
-    primaryScenario.thirdPanelSPlacement.trigger === 'single_drug_only'
-  // S先頭文ボタン群: FEATURE_S_BUTTONS で制御
-  const showSButtons = FEATURE_S_BUTTONS && sPlacementEnabled
+  // S先頭文ボタン群: isSReplacementEligible で汎用判定（単剤 primary 時のみ）
+  const showSButtons =
+    FEATURE_S_BUTTONS &&
+    isSReplacementEligible(primaryScenario, { thirdPanelEnabled, isSingleDrug })
 
   // ── Express候補ポップアップ管理 ──────────────────────────────
   // expressCategory/Group/SubGroup でグルーピングしたマップ（メモ化）

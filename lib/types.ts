@@ -118,6 +118,12 @@ export interface Scenario {
    * 例: ["bilastine"] → bilastine handlingTag を持つブランド選択時のみ表示。
    */
   scenarioRequiredTags?: string[]
+  /**
+   * シナリオ意味タグ — MenuGroup 分類・S置換UI eligibility 判定に使用。
+   * 増量: "increase" / 減量: "decrease" / 副作用なし: "absent" / CP良好: "good" 等。
+   * 新規モジュールはこのフィールドを設定するだけで UI 分類・S置換UI が自動反映される。
+   */
+  scenarioTags?: string[]
   /** 意味タグ（intentTags）— 文章の意味的役割を表す */
   intentTags?: string[]
   /** 臨床タグ（将来拡張用） */
