@@ -755,12 +755,19 @@ export interface ExpressModeEntry {
   /** デフォルトで追加する scenario.id（通常 "initial"）。scenarioCandidates が存在する場合はフォールバックとして機能 */
   defaultScenarioId: string
   /**
-   * Express 追加時に使用する既定ブランド名（必須）。
+   * Express 追加時に使用する既定ブランド名（必須）。先発モード時の brandCatalog 解決キー。
    * 値は必ず drug.brandCatalog のキーと完全一致させること。
    * Express追加時の {{drug_subject}} 解決および addonFilter の handlingTags 解決に使用。
    * expressModes では複数ブランド誤作動防止のため省略不可。
    */
   defaultBrandName: string
+  /**
+   * GEモード時に使用する brandCatalog 解決キー（省略可）。
+   * 設定時は GEモードでの brandName 解決にこちらを使用する。
+   * 省略時は GEモードでも defaultBrandName にフォールバックする（既存モジュールとの後方互換）。
+   * 例: defaultBrandName="ヒルドイドソフト軟膏" / genericBrandName="ヘパリン類似物質油性クリーム"
+   */
+  genericBrandName?: string
   /** 同サブグループ内での表示順 */
   sortOrder?: number
   /**

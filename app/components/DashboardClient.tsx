@@ -549,6 +549,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               defaultScenarioId: e.defaultScenarioId,
               defaultScenarioGlobalId: sc?.globalId ?? '',
               defaultBrandName: e.defaultBrandName,
+              genericBrandName: e.genericBrandName,
               sortOrder: e.sortOrder ?? 99,
               scenarioCandidates: resolvedScenarioCandidates && resolvedScenarioCandidates.length > 0
                 ? resolvedScenarioCandidates

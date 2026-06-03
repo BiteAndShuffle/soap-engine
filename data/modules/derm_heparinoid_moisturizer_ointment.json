@@ -2475,7 +2475,8 @@
       "label": "ヒルドイドソフト軟膏",
       "genericDisplayName": "油性クリーム",
       "defaultScenarioId": "initial_dryness",
-      "defaultBrandName": "ヘパリン類似物質油性クリーム",
+      "defaultBrandName": "ヒルドイドソフト軟膏",
+      "genericBrandName": "ヘパリン類似物質油性クリーム",
       "sortOrder": 1,
       "scenarioCandidates": [
         { "scenarioId": "initial_dryness",           "label": "乾燥" },

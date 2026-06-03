@@ -274,11 +274,17 @@ export interface ExpressCandidate {
   /** scenario.globalId（activeExpressKeys のキーと照合するために使用） */
   defaultScenarioGlobalId: string
   /**
-   * Express 追加時に使用する既定ブランド名。
+   * Express 追加時に使用する既定ブランド名（先発モード時）。
    * drug.brandCatalog のキーと完全一致させること。
    * expressModes 側では必須。expressMode 単数フォールバック時のみ省略可。
    */
   defaultBrandName?: string
+  /**
+   * GEモード時に使用する brandCatalog 解決キー（省略可）。
+   * 設定時は GEモードでの brandName 解決にこちらを使用する。
+   * 省略時は GEモードでも defaultBrandName にフォールバック（既存モジュール後方互換）。
+   */
+  genericBrandName?: string
   sortOrder: number
   /**
    * シナリオ候補リスト（省略可）。
@@ -491,31 +497,44 @@ export default function ThirdPanel({
     }
   }
 
+  // GE/先発モードに応じた brandName / displayName を解決するヘルパー。
+  // brandName  (brandCatalog 解決キー):
+  //   GEモード  → c.genericBrandName ?? c.defaultBrandName
+  //   先発モード → c.defaultBrandName
+  // displayName (SOAP {{drug_subject}} / ノード表示名):
+  //   GEモード  → c.genericLabel ?? c.defaultBrandName
+  //   先発モード → c.label ?? c.defaultBrandName
+  // genericBrandName が未定義の既存モジュールでは両モードとも defaultBrandName にフォールバック。
+  function resolveExpressBrandAndDisplay(c: ExpressCandidate): { brandName: string | undefined; displayName: string | undefined } {
+    if (expressUseGE) {
+      return {
+        brandName:   c.genericBrandName ?? c.defaultBrandName,
+        displayName: c.genericLabel ?? c.defaultBrandName,
+      }
+    }
+    return {
+      brandName:   c.defaultBrandName,
+      displayName: c.label ?? c.defaultBrandName,
+    }
+  }
+
   // ブランドボタン押下: ポップアップは閉じない
   // scenarioCandidates がある場合は2段階選択（シナリオピッカーを表示）。
   // ない場合は従来通り defaultScenarioId で即時追加。
-  // brandName（先発名）は brandCatalog 解決キーとして常に defaultBrandName を使用する。
-  // displayName（表示/SOAP主語）だけ GE/先発モードで切り替える。
   function handleExpressBrandAdd(c: ExpressCandidate) {
     if (c.scenarioCandidates && c.scenarioCandidates.length > 0) {
       // 2段階: 同じ候補を再押しでピッカーをトグル（閉じる）
       setExpressScenarioPicker(prev => (prev?.moduleId === c.moduleId && prev?.defaultBrandName === c.defaultBrandName) ? null : c)
       return
     }
-    // 1段階: 従来通り即時追加
-    const brandName = c.defaultBrandName                             // brandCatalog キー: 常に先発名
-    const displayName = expressUseGE
-      ? (c.genericLabel ?? c.defaultBrandName)                       // GEモード: GE名（なければ先発名）
-      : c.defaultBrandName                                           // 先発モード: 先発名
+    // 1段階: 即時追加
+    const { brandName, displayName } = resolveExpressBrandAndDisplay(c)
     onExpressAdd?.(c.moduleId, c.defaultScenarioId, brandName, displayName)
   }
 
   // シナリオ候補ボタン押下: 選択したシナリオで追加。ピッカーは開いたまま（複数追加可）
   function handleExpressScenarioAdd(c: ExpressCandidate, sc: { scenarioId: string; globalId: string; label: string }) {
-    const brandName = c.defaultBrandName
-    const displayName = expressUseGE
-      ? (c.genericLabel ?? c.defaultBrandName)
-      : c.defaultBrandName
+    const { brandName, displayName } = resolveExpressBrandAndDisplay(c)
     onExpressAdd?.(c.moduleId, sc.scenarioId, brandName, displayName)
   }
 
@@ -568,7 +587,12 @@ export default function ThirdPanel({
                 </div>
                 <div className={s.expressGrid}>
                   {expressScenarioPicker.scenarioCandidates!.map(sc => {
-                    const expressKey = `${expressScenarioPicker.moduleId}__${expressScenarioPicker.defaultBrandName ?? ''}__${sc.globalId}`
+                    // アクティブキーは実際に追加された matchedBrandName と一致させる
+                    // GEモードで genericBrandName があればそちら、なければ defaultBrandName
+                    const pickerBrandKey = expressUseGE
+                      ? (expressScenarioPicker.genericBrandName ?? expressScenarioPicker.defaultBrandName ?? '')
+                      : (expressScenarioPicker.defaultBrandName ?? '')
+                    const expressKey = `${expressScenarioPicker.moduleId}__${pickerBrandKey}__${sc.globalId}`
                     const isActive = activeExpressKeys?.has(expressKey) ?? false
                     return (
                       <button
@@ -598,14 +622,14 @@ export default function ThirdPanel({
                     <div className={s.expressSubGroupLabel}>{sub}</div>
                     <div className={s.expressGrid}>
                       {sorted.map(c => {
-                        // アクティブキー: matchedBrandName は常に defaultBrandName（先発名）
-                        // GE/先発モードに関わらずここは先発名で照合する
+                        // アクティブキー: GE/先発モードに応じて brandKey を切り替える
                         // scenarioCandidates がある場合はいずれかの scenarioId がアクティブなら全体をアクティブ扱い
+                        const brandKey = (expressUseGE ? (c.genericBrandName ?? c.defaultBrandName) : c.defaultBrandName) ?? ''
                         const isActive = c.scenarioCandidates
                           ? c.scenarioCandidates.some(sc =>
-                              activeExpressKeys?.has(`${c.moduleId}__${c.defaultBrandName ?? ''}__${sc.globalId}`) ?? false
+                              activeExpressKeys?.has(`${c.moduleId}__${brandKey}__${sc.globalId}`) ?? false
                             )
-                          : (activeExpressKeys?.has(`${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`) ?? false)
+                          : (activeExpressKeys?.has(`${c.moduleId}__${brandKey}__${c.defaultScenarioGlobalId}`) ?? false)
                         const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
                         return (
                           <button
