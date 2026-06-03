@@ -4,11 +4,14 @@
  * 不具合修正の回帰テスト:
  *   1. treatment_adjustment の MenuGroup 分類（id naming 非依存 generic 判定）
  *   2. isSReplacementEligible() の汎用 S置換UI eligibility 判定
+ *   3. Express Mode グルーピング: expressGroup 一致で同一ポップアップに集約されること
  *
  * 対象不具合:
  *   - derm_heparinoid_moisturizer_ointment の treatment_adjustment が「その他」に入る
  *   - derm_heparinoid_moisturizer_ointment の cp_good / se_contact_dermatitis_none で
  *     S置換UI が表示されない
+ *   - expressGroup="ヘパリン類似物質" が MEDICAL_AREAS subcategory "ヘパリン" と不一致で
+ *     ポップアップが開かなかった（fix: expressGroup="ヘパリン" に統一）
  *
  * 実行:
  *   npx tsx --test tests/genericIntegration.test.ts
@@ -24,7 +27,7 @@ import h1EyeData  from '../data/modules/allergy_h1_antihistamine_eye_drops.json'
 
 import { getMenuGroupFromScenario } from '../lib/menuGroups'
 import { isSReplacementEligible }   from '../lib/isSReplacementEligible'
-import type { ModuleData, Scenario } from '../lib/types'
+import type { ModuleData, Scenario, ExpressModeEntry } from '../lib/types'
 
 // ─────────────────────────────────────────────────────────────
 // ヘルパー
@@ -338,6 +341,221 @@ describe('getMenuGroupFromScenario — 既存モジュール回帰', () => {
     test('dose_increase_due_to_other_med_adjustment → 増量', () => {
       const sc = findScenario(h1Eye, 'dose_increase_due_to_other_med_adjustment')
       assert.equal(getMenuGroupFromScenario(sc), '増量')
+    })
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 4. Express Mode グルーピング回帰
+//
+// ThirdPanel の expressByCat ロジック（pure function 部分）を inline で再現し、
+// expressModes エントリが期待通りにグルーピングされることを検証する。
+//
+// 検証観点:
+//   (a) 現在の油性クリームエントリが "皮膚科" > "ヘパリン" > "剤形" に分類されること
+//   (b) 将来追加する剤形エントリ（ローション・ゲル・スプレー）が
+//       同一 expressGroup="ヘパリン" を持てば同一ポップアップに集約されること
+//   (c) expressSubGroup が異なれば別グループラベルで分割されること
+//   (d) expressGroup が異なれば別ポップアップグループに分離されること
+// ─────────────────────────────────────────────────────────────
+
+// ThirdPanel.expressByCat のグルーピングロジックを純粋関数として inline 複製
+type ExpressCandidateLike = {
+  moduleId: string
+  expressCategory: string
+  expressGroup: string
+  expressSubGroup: string
+  label: string
+}
+
+function buildExpressByCat(candidates: ExpressCandidateLike[]) {
+  const map: Record<string, {
+    groupOrder: string[]
+    groupMap: Record<string, { subGroupOrder: string[]; subGroupMap: Record<string, ExpressCandidateLike[]> }>
+  }> = {}
+  for (const c of candidates) {
+    const cat = c.expressCategory
+    const grp = c.expressGroup
+    const sub = c.expressSubGroup
+    if (!map[cat]) map[cat] = { groupOrder: [], groupMap: {} }
+    const catEntry = map[cat]
+    if (!catEntry.groupMap[grp]) {
+      catEntry.groupOrder.push(grp)
+      catEntry.groupMap[grp] = { subGroupOrder: [], subGroupMap: {} }
+    }
+    const grpEntry = catEntry.groupMap[grp]
+    if (!grpEntry.subGroupMap[sub]) {
+      grpEntry.subGroupOrder.push(sub)
+      grpEntry.subGroupMap[sub] = []
+    }
+    grpEntry.subGroupMap[sub].push(c)
+  }
+  return map
+}
+
+describe('Express Mode グルーピング — expressGroup/SubGroup 一致による集約', () => {
+
+  // ── 現在の油性クリームエントリ（実 JSON から） ──────────────
+  const oilyCreamEntry: ExpressCandidateLike = {
+    moduleId: 'derm_heparinoid_moisturizer_ointment',
+    expressCategory: '皮膚科',
+    expressGroup: 'ヘパリン',
+    expressSubGroup: '剤形',
+    label: 'ヒルドイドソフト軟膏',
+  }
+
+  // ── 将来追加想定の剤形エントリ（モック） ─────────────────────
+  const lotionEntry: ExpressCandidateLike = {
+    moduleId: 'derm_heparinoid_lotion',
+    expressCategory: '皮膚科',
+    expressGroup: 'ヘパリン',
+    expressSubGroup: '剤形',
+    label: 'ヒルドイドローション',
+  }
+  const gelEntry: ExpressCandidateLike = {
+    moduleId: 'derm_heparinoid_gel',
+    expressCategory: '皮膚科',
+    expressGroup: 'ヘパリン',
+    expressSubGroup: '剤形',
+    label: 'ヒルドイドゲル',
+  }
+  const sprayEntry: ExpressCandidateLike = {
+    moduleId: 'derm_heparinoid_spray',
+    expressCategory: '皮膚科',
+    expressGroup: 'ヘパリン',
+    expressSubGroup: '剤形',
+    label: 'ヒルドイドスプレー',
+  }
+  // 別 expressSubGroup に分類される剤形（区切りラベルが変わることを確認）
+  const specialSubGroupEntry: ExpressCandidateLike = {
+    moduleId: 'derm_heparinoid_patch',
+    expressCategory: '皮膚科',
+    expressGroup: 'ヘパリン',
+    expressSubGroup: 'テープ・パッチ',
+    label: 'テープ剤',
+  }
+  // 別 expressGroup（ポップアップが分離されることを確認）
+  const steroidEntry: ExpressCandidateLike = {
+    moduleId: 'derm_steroid_mild',
+    expressCategory: '皮膚科',
+    expressGroup: 'ステロイド',
+    expressSubGroup: '剤形',
+    label: 'ロコイド軟膏',
+  }
+
+  describe('(a) 現在の油性クリームエントリのカテゴリ分類', () => {
+    const map = buildExpressByCat([oilyCreamEntry])
+
+    test('expressCategory "皮膚科" が map に存在する', () => {
+      assert.ok('皮膚科' in map)
+    })
+
+    test('expressGroup "ヘパリン" が groupOrder に含まれる', () => {
+      assert.ok(map['皮膚科'].groupOrder.includes('ヘパリン'))
+    })
+
+    test('expressSubGroup "剤形" が subGroupOrder に含まれる', () => {
+      assert.ok(map['皮膚科'].groupMap['ヘパリン'].subGroupOrder.includes('剤形'))
+    })
+
+    test('油性クリームエントリが "剤形" グループに1件存在する', () => {
+      const entries = map['皮膚科'].groupMap['ヘパリン'].subGroupMap['剤形']
+      assert.equal(entries.length, 1)
+      assert.equal(entries[0].moduleId, 'derm_heparinoid_moisturizer_ointment')
+    })
+
+    test('expressSubcats に "ヘパリン" が含まれる（MEDICAL_AREAS ボタンと一致）', () => {
+      const expressSubcats = new Set<string>()
+      for (const catEntry of Object.values(map)) {
+        for (const grp of catEntry.groupOrder) {
+          expressSubcats.add(grp)
+          for (const sub of catEntry.groupMap[grp].subGroupOrder) {
+            expressSubcats.add(sub)
+          }
+        }
+      }
+      assert.ok(expressSubcats.has('ヘパリン'), '"ヘパリン" が expressSubcats に存在しない → ポップアップが開かない')
+    })
+  })
+
+  describe('(b) 将来の剤形追加: 同一 expressGroup で同一ポップアップに集約', () => {
+    const map = buildExpressByCat([oilyCreamEntry, lotionEntry, gelEntry, sprayEntry])
+
+    test('"ヘパリン" グループが1つだけ存在する（複数グループに分裂しない）', () => {
+      assert.equal(map['皮膚科'].groupOrder.filter(g => g === 'ヘパリン').length, 1)
+    })
+
+    test('"剤形" subGroup に4エントリすべてが集約される', () => {
+      const entries = map['皮膚科'].groupMap['ヘパリン'].subGroupMap['剤形']
+      assert.equal(entries.length, 4)
+    })
+
+    test('全エントリの moduleId が存在する', () => {
+      const entries = map['皮膚科'].groupMap['ヘパリン'].subGroupMap['剤形']
+      const ids = entries.map(e => e.moduleId)
+      assert.ok(ids.includes('derm_heparinoid_moisturizer_ointment'))
+      assert.ok(ids.includes('derm_heparinoid_lotion'))
+      assert.ok(ids.includes('derm_heparinoid_gel'))
+      assert.ok(ids.includes('derm_heparinoid_spray'))
+    })
+  })
+
+  describe('(c) expressSubGroup が異なれば別グループラベルで分割される', () => {
+    const map = buildExpressByCat([oilyCreamEntry, specialSubGroupEntry])
+
+    test('"ヘパリン" の subGroupOrder に "剤形" と "テープ・パッチ" が両方含まれる', () => {
+      const subGroups = map['皮膚科'].groupMap['ヘパリン'].subGroupOrder
+      assert.ok(subGroups.includes('剤形'))
+      assert.ok(subGroups.includes('テープ・パッチ'))
+    })
+
+    test('"剤形" に oil cream、"テープ・パッチ" に patch がそれぞれ1件', () => {
+      assert.equal(map['皮膚科'].groupMap['ヘパリン'].subGroupMap['剤形'].length, 1)
+      assert.equal(map['皮膚科'].groupMap['ヘパリン'].subGroupMap['テープ・パッチ'].length, 1)
+    })
+  })
+
+  describe('(d) expressGroup が異なれば別ポップアップグループに分離される', () => {
+    const map = buildExpressByCat([oilyCreamEntry, steroidEntry])
+
+    test('"皮膚科" に "ヘパリン" と "ステロイド" の2グループが存在する', () => {
+      assert.equal(map['皮膚科'].groupOrder.length, 2)
+      assert.ok(map['皮膚科'].groupOrder.includes('ヘパリン'))
+      assert.ok(map['皮膚科'].groupOrder.includes('ステロイド'))
+    })
+
+    test('"ヘパリン" ポップアップに oil cream のみ、"ステロイド" ポップアップに steroid のみ', () => {
+      assert.equal(map['皮膚科'].groupMap['ヘパリン'].subGroupMap['剤形'].length, 1)
+      assert.equal(map['皮膚科'].groupMap['ステロイド'].subGroupMap['剤形'].length, 1)
+    })
+  })
+
+  describe('(e) 実 derm JSON の expressModes が正しく分類されること', () => {
+    const dermModes = (dermData as unknown as ModuleData).expressModes ?? []
+
+    test('derm expressModes に 1 エントリ存在する', () => {
+      assert.equal(dermModes.length, 1)
+    })
+
+    test('唯一のエントリの expressGroup が "ヘパリン"', () => {
+      assert.equal(dermModes[0].expressGroup, 'ヘパリン')
+    })
+
+    test('唯一のエントリの expressCategory が "皮膚科"', () => {
+      assert.equal(dermModes[0].expressCategory, '皮膚科')
+    })
+
+    test('唯一のエントリの expressSubGroup が "剤形"', () => {
+      assert.equal(dermModes[0].expressSubGroup, '剤形')
+    })
+
+    test('唯一のエントリに scenarioCandidates が 3 件存在する', () => {
+      assert.equal(dermModes[0].scenarioCandidates?.length, 3)
+    })
+
+    test('scenarioCandidates の scenarioId が期待値と一致する', () => {
+      const ids = dermModes[0].scenarioCandidates?.map(c => c.scenarioId)
+      assert.deepEqual(ids, ['initial_dryness', 'initial_eczema', 'initial_skin_barrier_patch'])
     })
   })
 })
