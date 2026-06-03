@@ -13,7 +13,18 @@
  *
  * Context 条件（すべて満たす場合のみ eligibility 判定に進む）:
  *   - thirdPanelEnabled: シナリオ確定済み
- *   - isSingleDrug: composeNodes が空（追加薬剤なし）
+ *   - isSingleDrug: 「右上メイン検索で選択した1剤目 primary drug が確定済み、
+ *                   かつ追加薬剤（composeNodes）がゼロ件」を意味する。
+ *                   以下のすべてが成立する場合のみ true とすること:
+ *                     isPrimaryDrug         — 1剤目のシナリオ（selectedScenarioId 非null）
+ *                     isPrimaryScenario     — primary drug のシナリオを表示中
+ *                     isMainSearchSelection — サードパネル薬剤追加検索ではなく右上メイン検索由来
+ *                     !isAdditionalDrugSelection — composeNodes への追加薬剤選択中ではない
+ *                     !isSynthesisMode      — 多剤合成中（composeNodes.length > 0）ではない
+ *                     !isComposedSoapMode   — 合成済み SOAP の再編集中ではない
+ *                   DashboardClient では
+ *                     selectedScenarioId !== null && composeNodes.length === 0
+ *                   がこれらすべてを包含して isSingleDrug として計算される。
  *
  * Generic fallback（thirdPanelSPlacement 未設定時）:
  *   1. sideEffectPresence === "absent_or_not_observed"
@@ -27,8 +38,21 @@ import type { Scenario } from './types'
 /**
  * S置換UI 表示コンテキスト。
  *
- * isSingleDrug: composeNodes.length === 0 かつ 1剤目確定済み。
- *   多剤合成中・追加薬剤側では false にすること。
+ * ## isSingleDrug の意味（= primary main-search context）
+ *
+ * このフィールドは単なる「薬剤が1剤か」ではなく、以下をすべて包含する:
+ *   - isPrimaryDrug:          右上メイン検索で選ばれた1剤目（selectedScenarioId 非null）
+ *   - isPrimaryScenario:      その primary drug のシナリオを表示・編集中
+ *   - isMainSearchSelection:  サードパネル内「薬剤追加」検索経由ではない
+ *   - !isAdditionalDrugSelection: composeNodes への2剤目以降追加中ではない
+ *   - !isSynthesisMode:       composeNodes が空（多剤合成未開始）
+ *   - !isComposedSoapMode:    合成済み SOAP 再編集中ではない
+ *
+ * DashboardClient での算出式:
+ *   isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0
+ *
+ * S置換UI はこのすべてが成立する場合のみ表示する。
+ * 追加薬剤（2剤目以降）・合成窓・合成済み SOAP 再編集中は必ず false にすること。
  *
  * thirdPanelEnabled: currentScenarioId !== null かつ !== ''。
  *   シナリオ未確定では false にすること。
@@ -37,9 +61,13 @@ export interface SReplacementContext {
   /** シナリオ確定済み（currentScenarioId が有効） */
   thirdPanelEnabled: boolean
   /**
-   * 単剤かつ primary drug。
-   * composeNodes が空（追加薬剤なし）かつ 1剤目のシナリオ確定済みの場合のみ true。
-   * 追加薬剤側・合成窓・composed SOAP 再編集中は false にすること。
+   * primary drug / main-search / non-synthesis context。
+   *
+   * 以下をすべて包含する複合条件（詳細は上記 JSDoc 参照）:
+   *   isPrimaryDrug / isPrimaryScenario / isMainSearchSelection /
+   *   !isAdditionalDrugSelection / !isSynthesisMode / !isComposedSoapMode
+   *
+   * DashboardClient: selectedScenarioId !== null && composeNodes.length === 0
    */
   isSingleDrug: boolean
 }

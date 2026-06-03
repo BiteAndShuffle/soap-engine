@@ -206,6 +206,93 @@ describe('isSReplacementEligible — generic fallback', () => {
       assert.equal(isSReplacementEligible(sc, primaryCtx), true)
     })
   })
+
+  // ─────────────────────────────────────────────────────────────
+  // secondary / additional / composed / synthesis context テスト
+  //
+  // isSingleDrug は「primary drug / main-search / non-synthesis」の複合条件。
+  // 以下のいずれかに該当する場合は isSingleDrug=false として渡す:
+  //   - isAdditionalDrugSelection: 2剤目・3剤目の薬剤追加検索選択中
+  //   - isSynthesisMode:           composeNodes.length > 0（多剤合成中）
+  //   - isComposedSoapMode:        合成済み SOAP の再編集中
+  //   - secondary scenario:        primary ではない追加薬剤のシナリオ
+  // ─────────────────────────────────────────────────────────────
+
+  describe('secondary / additional / composed context — すべて false', () => {
+    // additionalDrugCtx: 追加薬剤選択中（composeNodes.length > 0 に相当）
+    const additionalDrugCtx = { thirdPanelEnabled: true, isSingleDrug: false }
+    // synthesisCtx: 多剤合成中（composeNodes.length > 0）
+    const synthesisCtx = { thirdPanelEnabled: true, isSingleDrug: false }
+    // composedSoapCtx: 合成済み SOAP 再編集中
+    const composedSoapCtx = { thirdPanelEnabled: true, isSingleDrug: false }
+    // noScenario: シナリオ未確定
+    const noScenarioCtx = { thirdPanelEnabled: false, isSingleDrug: false }
+
+    test('derm cp_good: additional drug context (isSingleDrug=false) → false', () => {
+      const sc = findScenario(dermData as unknown as ModuleData, 'cp_good')
+      assert.equal(isSReplacementEligible(sc, additionalDrugCtx), false)
+    })
+
+    test('derm se_contact_dermatitis_none: synthesis mode context → false', () => {
+      const sc = findScenario(dermData as unknown as ModuleData, 'se_contact_dermatitis_none')
+      assert.equal(isSReplacementEligible(sc, synthesisCtx), false)
+    })
+
+    test('derm cp_good: composed SOAP mode context → false', () => {
+      const sc = findScenario(dermData as unknown as ModuleData, 'cp_good')
+      assert.equal(isSReplacementEligible(sc, composedSoapCtx), false)
+    })
+
+    test('GLP-1 cp_good (explicit enabled:true): additional drug context → false', () => {
+      const sc = findScenario(oralData as unknown as ModuleData, 'cp_good')
+      assert.ok(sc.thirdPanelSPlacement?.enabled === true, 'precondition')
+      // 明示 enabled:true でも context が additional なら false
+      assert.equal(isSReplacementEligible(sc, additionalDrugCtx), false)
+    })
+
+    test('GLP-1 se_hypo_none (explicit enabled:true): synthesis mode → false', () => {
+      const sc = findScenario(oralData as unknown as ModuleData, 'se_hypo_none')
+      assert.ok(sc.thirdPanelSPlacement?.enabled === true, 'precondition')
+      assert.equal(isSReplacementEligible(sc, synthesisCtx), false)
+    })
+
+    test('secondary scenario (derm initial_dryness — 非S置換対象): primary context でも false', () => {
+      // 初回シナリオは sideEffectPresence=not_applicable かつ
+      // scenarioType=treatment_start → generic fallback の条件をいずれも満たさない
+      const sc = findScenario(dermData as unknown as ModuleData, 'initial_dryness')
+      assert.equal(sc.sideEffectPresence, 'not_applicable', 'precondition: not a side_effect/adherence scenario')
+      // primary context で渡しても eligibility は false（シナリオ自体が対象外）
+      assert.equal(isSReplacementEligible(sc, primaryCtx), false)
+    })
+
+    test('synthetic secondary scenario (治療_start, not_applicable): context=additional → false', () => {
+      // 追加薬剤の treatment_start シナリオを secondary として渡す想定
+      const secondaryScenario: Scenario = {
+        id: 'secondary_initial',
+        globalId: 'test.secondary_initial',
+        title: '2剤目初回',
+        scenarioType: 'treatment_start',
+        scenarioGroup: 'treatment_start',
+        sideEffectPresence: 'not_applicable',
+        scenarioTags: ['treatment_start', 'initial'],
+        sComposition: { intent: 'new_addition', template: 'symptom_based', symptomCodes: [], symptoms: [] },
+        clinicalTags: [],
+        counselingTags: [],
+        workflowTags: [],
+        S: '{{drug_subject}}は、初めて使用する。',
+        O: '{{drug_subject}}　処方',
+        A: '{{drug_subject}}は、治療目的で使用する。',
+        P: '次回確認。',
+      }
+      // additional drug context（isSingleDrug=false）
+      assert.equal(isSReplacementEligible(secondaryScenario, additionalDrugCtx), false)
+    })
+
+    test('no-scenario context (thirdPanelEnabled=false, isSingleDrug=false) → false', () => {
+      const sc = findScenario(dermData as unknown as ModuleData, 'cp_good')
+      assert.equal(isSReplacementEligible(sc, noScenarioCtx), false)
+    })
+  })
 })
 
 // ─────────────────────────────────────────────────────────────
