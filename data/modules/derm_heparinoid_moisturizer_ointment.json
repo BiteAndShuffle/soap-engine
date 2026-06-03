@@ -2473,21 +2473,15 @@
       "expressGroup": "ヘパリン類似物質",
       "expressSubGroup": "剤形",
       "label": "ヒルドイドソフト軟膏",
-      "genericDisplayName": "ヘパリン類似物質軟膏",
-      "defaultScenarioId": "initial_dryness",
-      "defaultBrandName": "ヒルドイドソフト軟膏",
-      "sortOrder": 1
-    },
-    {
-      "enabled": true,
-      "expressCategory": "皮膚科",
-      "expressGroup": "ヘパリン類似物質",
-      "expressSubGroup": "剤形",
-      "label": "ヘパリン類似物質油性クリーム",
-      "genericDisplayName": "ヘパリン類似物質油性クリーム",
+      "genericDisplayName": "油性クリーム",
       "defaultScenarioId": "initial_dryness",
       "defaultBrandName": "ヘパリン類似物質油性クリーム",
-      "sortOrder": 2
+      "sortOrder": 1,
+      "scenarioCandidates": [
+        { "scenarioId": "initial_dryness",           "label": "乾燥" },
+        { "scenarioId": "initial_eczema",             "label": "湿疹" },
+        { "scenarioId": "initial_skin_barrier_patch", "label": "皮膚バリア / パッチかぶれ" }
+      ]
     }
   ]
 }

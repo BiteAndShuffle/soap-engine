@@ -529,6 +529,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           for (const e of m.expressModes) {
             if (!e.enabled) continue
             const sc = m.scenarios.find(s => s.id === e.defaultScenarioId)
+            // scenarioCandidates: scenario.id → globalId を解決して ExpressCandidate 用配列に変換
+            const resolvedScenarioCandidates = e.scenarioCandidates
+              ?.map(c => {
+                const found = m.scenarios.find(s => s.id === c.scenarioId)
+                if (!found) return null
+                return { scenarioId: c.scenarioId, globalId: found.globalId, label: c.label }
+              })
+              .filter((c): c is NonNullable<typeof c> => c !== null)
             entries.push({
               moduleId: m.moduleId,
               category: e.expressCategory,
@@ -542,6 +550,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               defaultScenarioGlobalId: sc?.globalId ?? '',
               defaultBrandName: e.defaultBrandName,
               sortOrder: e.sortOrder ?? 99,
+              scenarioCandidates: resolvedScenarioCandidates && resolvedScenarioCandidates.length > 0
+                ? resolvedScenarioCandidates
+                : undefined,
             })
           }
         } else if (m.expressMode?.enabled === true) {

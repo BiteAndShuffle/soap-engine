@@ -752,7 +752,7 @@ export interface ExpressModeEntry {
    * 省略時は label（先発名）をそのまま使用する。
    */
   genericDisplayName?: string
-  /** デフォルトで追加する scenario.id（通常 "initial"） */
+  /** デフォルトで追加する scenario.id（通常 "initial"）。scenarioCandidates が存在する場合はフォールバックとして機能 */
   defaultScenarioId: string
   /**
    * Express 追加時に使用する既定ブランド名（必須）。
@@ -763,6 +763,18 @@ export interface ExpressModeEntry {
   defaultBrandName: string
   /** 同サブグループ内での表示順 */
   sortOrder?: number
+  /**
+   * シナリオ候補リスト（省略可）。
+   * 設定時は剤形ボタン押下後にシナリオ一覧を表示し、ユーザーが選択してから追加する（2段階選択）。
+   * 省略時は defaultScenarioId で即時追加する（従来の1段階選択）。
+   * 既存モジュール（H1内服/H1点眼）は省略のため動作変更なし。
+   */
+  scenarioCandidates?: Array<{
+    /** scenario.id（JSON scenarios 配列の id フィールドと一致させること） */
+    scenarioId: string
+    /** ボタンに表示するラベル（日本語短縮形推奨） */
+    label: string
+  }>
 }
 
 // ─────────────────────────────────────────────────────────────

@@ -280,6 +280,16 @@ export interface ExpressCandidate {
    */
   defaultBrandName?: string
   sortOrder: number
+  /**
+   * シナリオ候補リスト（省略可）。
+   * 設定時は剤形ボタン押下後にシナリオ一覧を表示する（2段階選択）。
+   * 省略時は defaultScenarioId で即時追加する（従来の1段階選択）。
+   */
+  scenarioCandidates?: Array<{
+    scenarioId: string
+    globalId: string
+    label: string
+  }>
 }
 
 interface ThirdPanelProps {
@@ -422,13 +432,16 @@ export default function ThirdPanel({
   const expressPopupRef = useRef<HTMLDivElement>(null)
   // GE / 先発 切替（true = GEモード）
   const [expressUseGE, setExpressUseGE] = useState(true)
+  // 2段階選択: 剤形ボタン押下後にシナリオ候補を表示する対象候補（null = 剤形一覧表示中）
+  const [expressScenarioPicker, setExpressScenarioPicker] = useState<ExpressCandidate | null>(null)
 
-  // ポップアップ外クリックで閉じる
+  // ポップアップ外クリックで閉じる（ピッカーも同時リセット）
   useEffect(() => {
     if (!expressPopupSubcat) return
     function handleMouseDown(e: MouseEvent) {
       if (expressPopupRef.current && !expressPopupRef.current.contains(e.target as Node)) {
         setExpressPopupSubcat(null)
+        setExpressScenarioPicker(null)
       }
     }
     document.addEventListener('mousedown', handleMouseDown)
@@ -442,9 +455,11 @@ export default function ThirdPanel({
       // 同じボタン再押しでポップアップを閉じる、別ボタン（または別エリア）で切り替え
       setExpressPopupSubcat(prev => (prev === label && expressPopupArea === areaLabel) ? null : label)
       setExpressPopupArea(areaLabel)
+      setExpressScenarioPicker(null)  // 別カテゴリ選択時はピッカーをリセット
     } else {
       setExpressPopupSubcat(null)
       setExpressPopupArea(areaLabel)
+      setExpressScenarioPicker(null)
     }
     if (onSubcategorySelect) {
       onSubcategorySelect(label)
@@ -477,14 +492,31 @@ export default function ThirdPanel({
   }
 
   // ブランドボタン押下: ポップアップは閉じない
+  // scenarioCandidates がある場合は2段階選択（シナリオピッカーを表示）。
+  // ない場合は従来通り defaultScenarioId で即時追加。
   // brandName（先発名）は brandCatalog 解決キーとして常に defaultBrandName を使用する。
   // displayName（表示/SOAP主語）だけ GE/先発モードで切り替える。
   function handleExpressBrandAdd(c: ExpressCandidate) {
+    if (c.scenarioCandidates && c.scenarioCandidates.length > 0) {
+      // 2段階: 同じ候補を再押しでピッカーをトグル（閉じる）
+      setExpressScenarioPicker(prev => (prev?.moduleId === c.moduleId && prev?.defaultBrandName === c.defaultBrandName) ? null : c)
+      return
+    }
+    // 1段階: 従来通り即時追加
     const brandName = c.defaultBrandName                             // brandCatalog キー: 常に先発名
     const displayName = expressUseGE
       ? (c.genericLabel ?? c.defaultBrandName)                       // GEモード: GE名（なければ先発名）
       : c.defaultBrandName                                           // 先発モード: 先発名
     onExpressAdd?.(c.moduleId, c.defaultScenarioId, brandName, displayName)
+  }
+
+  // シナリオ候補ボタン押下: 選択したシナリオで追加。ピッカーは開いたまま（複数追加可）
+  function handleExpressScenarioAdd(c: ExpressCandidate, sc: { scenarioId: string; globalId: string; label: string }) {
+    const brandName = c.defaultBrandName
+    const displayName = expressUseGE
+      ? (c.genericLabel ?? c.defaultBrandName)
+      : c.defaultBrandName
+    onExpressAdd?.(c.moduleId, sc.scenarioId, brandName, displayName)
   }
 
   // 合成窓: 1剤目シナリオ確定後（thirdPanelEnabled）のみ表示
@@ -512,47 +544,86 @@ export default function ThirdPanel({
                     aria-pressed={!expressUseGE}
                   >先発</button>
                 </div>
+                {expressScenarioPicker && (
+                  <button
+                    className={s.expressGEBtn}
+                    onClick={() => setExpressScenarioPicker(null)}
+                    aria-label="剤形一覧に戻る"
+                  >‹ 戻る</button>
+                )}
                 <button
                   className={s.expressPopupClose}
-                  onClick={() => setExpressPopupSubcat(null)}
+                  onClick={() => { setExpressPopupSubcat(null); setExpressScenarioPicker(null) }}
                   aria-label="閉じる"
                 >×</button>
               </div>
             </div>
-            {popupCandidates.map(({ grp, sub, candidates }) => {
-              // GEモード時はGE名でソート、先発モード時はlabel（先発名）でソート
-              const jaCollator = new Intl.Collator('ja')
-              const sorted = [...candidates].sort((a, b) => {
-                const nameA = expressUseGE ? (a.genericLabel ?? a.label) : a.label
-                const nameB = expressUseGE ? (b.genericLabel ?? b.label) : b.label
-                return jaCollator.compare(nameA, nameB)
-              })
-              return (
-                <div key={`${grp}__${sub}`} className={s.expressSubGroup}>
-                  <div className={s.expressSubGroupLabel}>{sub}</div>
-                  <div className={s.expressGrid}>
-                    {sorted.map(c => {
-                      // アクティブキー: matchedBrandName は常に defaultBrandName（先発名）
-                      // GE/先発モードに関わらずここは先発名で照合する
-                      const expressKey = `${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`
-                      const isActive = activeExpressKeys?.has(expressKey) ?? false
-                      const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
-                      return (
-                        <button
-                          key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
-                          className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
-                          onClick={() => handleExpressBrandAdd(c)}
-                          title={expressUseGE && c.genericLabel ? `${c.genericLabel}（${c.label}）` : c.label}
-                          aria-pressed={isActive}
-                        >
-                          {displayName}
-                        </button>
-                      )
-                    })}
-                  </div>
+            {expressScenarioPicker ? (
+              // 2段階目: シナリオ選択ビュー
+              <div className={s.expressSubGroup}>
+                <div className={s.expressSubGroupLabel}>
+                  {expressUseGE
+                    ? (expressScenarioPicker.genericLabel ?? expressScenarioPicker.label)
+                    : expressScenarioPicker.label}
                 </div>
-              )
-            })}
+                <div className={s.expressGrid}>
+                  {expressScenarioPicker.scenarioCandidates!.map(sc => {
+                    const expressKey = `${expressScenarioPicker.moduleId}__${expressScenarioPicker.defaultBrandName ?? ''}__${sc.globalId}`
+                    const isActive = activeExpressKeys?.has(expressKey) ?? false
+                    return (
+                      <button
+                        key={sc.scenarioId}
+                        className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                        onClick={() => handleExpressScenarioAdd(expressScenarioPicker, sc)}
+                        aria-pressed={isActive}
+                      >
+                        {sc.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ) : (
+              // 1段階目: 剤形ボタン一覧
+              popupCandidates.map(({ grp, sub, candidates }) => {
+                // GEモード時はGE名でソート、先発モード時はlabel（先発名）でソート
+                const jaCollator = new Intl.Collator('ja')
+                const sorted = [...candidates].sort((a, b) => {
+                  const nameA = expressUseGE ? (a.genericLabel ?? a.label) : a.label
+                  const nameB = expressUseGE ? (b.genericLabel ?? b.label) : b.label
+                  return jaCollator.compare(nameA, nameB)
+                })
+                return (
+                  <div key={`${grp}__${sub}`} className={s.expressSubGroup}>
+                    <div className={s.expressSubGroupLabel}>{sub}</div>
+                    <div className={s.expressGrid}>
+                      {sorted.map(c => {
+                        // アクティブキー: matchedBrandName は常に defaultBrandName（先発名）
+                        // GE/先発モードに関わらずここは先発名で照合する
+                        // scenarioCandidates がある場合はいずれかの scenarioId がアクティブなら全体をアクティブ扱い
+                        const isActive = c.scenarioCandidates
+                          ? c.scenarioCandidates.some(sc =>
+                              activeExpressKeys?.has(`${c.moduleId}__${c.defaultBrandName ?? ''}__${sc.globalId}`) ?? false
+                            )
+                          : (activeExpressKeys?.has(`${c.moduleId}__${c.defaultBrandName ?? ''}__${c.defaultScenarioGlobalId}`) ?? false)
+                        const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
+                        return (
+                          <button
+                            key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}
+                            className={[s.expressBtn, isActive ? s.expressBtnActive : ''].join(' ')}
+                            onClick={() => handleExpressBrandAdd(c)}
+                            title={expressUseGE && c.genericLabel ? `${c.genericLabel}（${c.label}）` : c.label}
+                            aria-pressed={isActive}
+                          >
+                            {displayName}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })
+            )}
           </div>
         )}
 
