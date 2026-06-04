@@ -559,3 +559,157 @@ describe('Express Mode グルーピング — expressGroup/SubGroup 一致によ
     })
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 5. Express Mode UI遷移: 油性クリーム押下 → scenarioCandidates 表示パス
+//
+// ThirdPanel の handleExpressBrandAdd() / DashboardClient の expressCandidates 生成を
+// データレイヤーで検証する。
+//
+// 検証観点:
+//   (f) DashboardClient 相当の expressCandidates 生成で
+//       derm の oil cream エントリに scenarioCandidates が付与されること
+//   (g) handleExpressBrandAdd() 相当の分岐で
+//       scenarioCandidates があれば setExpressScenarioPicker が呼ばれ
+//       onExpressAdd は呼ばれないこと
+//   (h) scenarioCandidates が undefined / [] の場合は
+//       onExpressAdd が即時呼ばれること（H1内服の既存動作）
+//   (i) globalId 解決が成功しており resolved 後も3件であること
+// ─────────────────────────────────────────────────────────────
+
+describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandidates 表示パス', () => {
+  const derm = dermData as unknown as ModuleData
+  const h1Oral = h1OralData as unknown as ModuleData
+
+  // DashboardClient の expressCandidates 生成ロジックを inline 再現
+  function buildExpressCandidates(m: ModuleData) {
+    const entries: Array<{
+      moduleId: string
+      scenarioCandidates?: Array<{ scenarioId: string; globalId: string; label: string }>
+      defaultScenarioId: string
+      expressGroup: string
+    }> = []
+    if (m.expressModes && m.expressModes.length > 0) {
+      for (const e of m.expressModes) {
+        if (!e.enabled) continue
+        const resolvedScenarioCandidates = e.scenarioCandidates
+          ?.map(c => {
+            const found = m.scenarios.find(s => s.id === c.scenarioId)
+            if (!found) return null
+            return { scenarioId: c.scenarioId, globalId: found.globalId, label: c.label }
+          })
+          .filter((c): c is NonNullable<typeof c> => c !== null)
+        entries.push({
+          moduleId: m.moduleId,
+          defaultScenarioId: e.defaultScenarioId,
+          expressGroup: e.expressGroup,
+          scenarioCandidates: resolvedScenarioCandidates && resolvedScenarioCandidates.length > 0
+            ? resolvedScenarioCandidates
+            : undefined,
+        })
+      }
+    }
+    return entries
+  }
+
+  // handleExpressBrandAdd() 相当の分岐ロジックを inline 再現
+  function simulateExpressBrandAdd(candidate: { scenarioCandidates?: unknown[] }) {
+    const onExpressAddCalled = { value: false }
+    const expressScenarioPickerSet = { value: false }
+    if (candidate.scenarioCandidates && candidate.scenarioCandidates.length > 0) {
+      expressScenarioPickerSet.value = true
+      return { onExpressAddCalled, expressScenarioPickerSet }
+    }
+    onExpressAddCalled.value = true
+    return { onExpressAddCalled, expressScenarioPickerSet }
+  }
+
+  describe('(f) expressCandidates 生成: derm oil cream に scenarioCandidates が付与される', () => {
+    const candidates = buildExpressCandidates(derm)
+
+    test('derm から 1 エントリ生成される', () => {
+      assert.equal(candidates.length, 1)
+    })
+
+    test('生成エントリの expressGroup が "ヘパリン"', () => {
+      assert.equal(candidates[0].expressGroup, 'ヘパリン')
+    })
+
+    test('生成エントリに scenarioCandidates が存在する（undefined でない）', () => {
+      assert.notEqual(candidates[0].scenarioCandidates, undefined,
+        'scenarioCandidates が undefined → handleExpressBrandAdd が即時追加分岐に入る → 2段階目が表示されない')
+    })
+
+    test('生成エントリの scenarioCandidates が 3 件', () => {
+      assert.equal(candidates[0].scenarioCandidates?.length, 3)
+    })
+  })
+
+  describe('(g) handleExpressBrandAdd 分岐: scenarioCandidates あり → picker セット・onExpressAdd 非呼出', () => {
+    const candidates = buildExpressCandidates(derm)
+    const result = simulateExpressBrandAdd(candidates[0])
+
+    test('expressScenarioPicker がセットされる（2段階目への遷移）', () => {
+      assert.equal(result.expressScenarioPickerSet.value, true)
+    })
+
+    test('onExpressAdd は呼ばれない（即時追加しない）', () => {
+      assert.equal(result.onExpressAddCalled.value, false)
+    })
+  })
+
+  describe('(h) handleExpressBrandAdd 分岐: scenarioCandidates なし → onExpressAdd 即時呼出（H1内服互換）', () => {
+    // H1内服は expressModes を持つが scenarioCandidates は持たない → 1段階選択
+    test('H1内服の expressModes エントリには scenarioCandidates が存在しない', () => {
+      assert.ok(h1Oral.expressModes && h1Oral.expressModes.length > 0, 'H1内服に expressModes が存在しない')
+      const hasAnySc = h1Oral.expressModes!.some(e => e.scenarioCandidates && e.scenarioCandidates.length > 0)
+      assert.equal(hasAnySc, false, 'H1内服のいずれかのエントリに scenarioCandidates が存在する（想定外）')
+    })
+
+    test('scenarioCandidates が undefined のエントリ → onExpressAdd が呼ばれる', () => {
+      const noScenarioCandidateEntry = { scenarioCandidates: undefined }
+      const result = simulateExpressBrandAdd(noScenarioCandidateEntry)
+      assert.equal(result.onExpressAddCalled.value, true)
+      assert.equal(result.expressScenarioPickerSet.value, false)
+    })
+
+    test('scenarioCandidates が空配列のエントリ → onExpressAdd が呼ばれる', () => {
+      const emptyScenarioCandidateEntry = { scenarioCandidates: [] }
+      const result = simulateExpressBrandAdd(emptyScenarioCandidateEntry)
+      assert.equal(result.onExpressAddCalled.value, true)
+      assert.equal(result.expressScenarioPickerSet.value, false)
+    })
+  })
+
+  describe('(i) globalId 解決: 全 scenarioCandidate の globalId が解決済みである', () => {
+    const candidates = buildExpressCandidates(derm)
+    const scs = candidates[0].scenarioCandidates!
+
+    test('initial_dryness の globalId が解決されている', () => {
+      const sc = scs.find(s => s.scenarioId === 'initial_dryness')
+      assert.ok(sc, 'initial_dryness が candidates に存在しない')
+      assert.ok(sc!.globalId && sc!.globalId.length > 0, 'globalId が空 → activeExpressKeys 照合が壊れる')
+    })
+
+    test('initial_eczema の globalId が解決されている', () => {
+      const sc = scs.find(s => s.scenarioId === 'initial_eczema')
+      assert.ok(sc, 'initial_eczema が candidates に存在しない')
+      assert.ok(sc!.globalId && sc!.globalId.length > 0)
+    })
+
+    test('initial_skin_barrier_patch の globalId が解決されている', () => {
+      const sc = scs.find(s => s.scenarioId === 'initial_skin_barrier_patch')
+      assert.ok(sc, 'initial_skin_barrier_patch が candidates に存在しない')
+      assert.ok(sc!.globalId && sc!.globalId.length > 0)
+    })
+
+    test('全 globalId が "moduleId.scenarioId" 形式である', () => {
+      for (const sc of scs) {
+        assert.ok(
+          sc.globalId.startsWith('derm_heparinoid_moisturizer_ointment.'),
+          `globalId "${sc.globalId}" が期待形式でない`
+        )
+      }
+    })
+  })
+})
