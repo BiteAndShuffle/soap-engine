@@ -394,6 +394,15 @@ export default function ThirdPanel({
     isSReplacementEligible(primaryScenario, { thirdPanelEnabled, isSingleDrug })
 
   // ── Express候補ポップアップ管理 ──────────────────────────────
+  // debug: derm の scenarioCandidates 確認
+  const dermCandidate = expressCandidates.find(c => c.moduleId === 'derm_heparinoid_moisturizer_ointment')
+  if (dermCandidate) {
+    console.log('[Express] derm candidate received', {
+      expressGroup: dermCandidate.expressGroup,
+      scenarioCandidates: dermCandidate.scenarioCandidates,
+    })
+  }
+
   // expressCategory/Group/SubGroup でグルーピングしたマップ（メモ化）
   const expressByCat = useCallback(() => {
     const map: Record<string, {
@@ -522,6 +531,12 @@ export default function ThirdPanel({
   // scenarioCandidates がある場合は2段階選択（シナリオピッカーを表示）。
   // ない場合は従来通り defaultScenarioId で即時追加。
   function handleExpressBrandAdd(c: ExpressCandidate) {
+    console.log('[Express] handleExpressBrandAdd', {
+      moduleId: c.moduleId,
+      label: c.label,
+      scenarioCandidates: c.scenarioCandidates,
+      hasSc: !!(c.scenarioCandidates && c.scenarioCandidates.length > 0),
+    })
     if (c.scenarioCandidates && c.scenarioCandidates.length > 0) {
       // 2段階: 同じ候補を再押しでピッカーをトグル（閉じる）
       setExpressScenarioPicker(prev => (prev?.moduleId === c.moduleId && prev?.defaultBrandName === c.defaultBrandName) ? null : c)
@@ -545,7 +560,7 @@ export default function ThirdPanel({
     <div className={[s.thirdPanel, thirdPanelEnabled ? s.expandedPanel : s.collapsedPanel].join(' ')}>
       <div className={s.thirdPanelInner}>
         {/* Express候補ポップアップ: 診療領域サブカテゴリ押下時に上部オーバーレイ表示 */}
-        {expressPopupSubcat && popupCandidates.length > 0 && (
+        {expressPopupSubcat && (popupCandidates.length > 0 || expressScenarioPicker !== null) && (
           <div ref={expressPopupRef} className={s.expressPopup} role="dialog" aria-label="Express候補">
             <div className={s.expressPopupHeader}>
               <span className={s.expressPopupTitle}>{expressPopupSubcat}</span>
@@ -586,7 +601,7 @@ export default function ThirdPanel({
                     : expressScenarioPicker.label}
                 </div>
                 <div className={s.expressGrid}>
-                  {expressScenarioPicker.scenarioCandidates!.map(sc => {
+                  {(expressScenarioPicker.scenarioCandidates ?? []).map(sc => {
                     // アクティブキーは実際に追加された matchedBrandName と一致させる
                     // GEモードで genericBrandName があればそちら、なければ defaultBrandName
                     const pickerBrandKey = expressUseGE
