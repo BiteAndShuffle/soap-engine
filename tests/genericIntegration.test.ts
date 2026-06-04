@@ -533,28 +533,40 @@ describe('Express Mode グルーピング — expressGroup/SubGroup 一致によ
   describe('(e) 実 derm JSON の expressModes が正しく分類されること', () => {
     const dermModes = (dermData as unknown as ModuleData).expressModes ?? []
 
-    test('derm expressModes に 1 エントリ存在する', () => {
-      assert.equal(dermModes.length, 1)
+    test('derm expressModes に 5 エントリ存在する（油性クリーム1件 + disabled placeholder 4件）', () => {
+      assert.equal(dermModes.length, 5)
     })
 
-    test('唯一のエントリの expressGroup が "ヘパリン"', () => {
-      assert.equal(dermModes[0].expressGroup, 'ヘパリン')
+    test('全エントリの expressGroup が "ヘパリン"', () => {
+      assert.ok(dermModes.every(e => e.expressGroup === 'ヘパリン'))
     })
 
-    test('唯一のエントリの expressCategory が "皮膚科"', () => {
-      assert.equal(dermModes[0].expressCategory, '皮膚科')
+    test('全エントリの expressCategory が "皮膚科"', () => {
+      assert.ok(dermModes.every(e => e.expressCategory === '皮膚科'))
     })
 
-    test('唯一のエントリの expressSubGroup が "剤形"', () => {
-      assert.equal(dermModes[0].expressSubGroup, '剤形')
+    test('全エントリの expressSubGroup が "剤形"', () => {
+      assert.ok(dermModes.every(e => e.expressSubGroup === '剤形'))
     })
 
-    test('唯一のエントリに scenarioCandidates が 3 件存在する', () => {
-      assert.equal(dermModes[0].scenarioCandidates?.length, 3)
+    test('有効エントリ（disabled なし）が 1 件のみ', () => {
+      const enabled = dermModes.filter(e => !e.disabled)
+      assert.equal(enabled.length, 1)
+    })
+
+    test('disabled placeholder が 4 件', () => {
+      const disabled = dermModes.filter(e => e.disabled === true)
+      assert.equal(disabled.length, 4)
+    })
+
+    test('有効エントリに scenarioCandidates が 3 件存在する', () => {
+      const active = dermModes.find(e => !e.disabled)
+      assert.equal(active?.scenarioCandidates?.length, 3)
     })
 
     test('scenarioCandidates の scenarioId が期待値と一致する', () => {
-      const ids = dermModes[0].scenarioCandidates?.map(c => c.scenarioId)
+      const active = dermModes.find(e => !e.disabled)
+      const ids = active?.scenarioCandidates?.map(c => c.scenarioId)
       assert.deepEqual(ids, ['initial_dryness', 'initial_eczema', 'initial_skin_barrier_patch'])
     })
   })
@@ -592,6 +604,7 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
     if (m.expressModes && m.expressModes.length > 0) {
       for (const e of m.expressModes) {
         if (!e.enabled) continue
+        if (e.disabled) continue  // disabled placeholder はスキップ（DashboardClient 同様）
         const resolvedScenarioCandidates = e.scenarioCandidates
           ?.map(c => {
             const found = m.scenarios.find(s => s.id === c.scenarioId)
@@ -601,7 +614,7 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
           .filter((c): c is NonNullable<typeof c> => c !== null)
         entries.push({
           moduleId: m.moduleId,
-          defaultScenarioId: e.defaultScenarioId,
+          defaultScenarioId: e.defaultScenarioId ?? '',
           expressGroup: e.expressGroup,
           scenarioCandidates: resolvedScenarioCandidates && resolvedScenarioCandidates.length > 0
             ? resolvedScenarioCandidates

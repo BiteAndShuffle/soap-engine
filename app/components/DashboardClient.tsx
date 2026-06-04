@@ -528,6 +528,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           // expressModes 配列優先
           for (const e of m.expressModes) {
             if (!e.enabled) continue
+            // disabled placeholder: 表示情報のみ渡し、シナリオ/ブランド解決はスキップ
+            if (e.disabled) {
+              entries.push({
+                moduleId: m.moduleId,
+                category: e.expressCategory,
+                subCategory: e.expressGroup,
+                expressCategory: e.expressCategory,
+                expressGroup: e.expressGroup,
+                expressSubGroup: e.expressSubGroup,
+                label: e.label,
+                genericLabel: e.genericDisplayName,
+                defaultScenarioId: '',
+                defaultScenarioGlobalId: '',
+                defaultBrandName: undefined,
+                genericBrandName: undefined,
+                sortOrder: e.sortOrder ?? 99,
+                disabled: true,
+                disabledReason: e.disabledReason,
+                scenarioCandidates: undefined,
+              })
+              continue
+            }
             const sc = m.scenarios.find(s => s.id === e.defaultScenarioId)
             // scenarioCandidates: scenario.id → globalId を解決して ExpressCandidate 用配列に変換
             const resolvedScenarioCandidates = e.scenarioCandidates
@@ -546,7 +568,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               expressSubGroup: e.expressSubGroup,
               label: e.label,
               genericLabel: e.genericDisplayName,
-              defaultScenarioId: e.defaultScenarioId,
+              defaultScenarioId: e.defaultScenarioId ?? '',
               defaultScenarioGlobalId: sc?.globalId ?? '',
               defaultBrandName: e.defaultBrandName,
               genericBrandName: e.genericBrandName,

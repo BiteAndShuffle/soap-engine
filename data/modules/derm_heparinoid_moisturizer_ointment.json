@@ -2483,6 +2483,50 @@
         { "scenarioId": "initial_eczema",             "label": "湿疹" },
         { "scenarioId": "initial_skin_barrier_patch", "label": "皮膚バリア / パッチかぶれ" }
       ]
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドクリーム",
+      "genericDisplayName": "クリーム",
+      "sortOrder": 2
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドゲル",
+      "genericDisplayName": "ゲル",
+      "sortOrder": 3
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドローション",
+      "genericDisplayName": "ローション",
+      "sortOrder": 4
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドフォーム / スプレー",
+      "genericDisplayName": "フォーム / スプレー",
+      "sortOrder": 5
     }
   ]
 }

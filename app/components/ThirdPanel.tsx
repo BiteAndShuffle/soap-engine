@@ -287,6 +287,13 @@ export interface ExpressCandidate {
   genericBrandName?: string
   sortOrder: number
   /**
+   * UI上でグレーアウト表示する未実装 placeholder か。
+   * true の場合: ボタンは disabled 表示、クリックしても何も追加されない。
+   */
+  disabled?: boolean
+  /** disabled エントリ用の補足テキスト（ツールチップ等に使用） */
+  disabledReason?: string
+  /**
    * シナリオ候補リスト（省略可）。
    * 設定時は剤形ボタン押下後にシナリオ一覧を表示する（2段階選択）。
    * 省略時は defaultScenarioId で即時追加する（従来の1段階選択）。
@@ -394,15 +401,6 @@ export default function ThirdPanel({
     isSReplacementEligible(primaryScenario, { thirdPanelEnabled, isSingleDrug })
 
   // ── Express候補ポップアップ管理 ──────────────────────────────
-  // debug: derm の scenarioCandidates 確認
-  const dermCandidate = expressCandidates.find(c => c.moduleId === 'derm_heparinoid_moisturizer_ointment')
-  if (dermCandidate) {
-    console.log('[Express] derm candidate received', {
-      expressGroup: dermCandidate.expressGroup,
-      scenarioCandidates: dermCandidate.scenarioCandidates,
-    })
-  }
-
   // expressCategory/Group/SubGroup でグルーピングしたマップ（メモ化）
   const expressByCat = useCallback(() => {
     const map: Record<string, {
@@ -531,12 +529,6 @@ export default function ThirdPanel({
   // scenarioCandidates がある場合は2段階選択（シナリオピッカーを表示）。
   // ない場合は従来通り defaultScenarioId で即時追加。
   function handleExpressBrandAdd(c: ExpressCandidate) {
-    console.log('[Express] handleExpressBrandAdd', {
-      moduleId: c.moduleId,
-      label: c.label,
-      scenarioCandidates: c.scenarioCandidates,
-      hasSc: !!(c.scenarioCandidates && c.scenarioCandidates.length > 0),
-    })
     if (c.scenarioCandidates && c.scenarioCandidates.length > 0) {
       // 2段階: 同じ候補を再押しでピッカーをトグル（閉じる）
       setExpressScenarioPicker(prev => (prev?.moduleId === c.moduleId && prev?.defaultBrandName === c.defaultBrandName) ? null : c)
@@ -637,6 +629,21 @@ export default function ThirdPanel({
                     <div className={s.expressSubGroupLabel}>{sub}</div>
                     <div className={s.expressGrid}>
                       {sorted.map(c => {
+                        const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
+                        // disabled placeholder: グレー表示・クリック無効
+                        if (c.disabled) {
+                          return (
+                            <button
+                              key={`${c.moduleId}__disabled__${c.label}`}
+                              className={[s.expressBtn, s.expressBtnDisabled].join(' ')}
+                              disabled
+                              title={c.disabledReason ?? '準備中'}
+                              aria-disabled={true}
+                            >
+                              {displayName}
+                            </button>
+                          )
+                        }
                         // アクティブキー: GE/先発モードに応じて brandKey を切り替える
                         // scenarioCandidates がある場合はいずれかの scenarioId がアクティブなら全体をアクティブ扱い
                         const brandKey = (expressUseGE ? (c.genericBrandName ?? c.defaultBrandName) : c.defaultBrandName) ?? ''
@@ -645,7 +652,6 @@ export default function ThirdPanel({
                               activeExpressKeys?.has(`${c.moduleId}__${brandKey}__${sc.globalId}`) ?? false
                             )
                           : (activeExpressKeys?.has(`${c.moduleId}__${brandKey}__${c.defaultScenarioGlobalId}`) ?? false)
-                        const displayName = expressUseGE ? (c.genericLabel ?? c.label) : c.label
                         return (
                           <button
                             key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}

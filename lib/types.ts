@@ -739,6 +739,16 @@ export interface ModuleData {
 export interface ExpressModeEntry {
   /** エクスプレス候補に表示するか */
   enabled: boolean
+  /**
+   * UI上でグレーアウト表示する未実装 placeholder エントリか（省略時 false）。
+   * true の場合: ボタンは disabled 表示され、クリックしても何も追加されない。
+   *             defaultScenarioId / defaultBrandName / scenarioCandidates は省略可。
+   *             activeExpressKeys 判定・search・addon・compose への影響なし。
+   * false / 省略: 通常の有効エントリ。defaultScenarioId / defaultBrandName は必須。
+   */
+  disabled?: boolean
+  /** disabled エントリ用の補足テキスト（例: "準備中"）。省略可 */
+  disabledReason?: string
   /** 診療領域（ThirdPanel 第1階層、将来アコーディオン用）: "眼科" / "感染症" / "整形" など */
   expressCategory: string
   /** 薬効大分類（第2階層）: "抗アレルギー" / "抗菌" など */
@@ -752,15 +762,18 @@ export interface ExpressModeEntry {
    * 省略時は label（先発名）をそのまま使用する。
    */
   genericDisplayName?: string
-  /** デフォルトで追加する scenario.id（通常 "initial"）。scenarioCandidates が存在する場合はフォールバックとして機能 */
-  defaultScenarioId: string
   /**
-   * Express 追加時に使用する既定ブランド名（必須）。先発モード時の brandCatalog 解決キー。
+   * デフォルトで追加する scenario.id（通常 "initial"）。scenarioCandidates が存在する場合はフォールバックとして機能。
+   * disabled: true のエントリでは省略可。
+   */
+  defaultScenarioId?: string
+  /**
+   * Express 追加時に使用する既定ブランド名。先発モード時の brandCatalog 解決キー。
    * 値は必ず drug.brandCatalog のキーと完全一致させること。
    * Express追加時の {{drug_subject}} 解決および addonFilter の handlingTags 解決に使用。
-   * expressModes では複数ブランド誤作動防止のため省略不可。
+   * disabled: true のエントリでは省略可。有効エントリでは必須。
    */
-  defaultBrandName: string
+  defaultBrandName?: string
   /**
    * GEモード時に使用する brandCatalog 解決キー（省略可）。
    * 設定時は GEモードでの brandName 解決にこちらを使用する。
