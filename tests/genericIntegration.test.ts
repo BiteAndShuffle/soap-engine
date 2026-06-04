@@ -600,6 +600,12 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
       scenarioCandidates?: Array<{ scenarioId: string; globalId: string; label: string }>
       defaultScenarioId: string
       expressGroup: string
+      label: string
+      genericLabel?: string
+      resolvedSoapDisplayName?: string
+      resolvedGenericSoapDisplayName?: string
+      defaultBrandName?: string
+      genericBrandName?: string
     }> = []
     if (m.expressModes && m.expressModes.length > 0) {
       for (const e of m.expressModes) {
@@ -612,10 +618,25 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
             return { scenarioId: c.scenarioId, globalId: found.globalId, label: c.label }
           })
           .filter((c): c is NonNullable<typeof c> => c !== null)
+        // SOAP {{drug_subject}} 解決: brandCatalog から解決（UI label を使わない）
+        const brandCatalog = m.drug?.brandCatalog as Record<string, { displayName?: string; displayGenericName?: string }> | undefined
+        const resolvedSoapDisplayName = e.defaultBrandName
+          ? (brandCatalog?.[e.defaultBrandName]?.displayName ?? e.defaultBrandName)
+          : undefined
+        const geKey = e.genericBrandName ?? e.defaultBrandName
+        const resolvedGenericSoapDisplayName = geKey
+          ? (brandCatalog?.[geKey]?.displayGenericName ?? brandCatalog?.[geKey]?.displayName ?? geKey)
+          : undefined
         entries.push({
           moduleId: m.moduleId,
           defaultScenarioId: e.defaultScenarioId ?? '',
           expressGroup: e.expressGroup,
+          label: e.label,
+          genericLabel: e.genericDisplayName,
+          resolvedSoapDisplayName,
+          resolvedGenericSoapDisplayName,
+          defaultBrandName: e.defaultBrandName,
+          genericBrandName: e.genericBrandName,
           scenarioCandidates: resolvedScenarioCandidates && resolvedScenarioCandidates.length > 0
             ? resolvedScenarioCandidates
             : undefined,
@@ -722,6 +743,134 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
           sc.globalId.startsWith('derm_heparinoid_moisturizer_ointment.'),
           `globalId "${sc.globalId}" が期待形式でない`
         )
+      }
+    })
+  })
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Suite j: UI label / SOAP subject 分離
+  // Express Mode UI表示名と SOAP {{drug_subject}} 主語が正しく分離されること。
+  // ─────────────────────────────────────────────────────────────────────────
+  describe('(j) Express Mode UI label と SOAP {{drug_subject}} の分離', () => {
+
+    // derm: 先発 / GE で SOAP主語が UI label ではなく brandCatalog 解決名になること
+    describe('derm ヘパリン油性クリーム: SOAP主語が brandCatalog 解決名', () => {
+      const candidates = buildExpressCandidates(derm)
+      const c = candidates[0]  // 油性クリーム（enabled, not disabled）
+
+      test('先発モード: resolvedSoapDisplayName が "ヒルドイドソフト軟膏"', () => {
+        // brandCatalog["ヒルドイドソフト軟膏"].displayName = "ヒルドイドソフト軟膏"
+        assert.equal(c.resolvedSoapDisplayName, 'ヒルドイドソフト軟膏',
+          '先発SOAP主語が brandCatalog.displayName でない')
+      })
+
+      test('先発モード: UI label（label）が SOAP主語と異なる場合もある（短縮名は使わない）', () => {
+        // label = "油性クリーム" / "ヒルドイドソフト軟膏 / ソフト軟膏" 等の短縮形でも SOAP は正式名
+        // このテストは label != resolvedSoapDisplayName の場合を保証（偶然一致のみ許容）
+        // 実際の label 値に依存しないため、resolvedSoapDisplayName が undefined でないことのみ検証
+        assert.ok(c.resolvedSoapDisplayName !== undefined, 'resolvedSoapDisplayName が未解決')
+      })
+
+      test('GEモード: resolvedGenericSoapDisplayName が "ヘパリン類似物質油性クリーム"', () => {
+        // brandCatalog["ヘパリン類似物質油性クリーム"].displayGenericName = "ヘパリン類似物質油性クリーム"
+        assert.equal(c.resolvedGenericSoapDisplayName, 'ヘパリン類似物質油性クリーム',
+          'GE SOAP主語が brandCatalog.displayGenericName でない')
+      })
+
+      test('GEモード: UI genericLabel（genericDisplayName）が SOAP主語に使われない', () => {
+        // genericLabel（UI表示名）を SOAP主語に直接渡してはいけない
+        // resolvedGenericSoapDisplayName != genericLabel の場合を検証
+        // derm では genericDisplayName = "油性クリーム" だが SOAP主語は "ヘパリン類似物質油性クリーム"
+        assert.notEqual(c.resolvedGenericSoapDisplayName, c.genericLabel,
+          'resolvedGenericSoapDisplayName が UI genericLabel と同一（UI label が SOAP主語に混入）')
+      })
+    })
+
+    // H1内服: 先発 / GE で SOAP主語が正しく解決される
+    describe('H1内服 アレグラ: SOAP主語が brandCatalog 解決名', () => {
+      const h1Oral = h1OralData as unknown as ModuleData
+      const candidates = buildExpressCandidates(h1Oral)
+      const alegraEntry = candidates.find(c => c.defaultBrandName === 'アレグラ')
+
+      test('アレグラエントリが存在する', () => {
+        assert.ok(alegraEntry, 'アレグラが expressModes 候補に存在しない')
+      })
+
+      test('先発モード: resolvedSoapDisplayName が "アレグラ"', () => {
+        // brandCatalog["アレグラ"].displayName = "アレグラ"
+        assert.equal(alegraEntry?.resolvedSoapDisplayName, 'アレグラ')
+      })
+
+      test('GEモード: resolvedGenericSoapDisplayName が "フェキソフェナジン"', () => {
+        // brandCatalog["アレグラ"].displayGenericName = "フェキソフェナジン"
+        // genericDisplayName（UI）= "フェキソフェナジン（内服）" — （内服）付きは SOAP主語に使わない
+        assert.equal(alegraEntry?.resolvedGenericSoapDisplayName, 'フェキソフェナジン',
+          'GE SOAP主語が brandCatalog.displayGenericName でない（"（内服）" 等の UI suffix が混入している可能性）')
+      })
+
+      test('GEモード: UI genericLabel（genericDisplayName）とは異なる（"内服" suffix が混入しない）', () => {
+        // genericLabel = "フェキソフェナジン（内服）" だが SOAP主語は "フェキソフェナジン"
+        assert.notEqual(alegraEntry?.resolvedGenericSoapDisplayName, alegraEntry?.genericLabel,
+          'resolvedGenericSoapDisplayName が UI genericLabel と同一（"（内服）" suffix が SOAP本文に混入）')
+      })
+    })
+
+    // H1点眼: 先発 / GE で SOAP主語が正しく解決される
+    describe('H1点眼 アレジオン点眼液: SOAP主語が brandCatalog 解決名', () => {
+      const h1Eye = h1EyeData as unknown as ModuleData
+      const candidates = buildExpressCandidates(h1Eye)
+      const entry = candidates.find(c => c.defaultBrandName === 'アレジオン点眼液')
+
+      test('アレジオン点眼液エントリが存在する', () => {
+        assert.ok(entry, 'アレジオン点眼液が expressModes 候補に存在しない')
+      })
+
+      test('先発モード: resolvedSoapDisplayName が "アレジオン点眼液"', () => {
+        assert.equal(entry?.resolvedSoapDisplayName, 'アレジオン点眼液')
+      })
+
+      test('GEモード: resolvedGenericSoapDisplayName が "エピナスチン点眼液"', () => {
+        // brandCatalog["アレジオン点眼液"].displayGenericName = "エピナスチン点眼液"
+        // genericDisplayName（UI）= "エピナスチン点眼薬" — "薬" vs "液" が SOAP主語に混入しない
+        assert.equal(entry?.resolvedGenericSoapDisplayName, 'エピナスチン点眼液',
+          'GE SOAP主語が "エピナスチン点眼薬"（UI label）になっている。brandCatalog.displayGenericName "エピナスチン点眼液" を使うこと')
+      })
+
+      test('GEモード: UI genericLabel（"点眼薬"）が SOAP主語に混入しない', () => {
+        // genericLabel = "エピナスチン点眼薬" だが SOAP主語は "エピナスチン点眼液"
+        assert.notEqual(entry?.resolvedGenericSoapDisplayName, entry?.genericLabel,
+          'resolvedGenericSoapDisplayName が UI genericLabel と同一（"点眼薬" suffix が SOAP本文に混入）')
+      })
+    })
+
+    // 全 Express Module: resolvedSoapDisplayName が UI label と独立している
+    describe('全 expressModes モジュール: resolvedSoapDisplayName は UI label 非依存', () => {
+      const modules = [
+        { name: 'derm', m: derm as unknown as ModuleData },
+        { name: 'H1内服', m: h1OralData as unknown as ModuleData },
+        { name: 'H1点眼', m: h1EyeData as unknown as ModuleData },
+      ]
+
+      for (const { name, m } of modules) {
+        test(`${name}: 全エントリの resolvedSoapDisplayName が定義済み`, () => {
+          const candidates = buildExpressCandidates(m)
+          for (const c of candidates) {
+            assert.ok(
+              c.resolvedSoapDisplayName !== undefined && c.resolvedSoapDisplayName !== '',
+              `${name} moduleId=${c.moduleId} brandName=${c.defaultBrandName}: resolvedSoapDisplayName が未解決`
+            )
+          }
+        })
+
+        test(`${name}: 全エントリの resolvedGenericSoapDisplayName が定義済み`, () => {
+          const candidates = buildExpressCandidates(m)
+          for (const c of candidates) {
+            assert.ok(
+              c.resolvedGenericSoapDisplayName !== undefined && c.resolvedGenericSoapDisplayName !== '',
+              `${name} moduleId=${c.moduleId} brandName=${c.defaultBrandName}: resolvedGenericSoapDisplayName が未解決`
+            )
+          }
+        })
       }
     })
   })

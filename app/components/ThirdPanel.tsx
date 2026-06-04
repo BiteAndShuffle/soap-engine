@@ -261,15 +261,29 @@ export interface ExpressCandidate {
   expressCategory: string
   expressGroup: string
   expressSubGroup: string
-  /** 先発ブランド名（デフォルト表示・SOAP合成時のブランド解決に使用） */
+  /**
+   * UI表示専用の先発ブランド短縮名（例: "ヒルドイドソフト軟膏 / ソフト軟膏"）。
+   * SOAP本文には使用しない。SOAP主語は resolvedSoapDisplayName を使うこと。
+   */
   label: string
   /**
-   * GEモード時の表示名（例: "エピナスチン点眼薬"）。
+   * UI表示専用の GEモード短縮名（例: "油性クリーム", "フェキソフェナジン（内服）"）。
+   * SOAP本文には使用しない。SOAP主語は resolvedGenericSoapDisplayName を使うこと。
    * 省略時は label をそのまま使用する。
-   * GEモードで追加した場合も、SOAP合成は defaultBrandName を維持しつつ
-   * 画面表示名のみ genericLabel に切り替える（将来拡張用）。
    */
   genericLabel?: string
+  /**
+   * SOAP {{drug_subject}} 用の先発モード解決済み表示名。
+   * brandCatalog[defaultBrandName].displayName から解決される。
+   * 省略時（旧 expressMode 単数構造）は defaultBrandName にフォールバック。
+   */
+  resolvedSoapDisplayName?: string
+  /**
+   * SOAP {{drug_subject}} 用の GEモード解決済み表示名。
+   * brandCatalog[genericBrandName ?? defaultBrandName].displayGenericName ?? displayName から解決される。
+   * 省略時は resolvedSoapDisplayName → defaultBrandName にフォールバック。
+   */
+  resolvedGenericSoapDisplayName?: string
   defaultScenarioId: string
   /** scenario.globalId（activeExpressKeys のキーと照合するために使用） */
   defaultScenarioGlobalId: string
@@ -341,7 +355,7 @@ interface ThirdPanelProps {
    * @param moduleId         対象モジュールID
    * @param defaultScenarioId scenario.id（非 globalId）
    * @param brandName        brandCatalog 解決キー（先発名）。handlingTags / アドオンフィルタリングに使用
-   * @param displayName      SOAP {{drug_subject}} / ノード表示名。GEモード時はGE名、先発モード時は brandName と同値
+   * @param displayName      SOAP {{drug_subject}} / ノード表示名。brandCatalog から解決済みの正式表示名（UI label を流用しない）
    */
   onExpressAdd?: (moduleId: string, defaultScenarioId: string, brandName?: string, displayName?: string) => void
   /**
@@ -505,23 +519,28 @@ export default function ThirdPanel({
   }
 
   // GE/先発モードに応じた brandName / displayName を解決するヘルパー。
-  // brandName  (brandCatalog 解決キー):
+  //
+  // brandName  (brandCatalog 解決キー — handlingTags / addonFilter に使用):
   //   GEモード  → c.genericBrandName ?? c.defaultBrandName
   //   先発モード → c.defaultBrandName
-  // displayName (SOAP {{drug_subject}} / ノード表示名):
-  //   GEモード  → c.genericLabel ?? c.defaultBrandName
-  //   先発モード → c.label ?? c.defaultBrandName
-  // genericBrandName が未定義の既存モジュールでは両モードとも defaultBrandName にフォールバック。
+  //
+  // displayName (SOAP {{drug_subject}} 主語 — UI ラベルを流用しない):
+  //   GEモード  → c.resolvedGenericSoapDisplayName（brandCatalog.displayGenericName 解決済み）
+  //               フォールバック: c.resolvedSoapDisplayName → c.defaultBrandName
+  //   先発モード → c.resolvedSoapDisplayName（brandCatalog.displayName 解決済み）
+  //               フォールバック: c.defaultBrandName
+  //
+  // UI表示（label / genericLabel）は SOAP本文には渡さない。
   function resolveExpressBrandAndDisplay(c: ExpressCandidate): { brandName: string | undefined; displayName: string | undefined } {
     if (expressUseGE) {
       return {
         brandName:   c.genericBrandName ?? c.defaultBrandName,
-        displayName: c.genericLabel ?? c.defaultBrandName,
+        displayName: c.resolvedGenericSoapDisplayName ?? c.resolvedSoapDisplayName ?? c.defaultBrandName,
       }
     }
     return {
       brandName:   c.defaultBrandName,
-      displayName: c.label ?? c.defaultBrandName,
+      displayName: c.resolvedSoapDisplayName ?? c.defaultBrandName,
     }
   }
 

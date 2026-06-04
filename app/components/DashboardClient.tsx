@@ -559,6 +559,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                 return { scenarioId: c.scenarioId, globalId: found.globalId, label: c.label }
               })
               .filter((c): c is NonNullable<typeof c> => c !== null)
+            // SOAP {{drug_subject}} 用の表示名を brandCatalog から解決する。
+            // UI表示名（label / genericDisplayName）は SOAP本文には使用しない。
+            const brandCatalog = m.drug?.brandCatalog
+            // 先発モード: brandCatalog[defaultBrandName].displayName → defaultBrandName
+            const resolvedSoapDisplayName = e.defaultBrandName
+              ? (brandCatalog?.[e.defaultBrandName]?.displayName ?? e.defaultBrandName)
+              : undefined
+            // GEモード: brandCatalog[genericBrandName ?? defaultBrandName].displayGenericName
+            //           → brandCatalog[...].displayName → genericBrandName ?? defaultBrandName
+            const geKey = e.genericBrandName ?? e.defaultBrandName
+            const resolvedGenericSoapDisplayName = geKey
+              ? (brandCatalog?.[geKey]?.displayGenericName ?? brandCatalog?.[geKey]?.displayName ?? geKey)
+              : undefined
             entries.push({
               moduleId: m.moduleId,
               category: e.expressCategory,
@@ -568,6 +581,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               expressSubGroup: e.expressSubGroup,
               label: e.label,
               genericLabel: e.genericDisplayName,
+              resolvedSoapDisplayName,
+              resolvedGenericSoapDisplayName,
               defaultScenarioId: e.defaultScenarioId ?? '',
               defaultScenarioGlobalId: sc?.globalId ?? '',
               defaultBrandName: e.defaultBrandName,
@@ -580,6 +595,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           }
         } else if (m.expressMode?.enabled === true) {
           // フォールバック: 旧 expressMode 単数構造
+          // brandCatalog から SOAP表示名を解決（旧構造でも同じ原則を適用）
+          const brandCatalog = m.drug?.brandCatalog
+          const ebn = m.expressMode.defaultBrandName
+          const resolvedSoapDisplayName = ebn
+            ? (brandCatalog?.[ebn]?.displayName ?? ebn)
+            : undefined
           const sc = m.scenarios.find(s => s.id === m.expressMode!.defaultScenarioId)
           entries.push({
             moduleId: m.moduleId,
@@ -589,6 +610,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             expressGroup: m.expressMode.subCategory ?? m.expressMode.category,
             expressSubGroup: m.expressMode.subCategory ?? '',
             label: m.expressMode.label,
+            resolvedSoapDisplayName,
             defaultScenarioId: m.expressMode.defaultScenarioId,
             defaultScenarioGlobalId: sc?.globalId ?? '',
             defaultBrandName: m.expressMode.defaultBrandName,
@@ -1261,7 +1283,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     targetModuleId: string,
     defaultScenarioId: string,
     brandName?: string,     // brandCatalog 解決キー（先発名）。handlingTags / アドオンフィルタリングに使用
-    displayName?: string,   // SOAP {{drug_subject}} / ノード表示名。GEモード時はGE名、省略時は brandName と同値
+    displayName?: string,   // SOAP {{drug_subject}} / ノード表示名。brandCatalog から解決済みの正式表示名。省略時は brandName と同値
   ) => {
     const mod = allModules.find(m => m.moduleId === targetModuleId) ?? moduleData
     // defaultScenarioId は scenario.id（非 globalId）なので globalId に変換する
