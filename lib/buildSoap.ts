@@ -513,13 +513,20 @@ function normalizeAdminVerbForKey(text: string): string {
  *      reason + obs → reason[0] + obs bodies を1行に結合
  *      decision → predicate ごとに subject を「・」結合
  *
- * reason 統合ルール（groupKey × body 単位）:
- *   - 「薬剤名は、本文」形式: groupKey と body（は、以降）が同一なら主語を「と」で結合
+ * reason 統合ルール（2パス方式）:
+ *
+ * Pass 1 — groupKey × body 単位で主語統合（異なる薬剤が同一理由で追加された場合）:
+ *   - 「薬剤名は、本文」形式: groupKey と body が同一なら主語を「と」で結合
  *     例: "Aは、目のかゆみ..." + "Bは、目のかゆみ..." → "AとBは、目のかゆみ..."
  *   - 主語なし形式（"血糖値が高いため..."等）: groupKey × 全文一致のみ重複排除、
  *     本文が異なれば別行維持
  *   - groupKey が '' / undefined: 独立キーとして個別出力（統合しない）
- *   - groupKey は削除キーではなく統合候補の識別キーとして使用する
+ *
+ * Pass 2 — 同一主語 × 同一 groupKey で body が複数ある場合は body を「・」結合:
+ *   - Express Mode で同一薬剤を複数シナリオで追加した場合（乾燥/湿疹/かぶれ等）
+ *     "Aは、乾燥...追加" + "Aは、湿疹...追加" → "Aは、乾燥...・湿疹...追加となった。"
+ *   - 主語が複数の場合（AとB）も同様に body を結合する
+ *   - groupKey なし / 主語なし形式は従来通り個別出力
  *
  * 出力順:
  *   - reason は最初に出現した統合グループの順を保持する
@@ -597,17 +604,102 @@ function buildS(sEntries: SEntry[]): string {
     }
   }
 
-  // reason を統合キー出現順に再構築
-  const uniqueReasons: string[] = []
-  for (const key of reasonKeyOrder) {
-    const subjects = reasonSubjects.get(key)!
-    const body     = reasonBody.get(key)!
+  // reason を統合キー出現順に再構築。
+  //
+  // Pass 2 — 同一主語 × 同一 groupKey で body が複数ある場合はまとめる。
+  //
+  // 例: 同一薬剤を Express Mode で複数シナリオ（乾燥/湿疹/かぶれ）追加した場合、
+  //   "ヒルドイドソフト軟膏は、乾燥が気になるため追加となった。"
+  //   "ヒルドイドソフト軟膏は、湿疹が気になるため追加となった。"
+  //   → "ヒルドイドソフト軟膏は、乾燥が気になるため・湿疹が気になるため追加となった。"
+  //
+  // 同一主語判定: subjects 配列をソートして文字列化したものを比較キーとする。
+  //
+  // 異なる薬剤（subjects が異なる）や groupKey なしエントリは従来通り個別出力。
+  // body の末尾「追加となった。」などは末尾エントリからのみ取得する。
+  // body を「・」結合するとき: 全 body の末尾を除いた prefix を「・」で繋ぎ、
+  // 末尾 body の全体を最後に付ける（末尾の句点・助詞を保持する）。
+  //
+  // 実装: groupKey と subjects を key に body を集約する Map を構築し、
+  //       入力順を維持しながら出力する。
+
+  // subjectMergeKey → { subjects, groupKey, bodies[], firstMergeKey }
+  const subjectBodyMerge = new Map<string, {
+    subjects: string[]
+    groupKey: string
+    bodies: string[]
+    firstMergeKey: string  // uniqueReasons での出力順管理用
+  }>()
+  // 出力順を保持: 先に出現した subjectMergeKey 順
+  const subjectMergeOrder: string[] = []
+
+  for (const mergeKey of reasonKeyOrder) {
+    const subjects = reasonSubjects.get(mergeKey)!
+    const body     = reasonBody.get(mergeKey)!
+
     if (subjects.length === 0) {
-      // 主語なし形式: body がそのままテキスト全体
-      uniqueReasons.push(body)
+      // 主語なし形式はそのまま独立出力（変換しない）
+      const smk = `__anon__::${mergeKey}`
+      subjectBodyMerge.set(smk, { subjects: [], groupKey: '', bodies: [body], firstMergeKey: mergeKey })
+      subjectMergeOrder.push(smk)
+      continue
+    }
+
+    // 主語ありの場合: subjects をソートして canonical key を作る
+    const gkPrefix = mergeKey.split('::')[0]  // groupKey 部分
+    const subjectKey = [...subjects].sort().join('\x00')
+    const smk = `${gkPrefix}::${subjectKey}`
+
+    if (!subjectBodyMerge.has(smk)) {
+      subjectBodyMerge.set(smk, { subjects, groupKey: gkPrefix, bodies: [body], firstMergeKey: mergeKey })
+      subjectMergeOrder.push(smk)
     } else {
-      // 「A と B と C は、本文」形式で結合
-      uniqueReasons.push(subjects.join('と') + 'は、' + body)
+      // 同一主語 × 同一 groupKey → body を追加
+      const existing = subjectBodyMerge.get(smk)!
+      if (!existing.bodies.includes(body)) existing.bodies.push(body)
+    }
+  }
+
+  const uniqueReasons: string[] = []
+  for (const smk of subjectMergeOrder) {
+    const { subjects, bodies } = subjectBodyMerge.get(smk)!
+    if (subjects.length === 0) {
+      // 主語なし形式
+      uniqueReasons.push(bodies[0])
+    } else if (bodies.length === 1) {
+      // 従来通り: 単一 body
+      uniqueReasons.push(subjects.join('と') + 'は、' + bodies[0])
+    } else {
+      // 複数 body を「・」結合する。
+      // 末尾 body はそのまま、先行 body は末尾の「追加となった。」等を除いた
+      // 理由句（「〜ため」止まり）を抽出して繋ぐ。
+      //
+      // 例: bodies = ["乾燥が気になるため追加となった。", "湿疹が気になるため追加となった。"]
+      //   → "ヒルドイドソフト軟膏は、乾燥が気になるため・湿疹が気になるため追加となった。"
+      //
+      // body から末尾の「追加となった。」「導入となった。」等を分離し、
+      // reason-verb より前の部分（"ため" 等）を prefix として使う。
+      //
+      // 安全側: reason-verb が見つからない場合は body 全体をそのまま使う。
+      const REASON_VERB = /(?:追加|導入)となった[。]?$/
+      const lastBody = bodies[bodies.length - 1]
+      const lastMatch = lastBody.match(REASON_VERB)
+      if (lastMatch) {
+        // 末尾の reason-verb を抽出
+        const verb = lastMatch[0]
+        const prefixes: string[] = []
+        for (let i = 0; i < bodies.length - 1; i++) {
+          // 先行 body: reason-verb を除いた部分だけを prefix とする
+          prefixes.push(bodies[i].replace(REASON_VERB, ''))
+        }
+        // 末尾 body の verb 前部分も prefix として追加
+        const lastPrefix = lastBody.slice(0, lastBody.length - verb.length)
+        prefixes.push(lastPrefix)
+        uniqueReasons.push(subjects.join('と') + 'は、' + prefixes.join('・') + verb)
+      } else {
+        // verb が分離できない場合は body 全体を「・」結合（安全フォールバック）
+        uniqueReasons.push(subjects.join('と') + 'は、' + bodies.join('・'))
+      }
     }
   }
 

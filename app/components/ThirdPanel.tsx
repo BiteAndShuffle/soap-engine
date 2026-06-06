@@ -613,13 +613,13 @@ export default function ThirdPanel({
                 </div>
                 <div className={s.expressGrid}>
                   {(expressScenarioPicker.scenarioCandidates ?? []).map(sc => {
-                    // アクティブキーは実際に追加された matchedBrandName と一致させる
-                    // GEモードで genericBrandName があればそちら、なければ defaultBrandName
-                    const pickerBrandKey = expressUseGE
-                      ? (expressScenarioPicker.genericBrandName ?? expressScenarioPicker.defaultBrandName ?? '')
-                      : (expressScenarioPicker.defaultBrandName ?? '')
-                    const expressKey = `${expressScenarioPicker.moduleId}__${pickerBrandKey}__${sc.globalId}`
-                    const isActive = activeExpressKeys?.has(expressKey) ?? false
+                    // アクティブキー: GE / 先発どちらで追加されていてもアクティブ表示する。
+                    // GE/先発切替後も追加済み状態が消えないよう両方の brandKey でチェックする。
+                    const pickerGEKey  = expressScenarioPicker.genericBrandName ?? expressScenarioPicker.defaultBrandName ?? ''
+                    const pickerSenKey = expressScenarioPicker.defaultBrandName ?? ''
+                    const isActive =
+                      (activeExpressKeys?.has(`${expressScenarioPicker.moduleId}__${pickerGEKey}__${sc.globalId}`) ?? false) ||
+                      (activeExpressKeys?.has(`${expressScenarioPicker.moduleId}__${pickerSenKey}__${sc.globalId}`) ?? false)
                     return (
                       <button
                         key={sc.scenarioId}
@@ -663,14 +663,21 @@ export default function ThirdPanel({
                             </button>
                           )
                         }
-                        // アクティブキー: GE/先発モードに応じて brandKey を切り替える
-                        // scenarioCandidates がある場合はいずれかの scenarioId がアクティブなら全体をアクティブ扱い
-                        const brandKey = (expressUseGE ? (c.genericBrandName ?? c.defaultBrandName) : c.defaultBrandName) ?? ''
-                        const isActive = c.scenarioCandidates
-                          ? c.scenarioCandidates.some(sc =>
-                              activeExpressKeys?.has(`${c.moduleId}__${brandKey}__${sc.globalId}`) ?? false
+                        // アクティブキー: GEモード / 先発モードのどちらで追加されていてもアクティブ扱いにする。
+                        // GE/先発切替後も「追加済み」状態を正しく表示するため、
+                        // 両方の brandKey でチェックする。
+                        const geBrandKey  = (c.genericBrandName ?? c.defaultBrandName) ?? ''
+                        const senBrandKey = c.defaultBrandName ?? ''
+                        function _isKeyActive(bk: string): boolean {
+                          if (!bk) return false
+                          if (c.scenarioCandidates) {
+                            return c.scenarioCandidates.some(sc =>
+                              activeExpressKeys?.has(`${c.moduleId}__${bk}__${sc.globalId}`) ?? false
                             )
-                          : (activeExpressKeys?.has(`${c.moduleId}__${brandKey}__${c.defaultScenarioGlobalId}`) ?? false)
+                          }
+                          return activeExpressKeys?.has(`${c.moduleId}__${bk}__${c.defaultScenarioGlobalId}`) ?? false
+                        }
+                        const isActive = _isKeyActive(geBrandKey) || _isKeyActive(senBrandKey)
                         return (
                           <button
                             key={`${c.moduleId}__${c.defaultBrandName ?? c.label}`}

@@ -25,6 +25,7 @@ import oralData   from '../data/modules/dm_glp1ra_semaglutide_oral.json'   asser
 import injData    from '../data/modules/dm_glp1ra_injection.json'           assert { type: 'json' }
 import h1OralData from '../data/modules/allergy_h1_antihistamine_second_gen_oral.json' assert { type: 'json' }
 import h1EyeData  from '../data/modules/allergy_h1_antihistamine_eye_drops.json'      assert { type: 'json' }
+import dermData   from '../data/modules/derm_heparinoid_moisturizer_ointment.json'    assert { type: 'json' }
 
 // ─────────────────────────────────────────────────────────────
 // ヘルパー
@@ -546,5 +547,119 @@ describe('P合成: H1内服4剤混在 (default/default/end/default → closing �
     // 全体 dedup されていれば 1 回になってしまう → 2 回であることを確認
     assert.ok(count >= 2,
       `Non-consecutive default closings must NOT be globally deduped: got ${count} (expected ≥2). P:\n${result.P}`)
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 同一薬剤・同一 groupKey・複数 body のS統合
+// Express Mode で同一薬剤を複数シナリオで追加した場合
+// ─────────────────────────────────────────────────────────────
+
+describe('S合成: 同一薬剤・同一 groupKey で body が異なる複数 reason の統合', () => {
+  const derm = dermData as unknown as ModuleData
+
+  // derm: 乾燥 + 湿疹（同一薬剤・同一 groupKey=treatment_start）
+  describe('derm 乾燥 + 湿疹: S が 1 行にまとまること', () => {
+    const b1 = makeBlock(derm, 'initial_dryness', 'ヒルドイドソフト軟膏')
+    const b2 = makeBlock(derm, 'initial_eczema',  'ヒルドイドソフト軟膏')
+
+    test('mergeBlocks の S が 1 行になる（別行にならない）', () => {
+      const result = runMerge(b1, [b2])
+      const lines = result.S.split('\n').filter(Boolean)
+      assert.equal(lines.length, 1,
+        `S should be 1 merged line, got ${lines.length} lines:\n${result.S}`)
+    })
+
+    test('S に "ヒルドイドソフト軟膏は、" が 1 回だけ出現する（主語重複なし）', () => {
+      const result = runMerge(b1, [b2])
+      const count = result.S.split('ヒルドイドソフト軟膏は、').length - 1
+      assert.equal(count, 1,
+        `Subject should appear once, got ${count}:\n${result.S}`)
+    })
+
+    test('S に "乾燥" と "湿疹" の両方が含まれる', () => {
+      const result = runMerge(b1, [b2])
+      assert.ok(result.S.includes('乾燥'), `S should contain 乾燥:\n${result.S}`)
+      assert.ok(result.S.includes('湿疹'), `S should contain 湿疹:\n${result.S}`)
+    })
+
+    test('S に "追加となった" が 1 回だけ出現する（verb 重複なし）', () => {
+      const result = runMerge(b1, [b2])
+      const count = result.S.split('追加となった').length - 1
+      assert.equal(count, 1,
+        `Verb should appear once, got ${count}:\n${result.S}`)
+    })
+  })
+
+  // derm: 乾燥 + 湿疹 + かぶれ（3シナリオ）
+  describe('derm 乾燥 + 湿疹 + かぶれ (3件): S が 1 行にまとまること', () => {
+    const b1 = makeBlock(derm, 'initial_dryness',           'ヒルドイドソフト軟膏')
+    const b2 = makeBlock(derm, 'initial_eczema',            'ヒルドイドソフト軟膏')
+    const b3 = makeBlock(derm, 'initial_skin_barrier_patch','ヒルドイドソフト軟膏')
+
+    test('S が 1 行になる', () => {
+      const result = runMerge(b1, [b2, b3])
+      const lines = result.S.split('\n').filter(Boolean)
+      assert.equal(lines.length, 1,
+        `S should be 1 merged line, got ${lines.length} lines:\n${result.S}`)
+    })
+
+    test('S に 乾燥・湿疹・かぶれ の3語が含まれる', () => {
+      const result = runMerge(b1, [b2, b3])
+      assert.ok(result.S.includes('乾燥'), `missing 乾燥:\n${result.S}`)
+      assert.ok(result.S.includes('湿疹'), `missing 湿疹:\n${result.S}`)
+      assert.ok(result.S.includes('かぶれ'), `missing かぶれ:\n${result.S}`)
+    })
+
+    test('S に "追加となった" が 1 回だけ出現する', () => {
+      const result = runMerge(b1, [b2, b3])
+      const count = result.S.split('追加となった').length - 1
+      assert.equal(count, 1,
+        `Verb should appear once, got ${count}:\n${result.S}`)
+    })
+
+    test('GEモード名でも同様に 1 行にまとまる', () => {
+      const g1 = makeBlock(derm, 'initial_dryness',           'ヘパリン類似物質油性クリーム')
+      const g2 = makeBlock(derm, 'initial_eczema',            'ヘパリン類似物質油性クリーム')
+      const g3 = makeBlock(derm, 'initial_skin_barrier_patch','ヘパリン類似物質油性クリーム')
+      const result = runMerge(g1, [g2, g3])
+      const lines = result.S.split('\n').filter(Boolean)
+      assert.equal(lines.length, 1,
+        `GE mode: S should be 1 merged line, got ${lines.length} lines:\n${result.S}`)
+      assert.ok(result.S.startsWith('ヘパリン類似物質油性クリームは、'),
+        `GE SOAP subject should start with ヘパリン類似物質油性クリーム:\n${result.S}`)
+    })
+  })
+
+  // 異なる薬剤（derm + h1）は統合しない
+  describe('derm + H1内服: 異なる clinicalDomain の S は統合しない', () => {
+    const b1 = makeBlock(derm, 'initial_dryness',  'ヒルドイドソフト軟膏')
+    const b2 = makeBlock(h1OralData as unknown as ModuleData, 'initial_nasal', 'アレグラ')
+
+    test('S が 2 行になる（clinicalDomain が異なるため分離）', () => {
+      const result = runMerge(b1, [b2])
+      const lines = result.S.split('\n').filter(Boolean)
+      assert.equal(lines.length, 2,
+        `S should be 2 lines (different clinicalDomain), got ${lines.length}:\n${result.S}`)
+    })
+
+    test('S にヒルドイドとアレグラの両方が含まれる', () => {
+      const result = runMerge(b1, [b2])
+      assert.ok(result.S.includes('ヒルドイドソフト軟膏'), `missing derm drug:\n${result.S}`)
+      assert.ok(result.S.includes('アレグラ'), `missing h1 drug:\n${result.S}`)
+    })
+  })
+
+  // 同一 clinicalDomain・異なる groupKey: 統合しない
+  describe('derm treatment_start + treatment_adjustment: 異なる groupKey の S は統合しない', () => {
+    const b1 = makeBlock(derm, 'initial_dryness',                    'ヒルドイドソフト軟膏')
+    const b2 = makeBlock(derm, 'frequency_increase_low_perceived_effect', 'ヒルドイドソフト軟膏')
+
+    test('S が 2 行になる（groupKey が treatment_start vs treatment_adjustment）', () => {
+      const result = runMerge(b1, [b2])
+      const lines = result.S.split('\n').filter(Boolean)
+      assert.equal(lines.length, 2,
+        `S should be 2 lines (different groupKey), got ${lines.length}:\n${result.S}`)
+    })
   })
 })
