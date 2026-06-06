@@ -670,35 +670,63 @@ function buildS(sEntries: SEntry[]): string {
       // 従来通り: 単一 body
       uniqueReasons.push(subjects.join('と') + 'は、' + bodies[0])
     } else {
-      // 複数 body を「・」結合する。
-      // 末尾 body はそのまま、先行 body は末尾の「追加となった。」等を除いた
-      // 理由句（「〜ため」止まり）を抽出して繋ぐ。
+      // 複数 body を自然な日本語で結合する。
       //
-      // 例: bodies = ["乾燥が気になるため追加となった。", "湿疹が気になるため追加となった。"]
-      //   → "ヒルドイドソフト軟膏は、乾燥が気になるため・湿疹が気になるため追加となった。"
+      // 処理:
+      //   1. 各 body から末尾の reason-verb（"追加となった。"等）を除いた prefix を取り出す。
+      //   2. 各 prefix からさらに末尾の「ため」連結語（"のため" / "が気になるため" 等）を
+      //      除いた「理由句のコア」を取り出す。
+      //      全 prefix が ため 連結語を持つ場合: コアを「、」結合し末尾に「のため」+ verb。
+      //      いずれかが持たない場合: prefix をそのまま「、」結合し末尾に verb。
+      //   3. verb が見つからない場合は body 全体を「、」結合（安全フォールバック）。
       //
-      // body から末尾の「追加となった。」「導入となった。」等を分離し、
-      // reason-verb より前の部分（"ため" 等）を prefix として使う。
+      // 例（全 prefix が ため 系）:
+      //   ["乾燥が気になるため追加となった。", "湿疹が気になるため追加となった。",
+      //    "パッチによるかぶれ防止のため追加となった。"]
+      //   → "ヒルドイドソフト軟膏は、乾燥、湿疹、パッチによるかぶれ防止のため追加となった。"
       //
-      // 安全側: reason-verb が見つからない場合は body 全体をそのまま使う。
+      // 例（混在: ため あり / なし）:
+      //   ["血行促進目的で追加となった。", "皮膚バリア強化のため追加となった。"]
+      //   → "ヒルドイドソフト軟膏は、血行促進目的で、皮膚バリア強化のため追加となった。"
+      //
+      // hardcode なし: ため連結語の判定はパターンマッチのみ。JSON/moduleId 依存なし。
+
+      // 「ため」系の末尾パターン（長いものから順に試す）
+      const TAME_PATTERNS: RegExp[] = [
+        /が気になるため$/,
+        /のため$/,
+        /ため$/,
+      ]
+
+      function stripTameSuffix(prefix: string): { core: string; matched: boolean } {
+        for (const pat of TAME_PATTERNS) {
+          if (pat.test(prefix)) {
+            return { core: prefix.replace(pat, ''), matched: true }
+          }
+        }
+        return { core: prefix, matched: false }
+      }
+
       const REASON_VERB = /(?:追加|導入)となった[。]?$/
       const lastBody = bodies[bodies.length - 1]
       const lastMatch = lastBody.match(REASON_VERB)
       if (lastMatch) {
-        // 末尾の reason-verb を抽出
         const verb = lastMatch[0]
-        const prefixes: string[] = []
-        for (let i = 0; i < bodies.length - 1; i++) {
-          // 先行 body: reason-verb を除いた部分だけを prefix とする
-          prefixes.push(bodies[i].replace(REASON_VERB, ''))
+        // 各 body から verb を除いた prefix を取り出す
+        const prefixes = bodies.map(b => b.replace(REASON_VERB, ''))
+        // 各 prefix から ため 連結語を除く試み
+        const stripped = prefixes.map(p => stripTameSuffix(p))
+        const allHadTame = stripped.every(s => s.matched)
+        if (allHadTame) {
+          // 全 prefix が ため 系 → コアを「、」結合し「のため」を末尾に付ける
+          uniqueReasons.push(subjects.join('と') + 'は、' + stripped.map(s => s.core).join('、') + 'のため' + verb)
+        } else {
+          // 混在: prefix をそのまま「、」結合
+          uniqueReasons.push(subjects.join('と') + 'は、' + prefixes.join('、') + verb)
         }
-        // 末尾 body の verb 前部分も prefix として追加
-        const lastPrefix = lastBody.slice(0, lastBody.length - verb.length)
-        prefixes.push(lastPrefix)
-        uniqueReasons.push(subjects.join('と') + 'は、' + prefixes.join('・') + verb)
       } else {
-        // verb が分離できない場合は body 全体を「・」結合（安全フォールバック）
-        uniqueReasons.push(subjects.join('と') + 'は、' + bodies.join('・'))
+        // verb が分離できない場合: body 全体を「、」結合（安全フォールバック）
+        uniqueReasons.push(subjects.join('と') + 'は、' + bodies.join('、'))
       }
     }
   }

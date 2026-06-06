@@ -618,6 +618,17 @@ describe('S合成: 同一薬剤・同一 groupKey で body が異なる複数 re
         `Verb should appear once, got ${count}:\n${result.S}`)
     })
 
+    test('S が「乾燥、湿疹、かぶれ防止のため追加となった」形式になる（"ため" 重複なし）', () => {
+      const result = runMerge(b1, [b2, b3])
+      // "が気になるため" が複数出現しないこと（自然化確認）
+      const tameCount = result.S.split('のため').length - 1
+      assert.equal(tameCount, 1,
+        `"のため" should appear once after natural merge, got ${tameCount}:\n${result.S}`)
+      // "ヒルドイドソフト軟膏は、" が主語として 1 回だけ
+      assert.equal(result.S.split('ヒルドイドソフト軟膏は、').length - 1, 1,
+        `Subject should appear once:\n${result.S}`)
+    })
+
     test('GEモード名でも同様に 1 行にまとまる', () => {
       const g1 = makeBlock(derm, 'initial_dryness',           'ヘパリン類似物質油性クリーム')
       const g2 = makeBlock(derm, 'initial_eczema',            'ヘパリン類似物質油性クリーム')
