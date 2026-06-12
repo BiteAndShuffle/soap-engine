@@ -643,19 +643,31 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }
       // ── 重複排除 ──────────────────────────────────────────────
       // 同一カテゴリ/グループ/サブグループ内で表示ラベル（genericLabel ?? label）が
-      // 同一のエントリは先勝ちで1件だけ残す。
-      // ヒルドイド系3剤（cream/lotion/ointment）が同一 expressModes を持つため
-      // 各剤形ボタンが3重に表示されてしまう問題を防ぐ。
-      // disabled placeholder も同様に重複排除する（後続の enabled エントリが優先）。
-      const seenKeys = new Set<string>()
-      const deduped = entries.filter(e => {
+      // 同一のエントリは1件だけ残す。
+      //
+      // 優先ルール: active（disabled でない）エントリが disabled エントリより優先される。
+      // これにより、モジュールのロード順に依らず、
+      // 「active なエントリが存在する剤形は選択可能」が保証される。
+      //
+      // 例: ointment の "クリーム" (disabled) と cream の "クリーム" (active) が混在する場合、
+      //     cream の active エントリが残り、ointment の disabled は捨てられる。
+      //
+      // 実装: key ごとに候補を Map で集め、active エントリがあれば active を優先する。
+      const dedupMap = new Map<string, typeof entries[number]>()
+      for (const e of entries) {
         const displayLabel = e.genericLabel ?? e.label
         const key = `${e.expressCategory}__${e.expressGroup}__${e.expressSubGroup ?? ''}__${displayLabel}`
-        if (seenKeys.has(key)) return false
-        seenKeys.add(key)
-        return true
-      })
-      return deduped.sort((a, b) => a.sortOrder - b.sortOrder)
+        const existing = dedupMap.get(key)
+        if (!existing) {
+          dedupMap.set(key, e)
+        } else if (existing.disabled && !e.disabled) {
+          // 既存が disabled で新規が active → active で上書き
+          dedupMap.set(key, e)
+        }
+        // 既存が active / 新規が disabled → 上書きしない（既存維持）
+        // 両方 active / 両方 disabled → 先勝ち（上書きしない）
+      }
+      return [...dedupMap.values()].sort((a, b) => a.sortOrder - b.sortOrder)
     },
     [allModules],
   )
