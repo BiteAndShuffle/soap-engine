@@ -734,11 +734,20 @@ export default function ThirdPanel({
             const isEye = localInputConfig.siteButtonType === 'eye'
             const DIRECTIONS = ['左', '右', '両']
             const TOPICAL_SITES = ['手', '足', '腕', '膝', '肘', '肩', '顔', '首', '背中', '腹']
+            const EYE_SITES = ['眼']
+
+            // 方向プレフィックスを除いた本体部分を返す
+            const stripDir = (v: string) => DIRECTIONS.reduce((s, d) => s.startsWith(d) ? s.slice(d.length) : s, v)
+            // 現在の方向プレフィックスを取得（なければ空文字）
+            const currentDir = DIRECTIONS.find(d => localSiteInput.startsWith(d)) ?? ''
+
             return (
               <div className={s.localInputHighlight}>
                 <div className={s.localInputLabel}>{localInputConfig.label}</div>
                 {isPlaceholderMode && (
                   <div className={s.siteButtonArea}>
+                    {/* 方向セクション */}
+                    <div className={s.siteSectionLabel}>方向</div>
                     <div className={s.siteDirectionRow}>
                       {DIRECTIONS.map(dir => (
                         <button
@@ -746,13 +755,10 @@ export default function ThirdPanel({
                           type="button"
                           className={[
                             s.siteDirectionBtn,
-                            localSiteInput.startsWith(dir) ? s.siteDirectionBtnActive : '',
+                            currentDir === dir ? s.siteDirectionBtnActive : '',
                           ].join(' ')}
                           onClick={() => {
-                            // 現在の方向プレフィックスを外して dir に付け替え
-                            const current = localSiteInput
-                            const stripped = DIRECTIONS.reduce((v, d) => v.startsWith(d) ? v.slice(d.length) : v, current)
-                            onLocalSiteInputChange?.(dir + stripped)
+                            onLocalSiteInputChange?.(dir + stripDir(localSiteInput))
                           }}
                         >
                           {dir}
@@ -762,38 +768,39 @@ export default function ThirdPanel({
                         type="button"
                         className={s.siteDirectionClearBtn}
                         onClick={() => {
-                          const current = localSiteInput
-                          const stripped = DIRECTIONS.reduce((v, d) => v.startsWith(d) ? v.slice(d.length) : v, current)
-                          onLocalSiteInputChange?.(stripped)
+                          onLocalSiteInputChange?.(stripDir(localSiteInput))
                         }}
                       >
-                        方向解除
+                        解除
                       </button>
                     </div>
-                    {!isEye && (
-                      <div className={s.siteBtnGrid}>
-                        {TOPICAL_SITES.map(site => (
-                          <button
-                            key={site}
-                            type="button"
-                            className={[
-                              s.siteBtn,
-                              localSiteInput.endsWith(site) ? s.siteBtnActive : '',
-                            ].join(' ')}
-                            onClick={() => {
-                              const current = localSiteInput
-                              // 方向プレフィックスを保持して部位だけ差し替え
-                              const dir = DIRECTIONS.find(d => current.startsWith(d)) ?? ''
-                              onLocalSiteInputChange?.(dir + site)
-                            }}
-                          >
-                            {site}
-                          </button>
-                        ))}
-                      </div>
-                    )}
+
+                    <div className={s.siteSectionDivider} />
+
+                    {/* 部位セクション */}
+                    <div className={s.siteSectionLabel}>部位</div>
+                    <div className={s.siteBtnGrid}>
+                      {(isEye ? EYE_SITES : TOPICAL_SITES).map(site => (
+                        <button
+                          key={site}
+                          type="button"
+                          className={[
+                            s.siteBtn,
+                            stripDir(localSiteInput) === site ? s.siteBtnActive : '',
+                          ].join(' ')}
+                          onClick={() => {
+                            onLocalSiteInputChange?.(currentDir + site)
+                          }}
+                        >
+                          {site}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
+
+                <div className={s.siteSectionDivider} />
+
                 <input
                   type="text"
                   className={s.localSiteInput}

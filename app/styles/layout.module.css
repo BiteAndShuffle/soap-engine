@@ -863,8 +863,24 @@
 .siteButtonArea {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   margin-bottom: 2px;
+}
+
+/* 方向/部位セクション見出し */
+.siteSectionLabel {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #7a8fb8;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+/* 方向/部位セクション区切り線 */
+.siteSectionDivider {
+  border: none;
+  border-top: 1px solid #d8e4f4;
+  margin: 1px 0;
 }
 
 /* 方向ボタン行（左・右・両 + 解除） */

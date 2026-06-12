@@ -422,7 +422,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     // 1剤目: primaryBaseFields.S にのみ変換を適用して再マージ
     // baseFields.S は合成済みの場合もあるため、1剤目の S だけを差し替えて再計算する。
-    const primaryS = primaryBaseFieldsRef.current.S
+    // NOTE: Ref ではなく primaryBaseFields を直接参照する。
+    //   primaryBaseFieldsRef.current は render 後に同期されるため、
+    //   render 中の IIFE 内では1フレーム遅延した古い値を参照してしまう。
+    const primaryS = primaryBaseFields.S
     if (!primaryS) return baseFields
     const patchedPrimaryS = applyFn(primaryS)
     if (!patchedPrimaryS) return baseFields
