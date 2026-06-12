@@ -356,8 +356,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (!activeLocalId || !applyIds.includes(activeLocalId)) return baseFields
     }
 
-    // emptyBehavior チェック: 空入力時に keep_original なら baseFields をそのまま返す
-    if (!localSiteInput.trim()) return baseFields
+    // emptyBehavior チェック: 空入力時の挙動
+    // - insertMode === 'placeholder': 空でも applyPlaceholder を呼ぶ（{{applicationSite}} 除去のため）
+    // - insertMode === 'prefix': 空なら baseFields をそのまま返す
+    const insertMode = localInputConfig.insertMode ?? 'prefix'
+    if (insertMode !== 'placeholder' && !localSiteInput.trim()) return baseFields
 
     // applyPrefix: S行の最初の名詞（助詞直前まで）を localSiteInput で置換する。
     // 「薬剤名は、...」形式の S（drug_subject 解決済み）の場合:
@@ -384,13 +387,32 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       return localSiteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
     }
 
+    // applyPlaceholder: S本文中の {{applicationSite}} を localSiteInput で置換する。
+    // 未入力時は {{applicationSite}} トークンおよび直後の「の」「眼」を除去する。
+    //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + "右膝" → "〜は、右膝の乾燥が〜"
+    //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + ""    → "〜は、乾燥が〜"
+    //   例（点眼）: "〜は、{{applicationSite}}眼のかゆみが〜" + "右" → "〜は、右眼のかゆみが〜"
+    //   例（点眼）: "〜は、{{applicationSite}}眼のかゆみが〜" + ""   → "〜は、眼のかゆみが〜"
+    const applyPlaceholder = (s: string): string => {
+      const site = localSiteInput.trim()
+      if (site) {
+        return s.replace('{{applicationSite}}', site)
+      }
+      // 未入力: {{applicationSite}} トークンを除去。直後の「の」も除去（外用薬パターン）
+      return s.replace('{{applicationSite}}の', '').replace('{{applicationSite}}', '')
+    }
+
+    const applyFn = insertMode === 'placeholder'
+      ? (s: string) => applyPlaceholder(s)
+      : (s: string) => applyPrefix(s)
+
     if (activeNode !== null) {
       // Express 合成ノードのSだけを差し替えて再マージ
       const patchedNodes = composeNodes.map(n => {
         if (n.id !== activeNode.id) return n
         const originalS = n.block.fields.S
         if (!originalS) return n
-        const patchedS = applyPrefix(originalS)
+        const patchedS = applyFn(originalS)
         if (!patchedS) return n
         return { ...n, block: { ...n.block, fields: { ...n.block.fields, S: patchedS } } }
       })
@@ -398,11 +420,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       return editedSOAP !== null ? baseFields : patched
     }
 
-    // 1剤目: primaryBaseFields.S にのみ prefix を適用して再マージ
+    // 1剤目: primaryBaseFields.S にのみ変換を適用して再マージ
     // baseFields.S は合成済みの場合もあるため、1剤目の S だけを差し替えて再計算する。
     const primaryS = primaryBaseFieldsRef.current.S
     if (!primaryS) return baseFields
-    const patchedPrimaryS = applyPrefix(primaryS)
+    const patchedPrimaryS = applyFn(primaryS)
     if (!patchedPrimaryS) return baseFields
     const patchedPrimaryFields = { ...primaryBaseFieldsRef.current, S: patchedPrimaryS }
     if (composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null).length === 0) {
@@ -1623,7 +1645,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             activeExpressKeys={activeExpressKeys}
             onExpressAdd={handleExpressAdd}
             menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
-            localInputConfig={targetModule.display?.localInput}
+            localInputConfig={targetModule.display?.localInput ? {
+              ...targetModule.display.localInput,
+              insertMode: targetModule.display.localInput.insertMode,
+              siteButtonType: targetModule.drug?.route === 'topical' ? 'topical' : 'eye',
+            } : undefined}
             localSiteInput={localSiteInput}
             onLocalSiteInputChange={setLocalSiteInput}
           />

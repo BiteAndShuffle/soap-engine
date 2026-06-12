@@ -859,6 +859,84 @@
   color: #bbb;
 }
 
+/* 部位ボタンエリア */
+.siteButtonArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+/* 方向ボタン行（左・右・両 + 解除） */
+.siteDirectionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.siteDirectionBtn {
+  padding: 2px 7px;
+  font-size: 0.68rem;
+  font-family: inherit;
+  border: 1.5px solid #b0c8f0;
+  border-radius: 4px;
+  background: #f0f5ff;
+  color: #3a6ec7;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+.siteDirectionBtn:hover {
+  background: #dce8fb;
+}
+.siteDirectionBtnActive {
+  background: #3a6ec7;
+  color: #fff;
+  border-color: #2a5ab0;
+}
+
+.siteDirectionClearBtn {
+  padding: 2px 7px;
+  font-size: 0.62rem;
+  font-family: inherit;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f5f5f7;
+  color: #888;
+  cursor: pointer;
+  margin-left: 2px;
+}
+.siteDirectionClearBtn:hover {
+  background: #ececec;
+}
+
+/* 部位ボタングリッド（外用薬） */
+.siteBtnGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.siteBtn {
+  padding: 2px 7px;
+  font-size: 0.68rem;
+  font-family: inherit;
+  border: 1.5px solid #d0d4e0;
+  border-radius: 4px;
+  background: #f8f9fc;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+}
+.siteBtn:hover {
+  background: #eef0f6;
+  border-color: #b0b8cc;
+}
+.siteBtnActive {
+  background: #3a6ec7;
+  color: #fff;
+  border-color: #2a5ab0;
+}
+
 /* 4ボタンを2×2グリッドで並べる */
 .sActionBtnGrid {
   display: grid;

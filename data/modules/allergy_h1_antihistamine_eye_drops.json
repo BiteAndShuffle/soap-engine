@@ -362,11 +362,13 @@
     "localInput": {
       "enabled": true,
       "label": "外用部位（任意）",
-      "placeholder": "未入力なら自動生成（例：右目、左目、両目）",
+      "placeholder": "左・右・両 など",
       "targetField": "S",
-      "insertMode": "prefix",
+      "insertMode": "placeholder",
       "applyScenarioIds": [
-        "initial"
+        "initial",
+        "restart",
+        "external_start"
       ],
       "emptyBehavior": "keep_original"
     }
@@ -437,7 +439,7 @@
         "drug_effect_explanation",
         "side_effect_attention"
       ],
-      "S": "{{drug_subject}}は、目のかゆみが気になるため追加となった。",
+      "S": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため追加となった。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
@@ -481,7 +483,7 @@
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}は、目のかゆみが気になるため追加となった。",
+          "text": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため追加となった。",
           "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",
@@ -3845,7 +3847,7 @@
         "drug_effect_explanation",
         "side_effect_attention"
       ],
-      "S": "{{drug_subject}}は、目のかゆみが気になるため再開となった。",
+      "S": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため再開となった。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}は、アレルギー症状の改善を目的として再開となった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
@@ -3889,7 +3891,7 @@
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}は、目のかゆみが気になるため再開となった。",
+          "text": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため再開となった。",
           "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",
@@ -3976,7 +3978,7 @@
         "drug_effect_explanation",
         "side_effect_attention"
       ],
-      "S": "{{drug_subject}}は、目のかゆみに対して他院で開始され継続使用中であった。",
+      "S": "{{drug_subject}}は、{{applicationSite}}眼のかゆみに対して他院で開始され継続使用中であった。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}は、アレルギー症状の改善を目的として継続使用中であった。\nヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
       "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
@@ -4020,7 +4022,7 @@
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}は、目のかゆみに対して他院で開始され継続使用中であった。",
+          "text": "{{drug_subject}}は、{{applicationSite}}眼のかゆみに対して他院で開始され継続使用中であった。",
           "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",

@@ -1,23 +1,23 @@
 {
-  "moduleId": "derm_heparinoid_moisturizer_ointment",
+  "moduleId": "derm_heparinoid_moisturizer_lotion",
   "moduleVersion": "1.0.10",
   "categoryPath": [
     "皮膚科",
     "保湿剤",
     "ヘパリン類似物質",
     "外用",
-    "軟膏"
+    "ローション"
   ],
   "composition": {
-    "nodeKey": "heparinoid_moisturizer_ointment",
-    "nodeLabelShort": "ヘパ軟膏",
-    "nodeLabelLong": "ヘパリン類似物質系保湿剤軟膏",
+    "nodeKey": "heparinoid_moisturizer_lotion",
+    "nodeLabelShort": "ヘパL",
+    "nodeLabelLong": "ヘパリン類似物質系保湿剤ローション",
     "domain": "dermatology",
     "priority": 5,
     "clinicalDomain": "dermatology",
     "searchDomain": "dermatology_topical",
+    "classKey": "heparinoid_moisturizer_lotion",
     "sMergeDomain": "dermatology_topical",
-    "classKey": "heparinoid_moisturizer_ointment",
     "sMergePolicy": {
       "unit": "clinical_domain",
       "conflictStrategy": "separate_by_domain",
@@ -34,18 +34,17 @@
     ]
   },
   "drug": {
-    "genericName": "ヘパリン類似物質系保湿剤軟膏",
+    "genericName": "ヘパリン類似物質系保湿剤ローション",
     "brandNames": [
-      "ヒルドイドソフト軟膏",
-      "ヘパリン類似物質油性クリーム"
+      "ヒルドイドローション",
+      "ヘパリン類似物質ローション"
     ],
     "drugClass": [
-      "HEPARINOID_MOISTURIZER_OINTMENT"
+      "HEPARINOID_MOISTURIZER_LOTION"
     ],
     "route": "topical",
     "dosageForms": [
-      "ointment",
-      "oily_cream"
+      "lotion"
     ],
     "drugSpecificTags": [
       "heparinoid",
@@ -53,80 +52,49 @@
       "dermatology",
       "topical",
       "external_use",
-      "ointment",
-      "oily_cream",
+      "lotion",
       "dry_skin",
       "skin_barrier_care",
       "application_instruction",
       "formulation_instruction"
     ],
     "nameAliases": [
-      "ひるどいどそふとなんこう",
-      "ひるどいどなんこう",
-      "ひるどいど",
-      "ひるどい",
-      "ひるど",
-      "ひるどいなんこう",
-      "ひるどなんこう",
-      "ひるなんこう",
-      "へぱなんこう",
-      "へぱりんなんこう",
-      "へぱりんゆせいくりーむ",
-      "へぱゆせいくりーむ",
-      "へぱりんるいじぶっしつなんこう",
-      "へぱりんるいじぶっしつゆせいくりーむ"
+      "ひるどいどろーしょん",
+      "ひるろーしょん",
+      "へぱろーしょん",
+      "へぱりんろーしょん",
+      "へぱりんるいじぶっしつろーしょん"
     ],
     "search": {
-      "primaryDisplayName": "ヘパリン類似物質系保湿剤軟膏",
+      "primaryDisplayName": "ヘパリン類似物質系保湿剤ローション",
       "exactAliases": [
-        "ヒルドイドソフト軟膏",
-        "ヒルドイド軟膏",
-        "ヘパリン類似物質油性クリーム",
-        "ヘパリン類似物質軟膏"
+        "ヒルドイドローション",
+        "ヘパリン類似物質ローション"
       ],
       "prefixAliases": [
-        "ひるどいどそふとなんこう",
-        "ひるどいどなんこう",
-        "ひるどいど",
-        "ひるどい",
-        "ひるど",
-        "ひるどいなんこう",
-        "ひるどなんこう",
-        "ひるなんこう",
+        "ひるどいどろーしょん",
+        "ひるろーしょん",
         "へぱ",
-        "へぱなんこう",
+        "へぱろーしょん",
         "へぱりん",
-        "へぱりんなんこう",
+        "へぱりんろーしょん",
         "へぱりんるいじ",
         "へぱりんるいじぶっしつ",
-        "へぱりんゆせいくりーむ",
-        "へぱゆせいくりーむ",
-        "へぱりんるいじぶっしつなんこう",
-        "へぱりんるいじぶっしつゆせいくりーむ"
+        "へぱりんるいじぶっしつろーしょん"
       ],
       "nameAliases": [
-        "ひるどいどそふとなんこう",
-        "ひるどいどなんこう",
-        "ひるどいど",
-        "ひるどい",
-        "ひるど",
-        "ひるどいなんこう",
-        "ひるどなんこう",
-        "ひるなんこう",
-        "へぱなんこう",
-        "へぱりんなんこう",
-        "へぱりんゆせいくりーむ",
-        "へぱゆせいくりーむ",
-        "へぱりんるいじぶっしつなんこう",
-        "へぱりんるいじぶっしつゆせいくりーむ"
+        "ひるどいどろーしょん",
+        "ひるろーしょん",
+        "へぱろーしょん",
+        "へぱりんろーしょん",
+        "へぱりんるいじぶっしつろーしょん"
       ],
       "keywords": [
         "保湿",
         "乾燥",
         "皮膚乾燥",
         "外用",
-        "軟膏",
-        "油性クリーム",
+        "ローション",
         "皮膚科"
       ],
       "priority": 5,
@@ -145,118 +113,93 @@
         "へぱりんるいじぶっしつ"
       ],
       "formulationSearchTokens": [
-        "なん",
-        "なんこう",
-        "ゆせい",
-        "ゆせいくりーむ",
-        "そふと",
-        "そふとなんこう"
+        "ろー",
+        "ろーしょん"
       ]
     },
     "brandCatalog": {
-      "ヒルドイドソフト軟膏": {
-        "displayName": "ヒルドイドソフト軟膏",
+      "ヒルドイドローション": {
+        "displayName": "ヒルドイドローション",
         "genericName": "ヘパリン類似物質",
-        "displayGenericName": "ヘパリン類似物質軟膏",
+        "displayGenericName": "ヘパリン類似物質ローション",
         "storageType": "room_temperature",
-        "formulationType": "ointment",
+        "formulationType": "lotion",
         "handlingTags": [
           "room_temperature_storage",
-          "ointment",
+          "lotion",
           "topical_application",
           "external_use",
           "apply_thin_layer",
           "avoid_mucosa",
           "wash_hands_before_use",
-          "ointment_application"
+          "lotion_application"
         ],
         "aliases": [
-          "ひるどいどそふとなんこう",
-          "ひるどいどなんこう",
-          "ひるどいど",
-          "ひるどい",
-          "ひるど",
-          "ひるどいなんこう",
-          "ひるどなんこう",
-          "ひるなんこう"
+          "ひるどいどろーしょん",
+          "ひるろーしょん"
         ],
         "normalizedAliases": [
-          "ひるどいどそふとなんこう",
-          "ひるどいどなんこう",
-          "ひるどいど",
-          "ひるどい",
-          "ひるど",
-          "ひるどいなんこう",
-          "ひるどなんこう",
-          "ひるなんこう"
+          "ひるどいどろーしょん",
+          "ひるろーしょん"
         ]
       },
-      "ヘパリン類似物質油性クリーム": {
-        "displayName": "ヘパリン類似物質油性クリーム",
+      "ヘパリン類似物質ローション": {
+        "displayName": "ヘパリン類似物質ローション",
         "genericName": "ヘパリン類似物質",
-        "displayGenericName": "ヘパリン類似物質油性クリーム",
+        "displayGenericName": "ヘパリン類似物質ローション",
         "storageType": "room_temperature",
-        "formulationType": "oily_cream",
+        "formulationType": "lotion",
         "handlingTags": [
           "room_temperature_storage",
-          "oily_cream",
+          "lotion",
           "topical_application",
           "external_use",
           "apply_thin_layer",
           "avoid_mucosa",
           "wash_hands_before_use",
-          "cream_application"
+          "lotion_application"
         ],
         "aliases": [
-          "へぱりんるいじぶっしつゆせいくりーむ",
-          "へぱりんるいじぶっしつなんこう",
-          "へぱりんゆせいくりーむ",
-          "へぱゆせいくりーむ"
+          "へぱりんるいじぶっしつろーしょん",
+          "へぱりんろーしょん",
+          "へぱろーしょん"
         ],
         "normalizedAliases": [
-          "へぱりんるいじぶっしつゆせいくりーむ",
-          "へぱりんるいじぶっしつなんこう",
-          "へぱりんゆせいくりーむ",
-          "へぱゆせいくりーむ"
+          "へぱりんるいじぶっしつろーしょん",
+          "へぱりんろーしょん",
+          "へぱろーしょん"
         ]
       }
     },
     "aliasToBrand": {
-      "ひるどいどそふとなんこう": "ヒルドイドソフト軟膏",
-      "ひるどいどなんこう": "ヒルドイドソフト軟膏",
-      "ひるどいど": "ヒルドイドソフト軟膏",
-      "ひるどい": "ヒルドイドソフト軟膏",
-      "ひるど": "ヒルドイドソフト軟膏",
-      "ひるどいなんこう": "ヒルドイドソフト軟膏",
-      "ひるどなんこう": "ヒルドイドソフト軟膏",
-      "ひるなんこう": "ヒルドイドソフト軟膏",
-      "へぱりんるいじぶっしつゆせいくりーむ": "ヘパリン類似物質油性クリーム",
-      "へぱりんるいじぶっしつなんこう": "ヘパリン類似物質油性クリーム",
-      "へぱりんゆせいくりーむ": "ヘパリン類似物質油性クリーム",
-      "へぱゆせいくりーむ": "ヘパリン類似物質油性クリーム"
+      "ひるどいどろーしょん": "ヒルドイドローション",
+      "ひるろーしょん": "ヒルドイドローション",
+      "へぱりんるいじぶっしつろーしょん": "ヘパリン類似物質ローション",
+      "へぱりんろーしょん": "ヘパリン類似物質ローション",
+      "へぱろーしょん": "ヘパリン類似物質ローション"
     }
   },
   "drugResolution": {
     "brandToTags": {
-      "ヒルドイドソフト軟膏": [
+      "ヒルドイドローション": [
         "room_temperature_storage",
-        "ointment",
+        "lotion",
         "topical_application",
         "external_use",
         "apply_thin_layer",
         "avoid_mucosa",
         "wash_hands_before_use",
-        "ointment_application"
+        "lotion_application"
       ],
-      "ヘパリン類似物質油性クリーム": [
+      "ヘパリン類似物質ローション": [
         "room_temperature_storage",
-        "oily_cream",
+        "lotion",
         "topical_application",
         "external_use",
         "apply_thin_layer",
         "avoid_mucosa",
         "wash_hands_before_use",
-        "cream_application"
+        "lotion_application"
       ]
     }
   },
@@ -270,7 +213,7 @@
     "notes": null
   },
   "template": {
-    "templateId": "derm_heparinoid_moisturizer_ointment_v1",
+    "templateId": "derm_heparinoid_moisturizer_lotion_v1",
     "templateVersion": "1.0.0",
     "situationTags": [
       "general",
@@ -287,8 +230,7 @@
       "storage_product_specific"
     ],
     "formulationTags": [
-      "ointment",
-      "oily_cream"
+      "lotion"
     ],
     "handlingTags": [
       "topical_application",
@@ -298,18 +240,17 @@
       "apply_thin_layer",
       "avoid_mucosa",
       "wash_hands_before_use",
-      "ointment_application",
-      "cream_application"
+      "lotion_application"
     ]
   },
   "display": {
-    "title": "ヘパリン類似物質系保湿剤軟膏",
+    "title": "ヘパリン類似物質系保湿剤ローション",
     "subtitle": "皮膚乾燥・保湿目的に使用する外用保湿剤",
-    "drugClassLabel": "ヘパリン類似物質系保湿剤軟膏",
-    "drugGeneric": "ヘパリン類似物質系保湿剤軟膏",
-    "nodeLabelShort": "ヘパ軟膏",
-    "nodeLabelLong": "ヘパリン類似物質系保湿剤軟膏",
-    "nodeKey": "heparinoid_moisturizer_ointment",
+    "drugClassLabel": "ヘパリン類似物質系保湿剤ローション",
+    "drugGeneric": "ヘパリン類似物質系保湿剤ローション",
+    "nodeLabelShort": "ヘパL",
+    "nodeLabelLong": "ヘパリン類似物質系保湿剤ローション",
+    "nodeKey": "heparinoid_moisturizer_lotion",
     "menuGroupLabels": {
       "増量": "使用回数増",
       "減量": "使用回数減"
@@ -376,8 +317,8 @@
   "scenarios": [
     {
       "id": "initial_dryness",
-      "globalId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
-      "title": "ヘパリン類似物質系保湿剤軟膏 初回（乾燥）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.initial_dryness",
+      "title": "ヘパリン類似物質系保湿剤ローション 初回（乾燥）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -408,7 +349,7 @@
       "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -451,8 +392,8 @@
     },
     {
       "id": "initial_eczema",
-      "globalId": "derm_heparinoid_moisturizer_ointment.initial_eczema",
-      "title": "ヘパリン類似物質系保湿剤軟膏 初回（湿疹）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.initial_eczema",
+      "title": "ヘパリン類似物質系保湿剤ローション 初回（湿疹）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -483,7 +424,7 @@
       "P": "{{drug_subject}}は、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -526,8 +467,8 @@
     },
     {
       "id": "initial_skin_barrier_patch",
-      "globalId": "derm_heparinoid_moisturizer_ointment.initial_skin_barrier_patch",
-      "title": "ヘパリン類似物質系保湿剤軟膏 初回（皮膚バリア機能低下）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.initial_skin_barrier_patch",
+      "title": "ヘパリン類似物質系保湿剤ローション 初回（皮膚バリア機能低下）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -562,7 +503,7 @@
       "addonsRef": {
         "P": [
           "addon_topical_patch_timing",
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -605,8 +546,8 @@
     },
     {
       "id": "restart_dryness",
-      "globalId": "derm_heparinoid_moisturizer_ointment.restart_dryness",
-      "title": "ヘパリン類似物質系保湿剤軟膏 再開（乾燥）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.restart_dryness",
+      "title": "ヘパリン類似物質系保湿剤ローション 再開（乾燥）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -637,7 +578,7 @@
       "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -680,8 +621,8 @@
     },
     {
       "id": "restart_eczema",
-      "globalId": "derm_heparinoid_moisturizer_ointment.restart_eczema",
-      "title": "ヘパリン類似物質系保湿剤軟膏 再開（湿疹）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.restart_eczema",
+      "title": "ヘパリン類似物質系保湿剤ローション 再開（湿疹）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -712,7 +653,7 @@
       "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -755,8 +696,8 @@
     },
     {
       "id": "external_start_dryness",
-      "globalId": "derm_heparinoid_moisturizer_ointment.external_start_dryness",
-      "title": "ヘパリン類似物質系保湿剤軟膏 他所開始（乾燥）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.external_start_dryness",
+      "title": "ヘパリン類似物質系保湿剤ローション 他所開始（乾燥）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -787,7 +728,7 @@
       "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -830,8 +771,8 @@
     },
     {
       "id": "external_start_eczema",
-      "globalId": "derm_heparinoid_moisturizer_ointment.external_start_eczema",
-      "title": "ヘパリン類似物質系保湿剤軟膏 他所開始（湿疹）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.external_start_eczema",
+      "title": "ヘパリン類似物質系保湿剤ローション 他所開始（湿疹）",
       "scenarioType": "treatment_start",
       "scenarioGroup": "treatment_start",
       "sideEffectPresence": "not_applicable",
@@ -862,7 +803,7 @@
       "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
       "addonsRef": {
         "P": [
-          "addon_ointment_application_method",
+          "addon_lotion_application_method",
           "addon_topical_after_bath",
           "addon_topical_redness_warning"
         ]
@@ -905,8 +846,8 @@
     },
     {
       "id": "frequency_increase_low_perceived_effect",
-      "globalId": "derm_heparinoid_moisturizer_ointment.frequency_increase_low_perceived_effect",
-      "title": "ヘパリン類似物質系保湿剤軟膏 回数増（効果実感乏しい）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.frequency_increase_low_perceived_effect",
+      "title": "ヘパリン類似物質系保湿剤ローション 回数増（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "treatment_adjustment",
       "sideEffectPresence": "not_applicable",
@@ -976,8 +917,8 @@
     },
     {
       "id": "frequency_increase_due_to_other_med_adjustment",
-      "globalId": "derm_heparinoid_moisturizer_ointment.frequency_increase_due_to_other_med_adjustment",
-      "title": "ヘパリン類似物質系保湿剤軟膏 回数増（他剤との調整）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.frequency_increase_due_to_other_med_adjustment",
+      "title": "ヘパリン類似物質系保湿剤ローション 回数増（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "treatment_adjustment",
       "sideEffectPresence": "not_applicable",
@@ -1048,8 +989,8 @@
     },
     {
       "id": "frequency_decrease_improved",
-      "globalId": "derm_heparinoid_moisturizer_ointment.frequency_decrease_improved",
-      "title": "ヘパリン類似物質系保湿剤軟膏 回数減（症状改善）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.frequency_decrease_improved",
+      "title": "ヘパリン類似物質系保湿剤ローション 回数減（症状改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "treatment_adjustment",
       "sideEffectPresence": "not_applicable",
@@ -1114,8 +1055,8 @@
     },
     {
       "id": "frequency_decrease_low_perceived_effect",
-      "globalId": "derm_heparinoid_moisturizer_ointment.frequency_decrease_low_perceived_effect",
-      "title": "ヘパリン類似物質系保湿剤軟膏 回数減（効果実感乏しい）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.frequency_decrease_low_perceived_effect",
+      "title": "ヘパリン類似物質系保湿剤ローション 回数減（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "treatment_adjustment",
       "sideEffectPresence": "not_applicable",
@@ -1180,8 +1121,8 @@
     },
     {
       "id": "frequency_decrease_due_to_other_med_adjustment",
-      "globalId": "derm_heparinoid_moisturizer_ointment.frequency_decrease_due_to_other_med_adjustment",
-      "title": "ヘパリン類似物質系保湿剤軟膏 回数減（他剤との調整）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.frequency_decrease_due_to_other_med_adjustment",
+      "title": "ヘパリン類似物質系保湿剤ローション 回数減（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "treatment_adjustment",
       "sideEffectPresence": "not_applicable",
@@ -1247,8 +1188,8 @@
     },
     {
       "id": "se_contact_dermatitis_none",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_contact_dermatitis_none",
-      "title": "ヘパリン類似物質系保湿剤軟膏 副作用なし（接触皮膚炎）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_contact_dermatitis_none",
+      "title": "ヘパリン類似物質系保湿剤ローション 副作用なし（接触皮膚炎）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "absent_or_not_observed",
@@ -1309,8 +1250,8 @@
     },
     {
       "id": "se_redness_none",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_redness_none",
-      "title": "ヘパリン類似物質系保湿剤軟膏 副作用なし（発赤）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_redness_none",
+      "title": "ヘパリン類似物質系保湿剤ローション 副作用なし（発赤）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "absent_or_not_observed",
@@ -1371,8 +1312,8 @@
     },
     {
       "id": "se_pruritus_none",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_pruritus_none",
-      "title": "ヘパリン類似物質系保湿剤軟膏 副作用なし（掻痒感）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_pruritus_none",
+      "title": "ヘパリン類似物質系保湿剤ローション 副作用なし（掻痒感）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "absent_or_not_observed",
@@ -1433,8 +1374,8 @@
     },
     {
       "id": "se_dermatitis_none",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_dermatitis_none",
-      "title": "ヘパリン類似物質系保湿剤軟膏 副作用なし（皮膚炎）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_dermatitis_none",
+      "title": "ヘパリン類似物質系保湿剤ローション 副作用なし（皮膚炎）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "absent_or_not_observed",
@@ -1495,8 +1436,8 @@
     },
     {
       "id": "cp_good",
-      "globalId": "derm_heparinoid_moisturizer_ointment.cp_good",
-      "title": "ヘパリン類似物質系保湿剤軟膏 CP良好",
+      "globalId": "derm_heparinoid_moisturizer_lotion.cp_good",
+      "title": "ヘパリン類似物質系保湿剤ローション CP良好",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence",
       "sideEffectPresence": "not_applicable",
@@ -1556,8 +1497,8 @@
     },
     {
       "id": "cp_poor_missed_doses",
-      "globalId": "derm_heparinoid_moisturizer_ointment.cp_poor_missed_doses",
-      "title": "ヘパリン類似物質系保湿剤軟膏 CP不良（使用忘れ）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.cp_poor_missed_doses",
+      "title": "ヘパリン類似物質系保湿剤ローション CP不良（使用忘れ）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence",
       "sideEffectPresence": "not_applicable",
@@ -1618,8 +1559,8 @@
     },
     {
       "id": "cp_poor_self_adjust",
-      "globalId": "derm_heparinoid_moisturizer_ointment.cp_poor_self_adjust",
-      "title": "ヘパリン類似物質系保湿剤軟膏 CP不良（自己判断）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.cp_poor_self_adjust",
+      "title": "ヘパリン類似物質系保湿剤ローション CP不良（自己判断）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence",
       "sideEffectPresence": "not_applicable",
@@ -1680,8 +1621,8 @@
     },
     {
       "id": "cp_poor_visit_delay",
-      "globalId": "derm_heparinoid_moisturizer_ointment.cp_poor_visit_delay",
-      "title": "ヘパリン類似物質系保湿剤軟膏 CP不良（受診遅延）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.cp_poor_visit_delay",
+      "title": "ヘパリン類似物質系保湿剤ローション CP不良（受診遅延）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence",
       "sideEffectPresence": "not_applicable",
@@ -1742,8 +1683,8 @@
     },
     {
       "id": "as_needed_refill_needed",
-      "globalId": "derm_heparinoid_moisturizer_ointment.as_needed_refill_needed",
-      "title": "ヘパリン類似物質系保湿剤軟膏 頓用使用（処方あり）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.as_needed_refill_needed",
+      "title": "ヘパリン類似物質系保湿剤ローション 頓用使用（処方あり）",
       "scenarioType": "usage",
       "scenarioGroup": "as_needed",
       "sideEffectPresence": "not_applicable",
@@ -1804,8 +1745,8 @@
     },
     {
       "id": "as_needed_refill_not_needed",
-      "globalId": "derm_heparinoid_moisturizer_ointment.as_needed_refill_not_needed",
-      "title": "ヘパリン類似物質系保湿剤軟膏 頓用使用（処方なし）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.as_needed_refill_not_needed",
+      "title": "ヘパリン類似物質系保湿剤ローション 頓用使用（処方なし）",
       "scenarioType": "usage",
       "scenarioGroup": "as_needed",
       "sideEffectPresence": "not_applicable",
@@ -1866,8 +1807,8 @@
     },
     {
       "id": "end_improved",
-      "globalId": "derm_heparinoid_moisturizer_ointment.end_improved",
-      "title": "ヘパリン類似物質系保湿剤軟膏 終了（改善）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.end_improved",
+      "title": "ヘパリン類似物質系保湿剤ローション 終了（改善）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "treatment_end",
       "sideEffectPresence": "not_applicable",
@@ -1931,8 +1872,8 @@
     },
     {
       "id": "end_insufficient_effect",
-      "globalId": "derm_heparinoid_moisturizer_ointment.end_insufficient_effect",
-      "title": "ヘパリン類似物質系保湿剤軟膏 終了（効果不十分）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.end_insufficient_effect",
+      "title": "ヘパリン類似物質系保湿剤ローション 終了（効果不十分）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "treatment_end",
       "sideEffectPresence": "not_applicable",
@@ -1996,8 +1937,8 @@
     },
     {
       "id": "end_ineffective",
-      "globalId": "derm_heparinoid_moisturizer_ointment.end_ineffective",
-      "title": "ヘパリン類似物質系保湿剤軟膏 終了（無効）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.end_ineffective",
+      "title": "ヘパリン類似物質系保湿剤ローション 終了（無効）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "treatment_end",
       "sideEffectPresence": "not_applicable",
@@ -2061,8 +2002,8 @@
     },
     {
       "id": "se_mild_continue",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_mild_continue",
-      "title": "ヘパリン類似物質系保湿剤軟膏 SE継続（軽症）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_mild_continue",
+      "title": "ヘパリン類似物質系保湿剤ローション SE継続（軽症）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "present_mild",
@@ -2127,8 +2068,8 @@
     },
     {
       "id": "se_change_due_to_pruritus",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_change_due_to_pruritus",
-      "title": "ヘパリン類似物質系保湿剤軟膏 SE変更（かゆみ）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_change_due_to_pruritus",
+      "title": "ヘパリン類似物質系保湿剤ローション SE変更（かゆみ）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "present_change",
@@ -2195,8 +2136,8 @@
     },
     {
       "id": "se_frequency_decrease_due_to_pruritus",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_frequency_decrease_due_to_pruritus",
-      "title": "ヘパリン類似物質系保湿剤軟膏 SE回数減（かゆみ）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_frequency_decrease_due_to_pruritus",
+      "title": "ヘパリン類似物質系保湿剤ローション SE回数減（かゆみ）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "present_dose_decrease",
@@ -2263,8 +2204,8 @@
     },
     {
       "id": "se_stop_due_to_pruritus",
-      "globalId": "derm_heparinoid_moisturizer_ointment.se_stop_due_to_pruritus",
-      "title": "ヘパリン類似物質系保湿剤軟膏 SE中止（かゆみ）",
+      "globalId": "derm_heparinoid_moisturizer_lotion.se_stop_due_to_pruritus",
+      "title": "ヘパリン類似物質系保湿剤ローション SE中止（かゆみ）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "present_stop",
@@ -2331,7 +2272,7 @@
     },
     {
       "id": "lifestyle_guidance_moisturizing",
-      "globalId": "derm_heparinoid_moisturizer_ointment.lifestyle_guidance_moisturizing",
+      "globalId": "derm_heparinoid_moisturizer_lotion.lifestyle_guidance_moisturizing",
       "title": "生活指導（保湿）",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
@@ -2398,9 +2339,9 @@
   ],
   "addons": {
     "items": {
-      "addon_ointment_application_method": {
-        "key": "addon_ointment_application_method",
-        "id": "addon_ointment_application_method",
+      "addon_lotion_application_method": {
+        "key": "addon_lotion_application_method",
+        "id": "addon_lotion_application_method",
         "title": "塗布方法説明",
         "group": "lifestyle_guidance",
         "targetSection": "P",
@@ -2409,7 +2350,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "text": "清潔な手で、薄く伸ばして使用してください。",
+        "text": "清潔な手で、適量を薄く伸ばして使用してください。",
         "intentTags": [
           "administration_instruction"
         ]
@@ -2465,6 +2406,111 @@
     },
     "orderPresets": {}
   },
+  "expressModes": [
+    {
+      "enabled": true,
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドローション",
+      "genericDisplayName": "ローション",
+      "defaultScenarioId": "initial_dryness",
+      "defaultBrandName": "ヒルドイドローション",
+      "genericBrandName": "ヘパリン類似物質ローション",
+      "sortOrder": 1,
+      "scenarioCandidates": [
+        {
+          "scenarioId": "initial_dryness",
+          "label": "乾燥"
+        },
+        {
+          "scenarioId": "initial_eczema",
+          "label": "湿疹"
+        },
+        {
+          "scenarioId": "initial_skin_barrier_patch",
+          "label": "皮膚バリア / パッチかぶれ"
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドソフト軟膏",
+      "genericDisplayName": "油性クリーム",
+      "sortOrder": 2
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドクリーム",
+      "genericDisplayName": "クリーム",
+      "sortOrder": 3
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドゲル",
+      "genericDisplayName": "ゲル",
+      "sortOrder": 4
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドフォーム / スプレー",
+      "genericDisplayName": "フォーム / スプレー",
+      "sortOrder": 5
+    }
+  ],
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "drug_effect_explanation",
+      "side_effect_attention",
+      "dose_increase_explanation",
+      "dose_decrease_explanation",
+      "treatment_end_explanation",
+      "adherence_support",
+      "usage_guidance",
+      "administration_instruction",
+      "concomitant_drug_attention",
+      "followup_monitoring",
+      "lifestyle_guidance"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
   "ui": {
     "panels": [
       {
@@ -2504,166 +2550,40 @@
     "secondary": [],
     "conditional": []
   },
-  "searchConfig": {
-    "minPrefixLen": 2,
-    "normalize": {
-      "toHiragana": true,
-      "lowerLatin": true,
-      "stripSymbols": true,
-      "zenkakuToHankaku": true,
-      "trimSpaces": true
-    },
-    "multiTerm": {
-      "enabled": true,
-      "operator": "AND",
-      "match": "prefix"
-    }
-  },
   "index": {
     "searchableText": [
-      "ヒルドイドソフト軟膏",
-      "ヒルドイド軟膏",
-      "ヘパリン類似物質油性クリーム",
-      "ヘパリン類似物質軟膏",
-      "ひるどいどそふとなんこう",
-      "ひるどいどなんこう",
-      "ひるどいど",
-      "ひるどい",
-      "ひるど",
-      "ひるどいなんこう",
-      "ひるどなんこう",
-      "ひるなんこう",
+      "ヒルドイドローション",
+      "ヘパリン類似物質ローション",
+      "ひるどいどろーしょん",
+      "ひるろーしょん",
       "へぱ",
-      "へぱなんこう",
+      "へぱろーしょん",
       "へぱりん",
-      "へぱりんなんこう",
+      "へぱりんろーしょん",
       "へぱりんるいじ",
       "へぱりんるいじぶっしつ",
-      "へぱりんゆせいくりーむ",
-      "へぱゆせいくりーむ",
-      "へぱりんるいじぶっしつなんこう",
-      "へぱりんるいじぶっしつゆせいくりーむ",
+      "へぱりんるいじぶっしつろーしょん",
       "保湿",
       "乾燥",
       "皮膚乾燥",
       "外用",
-      "軟膏",
-      "油性クリーム",
+      "ローション",
       "皮膚科",
-      "ヘパリン類似物質系保湿剤軟膏",
+      "ヘパリン類似物質系保湿剤ローション",
       "保湿剤",
       "ヘパリン類似物質"
     ],
     "normalizedTokens": [
-      "ひるどいどそふとなんこう",
-      "ひるどいどなんこう",
-      "ひるどいど",
-      "ひるどい",
-      "ひるど",
-      "ひるどいなんこう",
-      "ひるどなんこう",
-      "ひるなんこう",
+      "ひるどいどろーしょん",
+      "ひるろーしょん",
       "へぱ",
-      "へぱなんこう",
+      "へぱろーしょん",
       "へぱりん",
-      "へぱりんなんこう",
+      "へぱりんろーしょん",
       "へぱりんるいじ",
       "へぱりんるいじぶっしつ",
-      "へぱりんゆせいくりーむ",
-      "へぱゆせいくりーむ",
-      "へぱりんるいじぶっしつなんこう",
-      "へぱりんるいじぶっしつゆせいくりーむ"
+      "へぱりんるいじぶっしつろーしょん"
     ],
     "facets": {}
-  },
-  "tagCatalog": {
-    "intentTags": [
-      "drug_effect_explanation",
-      "side_effect_attention",
-      "dose_increase_explanation",
-      "dose_decrease_explanation",
-      "treatment_end_explanation",
-      "adherence_support",
-      "usage_guidance",
-      "administration_instruction",
-      "concomitant_drug_attention",
-      "followup_monitoring",
-      "lifestyle_guidance"
-    ],
-    "clinicalTags": [],
-    "counselingTags": [],
-    "workflowTags": []
-  },
-  "expressModes": [
-    {
-      "enabled": true,
-      "expressCategory": "皮膚科",
-      "expressGroup": "ヘパリン",
-      "expressSubGroup": "剤形",
-      "label": "ヒルドイドソフト軟膏",
-      "genericDisplayName": "油性クリーム",
-      "defaultScenarioId": "initial_dryness",
-      "defaultBrandName": "ヒルドイドソフト軟膏",
-      "genericBrandName": "ヘパリン類似物質油性クリーム",
-      "sortOrder": 1,
-      "scenarioCandidates": [
-        {
-          "scenarioId": "initial_dryness",
-          "label": "乾燥"
-        },
-        {
-          "scenarioId": "initial_eczema",
-          "label": "湿疹"
-        },
-        {
-          "scenarioId": "initial_skin_barrier_patch",
-          "label": "皮膚バリア / パッチかぶれ"
-        }
-      ]
-    },
-    {
-      "enabled": true,
-      "disabled": true,
-      "disabledReason": "準備中",
-      "expressCategory": "皮膚科",
-      "expressGroup": "ヘパリン",
-      "expressSubGroup": "剤形",
-      "label": "ヒルドイドクリーム",
-      "genericDisplayName": "クリーム",
-      "sortOrder": 2
-    },
-    {
-      "enabled": true,
-      "disabled": true,
-      "disabledReason": "準備中",
-      "expressCategory": "皮膚科",
-      "expressGroup": "ヘパリン",
-      "expressSubGroup": "剤形",
-      "label": "ヒルドイドゲル",
-      "genericDisplayName": "ゲル",
-      "sortOrder": 3
-    },
-    {
-      "enabled": true,
-      "disabled": true,
-      "disabledReason": "準備中",
-      "expressCategory": "皮膚科",
-      "expressGroup": "ヘパリン",
-      "expressSubGroup": "剤形",
-      "label": "ヒルドイドローション",
-      "genericDisplayName": "ローション",
-      "sortOrder": 4
-    },
-    {
-      "enabled": true,
-      "disabled": true,
-      "disabledReason": "準備中",
-      "expressCategory": "皮膚科",
-      "expressGroup": "ヘパリン",
-      "expressSubGroup": "剤形",
-      "label": "ヒルドイドフォーム / スプレー",
-      "genericDisplayName": "フォーム / スプレー",
-      "sortOrder": 5
-    }
-  ]
+  }
 }

@@ -654,7 +654,10 @@ export interface ModuleData {
      * label            — 入力欄のラベル（例: "部位"）
      * placeholder      — プレースホルダーテキスト
      * targetField      — 反映先フィールド（現時点では "S" のみ対応）
-     * insertMode       — 挿入モード。"prefix" = Sの先頭語を置換/補完
+     * insertMode       — 挿入モード。
+     *                    "prefix"      = Sの先頭語を置換/補完（旧方式）
+     *                    "placeholder" = S本文中の {{applicationSite}} を localSiteInput で置換。
+     *                                    未入力時は {{applicationSite}} トークンを除去して返す。
      * applyScenarioIds — 入力欄を表示・適用するシナリオIDのホワイトリスト。
      *                    未定義または空配列の場合はすべてのシナリオで適用する。
      * emptyBehavior    — 入力欄が空のときの挙動。
@@ -666,7 +669,7 @@ export interface ModuleData {
       label: string
       placeholder?: string
       targetField: 'S'
-      insertMode: 'prefix'
+      insertMode: 'prefix' | 'placeholder'
       applyScenarioIds?: string[]
       emptyBehavior?: 'keep_original'
     }

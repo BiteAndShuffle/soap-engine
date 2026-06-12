@@ -374,6 +374,10 @@ interface ThirdPanelProps {
     placeholder?: string
     applyScenarioIds?: string[]
     emptyBehavior?: 'keep_original'
+    /** 'placeholder' モードのとき方向+部位ボタンを表示する。'prefix' または未定義は従来動作。 */
+    insertMode?: 'prefix' | 'placeholder'
+    /** 点眼薬モード: 部位ボタンを眼科用（左・右・両のみ）にする */
+    siteButtonType?: 'topical' | 'eye'
   }
   /** 部位入力の現在値 */
   localSiteInput?: string
@@ -725,19 +729,82 @@ export default function ThirdPanel({
           )}
 
           {/* 部位入力欄: display.localInput.enabled === true かつ「初回」グループのみ */}
-          {localInputConfig?.enabled && thirdPanelEnabled && selectedGroup === '初回' && (
-            <div className={s.localInputHighlight}>
-              <div className={s.localInputLabel}>{localInputConfig.label}</div>
-              <input
-                type="text"
-                className={s.localSiteInput}
-                placeholder={localInputConfig.placeholder ?? ''}
-                value={localSiteInput}
-                onChange={e => onLocalSiteInputChange?.(e.target.value)}
-              />
-              <div className={s.localInputHint}>入力するとSOAPの部位表現に反映されます</div>
-            </div>
-          )}
+          {localInputConfig?.enabled && thirdPanelEnabled && selectedGroup === '初回' && (() => {
+            const isPlaceholderMode = localInputConfig.insertMode === 'placeholder'
+            const isEye = localInputConfig.siteButtonType === 'eye'
+            const DIRECTIONS = ['左', '右', '両']
+            const TOPICAL_SITES = ['手', '足', '腕', '膝', '肘', '肩', '顔', '首', '背中', '腹']
+            return (
+              <div className={s.localInputHighlight}>
+                <div className={s.localInputLabel}>{localInputConfig.label}</div>
+                {isPlaceholderMode && (
+                  <div className={s.siteButtonArea}>
+                    <div className={s.siteDirectionRow}>
+                      {DIRECTIONS.map(dir => (
+                        <button
+                          key={dir}
+                          type="button"
+                          className={[
+                            s.siteDirectionBtn,
+                            localSiteInput.startsWith(dir) ? s.siteDirectionBtnActive : '',
+                          ].join(' ')}
+                          onClick={() => {
+                            // 現在の方向プレフィックスを外して dir に付け替え
+                            const current = localSiteInput
+                            const stripped = DIRECTIONS.reduce((v, d) => v.startsWith(d) ? v.slice(d.length) : v, current)
+                            onLocalSiteInputChange?.(dir + stripped)
+                          }}
+                        >
+                          {dir}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        className={s.siteDirectionClearBtn}
+                        onClick={() => {
+                          const current = localSiteInput
+                          const stripped = DIRECTIONS.reduce((v, d) => v.startsWith(d) ? v.slice(d.length) : v, current)
+                          onLocalSiteInputChange?.(stripped)
+                        }}
+                      >
+                        方向解除
+                      </button>
+                    </div>
+                    {!isEye && (
+                      <div className={s.siteBtnGrid}>
+                        {TOPICAL_SITES.map(site => (
+                          <button
+                            key={site}
+                            type="button"
+                            className={[
+                              s.siteBtn,
+                              localSiteInput.endsWith(site) ? s.siteBtnActive : '',
+                            ].join(' ')}
+                            onClick={() => {
+                              const current = localSiteInput
+                              // 方向プレフィックスを保持して部位だけ差し替え
+                              const dir = DIRECTIONS.find(d => current.startsWith(d)) ?? ''
+                              onLocalSiteInputChange?.(dir + site)
+                            }}
+                          >
+                            {site}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <input
+                  type="text"
+                  className={s.localSiteInput}
+                  placeholder={localInputConfig.placeholder ?? ''}
+                  value={localSiteInput}
+                  onChange={e => onLocalSiteInputChange?.(e.target.value)}
+                />
+                <div className={s.localInputHint}>入力するとSOAPの部位表現に反映されます</div>
+              </div>
+            )
+          })()}
         </div>
 
         {/* S先頭文ボタン: 単剤 + 対象グループのみ */}
