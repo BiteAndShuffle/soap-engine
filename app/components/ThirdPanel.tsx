@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback, useEffect, useId } from 'react'
 import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
-import type { Scenario } from '../../lib/types'
+import type { Scenario, ModuleData } from '../../lib/types'
 import type { SRelation, SCondition } from './SoapEditor'
 import { isSReplacementEligible } from '../../lib/isSReplacementEligible'
 import s from '../styles/layout.module.css'
@@ -367,18 +367,9 @@ interface ThirdPanelProps {
   /**
    * 部位入力欄の設定。display.localInput から渡される。
    * enabled === true のモジュールのみ入力欄を表示する。
+   * lib/types.ts の ModuleData['display']['localInput'] と型を共有する。
    */
-  localInputConfig?: {
-    enabled: boolean
-    label: string
-    placeholder?: string
-    applyScenarioIds?: string[]
-    emptyBehavior?: 'keep_original'
-    /** 'placeholder' モードのとき方向+部位ボタンを表示する。'prefix' または未定義は従来動作。 */
-    insertMode?: 'prefix' | 'placeholder'
-    /** 点眼薬モード: 部位ボタンを眼科用（左・右・両のみ）にする */
-    siteButtonType?: 'topical' | 'eye'
-  }
+  localInputConfig?: NonNullable<ModuleData['display']>['localInput']
   /** 部位入力の現在値 */
   localSiteInput?: string
   /** 部位入力変更ハンドラ */
@@ -731,22 +722,48 @@ export default function ThirdPanel({
           {/* 部位入力欄: display.localInput.enabled === true かつ「初回」グループのみ */}
           {localInputConfig?.enabled && thirdPanelEnabled && selectedGroup === '初回' && (() => {
             const isPlaceholderMode = localInputConfig.insertMode === 'placeholder'
-            const isEye = localInputConfig.siteButtonType === 'eye'
+            // siteButtonType は JSON 側で明示される。未定義ならボタンなし。
+            const siteButtonType = localInputConfig.siteButtonType  // 'topical' | 'eye' | undefined
+            const showButtons = isPlaceholderMode && siteButtonType != null
+
             const DIRECTIONS = ['左', '右', '両']
             const TOPICAL_SITES = ['手', '足', '腕', '膝', '肘', '肩', '顔', '首', '背中', '腹']
-            const EYE_SITES = ['眼']
 
             // 方向プレフィックスを除いた本体部分を返す
-            const stripDir = (v: string) => DIRECTIONS.reduce((s, d) => s.startsWith(d) ? s.slice(d.length) : s, v)
-            // 現在の方向プレフィックスを取得（なければ空文字）
+            const stripDir = (v: string) =>
+              DIRECTIONS.reduce((acc, d) => acc.startsWith(d) ? acc.slice(d.length) : acc, v)
+            // 現在選択中の方向（なければ空文字）
             const currentDir = DIRECTIONS.find(d => localSiteInput.startsWith(d)) ?? ''
+            // 現在選択中の部位（方向を除いた残り）
+            const currentSite = stripDir(localSiteInput)
+
+            // 方向ボタンのクリック: 同じ方向を再タップで解除、別の方向で切り替え
+            const handleDirClick = (dir: string) => {
+              const body = stripDir(localSiteInput)
+              if (currentDir === dir) {
+                // トグル解除: 部位のみ残す（点眼: eye モードは 右 → 右眼 なので body が空になる）
+                onLocalSiteInputChange?.(body)
+              } else {
+                onLocalSiteInputChange?.(dir + body)
+              }
+            }
+
+            // 部位ボタンのクリック: 同じ部位を再タップで解除、別の部位で切り替え
+            const handleSiteClick = (site: string) => {
+              if (currentSite === site) {
+                // トグル解除: 方向のみ残す
+                onLocalSiteInputChange?.(currentDir)
+              } else {
+                onLocalSiteInputChange?.(currentDir + site)
+              }
+            }
 
             return (
               <div className={s.localInputHighlight}>
                 <div className={s.localInputLabel}>{localInputConfig.label}</div>
-                {isPlaceholderMode && (
+                {showButtons && (
                   <div className={s.siteButtonArea}>
-                    {/* 方向セクション */}
+                    {/* 方向セクション（外用・点眼共通） */}
                     <div className={s.siteSectionLabel}>方向</div>
                     <div className={s.siteDirectionRow}>
                       {DIRECTIONS.map(dir => (
@@ -757,45 +774,35 @@ export default function ThirdPanel({
                             s.siteDirectionBtn,
                             currentDir === dir ? s.siteDirectionBtnActive : '',
                           ].join(' ')}
-                          onClick={() => {
-                            onLocalSiteInputChange?.(dir + stripDir(localSiteInput))
-                          }}
+                          onClick={() => handleDirClick(dir)}
                         >
                           {dir}
                         </button>
                       ))}
-                      <button
-                        type="button"
-                        className={s.siteDirectionClearBtn}
-                        onClick={() => {
-                          onLocalSiteInputChange?.(stripDir(localSiteInput))
-                        }}
-                      >
-                        解除
-                      </button>
                     </div>
 
-                    <div className={s.siteSectionDivider} />
-
-                    {/* 部位セクション */}
-                    <div className={s.siteSectionLabel}>部位</div>
-                    <div className={s.siteBtnGrid}>
-                      {(isEye ? EYE_SITES : TOPICAL_SITES).map(site => (
-                        <button
-                          key={site}
-                          type="button"
-                          className={[
-                            s.siteBtn,
-                            stripDir(localSiteInput) === site ? s.siteBtnActive : '',
-                          ].join(' ')}
-                          onClick={() => {
-                            onLocalSiteInputChange?.(currentDir + site)
-                          }}
-                        >
-                          {site}
-                        </button>
-                      ))}
-                    </div>
+                    {/* 部位セクション（外用のみ。点眼は方向ボタンで左眼/右眼/両眼を生成） */}
+                    {siteButtonType === 'topical' && (
+                      <>
+                        <div className={s.siteSectionDivider} />
+                        <div className={s.siteSectionLabel}>部位</div>
+                        <div className={s.siteBtnGrid}>
+                          {TOPICAL_SITES.map(site => (
+                            <button
+                              key={site}
+                              type="button"
+                              className={[
+                                s.siteBtn,
+                                currentSite === site ? s.siteBtnActive : '',
+                              ].join(' ')}
+                              onClick={() => handleSiteClick(site)}
+                            >
+                              {site}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 

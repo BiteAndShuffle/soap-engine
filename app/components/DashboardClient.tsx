@@ -1648,11 +1648,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             activeExpressKeys={activeExpressKeys}
             onExpressAdd={handleExpressAdd}
             menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
-            localInputConfig={targetModule.display?.localInput ? {
-              ...targetModule.display.localInput,
-              insertMode: targetModule.display.localInput.insertMode,
-              siteButtonType: targetModule.drug?.route === 'topical' ? 'topical' : 'eye',
-            } : undefined}
+            localInputConfig={targetModule.display?.localInput ?? undefined}
             localSiteInput={localSiteInput}
             onLocalSiteInputChange={setLocalSiteInput}
           />

@@ -670,6 +670,16 @@ export interface ModuleData {
       placeholder?: string
       targetField: 'S'
       insertMode: 'prefix' | 'placeholder'
+      /**
+       * ボタン UI の種別。insertMode === 'placeholder' のときのみ参照する。
+       *   "topical" — 外用薬: 方向（左/右/両）+ 部位グリッドを表示。
+       *   "eye"     — 点眼薬: 方向（左/右/両）のみ表示。クリックで 左眼/右眼/両眼 を生成。
+       *   未定義    — ボタン UI なし（自由入力欄のみ）。
+       *
+       * JSON 側から明示指定することで、route/dosageForm に依らず
+       * 将来のモジュール追加時も自然に整合する。
+       */
+      siteButtonType?: 'topical' | 'eye'
       applyScenarioIds?: string[]
       emptyBehavior?: 'keep_original'
     }

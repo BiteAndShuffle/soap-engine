@@ -361,10 +361,11 @@
     },
     "localInput": {
       "enabled": true,
-      "label": "外用部位（任意）",
+      "label": "点眼部位（任意）",
       "placeholder": "左・右・両 など",
       "targetField": "S",
       "insertMode": "placeholder",
+      "siteButtonType": "eye",
       "applyScenarioIds": [
         "initial",
         "restart",

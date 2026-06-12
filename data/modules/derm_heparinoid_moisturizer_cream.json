@@ -265,6 +265,7 @@
       "placeholder": "例：右膝、顔、背中",
       "targetField": "S",
       "insertMode": "placeholder",
+      "siteButtonType": "topical",
       "applyScenarioIds": [
         "initial_dryness",
         "initial_eczema",
