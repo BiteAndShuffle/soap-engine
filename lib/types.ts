@@ -443,6 +443,13 @@ export interface ComposeNode {
    * buildNodeFields / handleAddonToggle から参照される。
    */
   resolvedDrugName?: string
+  /**
+   * このノードに紐づく localSiteInput（部位入力値）。
+   * display.localInput.insertMode === 'placeholder' のモジュールで使用する。
+   * 空文字 = 未入力。{{applicationSite}} は未入力時に自動除去される。
+   * 薬剤ごとに異なる部位を指定できるよう、グローバル state とは分離して保持する。
+   */
+  localSiteInput?: string
 }
 
 // ─────────────────────────────────────────────────────────────

@@ -19,6 +19,7 @@ import { getVisibleAddonKeys } from '../../lib/addonFilter'
 import { type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
+import { applyPlaceholder as applyPlaceholderFn } from '../../lib/applyPlaceholder'
 import { derivePersonaGuard } from '../../lib/personaGuard'
 import type { ValidationResult } from '../../lib/validationRunner'
 
@@ -198,7 +199,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [sCondition, setSCondition] = useState<SCondition>('stable')
 
   // ── localSiteInput: display.localInput 対応モジュール用・部位入力 ──
-  // 入力がある場合のみ finalFields.S の先頭語に反映する（空文字なら現状維持）。
+  // 1剤目（primaryBaseFields）に紐づく部位入力値。
+  // 2剤目以降（ComposeNode）は node.localSiteInput に個別保持する。
+  // 現在の編集コンテキストに応じて activeLocalSiteInput を使う（下記参照）。
   const [localSiteInput, setLocalSiteInput] = useState('')
 
   // ── 単剤フラグ（副作用なし / CP良好）: 単剤時のみ有効 ──────
@@ -328,123 +331,109 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // displayFields（生成ロジック）には一切触れない。
   const baseFields = editedSOAP ?? displayFields
 
-  // ── localSiteInput の S prefix 適用 ──────────────────────────
-  // display.localInput.enabled が true かつ localSiteInput に入力があるときのみ
-  // S の先頭語（最初の助詞「の/が/は/で/を」の直前まで）を localSiteInput で置換する。
-  // 未入力・localInput 未定義の場合は baseFields をそのまま使う。
+  // ── activeLocalSiteInput: 現在編集中のコンテキストに紐づく部位入力値 ──
+  // activeNode !== null → そのノードの localSiteInput（per-node 保持）
+  // activeNode === null → グローバルの localSiteInput（1剤目用）
+  const activeLocalSiteInput = activeNode !== null
+    ? (activeNode.localSiteInput ?? '')
+    : localSiteInput
+
+  // ── finalFields: {{applicationSite}} placeholder 解決 + prefix 適用 ──
   //
-  // applyScenarioIds が指定されている場合、現在のシナリオ（ローカル id）が
-  // その配列に含まれていないとき、入力欄の適用をスキップして baseFields を返す。
-  // emptyBehavior === "keep_original" の場合、localSiteInput が空のとき baseFields を返す。
+  // 設計:
+  //   薬剤ごとに異なる部位を指定できるよう、applicationSite は per-node で保持する。
+  //   - 1剤目 → localSiteInput（グローバル state）
+  //   - 2剤目以降 → composeNode.localSiteInput（ノード固有）
   //
-  // Express 2剤目+ (activeNode !== null) の場合:
-  //   baseFields.S はすべての合成ノードがマージされた後の値であるため、
-  //   対象ノードの block.fields.S にだけ prefix を適用して再マージする。
-  // 1剤目 (activeNode === null) の場合:
-  //   primaryBaseFields.S にのみ prefix を適用して再マージする。
+  //   多剤合成時は全ノードに対してそれぞれのモジュール設定・siteInput で解決する。
+  //   これにより「軟膏: 右肩 / クリーム: 腹 / ローション: 左肩」が別々に反映される。
+  //
+  //   共通関数 applyPlaceholderFn（lib/applyPlaceholder.ts）で単剤・多剤を統一処理。
+  //
+  // applyScenarioIds チェック:
+  //   各ノード/プライマリのシナリオIDが applyScenarioIds に含まれない場合はスキップ。
+  //
+  // applyPrefix（prefix モード）:
+  //   現行の insertMode: 'prefix' 互換。activeLocalSiteInput のみ参照。
+  //   多剤合成には適用しない（prefix モードは単剤想定）。
   const finalFields = (() => {
-    const localInputConfig = targetModule.display?.localInput
-    if (!localInputConfig?.enabled) return baseFields
+    if (editedSOAP !== null) return baseFields
 
-    // applyScenarioIds チェック: 現在のシナリオのローカル id が対象か確認する
-    const applyIds = localInputConfig.applyScenarioIds
-    if (applyIds && applyIds.length > 0) {
-      // アクティブシナリオのローカル id を解決する
-      const activeLocalId = activeNode !== null
-        ? targetModule.scenarios.find(sc => sc.globalId === activeNode.scenarioId)?.id
-        : primaryScenario?.id
-      if (!activeLocalId || !applyIds.includes(activeLocalId)) return baseFields
-    }
+    // ────────────────────────────────────────────────────────
+    // ユーティリティ: モジュールの localInput 設定を用いて
+    // 指定の siteInput で S テキストを解決する。
+    // applyScenarioIds のチェックも行い、対象外なら null を返す。
+    // ────────────────────────────────────────────────────────
+    const resolveS = (
+      s: string,
+      siteInput: string,
+      mod: ModuleData,
+      scenarioLocalId: string | undefined,
+    ): string | null => {
+      const cfg = mod.display?.localInput
+      if (!cfg?.enabled) return null  // localInput 非対応モジュールはスキップ
 
-    // emptyBehavior チェック: 空入力時の挙動
-    // - insertMode === 'placeholder': 空でも applyPlaceholder を呼ぶ（{{applicationSite}} 除去のため）
-    // - insertMode === 'prefix': 空なら baseFields をそのまま返す
-    const insertMode = localInputConfig.insertMode ?? 'prefix'
-    if (insertMode !== 'placeholder' && !localSiteInput.trim()) return baseFields
+      const applyIds = cfg.applyScenarioIds
+      if (applyIds && applyIds.length > 0) {
+        if (!scenarioLocalId || !applyIds.includes(scenarioLocalId)) return null
+      }
 
-    // applyPrefix: S行の最初の名詞（助詞直前まで）を localSiteInput で置換する。
-    // 「薬剤名は、...」形式の S（drug_subject 解決済み）の場合:
-    //   「は、」の前の主語部分を保持し、「は、」以降に対してのみ prefix を適用する。
-    //   例: "アレジオン点眼液は、目のかゆみが気になるため追加となった。" + "両目"
-    //     → "アレジオン点眼液は、両目のかゆみが気になるため追加となった。"
-    // それ以外の形式（主語なし）の場合:
-    //   従来どおり先頭から最初の助詞までを localSiteInput で置換する。
-    //   例: "目のかゆみが気になるため、薬が追加となった。" + "両目"
-    //     → "両目のかゆみが気になるため、薬が追加となった。"
-    const applyPrefix = (s: string): string | null => {
-      // 「主語は、本文」形式を検出: 先頭から「は、」または「は,」までを主語として扱う
+      const insertMode = cfg.insertMode ?? 'prefix'
+      if (insertMode === 'placeholder') {
+        return applyPlaceholderFn(s, siteInput, cfg.siteButtonType)
+      }
+
+      // prefix モード（旧方式）: siteInput が空なら適用しない
+      if (!siteInput.trim()) return null
       const subjectMatch = s.match(/^(.+?)(は[、,])(.+)$/)
       if (subjectMatch) {
-        const prefix = subjectMatch[1] + subjectMatch[2]  // 例: "アレジオン点眼液は、"
-        const rest   = subjectMatch[3]                    // 例: "目のかゆみが気になるため追加となった。"
+        const prefix = subjectMatch[1] + subjectMatch[2]
+        const rest   = subjectMatch[3]
         const particleMatch = rest.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
         if (!particleMatch) return null
-        return prefix + localSiteInput.trim() + particleMatch[2] + rest.slice(particleMatch[0].length)
+        return prefix + siteInput.trim() + particleMatch[2] + rest.slice(particleMatch[0].length)
       }
-      // 主語なし形式: 先頭から最初の助詞まで置換
       const particleMatch = s.match(/^(.+?)(の|が|は|で|を|へ|と|も)/)
       if (!particleMatch) return null
-      return localSiteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
+      return siteInput.trim() + particleMatch[2] + s.slice(particleMatch[0].length)
     }
 
-    // applyPlaceholder: S本文中の {{applicationSite}} を localSiteInput で置換する。
-    // 未入力時は {{applicationSite}} トークンおよび直後の「の」「眼」を除去する。
-    //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + "右膝" → "〜は、右膝の乾燥が〜"
-    //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + ""    → "〜は、乾燥が〜"
-    //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + "右"  → 方向のみは空扱い → "〜は、乾燥が〜"
-    //   例（点眼）: "〜は、{{applicationSite}}眼のかゆみが〜" + "右" → "〜は、右眼のかゆみが〜"
-    //   例（点眼）: "〜は、{{applicationSite}}眼のかゆみが〜" + ""   → "〜は、眼のかゆみが〜"
-    const PLACEHOLDER_DIRECTIONS = ['左', '右', '両'] as const
-    const applyPlaceholder = (s: string): string => {
-      let site = localSiteInput.trim()
-      // topical モードでは方向のみ（部位なし）を空扱いにする。
-      // 例: "右" → 部位なし → 空欄と同様に {{applicationSite}} を除去。
-      // 自由入力欄から "右" と手打ちされた場合も同様に扱う。
-      if (localInputConfig.siteButtonType === 'topical') {
-        const isDirectionOnly = PLACEHOLDER_DIRECTIONS.some(d => site === d)
-        if (isDirectionOnly) site = ''
-      }
-      if (site) {
-        return s.replace('{{applicationSite}}', site)
-      }
-      // 未入力: {{applicationSite}} トークンを除去。直後の「の」も除去（外用薬パターン）
-      return s.replace('{{applicationSite}}の', '').replace('{{applicationSite}}', '')
-    }
-
-    const applyFn = insertMode === 'placeholder'
-      ? (s: string) => applyPlaceholder(s)
-      : (s: string) => applyPrefix(s)
-
-    if (activeNode !== null) {
-      // Express 合成ノードのSだけを差し替えて再マージ
-      const patchedNodes = composeNodes.map(n => {
-        if (n.id !== activeNode.id) return n
-        const originalS = n.block.fields.S
-        if (!originalS) return n
-        const patchedS = applyFn(originalS)
-        if (!patchedS) return n
-        return { ...n, block: { ...n.block, fields: { ...n.block.fields, S: patchedS } } }
-      })
-      const patched = computeDisplayFields(primaryBaseFields, primaryScenario, patchedNodes, activeModuleData.defaults, activeModuleData)
-      return editedSOAP !== null ? baseFields : patched
-    }
-
-    // 1剤目: primaryBaseFields.S にのみ変換を適用して再マージ
-    // baseFields.S は合成済みの場合もあるため、1剤目の S だけを差し替えて再計算する。
-    // NOTE: Ref ではなく primaryBaseFields を直接参照する。
-    //   primaryBaseFieldsRef.current は render 後に同期されるため、
-    //   render 中の IIFE 内では1フレーム遅延した古い値を参照してしまう。
+    // ────────────────────────────────────────────────────────
+    // 1剤目の S を activeLocalSiteInput で解決する
+    // ────────────────────────────────────────────────────────
+    const primarySLocalId = primaryScenario
+      ? activeModuleData.scenarios.find(sc => sc.globalId === primaryScenario.globalId)?.id
+      : undefined
     const primaryS = primaryBaseFields.S
-    if (!primaryS) return baseFields
-    const patchedPrimaryS = applyFn(primaryS)
-    if (!patchedPrimaryS) return baseFields
-    const patchedPrimaryFields = { ...primaryBaseFieldsRef.current, S: patchedPrimaryS }
-    if (composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null).length === 0) {
-      // 単剤: そのまま返す（re-merge 不要）
+    const patchedPrimaryS = primaryS
+      ? (resolveS(primaryS, localSiteInput, activeModuleData, primarySLocalId) ?? primaryS)
+      : primaryS
+    const patchedPrimaryFields = { ...primaryBaseFields, S: patchedPrimaryS }
+
+    // ────────────────────────────────────────────────────────
+    // 全ノードをそれぞれの siteInput で解決する
+    // （localSiteInput を持たないモジュールはそのまま通過）
+    // ────────────────────────────────────────────────────────
+    const hasComposeNodes = composeNodes.some(n => n.scenarioId !== '' && n.scenarioId != null)
+    if (!hasComposeNodes) {
+      // 単剤
+      if (patchedPrimaryS === primaryS) return baseFields  // 変更なしなら baseFields を返す
       return { ...baseFields, S: patchedPrimaryS }
     }
-    // 多剤: 1剤目Sだけを差し替えて再マージ
-    return computeDisplayFields(patchedPrimaryFields, primaryScenario, composeNodes, activeModuleData.defaults, activeModuleData)
+
+    // 多剤: 全ノードをパッチして computeDisplayFields で再マージ
+    const patchedNodes = composeNodes.map(n => {
+      const originalS = n.block.fields.S
+      if (!originalS) return n
+      const nodeMod = allModules.find(m => m.moduleId === n.moduleId) ?? activeModuleData
+      const nodeSc = nodeMod.scenarios.find(sc => sc.globalId === n.scenarioId)
+      const nodeLocalId = nodeSc?.id
+      const nodeSiteInput = n.localSiteInput ?? ''
+      const patched = resolveS(originalS, nodeSiteInput, nodeMod, nodeLocalId)
+      if (patched === null) return n  // 対象外 or 変更なし
+      return { ...n, block: { ...n.block, fields: { ...n.block.fields, S: patched } } }
+    })
+    return computeDisplayFields(patchedPrimaryFields, primaryScenario, patchedNodes, activeModuleData.defaults, activeModuleData)
   })()
 
   // ── Refs を render ごとに同期 ──────────────────────────────
@@ -1083,6 +1072,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
+  // handleLocalSiteInputChange
+  //
+  // ThirdPanel の onLocalSiteInputChange コールバック。
+  // activeNode があれば対応する composeNode.localSiteInput に書き込む（per-node）。
+  // activeNode が null（1剤目操作）のときは グローバル localSiteInput を更新する。
+  // ─────────────────────────────────────────────────────────────
+
+  const handleLocalSiteInputChange = useCallback((value: string) => {
+    const nodeId = editingNodeIdRef.current
+    if (nodeId !== null) {
+      setComposeNodes(prev => prev.map(n =>
+        n.id === nodeId ? { ...n, localSiteInput: value } : n
+      ))
+    } else {
+      setLocalSiteInput(value)
+    }
+  }, [])
+
+  // ─────────────────────────────────────────────────────────────
   // handleFieldChange（テキスト直接編集）
   //
   // editingNodeId の有無にかかわらず、常に editedSOAP に書き込む。
@@ -1658,8 +1666,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             onExpressAdd={handleExpressAdd}
             menuGroupLabelOverrides={activeModuleData.display?.menuGroupLabels}
             localInputConfig={targetModule.display?.localInput ?? undefined}
-            localSiteInput={localSiteInput}
-            onLocalSiteInputChange={setLocalSiteInput}
+            localSiteInput={activeLocalSiteInput}
+            onLocalSiteInputChange={handleLocalSiteInputChange}
           />
         ) : (
           <div className={s.thirdPanel}>
