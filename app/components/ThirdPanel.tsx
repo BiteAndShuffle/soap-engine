@@ -738,10 +738,13 @@ export default function ThirdPanel({
             const currentSite = stripDir(localSiteInput)
 
             // 方向ボタンのクリック: 同じ方向を再タップで解除、別の方向で切り替え
+            // topical: 方向解除後は部位のみ残す（部位なければ空欄）
+            // eye:     方向が唯一の入力なので解除で空欄になる
             const handleDirClick = (dir: string) => {
               const body = stripDir(localSiteInput)
               if (currentDir === dir) {
-                // トグル解除: 部位のみ残す（点眼: eye モードは 右 → 右眼 なので body が空になる）
+                // トグル解除: body（部位）のみ残す
+                // topical の場合 body が空なら空欄になる（意図通り）
                 onLocalSiteInputChange?.(body)
               } else {
                 onLocalSiteInputChange?.(dir + body)
@@ -749,10 +752,12 @@ export default function ThirdPanel({
             }
 
             // 部位ボタンのクリック: 同じ部位を再タップで解除、別の部位で切り替え
+            // topical のみ表示される。解除時は方向も破棄して空欄にする。
+            // 理由: 外用では「方向のみ」は無効入力のため、部位解除 = 入力全体を無効化。
             const handleSiteClick = (site: string) => {
               if (currentSite === site) {
-                // トグル解除: 方向のみ残す
-                onLocalSiteInputChange?.(currentDir)
+                // トグル解除: 方向も含めて空欄にする（外用で方向のみは不自然のため）
+                onLocalSiteInputChange?.('')
               } else {
                 onLocalSiteInputChange?.(currentDir + site)
               }

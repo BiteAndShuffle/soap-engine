@@ -391,10 +391,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // 未入力時は {{applicationSite}} トークンおよび直後の「の」「眼」を除去する。
     //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + "右膝" → "〜は、右膝の乾燥が〜"
     //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + ""    → "〜は、乾燥が〜"
+    //   例（外用）: "〜は、{{applicationSite}}の乾燥が〜" + "右"  → 方向のみは空扱い → "〜は、乾燥が〜"
     //   例（点眼）: "〜は、{{applicationSite}}眼のかゆみが〜" + "右" → "〜は、右眼のかゆみが〜"
     //   例（点眼）: "〜は、{{applicationSite}}眼のかゆみが〜" + ""   → "〜は、眼のかゆみが〜"
+    const PLACEHOLDER_DIRECTIONS = ['左', '右', '両'] as const
     const applyPlaceholder = (s: string): string => {
-      const site = localSiteInput.trim()
+      let site = localSiteInput.trim()
+      // topical モードでは方向のみ（部位なし）を空扱いにする。
+      // 例: "右" → 部位なし → 空欄と同様に {{applicationSite}} を除去。
+      // 自由入力欄から "右" と手打ちされた場合も同様に扱う。
+      if (localInputConfig.siteButtonType === 'topical') {
+        const isDirectionOnly = PLACEHOLDER_DIRECTIONS.some(d => site === d)
+        if (isDirectionOnly) site = ''
+      }
       if (site) {
         return s.replace('{{applicationSite}}', site)
       }
