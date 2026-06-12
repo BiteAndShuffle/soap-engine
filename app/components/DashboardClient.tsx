@@ -641,7 +641,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           })
         }
       }
-      return entries.sort((a, b) => a.sortOrder - b.sortOrder)
+      // ── 重複排除 ──────────────────────────────────────────────
+      // 同一カテゴリ/グループ/サブグループ内で表示ラベル（genericLabel ?? label）が
+      // 同一のエントリは先勝ちで1件だけ残す。
+      // ヒルドイド系3剤（cream/lotion/ointment）が同一 expressModes を持つため
+      // 各剤形ボタンが3重に表示されてしまう問題を防ぐ。
+      // disabled placeholder も同様に重複排除する（後続の enabled エントリが優先）。
+      const seenKeys = new Set<string>()
+      const deduped = entries.filter(e => {
+        const displayLabel = e.genericLabel ?? e.label
+        const key = `${e.expressCategory}__${e.expressGroup}__${e.expressSubGroup ?? ''}__${displayLabel}`
+        if (seenKeys.has(key)) return false
+        seenKeys.add(key)
+        return true
+      })
+      return deduped.sort((a, b) => a.sortOrder - b.sortOrder)
     },
     [allModules],
   )
