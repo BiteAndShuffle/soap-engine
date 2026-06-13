@@ -244,9 +244,11 @@ function resolveBrandName(entry: SearchEntry, q: string): string | undefined {
     const aliases = entry.brandCatalogAliasMap[officialBrandName] ?? []
     if (aliases.some(a => a.startsWith(q))) return officialBrandName
   }
-  // 5. 正式ブランド名の部分一致
-  for (const officialBrandName of entry.brandNames) {
-    if (normalizeText(officialBrandName).includes(q)) return officialBrandName
+  // 5. 正式ブランド名の部分一致（1文字では暴発するためq.length >= 2 でガード）
+  if (q.length >= 2) {
+    for (const officialBrandName of entry.brandNames) {
+      if (normalizeText(officialBrandName).includes(q)) return officialBrandName
+    }
   }
   return undefined
 }
