@@ -300,7 +300,7 @@ function scoreFormulation(entry: SearchEntry, q: string): number {
 
 /**
  * AND 検索の第2トークン以降用スコアリング。
- * 「剤形・検索補助トークン」として扱い、corpus へのフォールバックを禁止する。
+ * 「剤形・検索補助トークン」として扱い、シナリオ本文・タイトル部分一致へのフォールバックを禁止する。
  *
  * 評価順（優先度 高→低）:
  *   1) scoreFormulation（formulationTokens との完全一致→6 / 前方一致→4）
@@ -310,7 +310,7 @@ function scoreFormulation(entry: SearchEntry, q: string): number {
  *   5) aliasTokens の前方一致 → 4
  *   6) label の前方一致 → 2
  *   7) aliasTokens の部分一致 → 2
- *   8) label の部分一致 → 1
+ *   ※ normLabel.includes() は評価しない（"副作用なし"等のシナリオタイトルへの誤爆を防ぐ）
  *   ※ corpus.includes() は評価しない（SOAP本文への誤爆を防ぐ）
  *
  * formulationTokens が空かつ alias/label にもマッチしない場合は 0 を返し、AND 除外する。
@@ -319,7 +319,7 @@ function scoreSecondaryToken(entry: SearchEntry, q: string): number {
   // 1. formulationTokens を優先評価
   const fs = scoreFormulation(entry, q)
   if (fs > 0) return fs
-  // 2–5. 明示された検索フィールドのみ評価（corpus は含まない）
+  // 2–7. 明示された検索フィールドのみ評価（label部分一致・corpus は含まない）
   for (const alias of entry.exactAliasTokens) {
     if (alias === q) return 7
   }
@@ -335,8 +335,8 @@ function scoreSecondaryToken(entry: SearchEntry, q: string): number {
   for (const alias of entry.aliasTokens) {
     if (alias.includes(q)) return 2
   }
-  if (normLabel.includes(q)) return 1
-  // corpus.includes(q) は評価しない
+  // normLabel.includes(q) は評価しない（"副作用なし"等シナリオタイトルへの誤爆を防ぐ）
+  // corpus.includes(q) は評価しない（SOAP本文への誤爆を防ぐ）
   return 0
 }
 
