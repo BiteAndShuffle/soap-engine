@@ -411,9 +411,18 @@ export function getSuggestions(
     if (seenShortLabels.has(entry.shortLabel)) continue
     seenShortLabels.add(entry.shortLabel)
 
-    const matchedBrandName = resolveBrandName(entry, q)
-    const isDirectBrandMatchSug = matchedBrandName !== undefined &&
-      entry.brandNames.some(b => normalizeText(b) === q || normalizeText(b).startsWith(q))
+    // 全トークンを順に評価し、最初にブランド名が特定できたトークンを採用する。
+    // lastToken だけでは 1 文字トークン（く/な/ろ）が全ステップ不一致になり
+    // undefined フォールバック → brandNames[0] 固定という問題を防ぐ。
+    let matchedBrandName: string | undefined
+    let matchedByTokenSug: string | undefined
+    for (const t of tokens) {
+      const resolved = resolveBrandName(entry, t)
+      if (resolved !== undefined) { matchedBrandName = resolved; matchedByTokenSug = t; break }
+    }
+    // isDirectBrandMatch: マッチしたトークンがブランド名本体と直接 eq/startsWith するか
+    const isDirectBrandMatchSug = matchedBrandName !== undefined && matchedByTokenSug !== undefined &&
+      entry.brandNames.some(b => normalizeText(b) === matchedByTokenSug || normalizeText(b).startsWith(matchedByTokenSug!))
     const resolvedDisplayLabelSug = (() => {
       if (!matchedBrandName) return entry.drugDisplayLabel
       if (isDirectBrandMatchSug) return matchedBrandName
@@ -495,12 +504,19 @@ export function getDrugSuggestions(
     if (seenModules.has(entry.moduleId)) continue
     seenModules.add(entry.moduleId)
 
-    const matchedBrandName = resolveBrandName(entry, q)
-    // クエリがブランド名の正規化形と直接一致しない（alias経由ヒット = 一般名検索）場合は
-    // brandCatalogGenericMap から一般名を drugDisplayLabel として使用する。
-    // ブランド名と直接一致した場合はブランド名をそのまま使用する。
-    const isDirectBrandMatch = matchedBrandName !== undefined &&
-      entry.brandNames.some(b => normalizeText(b) === q || normalizeText(b).startsWith(q))
+    // 全トークンを順に評価し、最初にブランド名が特定できたトークンを採用する。
+    // lastToken だけでは 1 文字トークン（く/な/ろ）が全ステップ不一致になり
+    // undefined フォールバック → brandNames[0] 固定という問題を防ぐ。
+    let matchedBrandName: string | undefined
+    let matchedByToken: string | undefined
+    for (const t of tokens) {
+      const resolved = resolveBrandName(entry, t)
+      if (resolved !== undefined) { matchedBrandName = resolved; matchedByToken = t; break }
+    }
+    // isDirectBrandMatch: マッチしたトークンがブランド名本体と直接 eq/startsWith するか。
+    // true → ブランド名をそのまま表示。false → brandCatalogGenericMap の表示一般名を使用。
+    const isDirectBrandMatch = matchedBrandName !== undefined && matchedByToken !== undefined &&
+      entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
     const resolvedDisplayLabel = (() => {
       if (!matchedBrandName) return entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId
       if (isDirectBrandMatch) return matchedBrandName
