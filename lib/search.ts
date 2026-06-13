@@ -79,6 +79,12 @@ export interface SearchEntry {
    * 一般名検索時に drugDisplayLabel を一般名寄りに解決するために使用。
    */
   brandCatalogGenericMap: Record<string, string>
+  /**
+   * 剤形識別トークン（drug.search.formulationSearchTokens の正規化済みリスト）。
+   * AND 検索の第2トークン以降でこのリストを優先評価し、剤形による絞り込みを強化する。
+   * 未定義モジュールでは空配列となり、既存の scoreEntry にフォールバックする。
+   */
+  formulationTokens: string[]
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -139,6 +145,11 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     if (resolvedGenericName) brandCatalogGenericMap[brand] = resolvedGenericName
   }
 
+  // 剤形識別トークン（AND 検索の第2トークン以降で優先評価）
+  const formulationTokens: string[] = (drugSearch?.formulationSearchTokens ?? [])
+    .map(normalizeText)
+    .filter(Boolean)
+
   const suppressOnExactHit =
     drugSearch?.matchPolicy?.suppressCrossModuleSuggestionsOnExactHit ?? false
   const priority = drugSearch?.priority ?? 0
@@ -172,6 +183,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       brandNames,
       brandCatalogAliasMap,
       brandCatalogGenericMap,
+      formulationTokens,
     }
   })
 }
@@ -269,17 +281,44 @@ function tokenizeQuery(query: string): string[] {
 }
 
 /**
+ * 剤形識別トークンによるスコアリング。
+ * - 完全一致 → 6（exactAlias 相当。剤形を明確に指定した場合）
+ * - 前方一致 → 4（alias_pfx 相当。短縮入力での剤形絞り込み）
+ * - その他   → 0（マッチなし。scoreEntry にフォールバックさせる）
+ *
+ * formulationTokens が空のモジュール（eye_drops 等）では常に 0 を返す。
+ */
+function scoreFormulation(entry: SearchEntry, q: string): number {
+  for (const ft of entry.formulationTokens) {
+    if (ft === q) return 6
+    if (ft.startsWith(q)) return 4
+  }
+  return 0
+}
+
+/**
  * トークン列に対して AND スコアを計算する。
  * - トークンが 1 件: scoreEntry をそのまま使用（既存挙動と同一）
- * - トークンが 2 件以上: 全トークンが score > 0 のときのみ採用。
- *   合計スコアを返す（順位が大きく崩れないよう高スコアトークンの寄与を維持）。
+ * - トークンが 2 件以上: 全トークンが score > 0 のときのみ採用（AND 除外）。
+ *   第1トークン → scoreEntry（薬剤名マッチ）
+ *   第2トークン以降 → scoreFormulation を優先評価。
+ *     formulationTokens にマッチすれば formulation スコアを採用。
+ *     マッチしない場合は scoreEntry にフォールバック。
  * - いずれか 1 トークンでも score = 0 なら 0 を返す（AND 除外）。
  */
 function scoreEntryAND(entry: SearchEntry, tokens: string[]): number {
   if (tokens.length === 1) return scoreEntry(entry, tokens[0])
   let total = 0
-  for (const t of tokens) {
-    const s = scoreEntry(entry, t)
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i]
+    let s: number
+    if (i > 0) {
+      // 第2トークン以降: formulationTokens を優先
+      const fs = scoreFormulation(entry, t)
+      s = fs > 0 ? fs : scoreEntry(entry, t)
+    } else {
+      s = scoreEntry(entry, t)
+    }
     if (s === 0) return 0
     total += s
   }

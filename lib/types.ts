@@ -312,6 +312,14 @@ export interface DrugSearch {
   nameAliases?: string[]
   keywords: string[]
   matchPolicy: DrugSearchMatchPolicy
+  /**
+   * 剤形を識別するひらがな前方一致トークン群。
+   * AND 検索の第2トークン以降を剤形語として評価する際に使用。
+   * 例（クリーム）: ["くり", "くりーむ"]
+   * 例（軟膏）:     ["なん", "なんこう", "ゆせい", "ゆせいくりーむ", "そふと"]
+   * 例（ローション）: ["ろー", "ろーしょん"]
+   */
+  formulationSearchTokens?: string[]
 }
 
 // ─────────────────────────────────────────────────────────────
