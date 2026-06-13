@@ -299,13 +299,53 @@ function scoreFormulation(entry: SearchEntry, q: string): number {
 }
 
 /**
+ * AND 検索の第2トークン以降用スコアリング。
+ * 「剤形・検索補助トークン」として扱い、corpus へのフォールバックを禁止する。
+ *
+ * 評価順（優先度 高→低）:
+ *   1) scoreFormulation（formulationTokens との完全一致→6 / 前方一致→4）
+ *   2) exactAliasTokens との完全一致 → 7
+ *   3) primaryDisplayNameNorm との完全一致 → 6
+ *   4) aliasTokens との完全一致 → 5
+ *   5) aliasTokens の前方一致 → 4
+ *   6) label の前方一致 → 2
+ *   7) aliasTokens の部分一致 → 2
+ *   8) label の部分一致 → 1
+ *   ※ corpus.includes() は評価しない（SOAP本文への誤爆を防ぐ）
+ *
+ * formulationTokens が空かつ alias/label にもマッチしない場合は 0 を返し、AND 除外する。
+ */
+function scoreSecondaryToken(entry: SearchEntry, q: string): number {
+  // 1. formulationTokens を優先評価
+  const fs = scoreFormulation(entry, q)
+  if (fs > 0) return fs
+  // 2–5. 明示された検索フィールドのみ評価（corpus は含まない）
+  for (const alias of entry.exactAliasTokens) {
+    if (alias === q) return 7
+  }
+  if (entry.primaryDisplayNameNorm && entry.primaryDisplayNameNorm === q) return 6
+  for (const alias of entry.aliasTokens) {
+    if (alias === q) return 5
+  }
+  for (const alias of entry.aliasTokens) {
+    if (alias.startsWith(q)) return 4
+  }
+  const normLabel = normalizeText(entry.label)
+  if (normLabel.startsWith(q)) return 2
+  for (const alias of entry.aliasTokens) {
+    if (alias.includes(q)) return 2
+  }
+  if (normLabel.includes(q)) return 1
+  // corpus.includes(q) は評価しない
+  return 0
+}
+
+/**
  * トークン列に対して AND スコアを計算する。
  * - トークンが 1 件: scoreEntry をそのまま使用（既存挙動と同一）
  * - トークンが 2 件以上: 全トークンが score > 0 のときのみ採用（AND 除外）。
- *   第1トークン → scoreEntry（薬剤名マッチ）
- *   第2トークン以降 → scoreFormulation を優先評価。
- *     formulationTokens にマッチすれば formulation スコアを採用。
- *     マッチしない場合は scoreEntry にフォールバック。
+ *   第1トークン → scoreEntry（薬剤名マッチ、corpus フォールバックあり）
+ *   第2トークン以降 → scoreSecondaryToken（corpus フォールバックなし）
  * - いずれか 1 トークンでも score = 0 なら 0 を返す（AND 除外）。
  */
 function scoreEntryAND(entry: SearchEntry, tokens: string[]): number {
@@ -313,14 +353,7 @@ function scoreEntryAND(entry: SearchEntry, tokens: string[]): number {
   let total = 0
   for (let i = 0; i < tokens.length; i++) {
     const t = tokens[i]
-    let s: number
-    if (i > 0) {
-      // 第2トークン以降: formulationTokens を優先
-      const fs = scoreFormulation(entry, t)
-      s = fs > 0 ? fs : scoreEntry(entry, t)
-    } else {
-      s = scoreEntry(entry, t)
-    }
+    const s = i === 0 ? scoreEntry(entry, t) : scoreSecondaryToken(entry, t)
     if (s === 0) return 0
     total += s
   }
