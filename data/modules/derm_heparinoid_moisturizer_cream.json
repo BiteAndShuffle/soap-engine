@@ -2351,7 +2351,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "text": "清潔な手で、薄く伸ばして使用してください。",
+        "text": "清潔な手で、適量を薄く伸ばして使用してください。",
         "intentTags": [
           "administration_instruction"
         ]
@@ -2560,8 +2560,8 @@
       "expressCategory": "皮膚科",
       "expressGroup": "ヘパリン",
       "expressSubGroup": "剤形",
-      "label": "ヒルドイドゲル",
-      "genericDisplayName": "ゲル",
+      "label": "ヒルドイドローション",
+      "genericDisplayName": "ローション",
       "sortOrder": 3
     },
     {
@@ -2571,8 +2571,8 @@
       "expressCategory": "皮膚科",
       "expressGroup": "ヘパリン",
       "expressSubGroup": "剤形",
-      "label": "ヒルドイドローション",
-      "genericDisplayName": "ローション",
+      "label": "ヒルドイドゲル",
+      "genericDisplayName": "ゲル",
       "sortOrder": 4
     },
     {

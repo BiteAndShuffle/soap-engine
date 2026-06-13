@@ -2410,7 +2410,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "text": "清潔な手で、薄く伸ばして使用してください。",
+        "text": "清潔な手で、適量を薄く伸ばして使用してください。",
         "intentTags": [
           "administration_instruction"
         ]
