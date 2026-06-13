@@ -260,17 +260,44 @@ function scoreEntry(entry: SearchEntry, q: string): number {
   return 0
 }
 
+/**
+ * スペース区切りクエリを正規化済みトークン列に分割する。
+ * トークンが 1 件のときは既存の単一文字列検索と同等になる。
+ */
+function tokenizeQuery(query: string): string[] {
+  return query.trim().split(/\s+/).map(normalizeText).filter(Boolean)
+}
+
+/**
+ * トークン列に対して AND スコアを計算する。
+ * - トークンが 1 件: scoreEntry をそのまま使用（既存挙動と同一）
+ * - トークンが 2 件以上: 全トークンが score > 0 のときのみ採用。
+ *   合計スコアを返す（順位が大きく崩れないよう高スコアトークンの寄与を維持）。
+ * - いずれか 1 トークンでも score = 0 なら 0 を返す（AND 除外）。
+ */
+function scoreEntryAND(entry: SearchEntry, tokens: string[]): number {
+  if (tokens.length === 1) return scoreEntry(entry, tokens[0])
+  let total = 0
+  for (const t of tokens) {
+    const s = scoreEntry(entry, t)
+    if (s === 0) return 0
+    total += s
+  }
+  return total
+}
+
 export function getSuggestions(
   query: string,
   index: SearchEntry[],
   limit = 8,
 ): SuggestionItem[] {
-  const q = normalizeText(query)
-  if (!q) return []
+  const tokens = tokenizeQuery(query)
+  if (tokens.length === 0) return []
+  const q = tokens[tokens.length - 1]  // ブランド名解決用（末尾トークン or 単一）
 
   const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
   for (let i = 0; i < index.length; i++) {
-    const score = scoreEntry(index[i], q)
+    const score = scoreEntryAND(index[i], tokens)
     if (score > 0) scored.push({ entry: index[i], score, originalIndex: i })
   }
 
@@ -368,13 +395,14 @@ export function getDrugSuggestions(
   index: SearchEntry[],
   limit = 8,
 ): DrugSuggestionItem[] {
-  const q = normalizeText(query)
-  if (!q) return []
+  const tokens = tokenizeQuery(query)
+  if (tokens.length === 0) return []
+  const q = tokens[tokens.length - 1]  // ブランド名解決用（末尾トークン or 単一）
 
-  // スコアリング（getSuggestions と同じロジック）
+  // スコアリング（getSuggestions と同じロジック、AND 対応）
   const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
   for (let i = 0; i < index.length; i++) {
-    const score = scoreEntry(index[i], q)
+    const score = scoreEntryAND(index[i], tokens)
     if (score > 0) scored.push({ entry: index[i], score, originalIndex: i })
   }
 
