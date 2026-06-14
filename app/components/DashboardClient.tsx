@@ -287,6 +287,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 1剤目 SOAP 再構築時に {{drug_subject}} で使う表示名（GE名 / 先発名）。
   // useEffect([selectedScenarioId]) の deps に含めず ref で参照することで stale closure を防ぐ。
   const activeDrugDisplayNameRef = useRef<string | undefined>(undefined)
+  // handleSToggle 内で現在の sRelation/sCondition を stale closure なしに読むための ref。
+  const sRelationRef  = useRef<SRelation>('continued_do')
+  const sConditionRef = useRef<SCondition>('stable')
   // handleFieldChange で editedSOAP の一致判定に使う（stale closure 防止）
   const displayFieldsRef      = useRef<SoapFields>(EMPTY_FIELDS)
   // 編集開始時点の finalFields スナップショット（一度確定したら次の編集開始まで変化しない）
@@ -458,6 +461,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   uiModeRef.current                = uiMode
   activeDrugDisplayNameRef.current = activeDrugDisplayName
   displayFieldsRef.current     = displayFields
+  sRelationRef.current         = sRelation
+  sConditionRef.current        = sCondition
   // 未編集状態のときだけスナップショットを追従させる。
   // editedSOAP が非null（編集中）のときは固定したまま更新しない。
   // これにより、mergeBlocks/addon の再計算が editSnapshotRef を汚染しない。
@@ -1290,6 +1295,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleSToggle = useCallback((relation: SRelation, condition: SCondition) => {
     if (editingNodeIdRef.current !== null) return
     confirmDiscard(() => {
+      // 同じボタンを再クリックした場合: S先頭文を解除してベースの S に戻す
+      const isAlreadyActive =
+        sRelationRef.current === relation && sConditionRef.current === condition
+      if (isAlreadyActive) {
+        setSRelation('continued_do')
+        setSCondition('stable')
+        // rapidBaseFieldsRef があればその S（Rapid生成直後の本文）に戻す。
+        // なければ primaryBaseFieldsRef の S の先頭文を除去した残り部分に戻す。
+        const base = rapidBaseFieldsRef.current ?? primaryBaseFieldsRef.current
+        setPrimaryBaseFields({ ...base })
+        setEditedSOAP(null)
+        return
+      }
       setSRelation(relation)
       setSCondition(condition)
       // 汎用先頭文を生成（「前回から新しく薬を使用して〜」など）
