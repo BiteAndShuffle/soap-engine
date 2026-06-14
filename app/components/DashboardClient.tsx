@@ -1587,7 +1587,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         : null
       rawPrimaryFieldsRef.current = nlpFields
       primaryGuardRef.current = guard
-      nlpRawFieldsRef.current = nlpFields  // NLP 生成成功: 出力を直接保存（原本として使用）
+      // nlpRawFieldsRef には addonsRef 展開前の生の S/O/A/P を保存する。
+      // soapComposer 出力（nlpFields）は addonsRef.P などを既に展開済みのため、
+      // これをベースに ADDON オーバーレイすると addonsRef 展開分が消えてしまう。
+      // ADDON 押下時は「生シナリオ + 選択 ADDON」として再構築するため、
+      // sc が取得できた場合は scenario.S/O/A/P をベースとして保存する。
+      // sc が取得できない場合は soapComposer 出力（addonsRef 展開済み）をフォールバックとする。
+      nlpRawFieldsRef.current = sc
+        ? { S: sc.S, O: sc.O, A: sc.A, P: sc.P }
+        : nlpFields  // NLP 生成成功: 原本を保存
       // persona が ON かつ guard がある場合は変換済みフィールドを表示する
       const displayableFields = (personaEnabledRef.current && guard)
         ? applyPersonaToFieldsWithGuard(nlpFields, true, selectedPersonaRef.current, guard)
