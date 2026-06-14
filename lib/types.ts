@@ -238,6 +238,17 @@ export interface AddonItem {
   group: string
   targetSection: 'S' | 'O' | 'A' | 'P'
   text: string
+  /**
+   * 複数セクションへの追記テキスト（optional）。
+   * 存在する場合、targetSection + text の代わりに各セクションへ追記する。
+   * 未定義の場合は既存の targetSection + text で動作する（後方互換）。
+   * text は P_APPEND 相当として維持し、sectionTexts.P と同値にすること。
+   */
+  sectionTexts?: {
+    S?: string
+    A?: string
+    P?: string
+  }
   /** 意味タグ（intentTags）— 文章の意味的役割を表す */
   intentTags?: string[]
   /** 臨床タグ（将来拡張用） */

@@ -34,9 +34,26 @@ export function buildSoapFromScenario(scenario: Scenario): SoapFields {
 /**
  * addons.items からキーに対応するテキストを解決する。
  * キーが存在しない場合は空文字を返す。
+ * sectionTexts がある場合は sectionTexts.P を優先して返す（P_APPEND 相当）。
+ * 後方互換: sectionTexts がない場合は text を返す。
  */
 function resolveAddonText(key: string, addonsData: AddonsData): string {
-  return addonsData.items[key]?.text ?? ''
+  const item = addonsData.items[key]
+  if (!item) return ''
+  return item.sectionTexts?.P ?? item.text
+}
+
+/**
+ * addons.items からキーに対応する sectionTexts を解決する。
+ * sectionTexts がある addon を addonsRef.P に配置した場合に
+ * buildSoapFull が各セクション（S / A / P）へ展開するために使用する。
+ * sectionTexts がない場合は null を返す（呼び出し側で text / targetSection にフォールバック）。
+ */
+function resolveAddonSectionTexts(
+  key: string,
+  addonsData: AddonsData,
+): { S?: string; A?: string; P?: string } | null {
+  return addonsData.items[key]?.sectionTexts ?? null
 }
 
 /**
@@ -87,16 +104,27 @@ export function buildNodeFields(
     if (appendText) result['S'] = result['S'] ? `${result['S']}\n${appendText}` : appendText
   }
 
-  // 3. addon テキストを targetSection に追記
+  // 3. addon テキストを追記（sectionTexts 対応）
   if (mod.addons && addonIds.length > 0) {
     // section ごとに addon テキストを集める
     const sectionMap = new Map<string, string[]>()
     for (const key of addonIds) {
       const item = mod.addons.items[key]
       if (!item) continue
-      const sec = item.targetSection
-      if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-      sectionMap.get(sec)!.push(item.text)
+      if (item.sectionTexts) {
+        // 新パス: sectionTexts の各セクションを追記（S / A / P）
+        for (const sec of ['S', 'A', 'P'] as const) {
+          const t = item.sectionTexts[sec]
+          if (!t) continue
+          if (!sectionMap.has(sec)) sectionMap.set(sec, [])
+          sectionMap.get(sec)!.push(t)
+        }
+      } else {
+        // 旧パス: targetSection + text（後方互換）
+        const sec = item.targetSection
+        if (!sectionMap.has(sec)) sectionMap.set(sec, [])
+        sectionMap.get(sec)!.push(item.text)
+      }
     }
     for (const [sec, texts] of sectionMap) {
       const k = sec as SoapKey
@@ -175,18 +203,39 @@ export function buildSoapFull(
   const SOAP_KEYS_LOCAL: SoapKey[] = ['S', 'O', 'A', 'P']
 
   // 2. addonsRef を各セクションに追記（addons が存在する場合のみ）
+  //
+  // sectionTexts 対応:
+  //   addonsRef.P に配置した addon が sectionTexts を持つ場合、
+  //   S / A / P それぞれに展開する（重複出力なし）。
+  //   addonsRef.S / A に同じ key が重複配置されていないことを前提とする。
+  //   sectionTexts がない addon は従来通り addonsRef[key] のセクションへ text を追記する。
   if (addonsData) {
     if (scenario.addonsRef) {
+      // sectionTexts 展開済みキーを追跡して重複防止
+      const expandedKeys = new Set<string>()
+
       for (const key of SOAP_KEYS_LOCAL) {
         const refs = scenario.addonsRef[key]
         if (!refs || refs.length === 0) continue
-        const texts = refs
-          .map(ref => resolveAddonText(ref, addonsData))
-          .filter(Boolean)
-        if (texts.length > 0) {
-          fields[key] = fields[key]
-            ? `${fields[key]}\n${texts.join('\n')}`
-            : texts.join('\n')
+
+        for (const ref of refs) {
+          const sectionTexts = resolveAddonSectionTexts(ref, addonsData)
+          if (sectionTexts) {
+            // sectionTexts あり: S / A / P を展開（addonsRef のセクションに関わらず）
+            // 同一 key が他のセクションの addonsRef にも重複している場合に二重展開しない
+            if (expandedKeys.has(ref)) continue
+            expandedKeys.add(ref)
+            for (const sec of ['S', 'A', 'P'] as const) {
+              const t = sectionTexts[sec]
+              if (!t) continue
+              fields[sec] = fields[sec] ? `${fields[sec]}\n${t}` : t
+            }
+          } else {
+            // sectionTexts なし: 従来通り addonsRef のセクションへ text を追記
+            const text = resolveAddonText(ref, addonsData)
+            if (!text) continue
+            fields[key] = fields[key] ? `${fields[key]}\n${text}` : text
+          }
         }
       }
     } else {

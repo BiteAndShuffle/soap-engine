@@ -1,6 +1,6 @@
 {
   "moduleId": "dm_glp1ra_semaglutide_oral",
-  "moduleVersion": "1.0.10",
+  "moduleVersion": "1.1.0",
   "regulatory": {
     "psychotropicClass": "not_applicable",
     "controlledSubstance": "not_applicable",
@@ -124,6 +124,9 @@
           "せまぐるちど",
           "せまぐ",
           "せま"
+        ],
+        "handlingTags": [
+          "ribelsus"
         ]
       }
     },
@@ -334,6 +337,10 @@
     "menuGroupLabels": {
       "増量": "増量",
       "減量": "減量"
+    },
+    "adjustmentExpression": {
+      "increasePast": "増量となった",
+      "decreasePast": "減量となった"
     }
   },
   "defaults": {
@@ -431,13 +438,13 @@
   },
   "addons": {
     "items": {
-      "addon_glycemic_guidance": {
-        "key": "addon_glycemic_guidance",
-        "id": "addon_glycemic_guidance",
-        "title": "血糖指導",
+      "addon_glycemic_guidance_initial": {
+        "key": "addon_glycemic_guidance_initial",
+        "id": "addon_glycemic_guidance_initial",
+        "title": "生活指導（血糖指導）",
         "group": "counseling",
         "targetSection": "P",
-        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食はカロリーオフ・ノンシュガー食品への置き換えを取り入れてみてください。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になる症状があればご相談ください。",
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事内容を見直すことも、血糖コントロールの改善につながります。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -448,10 +455,10 @@
         "counselingTags": [],
         "workflowTags": []
       },
-      "addon_oral_ribelsus_admin": {
-        "key": "addon_oral_ribelsus_admin",
-        "id": "addon_oral_ribelsus_admin",
-        "title": "リベルサス(セマグルチド)説明",
+      "addon_ribelsus_admin": {
+        "key": "addon_ribelsus_admin",
+        "id": "addon_ribelsus_admin",
+        "title": "リベルサス(セマグルチド)服用方法",
         "group": "oral",
         "targetSection": "P",
         "text": "湿気に弱いため、PTPシートはミシン目以外で切り離さないでください。\n起床後すぐ、最初の1錠としてコップ半分（120mL以下）の水で服用してください。\n服用後30分は、飲食や他の薬の服用を避けてください。\n30分以上空けてから朝食をとってください。",
@@ -462,7 +469,10 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "requiredTags": [
+          "ribelsus"
+        ]
       },
       "addon_se_hypoglycemia_guidance": {
         "key": "addon_se_hypoglycemia_guidance",
@@ -551,7 +561,7 @@
         "title": "初回シックデイ",
         "group": "sickday",
         "targetSection": "P",
-        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なります。\n自己判断せず、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n体調不良時は水分を少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なるため、自己判断せず処方医へご相談ください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -567,7 +577,96 @@
         "title": "生活指導（カリウム）",
         "group": "counseling",
         "targetSection": "P",
-        "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になる症状があればご相談ください。",
+        "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "カリウムの値が高いと言われた。",
+          "A": "カリウムコントロールが不十分であり、食事内容の見直しが必要である。",
+          "P": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_glycemic_guidance_followup": {
+        "key": "addon_glycemic_guidance_followup",
+        "id": "addon_glycemic_guidance_followup",
+        "title": "生活指導（血糖指導）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事内容を見直すことも、血糖コントロールの改善につながります。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "A": "血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事内容を見直すことも、血糖コントロールの改善につながります。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance",
+          "hypoglycemia_attention"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_hypertension_guidance": {
+        "key": "addon_hypertension_guidance",
+        "id": "addon_hypertension_guidance",
+        "title": "生活指導（血圧）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "血圧が高いと言われた。",
+          "A": "血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_dyslipidemia_guidance": {
+        "key": "addon_dyslipidemia_guidance",
+        "id": "addon_dyslipidemia_guidance",
+        "title": "生活指導（脂質）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "脂質が高いと言われた。",
+          "A": "脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_hyperuricemia_guidance": {
+        "key": "addon_hyperuricemia_guidance",
+        "id": "addon_hyperuricemia_guidance",
+        "title": "生活指導（尿酸）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "尿酸が高いと言われた。",
+          "A": "尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。",
+          "P": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
+        },
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -580,8 +679,8 @@
     },
     "orderPresets": {
       "initial_default": [
-        "addon_glycemic_guidance",
-        "addon_oral_ribelsus_admin",
+        "addon_glycemic_guidance_initial",
+        "addon_ribelsus_admin",
         "addon_se_hypoglycemia_guidance",
         "addon_initial_sickday_guidance",
         "addon_hyperkalemia_guidance"
@@ -639,8 +738,8 @@
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_glycemic_guidance",
-          "addon_oral_ribelsus_admin",
+          "addon_glycemic_guidance_initial",
+          "addon_ribelsus_admin",
           "addon_se_hypoglycemia_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
@@ -1460,6 +1559,15 @@
       "O": "GLP-1受容体作動薬(内服)　処方",
       "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は糖分を摂取してください。\n改善しない場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1604,6 +1712,15 @@
       "O": "GLP-1受容体作動薬(内服)　処方",
       "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に吐き気・下痢などが出ることがあります。\n症状が続く場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1724,6 +1841,15 @@
       "O": "GLP-1受容体作動薬(内服)　処方",
       "A": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に食欲低下が出ることがあります。\n食事量が落ちる・体重が急に減るなどの変化があればご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1842,6 +1968,15 @@
       "O": "GLP-1受容体作動薬(内服)　処方",
       "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1983,6 +2118,15 @@
       "O": "GLP-1受容体作動薬(内服)　服用中",
       "A": "コンプライアンスは良好である。治療継続に問題はない。",
       "P": "引き続き用法を守って服用することで、血糖コントロールの維持および合併症予防が期待できます。\n今後も継続して服用できるようにすることが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -3805,8 +3949,8 @@
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_glycemic_guidance",
-          "addon_oral_ribelsus_admin",
+          "addon_glycemic_guidance_initial",
+          "addon_ribelsus_admin",
           "addon_se_hypoglycemia_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
@@ -3947,8 +4091,8 @@
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_glycemic_guidance",
-          "addon_oral_ribelsus_admin",
+          "addon_glycemic_guidance_initial",
+          "addon_ribelsus_admin",
           "addon_se_hypoglycemia_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
