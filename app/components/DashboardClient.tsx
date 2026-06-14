@@ -290,6 +290,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // handleSToggle 内で現在の sRelation/sCondition を stale closure なしに読むための ref。
   const sRelationRef  = useRef<SRelation>('continued_do')
   const sConditionRef = useRef<SCondition>('stable')
+  // ユーザーが明示的に手動でシナリオを選択したときのみ true になるフラグ。
+  // useEffect([selectedScenarioId]) 内で rapidBaseFieldsRef.current を null にするのは
+  // このフラグが true のときだけに限定し、NLP 生成後の誤クリアを防ぐ。
+  const manualScenarioSelectRef = useRef(false)
   // handleFieldChange で editedSOAP の一致判定に使う（stale closure 防止）
   const displayFieldsRef      = useRef<SoapFields>(EMPTY_FIELDS)
   // 編集開始時点の finalFields スナップショット（一度確定したら次の編集開始まで変化しない）
@@ -765,6 +769,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
     // selectedScenarioId 変化による上書きをスキップする
     if (uiModeRef.current === 'nlp') return
+    // manualScenarioSelectRef が true の場合のみ rapidBaseFieldsRef をクリアする。
+    // false の場合（handleSelectGroup や薬剤切替などの内部呼び出し）はクリアしない。
+    const isManualSelect = manualScenarioSelectRef.current
+    manualScenarioSelectRef.current = false  // 消費してリセット
     if (selectedScenarioId !== null && primaryScenario) {
       // activeDrugDisplayNameRef: Express GEモード時の GE名（ref 経由で stale closure 防止）
       // activeBrandName は brandCatalog 解決キー（先発名）として保持
@@ -777,7 +785,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
-      rapidBaseFieldsRef.current = null  // ユーザーの手動シナリオ選択で NLP 原本をクリア
+      if (isManualSelect) {
+        rapidBaseFieldsRef.current = null  // ユーザーの手動シナリオ選択で NLP 原本をクリア
+      }
       // persona が ON の場合は初期表示から変換済みフィールドを使用する
       // personaEnabled / selectedPersona は ref 経由で参照（effect の deps に加えない）
       const displayableFields = personaEnabledRef.current
@@ -790,7 +800,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     } else if (selectedScenarioId === null) {
       rawPrimaryFieldsRef.current = EMPTY_FIELDS
       primaryGuardRef.current = null
-      rapidBaseFieldsRef.current = null  // シナリオ解除で NLP 原本をクリア
+      if (isManualSelect) {
+        rapidBaseFieldsRef.current = null  // シナリオ解除で NLP 原本をクリア
+      }
       setPrimaryBaseFields(EMPTY_FIELDS)
       setEditedSOAP(null)
     }
@@ -938,6 +950,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     confirmDiscard(() => {
       // editingPrimary 中にシナリオを選んだら編集モードを終了
       if (editingPrimaryRef.current) setEditingPrimary(false)
+      // ユーザーが明示的に手動でシナリオを選択した印を付ける。
+      // useEffect([selectedScenarioId]) で rapidBaseFieldsRef を null にする条件として使う。
+      manualScenarioSelectRef.current = true
       setSelectedScenarioId(prev => {
         if (prev === id) {
           // 同じシナリオを再タップ → 解除
