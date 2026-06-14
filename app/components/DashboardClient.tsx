@@ -275,13 +275,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const selectedPersonaRef    = useRef<PersonaId>('polite')
   // NLP モード中は selectedScenarioId 変化による useEffect の上書きをスキップするための ref
   const uiModeRef             = useRef<UiMode>('manual')
-  // NLP（Rapid）生成で得た生の SOAP フィールドを保持する ref。
-  // null = NLP 原本なし（通常シナリオ選択中 or 未生成）
-  // 非 null = NLP 出力が原本。handleAddonToggle はこれをベースに addon を重畳する。
-  // ユーザーが手動でシナリオを選択した時点で null にリセットする。
-  const nlpRawFieldsRef       = useRef<SoapFields | null>(null)
+  // Rapid（NLP）生成後に画面表示した最終 SOAP を immutable な原本として保持する ref。
+  // null = Rapid 原本なし（通常シナリオ選択中 or 未生成）
+  // 非 null = Rapid 出力が原本。S先頭文・ADDON 操作はこれをベースに差分だけ重ねる。
+  // ユーザーが手動で別シナリオを明示選択した時点のみ null にリセットする。
+  const rapidBaseFieldsRef    = useRef<SoapFields | null>(null)
   // handleNlpGenerate が setSelectedScenarioId を呼ぶ際に useEffect([selectedScenarioId]) で
-  // 通常シナリオ再構築・nlpRawFieldsRef リセットが走るのを防ぐためのフラグ。
+  // 通常シナリオ再構築・rapidBaseFieldsRef リセットが走るのを防ぐためのフラグ。
   // handleNlpGenerate 内で true にし、useEffect が一度スキップしたら false に戻す。
   const scenarioIdFromNlpRef  = useRef(false)
   // 1剤目 SOAP 再構築時に {{drug_subject}} で使う表示名（GE名 / 先発名）。
@@ -752,7 +752,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // このフラグは uiModeRef チェックより前に消費する。uiMode === 'nlp' のままで early return
     // すると false に戻す機会を失い、後続の手動シナリオ選択時にも誤ってスキップしてしまうため。
     // ADDON 候補表示（addonVisibleKeys）のために selectedScenarioId だけ更新し、
-    // rawPrimaryFieldsRef / primaryBaseFields / nlpRawFieldsRef は NLP 出力を保持する。
+    // rawPrimaryFieldsRef / primaryBaseFields / rapidBaseFieldsRef は NLP 出力を保持する。
     if (scenarioIdFromNlpRef.current) {
       scenarioIdFromNlpRef.current = false  // 次回以降は通常動作に戻す（一度だけスキップ）
       return
@@ -772,7 +772,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
-      nlpRawFieldsRef.current = null  // ユーザーの手動シナリオ選択で NLP 原本をクリア
+      rapidBaseFieldsRef.current = null  // ユーザーの手動シナリオ選択で NLP 原本をクリア
       // persona が ON の場合は初期表示から変換済みフィールドを使用する
       // personaEnabled / selectedPersona は ref 経由で参照（effect の deps に加えない）
       const displayableFields = personaEnabledRef.current
@@ -785,7 +785,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     } else if (selectedScenarioId === null) {
       rawPrimaryFieldsRef.current = EMPTY_FIELDS
       primaryGuardRef.current = null
-      nlpRawFieldsRef.current = null  // シナリオ解除で NLP 原本をクリア
+      rapidBaseFieldsRef.current = null  // シナリオ解除で NLP 原本をクリア
       setPrimaryBaseFields(EMPTY_FIELDS)
       setEditedSOAP(null)
     }
@@ -1225,13 +1225,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           const newAddonIds = [...next]
           setPrimaryAddonIds(next)
 
-          const nlpBase = nlpRawFieldsRef.current
-          if (nlpBase !== null) {
-            // ── NLP（Rapid）出力が原本の場合: nlpRawFieldsRef に保存した NLP 出力を
-            // ベースとして使う。rawPrimaryFieldsRef を参照しないことで同期ズレを防ぐ。
-            // buildNodeFields でシナリオベースの SOAP を生成・上書きせず、
-            // NLP 出力に addon テキストだけを重ねて表示する。
-            const base = nlpBase
+          const rapidBase = rapidBaseFieldsRef.current
+          if (rapidBase !== null) {
+            // ── Rapid（NLP）出力が原本の場合:
+            // rapidBaseFieldsRef は画面表示済みの最終本文（persona 変換・addonsRef 展開済み）。
+            // これをベースに選択 ADDON のテキストだけを重ねる。
+            // persona 再適用は不要（rapidBase は既に表示済み）。
+            // buildNodeFields は呼ばない（通常シナリオ再生成を防ぐ）。
             const sectionMap = new Map<string, string[]>()
             for (const key of newAddonIds) {
               const item = activeModuleData.addons?.items[key]
@@ -1249,17 +1249,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                 sectionMap.get(sec)!.push(item.text)
               }
             }
-            const overlaid = { ...base }
+            const overlaid = { ...rapidBase }
             for (const [sec, texts] of sectionMap) {
               const k = sec as keyof typeof overlaid
               overlaid[k] = overlaid[k] ? `${overlaid[k]}\n${texts.join('\n')}` : texts.join('\n')
             }
-            const guard = primaryGuardRef.current
-            const fields = (personaEnabled && guard)
-              ? applyPersonaToFieldsWithGuard(overlaid, true, selectedPersona, guard)
-              : overlaid
-            // rawPrimaryFieldsRef は NLP 出力のまま維持（上書きしない）
-            setPrimaryBaseFields(fields)
+            setPrimaryBaseFields(overlaid)
           } else {
             // ── manual モード: buildNodeFields でシナリオ + addon から SOAP を構築する
             const sc = primaryScenarioRef.current
@@ -1347,12 +1342,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
         return newFirst  // continued_do: 薬剤名なしが自然
       })()
-      // primaryBaseFieldsRef を使用: displayFields.S は合成後のマージ済みSのため、
-      // 多剤合成時に使うと他の薬剤のSを primaryBaseFields に混入させてしまう。
-      // handleSToggle は isSingleDrug === true のときのみ呼ばれるが、
-      // 設計上は1剤目のS（primaryBaseFields.S）のみを差し替えるのが正しい。
-      const updated = replaceSFirstSentence(primaryBaseFieldsRef.current.S, resolvedFirst)
-      setPrimaryBaseFields(prev => ({ ...prev, S: updated }))
+      // Rapid 原本がある場合は rapidBaseFieldsRef をベースに S だけ差し替える。
+      // これにより A/P は Rapid 生成時の画面表示値を完全に維持する。
+      // Rapid 原本がない場合は primaryBaseFields（通常シナリオ本文）をベースにする。
+      const base = rapidBaseFieldsRef.current ?? primaryBaseFieldsRef.current
+      const updated = replaceSFirstSentence(base.S, resolvedFirst)
+      setPrimaryBaseFields({ ...base, S: updated })
       setEditedSOAP(null)
     })
   }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
@@ -1371,15 +1366,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     confirmDiscard(() => {
       setSingleDrugFlags(flags)
       setEditedSOAP(null)
+      // Rapid 原本がある場合は rapidBaseFieldsRef をベースにする（A/P を Rapid 本文で維持）。
+      // Rapid 原本がない場合は現在の primaryBaseFields（prev）をベースにする。
       setPrimaryBaseFields(prev => {
-        // 現在のフラグ行を除去してから再挿入する
+        const base = rapidBaseFieldsRef.current ?? prev
         const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
-        const baseLines = prev.S
+        const baseLines = base.S
           .split('\n')
           .filter(l => !FLAG_LINES.includes(l.trim()))
         if (flags.noSideEffect)    baseLines.push('副作用は認めない。')
         if (flags.goodCompliance)  baseLines.push('コンプライアンス良好。')
-        return { ...prev, S: baseLines.join('\n') }
+        return { ...base, S: baseLines.join('\n') }
       })
     })
   }, [confirmDiscard])
@@ -1587,24 +1584,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         : null
       rawPrimaryFieldsRef.current = nlpFields
       primaryGuardRef.current = guard
-      // nlpRawFieldsRef には addonsRef 展開前の生の S/O/A/P を保存する。
-      // soapComposer 出力（nlpFields）は addonsRef.P などを既に展開済みのため、
-      // これをベースに ADDON オーバーレイすると addonsRef 展開分が消えてしまう。
-      // ADDON 押下時は「生シナリオ + 選択 ADDON」として再構築するため、
-      // sc が取得できた場合は scenario.S/O/A/P をベースとして保存する。
-      // sc が取得できない場合は soapComposer 出力（addonsRef 展開済み）をフォールバックとする。
-      nlpRawFieldsRef.current = sc
-        ? { S: sc.S, O: sc.O, A: sc.A, P: sc.P }
-        : nlpFields  // NLP 生成成功: 原本を保存
       // persona が ON かつ guard がある場合は変換済みフィールドを表示する
       const displayableFields = (personaEnabledRef.current && guard)
         ? applyPersonaToFieldsWithGuard(nlpFields, true, selectedPersonaRef.current, guard)
         : nlpFields
+      // rapidBaseFieldsRef には画面表示と完全一致する最終本文を保存する。
+      // S先頭文・ADDON 操作はこれをベースに差分だけ重ねる。
+      // persona 変換済み・addonsRef 展開済みの displayableFields を原本とする。
+      rapidBaseFieldsRef.current = displayableFields
       setPrimaryBaseFields(displayableFields)
       if (result.scenarioId) {
         // scenarioIdFromNlpRef を true にしてから setSelectedScenarioId を呼ぶ。
         // useEffect([selectedScenarioId]) はこの ref が true のときはスキップし、
-        // nlpRawFieldsRef / rawPrimaryFieldsRef / primaryBaseFields を上書きしない。
+        // rapidBaseFieldsRef / rawPrimaryFieldsRef / primaryBaseFields を上書きしない。
         scenarioIdFromNlpRef.current = true
         setSelectedScenarioId(result.scenarioId)
         if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
@@ -1612,7 +1604,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     } else {
       rawPrimaryFieldsRef.current = EMPTY_FIELDS
       primaryGuardRef.current = null
-      nlpRawFieldsRef.current = null  // NLP 生成失敗: 原本をクリア
+      rapidBaseFieldsRef.current = null  // NLP 生成失敗: 原本をクリア
       setPrimaryBaseFields(EMPTY_FIELDS)
       setSelectedScenarioId(null)
     }
