@@ -74,8 +74,12 @@ export function createSoapFromInput(
   }
 
   // 4. ScenarioOutput 生成 → SOAP 合成
+  // addonsRef の自動展開はスキップする。
+  // ADDON の本文反映は UI 側の handleAddonToggle が selectedAddonIds を使って行う。
+  // これにより Rapid 生成直後の本文は「addonsRef 未適用」の状態になり、
+  // rapidBaseFieldsRef との整合が取れる。
   const scenarioOutput = jsonScenarioBuilder({ module, scenario, patientInput })
-  const soap = soapComposer(scenarioOutput, module)
+  const soap = soapComposer(scenarioOutput, module, { skipAddonsRef: true })
 
   return {
     scenarioId: selected.scenarioId,

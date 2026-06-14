@@ -3,11 +3,17 @@
  *
  * 処理順:
  *   1. S/O/A/P の基本テキストを ScenarioOutput から取得
- *   2. addonsRef が存在する場合: module.addons.items から各セクションにテキストを追記
- *      （"\n\n" 区切り。参照先が存在しないキーは無視）
+ *   2. addonsRef が存在し skipAddonsRef が false の場合:
+ *      module.addons.items から各セクションにテキストを追記（"\n\n" 区切り）
+ *      参照先が存在しないキーは無視
  *   3. followup が存在する場合:
  *      - 値が "default" → module.defaults.followup[key] の値を末尾に追記
  *      - 値が null / undefined → 何もしない
+ *
+ * skipAddonsRef: true の場合は addonsRef の自動展開をスキップする。
+ * Rapid（NLP）生成経路ではこのオプションを true にすることで、
+ * addonsRef 由来テキストを本文に混入させない。
+ * ADDON の本文反映は UI 側の handleAddonToggle が selectedAddonIds を使って行う。
  *
  * any 禁止 / 純粋関数
  */
@@ -39,6 +45,7 @@ const SOAP_KEYS: SoapKey[] = ['S', 'O', 'A', 'P']
 export function soapComposer(
   scenarioOutput: ScenarioOutput,
   module: ModuleData,
+  { skipAddonsRef = false }: { skipAddonsRef?: boolean } = {},
 ): ComposedSoap {
   const result: ComposedSoap = {
     S: scenarioOutput.S,
@@ -47,8 +54,8 @@ export function soapComposer(
     P: scenarioOutput.P,
   }
 
-  // 2. addonsRef の解決
-  if (scenarioOutput.addonsRef && module.addons) {
+  // 2. addonsRef の解決（skipAddonsRef が true の場合はスキップ）
+  if (!skipAddonsRef && scenarioOutput.addonsRef && module.addons) {
     for (const key of SOAP_KEYS) {
       const refs = scenarioOutput.addonsRef[key]
       if (!refs || refs.length === 0) continue
