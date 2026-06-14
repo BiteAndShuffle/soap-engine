@@ -732,7 +732,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setSingleDrugFlags({ noSideEffect: false, goodCompliance: false })
   }, [primaryScenario])
 
-  // 1剤目シナリオ切替時に primaryBaseFields を初期化（addon なし素の状態）
+  // 1剤目シナリオ切替時に primaryBaseFields を初期化（addonsRef の addon を自動適用）
   // - selectedScenarioId 変化時のみ走る
   // - ノード操作中（editingNodeId !== null）はスキップ: primary は触らない
   // - addon 込みの更新は handleAddonToggle の primary ブランチで行う
@@ -749,7 +749,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? activeModuleData.drug?.brandNames?.[0]
         ?? activeModuleData.drug?.genericName
         ?? ''
-      const { fields: rawFields } = buildNodeFields(primaryScenario, activeModuleData, [], primaryDrugName)
+      // addonsRef から初期 addon を自動適用する。
+      // addonBrandHandlingTags の計算ロジックと同一: brandCatalog から handlingTags を inline 解決。
+      // useMemo 版（addonBrandHandlingTags）は activeNode 依存のため effect 内では直接使わない。
+      const primaryBrandCatalog = activeModuleData.drug?.brandCatalog
+      const primaryBrandKey = activeBrandName ?? activeModuleData.drug?.brandNames?.[0]
+      const primaryHandlingTags = primaryBrandCatalog && primaryBrandKey
+        ? primaryBrandCatalog[primaryBrandKey]?.handlingTags
+        : undefined
+      const initialAddonIds = getVisibleAddonKeys(activeModuleData.addons, primaryScenario, primaryHandlingTags)
+      const { fields: rawFields } = buildNodeFields(primaryScenario, activeModuleData, initialAddonIds, primaryDrugName)
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
@@ -759,8 +768,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard)
         : rawFields
       setPrimaryBaseFields(displayableFields)
-      setPrimaryAddonIds(new Set())
-      setSelectedAddonIds(new Set())
+      setPrimaryAddonIds(new Set(initialAddonIds))
+      setSelectedAddonIds(new Set(initialAddonIds))
       setEditedSOAP(null)
     } else if (selectedScenarioId === null) {
       rawPrimaryFieldsRef.current = EMPTY_FIELDS
@@ -1448,8 +1457,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         // ノードを追加して即時確定。
         // buildUpdatedNode に displayName（GE名 / 先発名）を渡し、{{drug_subject}} を正しく解決する。
         // matchedBrandName（先発名）は brandCatalog 解決キーとして node に保持し続ける。
+        // addonsRef から初期 addon を自動適用する（primary useEffect と同じロジック）。
+        const nodeBrandCatalog = mod.drug?.brandCatalog
+        const nodeHandlingTags = nodeBrandCatalog && resolvedBrandKey
+          ? nodeBrandCatalog[resolvedBrandKey]?.handlingTags
+          : undefined
+        const nodeInitialAddonIds = getVisibleAddonKeys(mod.addons, sc, nodeHandlingTags)
         setComposeNodes(prev => {
-          const updated = buildUpdatedNode(newNode, globalId, [], resolvedBrandKey, resolvedDisplayName)
+          const updated = buildUpdatedNode(newNode, globalId, nodeInitialAddonIds, resolvedBrandKey, resolvedDisplayName)
           if (!updated) return [...prev, newNode]
           // resolvedDrugName は node に保持（handleAddonToggle が {{drug_subject}} 再解決に使う）
           return [...prev, { ...updated, resolvedDrugName: resolvedDisplayName }]
@@ -1458,7 +1473,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setEditingNodeId(nodeId)
         setEditingPrimary(false)
         setSelectedGroup(getMenuGroupFromScenario(sc))
-        setSelectedAddonIds(new Set())
+        setSelectedAddonIds(new Set(nodeInitialAddonIds))
         setComposeSearch('')  // サブカテゴリ選択でセットされた値をリセット
         setEditedSOAP(null)
       }
