@@ -277,8 +277,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const uiModeRef             = useRef<UiMode>('manual')
   // rawPrimaryFieldsRef が NLP（Rapid）生成由来かどうかを示すフラグ。
   // uiMode は生成後に manual に戻ることがあるため、ADDON overlay 判定は uiMode ではなくこの ref で行う。
-  // handleNlpGenerate 成功時に true、シナリオ切替 / manual 戻り / NLP 失敗時に false にリセットする。
+  // handleNlpGenerate 成功時に true、ユーザーが手動でシナリオを選択した時に false にリセットする。
   const isNlpOriginRef        = useRef(false)
+  // handleNlpGenerate が setSelectedScenarioId を呼ぶ際に useEffect([selectedScenarioId]) で
+  // 通常シナリオ再構築・isNlpOriginRef リセットが走るのを防ぐためのフラグ。
+  // handleNlpGenerate 内で true にし、useEffect が一度スキップしたら false に戻す。
+  const scenarioIdFromNlpRef  = useRef(false)
   // 1剤目 SOAP 再構築時に {{drug_subject}} で使う表示名（GE名 / 先発名）。
   // useEffect([selectedScenarioId]) の deps に含めず ref で参照することで stale closure を防ぐ。
   const activeDrugDisplayNameRef = useRef<string | undefined>(undefined)
@@ -746,6 +750,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
     // selectedScenarioId 変化による上書きをスキップする
     if (uiModeRef.current === 'nlp') return
+    // handleNlpGenerate が setSelectedScenarioId を呼んだ場合は通常シナリオ再構築をスキップする。
+    // ADDON 候補表示（addonVisibleKeys）のために selectedScenarioId だけ更新し、
+    // rawPrimaryFieldsRef / primaryBaseFields / isNlpOriginRef は NLP 出力を保持する。
+    if (scenarioIdFromNlpRef.current) {
+      scenarioIdFromNlpRef.current = false  // 次回以降は通常動作に戻す（一度だけスキップ）
+      return
+    }
     if (selectedScenarioId !== null && primaryScenario) {
       // activeDrugDisplayNameRef: Express GEモード時の GE名（ref 経由で stale closure 防止）
       // activeBrandName は brandCatalog 解決キー（先発名）として保持
@@ -758,7 +769,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
-      isNlpOriginRef.current = false  // シナリオ切替で NLP 原本フラグをリセット
+      isNlpOriginRef.current = false  // ユーザーの手動シナリオ選択で NLP 原本フラグをリセット
       // persona が ON の場合は初期表示から変換済みフィールドを使用する
       // personaEnabled / selectedPersona は ref 経由で参照（effect の deps に加えない）
       const displayableFields = personaEnabledRef.current
@@ -1579,9 +1590,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         : nlpFields
       setPrimaryBaseFields(displayableFields)
       if (result.scenarioId) {
-        // setSelectedScenarioId で useEffect([selectedScenarioId]) が走るが、
-        // isNlpOriginRef.current が true なのでその中で false にリセットしてはならない。
-        // useEffect は uiModeRef.current === 'nlp' ガードで早期リターンするため問題ない。
+        // scenarioIdFromNlpRef を true にしてから setSelectedScenarioId を呼ぶ。
+        // useEffect([selectedScenarioId]) はこの ref が true のときはスキップし、
+        // isNlpOriginRef / rawPrimaryFieldsRef / primaryBaseFields を上書きしない。
+        scenarioIdFromNlpRef.current = true
         setSelectedScenarioId(result.scenarioId)
         if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
       }
