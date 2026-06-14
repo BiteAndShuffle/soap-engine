@@ -747,16 +747,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // - addonsRef は AddonPanel の表示候補のみに使用（初期選択ONには使わない）
   useEffect(() => {
     if (editingNodeId !== null) return
-    // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
-    // selectedScenarioId 変化による上書きをスキップする
-    if (uiModeRef.current === 'nlp') return
     // handleNlpGenerate が setSelectedScenarioId を呼んだ場合は通常シナリオ再構築をスキップする。
+    // このフラグは uiModeRef チェックより前に消費する。uiMode === 'nlp' のままで early return
+    // すると false に戻す機会を失い、後続の手動シナリオ選択時にも誤ってスキップしてしまうため。
     // ADDON 候補表示（addonVisibleKeys）のために selectedScenarioId だけ更新し、
     // rawPrimaryFieldsRef / primaryBaseFields / isNlpOriginRef は NLP 出力を保持する。
     if (scenarioIdFromNlpRef.current) {
       scenarioIdFromNlpRef.current = false  // 次回以降は通常動作に戻す（一度だけスキップ）
       return
     }
+    // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
+    // selectedScenarioId 変化による上書きをスキップする
+    if (uiModeRef.current === 'nlp') return
     if (selectedScenarioId !== null && primaryScenario) {
       // activeDrugDisplayNameRef: Express GEモード時の GE名（ref 経由で stale closure 防止）
       // activeBrandName は brandCatalog 解決キー（先発名）として保持
