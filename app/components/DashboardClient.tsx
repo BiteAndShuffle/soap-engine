@@ -1604,21 +1604,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     confirmDiscard(() => {
       // Rapid に入る瞬間の manual 状態をスナップショットとして保存する。
       // 以降の state リセット前に取得することで正確な復元元を確保する。
-      // Rapid 中に再度 handleSwitchToNlp が呼ばれることはないが、
-      // 念のり既存スナップショットがあれば上書きしない。
-      if (manualSnapshotRef.current === null) {
-        manualSnapshotRef.current = {
-          primaryBaseFields:  { ...primaryBaseFieldsRef.current },
-          rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
-          primaryGuard:       primaryGuardRef.current,
-          selectedScenarioId: selectedScenarioIdRef.current,
-          selectedGroup:      selectedGroup,
-          primaryAddonIds:    new Set(primaryAddonIdsRef.current),
-          selectedAddonIds:   new Set(selectedAddonIdsRef.current),
-          sRelation:          sRelationRef.current,
-          sCondition:         sConditionRef.current,
-          singleDrugFlags:    { ...singleDrugFlagsRef.current },
-        }
+      // 毎回必ず上書きする（直前の manual 状態が常に復元対象）。
+      manualSnapshotRef.current = {
+        primaryBaseFields:  { ...primaryBaseFieldsRef.current },
+        rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
+        primaryGuard:       primaryGuardRef.current,
+        selectedScenarioId: selectedScenarioIdRef.current,
+        selectedGroup:      selectedGroup,
+        primaryAddonIds:    new Set(primaryAddonIdsRef.current),
+        selectedAddonIds:   new Set(selectedAddonIdsRef.current),
+        sRelation:          sRelationRef.current,
+        sCondition:         sConditionRef.current,
+        singleDrugFlags:    { ...singleDrugFlagsRef.current },
       }
       setUiMode('nlp')
       setSelectedScenarioId(null)
