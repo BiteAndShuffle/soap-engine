@@ -298,15 +298,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // handleSwitchToManual でこれをそのまま復元する（buildNodeFields は呼ばない）。
   // null = スナップショットなし（Rapid 未使用 or 手動クリア済み）。
   type ManualSnapshot = {
-    primaryBaseFields: SoapFields
-    rawPrimaryFields:  SoapFields
-    primaryGuard:      ReturnType<typeof derivePersonaGuard> | null
+    primaryBaseFields:  SoapFields
+    rawPrimaryFields:   SoapFields
+    primaryGuard:       ReturnType<typeof derivePersonaGuard> | null
     selectedScenarioId: string | null
-    primaryAddonIds:   Set<string>
-    selectedAddonIds:  Set<string>
-    sRelation:         SRelation
-    sCondition:        SCondition
-    singleDrugFlags:   SingleDrugFlags
+    selectedGroup:      MenuGroup | null
+    primaryAddonIds:    Set<string>
+    selectedAddonIds:   Set<string>
+    sRelation:          SRelation
+    sCondition:         SCondition
+    singleDrugFlags:    SingleDrugFlags
   }
   const manualSnapshotRef = useRef<ManualSnapshot | null>(null)
   // ユーザーが明示的に手動でシナリオを選択したときのみ true になるフラグ。
@@ -1601,6 +1602,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSwitchToNlp = useCallback(() => {
     confirmDiscard(() => {
+      // Rapid に入る瞬間の manual 状態をスナップショットとして保存する。
+      // 以降の state リセット前に取得することで正確な復元元を確保する。
+      // Rapid 中に再度 handleSwitchToNlp が呼ばれることはないが、
+      // 念のり既存スナップショットがあれば上書きしない。
+      if (manualSnapshotRef.current === null) {
+        manualSnapshotRef.current = {
+          primaryBaseFields:  { ...primaryBaseFieldsRef.current },
+          rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
+          primaryGuard:       primaryGuardRef.current,
+          selectedScenarioId: selectedScenarioIdRef.current,
+          selectedGroup:      selectedGroup,
+          primaryAddonIds:    new Set(primaryAddonIdsRef.current),
+          selectedAddonIds:   new Set(selectedAddonIdsRef.current),
+          sRelation:          sRelationRef.current,
+          sCondition:         sConditionRef.current,
+          singleDrugFlags:    { ...singleDrugFlagsRef.current },
+        }
+      }
       setUiMode('nlp')
       setSelectedScenarioId(null)
       setPrimaryBaseFields(EMPTY_FIELDS)
@@ -1617,7 +1636,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setNlpConfidence(0)
       setEditedSOAP(null)
     })
-  }, [confirmDiscard])
+  }, [confirmDiscard, selectedGroup])
 
   const handleSwitchToManual = useCallback(() => {
     setUiMode('manual')
@@ -1638,6 +1657,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSRelation(snap.sRelation)
       setSCondition(snap.sCondition)
       setSingleDrugFlags(snap.singleDrugFlags)
+      setSelectedGroup(snap.selectedGroup)
       setEditedSOAP(null)
       // selectedScenarioId を戻す前に restoringFromSnapshotRef を立てて、
       // useEffect([selectedScenarioId]) による buildNodeFields 上書きを防ぐ。
@@ -1647,23 +1667,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [])
 
   const handleNlpGenerate = useCallback((patientInput: string) => {
-    // Rapid 生成前に manual 状態をスナップショットとして保存する。
-    // handleSwitchToManual（Rapid 解除）でこれをそのまま復元する。
-    // Rapid 中にシナリオ選択や薬剤切替が起きた場合は上書きしない
-    // （Rapid に入った瞬間の manual 状態が復元対象）。
-    if (manualSnapshotRef.current === null) {
-      manualSnapshotRef.current = {
-        primaryBaseFields:  { ...primaryBaseFieldsRef.current },
-        rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
-        primaryGuard:       primaryGuardRef.current,
-        selectedScenarioId: selectedScenarioIdRef.current,
-        primaryAddonIds:    new Set(primaryAddonIdsRef.current),
-        selectedAddonIds:   new Set(selectedAddonIdsRef.current),
-        sRelation:          sRelationRef.current,
-        sCondition:         sConditionRef.current,
-        singleDrugFlags:    { ...singleDrugFlagsRef.current },
-      }
-    }
     setNlpIsGenerating(true)
     const result = createSoapFromInput(activeModuleData, patientInput)
     setNlpValidation(result.validation)
