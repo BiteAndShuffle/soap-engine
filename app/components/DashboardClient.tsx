@@ -797,14 +797,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // handleSwitchToManual がスナップショットを復元した直後のフラグ。
     // true の場合は buildNodeFields による再構築・state 上書きをスキップする。
     // フラグ自体は消費してリセットする（次回以降は通常動作）。
-    console.log('[D] useEffect reached restoringFromSnapshot check', {
-      restoringFromSnapshot: restoringFromSnapshotRef.current,
-      selectedScenarioId,
-      uiMode: uiModeRef.current,
-    })
     if (restoringFromSnapshotRef.current) {
       restoringFromSnapshotRef.current = false
-      console.log('[D] skipped by restoringFromSnapshotRef')
       return
     }
     // manualScenarioSelectRef が true の場合のみ rapidBaseFieldsRef をクリアする。
@@ -831,7 +825,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const displayableFields = personaEnabledRef.current
         ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard)
         : rawFields
-      console.log('[E] useEffect overwriting primaryBaseFields via buildNodeFields', displayableFields.S?.slice(0, 80))
       setPrimaryBaseFields(displayableFields)
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
@@ -1289,16 +1282,42 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           const newAddonIds = [...next]
           setPrimaryAddonIds(next)
 
-          const rapidBase = rapidBaseFieldsRef.current
-          if (rapidBase !== null) {
-            // ── Rapid（NLP）出力が原本の場合:
-            // rapidBaseFieldsRef は画面表示済みの最終本文（persona 変換・addonsRef 展開済み）。
-            // これをベースに選択 ADDON のテキストだけを重ねる。
-            // persona 再適用は不要（rapidBase は既に表示済み）。
-            // buildNodeFields は呼ばない（通常シナリオ再生成を防ぐ）。
-            const sectionMap = new Map<string, string[]>()
+          // ── Rapid ADDON 操作: primaryBaseFieldsRef.current をベースに
+          // 全 ADDON テキストを一旦剥がし、選択中の ADDON だけ再付加する。
+          // buildNodeFields は呼ばない（S先頭文/フラグ変更が消えるのを防ぐ）。
+          {
+            const addonItems = activeModuleData.addons?.items ?? {}
+
+            // 全 ADDON テキストのセット（剥がし対象）
+            const allAddonTexts = new Set<string>()
+            for (const item of Object.values(addonItems)) {
+              if (item.sectionTexts) {
+                for (const sec of ['S', 'A', 'P'] as const) {
+                  const t = item.sectionTexts[sec]
+                  if (t) allAddonTexts.add(t)
+                }
+              } else {
+                allAddonTexts.add(item.text)
+              }
+            }
+
+            // primaryBaseFieldsRef から全 ADDON 行を除去してベースを得る
+            const currentFields = primaryBaseFieldsRef.current
+            const stripped: SoapFields = { S: '', O: '', A: '', P: '' }
+            for (const sec of ['S', 'O', 'A', 'P'] as const) {
+              const raw = currentFields[sec]
+              if (!raw) continue
+              const lines = raw.split('\n')
+              const kept = lines.filter(line => !allAddonTexts.has(line))
+              // 余剰な末尾空行を詰める
+              while (kept.length > 0 && kept[kept.length - 1] === '') kept.pop()
+              stripped[sec] = kept.join('\n')
+            }
+
+            // 選択中 ADDON テキストをセクション別にまとめる
+            const sectionMap = new Map<SoapKey, string[]>()
             for (const key of newAddonIds) {
-              const item = activeModuleData.addons?.items[key]
+              const item = addonItems[key]
               if (!item) continue
               if (item.sectionTexts) {
                 for (const sec of ['S', 'A', 'P'] as const) {
@@ -1313,30 +1332,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                 sectionMap.get(sec)!.push(item.text)
               }
             }
-            const overlaid = { ...rapidBase }
+
+            // ベースに選択 ADDON を付加して新しい primaryBaseFields を作る
+            const overlaid: SoapFields = { ...stripped }
             for (const [sec, texts] of sectionMap) {
-              const k = sec as keyof typeof overlaid
-              overlaid[k] = overlaid[k] ? `${overlaid[k]}\n${texts.join('\n')}` : texts.join('\n')
+              overlaid[sec] = overlaid[sec] ? `${overlaid[sec]}\n${texts.join('\n')}` : texts.join('\n')
             }
             setPrimaryBaseFields(overlaid)
-          } else {
-            // ── manual モード: buildNodeFields でシナリオ + addon から SOAP を構築する
-            const sc = primaryScenarioRef.current
-            if (sc) {
-              const primaryDrugName = activeDrugDisplayName
-                ?? activeBrandName
-                ?? activeModuleData.drug?.brandNames?.[0]
-                ?? activeModuleData.drug?.genericName
-                ?? ''
-              const { fields: rawFields } = buildNodeFields(sc, activeModuleData, newAddonIds, primaryDrugName)
-              const guard = derivePersonaGuard(sc, activeModuleData.template?.urgentFlag)
-              rawPrimaryFieldsRef.current = rawFields
-              primaryGuardRef.current = guard
-              const fields = personaEnabled
-                ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
-                : rawFields
-              setPrimaryBaseFields(fields)
-            }
           }
           setEditedSOAP(null)
           return next
@@ -1605,7 +1607,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   ])
 
   // ─────────────────────────────────────────────────────────────
-  // NLP モード
+  // NLP生成モード（現在未使用・将来機能）
+  //
+  // 注意: これは「Rapid」（S先頭文/フラグ/ADDON 右パネル操作）とは別概念。
+  //   Rapid  = ThirdPanel の S先頭文ボタン・フラグボタン・ADDONボタン
+  //   NLP生成 = 患者テキストから SOAP を AI 生成する将来機能
+  //
+  // handleSwitchToNlp は現在どの UI ボタンにも接続されていない。
+  // showNlpButton = false で完全に非表示。uiMode が 'nlp' になることはない。
   // ─────────────────────────────────────────────────────────────
 
   const handleSwitchToNlp = useCallback(() => {
@@ -1613,12 +1622,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // Rapid に入る瞬間の manual 状態をスナップショットとして保存する。
       // 以降の state リセット前に取得することで正確な復元元を確保する。
       // 毎回必ず上書きする（直前の manual 状態が常に復元対象）。
-      console.log('[0] handleSwitchToNlp saving snapshot', {
-        scenarioId: selectedScenarioIdRef.current,
-        S: primaryBaseFieldsRef.current.S?.slice(0, 80),
-        addonIds: [...selectedAddonIdsRef.current],
-        sRelation: sRelationRef.current,
-      })
       manualSnapshotRef.current = {
         primaryBaseFields:  { ...primaryBaseFieldsRef.current },
         rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
@@ -1651,13 +1654,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSwitchToManual = useCallback(() => {
     const snap = manualSnapshotRef.current
-    console.log('[A] handleSwitchToManual called', {
-      snapIsNull: snap === null,
-      snapScenarioId: snap?.selectedScenarioId,
-      snapS: snap?.primaryBaseFields?.S?.slice(0, 80),
-      snapAddonIds: snap ? [...snap.selectedAddonIds] : null,
-      snapSRelation: snap?.sRelation,
-    })
     setUiMode('manual')
     setNlpValidation(null)
     setNlpSelectorReason('')
@@ -1667,7 +1663,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       rapidBaseFieldsRef.current = null
       rawPrimaryFieldsRef.current = snap.rawPrimaryFields
       primaryGuardRef.current     = snap.primaryGuard
-      console.log('[B] calling setPrimaryBaseFields with snap', snap.primaryBaseFields?.S?.slice(0, 80))
       setPrimaryBaseFields(snap.primaryBaseFields)
       setPrimaryAddonIds(snap.primaryAddonIds)
       setSelectedAddonIds(snap.selectedAddonIds)
@@ -1677,7 +1672,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSelectedGroup(snap.selectedGroup)
       setEditedSOAP(null)
       restoringFromSnapshotRef.current = true
-      console.log('[C] restoringFromSnapshotRef=true → setSelectedScenarioId', snap.selectedScenarioId)
       setSelectedScenarioId(snap.selectedScenarioId)
     }
   }, [])
