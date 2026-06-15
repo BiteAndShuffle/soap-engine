@@ -275,10 +275,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const selectedPersonaRef    = useRef<PersonaId>('polite')
   // NLP モード中は selectedScenarioId 変化による useEffect の上書きをスキップするための ref
   const uiModeRef             = useRef<UiMode>('manual')
-  // Rapid（NLP）生成後に画面表示した最終 SOAP を immutable な原本として保持する ref。
-  // null = Rapid 原本なし（通常シナリオ選択中 or 未生成）
-  // 非 null = Rapid 出力が原本。S先頭文・ADDON 操作はこれをベースに差分だけ重ねる。
-  // ユーザーが手動で別シナリオを明示選択した時点のみ null にリセットする。
+  // NLP生成モード専用 ref（将来機能・現在 UI 未接続）。
+  // NLP生成が SOAP を出力したとき、その最終テキストを immutable な原本として保持する。
+  // 通常の Rapid（右パネル S先頭文/フラグ/ADDON ボタン）では一切使用せず、常に null のまま。
+  // ※ 「Rapid」と名前がついているが、Rapid 操作とは無関係。NLP生成フロー専用。
+  // null = NLP原本なし（通常運用では常にこの状態）
+  // 非 null = NLP出力が原本（handleNlpGenerate が設定。UI未接続のため現在は到達しない）
+  // ユーザーが手動で別シナリオを明示選択した時点で null にリセットする。
+  // → docs/feature-glossary.md「NLP生成」「Rapid」の定義を参照
   const rapidBaseFieldsRef    = useRef<SoapFields | null>(null)
   // handleNlpGenerate が setSelectedScenarioId を呼ぶ際に useEffect([selectedScenarioId]) で
   // 通常シナリオ再構築・rapidBaseFieldsRef リセットが走るのを防ぐためのフラグ。
@@ -294,9 +298,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // handleSToggle 内で現在の sRelation/sCondition を stale closure なしに読むための ref。
   const sRelationRef  = useRef<SRelation>('continued_do')
   const sConditionRef = useRef<SCondition>('stable')
-  // Rapid（NLP）モードに入る直前の manual 状態スナップショット。
+  // NLP生成モード専用 ref（将来機能・現在 UI 未接続）。
+  // NLP生成モード（handleSwitchToNlp）に入る直前の manual 状態スナップショット。
   // handleSwitchToManual でこれをそのまま復元する（buildNodeFields は呼ばない）。
-  // null = スナップショットなし（Rapid 未使用 or 手動クリア済み）。
+  // 通常の Rapid（右パネル S先頭文/フラグ/ADDON ボタン）では一切使用しない。
+  // handleSwitchToNlp は現在どの UI ボタンにも接続されていないため、常に null のまま。
+  // null = スナップショットなし（現在 UI 未接続のため常にこの状態）。
+  // → docs/feature-glossary.md「NLP生成」の定義を参照
   type ManualSnapshot = {
     primaryBaseFields:  SoapFields
     rawPrimaryFields:   SoapFields
