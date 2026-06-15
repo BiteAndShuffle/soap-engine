@@ -1232,10 +1232,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [])
 
   // ─────────────────────────────────────────────────────────────
-  // handleAddonToggle
+  // handleAddonToggle【Rapid 操作】
+  //
+  // Rapid の一部（右パネル ADDON ボタン）。Express / NLP生成とは無関係。
   //
   //   node    → ノードの block を addon 込みで再構築（composeNodes を書き換え）
-  //   primary → primaryBaseFields を addon 込みで再計算
+  //   primary → primaryBaseFieldsRef.current から全 ADDON を剥がし選択分だけ再付加
+  //             ※ buildNodeFields は呼ばない（S先頭文・フラグ変更を保持するため）
   // ─────────────────────────────────────────────────────────────
 
   const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
@@ -1348,8 +1351,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeModuleData, activeBrandName, activeDrugDisplayName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
-  // handleSToggle（S先頭文トグル）
+  // handleSToggle【Rapid 操作】（S先頭文トグル）
   //
+  // Rapid の一部（右パネル S先頭文ボタン）。Express / NLP生成とは無関係。
+  // S欄の先頭文のみ変更。A・P は保持。buildNodeFields は呼ばない。
   // ノード編集中は1剤目の S を変更しない（ノード側に S トグルは現時点では非対応）
   // ─────────────────────────────────────────────────────────────
 
@@ -1432,9 +1437,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
-  // handleFlagChange（単剤フラグ: 副作用なし / CP良好）
+  // handleFlagChange【Rapid 操作】（単剤フラグ: 副作用なし / CP良好）
   //
-  // フラグ行を S 末尾に追加/除去する。
+  // Rapid の一部（右パネル フラグボタン）。Express / NLP生成とは無関係。
+  // フラグ行を S 末尾に追加/除去する。A・P は保持。buildNodeFields は呼ばない。
   // 単剤時のみ呼ばれるため多剤チェックは不要。
   // フラグ行は buildS が observation として処理し、
   // OBS_PREFIX 付きの observation バケットには入らないため
@@ -1461,7 +1467,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
-  // handleSubcategorySelect
+  // handleSubcategorySelect【Express 操作】
+  //
+  // Express の一部（中央パネル サブカテゴリ選択）。Rapid / NLP生成とは無関係。
   // ─────────────────────────────────────────────────────────────
 
   const handleSubcategorySelect = useCallback((label: string) => {
@@ -1469,7 +1477,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [])
 
   // ─────────────────────────────────────────────────────────────
-  // handleExpressAdd
+  // handleExpressAdd【Express 操作】
+  //
+  // Express の一部（中央パネル 剤形/候補選択 → SOAP即時確定）。Rapid / NLP生成とは無関係。
+  // シナリオ確定時に buildNodeFields を呼ぶ（Express の責務）。
   //
   // エクスプレスモードから呼ばれる。通常フローと同じ状態を組み立てるショートカット。
   //
