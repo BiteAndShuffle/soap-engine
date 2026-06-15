@@ -791,15 +791,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       scenarioIdFromNlpRef.current = false  // 次回以降は通常動作に戻す（一度だけスキップ）
       return
     }
-    // handleSwitchToManual がスナップショット復元後に setSelectedScenarioId を呼ぶ場合、
-    // useEffect による buildNodeFields / setPrimaryBaseFields の上書きをスキップする。
-    if (restoringFromSnapshotRef.current) {
-      restoringFromSnapshotRef.current = false
-      return
-    }
     // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
     // selectedScenarioId 変化による上書きをスキップする
     if (uiModeRef.current === 'nlp') return
+    // handleSwitchToManual がスナップショットを復元した直後のフラグ。
+    // true の場合は buildNodeFields による再構築・state 上書きをスキップする。
+    // フラグ自体は消費してリセットする（次回以降は通常動作）。
+    console.log('[D] useEffect reached restoringFromSnapshot check', {
+      restoringFromSnapshot: restoringFromSnapshotRef.current,
+      selectedScenarioId,
+      uiMode: uiModeRef.current,
+    })
+    if (restoringFromSnapshotRef.current) {
+      restoringFromSnapshotRef.current = false
+      console.log('[D] skipped by restoringFromSnapshotRef')
+      return
+    }
     // manualScenarioSelectRef が true の場合のみ rapidBaseFieldsRef をクリアする。
     // false の場合（handleSelectGroup や薬剤切替などの内部呼び出し）はクリアしない。
     const isManualSelect = manualScenarioSelectRef.current
@@ -824,6 +831,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const displayableFields = personaEnabledRef.current
         ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard)
         : rawFields
+      console.log('[E] useEffect overwriting primaryBaseFields via buildNodeFields', displayableFields.S?.slice(0, 80))
       setPrimaryBaseFields(displayableFields)
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
@@ -1605,6 +1613,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // Rapid に入る瞬間の manual 状態をスナップショットとして保存する。
       // 以降の state リセット前に取得することで正確な復元元を確保する。
       // 毎回必ず上書きする（直前の manual 状態が常に復元対象）。
+      console.log('[0] handleSwitchToNlp saving snapshot', {
+        scenarioId: selectedScenarioIdRef.current,
+        S: primaryBaseFieldsRef.current.S?.slice(0, 80),
+        addonIds: [...selectedAddonIdsRef.current],
+        sRelation: sRelationRef.current,
+      })
       manualSnapshotRef.current = {
         primaryBaseFields:  { ...primaryBaseFieldsRef.current },
         rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
@@ -1636,18 +1650,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [confirmDiscard, selectedGroup])
 
   const handleSwitchToManual = useCallback(() => {
+    const snap = manualSnapshotRef.current
+    console.log('[A] handleSwitchToManual called', {
+      snapIsNull: snap === null,
+      snapScenarioId: snap?.selectedScenarioId,
+      snapS: snap?.primaryBaseFields?.S?.slice(0, 80),
+      snapAddonIds: snap ? [...snap.selectedAddonIds] : null,
+      snapSRelation: snap?.sRelation,
+    })
     setUiMode('manual')
     setNlpValidation(null)
     setNlpSelectorReason('')
     setNlpConfidence(0)
-    // Rapid 前の manual 状態スナップショットがあればそのまま復元する。
-    // buildNodeFields は呼ばない（復元元は生成済みの正確な本文）。
-    const snap = manualSnapshotRef.current
     if (snap !== null) {
       manualSnapshotRef.current = null
       rapidBaseFieldsRef.current = null
       rawPrimaryFieldsRef.current = snap.rawPrimaryFields
       primaryGuardRef.current     = snap.primaryGuard
+      console.log('[B] calling setPrimaryBaseFields with snap', snap.primaryBaseFields?.S?.slice(0, 80))
       setPrimaryBaseFields(snap.primaryBaseFields)
       setPrimaryAddonIds(snap.primaryAddonIds)
       setSelectedAddonIds(snap.selectedAddonIds)
@@ -1656,9 +1676,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSingleDrugFlags(snap.singleDrugFlags)
       setSelectedGroup(snap.selectedGroup)
       setEditedSOAP(null)
-      // selectedScenarioId を戻す前に restoringFromSnapshotRef を立てて、
-      // useEffect([selectedScenarioId]) による buildNodeFields 上書きを防ぐ。
       restoringFromSnapshotRef.current = true
+      console.log('[C] restoringFromSnapshotRef=true → setSelectedScenarioId', snap.selectedScenarioId)
       setSelectedScenarioId(snap.selectedScenarioId)
     }
   }, [])
