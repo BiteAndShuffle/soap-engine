@@ -284,16 +284,38 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 通常シナリオ再構築・rapidBaseFieldsRef リセットが走るのを防ぐためのフラグ。
   // handleNlpGenerate 内で true にし、useEffect が一度スキップしたら false に戻す。
   const scenarioIdFromNlpRef  = useRef(false)
+  // handleSwitchToManual がスナップショットを復元した際に setSelectedScenarioId を呼ぶが、
+  // その useEffect([selectedScenarioId]) でスナップショット復元済みの状態を上書きしないよう
+  // 一度だけ useEffect 全体をスキップするためのフラグ。
+  const restoringFromSnapshotRef = useRef(false)
   // 1剤目 SOAP 再構築時に {{drug_subject}} で使う表示名（GE名 / 先発名）。
   // useEffect([selectedScenarioId]) の deps に含めず ref で参照することで stale closure を防ぐ。
   const activeDrugDisplayNameRef = useRef<string | undefined>(undefined)
   // handleSToggle 内で現在の sRelation/sCondition を stale closure なしに読むための ref。
   const sRelationRef  = useRef<SRelation>('continued_do')
   const sConditionRef = useRef<SCondition>('stable')
+  // Rapid（NLP）モードに入る直前の manual 状態スナップショット。
+  // handleSwitchToManual でこれをそのまま復元する（buildNodeFields は呼ばない）。
+  // null = スナップショットなし（Rapid 未使用 or 手動クリア済み）。
+  type ManualSnapshot = {
+    primaryBaseFields: SoapFields
+    rawPrimaryFields:  SoapFields
+    primaryGuard:      ReturnType<typeof derivePersonaGuard> | null
+    selectedScenarioId: string | null
+    primaryAddonIds:   Set<string>
+    selectedAddonIds:  Set<string>
+    sRelation:         SRelation
+    sCondition:        SCondition
+    singleDrugFlags:   SingleDrugFlags
+  }
+  const manualSnapshotRef = useRef<ManualSnapshot | null>(null)
   // ユーザーが明示的に手動でシナリオを選択したときのみ true になるフラグ。
   // useEffect([selectedScenarioId]) 内で rapidBaseFieldsRef.current を null にするのは
   // このフラグが true のときだけに限定し、NLP 生成後の誤クリアを防ぐ。
   const manualScenarioSelectRef = useRef(false)
+  // handleNlpGenerate / handleSwitchToManual 内で stale closure なしに参照するための ref
+  const selectedScenarioIdRef = useRef<string | null>(null)
+  const singleDrugFlagsRef    = useRef<SingleDrugFlags>({ noSideEffect: false, goodCompliance: false })
   // handleFieldChange で editedSOAP の一致判定に使う（stale closure 防止）
   const displayFieldsRef      = useRef<SoapFields>(EMPTY_FIELDS)
   // 編集開始時点の finalFields スナップショット（一度確定したら次の編集開始まで変化しない）
@@ -467,6 +489,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   displayFieldsRef.current     = displayFields
   sRelationRef.current         = sRelation
   sConditionRef.current        = sCondition
+  selectedScenarioIdRef.current = selectedScenarioId
+  singleDrugFlagsRef.current   = singleDrugFlags
   // 未編集状態のときだけスナップショットを追従させる。
   // editedSOAP が非null（編集中）のときは固定したまま更新しない。
   // これにより、mergeBlocks/addon の再計算が editSnapshotRef を汚染しない。
@@ -766,6 +790,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       scenarioIdFromNlpRef.current = false  // 次回以降は通常動作に戻す（一度だけスキップ）
       return
     }
+    // handleSwitchToManual がスナップショット復元後に setSelectedScenarioId を呼ぶ場合、
+    // useEffect による buildNodeFields / setPrimaryBaseFields の上書きをスキップする。
+    if (restoringFromSnapshotRef.current) {
+      restoringFromSnapshotRef.current = false
+      return
+    }
     // NLP モード中は handleNlpGenerate が rawFields/guard/primaryBaseFields を直接管理するため
     // selectedScenarioId 変化による上書きをスキップする
     if (uiModeRef.current === 'nlp') return
@@ -953,6 +983,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // ユーザーが明示的に手動でシナリオを選択した印を付ける。
       // useEffect([selectedScenarioId]) で rapidBaseFieldsRef を null にする条件として使う。
       manualScenarioSelectRef.current = true
+      // 手動でシナリオを選択したら Rapid 前スナップショットは不要になるのでクリアする。
+      manualSnapshotRef.current = null
       setSelectedScenarioId(prev => {
         if (prev === id) {
           // 同じシナリオを再タップ → 解除
@@ -979,6 +1011,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const handleSelectDrugSuggestion = useCallback((item: DrugSuggestionItem) => {
     confirmDiscard(() => {
+      // 薬剤切替でコンテキストが完全に変わるため Rapid 前スナップショットをクリアする
+      manualSnapshotRef.current = null
+      rapidBaseFieldsRef.current = null
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
       setActiveModuleData(mod)
       setActiveBrandName(item.matchedBrandName)
@@ -1589,9 +1624,46 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     setNlpValidation(null)
     setNlpSelectorReason('')
     setNlpConfidence(0)
+    // Rapid 前の manual 状態スナップショットがあればそのまま復元する。
+    // buildNodeFields は呼ばない（復元元は生成済みの正確な本文）。
+    const snap = manualSnapshotRef.current
+    if (snap !== null) {
+      manualSnapshotRef.current = null
+      rapidBaseFieldsRef.current = null
+      rawPrimaryFieldsRef.current = snap.rawPrimaryFields
+      primaryGuardRef.current     = snap.primaryGuard
+      setPrimaryBaseFields(snap.primaryBaseFields)
+      setPrimaryAddonIds(snap.primaryAddonIds)
+      setSelectedAddonIds(snap.selectedAddonIds)
+      setSRelation(snap.sRelation)
+      setSCondition(snap.sCondition)
+      setSingleDrugFlags(snap.singleDrugFlags)
+      setEditedSOAP(null)
+      // selectedScenarioId を戻す前に restoringFromSnapshotRef を立てて、
+      // useEffect([selectedScenarioId]) による buildNodeFields 上書きを防ぐ。
+      restoringFromSnapshotRef.current = true
+      setSelectedScenarioId(snap.selectedScenarioId)
+    }
   }, [])
 
   const handleNlpGenerate = useCallback((patientInput: string) => {
+    // Rapid 生成前に manual 状態をスナップショットとして保存する。
+    // handleSwitchToManual（Rapid 解除）でこれをそのまま復元する。
+    // Rapid 中にシナリオ選択や薬剤切替が起きた場合は上書きしない
+    // （Rapid に入った瞬間の manual 状態が復元対象）。
+    if (manualSnapshotRef.current === null) {
+      manualSnapshotRef.current = {
+        primaryBaseFields:  { ...primaryBaseFieldsRef.current },
+        rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
+        primaryGuard:       primaryGuardRef.current,
+        selectedScenarioId: selectedScenarioIdRef.current,
+        primaryAddonIds:    new Set(primaryAddonIdsRef.current),
+        selectedAddonIds:   new Set(selectedAddonIdsRef.current),
+        sRelation:          sRelationRef.current,
+        sCondition:         sConditionRef.current,
+        singleDrugFlags:    { ...singleDrugFlagsRef.current },
+      }
+    }
     setNlpIsGenerating(true)
     const result = createSoapFromInput(activeModuleData, patientInput)
     setNlpValidation(result.validation)
