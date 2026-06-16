@@ -1299,30 +1299,41 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           {
             const addonItems = activeModuleData.addons?.items ?? {}
 
-            // 全 ADDON テキストのセット（剥がし対象）
-            const allAddonTexts = new Set<string>()
+            // 全 ADDON テキストをセクション別に整理（剥がし対象）
+            // 複数行テキストに対応するため section → texts[] の Map で管理する
+            const allAddonTextsBySec = new Map<SoapKey, string[]>()
             for (const item of Object.values(addonItems)) {
               if (item.sectionTexts) {
                 for (const sec of ['S', 'A', 'P'] as const) {
                   const t = item.sectionTexts[sec]
-                  if (t) allAddonTexts.add(t)
+                  if (!t) continue
+                  const list = allAddonTextsBySec.get(sec) ?? []
+                  list.push(t)
+                  allAddonTextsBySec.set(sec, list)
                 }
               } else {
-                allAddonTexts.add(item.text)
+                const sec = item.targetSection as SoapKey
+                const list = allAddonTextsBySec.get(sec) ?? []
+                list.push(item.text)
+                allAddonTextsBySec.set(sec, list)
               }
             }
 
-            // primaryBaseFieldsRef から全 ADDON 行を除去してベースを得る
+            // primaryBaseFieldsRef から全 ADDON テキストを除去してベースを得る
+            // 行単位比較ではなく substring 除去を使う（複数行テキスト対応）
             const currentFields = primaryBaseFieldsRef.current
             const stripped: SoapFields = { S: '', O: '', A: '', P: '' }
             for (const sec of ['S', 'O', 'A', 'P'] as const) {
-              const raw = currentFields[sec]
-              if (!raw) continue
-              const lines = raw.split('\n')
-              const kept = lines.filter(line => !allAddonTexts.has(line))
-              // 余剰な末尾空行を詰める
-              while (kept.length > 0 && kept[kept.length - 1] === '') kept.pop()
-              stripped[sec] = kept.join('\n')
+              let val = currentFields[sec] ?? ''
+              for (const addonText of (allAddonTextsBySec.get(sec) ?? [])) {
+                const withSep = '\n' + addonText
+                if (val.includes(withSep)) {
+                  val = val.replace(withSep, '')
+                } else {
+                  val = val.replace(addonText, '')
+                }
+              }
+              stripped[sec] = val
             }
 
             // 選択中 ADDON テキストをセクション別にまとめる
