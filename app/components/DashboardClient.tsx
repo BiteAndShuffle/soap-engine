@@ -1356,9 +1356,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             }
 
             // ベースに選択 ADDON を付加して新しい primaryBaseFields を作る
+            // P セクションのみ: closing 行（followup P）の前に ADDON テキストを挿入する
+            const closingText = primaryScenarioRef.current
+              ? resolveClosingText(primaryScenarioRef.current, activeModuleData.defaults)
+              : undefined
             const overlaid: SoapFields = { ...stripped }
             for (const [sec, texts] of sectionMap) {
-              overlaid[sec] = overlaid[sec] ? `${overlaid[sec]}\n${texts.join('\n')}` : texts.join('\n')
+              const block = texts.join('\n')
+              if (sec === 'P' && closingText) {
+                // closing を一旦除去し ADDON テキストを挟んで再付加
+                const withSep = '\n' + closingText
+                const withoutClosing = overlaid.P.includes(withSep)
+                  ? overlaid.P.replace(withSep, '')
+                  : overlaid.P === closingText
+                    ? ''
+                    : overlaid.P
+                overlaid.P = withoutClosing
+                  ? `${withoutClosing}\n${block}\n${closingText}`
+                  : `${block}\n${closingText}`
+              } else {
+                overlaid[sec] = overlaid[sec] ? `${overlaid[sec]}\n${block}` : block
+              }
             }
             setPrimaryBaseFields(overlaid)
           }
@@ -1386,10 +1404,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (isAlreadyActive) {
         setSRelation('continued_do')
         setSCondition('stable')
-        // rapidBaseFieldsRef があればその S（Rapid生成直後の本文）に戻す。
-        // なければ primaryBaseFieldsRef の S の先頭文を除去した残り部分に戻す。
-        const base = rapidBaseFieldsRef.current ?? primaryBaseFieldsRef.current
-        setPrimaryBaseFields({ ...base })
+        // S をシナリオ素の表示値（rawPrimaryFieldsRef + persona）に戻す。
+        // フラグ行（副作用は認めない。/コンプライアンス良好。）は現在値を維持。
+        // A・P は prev のまま保持（ADDON 適用済みの場合もそのまま）。
+        setPrimaryBaseFields(prev => {
+          const rawFields = rawPrimaryFieldsRef.current
+          const guard = primaryGuardRef.current
+          const baseS = (personaEnabledRef.current && guard)
+            ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard).S
+            : rawFields.S
+          const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
+          const lines = baseS.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
+          if (singleDrugFlagsRef.current.noSideEffect)   lines.push('副作用は認めない。')
+          if (singleDrugFlagsRef.current.goodCompliance) lines.push('コンプライアンス良好。')
+          return { ...prev, S: lines.join('\n') }
+        })
         setEditedSOAP(null)
         return
       }
