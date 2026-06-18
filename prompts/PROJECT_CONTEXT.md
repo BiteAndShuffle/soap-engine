@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.2
+> **Version:** 1.3
 > **Last Updated:** 2026-06-18
-> **Current Focus:** Phase 1 SSOT回復完了。次フェーズ選定中。
+> **Current Focus:** Phase 2 moduleValidator連携完了。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -49,9 +49,18 @@
 | 完了 | P5 整合（P2_RETURN search token対称化） |
 | 完了 | PROJECT_CONTEXT.md 整備 |
 
+**Phase 2: moduleValidator連携 — 完了**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | addons.orderPresets 欠落 / 型違反検出（`ORDERPRESETS_MISSING` / `ORDERPRESETS_TYPE_INVALID`） |
+| 完了 | drug.nameAliases と drug.search.nameAliases 完全一致検出（`NAME_ALIASES_MISMATCH`） |
+| 完了 | formulationSearchTokens alias汚染 WARNING（`SEARCH_TOKEN_ALIAS_POLLUTION`） |
+| 完了 | expressModes 必須5フィールド検出（`EXPRESS_MODE_MISSING_FIELD`） |
+| 完了 | expressModes 参照切れ検出（`EXPRESS_MODE_REF_BROKEN`） |
+
 **次フェーズ候補**（優先順位未確定）
 
-- moduleValidator連携設計
 - trailing copy参照化（P2B/P3/P4/P5 → P0-A参照整理）
 - STANDARD_REFERENCE_PATHS共通化
 - P0-B / P1統合
@@ -172,7 +181,9 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 
 ---
 
-## 8. Phase 1 SSOT回復完了記録
+## 8. フェーズ完了記録
+
+### Phase 1: SSOT回復
 
 | 対象 | 修正ファイル | 状態 |
 |---|---|---|
@@ -183,6 +194,19 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 
 P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェーズで「P0-A参照」へ整理予定。
 
+### Phase 2: moduleValidator連携
+
+| 対象 | エラーコード | 分類 | 状態 |
+|---|---|---|---|
+| addons.orderPresets 欠落 | `ORDERPRESETS_MISSING` | ERROR | 完了 |
+| addons.orderPresets 型違反 | `ORDERPRESETS_TYPE_INVALID` | ERROR | 完了 |
+| drug.nameAliases 完全一致 | `NAME_ALIASES_MISMATCH` | ERROR | 完了 |
+| formulationSearchTokens alias汚染 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARNING | 完了 |
+| expressModes 必須5フィールド欠落 | `EXPRESS_MODE_MISSING_FIELD` | ERROR | 完了 |
+| expressModes 参照切れ | `EXPRESS_MODE_REF_BROKEN` | ERROR | 完了 |
+
+実装しなかったもの（次フェーズ以降）: commonSearchTokens検証 / types.ts修正 / schemaGeneration / StructuredEntry / P0-E
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
@@ -191,8 +215,8 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 - STANDARD_REFERENCE_PATHS共通化（候補のみ）
 - P0-E新設
 - schemaGeneration必須化・JSON追加
-- lib/types.ts 修正（StructuredEntry型追加等）
-- lib/moduleValidator.ts 修正
+- lib/types.ts 修正（StructuredEntry型追加・commonSearchTokens追加等）
+- commonSearchTokens検証（types.ts に DrugSearch 未定義のためブロック中）
 - P2B/P3/P4/P5 trailing copy整理・参照化（候補のみ）
 - 新プロンプト本文の全文再生成
 

@@ -5,22 +5,25 @@
  * モジュールレベルの整合性を検証する。
  *
  * チェック項目:
- *   1)  moduleId が存在・非空
- *   2)  moduleVersion が存在（警告扱い）
- *   3)  drug.search.primaryDisplayName が存在
- *   4)  addons.items の各アイテムで key フィールドが存在する場合、マップキーと一致
- *   5)  scenarios[].addonsRef.* の全参照が addons.items に存在
- *   6)  ui.panelOrder と ui.panels[].id が整合（panelOrder に含まれる全 id が panels に存在）
- *   7)  addons.orderPresets の全参照が addons.items に存在
- *   8)  scenarios[].globalId = moduleId + "." + scenario.id と一致
- *   9)  scenarios[].followup が defaults.followup と重複（警告扱い）
- *   10) scenarios[].situationFilter が必須・非空・許可値のみ
- *   11) scenarios[].sideEffectPresence の値チェック（必須・許可値のみ）
- *   12) scenario 競合制御メタデータの型チェック（priority / exclusiveGroup / combinable）
- *   13) drug.brandNames と drug.brandCatalog のキーが集合として一致
- *   14) followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
- *   15) addon.requiredTags のタグをいずれの brandCatalog も持たない（到達可能性、警告）
- *   16) *Structured text 連結と S/A/P 本文の不一致（警告）
+ *   1)   moduleId が存在・非空
+ *   2)   moduleVersion が存在（警告扱い）
+ *   3)   drug.search.primaryDisplayName が存在
+ *   3a)  drug.nameAliases と drug.search.nameAliases の完全一致（P0-A SSOT）
+ *   3b)  drug.search.formulationSearchTokens が alias 系フィールドに混入していないか（警告）
+ *   4)   addons.items の各アイテムで key フィールドが存在する場合、マップキーと一致
+ *   5)   scenarios[].addonsRef.* の全参照が addons.items に存在
+ *   6)   ui.panelOrder と ui.panels[].id が整合（panelOrder に含まれる全 id が panels に存在）
+ *   7)   addons.orderPresets の必須確認・型確認・全参照が addons.items に存在（P0-A SSOT）
+ *   8)   scenarios[].followupRef が defaults.followupProfiles に存在するか（警告）
+ *   9)   tagCatalog メンバーシップチェック（警告）
+ *   10)  addon.text の責務逸脱チェック（禁止語）（警告）
+ *   11)  defaults.followup* の責務逸脱チェック（禁止語）（警告）
+ *   12)  scenario 競合制御メタデータの型チェック（priority / exclusiveGroup / combinable）（警告）
+ *   13)  drug.brandNames と drug.brandCatalog のキーが集合として一致
+ *   14)  followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
+ *   15)  addon.requiredTags のタグをいずれの brandCatalog も持たない（到達可能性、警告）
+ *   16)  *Structured text 連結と S/A/P 本文の不一致（警告）
+ *   17)  expressModes[] の必須フィールド・参照整合チェック（P0-A SSOT）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -47,6 +50,12 @@ export type ModuleValidationErrorCode =
   | 'BRAND_CATALOG_MISMATCH'          // drug.brandNames と drug.brandCatalog のキーが不一致
   | 'ADDON_REQUIRED_TAG_UNREACHABLE'  // addon.requiredTags のタグをいずれの brandCatalog も持たない（警告）
   | 'STRUCTURED_TEXT_MISMATCH'        // *Structured text 連結と S/A/P 本文の不一致（警告）
+  | 'ORDERPRESETS_MISSING'            // addons.items 存在時に addons.orderPresets が欠落
+  | 'ORDERPRESETS_TYPE_INVALID'       // addons.orderPresets が object 型以外（array / null / string）
+  | 'NAME_ALIASES_MISMATCH'           // drug.nameAliases と drug.search.nameAliases が不一致
+  | 'SEARCH_TOKEN_ALIAS_POLLUTION'    // drug.search.formulationSearchTokens が alias 系フィールドに混入（警告）
+  | 'EXPRESS_MODE_MISSING_FIELD'      // expressModes[] の必須フィールド欠落
+  | 'EXPRESS_MODE_REF_BROKEN'         // expressModes[] の defaultBrandName / defaultScenarioId / scenarioCandidates 参照切れ
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -160,6 +169,94 @@ function validateBrandConsistency(
 }
 
 // ─────────────────────────────────────────────────────────────
+// expressModes バリデーション（P0-A SSOT）
+// ─────────────────────────────────────────────────────────────
+
+function validateExpressModes(
+  entries: unknown[],
+  brandCatalogKeys: Set<string>,
+  scenarioIds: Set<string>,
+): ModuleValidationError[] {
+  const errs: ModuleValidationError[] = []
+  const requiredFields = ['enabled', 'expressCategory', 'expressGroup', 'expressSubGroup', 'label'] as const
+
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i] as Record<string, unknown>
+    const entryLabel = typeof entry.label === 'string' ? `["${entry.label}"]` : `[${i}]`
+
+    // 必須5フィールドの確認
+    for (const field of requiredFields) {
+      if (entry[field] === undefined || entry[field] === null) {
+        errs.push({
+          code: 'EXPRESS_MODE_MISSING_FIELD',
+          detail: `expressModes${entryLabel} の必須フィールド "${field}" が存在しません`,
+          isWarning: false,
+        })
+      }
+    }
+
+    // 有効エントリ（enabled !== false かつ disabled !== true）の参照整合
+    if (entry.enabled !== false && entry.disabled !== true) {
+      const defaultBrandName = entry.defaultBrandName
+      if (defaultBrandName !== undefined) {
+        if (typeof defaultBrandName !== 'string') {
+          errs.push({
+            code: 'EXPRESS_MODE_MISSING_FIELD',
+            detail: `expressModes${entryLabel}.defaultBrandName は string 型である必要があります`,
+            isWarning: false,
+          })
+        } else if (brandCatalogKeys.size > 0 && !brandCatalogKeys.has(defaultBrandName)) {
+          errs.push({
+            code: 'EXPRESS_MODE_REF_BROKEN',
+            detail: `expressModes${entryLabel}.defaultBrandName = "${defaultBrandName}" が drug.brandCatalog に存在しません`,
+            isWarning: false,
+          })
+        }
+      }
+
+      const defaultScenarioId = entry.defaultScenarioId
+      if (defaultScenarioId !== undefined) {
+        if (typeof defaultScenarioId !== 'string') {
+          errs.push({
+            code: 'EXPRESS_MODE_MISSING_FIELD',
+            detail: `expressModes${entryLabel}.defaultScenarioId は string 型である必要があります`,
+            isWarning: false,
+          })
+        } else if (!scenarioIds.has(defaultScenarioId)) {
+          errs.push({
+            code: 'EXPRESS_MODE_REF_BROKEN',
+            detail: `expressModes${entryLabel}.defaultScenarioId = "${defaultScenarioId}" が scenarios[].id に存在しません`,
+            isWarning: false,
+          })
+        }
+      }
+    }
+
+    // scenarioCandidates の参照整合（disabled/enabled に関わらず確認）
+    if (Array.isArray(entry.scenarioCandidates)) {
+      for (const candidate of entry.scenarioCandidates as Array<Record<string, unknown>>) {
+        const sid = candidate.scenarioId
+        if (typeof sid !== 'string') {
+          errs.push({
+            code: 'EXPRESS_MODE_REF_BROKEN',
+            detail: `expressModes${entryLabel}.scenarioCandidates の scenarioId は string 型である必要があります`,
+            isWarning: false,
+          })
+        } else if (!scenarioIds.has(sid)) {
+          errs.push({
+            code: 'EXPRESS_MODE_REF_BROKEN',
+            detail: `expressModes${entryLabel}.scenarioCandidates に参照切れ: scenarioId = "${sid}" が scenarios[].id に存在しません`,
+            isWarning: false,
+          })
+        }
+      }
+    }
+  }
+
+  return errs
+}
+
+// ─────────────────────────────────────────────────────────────
 // バリデーション本体
 // ─────────────────────────────────────────────────────────────
 
@@ -193,12 +290,68 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   // 3) drug.search.primaryDisplayName
   const drug = obj?.drug as Record<string, unknown> | undefined
   const drugSearch = drug?.search as Record<string, unknown> | undefined
+  const brandCatalog = drug?.brandCatalog as Record<string, Record<string, unknown>> | undefined
   if (!drugSearch?.primaryDisplayName) {
     errors.push({
       code: 'MISSING_PRIMARY_DISPLAY_NAME',
       detail: 'drug.search.primaryDisplayName が存在しません',
       isWarning: false,
     })
+  }
+
+  // 3a) drug.nameAliases と drug.search.nameAliases の完全一致チェック（P0-A SSOT）
+  const drugNameAliases = drug?.nameAliases as string[] | undefined
+  const searchNameAliases = drugSearch?.nameAliases as string[] | undefined
+
+  if (drugNameAliases !== undefined || searchNameAliases !== undefined) {
+    if (drugNameAliases === undefined) {
+      errors.push({
+        code: 'NAME_ALIASES_MISMATCH',
+        detail: 'drug.search.nameAliases が存在しますが drug.nameAliases が存在しません（完全一致が必須）',
+        isWarning: false,
+      })
+    } else if (searchNameAliases === undefined) {
+      errors.push({
+        code: 'NAME_ALIASES_MISMATCH',
+        detail: 'drug.nameAliases が存在しますが drug.search.nameAliases が存在しません（完全一致が必須）',
+        isWarning: false,
+      })
+    } else if (drugNameAliases.length !== searchNameAliases.length) {
+      errors.push({
+        code: 'NAME_ALIASES_MISMATCH',
+        detail: `drug.nameAliases（${drugNameAliases.length}件）と drug.search.nameAliases（${searchNameAliases.length}件）のエントリ数が一致しません`,
+        isWarning: false,
+      })
+    } else {
+      const mismatchIdx = drugNameAliases.findIndex((a, i) => a !== searchNameAliases[i])
+      if (mismatchIdx >= 0) {
+        errors.push({
+          code: 'NAME_ALIASES_MISMATCH',
+          detail: `drug.nameAliases[${mismatchIdx}] = "${drugNameAliases[mismatchIdx]}" と drug.search.nameAliases[${mismatchIdx}] = "${searchNameAliases[mismatchIdx]}" が一致しません`,
+          isWarning: false,
+        })
+      }
+    }
+  }
+
+  // 3b) drug.search.formulationSearchTokens が alias 系フィールドに混入していないか（警告）
+  const formulationSearchTokens = drugSearch?.formulationSearchTokens as string[] | undefined
+  if (formulationSearchTokens && formulationSearchTokens.length > 0) {
+    const aliasTargets: Array<{ fieldName: string; values: string[] }> = [
+      { fieldName: 'drug.search.exactAliases', values: (drugSearch?.exactAliases as string[] | undefined) ?? [] },
+      { fieldName: 'drug.search.prefixAliases', values: (drugSearch?.prefixAliases as string[] | undefined) ?? [] },
+      { fieldName: 'drug.search.nameAliases', values: searchNameAliases ?? [] },
+    ]
+    for (const { fieldName, values } of aliasTargets) {
+      const polluted = formulationSearchTokens.filter(t => values.includes(t))
+      if (polluted.length > 0) {
+        errors.push({
+          code: 'SEARCH_TOKEN_ALIAS_POLLUTION',
+          detail: `drug.search.formulationSearchTokens のトークン [${polluted.map(t => `"${t}"`).join(', ')}] が ${fieldName} に混入しています`,
+          isWarning: true,
+        })
+      }
+    }
   }
 
   // 4) addons.items のキー整合チェック
@@ -262,8 +415,25 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     }
   }
 
-  // 7) addons.orderPresets の全参照が addons.items に存在するか
+  // 7) addons.orderPresets の必須確認・型確認・参照切れ確認（P0-A SSOT）
   const orderPresets = addons?.orderPresets as Record<string, unknown> | undefined
+
+  if (orderPresets != null && (typeof orderPresets !== 'object' || Array.isArray(orderPresets))) {
+    errors.push({
+      code: 'ORDERPRESETS_TYPE_INVALID',
+      detail: `addons.orderPresets は object 型である必要があります（現在: ${Array.isArray(orderPresets) ? 'array' : typeof orderPresets}）`,
+      isWarning: false,
+    })
+  }
+
+  if (addonItems && orderPresets == null) {
+    errors.push({
+      code: 'ORDERPRESETS_MISSING',
+      detail: 'addons.items が存在しますが addons.orderPresets が存在しません',
+      isWarning: false,
+    })
+  }
+
   if (orderPresets && addonItems) {
     for (const [presetKey, refs] of Object.entries(orderPresets)) {
       if (!Array.isArray(refs)) continue
@@ -476,7 +646,6 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
 
   // 15) addon.requiredTags の到達可能性チェック（警告）
   //     requiredTags の各タグをいずれの brandCatalog エントリも持たない場合は警告
-  const brandCatalog = drug?.brandCatalog as Record<string, Record<string, unknown>> | undefined
   if (addonItems && brandCatalog) {
     const allBrandHandlingTags = new Set<string>(
       Object.values(brandCatalog)
@@ -523,6 +692,18 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
         }
       }
     }
+  }
+
+  // 17) expressModes[] の必須フィールド・参照整合チェック（P0-A SSOT）
+  const expressModesArr = obj?.expressModes
+  if (Array.isArray(expressModesArr) && expressModesArr.length > 0) {
+    const scenarioIdSet = new Set(
+      Array.isArray(scenarios)
+        ? (scenarios as Array<Record<string, unknown>>).map(sc => String(sc.id ?? ''))
+        : [],
+    )
+    const brandCatalogKeySet = new Set(brandCatalog ? Object.keys(brandCatalog) : [])
+    errors.push(...validateExpressModes(expressModesArr, brandCatalogKeySet, scenarioIdSet))
   }
 
   const fatalErrors = errors.filter(e => !e.isWarning)
