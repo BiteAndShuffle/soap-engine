@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.8
+> **Version:** 1.9
 > **Last Updated:** 2026-06-19
-> **Current Focus:** Phase 3 trailing copy整理完了。次フェーズ選定中。
+> **Current Focus:** STANDARD_REFERENCE_PATHS共通化は現時点で見送り。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -94,9 +94,16 @@
 | 完了 | P2B BRAND_ALIAS_BUILD_RULE 内部重複削除（mandatory diff の === 重複行） |
 | 完了 | P2B search token handoff内部重複解消（早期 [P3_HANDOFF] を P3_HANDOFF_RULE に一本化） |
 
+**STANDARD_REFERENCE_PATHS 共通化レビュー — 完了・現時点では実施しない**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | P2B / P3 / P4 の STANDARD_REFERENCE_PATHS 重複分布を確認 |
+| 判断済み | 完全重複はファイルリスト部分のみ。工程固有注記が多く残り純削減効果は限定的 |
+| 判断済み | P0-C に移すと APP RULE 定義の責務が広がる（将来再検討条件あり → セクション9参照） |
+
 **次フェーズ候補**（優先順位未確定）
 
-- STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
 - P0-B / P1統合
 - P0-E 保留継続
 
@@ -295,12 +302,23 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 
 変更しなかったもの: P3 SEARCH_TOKEN_VALIDATION_RULE（独立セクションとして validation 判断基準を提供・追加参照化は工程固有性が高くリターンが小さいと判断済み）
 
+### STANDARD_REFERENCE_PATHS 共通化レビュー
+
+| 対象 | 内容 | 判断 |
+|---|---|---|
+| P2B / P3 / P4 ファイルリスト重複 | 17行が3工程で verbatim 一致 | 共通化可能だが現時点で見送り |
+| 工程固有注記 | 確認目的・制限注記・注意ブロックが各工程に残る | 共通化してもセクション全体は残存 |
+| P0-C 責務 | APP RULE 定義に「ファイル参照許可カタログ」が混入 | P0-C の役割一貫性を優先 |
+| 純削減効果 | 51行重複 → 29行削減（32%）にとどまる | 整備コストに見合わない |
+
+変更しなかったもの: P2B / P3 / P4 の STANDARD_REFERENCE_PATHS はすべて現状維持
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
 
 - P1削除・P0-B+P1統合（候補のみ）
-- STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
+- STANDARD_REFERENCE_PATHS共通化（将来再検討: lib/* ファイルが大幅に増えた場合 / P2B・P3・P4の参照パスが実際にずれた場合 / P0-Cを project-wide reference catalog として再定義する場合）
 - P0-E新設（保留条件: schemaGeneration実装・モジュール数増加・P0-A改版計画具体化のいずれか）
 - schemaGeneration必須化・JSON追加（P0-E保留に連動）
 - StructuredEntry 値バリデーション（role / transform / safety の値チェック）
