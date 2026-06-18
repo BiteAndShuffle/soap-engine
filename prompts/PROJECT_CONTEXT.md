@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.4
+> **Version:** 1.5
 > **Last Updated:** 2026-06-19
-> **Current Focus:** Phase 3 trailing copy低リスク整理完了。次フェーズ選定中。
+> **Current Focus:** Phase 2 types.ts / moduleValidator連携完了。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -56,8 +56,18 @@
 | 完了 | addons.orderPresets 欠落 / 型違反検出（`ORDERPRESETS_MISSING` / `ORDERPRESETS_TYPE_INVALID`） |
 | 完了 | drug.nameAliases と drug.search.nameAliases 完全一致検出（`NAME_ALIASES_MISMATCH`） |
 | 完了 | formulationSearchTokens alias汚染 WARNING（`SEARCH_TOKEN_ALIAS_POLLUTION`） |
+| 完了 | commonSearchTokens alias汚染 WARNING（`SEARCH_TOKEN_ALIAS_POLLUTION` 拡張） |
 | 完了 | expressModes 必須5フィールド検出（`EXPRESS_MODE_MISSING_FIELD`） |
 | 完了 | expressModes 参照切れ検出（`EXPRESS_MODE_REF_BROKEN`） |
+
+**Phase 2: types.ts整備 — 完了**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | `DrugSearch.commonSearchTokens?: string[]` 追加 |
+| 完了 | `StructuredEntry` interface 追加（id / text / role? / transform? / safety? / lockTerms? / notes?） |
+| 完了 | `Scenario` に `SStructured? / OStructured? / AStructured? / PStructured?: StructuredEntry[]` 追加 |
+| 保留 | `schemaGeneration` 未追加（P0-E保留に連動） |
 
 **Phase 3: trailing copy低リスク整理 — 完了**
 
@@ -210,10 +220,22 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 | addons.orderPresets 型違反 | `ORDERPRESETS_TYPE_INVALID` | ERROR | 完了 |
 | drug.nameAliases 完全一致 | `NAME_ALIASES_MISMATCH` | ERROR | 完了 |
 | formulationSearchTokens alias汚染 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARNING | 完了 |
+| commonSearchTokens alias汚染 | `SEARCH_TOKEN_ALIAS_POLLUTION` 拡張 | WARNING | 完了 |
 | expressModes 必須5フィールド欠落 | `EXPRESS_MODE_MISSING_FIELD` | ERROR | 完了 |
 | expressModes 参照切れ | `EXPRESS_MODE_REF_BROKEN` | ERROR | 完了 |
 
-実装しなかったもの（次フェーズ以降）: commonSearchTokens検証 / types.ts修正 / schemaGeneration / StructuredEntry / P0-E
+実装しなかったもの（次フェーズ以降）: schemaGeneration / StructuredEntry値バリデーション / Structured runtime接続 / P0-E
+
+### Phase 2: types.ts整備
+
+| 対象 | 変更ファイル | 状態 |
+|---|---|---|
+| `DrugSearch.commonSearchTokens?: string[]` 追加 | `lib/types.ts` | 完了 |
+| `StructuredEntry` interface 追加 | `lib/types.ts` | 完了 |
+| `Scenario` Structured optional フィールド追加（S/O/A/P） | `lib/types.ts` | 完了 |
+| `schemaGeneration?: number` 追加 | — | 保留（P0-E保留に連動） |
+
+追加しなかったもの（次フェーズ以降）: schemaGeneration / StructuredEntry値バリデーション / Structured runtime接続
 
 ### Phase 3: trailing copy低リスク整理
 
@@ -231,11 +253,12 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 
 - P1削除・P0-B+P1統合（候補のみ）
 - STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
-- P0-E新設
-- schemaGeneration必須化・JSON追加
-- lib/types.ts 修正（StructuredEntry型追加・commonSearchTokens追加等）
-- commonSearchTokens検証（types.ts に DrugSearch 未定義のためブロック中）
+- P0-E新設（保留条件: schemaGeneration実装・モジュール数増加・P0-A改版計画具体化のいずれか）
+- schemaGeneration必須化・JSON追加（P0-E保留に連動）
+- StructuredEntry 値バリデーション（role / transform / safety の値チェック）
+- Structured runtime接続（現状は moduleValidator check #16 text同期チェックのみ）
 - addons.orderPresets / drug.nameAliases / search token 参照化（中リスク・P0-A対応セクション確認が前提）
+- genericBrandName 参照先確定（P0-A未確定・CHECK）
 - 新プロンプト本文の全文再生成
 
 ---

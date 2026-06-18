@@ -9,7 +9,7 @@
  *   2)   moduleVersion が存在（警告扱い）
  *   3)   drug.search.primaryDisplayName が存在
  *   3a)  drug.nameAliases と drug.search.nameAliases の完全一致（P0-A SSOT）
- *   3b)  drug.search.formulationSearchTokens が alias 系フィールドに混入していないか（警告）
+ *   3b)  drug.search.formulationSearchTokens / commonSearchTokens が alias 系フィールドに混入していないか（警告）
  *   4)   addons.items の各アイテムで key フィールドが存在する場合、マップキーと一致
  *   5)   scenarios[].addonsRef.* の全参照が addons.items に存在
  *   6)   ui.panelOrder と ui.panels[].id が整合（panelOrder に含まれる全 id が panels に存在）
@@ -334,20 +334,33 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     }
   }
 
-  // 3b) drug.search.formulationSearchTokens が alias 系フィールドに混入していないか（警告）
+  // 3b) drug.search.formulationSearchTokens / commonSearchTokens が alias 系フィールドに混入していないか（警告）
+  const tokenAliasTargets: Array<{ fieldName: string; values: string[] }> = [
+    { fieldName: 'drug.search.exactAliases', values: (drugSearch?.exactAliases as string[] | undefined) ?? [] },
+    { fieldName: 'drug.search.prefixAliases', values: (drugSearch?.prefixAliases as string[] | undefined) ?? [] },
+    { fieldName: 'drug.search.nameAliases', values: searchNameAliases ?? [] },
+  ]
   const formulationSearchTokens = drugSearch?.formulationSearchTokens as string[] | undefined
   if (formulationSearchTokens && formulationSearchTokens.length > 0) {
-    const aliasTargets: Array<{ fieldName: string; values: string[] }> = [
-      { fieldName: 'drug.search.exactAliases', values: (drugSearch?.exactAliases as string[] | undefined) ?? [] },
-      { fieldName: 'drug.search.prefixAliases', values: (drugSearch?.prefixAliases as string[] | undefined) ?? [] },
-      { fieldName: 'drug.search.nameAliases', values: searchNameAliases ?? [] },
-    ]
-    for (const { fieldName, values } of aliasTargets) {
+    for (const { fieldName, values } of tokenAliasTargets) {
       const polluted = formulationSearchTokens.filter(t => values.includes(t))
       if (polluted.length > 0) {
         errors.push({
           code: 'SEARCH_TOKEN_ALIAS_POLLUTION',
           detail: `drug.search.formulationSearchTokens のトークン [${polluted.map(t => `"${t}"`).join(', ')}] が ${fieldName} に混入しています`,
+          isWarning: true,
+        })
+      }
+    }
+  }
+  const commonSearchTokens = drugSearch?.commonSearchTokens as string[] | undefined
+  if (commonSearchTokens && commonSearchTokens.length > 0) {
+    for (const { fieldName, values } of tokenAliasTargets) {
+      const polluted = commonSearchTokens.filter(t => values.includes(t))
+      if (polluted.length > 0) {
+        errors.push({
+          code: 'SEARCH_TOKEN_ALIAS_POLLUTION',
+          detail: `drug.search.commonSearchTokens のトークン [${polluted.map(t => `"${t}"`).join(', ')}] が ${fieldName} に混入しています`,
           isWarning: true,
         })
       }

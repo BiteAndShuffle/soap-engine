@@ -48,6 +48,24 @@ export interface SComposition {
 }
 
 // ─────────────────────────────────────────────────────────────
+// StructuredEntry（SStructured / OStructured / AStructured / PStructured の各要素）
+//
+// 全既存モジュールに SStructured / AStructured / PStructured が存在する。
+// 一部モジュールは OStructured を空配列として持つ。
+// runtime 未接続（moduleValidator check #16 で text 同期チェックのみ使用）。
+// ─────────────────────────────────────────────────────────────
+
+export interface StructuredEntry {
+  id: string
+  text: string
+  role?: string
+  transform?: string
+  safety?: string
+  lockTerms?: string[]
+  notes?: string | null
+}
+
+// ─────────────────────────────────────────────────────────────
 // Scenario（新スキーマ: scenarios[] で定義）
 //
 // 旧 Template の後継。SOAP フィールドを直接持ち、
@@ -170,6 +188,15 @@ export interface Scenario {
    * 省略時は旧来の固定ロジック（append / buildS / buildP）にフォールバック。
    */
   mergePolicy?: ScenarioMergePolicy
+  /**
+   * Structured テキスト分解（runtime 未接続・moduleValidator check #16 で text 同期チェックに使用）。
+   * 全既存モジュールに SStructured / AStructured / PStructured が存在する。
+   * OStructured は一部モジュールに空配列として存在する。
+   */
+  SStructured?: StructuredEntry[]
+  OStructured?: StructuredEntry[]
+  AStructured?: StructuredEntry[]
+  PStructured?: StructuredEntry[]
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -323,6 +350,12 @@ export interface DrugSearch {
   nameAliases?: string[]
   keywords: string[]
   matchPolicy: DrugSearchMatchPolicy
+  /**
+   * 薬剤クラス・薬剤名を識別するひらがな共通トークン群。
+   * alias ではない。aliases / normalizedAliases 系フィールドへ展開禁止（P0-A SSOT）。
+   * 例（ヘパリン類似物質）: ["へぱ", "へぱり", "へぱりん", "へぱりんるいじ"]
+   */
+  commonSearchTokens?: string[]
   /**
    * 剤形を識別するひらがな前方一致トークン群。
    * AND 検索の第2トークン以降を剤形語として評価する際に使用。
