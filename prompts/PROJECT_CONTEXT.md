@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.3
-> **Last Updated:** 2026-06-18
-> **Current Focus:** Phase 2 moduleValidator連携完了。次フェーズ選定中。
+> **Version:** 1.4
+> **Last Updated:** 2026-06-19
+> **Current Focus:** Phase 3 trailing copy低リスク整理完了。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -59,10 +59,18 @@
 | 完了 | expressModes 必須5フィールド検出（`EXPRESS_MODE_MISSING_FIELD`） |
 | 完了 | expressModes 参照切れ検出（`EXPRESS_MODE_REF_BROKEN`） |
 
+**Phase 3: trailing copy低リスク整理 — 完了**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | P3 SEARCH_TOKEN_VALIDATION_RULE 内の drug.nameAliases一致検証重複を削除 |
+| 完了 | drug.nameAliases一致検証の check_name 記録先を BRAND_ALIAS_VALIDATION_RULE 側へ移動 |
+| 完了 | P2B / P3 / P4 の expressModes field list を P0-A参照化（build / validation / runtime 固有ロジックは保持） |
+
 **次フェーズ候補**（優先順位未確定）
 
-- trailing copy参照化（P2B/P3/P4/P5 → P0-A参照整理）
-- STANDARD_REFERENCE_PATHS共通化
+- addons.orderPresets / drug.nameAliases / search token のさらなる参照化（trailing copy 中リスク分）
+- STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
 - P0-B / P1統合
 - genericBrandName参照先確定（P0-A未確定・CHECK）
 
@@ -207,17 +215,27 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 
 実装しなかったもの（次フェーズ以降）: commonSearchTokens検証 / types.ts修正 / schemaGeneration / StructuredEntry / P0-E
 
+### Phase 3: trailing copy低リスク整理
+
+| 対象 | 変更ファイル | 状態 |
+|---|---|---|
+| P3 drug.nameAliases一致検証 重複削除 | prompts/P3.md | 完了 |
+| drug.nameAliases check_name 記録先移動 | prompts/P3.md | 完了 |
+| expressModes field list P0-A参照化 | prompts/P2B.md / P3.md / P4.md | 完了 |
+
+変更しなかったもの（次フェーズ以降）: addons.orderPresets / drug.nameAliases / search token 参照化 / STANDARD_REFERENCE_PATHS共通化 / P0-B+P1統合 / commonSearchTokens / types.ts / schemaGeneration / StructuredEntry / P0-E
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
 
 - P1削除・P0-B+P1統合（候補のみ）
-- STANDARD_REFERENCE_PATHS共通化（候補のみ）
+- STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
 - P0-E新設
 - schemaGeneration必須化・JSON追加
 - lib/types.ts 修正（StructuredEntry型追加・commonSearchTokens追加等）
 - commonSearchTokens検証（types.ts に DrugSearch 未定義のためブロック中）
-- P2B/P3/P4/P5 trailing copy整理・参照化（候補のみ）
+- addons.orderPresets / drug.nameAliases / search token 参照化（中リスク・P0-A対応セクション確認が前提）
 - 新プロンプト本文の全文再生成
 
 ---

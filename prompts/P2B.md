@@ -533,20 +533,9 @@ build原則：
 ■ EXPRESS_THIRD_PANEL_BUILD_RULE
 以下をbuildする。
 - thirdPanelSPlacement
-- expressModes[]
-- enabled（必須）
-- expressCategory（必須）
-- expressGroup（必須）
-- expressSubGroup（必須）
-- label（必須）
-- disabled（任意：bridge / Model JSONに明示がある場合のみ）
-- disabledReason（任意：bridgeに明示がある場合のみ）
-- defaultBrandName（任意）
-- defaultScenarioId（任意）
-- genericDisplayName（任意：bridgeに明示がある場合のみ）
-- genericBrandName（任意：bridgeに明示がある場合のみ）
-- scenarioCandidates（任意：bridgeに明示がある場合のみ）
-- sortOrder（任意）
+- expressModes[] 各entryのフィールド定義は P0-A を参照する
+  - 必須フィールド: enabled / expressCategory / expressGroup / expressSubGroup / label
+  - 任意フィールド: disabled / disabledReason / defaultBrandName / defaultScenarioId / genericDisplayName / genericBrandName / scenarioCandidates / sortOrder
 build原則：
 - 明示参照のみ扱う
 - 任意フィールドはbridge / Model JSONに明示がない場合はomitする
