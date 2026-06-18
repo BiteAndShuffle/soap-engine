@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.7
+> **Version:** 1.8
 > **Last Updated:** 2026-06-19
-> **Current Focus:** Phase 3 trailing copy（中リスク分）完了。次フェーズ選定中。
+> **Current Focus:** Phase 3 trailing copy整理完了。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -92,12 +92,13 @@
 | 完了 | addons.orderPresets 型・必須性を P0-A ADDON_REQUIRED_RULES 参照化（P2B / P3） |
 | 完了 | drug.nameAliases 完全一致条件を P0-A drug.nameAliases完全一致ルール 参照化（P2B / P3） |
 | 完了 | P2B BRAND_ALIAS_BUILD_RULE 内部重複削除（mandatory diff の === 重複行） |
+| 完了 | P2B search token handoff内部重複解消（早期 [P3_HANDOFF] を P3_HANDOFF_RULE に一本化） |
 
 **次フェーズ候補**（優先順位未確定）
 
 - STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
 - P0-B / P1統合
-- search token 関連の追加参照化（必要性再評価）
+- P0-E 保留継続
 
 **次フェーズでまだ実施しないこと** → セクション9参照
 
@@ -282,6 +283,18 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 
 変更しなかったもの: search token参照化（SEARCH_TOKEN_VALIDATION_RULEを削ると判断基準が消えるリスクあり・必要性再評価）
 
+### Phase 3: trailing copy追補（P2B内部重複解消）
+
+| 対象 | 変更ファイル | 状態 |
+|---|---|---|
+| P2B search token handoff内部重複解消 | `prompts/P2B.md` | 完了 |
+
+- 早期 `[P3_HANDOFF]` の search token 検証対象（4フィールド＋alias非展開＋index反映要否）を削除
+- 正本を `■ P3_HANDOFF_RULE`（後段・完全版）に統一
+- search token build rule / validation rule / ERROR条件 / CHECK条件 は変更なし
+
+変更しなかったもの: P3 SEARCH_TOKEN_VALIDATION_RULE（独立セクションとして validation 判断基準を提供・追加参照化は工程固有性が高くリターンが小さいと判断済み）
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
@@ -292,7 +305,7 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 - schemaGeneration必須化・JSON追加（P0-E保留に連動）
 - StructuredEntry 値バリデーション（role / transform / safety の値チェック）
 - Structured runtime接続（現状は moduleValidator check #16 text同期チェックのみ）
-- search token 参照化（必要性再評価・SEARCH_TOKEN_VALIDATION_RULEを削ると判断基準消失リスクあり）
+- search token 追加参照化（工程固有性が高く参照化リターンが小さいと判断済み・追加検討不要）
 - 新プロンプト本文の全文再生成
 
 ---

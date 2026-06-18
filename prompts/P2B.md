@@ -162,13 +162,7 @@ PENDING:
 - inherited_from_existing
 - not_final
 - pending_review_required
-- search token検証対象
-  - drug.search.commonSearchTokens
-  - drug.search.formulationSearchTokens
-  - drug.search.matchPolicy.allowMultiTokenAndMatch
-  - drug.search.matchPolicy.allowFormulationTokenMatch
-  - commonSearchTokens / formulationSearchTokens が alias系へ展開されていないこと
-  - index.searchableText / index.normalizedTokens への反映要否
+- search token検証対象（詳細は P3_HANDOFF_RULE を参照）
 ■ ERROR / PENDING / CHECK 定義
 ERROR：
 - bridge preservation違反
