@@ -55,7 +55,7 @@ export type ModuleValidationErrorCode =
   | 'NAME_ALIASES_MISMATCH'           // drug.nameAliases と drug.search.nameAliases が不一致
   | 'SEARCH_TOKEN_ALIAS_POLLUTION'    // drug.search.formulationSearchTokens が alias 系フィールドに混入（警告）
   | 'EXPRESS_MODE_MISSING_FIELD'      // expressModes[] の必須フィールド欠落
-  | 'EXPRESS_MODE_REF_BROKEN'         // expressModes[] の defaultBrandName / defaultScenarioId / scenarioCandidates 参照切れ
+  | 'EXPRESS_MODE_REF_BROKEN'         // expressModes[] の defaultBrandName / genericBrandName / defaultScenarioId / scenarioCandidates 参照切れ
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -209,6 +209,23 @@ function validateExpressModes(
           errs.push({
             code: 'EXPRESS_MODE_REF_BROKEN',
             detail: `expressModes${entryLabel}.defaultBrandName = "${defaultBrandName}" が drug.brandCatalog に存在しません`,
+            isWarning: false,
+          })
+        }
+      }
+
+      const genericBrandName = entry.genericBrandName
+      if (genericBrandName !== undefined) {
+        if (typeof genericBrandName !== 'string') {
+          errs.push({
+            code: 'EXPRESS_MODE_MISSING_FIELD',
+            detail: `expressModes${entryLabel}.genericBrandName は string 型である必要があります`,
+            isWarning: false,
+          })
+        } else if (brandCatalogKeys.size > 0 && !brandCatalogKeys.has(genericBrandName)) {
+          errs.push({
+            code: 'EXPRESS_MODE_REF_BROKEN',
+            detail: `expressModes${entryLabel}.genericBrandName = "${genericBrandName}" が drug.brandCatalog に存在しません`,
             isWarning: false,
           })
         }

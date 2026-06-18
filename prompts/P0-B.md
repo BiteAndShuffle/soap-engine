@@ -367,6 +367,7 @@ text sync監査
 - Express Mode参照はbridgeまたはModel JSONに明示がある場合のみP2で移植対象とする
 - defaultBrandNameはbrandCatalogに存在する場合のみ有効
 - defaultScenarioIdはscenarios[].idに存在する場合のみ有効
+- genericBrandNameはbrandCatalogに存在する場合のみ有効（defaultBrandNameと同じ参照制約）
 - 5つの任意フィールド（disabled / disabledReason / genericDisplayName / genericBrandName / scenarioCandidates）はbridge / Model JSONに明示がない場合はomitする
 - 参照整合の実判定（defaultBrandName / defaultScenarioId / genericBrandName / scenarioCandidates の参照先確認）はP3へ渡す
 - Express Mode用参照を推測生成しない

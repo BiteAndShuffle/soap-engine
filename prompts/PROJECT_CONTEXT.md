@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.5
+> **Version:** 1.6
 > **Last Updated:** 2026-06-19
-> **Current Focus:** Phase 2 types.ts / moduleValidator連携完了。次フェーズ選定中。
+> **Current Focus:** genericBrandName参照先確定完了。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -77,12 +77,19 @@
 | 完了 | drug.nameAliases一致検証の check_name 記録先を BRAND_ALIAS_VALIDATION_RULE 側へ移動 |
 | 完了 | P2B / P3 / P4 の expressModes field list を P0-A参照化（build / validation / runtime 固有ロジックは保持） |
 
+**genericBrandName参照先確定 — 完了**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | genericBrandName を drug.brandCatalog の key として確定（defaultBrandName と同じ参照制約） |
+| 完了 | P0-A / P0-B / P3 / P4 の CHECK / P0-A未確定 表現を解消 |
+| 完了 | moduleValidator で genericBrandName の brandCatalog 参照切れを EXPRESS_MODE_REF_BROKEN ERROR として検出 |
+
 **次フェーズ候補**（優先順位未確定）
 
 - addons.orderPresets / drug.nameAliases / search token のさらなる参照化（trailing copy 中リスク分）
 - STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
 - P0-B / P1統合
-- genericBrandName参照先確定（P0-A未確定・CHECK）
 
 **次フェーズでまだ実施しないこと** → セクション9参照
 
@@ -247,6 +254,16 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 
 変更しなかったもの（次フェーズ以降）: addons.orderPresets / drug.nameAliases / search token 参照化 / STANDARD_REFERENCE_PATHS共通化 / P0-B+P1統合 / commonSearchTokens / types.ts / schemaGeneration / StructuredEntry / P0-E
 
+### genericBrandName参照先確定
+
+| 対象 | 変更ファイル | 状態 |
+|---|---|---|
+| P0-A THIRD_PANEL/EXPRESS_RULES CHECK解消 | `prompts/P0-A.md` | 完了 |
+| P0-B 参照制約明記 | `prompts/P0-B.md` | 完了 |
+| P3 EXPRESS_THIRD_PANEL_VALIDATION_RULE CHECK解消 | `prompts/P3.md` | 完了 |
+| P4 EXPRESS_THIRD_PANEL_RUNTIME_RULE CHECK解消 | `prompts/P4.md` | 完了 |
+| moduleValidator genericBrandName → EXPRESS_MODE_REF_BROKEN | `lib/moduleValidator.ts` | 完了 |
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
@@ -258,7 +275,6 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 - StructuredEntry 値バリデーション（role / transform / safety の値チェック）
 - Structured runtime接続（現状は moduleValidator check #16 text同期チェックのみ）
 - addons.orderPresets / drug.nameAliases / search token 参照化（中リスク・P0-A対応セクション確認が前提）
-- genericBrandName 参照先確定（P0-A未確定・CHECK）
 - 新プロンプト本文の全文再生成
 
 ---

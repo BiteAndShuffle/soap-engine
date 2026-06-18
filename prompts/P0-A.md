@@ -487,7 +487,7 @@ addons.orderPresets:
 - defaultBrandName は $.drug.brandCatalog[brand] に存在する場合のみ有効
 - defaultScenarioId は $.scenarios[].id に存在する場合のみ有効
 - scenarioCandidates[] の各値は $.scenarios[].id に存在する値のみ許容
-- genericBrandName の参照先はCHECK_ITEMSへ送る
+- genericBrandName は $.drug.brandCatalog[brand] に存在する場合のみ有効（defaultBrandName と同じ参照制約）
 - expressCategory / expressGroup / expressSubGroup の具体値はモジュール固有値。P0-Aでは固定しない
 12. RESOLVED_RUNTIME_PATHS
 runtime合成上の既知パスを明示する。
