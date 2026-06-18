@@ -350,10 +350,7 @@ P2Bでdeterministic mappingとして作成してよい。
 - これはbridge外補完ではなく、同一canonical JSON内の確定済み値からの構造写像として扱う。
 - handlingTagsに存在しないtagを追加してはならない。
 addons.orderPresets build原則：
-- addons.orderPresets は全 module で object として生成する
-- addons.items が存在する場合、addons.orderPresets も必ず存在させる
-- 未使用 module では {} （空 object）を生成する
-- キー自体を omit してはならない
+- 型・必須性は P0-A ADDON_REQUIRED_RULES を参照する（object必須・空{}許容・array/null/string禁止・omit禁止）
 - 目的：構造の標準化および将来の runtime 安全性確保
 - orderPresets の値（preset key → addon key[] の対応）は bridge に明示がある場合のみ生成する
 - bridge 未明示の preset key を推測生成してはならない
@@ -401,18 +398,15 @@ build原則：
 - bridge外alias禁止
 - alias identity保持
 - commonSearchTokens / formulationSearchTokens の扱いはSEARCH_TOKEN_BUILD_RULEを参照
+- drug.nameAliases の完全一致条件は P0-A drug.nameAliases完全一致ルール を参照する
 - drug.nameAliases は drug.search.nameAliases が確定した後に完全複写として生成する
-- drug.nameAliases と drug.search.nameAliases は順序・表記・エントリ数を完全一致させる
-- drug.nameAliases を drug.search.nameAliases と独立して生成してはならない
-- alias 推測生成・alias 補完によって drug.nameAliases を生成してはならない
 mandatory diff対象：
 - brandCatalog
 - aliases
 - normalizedAliases
 - aliasToBrand
 - search aliases
-- drug.nameAliases
-- drug.nameAliases === drug.search.nameAliases（順序・表記・エントリ数の完全一致）
+- drug.nameAliases（完全一致確認は MANDATORY_DIFF_EXECUTION を参照）
 ■ SEARCH_TOKEN_BUILD_RULE
 以下を build 対象に含める。
 - drug.search.commonSearchTokens

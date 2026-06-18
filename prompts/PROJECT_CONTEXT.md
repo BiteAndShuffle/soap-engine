@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.6
+> **Version:** 1.7
 > **Last Updated:** 2026-06-19
-> **Current Focus:** genericBrandName参照先確定完了。次フェーズ選定中。
+> **Current Focus:** Phase 3 trailing copy（中リスク分）完了。次フェーズ選定中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -85,11 +85,19 @@
 | 完了 | P0-A / P0-B / P3 / P4 の CHECK / P0-A未確定 表現を解消 |
 | 完了 | moduleValidator で genericBrandName の brandCatalog 参照切れを EXPRESS_MODE_REF_BROKEN ERROR として検出 |
 
+**Phase 3: trailing copy（中リスク分）— 完了**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | addons.orderPresets 型・必須性を P0-A ADDON_REQUIRED_RULES 参照化（P2B / P3） |
+| 完了 | drug.nameAliases 完全一致条件を P0-A drug.nameAliases完全一致ルール 参照化（P2B / P3） |
+| 完了 | P2B BRAND_ALIAS_BUILD_RULE 内部重複削除（mandatory diff の === 重複行） |
+
 **次フェーズ候補**（優先順位未確定）
 
-- addons.orderPresets / drug.nameAliases / search token のさらなる参照化（trailing copy 中リスク分）
 - STANDARD_REFERENCE_PATHS共通化（P0-C整備が前提）
 - P0-B / P1統合
+- search token 関連の追加参照化（必要性再評価）
 
 **次フェーズでまだ実施しないこと** → セクション9参照
 
@@ -264,6 +272,16 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 | P4 EXPRESS_THIRD_PANEL_RUNTIME_RULE CHECK解消 | `prompts/P4.md` | 完了 |
 | moduleValidator genericBrandName → EXPRESS_MODE_REF_BROKEN | `lib/moduleValidator.ts` | 完了 |
 
+### Phase 3: trailing copy中リスク整理
+
+| 対象 | 変更ファイル | 状態 |
+|---|---|---|
+| addons.orderPresets 型・必須性 P0-A参照化 | `prompts/P2B.md` / `prompts/P3.md` | 完了 |
+| drug.nameAliases 完全一致条件 P0-A参照化 | `prompts/P2B.md` / `prompts/P3.md` | 完了 |
+| P2B BRAND_ALIAS_BUILD_RULE 内部重複削除 | `prompts/P2B.md` | 完了 |
+
+変更しなかったもの: search token参照化（SEARCH_TOKEN_VALIDATION_RULEを削ると判断基準が消えるリスクあり・必要性再評価）
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
@@ -274,7 +292,7 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 - schemaGeneration必須化・JSON追加（P0-E保留に連動）
 - StructuredEntry 値バリデーション（role / transform / safety の値チェック）
 - Structured runtime接続（現状は moduleValidator check #16 text同期チェックのみ）
-- addons.orderPresets / drug.nameAliases / search token 参照化（中リスク・P0-A対応セクション確認が前提）
+- search token 参照化（必要性再評価・SEARCH_TOKEN_VALIDATION_RULEを削ると判断基準消失リスクあり）
 - 新プロンプト本文の全文再生成
 
 ---
