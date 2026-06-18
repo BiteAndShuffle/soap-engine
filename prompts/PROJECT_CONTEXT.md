@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 1.9
+> **Version:** 2.0
 > **Last Updated:** 2026-06-19
-> **Current Focus:** STANDARD_REFERENCE_PATHS共通化は現時点で見送り。次フェーズ選定中。
+> **Current Focus:** P0-B / P1統合は現時点で見送り。基盤プロンプト整理完了。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -102,9 +102,16 @@
 | 判断済み | 完全重複はファイルリスト部分のみ。工程固有注記が多く残り純削減効果は限定的 |
 | 判断済み | P0-C に移すと APP RULE 定義の責務が広がる（将来再検討条件あり → セクション9参照） |
 
+**P0-B / P1 統合レビュー — 完了・現時点では統合しない**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | P0-B（535行）/ P1（286行）の役割・重複・固有箇所を全セクション対比確認 |
+| 判断済み | 重複は ~80% だが役割は WHERE/HOW（格納ルール）と WHAT/WHEN（保全原則）で明確に分離 |
+| 判断済み | P1 が P0-C 後段に位置し P0-C 入力依存を持つため、統合すると pipeline 設計変更が必要 |
+
 **次フェーズ候補**（優先順位未確定）
 
-- P0-B / P1統合
 - P0-E 保留継続
 
 **次フェーズでまだ実施しないこと** → セクション9参照
@@ -313,11 +320,23 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 
 変更しなかったもの: P2B / P3 / P4 の STANDARD_REFERENCE_PATHS はすべて現状維持
 
+### P0-B / P1 統合レビュー
+
+| 観点 | 内容 | 判断 |
+|---|---|---|
+| P0-B の役割 | bridge→canonical の格納ルール定義（WHERE / HOW） | 分離維持 |
+| P1 の役割 | preservation 原則・non-creative build 原則・stop condition 定義（WHAT / WHEN） | 分離維持 |
+| 重複量 | SOURCE_OF_TRUTH / preservation targets / 禁止事項が ~80% 重複 | 統合動機あり |
+| P1 の入力依存 | P1 は P0-A + P0-B + **P0-C** を入力に取る（P0-C 後段に位置） | 統合すると pipeline 設計変更が必要 |
+| 統合リスク | P0-B が格納ルール＋保全原則を兼ねることで役割混在・肥大化（推定 500行超） | 統合コストが削減メリットを上回る |
+
+変更しなかったもの: P0-B.md / P1.md ともに現状維持
+
 ---
 
 ## 9. 次フェーズでまだ実施しないこと（暫定）
 
-- P1削除・P0-B+P1統合（候補のみ）
+- P0-B / P1統合（将来再検討: preservation targetが実際にずれた場合 / P0-Cの位置づけが変わった場合 / モジュール量産時に読込コストが実害化した場合）
 - STANDARD_REFERENCE_PATHS共通化（将来再検討: lib/* ファイルが大幅に増えた場合 / P2B・P3・P4の参照パスが実際にずれた場合 / P0-Cを project-wide reference catalog として再定義する場合）
 - P0-E新設（保留条件: schemaGeneration実装・モジュール数増加・P0-A改版計画具体化のいずれか）
 - schemaGeneration必須化・JSON追加（P0-E保留に連動）
