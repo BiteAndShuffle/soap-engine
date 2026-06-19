@@ -279,6 +279,12 @@
       "moderate",
       "severe"
     ],
+    "expectedAddonFormat": [
+      "header",
+      "S_APPEND(optional)",
+      "A_APPEND(optional)",
+      "P_APPEND(optional)"
+    ],
     "urgentFlag": true,
     "urgentCriteria": {
       "seekUrgentCareIf": [
@@ -678,7 +684,96 @@
         "title": "生活指導（カリウム）",
         "group": "counseling",
         "targetSection": "P",
-        "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になる症状があればご相談ください。",
+        "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "カリウムの値が高いと言われた。",
+          "A": "カリウムコントロールが不十分であり、食事内容の見直しが必要である。",
+          "P": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_glycemic_guidance_followup": {
+        "key": "addon_glycemic_guidance_followup",
+        "id": "addon_glycemic_guidance_followup",
+        "title": "生活指導（血糖指導）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事内容を見直すことも、血糖コントロールの改善につながります。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "A": "血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事内容を見直すことも、血糖コントロールの改善につながります。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance",
+          "hypoglycemia_attention"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_hypertension_guidance": {
+        "key": "addon_hypertension_guidance",
+        "id": "addon_hypertension_guidance",
+        "title": "生活指導（血圧）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "血圧が高いと言われた。",
+          "A": "血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_dyslipidemia_guidance": {
+        "key": "addon_dyslipidemia_guidance",
+        "id": "addon_dyslipidemia_guidance",
+        "title": "生活指導（脂質）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "脂質が高いと言われた。",
+          "A": "脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
+        },
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_hyperuricemia_guidance": {
+        "key": "addon_hyperuricemia_guidance",
+        "id": "addon_hyperuricemia_guidance",
+        "title": "生活指導（尿酸）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "尿酸が高いと言われた。",
+          "A": "尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。",
+          "P": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
+        },
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -1756,6 +1851,15 @@
       "O": "GLP-1受容体作動薬(注射)　処方",
       "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は糖分を摂取してください。\n改善しない場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2279,6 +2383,15 @@
       "O": "GLP-1受容体作動薬(注射)　使用中",
       "A": "コンプライアンスは良好である。治療継続に問題はない。",
       "P": "引き続き用法を守って使用することで、血糖コントロールの維持および合併症予防が期待できます。\n今後も継続して使用できるようにすることが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
