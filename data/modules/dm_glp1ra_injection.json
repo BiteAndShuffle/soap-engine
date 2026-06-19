@@ -567,7 +567,7 @@
       "addon_glycemic_guidance": {
         "key": "addon_glycemic_guidance",
         "id": "addon_glycemic_guidance",
-        "title": "血糖指導",
+        "title": "生活指導（血糖指導）",
         "group": "counseling",
         "targetSection": "P",
         "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食はカロリーオフ・ノンシュガー食品への置き換えを取り入れてみてください。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になる症状があればご相談ください。",
