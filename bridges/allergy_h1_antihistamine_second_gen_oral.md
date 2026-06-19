@@ -1,0 +1,1160 @@
+# =========================================
+# SOAP-ENGINE MODULE (bridge原稿 / lightweight)
+# allergy_h1_antihistamine_second_gen_oral
+# =========================================
+moduleId: "allergy_h1_antihistamine_second_gen_oral"
+categoryPath:
+  - "アレルギー"
+  - "第二世代抗ヒスタミン薬"
+  - "内服"
+drug:
+  genericName: "第二世代H1受容体拮抗薬"
+  brandNames:
+    - "ビラノア"
+    - "アレジオン"
+    - "アレグラ"
+    - "アレロック"
+    - "クラリチン"
+    - "ザイザル"
+    - "デザレックス"
+    - "ルパフィン"
+    - "タリオン"
+    - "エバステル"
+    - "ゼスラン"
+    - "ジルテック"
+    - "アゼプチン"
+  drugClass:
+    - "H1_ANTIHISTAMINE_SECOND_GEN"
+  route: "oral"
+  dosageForms:
+    - "tablet"
+  drugSpecificTags:
+    - "antihistamine"
+    - "second_generation"
+    - "allergy"
+    - "oral"
+  search:
+    primaryDisplayName: "第二世代抗ヒスタミン薬"
+    exactAliases:
+      - "ビラノア"
+      - "アレジオン"
+      - "アレグラ"
+      - "アレロック"
+      - "クラリチン"
+      - "ザイザル"
+      - "デザレックス"
+      - "ルパフィン"
+      - "タリオン"
+      - "エバステル"
+      - "ゼスラン"
+      - "ジルテック"
+      - "アゼプチン"
+      - "ビラスチン"
+      - "エピナスチン"
+      - "フェキソフェナジン"
+      - "オロパタジン"
+      - "ロラタジン"
+      - "レボセチリジン"
+      - "デスロラタジン"
+      - "ルパタジン"
+      - "ベポタスチン"
+      - "エバスチン"
+      - "メキタジン"
+      - "セチリジン"
+      - "アゼラスチン"
+    prefixAliases:
+      - "びらのあ"
+      - "びらすちん"
+      - "あれじおん"
+      - "えぴなすちん"
+      - "あれぐら"
+      - "ふぇきそふぇなじん"
+      - "あれろっく"
+      - "おろぱたじん"
+      - "くらりちん"
+      - "ろらたじん"
+      - "ざいざる"
+      - "れぼせちりじん"
+      - "でざれっくす"
+      - "ですろらたじん"
+      - "るぱふぃん"
+      - "るぱたじん"
+      - "たりおん"
+      - "べぽたすちん"
+      - "えばすてる"
+      - "えばすちん"
+      - "ぜすらん"
+      - "めきたじん"
+      - "じるてっく"
+      - "せちりじん"
+      - "あぜぷちん"
+      - "あぜらすちん"
+    nameAliases:
+      - "びらのあ"
+      - "びらすちん"
+      - "あれじおん"
+      - "えぴなすちん"
+      - "あれぐら"
+      - "ふぇきそふぇなじん"
+      - "あれろっく"
+      - "おろぱたじん"
+      - "くらりちん"
+      - "ろらたじん"
+      - "ざいざる"
+      - "れぼせちりじん"
+      - "でざれっくす"
+      - "ですろらたじん"
+      - "るぱふぃん"
+      - "るぱたじん"
+      - "たりおん"
+      - "べぽたすちん"
+      - "えばすてる"
+      - "えばすちん"
+      - "ぜすらん"
+      - "めきたじん"
+      - "じるてっく"
+      - "せちりじん"
+      - "あぜぷちん"
+      - "あぜらすちん"
+    keywords:
+      - "花粉症"
+      - "アレルギー性鼻炎"
+      - "じんましん"
+      - "かゆみ"
+      - "鼻水"
+      - "くしゃみ"
+    priority: 5
+    matchPolicy:
+      preferExactAlias: true
+      allowPrefixMatch: true
+      suppressCrossModuleSuggestionsOnExactHit: true
+  nameAliases:
+    - "びらのあ"
+    - "びらすちん"
+    - "あれじおん"
+    - "えぴなすちん"
+    - "あれぐら"
+    - "ふぇきそふぇなじん"
+    - "あれろっく"
+    - "おろぱたじん"
+    - "くらりちん"
+    - "ろらたじん"
+    - "ざいざる"
+    - "れぼせちりじん"
+    - "でざれっくす"
+    - "ですろらたじん"
+    - "るぱふぃん"
+    - "るぱたじん"
+    - "たりおん"
+    - "べぽたすちん"
+    - "えばすてる"
+    - "えばすちん"
+    - "ぜすらん"
+    - "めきたじん"
+    - "じるてっく"
+    - "せちりじん"
+    - "あぜぷちん"
+    - "あぜらすちん"
+  brandCatalog:
+    ビラノア:
+      displayName: "ビラノア"
+      genericName: "ビラスチン"
+      displayGenericName: "ビラスチン"
+      aliases:
+        - "びらのあ"
+        - "びらすちん"
+      normalizedAliases:
+        - "びらのあ"
+        - "びらすちん"
+    アレジオン:
+      displayName: "アレジオン"
+      genericName: "エピナスチン"
+      displayGenericName: "エピナスチン"
+      aliases:
+        - "あれじおん"
+        - "えぴなすちん"
+      normalizedAliases:
+        - "あれじおん"
+        - "えぴなすちん"
+    アレグラ:
+      displayName: "アレグラ"
+      genericName: "フェキソフェナジン"
+      displayGenericName: "フェキソフェナジン"
+      aliases:
+        - "あれぐら"
+        - "ふぇきそふぇなじん"
+      normalizedAliases:
+        - "あれぐら"
+        - "ふぇきそふぇなじん"
+    アレロック:
+      displayName: "アレロック"
+      genericName: "オロパタジン"
+      displayGenericName: "オロパタジン"
+      aliases:
+        - "あれろっく"
+        - "おろぱたじん"
+      normalizedAliases:
+        - "あれろっく"
+        - "おろぱたじん"
+    クラリチン:
+      displayName: "クラリチン"
+      genericName: "ロラタジン"
+      displayGenericName: "ロラタジン"
+      aliases:
+        - "くらりちん"
+        - "ろらたじん"
+      normalizedAliases:
+        - "くらりちん"
+        - "ろらたじん"
+    ザイザル:
+      displayName: "ザイザル"
+      genericName: "レボセチリジン"
+      displayGenericName: "レボセチリジン"
+      aliases:
+        - "ざいざる"
+        - "れぼせちりじん"
+      normalizedAliases:
+        - "ざいざる"
+        - "れぼせちりじん"
+    デザレックス:
+      displayName: "デザレックス"
+      genericName: "デスロラタジン"
+      displayGenericName: "デスロラタジン"
+      aliases:
+        - "でざれっくす"
+        - "ですろらたじん"
+      normalizedAliases:
+        - "でざれっくす"
+        - "ですろらたじん"
+    ルパフィン:
+      displayName: "ルパフィン"
+      genericName: "ルパタジン"
+      displayGenericName: "ルパタジン"
+      aliases:
+        - "るぱふぃん"
+        - "るぱたじん"
+      normalizedAliases:
+        - "るぱふぃん"
+        - "るぱたじん"
+    タリオン:
+      displayName: "タリオン"
+      genericName: "ベポタスチン"
+      displayGenericName: "ベポタスチン"
+      aliases:
+        - "たりおん"
+        - "べぽたすちん"
+      normalizedAliases:
+        - "たりおん"
+        - "べぽたすちん"
+    エバステル:
+      displayName: "エバステル"
+      genericName: "エバスチン"
+      displayGenericName: "エバスチン"
+      aliases:
+        - "えばすてる"
+        - "えばすちん"
+      normalizedAliases:
+        - "えばすてる"
+        - "えばすちん"
+    ゼスラン:
+      displayName: "ゼスラン"
+      genericName: "メキタジン"
+      displayGenericName: "メキタジン"
+      aliases:
+        - "ぜすらん"
+        - "めきたじん"
+      normalizedAliases:
+        - "ぜすらん"
+        - "めきたじん"
+    ジルテック:
+      displayName: "ジルテック"
+      genericName: "セチリジン"
+      displayGenericName: "セチリジン"
+      aliases:
+        - "じるてっく"
+        - "せちりじん"
+      normalizedAliases:
+        - "じるてっく"
+        - "せちりじん"
+    アゼプチン:
+      displayName: "アゼプチン"
+      genericName: "アゼラスチン"
+      displayGenericName: "アゼラスチン"
+      aliases:
+        - "あぜぷちん"
+        - "あぜらすちん"
+      normalizedAliases:
+        - "あぜぷちん"
+        - "あぜらすちん"
+  aliasToBrand:
+    "びらのあ": "ビラノア"
+    "びらすちん": "ビラノア"
+    "あれじおん": "アレジオン"
+    "えぴなすちん": "アレジオン"
+    "あれぐら": "アレグラ"
+    "ふぇきそふぇなじん": "アレグラ"
+    "あれろっく": "アレロック"
+    "おろぱたじん": "アレロック"
+    "くらりちん": "クラリチン"
+    "ろらたじん": "クラリチン"
+    "ざいざる": "ザイザル"
+    "れぼせちりじん": "ザイザル"
+    "でざれっくす": "デザレックス"
+    "ですろらたじん": "デザレックス"
+    "るぱふぃん": "ルパフィン"
+    "るぱたじん": "ルパフィン"
+    "たりおん": "タリオン"
+    "べぽたすちん": "タリオン"
+    "えばすてる": "エバステル"
+    "えばすちん": "エバステル"
+    "ぜすらん": "ゼスラン"
+    "めきたじん": "ゼスラン"
+    "じるてっく": "ジルテック"
+    "せちりじん": "ジルテック"
+    "あぜぷちん": "アゼプチン"
+    "あぜらすちん": "アゼプチン"
+template:
+  templateId: "allergy_h1_antihistamine_second_gen_oral_v1"
+  templateVersion: "1.0.0"
+  situationTags:
+    - "general"
+    - "seasonal"
+  severityTags:
+    - "mild"
+    - "moderate"
+    - "severe"
+display:
+  title: "第二世代抗ヒスタミン薬（内服）"
+  subtitle: "アレルギー症状に対する内服治療"
+  drugClassLabel: "第二世代抗ヒスタミン薬"
+  drugGeneric: "第二世代H1受容体拮抗薬"
+  nodeLabelShort: "抗ヒスタミン内服"
+  nodeLabelLong: "第二世代抗ヒスタミン薬（内服）"
+  nodeKey: "antihistamine_second_gen_oral"
+  menuGroupLabels:
+    増量: "増量"
+    減量: "減量"
+  adjustmentExpression:
+    increasePast: "増量となった"
+    decreasePast: "減量となった"
+scenarioEngine:
+  mode: "bridge"
+  sourceType: "natural_language_scenarios"
+  scenarioSection:
+    start: "=======SCENARIOS_START======="
+    end: "=======SCENARIOS_END======="
+    sectionStrictMode: true
+  addonSupported: true
+  closingSupported: true
+  headerFormat:
+    delimiter: "｜"
+    scenarioHeader:
+      prefix: "SCENARIO"
+      requiredFields:
+        - "type"
+        - "id"
+        - "title"
+    addonHeader:
+      prefix: "ADDON"
+      requiredFields:
+        - "type"
+        - "id"
+        - "title"
+  expectedScenarioFormat:
+    - "header"
+    - "S"
+    - "O"
+    - "A"
+    - "P"
+    - "P_ADDON(optional)"
+    - "P_CLOSING(optional)"
+  expectedAddonFormat:
+    - "header"
+    - "S_APPEND(optional)"
+    - "A_APPEND(optional)"
+    - "P_APPEND(optional)"
+constitution:
+  purpose: "このテンプレートは自然言語シナリオ原稿をJSONへ橋渡しするための軽量構造定義である。"
+  canonicalSource: "bridge原稿を single source of truth（内容の正本）として扱う。文言・構造の調整は bridge原稿を起点とし、確認後に canonical JSON へ反映する。canonical JSON は bridge原稿を実装へ反映したアウトプットとする。"
+  currentPriority:
+    - "現在の主目的は、実運用アプリを成立させること"
+    - "自然言語指導文の構造安定化"
+    - "自然言語からJSONへの安全な反映"
+    - "既存メモ帳運用の移植"
+  nearFuturePriority:
+    - "人格切替・ペルソナモードは近未来の優先実装対象"
+  futureExpansionPolicy:
+    - "将来の拡張枠は保持してよい"
+    - "ただし、現時点で未使用の枠を勝手に具体化しない"
+    - "ユーザーが明示的に要求しない限り、将来機能の詳細設計を追加しない"
+    - "スケールアップ前提の提案を現在要件へ混入させない"
+  nonGoals:
+    - "監査自動化ロジックの拡充"
+    - "自動scenario選択エンジンの具体化"
+    - "定義済みsemantic merge仕様を超える複数薬自動合成ロジックを、bridge原稿側で勝手に設計しない"
+    - "個人情報前提の高度パーソナライズ設計"
+  editingRules:
+    - "既存本文は勝手に書き換えない"
+    - "構造監査と整合性確認を優先する"
+    - "不足しているブロック、欠落、参照不一致のみを指摘する"
+    - "未依頼の新フィールド、新機能、新分類を追加しない"
+    - "将来拡張のための枠やコメントを削除・変更しない"
+    - "type、id、P_ADDON参照、P_CLOSING の整合性を最優先で確認する"
+    - "bridge原稿では薬剤名・薬効分類名を固定文言で記載してよい"
+    - "文言修正はまず bridge原稿で確認し、その後 JSON へ反映する"
+    - "JSON化時に、S / O / A / P / S_APPEND / A_APPEND / P_APPEND の薬剤名・薬効分類名は、主語・服用薬・対象薬・治療薬として使われている場合 {{drug_subject}} へ読み替える"
+    - "S / S_APPEND では、初回・増量・減量・終了・副作用・頓用使用など、薬剤ごとの状態や変更理由を表す場合、薬剤名・薬効分類名を {{drug_subject}} へ読み替える"
+    - "Oフィールドでは、薬剤名・薬効分類名を表す部分を {{drug_subject}} へ読み替え、処方・増量・減量・服用中・処方終了・処方変更・処方中止などの状態語は保持する"
+    - "A / P / A_APPEND / P_APPEND では、薬剤名・薬効分類名が服用薬・対象薬・治療薬として使われている場合のみ {{drug_subject}} へ読み替える。薬効説明・作用機序・症状説明・服用方法説明・疾患説明などの一般説明文として使われている場合は置換しない"
+    - "薬効説明・作用機序・症状説明など、薬剤主語ではない一般説明文は {{drug_subject}} へ置換しない"
+    - "{{drug_subject}} への読み替えは、薬剤名・薬効分類名が主語・使用薬・対象薬・治療薬として明示されている本文にのみ適用する"
+    - "全体状態評価シナリオ（例：CP良好、CP不良など）では、Sフィールドの主語省略を許容する"
+    - "主語省略を許容するシナリオでは、JSON化時に S フィールドへ {{drug_subject}} を補わない"
+    - "本文監査では意味一致だけでなく、文型・接続・主語構造の維持を重視する"
+    - "多剤合成時のS統合では、groupKeyは削除キーではなく統合候補キーとして扱う"
+    - "S統合は groupKey 単独ではなく semantic merge を前提とする"
+    - "同一clinicalDomain・同一groupKey・同一理由・同一述語で、drug_subjectのみが異なる場合は、S主語統合の対象とする"
+    - "clinicalDomainまたは理由・述語が異なるSは統合せず別行維持する"
+    - "runtime時のS統合・semantic merge挙動は buildSoap.ts / canonical JSON を正本とする"
+    - "bridge原稿では runtime merge の詳細実装を再定義せず、canonical JSON と実装側の仕様に従う"
+    - "lifestyle_guidance系scenario idは用途ごとに一意化する（例：lifestyle_guidance_hyperglycemia、lifestyle_guidance_hyperkalemia）"
+    - "displayGenericName を使用する場合は、displayGenericName ?? genericName の優先順で扱う"
+    - "expressModes は Model JSON管理項目として扱い、bridge原稿では定義しない"
+    - "expressModes の defaultBrandName および defaultScenarioId は、bridge上の brandCatalog および scenario id が確定した後に Model JSON 側で参照整合を確認する"
+    - "JSON化時、drug.nameAliases は drug.search.nameAliases と完全一致で生成する"
+    - "drug.nameAliases を drug.search.nameAliases と独立生成しない"
+    - "JSON化時、addons.orderPresets は全moduleで object として生成する"
+    - "未使用moduleでは addons.orderPresets: {} を許容する"
+    - "addons.orderPresets の preset key は bridge に明示がある場合のみ生成する"
+    - "bridge未明示の preset key を推測生成しない"
+    - "ADDONは S_APPEND / A_APPEND / P_APPEND を使用できる"
+    - "ADDONには S_APPEND / A_APPEND / P_APPEND のいずれか1つ以上を含める"
+    - "生活指導ADDONは、初回系では既存S/Aと重複しやすいためP_APPENDのみのinitial用ADDONを使用する"
+    - "副作用なし・CP良好などの継続確認系では、必要に応じてA_APPENDを含むfollowup用ADDONを使用する"
+    - "S_APPEND付きADDONは、薬剤師が実際に該当内容を確認・説明した場合のみ選択する"
+  outputRules:
+    - "自然言語監査では、原稿の欠落・誤記・構造揺れ・参照不一致のみを扱う"
+    - "JSON監査では、型・キー・参照・後方互換・canonical JSON一致のみを扱う"
+    - "提案は現在要件と将来拡張を明確に分離して述べる"
+
+
+
+=======SCENARIOS_START=======
+
+【SCENARIO｜type=treatment_start｜id=initial_nasal｜title=第二世代ヒスタミンH1受容体拮抗薬 初回（鼻水）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、鼻水が気になるため追加となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状の改善を目的として追加となった。
+ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。
+症状の改善と再燃予防を目的として服用する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状を改善する薬です。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が出た場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_driving_caution_guidance｜title=運転注意説明】
+P_APPEND
+服用後に眠気や集中力の低下を感じる場合は、自動車の運転など危険を伴う作業に注意してください。
+
+
+【ADDON｜type=administration_guidance｜id=addon_bilastine_admin｜title=ビラノア（ビラスチン）説明】
+P_APPEND
+食事の影響により、効果が減弱する可能性があります。
+1日1回空腹時（食事のおよそ1時間前または食後2時間以上あと）に服用してください。
+
+
+【ADDON｜type=administration_guidance｜id=addon_fexofenadine_admin｜title=アレグラ（フェキソフェナジン）説明】
+P_APPEND
+フルーツジュースの影響により、効果が減弱する可能性があります。
+グレープフルーツ、リンゴ、オレンジなどのジュースは避け、水で服用してください。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=initial_pruritus｜title=第二世代ヒスタミンH1受容体拮抗薬 初回（掻痒感）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、かゆみが気になるため追加となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状の改善を目的として追加となった。
+ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。
+症状の改善と再燃予防を目的として服用する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状を改善する薬です。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が出た場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart_nasal｜title=第二世代ヒスタミンH1受容体拮抗薬 再開（鼻水）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、鼻水が気になるため再開となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状の改善を目的として再開となった。
+ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。
+症状の改善と再燃予防を目的として服用する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状を改善する薬です。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が出た場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart_pruritus｜title=第二世代ヒスタミンH1受容体拮抗薬 再開（掻痒感）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、かゆみが気になるため再開となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状の改善を目的として再開となった。
+ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。
+症状の改善と再燃予防を目的として服用する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状を改善する薬です。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が出た場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start_nasal｜title=第二世代ヒスタミンH1受容体拮抗薬 他所開始（鼻水）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、鼻水に対して他所で開始され継続使用中であった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状の改善を目的として継続使用中であった。
+ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。
+症状の改善と再燃予防を目的として服用する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状を改善する薬です。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が出た場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start_pruritus｜title=第二世代ヒスタミンH1受容体拮抗薬 他所開始（掻痒感）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、かゆみに対して他所で開始され継続使用中であった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状の改善を目的として継続使用中であった。
+ヒスタミンH1受容体への作用を抑え、鼻水・かゆみなどのアレルギー症状を改善する。
+症状の改善と再燃予防を目的として服用する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、アレルギー症状を改善する薬です。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が出た場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=第二世代ヒスタミンH1受容体拮抗薬 用量調整（増量・効果実感乏しい）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、効果の実感が乏しいため増量となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　増量
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、効果不十分のため増量となった。増量後の眠気や倦怠感などの副作用に注意が必要である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、増量により眠気や倦怠感が出やすくなることがあります。
+眠気や倦怠感が強い場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=第二世代ヒスタミンH1受容体拮抗薬 用量調整（増量・他剤との調整）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、他剤との調整により増量となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　増量
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、併用薬との調整のため増量となった。増量後の眠気や倦怠感などの副作用に注意が必要である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、増量により眠気や倦怠感が出やすくなることがあります。
+眠気や倦怠感が強い場合はご相談ください。
+
+P_ADDON
+- addon_driving_caution_guidance
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=第二世代ヒスタミンH1受容体拮抗薬 用量調整（減量・症状改善）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、症状が改善したため服用量が調整となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　減量
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、症状改善を踏まえ減量となった。減量後に症状が再燃する可能性があるため、注意が必要である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、減量により症状が再燃することがあります。
+体調変化があればご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=第二世代ヒスタミンH1受容体拮抗薬 用量調整（減量・効果実感乏しい）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、効果の実感が乏しく、服用継続に不安があるため用量調整となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　減量
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、効果実感の乏しさと服用継続への不安を踏まえ減量となった。減量後の症状変化について経過確認を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、減量により症状が悪化する可能性があります。
+症状の変化や体調変化があればご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=第二世代ヒスタミンH1受容体拮抗薬 用量調整（減量・他剤との調整）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、他剤との調整により減量となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　減量
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、併用薬との調整のため減量となった。減量後の症状悪化に注意が必要である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、減量により症状が悪化する可能性があります。
+体調変化があればご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_drowsiness_none｜title=第二世代ヒスタミンH1受容体拮抗薬 副作用なし（眠気）】
+S
+第二世代ヒスタミンH1受容体拮抗薬を服用して症状は落ち着いている。
+眠気は認めない。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬による眠気は現時点で認められず、治療継続が可能である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の継続中に眠気が出ることがあります。
+症状が続く場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_liver_symptom_none｜title=第二世代ヒスタミンH1受容体拮抗薬 副作用なし（肝障害関連症状）】
+S
+第二世代ヒスタミンH1受容体拮抗薬を服用して症状は落ち着いている。
+強い倦怠感などの明らかな体調変化は認めない。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬による肝障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の継続中に、強い倦怠感が出ることがあります。
+気になる症状が続く場合はご相談ください。
+
+P_ADDON
+- addon_liver_warning_detail
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=side_effect_guidance｜id=addon_liver_warning_detail｜title=肝障害関連症状の補足】
+P_APPEND
+強いだるさが続く、食欲が落ちる、皮膚や白目が黄色く見えるなどの変化がある場合は、早めに医療機関へご相談ください。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_dry_mouth_none｜title=第二世代ヒスタミンH1受容体拮抗薬 副作用なし（口渇）】
+S
+第二世代ヒスタミンH1受容体拮抗薬を服用して症状は落ち着いている。
+口渇は認めない。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬による口渇は現時点で認められず、治療継続が可能である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の継続中に口渇が出ることがあります。
+症状が続く場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_abdominal_discomfort_none｜title=第二世代ヒスタミンH1受容体拮抗薬 副作用なし（腹部不快感）】
+S
+第二世代ヒスタミンH1受容体拮抗薬を服用して症状は落ち着いている。
+腹部不快感などの消化器症状は認めない。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬による消化器症状は現時点で認められず、治療継続が可能である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の継続中に腹部不快感が出ることがあります。
+症状が続く場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_good｜title=第二世代ヒスタミンH1受容体拮抗薬 CP良好】
+S
+薬を服用して症状は落ち着いている。
+継続して服用できている。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　服用中
+
+A
+コンプライアンスは良好である。治療継続に問題はない。
+
+P
+引き続き用法を守って服用することで、アレルギー症状改善が期待できます。
+今後も継続して服用できるようにすることが大切です。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=第二世代ヒスタミンH1受容体拮抗薬 CP不良（服薬忘れ）】
+S
+服薬忘れがみられる。
+継続して服用できていない。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　服用中
+
+A
+コンプライアンスは不良で、服薬忘れがみられる。
+
+P
+継続して服用することでアレルギー症状改善が期待されます。
+服薬忘れが続くとアレルギー症状が悪化する可能性があります。
+
+P_ADDON
+- addon_adherence_alarm_suggestion
+- addon_adherence_prep_previous_night
+- addon_adherence_prep_before_meal
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_alarm_suggestion｜title=服薬忘れ対策（アラーム）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、服用予定の時間に合わせてアラームを設定しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（事前準備　前日）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（事前準備　食事前）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=第二世代ヒスタミンH1受容体拮抗薬 CP不良（自己判断）】
+S
+自己判断での服用調整がみられる。
+用法どおりの継続服用ができていない。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　服用中
+
+A
+コンプライアンスは不良で、自己判断による調整がみられる。
+
+P
+継続して服用することで治療効果が安定し、症状悪化の予防につながります。
+自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。
+体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=第二世代ヒスタミンH1受容体拮抗薬 CP不良（受診遅延）】
+S
+都合により受診遅延がみられる。
+継続した服用に不安がある。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　服用中
+
+A
+コンプライアンスは不良で、受診遅延がみられる。
+
+P
+継続的な服用が治療効果の維持と症状悪化の予防につながります。
+治療が中断すると症状が悪化する可能性があります。
+次回受診が難しい場合は、早めに医療機関へご連絡ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=usage｜id=as_needed_refill_needed｜title=第二世代ヒスタミンH1受容体拮抗薬 頓用使用（処方あり）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、症状が出た時に使用している。
+使用により残薬が少なくなったため、継続処方となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、症状が出た時に、指示された用法に従って使用してください。
+使用後も症状が改善しない場合や、使用頻度が増えている場合はご相談ください。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が気になる場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=usage｜id=as_needed_refill_not_needed｜title=第二世代ヒスタミンH1受容体拮抗薬 頓用使用（処方なし）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、症状が出た時に使用している。
+残薬があるため、今回は処方なしとなった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　服用中
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬は、症状が出た時に、指示された用法に従って使用してください。
+症状が続く場合や、使用頻度が増える場合はご相談ください。
+眠気や倦怠感などの副作用が出ることがあります。
+副作用が気になる場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=第二世代ヒスタミンH1受容体拮抗薬 終了（改善）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、症状が改善したため中止となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方終了
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、症状改善により終了となった。
+終了後に症状が悪化する可能性があるため、注意が必要である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬終了後、症状悪化や体調変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=第二世代ヒスタミンH1受容体拮抗薬 終了（効果不十分）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、効果不十分のため中止となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方終了
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、効果不十分のため終了となった。
+終了後は、症状の変化について確認を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の終了後、症状の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=第二世代ヒスタミンH1受容体拮抗薬 終了（無効）】
+S
+第二世代ヒスタミンH1受容体拮抗薬は、効果が認められなかったため中止となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方終了
+
+A
+第二世代ヒスタミンH1受容体拮抗薬は、効果が認められなかったため終了となった。
+終了後は、症状の変化について確認を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の終了後、症状の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=第二世代ヒスタミンH1受容体拮抗薬 SE継続（軽症）】
+S
+第二世代ヒスタミンH1受容体拮抗薬の服用により眠気があるが、日常生活は送れている。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬による眠気を軽度認めるが、治療継続が可能である。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬による眠気が軽い場合は、経過をみていただき、眠気が強くなる場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=第二世代ヒスタミンH1受容体拮抗薬 SE継続（中等度）】
+S
+第二世代ヒスタミンH1受容体拮抗薬の服用により眠気が強く、辛いことがあるが、日常生活は送れている。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方
+
+A
+第二世代ヒスタミンH1受容体拮抗薬による眠気が強く、継続困難の可能性があるため対応を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬による眠気の副作用が強い場合は、減量や薬の変更が必要になることがあります。
+処方医へご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_neuropsychiatric_symptoms｜title=第二世代ヒスタミンH1受容体拮抗薬 SE変更（精神神経症状）】
+S
+第二世代ヒスタミンH1受容体拮抗薬の服用により眠気が出現したため、他剤へ変更となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方変更
+
+A
+第二世代ヒスタミンH1受容体拮抗薬の服用による眠気を認め、他剤変更後の経過確認を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の変更後、症状の悪化や体調変化があればご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_neuropsychiatric_symptoms｜title=第二世代ヒスタミンH1受容体拮抗薬 SE減量（精神神経症状）】
+S
+第二世代ヒスタミンH1受容体拮抗薬の服用により眠気がひどいため、減量となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　減量
+
+A
+第二世代ヒスタミンH1受容体拮抗薬の服用による眠気を認め、減量後の経過確認を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の減量後も眠気が続く場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_neuropsychiatric_symptoms｜title=第二世代ヒスタミンH1受容体拮抗薬 SE中止（精神神経症状）】
+S
+第二世代ヒスタミンH1受容体拮抗薬の服用により眠気がひどいため、中止となった。
+
+O
+第二世代ヒスタミンH1受容体拮抗薬　処方中止
+
+A
+第二世代ヒスタミンH1受容体拮抗薬の服用による眠気を認め、中止後の経過確認を要する。
+
+P
+第二世代ヒスタミンH1受容体拮抗薬の中止後、症状悪化や体調変化があればご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_bilastine｜title=ビラノア(ビラスチン)生活指導】
+S
+ビラスチンは空腹時に飲めていません。
+
+O
+ビラスチン　服用中
+
+A
+薬剤特性の理解が不十分であり、生活指導が必要である。
+
+P
+食事の影響により、効果が減弱する可能性があります。
+食事のおよそ1時間前または食後2時間以上後に服用するようにしてください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_fexofenadine｜title=アレグラ(フェキソフェナジン)生活指導】
+S
+よくフルーツジュースを飲みます。
+
+O
+フェキソフェナジン　服用中
+
+A
+薬剤特性の理解が不十分であり、生活指導が必要である。
+
+P
+フルーツジュースの影響により、効果が減弱する可能性があります。
+グレープフルーツ、リンゴ、オレンジなどのジュースは避け、水で服用してください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+=======SCENARIOS_END=======
