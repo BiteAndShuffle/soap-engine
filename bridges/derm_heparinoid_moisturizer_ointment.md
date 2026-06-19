@@ -1,0 +1,993 @@
+# =========================================
+# SOAP-ENGINE MODULE (bridge原稿 / lightweight)
+# derm_heparinoid_moisturizer_ointment
+# =========================================
+moduleId: "derm_heparinoid_moisturizer_ointment"
+categoryPath:
+  - "皮膚科"
+  - "保湿剤"
+  - "ヘパリン類似物質"
+  - "外用"
+  - "軟膏"
+drug:
+  genericName: "ヘパリン類似物質系保湿剤軟膏"
+  brandNames:
+    - "ヒルドイドソフト軟膏"
+    - "ヘパリン類似物質油性クリーム"
+  drugClass:
+    - "HEPARINOID_MOISTURIZER_OINTMENT"
+  route: "topical"
+  dosageForms:
+    - "ointment"
+    - "oily_cream"
+  drugSpecificTags:
+    - "heparinoid"
+    - "moisturizer"
+    - "dermatology"
+    - "topical"
+    - "external_use"
+    - "ointment"
+    - "oily_cream"
+    - "dry_skin"
+    - "skin_barrier_care"
+    - "application_instruction"
+    - "formulation_instruction"
+  search:
+    primaryDisplayName: "ヘパリン類似物質系保湿剤軟膏"
+    exactAliases:
+      - "ヒルドイドソフト軟膏"
+      - "ヒルドイド軟膏"
+      - "ヘパリン類似物質油性クリーム"
+      - "ヘパリン類似物質軟膏"
+    prefixAliases:
+      - "ひるどいどそふとなんこう"
+      - "ひるどいどなんこう"
+      - "ひるどいど"
+      - "ひるどい"
+      - "ひるど"
+      - "ひるどいなんこう"
+      - "ひるどなんこう"
+      - "ひるなんこう"
+      - "へぱ"
+      - "へぱなんこう"
+      - "へぱりん"
+      - "へぱりんなんこう"
+      - "へぱりんるいじ"
+      - "へぱりんるいじぶっしつ"
+      - "へぱりんゆせいくりーむ"
+      - "へぱゆせいくりーむ"
+      - "へぱりんるいじぶっしつなんこう"
+      - "へぱりんるいじぶっしつゆせいくりーむ"
+    commonSearchTokens:
+      - "へぱ"
+      - "へぱり"
+      - "へぱりん"
+      - "へぱりんるいじ"
+      - "へぱりんるいじぶっしつ"
+    formulationSearchTokens:
+      - "なん"
+      - "なんこう"
+      - "ゆせい"
+      - "ゆせいくりーむ"
+      - "そふと"
+      - "そふとなんこう"
+    nameAliases:
+      - "ひるどいどそふとなんこう"
+      - "ひるどいどなんこう"
+      - "ひるどいど"
+      - "ひるどい"
+      - "ひるど"
+      - "ひるどいなんこう"
+      - "ひるどなんこう"
+      - "ひるなんこう"
+      - "へぱなんこう"
+      - "へぱりんなんこう"
+      - "へぱりんゆせいくりーむ"
+      - "へぱゆせいくりーむ"
+      - "へぱりんるいじぶっしつなんこう"
+      - "へぱりんるいじぶっしつゆせいくりーむ"
+    keywords:
+      - "保湿"
+      - "乾燥"
+      - "皮膚乾燥"
+      - "外用"
+      - "軟膏"
+      - "油性クリーム"
+      - "皮膚科"
+    priority: 5
+    matchPolicy:
+      preferExactAlias: true
+      allowPrefixMatch: true
+      suppressCrossModuleSuggestionsOnExactHit: true
+      allowMultiTokenAndMatch: true
+      allowFormulationTokenMatch: true
+  nameAliases:
+    - "ひるどいどそふとなんこう"
+    - "ひるどいどなんこう"
+    - "ひるどいど"
+    - "ひるどい"
+    - "ひるど"
+    - "ひるどいなんこう"
+    - "ひるどなんこう"
+    - "ひるなんこう"
+    - "へぱなんこう"
+    - "へぱりんなんこう"
+    - "へぱりんゆせいくりーむ"
+    - "へぱゆせいくりーむ"
+    - "へぱりんるいじぶっしつなんこう"
+    - "へぱりんるいじぶっしつゆせいくりーむ"
+  brandCatalog:
+    ヒルドイドソフト軟膏:
+      displayName: "ヒルドイドソフト軟膏"
+      genericName: "ヘパリン類似物質"
+      displayGenericName: "ヘパリン類似物質油性クリーム"
+      storageType: "room_temperature"
+      formulationType: "ointment"
+      handlingTags:
+        - "room_temperature_storage"
+        - "ointment"
+        - "topical_application"
+        - "external_use"
+        - "apply_thin_layer"
+        - "avoid_mucosa"
+        - "wash_hands_before_use"
+        - "ointment_application"
+      aliases:
+        - "ひるどいどそふとなんこう"
+        - "ひるどいどなんこう"
+        - "ひるどいど"
+        - "ひるどい"
+        - "ひるど"
+        - "ひるどいなんこう"
+        - "ひるどなんこう"
+        - "ひるなんこう"
+      normalizedAliases:
+        - "ひるどいどそふとなんこう"
+        - "ひるどいどなんこう"
+        - "ひるどいど"
+        - "ひるどい"
+        - "ひるど"
+        - "ひるどいなんこう"
+        - "ひるどなんこう"
+        - "ひるなんこう"
+    ヘパリン類似物質油性クリーム:
+      displayName: "ヘパリン類似物質油性クリーム"
+      genericName: "ヘパリン類似物質"
+      displayGenericName: "ヘパリン類似物質油性クリーム"
+      storageType: "room_temperature"
+      formulationType: "oily_cream"
+      handlingTags:
+        - "room_temperature_storage"
+        - "oily_cream"
+        - "topical_application"
+        - "external_use"
+        - "apply_thin_layer"
+        - "avoid_mucosa"
+        - "wash_hands_before_use"
+        - "cream_application"
+      aliases:
+        - "へぱりんるいじぶっしつゆせいくりーむ"
+        - "へぱりんるいじぶっしつなんこう"
+        - "へぱりんゆせいくりーむ"
+        - "へぱゆせいくりーむ"
+      normalizedAliases:
+        - "へぱりんるいじぶっしつゆせいくりーむ"
+        - "へぱりんるいじぶっしつなんこう"
+        - "へぱりんゆせいくりーむ"
+        - "へぱゆせいくりーむ"
+  aliasToBrand:
+    "ひるどいどそふとなんこう": "ヒルドイドソフト軟膏"
+    "ひるどいどなんこう": "ヒルドイドソフト軟膏"
+    "ひるどいど": "ヒルドイドソフト軟膏"
+    "ひるどい": "ヒルドイドソフト軟膏"
+    "ひるど": "ヒルドイドソフト軟膏"
+    "ひるどいなんこう": "ヒルドイドソフト軟膏"
+    "ひるどなんこう": "ヒルドイドソフト軟膏"
+    "ひるなんこう": "ヒルドイドソフト軟膏"
+    "へぱりんるいじぶっしつゆせいくりーむ": "ヘパリン類似物質油性クリーム"
+    "へぱりんるいじぶっしつなんこう": "ヘパリン類似物質油性クリーム"
+    "へぱりんゆせいくりーむ": "ヘパリン類似物質油性クリーム"
+    "へぱゆせいくりーむ": "ヘパリン類似物質油性クリーム"
+template:
+  templateId: "derm_heparinoid_moisturizer_ointment_v1"
+  templateVersion: "1.0.0"
+  situationTags:
+    - "general"
+    - "dry_skin"
+    - "dermatology"
+  severityTags:
+    - "mild"
+    - "moderate"
+    - "severe"
+  storageTags:
+    - "room_temperature_storage"
+    - "storage_product_specific"
+  formulationTags:
+    - "ointment"
+    - "oily_cream"
+  handlingTags:
+    - "topical_application"
+    - "external_use"
+    - "application_instruction"
+    - "skin_barrier_care"
+    - "apply_thin_layer"
+    - "avoid_mucosa"
+    - "wash_hands_before_use"
+    - "ointment_application"
+    - "cream_application"
+display:
+  title: "ヘパリン類似物質系保湿剤軟膏"
+  subtitle: "皮膚乾燥・保湿目的に使用する外用保湿剤"
+  drugClassLabel: "ヘパリン類似物質系保湿剤軟膏"
+  drugGeneric: "ヘパリン類似物質系保湿剤軟膏"
+  nodeLabelShort: "ヘパ軟膏"
+  nodeLabelLong: "ヘパリン類似物質系保湿剤軟膏"
+  nodeKey: "heparinoid_moisturizer_ointment"
+  menuGroupLabels:
+    増量: "使用量増"
+    減量: "使用量減"
+  adjustmentExpression:
+    increasePast: "使用量が増えた"
+    decreasePast: "使用量が減った"
+scenarioEngine:
+  mode: "bridge"
+  sourceType: "natural_language_scenarios"
+  scenarioSection:
+    start: "=======SCENARIOS_START======="
+    end: "=======SCENARIOS_END======="
+    sectionStrictMode: true
+  addonSupported: true
+  closingSupported: true
+  headerFormat:
+    delimiter: "｜"
+    scenarioHeader:
+      prefix: "SCENARIO"
+      requiredFields:
+        - "type"
+        - "id"
+        - "title"
+    addonHeader:
+      prefix: "ADDON"
+      requiredFields:
+        - "type"
+        - "id"
+        - "title"
+  expectedScenarioFormat:
+    - "header"
+    - "S"
+    - "O"
+    - "A"
+    - "P"
+    - "P_ADDON(optional)"
+    - "P_CLOSING(optional)"
+  expectedAddonFormat:
+    - "header"
+    - "S_APPEND(optional)"
+    - "A_APPEND(optional)"
+    - "P_APPEND(optional)"
+constitution:
+  purpose: "このテンプレートは自然言語シナリオ原稿をJSONへ橋渡しするための軽量構造定義である。"
+  canonicalSource: "bridge原稿を single source of truth（内容の正本）として扱う。文言・構造の調整は bridge原稿を起点とし、確認後に canonical JSON へ反映する。canonical JSON は bridge原稿を実装へ反映したアウトプットとする。"
+  editingRules:
+    - "既存本文は勝手に書き換えない"
+    - "構造監査と整合性確認を優先する"
+    - "不足しているブロック、欠落、参照不一致のみを指摘する"
+    - "未依頼の新フィールド、新機能、新分類を追加しない"
+    - "将来拡張のための枠やコメントを削除・変更しない"
+    - "type、id、P_ADDON参照、P_CLOSING の整合性を最優先で確認する"
+    - "bridge原稿では薬剤名・薬効分類名を固定文言で記載してよい"
+    - "文言修正はまず bridge原稿で確認し、その後 JSON へ反映する"
+    - "JSON化時に、S / O / A / P / S_APPEND / A_APPEND / P_APPEND の薬剤名・薬効分類名は、主語・使用薬・対象薬・治療薬として使われている場合 {{drug_subject}} へ読み替える"
+    - "S / S_APPEND では、初回・使用量増・使用量減・終了・副作用・使用状況確認など、薬剤ごとの状態や変更理由を表す場合、薬剤名・薬効分類名を {{drug_subject}} へ読み替える"
+    - "Oフィールドでは、薬剤名・薬効分類名を表す部分を {{drug_subject}} へ読み替え、処方・使用量増・使用量減・使用中・処方終了・処方変更・処方中止などの状態語は保持する"
+    - "A / P / A_APPEND / P_APPEND では、薬剤名・薬効分類名が使用薬・対象薬・治療薬として使われている場合のみ {{drug_subject}} へ読み替える。薬効説明・皮膚乾燥の説明・外用手技説明・保管方法説明・疾患説明などの一般説明文として使われている場合は置換しない"
+    - "薬効説明・皮膚乾燥の説明・外用手技説明など、薬剤主語ではない一般説明文は {{drug_subject}} へ置換しない"
+    - "{{drug_subject}} への読み替えは、薬剤名・薬効分類名が主語・使用薬・対象薬・治療薬として明示されている本文にのみ適用する"
+    - "全体状態評価シナリオ（例：CP良好、CP不良など）では、Sフィールドの主語省略を許容する"
+    - "主語省略を許容するシナリオでは、JSON化時に S フィールドへ {{drug_subject}} を補わない"
+    - "本文監査では意味一致だけでなく、文型・接続・主語構造の維持を重視する"
+    - "displayGenericName を使用する場合は、displayGenericName ?? genericName の優先順で扱う"
+    - "expressModes は Model JSON管理項目として扱い、bridge原稿では定義しない"
+    - "expressModes の defaultBrandName および defaultScenarioId は、bridge上の brandCatalog および scenario id が確定した後に Model JSON 側で参照整合を確認する"
+    - "検索語は、薬剤共通語と剤形識別語を分けて管理する"
+    - "ヘパリン類似物質系では、commonSearchTokens に共通検索語を、formulationSearchTokens に剤形識別語を格納する"
+    - "へぱ なん、へぱり な、へ なんこう等の分割検索は、bridge本文側で大量alias化せず、search.commonSearchTokens / formulationSearchTokens と検索エンジン側のAND prefix matchで吸収する"
+    - "剤形違いモジュールを追加する場合、commonSearchTokensは原則共通化し、formulationSearchTokensで軟膏・クリーム・ローション・スプレー等を切り分ける"
+    - "JSON化時、drug.nameAliases は drug.search.nameAliases と完全一致で生成する"
+    - "drug.nameAliases を drug.search.nameAliases と独立生成しない"
+    - "JSON化時、addons.orderPresets は全moduleで object として生成する"
+    - "未使用moduleでは addons.orderPresets: {} を許容する"
+    - "addons.orderPresets の preset key は bridge に明示がある場合のみ生成する"
+    - "bridge未明示の preset key を推測生成しない"
+    - "ADDONは S_APPEND / A_APPEND / P_APPEND を使用できる"
+    - "ADDONには S_APPEND / A_APPEND / P_APPEND のいずれか1つ以上を含める"
+    - "S_APPEND付きADDONは、薬剤師が実際に該当内容を確認・説明した場合のみ選択する"
+  outputRules:
+    - "自然言語監査では、原稿の欠落・誤記・構造揺れ・参照不一致のみを扱う"
+    - "JSON監査では、型・キー・参照・後方互換・canonical JSON一致のみを扱う"
+    - "提案は現在要件と将来拡張を明確に分離して述べる"
+
+
+
+=======SCENARIOS_START=======
+
+【SCENARIO｜type=treatment_start｜id=initial_dryness｜title=ヘパリン類似物質系保湿剤軟膏 初回（乾燥）】
+S
+ヘパリン類似物質系保湿剤軟膏は、{{applicationSite}}の乾燥が気になるため追加となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れの改善を目的として使用する。
+皮膚状態を整え、症状の悪化予防につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_ointment_application_method｜title=塗布方法説明】
+P_APPEND
+清潔な手で、適量を薄く伸ばして使用してください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_topical_after_bath｜title=入浴後使用説明】
+P_APPEND
+入浴後に使用すると、保湿効果が高まりやすくなります。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_topical_redness_warning｜title=副作用注意喚起（発赤）】
+P_APPEND
+塗った場所が赤くなることがあります。
+赤みが続く場合や、気になる場合はご相談ください。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=initial_eczema｜title=ヘパリン類似物質系保湿剤軟膏 初回（湿疹）】
+S
+ヘパリン類似物質系保湿剤軟膏は、{{applicationSite}}の湿疹が気になるため追加となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、皮膚状態の改善を目的として使用する。
+皮膚状態を整え、症状改善や状態維持につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、皮膚状態を整える薬です。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=initial_skin_barrier_patch｜title=ヘパリン類似物質系保湿剤軟膏 初回（皮膚バリア機能低下）】
+S
+ヘパリン類似物質系保湿剤軟膏は、パッチによるかぶれ防止のため追加となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、パッチ使用部位の皮膚状態を整える目的で追加となった。
+貼付部位の乾燥や荒れを防ぎ、皮膚トラブル予防につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、パッチ使用部位の皮膚状態を整える薬です。
+貼付部位の皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_topical_patch_timing
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_topical_patch_timing｜title=パッチ貼付部位の塗布タイミング】
+P_APPEND
+パッチを貼る前に塗ると、はがれやすくなることがあります。
+パッチを剥がした後など、貼付していないタイミングで使用してください。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart_dryness｜title=ヘパリン類似物質系保湿剤軟膏 再開（乾燥）】
+S
+ヘパリン類似物質系保湿剤軟膏は、{{applicationSite}}の乾燥や荒れの改善を目的として再開となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れの改善を目的として使用する。
+皮膚状態を整え、症状の悪化予防につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart_eczema｜title=ヘパリン類似物質系保湿剤軟膏 再開（湿疹）】
+S
+ヘパリン類似物質系保湿剤軟膏は、{{applicationSite}}の湿疹の改善を目的として再開となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、皮膚状態の改善を目的として再開する。
+皮膚状態を整え、症状の悪化予防につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start_dryness｜title=ヘパリン類似物質系保湿剤軟膏 他所開始（乾燥）】
+S
+ヘパリン類似物質系保湿剤軟膏は、{{applicationSite}}の乾燥や荒れに対して他院で開始され継続使用中であった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れの改善を目的として継続使用中であった。
+皮膚状態を整え、症状の悪化予防につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start_eczema｜title=ヘパリン類似物質系保湿剤軟膏 他所開始（湿疹）】
+S
+ヘパリン類似物質系保湿剤軟膏は、{{applicationSite}}の湿疹改善を目的として他院で開始され継続使用中であった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、皮膚状態の改善を目的として継続使用中であった。
+皮膚状態を整え、症状改善や状態維持につなげる。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_ADDON
+- addon_ointment_application_method
+- addon_topical_after_bath
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_low_perceived_effect｜title=ヘパリン類似物質系保湿剤軟膏 回数増（効果実感乏しい）】
+S
+ヘパリン類似物質系保湿剤軟膏は、効果の実感が乏しいため使用回数が増えた。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用回数増
+
+A
+ヘパリン類似物質系保湿剤軟膏は、効果実感が乏しいため使用回数が増えた。
+使用回数変更後も、塗布状況と皮膚症状の変化を確認する。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、指示された回数で継続して使用してください。
+塗った場所に気になる変化がある場合はご相談ください。
+
+P_ADDON
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_due_to_other_med_adjustment｜title=ヘパリン類似物質系保湿剤軟膏 回数増（他剤との調整）】
+S
+ヘパリン類似物質系保湿剤軟膏は、他剤との調整により使用回数が増えた。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用回数増
+
+A
+ヘパリン類似物質系保湿剤軟膏は、併用薬との調整により使用回数が増えた。
+使用回数変更後も、塗布状況と皮膚症状の変化を確認する。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、指示された回数で継続して使用してください。
+塗った場所に気になる変化がある場合はご相談ください。
+
+P_ADDON
+- addon_topical_redness_warning
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_improved｜title=ヘパリン類似物質系保湿剤軟膏 回数減（症状改善）】
+S
+ヘパリン類似物質系保湿剤軟膏は、症状が改善したため使用回数が減った。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用回数減
+
+A
+ヘパリン類似物質系保湿剤軟膏は、症状改善により使用回数が減った。
+使用回数変更後も、皮膚症状の変化を確認する。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、指示された回数で継続して使用してください。
+皮膚症状に変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_low_perceived_effect｜title=ヘパリン類似物質系保湿剤軟膏 回数減（効果実感乏しい）】
+S
+ヘパリン類似物質系保湿剤軟膏は、効果の実感が乏しく、使用継続に不安があるため使用回数が減った。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用回数減
+
+A
+ヘパリン類似物質系保湿剤軟膏は、効果実感の乏しさと使用継続への不安により使用回数が減った。
+使用回数変更後も、塗布状況と皮膚症状の変化を確認する。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、指示された回数で継続して使用してください。
+皮膚症状に変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_due_to_other_med_adjustment｜title=ヘパリン類似物質系保湿剤軟膏 回数減（他剤との調整）】
+S
+ヘパリン類似物質系保湿剤軟膏は、他剤との調整により使用回数が減った。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用回数減
+
+A
+ヘパリン類似物質系保湿剤軟膏は、併用薬との調整により使用回数が減った。
+使用回数変更後も、皮膚症状の変化を確認する。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、指示された回数で継続して使用してください。
+皮膚症状に変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_contact_dermatitis_none｜title=ヘパリン類似物質系保湿剤軟膏 副作用なし（接触皮膚炎）】
+S
+ヘパリン類似物質系保湿剤軟膏を使用して症状は落ち着いている。
+かぶれは認めない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用によるかぶれは現時点で認められず、継続使用に問題はない。
+
+P
+ヘパリン類似物質系保湿剤軟膏の使用中に、塗った場所がかぶれることがあります。
+皮膚症状に変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_redness_none｜title=ヘパリン類似物質系保湿剤軟膏 副作用なし（発赤）】
+S
+ヘパリン類似物質系保湿剤軟膏を使用して症状は落ち着いている。
+肌の赤みは認めない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用による赤みは現時点で認められず、継続使用に問題はない。
+
+P
+ヘパリン類似物質系保湿剤軟膏の使用中に、塗った場所が赤くなることがあります。
+皮膚症状に変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_pruritus_none｜title=ヘパリン類似物質系保湿剤軟膏 副作用なし（掻痒感）】
+S
+ヘパリン類似物質系保湿剤軟膏を使用して症状は落ち着いている。
+掻痒感は認めない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用によるかゆみは現時点で認められず、継続使用に問題はない。
+
+P
+ヘパリン類似物質系保湿剤軟膏の使用中に、かゆみが出ることがあります。
+皮膚症状に変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_dermatitis_none｜title=ヘパリン類似物質系保湿剤軟膏 副作用なし（皮膚炎）】
+S
+ヘパリン類似物質系保湿剤軟膏を使用して症状は落ち着いている。
+皮膚炎は認めない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用による皮膚炎は現時点で認められず、継続使用に問題はない。
+
+P
+ヘパリン類似物質系保湿剤軟膏の使用中に、塗った場所の状態が変化することがあります。
+気になる変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_good｜title=ヘパリン類似物質系保湿剤軟膏 CP良好】
+S
+薬を使用して症状は落ち着いている。
+継続して使用できている。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用中
+
+A
+コンプライアンスは良好である。治療継続に問題はない。
+
+P
+引き続き指示された方法で使用してください。
+皮膚状態を保つため、継続して使用することが大切です。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=ヘパリン類似物質系保湿剤軟膏 CP不良（使用忘れ）】
+S
+使用忘れがみられる。
+継続して使用できていない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用中
+
+A
+コンプライアンスは不良で、使用忘れがみられる。
+
+P
+継続して使用することで皮膚症状の改善が期待されます。
+皮膚状態を保つため、指示された方法で使用してください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=ヘパリン類似物質系保湿剤軟膏 CP不良（自己判断）】
+S
+自己判断での使用調整がみられる。
+用法どおりの継続使用ができていない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用中
+
+A
+コンプライアンスは不良で、自己判断による調整がみられる。
+
+P
+継続して使用することで皮膚症状の改善が期待されます。
+皮膚状態を保つため、指示された方法で使用してください。
+使用回数や使用量を変えたい場合は、自己判断せずご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=ヘパリン類似物質系保湿剤軟膏 CP不良（受診遅延）】
+S
+都合により受診遅延がみられる。
+継続した使用に不安がある。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用中
+
+A
+コンプライアンスは不良で、受診遅延がみられる。
+
+P
+継続して使用することで皮膚症状の改善が期待されます。
+治療が中断すると症状が悪化する可能性があります。
+次回受診が難しい場合は、早めに医療機関へご連絡ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=usage｜id=as_needed_refill_needed｜title=ヘパリン類似物質系保湿剤軟膏 頓用使用（処方あり）】
+S
+ヘパリン類似物質系保湿剤軟膏は、症状が出た時に使用している。
+使用により残薬が少なくなったため、継続処方となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏は、必要時に使用されており、残薬状況を踏まえ継続処方となった。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、必要に応じて指示された方法で使用してください。
+塗った場所に気になる変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=usage｜id=as_needed_refill_not_needed｜title=ヘパリン類似物質系保湿剤軟膏 頓用使用（処方なし）】
+S
+ヘパリン類似物質系保湿剤軟膏は、症状が出た時に使用している。
+残薬があるため、今回は処方なしとなった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用中
+
+A
+ヘパリン類似物質系保湿剤軟膏は、必要時に使用されており、残薬があるため今回は処方なしとなった。
+
+P
+ヘパリン類似物質系保湿剤軟膏は、必要に応じて指示された方法で使用してください。
+塗った場所に気になる変化がある場合はご相談ください。
+
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=ヘパリン類似物質系保湿剤軟膏 終了（改善）】
+S
+ヘパリン類似物質系保湿剤軟膏は、症状が改善したため中止となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方終了
+
+A
+ヘパリン類似物質系保湿剤軟膏は、症状改善により終了となった。
+
+P
+ヘパリン類似物質系保湿剤軟膏の終了後、皮膚状態の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=ヘパリン類似物質系保湿剤軟膏 終了（効果不十分）】
+S
+ヘパリン類似物質系保湿剤軟膏は、効果不十分のため中止となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方終了
+
+A
+ヘパリン類似物質系保湿剤軟膏は、効果不十分のため終了となった。
+
+P
+ヘパリン類似物質系保湿剤軟膏の終了後、皮膚状態の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=ヘパリン類似物質系保湿剤軟膏 終了（無効）】
+S
+ヘパリン類似物質系保湿剤軟膏は、効果が認められなかったため中止となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方終了
+
+A
+ヘパリン類似物質系保湿剤軟膏は、効果が認められなかったため終了となった。
+
+P
+ヘパリン類似物質系保湿剤軟膏の終了後、皮膚状態の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=ヘパリン類似物質系保湿剤軟膏 SE継続（軽症）】
+S
+ヘパリン類似物質系保湿剤軟膏の使用により、少し違和感があるが、使用は継続できている。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方
+
+A
+ヘパリン類似物質系保湿剤軟膏使用後に軽い皮膚症状がみられるが、継続使用に問題はない。
+
+P
+塗った場所の違和感が軽い場合は経過をみてください。
+気になる変化が強くなる場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_pruritus｜title=ヘパリン類似物質系保湿剤軟膏 SE変更（かゆみ）】
+S
+ヘパリン類似物質系保湿剤軟膏の使用によりかゆみが出現したため、他剤へ変更となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方変更
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用による皮膚症状を認め、他剤変更後の経過確認を要する。
+
+P
+ヘパリン類似物質系保湿剤軟膏の変更後も、かゆみや皮膚状態の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_frequency_decrease_due_to_pruritus｜title=ヘパリン類似物質系保湿剤軟膏 SE回数減（かゆみ）】
+S
+ヘパリン類似物質系保湿剤軟膏の使用によりかゆみが強いため、使用回数が減った。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用回数減
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用による皮膚症状を認め、使用回数変更後の経過確認を要する。
+
+P
+ヘパリン類似物質系保湿剤軟膏の使用回数が減った後もかゆみが続く場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_pruritus｜title=ヘパリン類似物質系保湿剤軟膏 SE中止（かゆみ）】
+S
+ヘパリン類似物質系保湿剤軟膏の使用によりかゆみが強いため、中止となった。
+
+O
+ヘパリン類似物質系保湿剤軟膏　処方中止
+
+A
+ヘパリン類似物質系保湿剤軟膏の使用による皮膚症状を認め、中止後の経過確認を要する。
+
+P
+ヘパリン類似物質系保湿剤軟膏の中止後も、皮膚状態の変化がある場合はご相談ください。
+
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_moisturizing｜title=生活指導（保湿）】
+S
+乾燥しているが、なかなか良くならない。
+
+O
+ヘパリン類似物質系保湿剤軟膏　使用中
+
+A
+乾燥症状の改善に向け、保湿に関する生活指導が必要である。
+
+P
+入浴後は皮膚が乾燥しやすくなります。
+入浴後に保湿剤を使用すると、皮膚状態を保ちやすくなります。
+
+P_CLOSING
+次回、治療経過および皮膚状態の変化を確認。
+
+=======SCENARIOS_END=======
