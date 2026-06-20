@@ -19,7 +19,7 @@ SOAP Engine — P4 工程 設計標準
 「P3 の独立検証設計意図」→ `docs/P3_STANDARD.md`
 「STRUCTURE ステータス分類の設計意図」→ `docs/P3_STANDARD.md` P3S-04
 「P3 → P4 の Handoff 設計意図（送り出し側）」→ `docs/P3_STANDARD.md` P3S-07
-「P5 の設計意図」→ `docs/P5_STANDARD.md`（未作成）
+「P5 の設計意図」→ `docs/P5_STANDARD.md`
 「canonical JSON の書き方」→ `docs/JSON_STANDARD.md`
 
 最終更新: 2026-06-20
@@ -56,7 +56,7 @@ P4 は P3 の validated canonical JSON を受け取り、runtime / app compatibi
 | P3 の独立検証設計意図 | `docs/P3_STANDARD.md` |
 | STRUCTURE ステータス分類の設計意図 | `docs/P3_STANDARD.md` P3S-04 |
 | P3 → P4 の Handoff 設計意図（送り出し側）| `docs/P3_STANDARD.md` P3S-07 |
-| P5 の設計意図 | `docs/P5_STANDARD.md`（未作成）|
+| P5 の設計意図 | `docs/P5_STANDARD.md` |
 | canonical JSON の書き方 | `docs/JSON_STANDARD.md` |
 
 ### 関連ドキュメント
@@ -383,7 +383,7 @@ P3 output intake の設計は、**P3 の判定結果が P4 を経由して P5 �
 
 P4 が P5 へ渡す情報パッケージ（P5_HANDOFF）を設計した意図を記録する。とりわけ、P4 が P5 の release 判定を先取りしない設計意図を記録する。
 
-P5 の責務・P5 の実行手順は `docs/P5_STANDARD.md`（未作成）を参照する。P4S-08 は「P4 が P5 へ引き渡す設計意図」のみを記録し、P5 がそれをどう活用するかは語らない。
+P5 の責務・P5 の実行手順は `docs/P5_STANDARD.md` を参照する。P4S-08 は「P4 が P5 へ引き渡す設計意図」のみを記録し、P5 がそれをどう活用するかは語らない。
 
 ### P4 が P5 へ渡す情報の設計意図
 
@@ -476,5 +476,5 @@ P1 / P2B / P3 / P5 との責務境界の維持は、**P4 が「runtime 確認工
 
 - 三工程設計の意図 → `docs/P1_STANDARD.md` P1S-07
 - P3 から見た P4 との境界 → `docs/P3_STANDARD.md` P3S-09
-- P5 の設計意図 → `docs/P5_STANDARD.md`（未作成）
+- P5 の設計意図 → `docs/P5_STANDARD.md`
 - P4 の実行禁止事項 → `prompts/P4.md` §禁止 / §本質
