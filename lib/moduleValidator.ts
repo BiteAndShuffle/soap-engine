@@ -24,6 +24,8 @@
  *   15)  addon.requiredTags のタグをいずれの brandCatalog も持たない（到達可能性、警告）
  *   16)  *Structured text 連結と S/A/P 本文の不一致（警告）
  *   17)  expressModes[] の必須フィールド・参照整合チェック（P0-A SSOT）
+ *   18)  scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在すること
+ *        （groupKeyRegistry が未定義または空の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -56,6 +58,7 @@ export type ModuleValidationErrorCode =
   | 'SEARCH_TOKEN_ALIAS_POLLUTION'    // drug.search.formulationSearchTokens が alias 系フィールドに混入（警告）
   | 'EXPRESS_MODE_MISSING_FIELD'      // expressModes[] の必須フィールド欠落
   | 'EXPRESS_MODE_REF_BROKEN'         // expressModes[] の defaultBrandName / genericBrandName / defaultScenarioId / scenarioCandidates 参照切れ
+  | 'MERGE_POLICY_GROUPKEY_INVALID'   // scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在しない
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -610,6 +613,30 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
           detail: `[FOLLOWUP_SCOPE_VIOLATION] defaults.followup.${fieldKey} contains decision-level wording: "${hit}"`,
           isWarning: true,
         })
+      }
+    }
+  }
+
+  // 18) scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在すること
+  //     groupKeyRegistry が未定義または空配列の場合はスキップ（後方互換）
+  const groupKeyRegistry = (obj?.composition as Record<string, unknown> | undefined)
+    ?.groupKeyRegistry as string[] | undefined
+  if (Array.isArray(groupKeyRegistry) && groupKeyRegistry.length > 0 && Array.isArray(scenarios)) {
+    const groupKeySet = new Set(groupKeyRegistry)
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const scId = String(sc.id ?? '(unknown)')
+      const groupKey = (
+        (sc.mergePolicy as Record<string, unknown> | undefined)
+          ?.S as Record<string, unknown> | undefined
+      )?.groupKey
+      if (groupKey !== undefined && groupKey !== null) {
+        if (typeof groupKey !== 'string' || !groupKeySet.has(groupKey)) {
+          errors.push({
+            code: 'MERGE_POLICY_GROUPKEY_INVALID',
+            detail: `scenarios["${scId}"].mergePolicy.S.groupKey = "${groupKey}" が composition.groupKeyRegistry に存在しません（registry: [${groupKeyRegistry.join(', ')}]）`,
+            isWarning: false,
+          })
+        }
       }
     }
   }
