@@ -1615,7 +1615,18 @@
       "SStructured": [],
       "OStructured": [],
       "AStructured": [],
-      "PStructured": []
+      "PStructured": [],
+      "addonsRef": {
+        "P": [
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_checklist",
+          "addon_adherence_visual_note",
+          "addon_adherence_schedule_confirmation",
+          "addon_adherence_routine_link",
+          "addon_adherence_support_family_reminder"
+        ]
+      }
     },
     {
       "id": "cp_poor_self_adjust",
@@ -2462,6 +2473,118 @@
         "intentTags": [
           "administration_instruction"
         ]
+      },
+      "addon_adherence_reminder_alarm": {
+        "key": "addon_adherence_reminder_alarm",
+        "id": "addon_adherence_reminder_alarm",
+        "title": "使用忘れ対策（通知：アラーム）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、アラームを使用タイミングに合わせて設定しておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_reminder_app": {
+        "key": "addon_adherence_reminder_app",
+        "id": "addon_adherence_reminder_app",
+        "title": "使用忘れ対策（通知：記録アプリ）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_visual_checklist": {
+        "key": "addon_adherence_visual_checklist",
+        "id": "addon_adherence_visual_checklist",
+        "title": "使用忘れ対策（見える化：チェックリスト）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、チェックリストなどで確認する方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_visual_note": {
+        "key": "addon_adherence_visual_note",
+        "id": "addon_adherence_visual_note",
+        "title": "使用忘れ対策（見える化：貼り紙）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_schedule_confirmation": {
+        "key": "addon_adherence_schedule_confirmation",
+        "id": "addon_adherence_schedule_confirmation",
+        "title": "使用忘れ対策（予定確認）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_routine_link": {
+        "key": "addon_adherence_routine_link",
+        "id": "addon_adherence_routine_link",
+        "title": "使用忘れ対策（習慣化：生活習慣と結びつける）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、毎日の習慣と使用を結びつけて覚える方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_support_family_reminder": {
+        "key": "addon_adherence_support_family_reminder",
+        "id": "addon_adherence_support_family_reminder",
+        "title": "使用忘れ対策（支援：家族などの声掛け）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       }
     },
     "orderPresets": {}

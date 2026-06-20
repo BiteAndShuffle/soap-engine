@@ -490,10 +490,10 @@
         "counselingTags": [],
         "workflowTags": []
       },
-      "addon_adherence_alarm_suggestion": {
-        "key": "addon_adherence_alarm_suggestion",
-        "id": "addon_adherence_alarm_suggestion",
-        "title": "服薬忘れ対策（アラーム）",
+      "addon_adherence_reminder_alarm": {
+        "key": "addon_adherence_reminder_alarm",
+        "id": "addon_adherence_reminder_alarm",
+        "title": "服薬忘れ対策（通知：アラーム）",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。",
@@ -506,10 +506,58 @@
         "counselingTags": [],
         "workflowTags": []
       },
+      "addon_adherence_reminder_app": {
+        "key": "addon_adherence_reminder_app",
+        "id": "addon_adherence_reminder_app",
+        "title": "服薬忘れ対策（通知：服薬アプリ）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_visual_calendar_checklist": {
+        "key": "addon_adherence_visual_calendar_checklist",
+        "id": "addon_adherence_visual_calendar_checklist",
+        "title": "服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_visual_note": {
+        "key": "addon_adherence_visual_note",
+        "id": "addon_adherence_visual_note",
+        "title": "服薬忘れ対策（見える化：貼り紙）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
         "id": "addon_adherence_prep_previous_night",
-        "title": "服薬忘れ対策（事前準備　前日）",
+        "title": "服薬忘れ対策（準備：前夜）",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。",
@@ -525,10 +573,26 @@
       "addon_adherence_prep_before_meal": {
         "key": "addon_adherence_prep_before_meal",
         "id": "addon_adherence_prep_before_meal",
-        "title": "服薬忘れ対策（事前準備　食事前）",
+        "title": "服薬忘れ対策（準備：食前）",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_support_family_reminder": {
+        "key": "addon_adherence_support_family_reminder",
+        "id": "addon_adherence_support_family_reminder",
+        "title": "服薬忘れ対策（支援：家族などの声掛け）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -686,9 +750,13 @@
         "addon_hyperkalemia_guidance"
       ],
       "cp_poor_missed_doses_default": [
-        "addon_adherence_alarm_suggestion",
+        "addon_adherence_reminder_alarm",
+        "addon_adherence_reminder_app",
+        "addon_adherence_visual_calendar_checklist",
+        "addon_adherence_visual_note",
         "addon_adherence_prep_previous_night",
-        "addon_adherence_prep_before_meal"
+        "addon_adherence_prep_before_meal",
+        "addon_adherence_support_family_reminder"
       ],
       "sickday_default": [
         "addon_sickday_hold_sglt2_metformin"
@@ -2242,9 +2310,13 @@
       "P": "継続して服用することで血糖コントロールの維持が期待されます。\n服薬忘れが続くと血糖値が不安定となる可能性があります。",
       "addonsRef": {
         "P": [
-          "addon_adherence_alarm_suggestion",
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_calendar_checklist",
+          "addon_adherence_visual_note",
           "addon_adherence_prep_previous_night",
-          "addon_adherence_prep_before_meal"
+          "addon_adherence_prep_before_meal",
+          "addon_adherence_support_family_reminder"
         ]
       },
       "mergePolicy": {

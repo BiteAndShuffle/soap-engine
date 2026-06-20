@@ -849,27 +849,51 @@ P
 服薬忘れが続くとアレルギー症状が悪化する可能性があります。
 
 P_ADDON
-- addon_adherence_alarm_suggestion
+- addon_adherence_reminder_alarm
+- addon_adherence_reminder_app
+- addon_adherence_visual_calendar_checklist
+- addon_adherence_visual_note
 - addon_adherence_prep_previous_night
 - addon_adherence_prep_before_meal
+- addon_adherence_support_family_reminder
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_alarm_suggestion｜title=服薬忘れ対策（アラーム）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=服薬忘れ対策（通知：アラーム）】
 P_APPEND
-飲み忘れを防ぐ方法の一つとして、服用予定の時間に合わせてアラームを設定しておく方法があります。
+飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（事前準備　前日）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=服薬忘れ対策（通知：服薬アプリ）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=服薬忘れ対策（見える化：貼り紙）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（準備：前夜）】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（事前準備　食事前）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（準備：食前）】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=服薬忘れ対策（支援：家族などの声掛け）】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。
 
 
 

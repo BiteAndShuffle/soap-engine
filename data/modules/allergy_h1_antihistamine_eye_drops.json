@@ -1832,9 +1832,13 @@
       "P": "継続して使用することでアレルギー症状改善が期待されます。\n使用忘れが続くとアレルギー症状が悪化する可能性があります。",
       "addonsRef": {
         "P": [
-          "addon_adherence_alarm_suggestion",
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_calendar_checklist",
+          "addon_adherence_visual_note",
           "addon_adherence_prep_previous_night",
-          "addon_adherence_prep_before_meal"
+          "addon_adherence_routine_link",
+          "addon_adherence_support_family_reminder"
         ]
       },
       "followupRef": "default_followup",
@@ -4226,53 +4230,117 @@
           "administration_instruction"
         ]
       },
-      "addon_adherence_alarm_suggestion": {
-        "key": "addon_adherence_alarm_suggestion",
-        "id": "addon_adherence_alarm_suggestion",
-        "title": "使用忘れ対策（アラーム）",
-        "group": "adherence_guidance",
+      "addon_adherence_reminder_alarm": {
+        "key": "addon_adherence_reminder_alarm",
+        "id": "addon_adherence_reminder_alarm",
+        "title": "使用忘れ対策（通知：アラーム）",
+        "group": "adherence",
         "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。",
         "tone": null,
         "evidenceRefs": [],
-        "clinicalTags": [],
-        "counselingTags": [],
-        "workflowTags": [],
-        "text": "使用忘れを防ぐ方法の一つとして、使用予定の時間に合わせてアラームを設定しておく方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_reminder_app": {
+        "key": "addon_adherence_reminder_app",
+        "id": "addon_adherence_reminder_app",
+        "title": "使用忘れ対策（通知：記録アプリ）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_visual_calendar_checklist": {
+        "key": "addon_adherence_visual_calendar_checklist",
+        "id": "addon_adherence_visual_calendar_checklist",
+        "title": "使用忘れ対策（見える化：カレンダー・チェックリスト）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、カレンダーやチェックリストで確認する方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_visual_note": {
+        "key": "addon_adherence_visual_note",
+        "id": "addon_adherence_visual_note",
+        "title": "使用忘れ対策（見える化：貼り紙）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、点眼する時間を目立つ場所に書いておく方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
         "id": "addon_adherence_prep_previous_night",
-        "title": "使用忘れ対策（事前準備　前日）",
-        "group": "adherence_guidance",
+        "title": "使用忘れ対策（準備：前夜）",
+        "group": "adherence",
         "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の使用予定を確認しておく習慣も役立ちます。",
         "tone": null,
         "evidenceRefs": [],
-        "clinicalTags": [],
-        "counselingTags": [],
-        "workflowTags": [],
-        "text": "使用忘れを防ぐ方法の一つとして、前夜のうちに翌朝使う目薬を確認し、使用予定を分かりやすくしておくことも役立ちます。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
-      "addon_adherence_prep_before_meal": {
-        "key": "addon_adherence_prep_before_meal",
-        "id": "addon_adherence_prep_before_meal",
-        "title": "使用忘れ対策（事前準備　食事前）",
-        "group": "adherence_guidance",
+      "addon_adherence_routine_link": {
+        "key": "addon_adherence_routine_link",
+        "id": "addon_adherence_routine_link",
+        "title": "使用忘れ対策（習慣化：生活習慣と結びつける）",
+        "group": "adherence",
         "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、毎日の習慣と点眼を結びつけて覚える方法があります。",
         "tone": null,
         "evidenceRefs": [],
-        "clinicalTags": [],
-        "counselingTags": [],
-        "workflowTags": [],
-        "text": "使用忘れを防ぐ方法の一つとして、使用前に確認しやすい場所へ予定を記録しておく方法も役立ちます。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
+      },
+      "addon_adherence_support_family_reminder": {
+        "key": "addon_adherence_support_family_reminder",
+        "id": "addon_adherence_support_family_reminder",
+        "title": "使用忘れ対策（支援：家族などの声掛け）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
+        "tone": null,
+        "evidenceRefs": [],
+        "intentTags": [
+          "adherence_support"
+        ],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": []
       },
       "addon_eye_drop_contact_lens_remove_before_use": {
         "key": "addon_eye_drop_contact_lens_remove_before_use",

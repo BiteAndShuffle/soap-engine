@@ -689,8 +689,52 @@ P
 継続して使用することで皮膚症状の改善が期待されます。
 皮膚状態を保つため、指示された方法で使用してください。
 
+P_ADDON
+- addon_adherence_reminder_alarm
+- addon_adherence_reminder_app
+- addon_adherence_visual_checklist
+- addon_adherence_visual_note
+- addon_adherence_schedule_confirmation
+- addon_adherence_routine_link
+- addon_adherence_support_family_reminder
+
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、アラームを使用タイミングに合わせて設定しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_checklist｜title=使用忘れ対策（見える化：チェックリスト）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、チェックリストなどで確認する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用忘れ対策（予定確認）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_routine_link｜title=使用忘れ対策（習慣化：生活習慣と結びつける）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、毎日の習慣と使用を結びつけて覚える方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
 
 
 

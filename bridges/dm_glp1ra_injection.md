@@ -897,27 +897,51 @@ P
 使用忘れが続くと血糖値が不安定となる可能性があります。
 
 P_ADDON
-- addon_adherence_alarm_suggestion
-- addon_adherence_prep_previous_night
-- addon_adherence_prep_before_meal
+- addon_adherence_reminder_alarm
+- addon_adherence_reminder_app
+- addon_adherence_visual_calendar_checklist
+- addon_adherence_visual_note
+- addon_adherence_schedule_confirmation
+- addon_adherence_fixed_weekday
+- addon_adherence_support_family_reminder
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_alarm_suggestion｜title=使用忘れ対策（アラーム）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、使用予定の時間に合わせてアラームを設定しておく方法があります。
+使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=使用忘れ対策（事前準備　前日）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、前日のうちに次回の使用予定を確認しておく習慣も役立ちます。
+使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=使用忘れ対策（使用前確認）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=使用忘れ対策（見える化：カレンダー・チェックリスト）】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、使用前に確認しやすい場所へ予定を記録しておく方法も役立ちます。
+使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、次回の使用予定日を目立つ場所に書いておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用忘れ対策（予定確認）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、次回の使用予定日を事前に確認しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_fixed_weekday｜title=使用忘れ対策（曜日固定）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、毎週同じ曜日に使用する習慣をつける方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
 
 
 
