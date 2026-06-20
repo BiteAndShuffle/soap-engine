@@ -26,6 +26,9 @@
  *   17)  expressModes[] の必須フィールド・参照整合チェック（P0-A SSOT）
  *   18)  scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在すること
  *        （groupKeyRegistry が未定義または空の場合はスキップ）
+ *   19)  display.localInput.enabled === true の場合、display.localInput.applyScenarioIds[]
+ *        の全要素が scenarios[].id に存在すること
+ *        （display.localInput 未定義 / enabled !== true / applyScenarioIds 未定義の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -59,6 +62,7 @@ export type ModuleValidationErrorCode =
   | 'EXPRESS_MODE_MISSING_FIELD'      // expressModes[] の必須フィールド欠落
   | 'EXPRESS_MODE_REF_BROKEN'         // expressModes[] の defaultBrandName / genericBrandName / defaultScenarioId / scenarioCandidates 参照切れ
   | 'MERGE_POLICY_GROUPKEY_INVALID'   // scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在しない
+  | 'LOCALINPUT_SCENARIOID_BROKEN'    // display.localInput.applyScenarioIds の参照先が scenarios[].id に存在しない
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -634,6 +638,28 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
           errors.push({
             code: 'MERGE_POLICY_GROUPKEY_INVALID',
             detail: `scenarios["${scId}"].mergePolicy.S.groupKey = "${groupKey}" が composition.groupKeyRegistry に存在しません（registry: [${groupKeyRegistry.join(', ')}]）`,
+            isWarning: false,
+          })
+        }
+      }
+    }
+  }
+
+  // 19) display.localInput.applyScenarioIds の参照整合チェック
+  //     display.localInput.enabled === true の場合のみ実行（後方互換）
+  const localInput = (obj?.display as Record<string, unknown> | undefined)
+    ?.localInput as Record<string, unknown> | undefined
+  if (localInput?.enabled === true) {
+    const applyScenarioIds = localInput.applyScenarioIds as string[] | undefined
+    if (Array.isArray(applyScenarioIds) && applyScenarioIds.length > 0 && Array.isArray(scenarios)) {
+      const scenarioIdSet = new Set(
+        (scenarios as Record<string, unknown>[]).map(sc => String(sc.id ?? '')),
+      )
+      for (const refId of applyScenarioIds) {
+        if (!scenarioIdSet.has(refId)) {
+          errors.push({
+            code: 'LOCALINPUT_SCENARIOID_BROKEN',
+            detail: `display.localInput.applyScenarioIds に参照切れ: "${refId}" が scenarios[].id に存在しません`,
             isWarning: false,
           })
         }
