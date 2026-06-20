@@ -17,7 +17,7 @@ SOAP Engine — P3 工程 設計標準
 「Preservation Firewall（mandatory diff）の設計意図」→ `docs/P2B_STANDARD.md` P2BS-03
 「BUILD ステータス 4 段階分類の設計意図」→ `docs/P2B_STANDARD.md` P2BS-04
 「P2B → P3 の Handoff 設計意図」→ `docs/P2B_STANDARD.md` P2BS-07
-「P4 の設計意図」→ `docs/P4_STANDARD.md`（未作成）
+「P4 の設計意図」→ `docs/P4_STANDARD.md`
 「canonical JSON の書き方」→ `docs/JSON_STANDARD.md`
 
 最終更新: 2026-06-20
@@ -54,7 +54,7 @@ P3 は P2B の build 済 canonical JSON を受け取り、structural validation 
 | Preservation Firewall の設計意図 | `docs/P2B_STANDARD.md` P2BS-03 |
 | BUILD ステータス分類の設計意図 | `docs/P2B_STANDARD.md` P2BS-04 |
 | P2B → P3 の Handoff 設計意図 | `docs/P2B_STANDARD.md` P2BS-07 |
-| P4 の設計意図 | `docs/P4_STANDARD.md`（未作成）|
+| P4 の設計意図 | `docs/P4_STANDARD.md` |
 | canonical JSON の書き方 | `docs/JSON_STANDARD.md` |
 
 ### 関連ドキュメント
@@ -333,7 +333,7 @@ P2_RETURN の設計は、**構造問題の修正責務が P2B に帰属するこ
 
 P3 が P4 へ引き渡す情報パッケージ（P4_HANDOFF）を設計した意図を記録する。
 
-P4 の責務・P4 の実行手順は `docs/P4_STANDARD.md`（未作成）を参照する。P3S-07 は「P3 が P4 へ引き渡す設計意図」のみを記録し、P4 がそれをどう活用するかは語らない。
+P4 の責務・P4 の実行手順は `docs/P4_STANDARD.md` を参照する。P3S-07 は「P3 が P4 へ引き渡す設計意図」のみを記録し、P4 がそれをどう活用するかは語らない。
 
 ### P3 が P4 へ渡す情報をまとめる設計意図
 
@@ -452,5 +452,5 @@ P1 / P2B / P4 との責務境界の維持は、**P3 が「独立検証者」と�
 
 - 三工程設計の意図 → `docs/P1_STANDARD.md` P1S-07
 - P2B から見た P3 との境界 → `docs/P2B_STANDARD.md` P2BS-09
-- P4 の設計意図 → `docs/P4_STANDARD.md`（未作成）
+- P4 の設計意図 → `docs/P4_STANDARD.md`
 - P3 の実行禁止事項 → `prompts/P3.md` §禁止 / §本質
