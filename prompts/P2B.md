@@ -478,6 +478,27 @@ scenarioType / scenarioGroup / scenarioTags / sideEffectPresence / sComposition 
 本文意味からの推測・類推は禁止する。
 対応scenario idが存在しない場合、または対応関係が一意でない場合は PENDING とする。
 決定不能な場合はPENDINGとする。
+mergePolicy.S.groupKey build原則:
+- scenarioGroup と mergePolicy.S.groupKey は別概念であり、自動転用してはならない。
+  - scenarioGroup: UI分類・メニュー表示・シナリオグループ識別子
+  - mergePolicy.S.groupKey: Sフィールドのマージ先を決定するキー（composition.groupKeyRegistry参照）
+- mergePolicy.S.groupKey は、対象module の composition.groupKeyRegistry に存在する値のみ使用する。
+- reference copy 時も、copy元の groupKey 値をそのまま採用せず、
+  target module の composition.groupKeyRegistry に照合してから採用すること。
+- 照合の結果、一意に決定できない場合は PENDING とする。
+- groupKeyRegistry が未定義または空配列の場合は NOT_CHECKED とする。
+scenarioGroup → mergePolicy.S.groupKey 参照表（転用禁止・照合用）:
+- side_effect → side_effect_monitoring  ← 名称が異なる代表例
+- side_effect_monitoring → side_effect_monitoring
+- adherence / adherence_good / adherence_poor → adherence
+- treatment_end / end_improved / end_insufficient_effect / end_ineffective → treatment_end
+- digestive / hypoglycemia / pancreatitis / injection_site → side_effect_monitoring
+- treatment_start → treatment_start（または domain固有の groupKeyRegistry 値）
+- treatment_adjustment → treatment_adjustment
+- as_needed → as_needed
+- lifestyle_guidance → lifestyle_guidance
+- 上記以外の scenarioGroup: groupKeyRegistry に存在するエントリから一意に照合できる場合のみ採用。
+  一意に決定できない場合は PENDING とする。
 以下をbuildする。
 - scenario.id
 - globalId
@@ -595,6 +616,11 @@ Reference:
 - addonsRef
 Structure:
 - addons.orderPresets が object として存在すること（欠落は FAIL、{} は PASS）
+MergePolicy:
+- scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在すること
+  （groupKeyRegistry が空または未定義の場合は NOT_CHECKED）
+- check_name: mergePolicy_groupkey_check
+- status: PASS / FAIL / NOT_CHECKED
 Persona:
 - baseline persona preservation
 DrugResolution:
