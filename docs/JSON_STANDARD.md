@@ -34,7 +34,7 @@ canonical JSON を監査・修正する前に、以下の順序で差分の性�
 
 ### top-level キー
 
-新規作成時の推奨順序（Pattern A）:
+新規作成標準（Pattern A）:
 
 ```
 moduleId → moduleVersion → categoryPath → composition → drug → drugResolution
@@ -42,8 +42,9 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 → addons → ui → risks → searchConfig → index → tagCatalog → expressModes
 ```
 
-既存ファイルには Pattern A / Pattern B の 2 パターンが存在する（保留: Q-TOP）。
-現時点では既存ファイルの key 順序変更は不要。新規作成時は Pattern A を推奨。
+- runtime / validator は top-level key 順序に依存しない（名前アクセスのみ）
+- 既存ファイルに Pattern B（`regulatory → topical` が先行する形式）が存在するが、機能差がないため並び替え不要
+- 新規作成時のみ Pattern A を標準とする
 
 | キー | 型 | 備考 |
 |---|---|---|
@@ -174,10 +175,11 @@ bridge 未記載の preset を推測生成しない。
 | `expressModes[*].genericBrandName` | derm 3系 |
 | `expressModes[*].scenarioCandidates` | derm 3系 |
 
-### display.localInput（条件未確定・保留: Q-K4b）
+### display.localInput
 
-4 module に存在、3 module に不在。必須条件が未定義。
-現時点では欠落を「バグ」と判断しない。
+- 外用薬・点眼薬など、部位入力 UI が必要な module のみ定義する
+- 未定義の場合は部位入力 UI を表示しない（バグではない）
+- UI 側では `mod.display?.localInput` および `localInputConfig?.enabled` による fallback を確認済み
 
 ---
 
@@ -205,8 +207,7 @@ bridge 未記載の preset を推測生成しない。
 | `addons.orderPresets` が `{}` | allergy 2系 / derm 3系 | bridge 未明示のため空。DP-08 最小構成原則 |
 | `composition.defaultSMergeLevel` 等の欠落 | allergy_eye_drops / derm 3系 | 多剤合成対象外。DP-03 条件付き必須原則 |
 | `expressModes[*].enabled: false` + `disabled: true` | derm 3系・GLP-1系 | 準備中プレースホルダー。将来の有効化時に更新 |
-| top-level key 順序が Pattern A / B に分かれる | 全 module | 推奨統一対象だが機能差なし（保留: Q-TOP）|
-| `moduleVersion` 値が module ごとに異なる | 全 module | lifecycle 管理上の意図的バージョニング（保留: Q-K1）|
+| `moduleVersion` 値が module ごとに異なる | 全 module | string 型で存在すればよい。runtime 未参照。validator は存在確認のみ。値の形式は不問 |
 
 ---
 
@@ -216,11 +217,8 @@ bridge 未記載の preset を推測生成しない。
 
 | No | 項目 | 現時点の扱い |
 |---|---|---|
-| Q-J1 | derm 3系 `composition.classKey` の剤形込み設計 | JS-C で暫定保持 |
-| Q-K1 | `moduleVersion` 採番ルール | JS-D で暫定保持 |
-| Q-K4b | `display.localInput` の条件定義 | JS-B 候補として保留 |
-| Q-F4 | `composition.canonicalSource` の必須化範囲 | JS-B で「多剤合成対象のみ必須」として暫定定義 |
-| Q-TOP | top-level key 順序の標準パターン | JS-D で暫定保持・新規作成は Pattern A 推奨 |
+| Q-J1 | derm 3系 `composition.classKey` の剤形込み設計 | JS-C で継続保留 |
+| Q-F4 | `composition.canonicalSource` の必須化範囲 | JS-B で「多剤合成対象のみ必須」として継続保留 |
 
 ---
 

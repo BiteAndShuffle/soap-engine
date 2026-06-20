@@ -178,9 +178,6 @@ bridge 原稿にバージョンを持つと bridge と JSON の二重管理が�
 **関連フィールド**
 `moduleVersion`（JSON のみ）
 
-**保留事項**
-Q-K1: moduleVersion 採番ルール（→ OPEN_DESIGN_QUESTIONS.md）
-
 ---
 
 ## DP-05: heparinoid 剤形検索分離原則
