@@ -66,8 +66,8 @@ P1 は P0-C の出力（APP RULE）を入力として受け取るため、P0-B �
 | Bootstrap が preservation_fields を定義する意図 | `docs/BOOTSTRAP_STANDARD.md` BS-04 |
 | P0-B / P1 統合を見送った経緯 | `docs/BOOTSTRAP_STANDARD.md` BS-11 |
 | canonical JSON の書き方 | `docs/JSON_STANDARD.md` |
-| P2B の設計意図 | `docs/P2B_STANDARD.md`（未作成）|
-| P3 の設計意図 | `docs/P3_STANDARD.md`（未作成）|
+| P2B の設計意図 | `docs/P2B_STANDARD.md` |
+| P3 の設計意図 | `docs/P3_STANDARD.md` |
 
 ### 関連ドキュメント
 
@@ -434,9 +434,9 @@ P3 が「P2B へ差し戻す」という設計は、preservation 違反の補正
 
 ### P1_STANDARD が後続 STANDARD の前提になる理由
 
-P2B_STANDARD.md（未作成）が記述する「なぜ P2B が preservation firewall を実行するのか」は、「P1 が定義した preservation 対象を P2B が実行する」という分業設計なしには説明できない。
+P2B_STANDARD.md が記述する「なぜ P2B が preservation firewall を実行するのか」は、「P1 が定義した preservation 対象を P2B が実行する」という分業設計なしには説明できない。
 
-P3_STANDARD.md（未作成）が記述する「なぜ P3 が preservation recheck を行うのか」は、「P2B の一次確認に対して P3 が独立二次確認を行う」という三層設計なしには説明できない。
+P3_STANDARD.md が記述する「なぜ P3 が preservation recheck を行うのか」は、「P2B の一次確認に対して P3 が独立二次確認を行う」という三層設計なしには説明できない。
 
 P1_STANDARD.md は、P2B_STANDARD.md / P3_STANDARD.md が共有する「前提」である。P2B_STANDARD.md / P3_STANDARD.md の各節は「P1_STANDARD.md P1S-XX 参照」として P1 の設計意図を参照する形で記述でき、再定義の重複を避けられる。
 
@@ -446,7 +446,7 @@ P1_STANDARD.md は、P2B_STANDARD.md / P3_STANDARD.md が共有する「前提�
 
 ### どのドキュメントが正本か
 
-- P2B の設計意図 → `docs/P2B_STANDARD.md`（未作成）
-- P3 の設計意図 → `docs/P3_STANDARD.md`（未作成）
+- P2B の設計意図 → `docs/P2B_STANDARD.md`
+- P3 の設計意図 → `docs/P3_STANDARD.md`
 - P2B の実行手順 → `prompts/P2B.md`
 - P3 の検証手順 → `prompts/P3.md`
