@@ -1,0 +1,2732 @@
+{
+  "moduleId": "derm_heparinoid_moisturizer_spray",
+  "moduleVersion": "1.0.10",
+  "categoryPath": [
+    "皮膚科",
+    "保湿剤",
+    "ヘパリン類似物質",
+    "外用",
+    "フォーム・スプレー"
+  ],
+  "composition": {
+    "nodeKey": "heparinoid_moisturizer_spray",
+    "nodeLabelShort": "ヘパF/S",
+    "nodeLabelLong": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+    "domain": "dermatology",
+    "priority": 5,
+    "clinicalDomain": "dermatology",
+    "searchDomain": "dermatology_topical",
+    "classKey": "heparinoid_moisturizer_spray",
+    "sMergeDomain": "dermatology_topical",
+    "sMergePolicy": {
+      "unit": "clinical_domain",
+      "conflictStrategy": "separate_by_domain",
+      "withinDomainStrategy": "groupKey_based_semantic_merge"
+    },
+    "groupKeyRegistry": [
+      "treatment_start",
+      "treatment_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "as_needed",
+      "treatment_end",
+      "lifestyle_guidance"
+    ]
+  },
+  "drug": {
+    "genericName": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+    "brandNames": [
+      "ヒルドイドフォーム",
+      "ヘパリン類似物質外用スプレー"
+    ],
+    "drugClass": [
+      "HEPARINOID_MOISTURIZER_SPRAY"
+    ],
+    "route": "topical",
+    "dosageForms": [
+      "foam",
+      "spray"
+    ],
+    "drugSpecificTags": [
+      "heparinoid",
+      "moisturizer",
+      "dermatology",
+      "topical",
+      "external_use",
+      "foam",
+      "spray",
+      "dry_skin",
+      "skin_barrier_care",
+      "application_instruction",
+      "formulation_instruction"
+    ],
+    "nameAliases": [
+      "ひるどいどふぉーむ",
+      "ひるふぉーむ",
+      "へぱふぉーむ",
+      "へぱすぷれー",
+      "へぱりんふぉーむ",
+      "へぱりんすぷれー",
+      "へぱりんるいじぶっしつふぉーむ",
+      "へぱりんるいじぶっしつすぷれー"
+    ],
+    "search": {
+      "primaryDisplayName": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+      "exactAliases": [
+        "ヒルドイドフォーム",
+        "ヘパリン類似物質外用スプレー",
+        "ヘパリン類似物質スプレー"
+      ],
+      "prefixAliases": [
+        "ひるどいどふぉーむ",
+        "ひるふぉーむ",
+        "へぱ",
+        "へぱふぉーむ",
+        "へぱすぷれー",
+        "へぱりん",
+        "へぱりんふぉーむ",
+        "へぱりんすぷれー",
+        "へぱりんるいじ",
+        "へぱりんるいじぶっしつ",
+        "へぱりんるいじぶっしつふぉーむ",
+        "へぱりんるいじぶっしつすぷれー"
+      ],
+      "nameAliases": [
+        "ひるどいどふぉーむ",
+        "ひるふぉーむ",
+        "へぱふぉーむ",
+        "へぱすぷれー",
+        "へぱりんふぉーむ",
+        "へぱりんすぷれー",
+        "へぱりんるいじぶっしつふぉーむ",
+        "へぱりんるいじぶっしつすぷれー"
+      ],
+      "keywords": [
+        "保湿",
+        "乾燥",
+        "皮膚乾燥",
+        "外用",
+        "フォーム",
+        "スプレー",
+        "皮膚科"
+      ],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "allowMultiTokenAndMatch": true,
+        "allowFormulationTokenMatch": true
+      },
+      "commonSearchTokens": [
+        "へぱ",
+        "へぱり",
+        "へぱりん",
+        "へぱりんるいじ",
+        "へぱりんるいじぶっしつ"
+      ],
+      "formulationSearchTokens": [
+        "ふぉ",
+        "ふぉーむ",
+        "すぷ",
+        "すぷれー"
+      ]
+    },
+    "brandCatalog": {
+      "ヒルドイドフォーム": {
+        "displayName": "ヒルドイドフォーム",
+        "genericName": "ヘパリン類似物質",
+        "displayGenericName": "ヘパリン類似物質フォーム",
+        "storageType": "room_temperature",
+        "formulationType": "foam",
+        "handlingTags": [
+          "room_temperature_storage",
+          "foam",
+          "topical_application",
+          "external_use",
+          "avoid_mucosa",
+          "wash_hands_before_use",
+          "foam_application"
+        ],
+        "aliases": [
+          "ひるどいどふぉーむ",
+          "ひるふぉーむ"
+        ],
+        "normalizedAliases": [
+          "ひるどいどふぉーむ",
+          "ひるふぉーむ"
+        ]
+      },
+      "ヘパリン類似物質外用スプレー": {
+        "displayName": "ヘパリン類似物質外用スプレー",
+        "genericName": "ヘパリン類似物質",
+        "displayGenericName": "ヘパリン類似物質外用スプレー",
+        "storageType": "room_temperature",
+        "formulationType": "spray",
+        "handlingTags": [
+          "room_temperature_storage",
+          "spray",
+          "topical_application",
+          "external_use",
+          "avoid_mucosa",
+          "wash_hands_before_use",
+          "spray_application"
+        ],
+        "aliases": [
+          "へぱりんるいじぶっしつすぷれー",
+          "へぱりんすぷれー",
+          "へぱすぷれー"
+        ],
+        "normalizedAliases": [
+          "へぱりんるいじぶっしつすぷれー",
+          "へぱりんすぷれー",
+          "へぱすぷれー"
+        ]
+      }
+    },
+    "aliasToBrand": {
+      "ひるどいどふぉーむ": "ヒルドイドフォーム",
+      "ひるふぉーむ": "ヒルドイドフォーム",
+      "へぱりんるいじぶっしつすぷれー": "ヘパリン類似物質外用スプレー",
+      "へぱりんすぷれー": "ヘパリン類似物質外用スプレー",
+      "へぱすぷれー": "ヘパリン類似物質外用スプレー"
+    }
+  },
+  "drugResolution": {
+    "brandToTags": {
+      "ヒルドイドフォーム": [
+        "room_temperature_storage",
+        "foam",
+        "topical_application",
+        "external_use",
+        "avoid_mucosa",
+        "wash_hands_before_use",
+        "foam_application"
+      ],
+      "ヘパリン類似物質外用スプレー": [
+        "room_temperature_storage",
+        "spray",
+        "topical_application",
+        "external_use",
+        "avoid_mucosa",
+        "wash_hands_before_use",
+        "spray_application"
+      ]
+    }
+  },
+  "regulatory": {
+    "psychotropicClass": "not_applicable",
+    "controlledSubstance": "not_applicable",
+    "notes": null
+  },
+  "topical": {
+    "steroidPotency": "not_applicable",
+    "notes": null
+  },
+  "template": {
+    "templateId": "derm_heparinoid_moisturizer_spray_v1",
+    "templateVersion": "1.0.0",
+    "situationTags": [
+      "general",
+      "dry_skin",
+      "dermatology"
+    ],
+    "severityTags": [
+      "mild",
+      "moderate",
+      "severe"
+    ],
+    "storageTags": [
+      "room_temperature_storage",
+      "storage_product_specific"
+    ],
+    "formulationTags": [
+      "foam",
+      "spray"
+    ],
+    "handlingTags": [
+      "topical_application",
+      "external_use",
+      "application_instruction",
+      "skin_barrier_care",
+      "avoid_mucosa",
+      "wash_hands_before_use",
+      "foam_application",
+      "spray_application"
+    ]
+  },
+  "display": {
+    "title": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+    "subtitle": "皮膚乾燥・保湿目的に使用する外用保湿剤",
+    "drugClassLabel": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+    "drugGeneric": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+    "nodeLabelShort": "ヘパF/S",
+    "nodeLabelLong": "ヘパリン類似物質系保湿剤フォーム・スプレー",
+    "nodeKey": "heparinoid_moisturizer_spray",
+    "menuGroupLabels": {
+      "増量": "使用回数増",
+      "減量": "使用回数減"
+    },
+    "adjustmentExpression": {
+      "increasePast": "使用回数が増えた",
+      "decreasePast": "使用回数が減った"
+    },
+    "localInput": {
+      "enabled": true,
+      "label": "外用部位（任意）",
+      "placeholder": "例：右膝、顔、背中",
+      "targetField": "S",
+      "insertMode": "placeholder",
+      "siteButtonType": "topical",
+      "applyScenarioIds": [
+        "initial_dryness",
+        "initial_eczema",
+        "restart_dryness",
+        "restart_eczema",
+        "external_start_dryness",
+        "external_start_eczema"
+      ],
+      "emptyBehavior": "keep_original"
+    }
+  },
+  "defaults": {
+    "followup": {
+      "S": null,
+      "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+    },
+    "followupProfiles": {
+      "default_followup": {
+        "S": null,
+        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+      },
+      "end_followup": {
+        "S": null,
+        "P": "次回、治療経過および体調変化の有無を確認。"
+      },
+      "se_followup": {
+        "S": null,
+        "P": "次回、治療経過および副作用の有無を確認。"
+      },
+      "lifestyle_followup": {
+        "S": null,
+        "P": "次回、治療経過および皮膚状態の変化を確認。"
+      }
+    }
+  },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "initial_dryness",
+      "globalId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "title": "ヘパリン類似物質系保湿剤スプレー 初回（乾燥）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "dry_skin"
+        ],
+        "symptoms": [
+          "皮膚乾燥"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "initial",
+        "dryness"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}の乾燥が気になるため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、皮膚の乾燥や荒れの改善を目的として使用する。\n皮膚状態を整え、症状の悪化予防につなげる。",
+      "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "initial_eczema",
+      "globalId": "derm_heparinoid_moisturizer_spray.initial_eczema",
+      "title": "ヘパリン類似物質系保湿剤スプレー 初回（湿疹）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "eczema"
+        ],
+        "symptoms": [
+          "湿疹"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "initial",
+        "eczema"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}の湿疹が気になるため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、皮膚状態の改善を目的として使用する。\n皮膚状態を整え、症状改善や状態維持につなげる。",
+      "P": "{{drug_subject}}は、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "initial_skin_barrier_patch",
+      "globalId": "derm_heparinoid_moisturizer_spray.initial_skin_barrier_patch",
+      "title": "ヘパリン類似物質系保湿剤スプレー 初回（皮膚バリア機能低下）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "skin_barrier_impairment",
+          "patch_site"
+        ],
+        "symptoms": [
+          "皮膚バリア機能低下",
+          "パッチ貼付部位"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "initial",
+        "skin_barrier",
+        "patch"
+      ],
+      "S": "{{drug_subject}}は、パッチによるかぶれ防止のため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、パッチ使用部位の皮膚状態を整える目的で追加となった。\n貼付部位の乾燥や荒れを防ぎ、皮膚トラブル予防につなげる。",
+      "P": "{{drug_subject}}は、パッチ使用部位の皮膚状態を整える薬です。\n貼付部位の皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_topical_patch_timing",
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "restart_dryness",
+      "globalId": "derm_heparinoid_moisturizer_spray.restart_dryness",
+      "title": "ヘパリン類似物質系保湿剤スプレー 再開（乾燥）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "dry_skin"
+        ],
+        "symptoms": [
+          "皮膚乾燥"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "restart",
+        "dryness"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}の乾燥や荒れの改善を目的として再開となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、皮膚の乾燥や荒れの改善を目的として使用する。\n皮膚状態を整え、症状の悪化予防につなげる。",
+      "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "restart_eczema",
+      "globalId": "derm_heparinoid_moisturizer_spray.restart_eczema",
+      "title": "ヘパリン類似物質系保湿剤スプレー 再開（湿疹）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "eczema"
+        ],
+        "symptoms": [
+          "湿疹"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "restart",
+        "eczema"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}の湿疹の改善を目的として再開となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、皮膚状態の改善を目的として再開する。\n皮膚状態を整え、症状の悪化予防につなげる。",
+      "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "external_start_dryness",
+      "globalId": "derm_heparinoid_moisturizer_spray.external_start_dryness",
+      "title": "ヘパリン類似物質系保湿剤スプレー 他所開始（乾燥）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "dry_skin"
+        ],
+        "symptoms": [
+          "皮膚乾燥"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "external_start",
+        "dryness"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}の乾燥や荒れに対して他院で開始され継続使用中であった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、皮膚の乾燥や荒れの改善を目的として継続使用中であった。\n皮膚状態を整え、症状の悪化予防につなげる。",
+      "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "external_start_eczema",
+      "globalId": "derm_heparinoid_moisturizer_spray.external_start_eczema",
+      "title": "ヘパリン類似物質系保湿剤スプレー 他所開始（湿疹）",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "eczema"
+        ],
+        "symptoms": [
+          "湿疹"
+        ],
+        "intent": "new_addition",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "external_start",
+        "eczema"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}の湿疹改善を目的として他院で開始され継続使用中であった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、皮膚状態の改善を目的として継続使用中であった。\n皮膚状態を整え、症状改善や状態維持につなげる。",
+      "P": "{{drug_subject}}は、皮膚の乾燥や荒れを防ぎ、皮膚状態を整える薬です。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_spray_application_method",
+          "addon_topical_after_bath",
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "frequency_increase_low_perceived_effect",
+      "globalId": "derm_heparinoid_moisturizer_spray.frequency_increase_low_perceived_effect",
+      "title": "ヘパリン類似物質系保湿剤スプレー 回数増（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ],
+        "intent": "dose_increase",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "increase",
+        "low_perceived_effect"
+      ],
+      "S": "{{drug_subject}}は、効果の実感が乏しいため使用回数が増えた。",
+      "O": "{{drug_subject}}　使用回数増",
+      "A": "{{drug_subject}}は、効果実感が乏しいため使用回数が増えた。\n使用回数変更後も、使用状況と皮膚症状の変化を確認する。",
+      "P": "{{drug_subject}}は、指示された回数で継続して使用してください。\n使用した場所に気になる変化がある場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "frequency_increase_due_to_other_med_adjustment",
+      "globalId": "derm_heparinoid_moisturizer_spray.frequency_increase_due_to_other_med_adjustment",
+      "title": "ヘパリン類似物質系保湿剤スプレー 回数増（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ],
+        "intent": "dose_increase",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "increase",
+        "other_med_adjustment"
+      ],
+      "S": "{{drug_subject}}は、他剤との調整により使用回数が増えた。",
+      "O": "{{drug_subject}}　使用回数増",
+      "A": "{{drug_subject}}は、併用薬との調整により使用回数が増えた。\n使用回数変更後も、使用状況と皮膚症状の変化を確認する。",
+      "P": "{{drug_subject}}は、指示された回数で継続して使用してください。\n使用した場所に気になる変化がある場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_topical_redness_warning"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_increase_explanation",
+        "concomitant_drug_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "frequency_decrease_improved",
+      "globalId": "derm_heparinoid_moisturizer_spray.frequency_decrease_improved",
+      "title": "ヘパリン類似物質系保湿剤スプレー 回数減（症状改善）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状が改善した"
+        ],
+        "intent": "dose_decrease",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease",
+        "symptom_improved"
+      ],
+      "S": "{{drug_subject}}は、症状が改善したため使用回数が減った。",
+      "O": "{{drug_subject}}　使用回数減",
+      "A": "{{drug_subject}}は、症状改善により使用回数が減った。\n使用回数変更後も、皮膚症状の変化を確認する。",
+      "P": "{{drug_subject}}は、指示された回数で継続して使用してください。\n皮膚症状に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "frequency_decrease_low_perceived_effect",
+      "globalId": "derm_heparinoid_moisturizer_spray.frequency_decrease_low_perceived_effect",
+      "title": "ヘパリン類似物質系保湿剤スプレー 回数減（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ],
+        "intent": "dose_decrease",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease",
+        "low_perceived_effect"
+      ],
+      "S": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため使用回数が減った。",
+      "O": "{{drug_subject}}　使用回数減",
+      "A": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安により使用回数が減った。\n使用回数変更後も、使用状況と皮膚症状の変化を確認する。",
+      "P": "{{drug_subject}}は、指示された回数で継続して使用してください。\n皮膚症状に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "frequency_decrease_due_to_other_med_adjustment",
+      "globalId": "derm_heparinoid_moisturizer_spray.frequency_decrease_due_to_other_med_adjustment",
+      "title": "ヘパリン類似物質系保湿剤スプレー 回数減（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ],
+        "intent": "dose_decrease",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease",
+        "other_med_adjustment"
+      ],
+      "S": "{{drug_subject}}は、他剤との調整により使用回数が減った。",
+      "O": "{{drug_subject}}　使用回数減",
+      "A": "{{drug_subject}}は、併用薬との調整により使用回数が減った。\n使用回数変更後も、皮膚症状の変化を確認する。",
+      "P": "{{drug_subject}}は、指示された回数で継続して使用してください。\n皮膚症状に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation",
+        "concomitant_drug_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_contact_dermatitis_none",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_contact_dermatitis_none",
+      "title": "ヘパリン類似物質系保湿剤スプレー 副作用なし（接触皮膚炎）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "side_effect_check",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "contact_dermatitis",
+        "absent"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\nかぶれは認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}の使用によるかぶれは現時点で認められず、継続使用に問題はない。",
+      "P": "{{drug_subject}}の使用中に、使用した場所がかぶれることがあります。\n皮膚症状に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_redness_none",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_redness_none",
+      "title": "ヘパリン類似物質系保湿剤スプレー 副作用なし（発赤）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "side_effect_check",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "redness",
+        "absent"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n肌の赤みは認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}の使用による赤みは現時点で認められず、継続使用に問題はない。",
+      "P": "{{drug_subject}}の使用中に、使用した場所が赤くなることがあります。\n皮膚症状に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_pruritus_none",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_pruritus_none",
+      "title": "ヘパリン類似物質系保湿剤スプレー 副作用なし（掻痒感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "side_effect_check",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "pruritus",
+        "absent"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n掻痒感は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}の使用によるかゆみは現時点で認められず、継続使用に問題はない。",
+      "P": "{{drug_subject}}の使用中に、かゆみが出ることがあります。\n皮膚症状に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_dermatitis_none",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_dermatitis_none",
+      "title": "ヘパリン類似物質系保湿剤スプレー 副作用なし（皮膚炎）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "side_effect_check",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "dermatitis",
+        "absent"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n皮膚炎は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}の使用による皮膚炎は現時点で認められず、継続使用に問題はない。",
+      "P": "{{drug_subject}}の使用中に、使用した場所の状態が変化することがあります。\n気になる変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_good",
+      "globalId": "derm_heparinoid_moisturizer_spray.cp_good",
+      "title": "ヘパリン類似物質系保湿剤スプレー CP良好",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "continue",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "good"
+      ],
+      "S": "薬を使用して症状は落ち着いている。\n継続して使用できている。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは良好である。治療継続に問題はない。",
+      "P": "引き続き指示された方法で使用してください。\n皮膚状態を保つため、継続して使用することが大切です。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_poor_missed_doses",
+      "globalId": "derm_heparinoid_moisturizer_spray.cp_poor_missed_doses",
+      "title": "ヘパリン類似物質系保湿剤スプレー CP不良（使用忘れ）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "continue",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "missed_doses"
+      ],
+      "S": "使用忘れがみられる。\n継続して使用できていない。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは不良で、使用忘れがみられる。",
+      "P": "継続して使用することで皮膚症状の改善が期待されます。\n皮膚状態を保つため、指示された方法で使用してください。",
+      "addonsRef": {
+        "P": [
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_checklist",
+          "addon_adherence_visual_note",
+          "addon_adherence_schedule_confirmation",
+          "addon_adherence_routine_link",
+          "addon_adherence_support_family_reminder"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_poor_self_adjust",
+      "globalId": "derm_heparinoid_moisturizer_spray.cp_poor_self_adjust",
+      "title": "ヘパリン類似物質系保湿剤スプレー CP不良（自己判断）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "continue",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "self_adjust"
+      ],
+      "S": "自己判断での使用調整がみられる。\n用法どおりの継続使用ができていない。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは不良で、自己判断による調整がみられる。",
+      "P": "継続して使用することで皮膚症状の改善が期待されます。\n皮膚状態を保つため、指示された方法で使用してください。\n使用回数や使用量を変えたい場合は、自己判断せずご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "cp_poor_visit_delay",
+      "globalId": "derm_heparinoid_moisturizer_spray.cp_poor_visit_delay",
+      "title": "ヘパリン類似物質系保湿剤スプレー CP不良（受診遅延）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "continue",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "visit_delay"
+      ],
+      "S": "都合により受診遅延がみられる。\n継続した使用に不安がある。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは不良で、受診遅延がみられる。",
+      "P": "継続して使用することで皮膚症状の改善が期待されます。\n治療が中断すると症状が悪化する可能性があります。\n次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "adherence_support"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "as_needed_refill_needed",
+      "globalId": "derm_heparinoid_moisturizer_spray.as_needed_refill_needed",
+      "title": "ヘパリン類似物質系保湿剤スプレー 頓用使用（処方あり）",
+      "scenarioType": "usage",
+      "scenarioGroup": "as_needed",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "continue",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "usage",
+        "as_needed",
+        "refill_needed"
+      ],
+      "S": "{{drug_subject}}は、症状が出た時に使用している。\n使用により残薬が少なくなったため、継続処方となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、必要時に使用されており、残薬状況を踏まえ継続処方となった。",
+      "P": "{{drug_subject}}は、必要に応じて指示された方法で使用してください。\n使用した場所に気になる変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "as_needed",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "usage_guidance"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "as_needed_refill_not_needed",
+      "globalId": "derm_heparinoid_moisturizer_spray.as_needed_refill_not_needed",
+      "title": "ヘパリン類似物質系保湿剤スプレー 頓用使用（処方なし）",
+      "scenarioType": "usage",
+      "scenarioGroup": "as_needed",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [],
+        "symptoms": [],
+        "intent": "continue",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "usage",
+        "as_needed",
+        "refill_not_needed"
+      ],
+      "S": "{{drug_subject}}は、症状が出た時に使用している。\n残薬があるため、今回は処方なしとなった。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "{{drug_subject}}は、必要時に使用されており、残薬があるため今回は処方なしとなった。",
+      "P": "{{drug_subject}}は、必要に応じて指示された方法で使用してください。\n使用した場所に気になる変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "as_needed",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "usage_guidance"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "end_improved",
+      "globalId": "derm_heparinoid_moisturizer_spray.end_improved",
+      "title": "ヘパリン類似物質系保湿剤スプレー 終了（改善）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状が改善した"
+        ],
+        "intent": "stop",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "improved"
+      ],
+      "S": "{{drug_subject}}は、症状が改善したため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、症状改善により終了となった。",
+      "P": "{{drug_subject}}の終了後、皮膚状態の変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "end_insufficient_effect",
+      "globalId": "derm_heparinoid_moisturizer_spray.end_insufficient_effect",
+      "title": "ヘパリン類似物質系保湿剤スプレー 終了（効果不十分）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
+        ],
+        "intent": "stop",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "insufficient_effect"
+      ],
+      "S": "{{drug_subject}}は、効果不十分のため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。",
+      "P": "{{drug_subject}}の終了後、皮膚状態の変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "end_ineffective",
+      "globalId": "derm_heparinoid_moisturizer_spray.end_ineffective",
+      "title": "ヘパリン類似物質系保湿剤スプレー 終了（無効）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "ineffective"
+        ],
+        "symptoms": [
+          "効果が認められなかった"
+        ],
+        "intent": "stop",
+        "template": "status_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "ineffective"
+      ],
+      "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。",
+      "P": "{{drug_subject}}の終了後、皮膚状態の変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_mild_continue",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_mild_continue",
+      "title": "ヘパリン類似物質系保湿剤スプレー SE継続（軽症）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_mild",
+      "sComposition": {
+        "symptomCodes": [
+          "skin_discomfort"
+        ],
+        "symptoms": [
+          "皮膚の違和感"
+        ],
+        "intent": "side_effect_check",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "present",
+        "mild"
+      ],
+      "S": "{{drug_subject}}の使用により、少し違和感があるが、使用は継続できている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}使用後に軽い皮膚症状がみられるが、継続使用に問題はない。",
+      "P": "使用した場所の違和感が軽い場合は経過をみてください。\n気になる変化が強くなる場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_change_due_to_pruritus",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_change_due_to_pruritus",
+      "title": "ヘパリン類似物質系保湿剤スプレー SE変更（かゆみ）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_change",
+      "sComposition": {
+        "symptomCodes": [
+          "pruritus"
+        ],
+        "symptoms": [
+          "かゆみ"
+        ],
+        "intent": "stop",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "pruritus",
+        "present",
+        "change"
+      ],
+      "S": "{{drug_subject}}の使用によりかゆみが出現したため、他剤へ変更となった。",
+      "O": "{{drug_subject}}　処方変更",
+      "A": "{{drug_subject}}の使用による皮膚症状を認め、他剤変更後の経過確認を要する。",
+      "P": "{{drug_subject}}の変更後も、かゆみや皮膚状態の変化がある場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation",
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_frequency_decrease_due_to_pruritus",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_frequency_decrease_due_to_pruritus",
+      "title": "ヘパリン類似物質系保湿剤スプレー SE回数減（かゆみ）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_dose_decrease",
+      "sComposition": {
+        "symptomCodes": [
+          "pruritus"
+        ],
+        "symptoms": [
+          "かゆみ"
+        ],
+        "intent": "dose_decrease",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "pruritus",
+        "present",
+        "dose_decrease"
+      ],
+      "S": "{{drug_subject}}の使用によりかゆみが強いため、使用回数が減った。",
+      "O": "{{drug_subject}}　使用回数減",
+      "A": "{{drug_subject}}の使用による皮膚症状を認め、使用回数変更後の経過確認を要する。",
+      "P": "{{drug_subject}}の使用回数が減った後もかゆみが続く場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "dose_decrease_explanation",
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "se_stop_due_to_pruritus",
+      "globalId": "derm_heparinoid_moisturizer_spray.se_stop_due_to_pruritus",
+      "title": "ヘパリン類似物質系保湿剤スプレー SE中止（かゆみ）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_stop",
+      "sComposition": {
+        "symptomCodes": [
+          "pruritus"
+        ],
+        "symptoms": [
+          "かゆみ"
+        ],
+        "intent": "stop",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "pruritus",
+        "present",
+        "stop"
+      ],
+      "S": "{{drug_subject}}の使用によりかゆみが強いため、中止となった。",
+      "O": "{{drug_subject}}　処方中止",
+      "A": "{{drug_subject}}の使用による皮膚症状を認め、中止後の経過確認を要する。",
+      "P": "{{drug_subject}}の中止後も、皮膚状態の変化がある場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "side_effect",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "treatment_end_explanation",
+        "side_effect_attention"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    },
+    {
+      "id": "lifestyle_guidance_moisturizing",
+      "globalId": "derm_heparinoid_moisturizer_spray.lifestyle_guidance_moisturizing",
+      "title": "生活指導（保湿）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "symptomCodes": [
+          "insufficient_moisturizing"
+        ],
+        "symptoms": [
+          "保湿不十分"
+        ],
+        "intent": "status_report",
+        "template": "symptom_based"
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "moisturizing"
+      ],
+      "S": "乾燥しているが、なかなか良くならない。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "乾燥症状の改善に向け、保湿に関する生活指導が必要である。",
+      "P": "入浴後は皮膚が乾燥しやすくなります。\n入浴後に保湿剤を使用すると、皮膚状態を保ちやすくなります。",
+      "followupRef": "lifestyle_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "dermatology",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "intentTags": [
+        "lifestyle_guidance",
+        "administration_instruction"
+      ],
+      "SStructured": [],
+      "OStructured": [],
+      "AStructured": [],
+      "PStructured": []
+    }
+  ],
+  "addons": {
+    "items": {
+      "addon_spray_application_method": {
+        "key": "addon_spray_application_method",
+        "id": "addon_spray_application_method",
+        "title": "使用方法説明",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "清潔な手で、指示された部位へ適量を使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_topical_after_bath": {
+        "key": "addon_topical_after_bath",
+        "id": "addon_topical_after_bath",
+        "title": "入浴後使用説明",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "入浴後に使用すると、保湿効果が高まりやすくなります。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_topical_redness_warning": {
+        "key": "addon_topical_redness_warning",
+        "id": "addon_topical_redness_warning",
+        "title": "副作用注意喚起（発赤）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用した場所が赤くなることがあります。\n赤みが続く場合や、気になる場合はご相談ください。",
+        "intentTags": [
+          "side_effect_attention"
+        ]
+      },
+      "addon_topical_patch_timing": {
+        "key": "addon_topical_patch_timing",
+        "id": "addon_topical_patch_timing",
+        "title": "パッチ貼付部位の使用タイミング",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "パッチを貼る前に使用すると、はがれやすくなることがあります。\nパッチを剥がした後など、貼付していないタイミングで使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_adherence_reminder_alarm": {
+        "key": "addon_adherence_reminder_alarm",
+        "id": "addon_adherence_reminder_alarm",
+        "title": "使用忘れ対策（通知：アラーム）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、アラームを使用タイミングに合わせて設定しておく方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_reminder_app": {
+        "key": "addon_adherence_reminder_app",
+        "id": "addon_adherence_reminder_app",
+        "title": "使用忘れ対策（通知：記録アプリ）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_visual_checklist": {
+        "key": "addon_adherence_visual_checklist",
+        "id": "addon_adherence_visual_checklist",
+        "title": "使用忘れ対策（見える化：チェックリスト）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、チェックリストなどで確認する方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_visual_note": {
+        "key": "addon_adherence_visual_note",
+        "id": "addon_adherence_visual_note",
+        "title": "使用忘れ対策（見える化：貼り紙）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_schedule_confirmation": {
+        "key": "addon_adherence_schedule_confirmation",
+        "id": "addon_adherence_schedule_confirmation",
+        "title": "使用忘れ対策（予定確認）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_routine_link": {
+        "key": "addon_adherence_routine_link",
+        "id": "addon_adherence_routine_link",
+        "title": "使用忘れ対策（習慣化：生活習慣と結びつける）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、毎日の習慣と使用を結びつけて覚える方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_support_family_reminder": {
+        "key": "addon_adherence_support_family_reminder",
+        "id": "addon_adherence_support_family_reminder",
+        "title": "使用忘れ対策（支援：家族などの声掛け）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      }
+    },
+    "orderPresets": {}
+  },
+  "expressModes": [
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドローション",
+      "genericDisplayName": "ローション",
+      "sortOrder": 1
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドソフト軟膏",
+      "genericDisplayName": "油性クリーム",
+      "sortOrder": 2
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドクリーム",
+      "genericDisplayName": "クリーム",
+      "sortOrder": 3
+    },
+    {
+      "enabled": true,
+      "disabled": true,
+      "disabledReason": "準備中",
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドゲル",
+      "genericDisplayName": "ゲル",
+      "sortOrder": 4
+    },
+    {
+      "enabled": true,
+      "expressCategory": "皮膚科",
+      "expressGroup": "ヘパリン",
+      "expressSubGroup": "剤形",
+      "label": "ヒルドイドフォーム / スプレー",
+      "genericDisplayName": "フォーム / スプレー",
+      "defaultScenarioId": "initial_dryness",
+      "defaultBrandName": "ヒルドイドフォーム",
+      "genericBrandName": "ヘパリン類似物質外用スプレー",
+      "sortOrder": 5,
+      "scenarioCandidates": [
+        {
+          "scenarioId": "initial_dryness",
+          "label": "乾燥"
+        },
+        {
+          "scenarioId": "initial_eczema",
+          "label": "湿疹"
+        },
+        {
+          "scenarioId": "initial_skin_barrier_patch",
+          "label": "皮膚バリア / パッチかぶれ"
+        }
+      ]
+    }
+  ],
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "drug_effect_explanation",
+      "side_effect_attention",
+      "dose_increase_explanation",
+      "dose_decrease_explanation",
+      "treatment_end_explanation",
+      "adherence_support",
+      "usage_guidance",
+      "administration_instruction",
+      "concomitant_drug_attention",
+      "followup_monitoring",
+      "lifestyle_guidance"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
+  "ui": {
+    "panels": [
+      {
+        "id": "panel_1",
+        "title": "基本",
+        "sections": [
+          "display",
+          "categoryPath",
+          "drug",
+          "template"
+        ]
+      },
+      {
+        "id": "panel_2",
+        "title": "指導（アドオン）",
+        "sections": [
+          "addons"
+        ]
+      },
+      {
+        "id": "panel_3",
+        "title": "SOAP（シナリオ）",
+        "sections": [
+          "scenarios"
+        ]
+      }
+    ],
+    "panelOrder": [
+      "panel_1",
+      "panel_2",
+      "panel_3"
+    ],
+    "defaultPanelId": "panel_1"
+  },
+  "risks": {
+    "primary": [],
+    "secondary": [],
+    "conditional": []
+  },
+  "index": {
+    "searchableText": [
+      "ヒルドイドフォーム",
+      "ヘパリン類似物質外用スプレー",
+      "ひるどいどふぉーむ",
+      "ひるふぉーむ",
+      "へぱ",
+      "へぱふぉーむ",
+      "へぱすぷれー",
+      "へぱりん",
+      "へぱりんふぉーむ",
+      "へぱりんすぷれー",
+      "へぱりんるいじ",
+      "へぱりんるいじぶっしつ",
+      "へぱりんるいじぶっしつふぉーむ",
+      "へぱりんるいじぶっしつすぷれー",
+      "保湿",
+      "乾燥",
+      "皮膚乾燥",
+      "外用",
+      "フォーム",
+      "スプレー",
+      "皮膚科",
+      "ヘパリン類似物質系保湿剤フォーム・スプレー",
+      "保湿剤",
+      "ヘパリン類似物質"
+    ],
+    "normalizedTokens": [
+      "ひるどいどふぉーむ",
+      "ひるふぉーむ",
+      "へぱ",
+      "へぱふぉーむ",
+      "へぱすぷれー",
+      "へぱりん",
+      "へぱりんふぉーむ",
+      "へぱりんすぷれー",
+      "へぱりんるいじ",
+      "へぱりんるいじぶっしつ",
+      "へぱりんるいじぶっしつふぉーむ",
+      "へぱりんるいじぶっしつすぷれー"
+    ],
+    "facets": {}
+  }
+}
