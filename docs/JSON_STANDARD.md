@@ -1,0 +1,261 @@
+# JSON_STANDARD.md
+
+SOAP Engine — canonical JSON 構造標準
+
+このドキュメントは canonical JSON の「どう書くか」を定義します。
+「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
+「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
+
+最終更新: 2026-06-20
+
+---
+
+## JS-00: 差分発見時の判断フロー
+
+canonical JSON を監査・修正する前に、以下の順序で差分の性質を判断してください。
+
+> 差分を発見した
+> ↓
+> **JS-A（全 module 必須）** に記載あり → 欠落なら修正必須
+> ↓ なければ
+> **JS-B（条件付き必須）** に記載あり → 対象条件を確認して判断
+> ↓ なければ
+> **JS-C（薬剤固有差分許容）** に記載あり → 意図的差分として保持
+> ↓ なければ
+> **JS-D（意図的差分許容）** に記載あり → 保持
+> ↓ なければ
+> **JS-E（保留事項）** に記載あり → OPEN_DESIGN_QUESTIONS.md を参照
+> ↓ どこにもなければ
+> 新規監査項目として記録・判断が必要
+
+---
+
+## JS-A: 全 module 必須
+
+### top-level キー
+
+新規作成時の推奨順序（Pattern A）:
+
+```
+moduleId → moduleVersion → categoryPath → composition → drug → drugResolution
+→ regulatory → topical → template → display → defaults → persona → scenarios
+→ addons → ui → risks → searchConfig → index → tagCatalog → expressModes
+```
+
+既存ファイルには Pattern A / Pattern B の 2 パターンが存在する（保留: Q-TOP）。
+現時点では既存ファイルの key 順序変更は不要。新規作成時は Pattern A を推奨。
+
+| キー | 型 | 備考 |
+|---|---|---|
+| `moduleId` | string | スネークケース。categoryPath 末端を反映 |
+| `moduleVersion` | string | JSON では保持する（bridge では定義しない: DP-04）|
+| `categoryPath` | array[string] | 最大 4 階層 |
+| `composition` | object | JS-A-composition 参照 |
+| `drug` | object | JS-A-drug 参照 |
+| `drugResolution` | object | — |
+| `regulatory` | object | `psychotropicClass` / `controlledSubstance` / `notes` |
+| `topical` | object | `steroidPotency` / `notes` |
+| `template` | object | — |
+| `display` | object | JS-A-display 参照 |
+| `defaults` | object | `followup` / `followupProfiles` |
+| `persona` | object | — |
+| `scenarios` | object | — |
+| `addons` | object | `orderPresets` を含む（JS-A-addons 参照）|
+| `ui` | object | `panels` / `panelOrder` / `defaultPanelId` |
+| `risks` | object | `primary` / `secondary` / `conditional` |
+| `searchConfig` | object | `minPrefixLen` / `normalize` / `multiTerm` |
+| `index` | object | — |
+| `tagCatalog` | object | — |
+| `expressModes` | array | 型は配列固定（JS-expressModes 参照）|
+
+### JS-A-composition: composition 必須サブフィールド
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `nodeKey` | string | `{classKey}_{route}` または `{classKey}_{formulationType}` |
+| `classKey` | string | 薬効クラス英略。剤形分離原則適用時は剤形を含めてもよい（DP-02）|
+| `clinicalDomain` | string | — |
+| `sMergeDomain` | string | — |
+| `sMergePolicy` | object | `unit` / `conflictStrategy` / `withinDomainStrategy` |
+| `groupKeyRegistry` | array | — |
+| `nodeLabelShort` | string | — |
+| `nodeLabelLong` | string | — |
+
+### JS-A-drug: drug 必須サブフィールド
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `nameAliases` | array | `drug.search.nameAliases` と完全一致で生成 |
+| `aliasToBrand` | object | — |
+| `brandCatalog` | object | 全 brand に `displayGenericName` 必須（下表参照）|
+
+**drug.search 必須フィールド**
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `primaryDisplayName` | string | — |
+| `exactAliases` | array | — |
+| `prefixAliases` | array | — |
+| `nameAliases` | array | `drug.nameAliases` と完全一致 |
+| `keywords` | array | — |
+| `priority` | number | — |
+| `matchPolicy.preferExactAlias` | boolean | — |
+| `matchPolicy.allowPrefixMatch` | boolean | — |
+| `matchPolicy.suppressCrossModuleSuggestionsOnExactHit` | boolean | 全 module で `true` |
+
+**brandCatalog エントリ必須フィールド**
+
+| フィールド | 備考 |
+|---|---|
+| `displayName` | — |
+| `genericName` | — |
+| `displayGenericName` | **全 brand 必須**。参照優先順: `displayGenericName ?? genericName` |
+| `aliases` | — |
+| `normalizedAliases` | — |
+
+### JS-A-display: display 必須サブフィールド
+
+| フィールド | 備考 |
+|---|---|
+| `title` | — |
+| `subtitle` | — |
+| `drugClassLabel` | — |
+| `drugGeneric` | — |
+| `nodeLabelShort` | — |
+| `nodeLabelLong` | — |
+| `nodeKey` | `composition.nodeKey` と必ず一致させる |
+
+### JS-A-addons: addons 構造
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `orderPresets` | object | 未使用時は `{}` を保持。キー削除禁止（DP-08）|
+
+`addons.orderPresets` の中身（preset キー）は bridge 原稿に明示がある場合のみ定義する。
+bridge 未記載の preset を推測生成しない。
+
+---
+
+## JS-B: 条件付き必須
+
+### 多剤合成対象 module のみ必須
+
+参照: DP-03（多剤合成フィールド条件付き必須原則）
+
+| フィールド | 現在の対象 |
+|---|---|
+| `composition.canonicalSource`（保留: Q-F4）| allergy_oral / GLP-1 2系 |
+| `composition.defaultSMergeLevel` | 同上 |
+| `composition.domainPolicy` | 同上 |
+| `composition.nodeIdentityPolicy` | 同上 |
+
+### 剤形分割検索が必要な module のみ必須
+
+参照: DP-05（heparinoid 剤形検索分離原則）
+
+| フィールド | 現在の対象 |
+|---|---|
+| `drug.search.commonSearchTokens` | derm_heparinoid 系 |
+| `drug.search.formulationSearchTokens` | derm_heparinoid 系 |
+| `drug.search.matchPolicy.allowMultiTokenAndMatch` | derm_heparinoid 系 |
+| `drug.search.matchPolicy.allowFormulationTokenMatch` | derm_heparinoid 系 |
+
+### 増量・減量シナリオが存在する module
+
+| フィールド | 現在の対象 |
+|---|---|
+| `display.menuGroupLabels` | allergy_eye_drops / derm 3系 / GLP-1 2系 |
+| `display.adjustmentExpression` | 同上 |
+
+### 剤形横断ナビゲーションを持つ module
+
+| フィールド | 現在の対象 |
+|---|---|
+| `expressModes[*].genericBrandName` | derm 3系 |
+| `expressModes[*].scenarioCandidates` | derm 3系 |
+
+### display.localInput（条件未確定・保留: Q-K4b）
+
+4 module に存在、3 module に不在。必須条件が未定義。
+現時点では欠落を「バグ」と判断しない。
+
+---
+
+## JS-C: 薬剤固有差分許容
+
+「差分」ではなく「設計上の固有特性」として保持するフィールド・値。
+
+| 差分 | 対象 module | 根拠 |
+|---|---|---|
+| `expressModes[*].genericBrandName` / `scenarioCandidates` | derm 3系 | 剤形横断ナビゲーション UI 固有（JS-B 参照）|
+| `matchPolicy.allowMultiTokenAndMatch` / `allowFormulationTokenMatch` | derm 3系 | heparinoid 剤形分割検索固有（DP-05）|
+| `commonSearchTokens` / `formulationSearchTokens` | derm 3系 | 同上 |
+| `brandCatalog` のブランド固有フィールド（`contactLensCaution`, `bakStatus` 等）| allergy_eye_drops | 点眼薬の品質管理情報 |
+| `expressModes` のエントリ数（1〜39）| 全 module | 薬剤種により変動。上限制限なし |
+| `composition.classKey` に剤形名を含む | derm 3系 | 保留中（Q-J1）の意図的設計の可能性（DP-02）|
+
+---
+
+## JS-D: 意図的差分許容
+
+「差分」ではなく「設計上の意図的選択」として許容するもの。
+
+| 差分 | 対象 | 根拠 |
+|---|---|---|
+| `addons.orderPresets` が `{}` | allergy 2系 / derm 3系 | bridge 未明示のため空。DP-08 最小構成原則 |
+| `composition.defaultSMergeLevel` 等の欠落 | allergy_eye_drops / derm 3系 | 多剤合成対象外。DP-03 条件付き必須原則 |
+| `expressModes[*].enabled: false` + `disabled: true` | derm 3系・GLP-1系 | 準備中プレースホルダー。将来の有効化時に更新 |
+| top-level key 順序が Pattern A / B に分かれる | 全 module | 推奨統一対象だが機能差なし（保留: Q-TOP）|
+| `moduleVersion` 値が module ごとに異なる | 全 module | lifecycle 管理上の意図的バージョニング（保留: Q-K1）|
+
+---
+
+## JS-E: 保留事項
+
+詳細は OPEN_DESIGN_QUESTIONS.md を参照。
+
+| No | 項目 | 現時点の扱い |
+|---|---|---|
+| Q-J1 | derm 3系 `composition.classKey` の剤形込み設計 | JS-C で暫定保持 |
+| Q-K1 | `moduleVersion` 採番ルール | JS-D で暫定保持 |
+| Q-K4b | `display.localInput` の条件定義 | JS-B 候補として保留 |
+| Q-F4 | `composition.canonicalSource` の必須化範囲 | JS-B で「多剤合成対象のみ必須」として暫定定義 |
+| Q-TOP | top-level key 順序の標準パターン | JS-D で暫定保持・新規作成は Pattern A 推奨 |
+
+---
+
+## JS-expressModes: expressModes 配列構造統一原則
+
+旧 DP-06。JSON 実装ルールのため JSON_STANDARD.md へ移管（DESIGN_PRINCIPLES.md の欠番注記参照）。
+
+**型と必須制約**
+
+- 型: **配列（array）固定**。オブジェクト・null 禁止
+- `sortOrder`: 全エントリに必須
+- `enabled: false` + `disabled: true`: 準備中プレースホルダーとして許容
+
+**全エントリ必須フィールド**
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `enabled` | boolean | — |
+| `expressCategory` | string | — |
+| `expressGroup` | string | — |
+| `expressSubGroup` | string | — |
+| `label` | string | — |
+| `sortOrder` | number | — |
+
+**enabled: true のエントリに必要なフィールド**
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `defaultScenarioId` | string | — |
+| `defaultBrandName` | string | — |
+| `genericDisplayName` | string | — |
+
+**剤形横断ナビゲーション用（derm 3系のみ）**
+
+| フィールド | 型 | 備考 |
+|---|---|---|
+| `genericBrandName` | string | 剤形選択 UI 用 |
+| `scenarioCandidates` | array | 剤形選択時の初期シナリオ候補 |
