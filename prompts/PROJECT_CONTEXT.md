@@ -23,6 +23,21 @@
 
 ---
 
+## 設計ドキュメント（Design Documentation）
+
+設計意図・実装基準・保留事項を恒久化したドキュメント群。`prompts/` とは役割が異なる。
+
+| ドキュメント | 役割 |
+|---|---|
+| `docs/DESIGN_PRINCIPLES.md` | モジュール設計原則（なぜそうするか）|
+| `docs/JSON_STANDARD.md` | canonical JSON 構造標準（どう書くか）|
+| `docs/BOOTSTRAP_STANDARD.md` | Bootstrap 設計標準（P0-A 工程の設計意図）|
+| `docs/OPEN_DESIGN_QUESTIONS.md` | 設計保留事項（まだ決めていないこと）|
+
+`prompts/` は工程実行用プロンプト。設計意図の記録・参照は `docs/` を用いる。
+
+---
+
 ## Claude Startup Procedure
 
 新規チャット・セッション再起動時の手順：
@@ -135,6 +150,7 @@ soap-engine/
   lib/types.ts           # TypeScript型定義
   lib/moduleValidator.ts # ビルド時バリデーション
   prompts/               # P0-A〜P5 プロンプト群（本ファイル含む）
+  docs/                  # 設計ドキュメント（設計原則・JSON標準・Bootstrap・保留事項）
 ```
 
 ---
@@ -368,4 +384,7 @@ lib/search.ts          lib/buildSoap.ts
 
 data/modules/index.ts
 data/modules/{moduleId}.json
+
+docs/DESIGN_PRINCIPLES.md    docs/JSON_STANDARD.md
+docs/BOOTSTRAP_STANDARD.md  docs/OPEN_DESIGN_QUESTIONS.md
 ```
