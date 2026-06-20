@@ -1232,7 +1232,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -1294,7 +1294,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -1356,7 +1356,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -1418,7 +1418,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -2061,7 +2061,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -2128,7 +2128,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -2196,7 +2196,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
@@ -2264,7 +2264,7 @@
         "S": {
           "domain": "dermatology",
           "behavior": "replace",
-          "groupKey": "side_effect",
+          "groupKey": "side_effect_monitoring",
           "mergeLevel": "clinical_domain",
           "sectionRole": "subjective"
         },
