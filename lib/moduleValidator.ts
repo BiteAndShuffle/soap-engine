@@ -29,6 +29,8 @@
  *   19)  display.localInput.enabled === true の場合、display.localInput.applyScenarioIds[]
  *        の全要素が scenarios[].id に存在すること
  *        （display.localInput 未定義 / enabled !== true / applyScenarioIds 未定義の場合はスキップ）
+ *   20)  drugResolution.brandToTags が存在する場合、その全キーが drug.brandCatalog に存在すること
+ *        （drugResolution 未定義 / brandToTags 未定義 / drug.brandCatalog 未定義の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -63,6 +65,7 @@ export type ModuleValidationErrorCode =
   | 'EXPRESS_MODE_REF_BROKEN'         // expressModes[] の defaultBrandName / genericBrandName / defaultScenarioId / scenarioCandidates 参照切れ
   | 'MERGE_POLICY_GROUPKEY_INVALID'   // scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在しない
   | 'LOCALINPUT_SCENARIOID_BROKEN'    // display.localInput.applyScenarioIds の参照先が scenarios[].id に存在しない
+  | 'DRUGRESOLUTION_REF_BROKEN'       // drugResolution.brandToTags のキーが drug.brandCatalog に存在しない
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -663,6 +666,22 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
             isWarning: false,
           })
         }
+      }
+    }
+  }
+
+  // 20) drugResolution.brandToTags のキー参照整合チェック
+  //     drug.brandCatalog が未定義の場合はスキップ（後方互換）
+  const drugResolution = obj?.drugResolution as Record<string, unknown> | undefined
+  const brandToTags = drugResolution?.brandToTags as Record<string, unknown> | undefined
+  if (brandToTags && brandCatalog) {
+    for (const brandKey of Object.keys(brandToTags)) {
+      if (!(brandKey in brandCatalog)) {
+        errors.push({
+          code: 'DRUGRESOLUTION_REF_BROKEN',
+          detail: `drugResolution.brandToTags["${brandKey}"] が drug.brandCatalog に存在しません`,
+          isWarning: false,
+        })
       }
     }
   }
