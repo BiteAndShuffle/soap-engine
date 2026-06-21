@@ -532,6 +532,48 @@ mandatory diff対象：
 - scenario件数
 - scenario identity
 - S/O/A/P
+sideEffectPresence build原則:
+有効値（この7値のみ、それ以外は ERROR）:
+- not_applicable          : treatment_start / treatment_adjustment / adherence / treatment_end / lifestyle_guidance / sickday 等
+- absent_or_not_observed  : side_effect なし確認シナリオ（se_*_none 系）
+- present_mild            : 副作用あり・軽度・治療継続
+- present_moderate        : 副作用あり・中等度・治療継続
+- present_change          : 副作用による薬剤変更
+- present_dose_decrease   : 副作用による減量
+- present_stop            : 副作用による中止
+禁止値（本文から推測生成した無効値の例）: present_continue / present_severe / present_active
+sComposition build原則:
+template 有効値（2値のみ）:
+- "symptom_based"  : treatment_start 系（初回開始 / 再開 / 外部継続等）
+- "status_based"   : treatment_adjustment / side_effect / adherence / treatment_end 等
+禁止値（推測生成された非標準値の例）:
+- adjustment_based   → "status_based" を使用
+- adherence_based    → "status_based" を使用
+- continuation_based → "symptom_based" を使用
+- outcome_based      → "status_based" を使用
+上記禁止値が登場した場合は ERROR とする。
+sComposition 標準キースキーマ:
+格納フィールド: intent / template / symptomCodes / symptoms
+- symptomCodes: list[string]（状態・症状コード）
+- symptoms: list[string]（symptomCodes と同内容の日本語ラベル、1:1 対応）
+禁止キー（推測生成された非標準キーの例）:
+- adjustmentCodes → symptomCodes へ置換（値は確立済みコードで再設定）
+- adherenceCodes  → symptomCodes へ置換
+- outcomeCodes    → symptomCodes へ置換
+- severity        → symptomCodes の専用コード（drowsiness_mild / drowsiness_moderate 等）へ統合
+上記禁止キーが存在する場合は ERROR とする。
+sComposition.intent 有効値（scenarioType 別確立済み値）:
+- treatment_start 系:      new_addition / restart / external_continuation
+- treatment_adjustment 系: dose_increase / dose_decrease
+- side_effect（なし）:     side_effect_check
+- side_effect（あり）:     side_effect_present（H1系）/ stop / dose_decrease（GLP1系）
+- adherence 系:            adherence_check（H1系）/ continue / status_report / as_needed_use（GLP1系）
+- treatment_end 系:        treatment_end（H1系）/ stop（GLP1系）
+禁止値（推測生成された非標準値の例）:
+- side_effect_absent → side_effect_check を使用
+- adherence_good     → adherence_check を使用
+- adherence_poor     → adherence_check を使用
+上記禁止値が登場した場合は ERROR とする。
 ■ STRUCTURED_BUILD_RULE
 以下を扱う。
 - SStructured
@@ -545,6 +587,39 @@ build原則：
 - 医学的意味補完禁止
 - Structuredのために本文変更しない
 - 同期不能はERROR / PENDING
+Structured.role build原則:
+以下の確立済み語彙を優先する。推測生成・造語は禁止する。
+SStructured.role 確立済み語彙:
+- treatment_start_reason  : treatment_start 系の S 行
+- dose_adjustment_reason  : treatment_adjustment 系の S 行
+- side_effect_status      : side_effect なし確認系（se_*_none 等）の全 S 行
+- side_effect_presence    : side_effect あり系（se_mild / se_moderate / se_change 等）の全 S 行
+- adherence_status        : adherence 系の全 S 行
+- treatment_end_reason    : treatment_end 系の S 行
+禁止語彙（推測生成された非標準語の例）:
+- treatment_adjustment_reason → dose_adjustment_reason を使用
+- adherence_observation       → adherence_status を使用
+- side_effect_observation     → side_effect_status（なし系）/ side_effect_presence（あり系）を使用
+- symptom_observation         → scenarioType に応じて side_effect_status / adherence_status を使用
+上記禁止語彙が存在する場合は ERROR とする。
+AStructured.role 確立済み語彙:
+- treatment_assessment      : treatment_start / treatment_adjustment / adherence 等の A 行（汎用）
+- side_effect_assessment    : side_effect 系の A 行
+- adherence_assessment      : adherence 系の A 行
+- treatment_end_assessment  : treatment_end 系の A 行（treatment_assessment との混用禁止）
+禁止語彙（推測生成された非標準語の例）:
+- drug_mechanism → treatment_assessment を使用（機序説明行も treatment_assessment で扱う）
+上記禁止語彙が存在する場合は ERROR とする。
+PStructured.role 確立済み語彙（参考）:
+- drug_effect_explanation / side_effect_attention / side_effect_guidance
+- dose_adjustment_guidance / adherence_guidance / treatment_end_guidance
+- followup_guidance / lifestyle_guidance / administration_guidance
+- sickday_guidance / urgent_consult_guidance
+新規 role 語彙が必要な場合:
+1. 既存語彙での代替可能性を確認する
+2. 代替不能の場合のみ新規語彙を使用してよい
+3. 必ずユーザーに事前確認する（推測生成禁止）
+推測生成された新規 role 語彙が存在する場合は ERROR とする。
 ■ EXPRESS_THIRD_PANEL_BUILD_RULE
 以下をbuildする。
 - thirdPanelSPlacement
@@ -668,6 +743,13 @@ ERROR条件：
 - drug.nameAliases が drug.search.nameAliases と一致しない状態
 - addons.orderPresets キーが欠落している状態（addons.items が存在するにもかかわらず）
 - addons.orderPresets が object 型以外（null / array / string）である状態
+- sideEffectPresence の値が有効 7 値以外（例: present_continue）
+- sComposition.template が "status_based" / "symptom_based" 以外の推測生成値（例: adjustment_based / adherence_based / continuation_based / outcome_based）
+- sComposition に禁止キーが存在する（adjustmentCodes / adherenceCodes / outcomeCodes / severity）
+- sComposition.intent に禁止値が存在する（side_effect_absent / adherence_good / adherence_poor）
+- SStructured.role に禁止語彙が存在する（treatment_adjustment_reason / adherence_observation / side_effect_observation / symptom_observation）
+- AStructured.role に禁止語彙が存在する（drug_mechanism）
+- Structured.role にユーザー確認なしで推測生成された新規語彙が存在する
 PENDING条件：
 - P2A実施時、P2A CHECK_ITEMSのうち、P2B前解決推奨項目が未解決
 - P2A実施時、P2A UNRESOLVED_STRUCTUREのうち、P2Bで確定不能な項目
