@@ -639,7 +639,7 @@
         {
           "id": "a_2",
           "text": "ロイコトリエンの作用を抑え、鼻水や咳などの症状を改善する。",
-          "role": "drug_mechanism",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -777,7 +777,7 @@
         {
           "id": "a_2",
           "text": "ロイコトリエンの作用を抑え、鼻水や咳などの症状を改善する。",
-          "role": "drug_mechanism",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -915,7 +915,7 @@
         {
           "id": "a_2",
           "text": "ロイコトリエンの作用を抑え、鼻水や咳などの症状を改善する。",
-          "role": "drug_mechanism",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1053,7 +1053,7 @@
         {
           "id": "a_2",
           "text": "ロイコトリエンの作用を抑え、鼻水や咳などの症状を改善する。",
-          "role": "drug_mechanism",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1117,7 +1117,7 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "external_continuation",
-        "template": "continuation_based",
+        "template": "symptom_based",
         "symptomCodes": [
           "nasal_discharge"
         ],
@@ -1191,7 +1191,7 @@
         {
           "id": "a_2",
           "text": "ロイコトリエンの作用を抑え、鼻水や咳などの症状を改善する。",
-          "role": "drug_mechanism",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1255,7 +1255,7 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "external_continuation",
-        "template": "continuation_based",
+        "template": "symptom_based",
         "symptomCodes": [
           "cough"
         ],
@@ -1329,7 +1329,7 @@
         {
           "id": "a_2",
           "text": "ロイコトリエンの作用を抑え、鼻水や咳などの症状を改善する。",
-          "role": "drug_mechanism",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1393,9 +1393,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_increase",
-        "template": "adjustment_based",
-        "adjustmentCodes": [
+        "template": "status_based",
+        "symptomCodes": [
           "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
         ]
       },
       "S": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
@@ -1444,7 +1447,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
-          "role": "treatment_adjustment_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1501,9 +1504,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_increase",
-        "template": "adjustment_based",
-        "adjustmentCodes": [
-          "drug_combination_adjustment"
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
         ]
       },
       "S": "{{drug_subject}}は、他剤との調整により増量となった。",
@@ -1552,7 +1558,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他剤との調整により増量となった。",
-          "role": "treatment_adjustment_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1609,9 +1615,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_decrease",
-        "template": "adjustment_based",
-        "adjustmentCodes": [
-          "symptom_improvement"
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状改善"
         ]
       },
       "S": "{{drug_subject}}は、症状が改善したため服用量が調整となった。",
@@ -1655,7 +1664,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、症状が改善したため服用量が調整となった。",
-          "role": "treatment_adjustment_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1712,9 +1721,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_decrease",
-        "template": "adjustment_based",
-        "adjustmentCodes": [
+        "template": "status_based",
+        "symptomCodes": [
           "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果実感乏しい"
         ]
       },
       "S": "{{drug_subject}}は、効果の実感が乏しく、服用継続に不安があるため用量調整となった。",
@@ -1758,7 +1770,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果の実感が乏しく、服用継続に不安があるため用量調整となった。",
-          "role": "treatment_adjustment_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1815,9 +1827,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_decrease",
-        "template": "adjustment_based",
-        "adjustmentCodes": [
-          "drug_combination_adjustment"
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
         ]
       },
       "S": "{{drug_subject}}は、他剤との調整により減量となった。",
@@ -1861,7 +1876,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他剤との調整により減量となった。",
-          "role": "treatment_adjustment_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1917,10 +1932,13 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "sComposition": {
-        "intent": "side_effect_absent",
+        "intent": "side_effect_check",
         "template": "status_based",
         "symptomCodes": [
-          "drowsiness"
+          "drowsiness_none"
+        ],
+        "symptoms": [
+          "眠気なし"
         ]
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\n眠気は認めない。",
@@ -1965,7 +1983,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を服用して症状は落ち着いている。",
-          "role": "symptom_observation",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1974,7 +1992,7 @@
         {
           "id": "s_2",
           "text": "眠気は認めない。",
-          "role": "side_effect_observation",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2030,10 +2048,13 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "sComposition": {
-        "intent": "side_effect_absent",
+        "intent": "side_effect_check",
         "template": "status_based",
         "symptomCodes": [
-          "liver_dysfunction"
+          "liver_symptom_none"
+        ],
+        "symptoms": [
+          "肝障害関連症状なし"
         ]
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強い倦怠感などの明らかな体調変化は認めない。",
@@ -2082,7 +2103,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を服用して症状は落ち着いている。",
-          "role": "symptom_observation",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2091,7 +2112,7 @@
         {
           "id": "s_2",
           "text": "強い倦怠感などの明らかな体調変化は認めない。",
-          "role": "side_effect_observation",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2147,10 +2168,13 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "sComposition": {
-        "intent": "side_effect_absent",
+        "intent": "side_effect_check",
         "template": "status_based",
         "symptomCodes": [
-          "abdominal_discomfort"
+          "abdominal_discomfort_none"
+        ],
+        "symptoms": [
+          "腹部不快感なし"
         ]
       },
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\n腹部不快感などの消化器症状は認めない。",
@@ -2194,7 +2218,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を服用して症状は落ち着いている。",
-          "role": "symptom_observation",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2203,7 +2227,7 @@
         {
           "id": "s_2",
           "text": "腹部不快感などの消化器症状は認めない。",
-          "role": "side_effect_observation",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2258,8 +2282,14 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "adherence_good",
-        "template": "adherence_based"
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "good_compliance"
+        ],
+        "symptoms": [
+          "コンプライアンス良好"
+        ]
       },
       "S": "薬を服用して症状は落ち着いている。\n継続して服用できている。",
       "O": "{{drug_subject}}　服用中",
@@ -2302,7 +2332,7 @@
         {
           "id": "s_1",
           "text": "薬を服用して症状は落ち着いている。",
-          "role": "symptom_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2311,7 +2341,7 @@
         {
           "id": "s_2",
           "text": "継続して服用できている。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2367,10 +2397,13 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "adherence_poor",
-        "template": "adherence_based",
-        "adherenceCodes": [
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
           "missed_doses"
+        ],
+        "symptoms": [
+          "服薬忘れ"
         ]
       },
       "S": "服薬忘れがみられる。\n継続して服用できていない。",
@@ -2424,7 +2457,7 @@
         {
           "id": "s_1",
           "text": "服薬忘れがみられる。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2433,7 +2466,7 @@
         {
           "id": "s_2",
           "text": "継続して服用できていない。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2489,10 +2522,13 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "adherence_poor",
-        "template": "adherence_based",
-        "adherenceCodes": [
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
           "self_adjustment"
+        ],
+        "symptoms": [
+          "自己判断による調整"
         ]
       },
       "S": "自己判断での服用調整がみられる。\n用法どおりの継続服用ができていない。",
@@ -2536,7 +2572,7 @@
         {
           "id": "s_1",
           "text": "自己判断での服用調整がみられる。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2545,7 +2581,7 @@
         {
           "id": "s_2",
           "text": "用法どおりの継続服用ができていない。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2610,10 +2646,13 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "adherence_poor",
-        "template": "adherence_based",
-        "adherenceCodes": [
+        "intent": "adherence_check",
+        "template": "status_based",
+        "symptomCodes": [
           "visit_delay"
+        ],
+        "symptoms": [
+          "受診遅延"
         ]
       },
       "S": "都合により受診遅延がみられる。\n継続した服用に不安がある。",
@@ -2657,7 +2696,7 @@
         {
           "id": "s_1",
           "text": "都合により受診遅延がみられる。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2666,7 +2705,7 @@
         {
           "id": "s_2",
           "text": "継続した服用に不安がある。",
-          "role": "adherence_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2731,9 +2770,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "treatment_end",
-        "template": "outcome_based",
-        "outcomeCodes": [
-          "improvement"
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状改善"
         ]
       },
       "S": "{{drug_subject}}は、症状が改善したため中止となった。",
@@ -2788,7 +2830,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、症状改善により終了となった。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2797,7 +2839,7 @@
         {
           "id": "a_2",
           "text": "終了後に症状が悪化する可能性があるため、注意が必要である。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2833,9 +2875,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "treatment_end",
-        "template": "outcome_based",
-        "outcomeCodes": [
+        "template": "status_based",
+        "symptomCodes": [
           "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
         ]
       },
       "S": "{{drug_subject}}は、効果不十分のため中止となった。",
@@ -2890,7 +2935,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果不十分のため終了となった。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2899,7 +2944,7 @@
         {
           "id": "a_2",
           "text": "終了後は、症状の変化について確認を要する。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -2935,9 +2980,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "treatment_end",
-        "template": "outcome_based",
-        "outcomeCodes": [
-          "ineffective"
+        "template": "status_based",
+        "symptomCodes": [
+          "no_effect"
+        ],
+        "symptoms": [
+          "効果なし"
         ]
       },
       "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
@@ -2992,7 +3040,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果が認められなかったため終了となった。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3001,7 +3049,7 @@
         {
           "id": "a_2",
           "text": "終了後は、症状の変化について確認を要する。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3040,9 +3088,11 @@
         "intent": "side_effect_present",
         "template": "status_based",
         "symptomCodes": [
-          "drowsiness"
+          "drowsiness_mild"
         ],
-        "severity": "mild"
+        "symptoms": [
+          "眠気（軽度）"
+        ]
       },
       "S": "{{drug_subject}}の服用により眠気があるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
@@ -3086,7 +3136,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の服用により眠気があるが、日常生活は送れている。",
-          "role": "side_effect_observation",
+          "role": "side_effect_presence",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3136,9 +3186,11 @@
         "intent": "side_effect_present",
         "template": "status_based",
         "symptomCodes": [
-          "drowsiness"
+          "drowsiness_moderate"
         ],
-        "severity": "moderate"
+        "symptoms": [
+          "眠気（中等度）"
+        ]
       },
       "S": "{{drug_subject}}の服用により眠気が強く、辛いことがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
@@ -3182,7 +3234,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の服用により眠気が強く、辛いことがあるが、日常生活は送れている。",
-          "role": "side_effect_observation",
+          "role": "side_effect_presence",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3242,6 +3294,9 @@
         "template": "status_based",
         "symptomCodes": [
           "drowsiness_led_to_change"
+        ],
+        "symptoms": [
+          "眠気による薬剤変更"
         ]
       },
       "S": "{{drug_subject}}の服用により眠気が出現したため、他剤へ変更となった。",
@@ -3286,7 +3341,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の服用により眠気が出現したため、他剤へ変更となった。",
-          "role": "side_effect_observation",
+          "role": "side_effect_presence",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3337,6 +3392,9 @@
         "template": "status_based",
         "symptomCodes": [
           "drowsiness_led_to_dose_decrease"
+        ],
+        "symptoms": [
+          "眠気による減量"
         ]
       },
       "S": "{{drug_subject}}の服用により眠気がひどいため、減量となった。",
@@ -3381,7 +3439,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の服用により眠気がひどいため、減量となった。",
-          "role": "side_effect_observation",
+          "role": "side_effect_presence",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3432,6 +3490,9 @@
         "template": "status_based",
         "symptomCodes": [
           "drowsiness_led_to_stop"
+        ],
+        "symptoms": [
+          "眠気による中止"
         ]
       },
       "S": "{{drug_subject}}の服用により眠気がひどいため、中止となった。",
@@ -3476,7 +3537,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}の服用により眠気がひどいため、中止となった。",
-          "role": "side_effect_observation",
+          "role": "side_effect_presence",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
