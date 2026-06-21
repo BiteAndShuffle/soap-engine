@@ -20,6 +20,7 @@ import rawDermHeparinoidMoisturizerOintment from './derm_heparinoid_moisturizer_
 import rawDermHeparinoidMoisturizerCream from './derm_heparinoid_moisturizer_cream.json'
 import rawDermHeparinoidMoisturizerLotion from './derm_heparinoid_moisturizer_lotion.json'
 import rawDermHeparinoidMoisturizerSpray from './derm_heparinoid_moisturizer_spray.json'
+import rawAllergyLeukotrieneReceptorAntagonistOral from './allergy_leukotriene_receptor_antagonist_oral.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
@@ -30,4 +31,5 @@ export const ALL_MODULES: ModuleData[] = [
   rawDermHeparinoidMoisturizerCream as unknown as ModuleData,
   rawDermHeparinoidMoisturizerLotion as unknown as ModuleData,
   rawDermHeparinoidMoisturizerSpray as unknown as ModuleData,
+  rawAllergyLeukotrieneReceptorAntagonistOral as unknown as ModuleData,
 ]
