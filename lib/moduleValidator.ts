@@ -31,6 +31,8 @@
  *        （display.localInput 未定義 / enabled !== true / applyScenarioIds 未定義の場合はスキップ）
  *   20)  drugResolution.brandToTags が存在する場合、その全キーが drug.brandCatalog に存在すること
  *        （drugResolution 未定義 / brandToTags 未定義 / drug.brandCatalog 未定義の場合はスキップ）
+ *   21)  drug.aliasToBrand の全 value（brandKey）が drug.brandCatalog に存在すること
+ *        （drug 未定義 / aliasToBrand 未定義 / brandCatalog 未定義の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -66,6 +68,7 @@ export type ModuleValidationErrorCode =
   | 'MERGE_POLICY_GROUPKEY_INVALID'   // scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在しない
   | 'LOCALINPUT_SCENARIOID_BROKEN'    // display.localInput.applyScenarioIds の参照先が scenarios[].id に存在しない
   | 'DRUGRESOLUTION_REF_BROKEN'       // drugResolution.brandToTags のキーが drug.brandCatalog に存在しない
+  | 'ALIAS_TO_BRAND_VALUE_BROKEN'    // drug.aliasToBrand の value（brandKey）が drug.brandCatalog に存在しない
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -680,6 +683,21 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
         errors.push({
           code: 'DRUGRESOLUTION_REF_BROKEN',
           detail: `drugResolution.brandToTags["${brandKey}"] が drug.brandCatalog に存在しません`,
+          isWarning: false,
+        })
+      }
+    }
+  }
+
+  // 21) drug.aliasToBrand の value 参照整合チェック
+  //     drug / aliasToBrand / brandCatalog が未定義の場合はスキップ（後方互換）
+  const aliasToBrand = drug?.aliasToBrand as Record<string, unknown> | undefined
+  if (aliasToBrand && brandCatalog) {
+    for (const [alias, brandKey] of Object.entries(aliasToBrand)) {
+      if (typeof brandKey === 'string' && !(brandKey in brandCatalog)) {
+        errors.push({
+          code: 'ALIAS_TO_BRAND_VALUE_BROKEN',
+          detail: `drug.aliasToBrand["${alias}"] = "${brandKey}" が drug.brandCatalog に存在しません`,
           isWarning: false,
         })
       }
