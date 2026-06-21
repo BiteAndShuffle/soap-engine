@@ -1087,7 +1087,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_change_due_to_neuropsychiatric_symptoms｜title=第二世代ヒスタミンH1受容体拮抗薬 SE変更（精神神経症状）】
+【SCENARIO｜type=side_effect｜id=se_change_due_to_drowsiness｜title=第二世代ヒスタミンH1受容体拮抗薬 SE変更（眠気）】
 S
 第二世代ヒスタミンH1受容体拮抗薬の服用により眠気が出現したため、他剤へ変更となった。
 
@@ -1106,7 +1106,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_neuropsychiatric_symptoms｜title=第二世代ヒスタミンH1受容体拮抗薬 SE減量（精神神経症状）】
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_drowsiness｜title=第二世代ヒスタミンH1受容体拮抗薬 SE減量（眠気）】
 S
 第二世代ヒスタミンH1受容体拮抗薬の服用により眠気がひどいため、減量となった。
 
@@ -1125,7 +1125,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_stop_due_to_neuropsychiatric_symptoms｜title=第二世代ヒスタミンH1受容体拮抗薬 SE中止（精神神経症状）】
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_drowsiness｜title=第二世代ヒスタミンH1受容体拮抗薬 SE中止（眠気）】
 S
 第二世代ヒスタミンH1受容体拮抗薬の服用により眠気がひどいため、中止となった。
 

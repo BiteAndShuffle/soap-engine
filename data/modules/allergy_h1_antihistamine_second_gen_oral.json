@@ -3938,15 +3938,15 @@
       "followupRef": "se_followup"
     },
     {
-      "id": "se_change_due_to_neuropsychiatric_symptoms",
-      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_change_due_to_neuropsychiatric_symptoms",
-      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE変更（精神神経症状）",
+      "id": "se_change_due_to_drowsiness",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_change_due_to_drowsiness",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE変更（眠気）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
         "change",
-        "neuropsychiatric"
+        "drowsiness"
       ],
       "situationFilter": [
         "general"
@@ -4037,15 +4037,15 @@
       "followupRef": "se_followup"
     },
     {
-      "id": "se_dose_decrease_due_to_neuropsychiatric_symptoms",
-      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_dose_decrease_due_to_neuropsychiatric_symptoms",
-      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE減量（精神神経症状）",
+      "id": "se_dose_decrease_due_to_drowsiness",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_dose_decrease_due_to_drowsiness",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE減量（眠気）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
         "dose_decrease",
-        "neuropsychiatric"
+        "drowsiness"
       ],
       "situationFilter": [
         "general"
@@ -4136,15 +4136,15 @@
       "followupRef": "se_followup"
     },
     {
-      "id": "se_stop_due_to_neuropsychiatric_symptoms",
-      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_stop_due_to_neuropsychiatric_symptoms",
-      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE中止（精神神経症状）",
+      "id": "se_stop_due_to_drowsiness",
+      "globalId": "allergy_h1_antihistamine_second_gen_oral.se_stop_due_to_drowsiness",
+      "title": "第二世代ヒスタミンH1受容体拮抗薬 SE中止（眠気）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
         "stop",
-        "neuropsychiatric"
+        "drowsiness"
       ],
       "situationFilter": [
         "general"
