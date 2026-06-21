@@ -33,6 +33,8 @@
  *        （drugResolution 未定義 / brandToTags 未定義 / drug.brandCatalog 未定義の場合はスキップ）
  *   21)  drug.aliasToBrand の全 value（brandKey）が drug.brandCatalog に存在すること
  *        （drug 未定義 / aliasToBrand 未定義 / brandCatalog 未定義の場合はスキップ）
+ *   22)  scenarios[].followup[].addonId が addons.items に存在すること
+ *        （followup 未定義 / addonId 未定義 / addons.items 未定義の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -69,6 +71,7 @@ export type ModuleValidationErrorCode =
   | 'LOCALINPUT_SCENARIOID_BROKEN'    // display.localInput.applyScenarioIds の参照先が scenarios[].id に存在しない
   | 'DRUGRESOLUTION_REF_BROKEN'       // drugResolution.brandToTags のキーが drug.brandCatalog に存在しない
   | 'ALIAS_TO_BRAND_VALUE_BROKEN'    // drug.aliasToBrand の value（brandKey）が drug.brandCatalog に存在しない
+  | 'FOLLOWUP_ADDONID_BROKEN'       // scenarios[].followup[].addonId が addons.items に存在しない
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -700,6 +703,26 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
           detail: `drug.aliasToBrand["${alias}"] = "${brandKey}" が drug.brandCatalog に存在しません`,
           isWarning: false,
         })
+      }
+    }
+  }
+
+  // 22) scenarios[].followup[].addonId 参照整合チェック
+  //     addonItems / followup / addonId が未定義の場合はスキップ（後方互換）
+  if (Array.isArray(scenarios) && addonItems) {
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const scId = String((sc as Record<string, unknown>).id ?? '(unknown)')
+      const followup = (sc as Record<string, unknown>).followup
+      if (!Array.isArray(followup)) continue
+      for (const fu of followup as Record<string, unknown>[]) {
+        const addonId = fu.addonId
+        if (typeof addonId === 'string' && !(addonId in addonItems)) {
+          errors.push({
+            code: 'FOLLOWUP_ADDONID_BROKEN',
+            detail: `scenarios["${scId}"].followup[].addonId = "${addonId}" が addons.items に存在しません`,
+            isWarning: false,
+          })
+        }
       }
     }
   }
