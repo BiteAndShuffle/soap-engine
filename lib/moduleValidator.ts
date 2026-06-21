@@ -35,6 +35,10 @@
  *        （drug 未定義 / aliasToBrand 未定義 / brandCatalog 未定義の場合はスキップ）
  *   22)  scenarios[].followup[].addonId が addons.items に存在すること
  *        （followup 未定義 / addonId 未定義 / addons.items 未定義の場合はスキップ）
+ *   23)  scenarios[].id がモジュール内で重複していないこと
+ *        （scenarios 未定義 / id 未定義の場合はスキップ）
+ *   24)  scenarios[].globalId がモジュール内で重複していないこと
+ *        （scenarios 未定義 / globalId 未定義の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -72,6 +76,8 @@ export type ModuleValidationErrorCode =
   | 'DRUGRESOLUTION_REF_BROKEN'       // drugResolution.brandToTags のキーが drug.brandCatalog に存在しない
   | 'ALIAS_TO_BRAND_VALUE_BROKEN'    // drug.aliasToBrand の value（brandKey）が drug.brandCatalog に存在しない
   | 'FOLLOWUP_ADDONID_BROKEN'       // scenarios[].followup[].addonId が addons.items に存在しない
+  | 'SCENARIO_ID_DUPLICATE'         // scenarios[].id がモジュール内で重複している
+  | 'SCENARIO_GLOBALID_DUPLICATE'   // scenarios[].globalId がモジュール内で重複している
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -723,6 +729,41 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
             isWarning: false,
           })
         }
+      }
+    }
+  }
+
+  // 23/24) scenarios[].id / scenarios[].globalId のモジュール内一意性チェック
+  //        scenarios 未定義 / 各フィールド未定義の場合はスキップ（後方互換）
+  if (Array.isArray(scenarios)) {
+    const idSeen = new Map<string, number>()
+    const globalIdSeen = new Map<string, number>()
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const id = sc.id
+      if (typeof id === 'string' && id !== '') {
+        idSeen.set(id, (idSeen.get(id) ?? 0) + 1)
+      }
+      const globalId = sc.globalId
+      if (typeof globalId === 'string' && globalId !== '') {
+        globalIdSeen.set(globalId, (globalIdSeen.get(globalId) ?? 0) + 1)
+      }
+    }
+    for (const [id, count] of idSeen.entries()) {
+      if (count > 1) {
+        errors.push({
+          code: 'SCENARIO_ID_DUPLICATE',
+          detail: `scenarios[].id = "${id}" がモジュール内で ${count} 件重複しています`,
+          isWarning: false,
+        })
+      }
+    }
+    for (const [globalId, count] of globalIdSeen.entries()) {
+      if (count > 1) {
+        errors.push({
+          code: 'SCENARIO_GLOBALID_DUPLICATE',
+          detail: `scenarios[].globalId = "${globalId}" がモジュール内で ${count} 件重複しています`,
+          isWarning: false,
+        })
       }
     }
   }
