@@ -38,7 +38,7 @@ Validator は「機械的に判定できること」のみを保証する。設�
 
 ---
 
-## 3. ModuleValidator の責務（check 1〜24）
+## 3. ModuleValidator の責務（check 1〜29）
 
 `lib/moduleValidator.ts` — 単一モジュールスコープ。
 
@@ -67,6 +67,7 @@ build/runtime を停止させる致命的問題。
 | 22 | `FOLLOWUP_ADDONID_BROKEN` | Reference | `scenarios[].followup[].addonId` → `addons.items` |
 | 23 | `SCENARIO_ID_DUPLICATE` | Structural | `scenarios[].id` のモジュール内一意性 |
 | 24 | `SCENARIO_GLOBALID_DUPLICATE` | Structural | `scenarios[].globalId` のモジュール内一意性 |
+| 25 | `SIDE_EFFECT_PRESENCE_INVALID` | Design Rule | `scenarios[].sideEffectPresence` が有効 7 値（`not_applicable` / `absent_or_not_observed` / `present_mild` / `present_moderate` / `present_change` / `present_dose_decrease` / `present_stop`）以外 |
 
 ### 3-B. WARNING（isWarning: true）
 
@@ -84,6 +85,10 @@ build は継続するが、コンソールに出力される問題。
 | 14 | `FOLLOWUP_REF_MISSING` | Structural | `followupProfiles` 存在時に `followupRef` が未設定 |
 | 15 | `ADDON_REQUIRED_TAG_UNREACHABLE` | Reference | `addon.requiredTags` のタグが `brandCatalog.handlingTags` で到達不能 |
 | 16 | `STRUCTURED_TEXT_MISMATCH` | Structural | `*Structured` 連結と S/A/P 本文の不一致 |
+| 26 | `SCOMPOSITION_TEMPLATE_NONSTANDARD` | Design Rule | `sComposition.template` が `symptom_based` / `status_based` 以外の推測生成値（`adjustment_based` / `adherence_based` / `continuation_based` / `outcome_based` 等） |
+| 27 | `SCOMPOSITION_NONSTANDARD_KEY` | Design Rule | `sComposition` に禁止キーが存在（`adjustmentCodes` / `adherenceCodes` / `outcomeCodes` / `severity`）|
+| 28 | `SCOMPOSITION_INTENT_FORBIDDEN` | Design Rule | `sComposition.intent` が禁止値（`side_effect_absent` / `adherence_good` / `adherence_poor`）|
+| 29 | `STRUCTURED_ROLE_FORBIDDEN` | Design Rule | `SStructured.role` の禁止語彙（`treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation` / `symptom_observation`）または `AStructured.role` の禁止語彙（`drug_mechanism`）|
 
 **WARNING は Design Rule を Validator に持ち込む唯一の方法**。ただし WARNING は最終判断ではなく「P3/人間レビューへの情報提供」として位置づける。
 
@@ -158,7 +163,7 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 | P2B | JSON 生成 | AI | bridge → JSON 変換。preservation・必須フィールド生成 |
 | P3 | 構造レビュー | AI | 生成 JSON の参照整合・設計ルール適合・drugResolution 正当性 |
 | P4 | Runtime レビュー | AI | 生成 JSON が runtime で正しく動くか。描画・addon フィルタ・persona |
-| ModuleValidator | 単一モジュール機械判定 | コード | Reference + Structural の 24 checks。build 時に必ず通る |
+| ModuleValidator | 単一モジュール機械判定 | コード | Reference + Structural + Design Rule（WARNING）の 29 checks。build 時に必ず通る |
 | CrossModuleValidator | クロスモジュール機械判定 | コード | moduleId + globalId の横断一意性。build 時に必ず通る |
 
 ### 具体的な責務分担例
@@ -250,6 +255,11 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `FOLLOWUP_ADDONID_BROKEN` | ERROR | Reference |
 | `SCENARIO_ID_DUPLICATE` | ERROR | Structural |
 | `SCENARIO_GLOBALID_DUPLICATE` | ERROR | Structural |
+| `SIDE_EFFECT_PRESENCE_INVALID` | ERROR | Design Rule |
+| `SCOMPOSITION_TEMPLATE_NONSTANDARD` | WARN | Design Rule |
+| `SCOMPOSITION_NONSTANDARD_KEY` | WARN | Design Rule |
+| `SCOMPOSITION_INTENT_FORBIDDEN` | WARN | Design Rule |
+| `STRUCTURED_ROLE_FORBIDDEN` | WARN | Design Rule |
 
 ### CrossModuleValidator（lib/crossModuleValidator.ts）
 

@@ -39,6 +39,15 @@
  *        （scenarios 未定義 / id 未定義の場合はスキップ）
  *   24)  scenarios[].globalId がモジュール内で重複していないこと
  *        （scenarios 未定義 / globalId 未定義の場合はスキップ）
+ *   25)  scenarios[].sideEffectPresence が有効 7 値のいずれかであること（ERROR）
+ *        （sideEffectPresence 未定義の場合はスキップ）
+ *   26)  scenarios[].sComposition.template が "symptom_based" / "status_based" であること（WARNING）
+ *        （sComposition / template 未定義の場合はスキップ）
+ *   27)  scenarios[].sComposition に禁止キーが存在しないこと（WARNING）
+ *        （adjustmentCodes / adherenceCodes / outcomeCodes / severity）
+ *   28)  scenarios[].sComposition.intent が禁止値でないこと（WARNING）
+ *        （side_effect_absent / adherence_good / adherence_poor）
+ *   29)  scenarios[].SStructured / AStructured の role が禁止語彙でないこと（WARNING）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -78,6 +87,11 @@ export type ModuleValidationErrorCode =
   | 'FOLLOWUP_ADDONID_BROKEN'       // scenarios[].followup[].addonId が addons.items に存在しない
   | 'SCENARIO_ID_DUPLICATE'         // scenarios[].id がモジュール内で重複している
   | 'SCENARIO_GLOBALID_DUPLICATE'   // scenarios[].globalId がモジュール内で重複している
+  | 'SIDE_EFFECT_PRESENCE_INVALID'  // sideEffectPresence が有効 7 値以外（ERROR）
+  | 'SCOMPOSITION_TEMPLATE_NONSTANDARD' // sComposition.template が symptom_based/status_based 以外（WARNING）
+  | 'SCOMPOSITION_NONSTANDARD_KEY'  // sComposition に禁止キーが存在する（WARNING）
+  | 'SCOMPOSITION_INTENT_FORBIDDEN' // sComposition.intent が禁止値（WARNING）
+  | 'STRUCTURED_ROLE_FORBIDDEN'     // SStructured/AStructured.role が禁止語彙（WARNING）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -93,6 +107,44 @@ export interface ModuleValidationResult {
   /** isWarning=true のみのエントリは警告扱い（アプリ起動は続行） */
   errors: ModuleValidationError[]
 }
+
+// ─────────────────────────────────────────────────────────────
+// sideEffectPresence / sComposition / Structured.role 語彙定数
+// ─────────────────────────────────────────────────────────────
+
+const VALID_SIDE_EFFECT_PRESENCE = new Set([
+  'not_applicable',
+  'absent_or_not_observed',
+  'present_mild',
+  'present_moderate',
+  'present_change',
+  'present_dose_decrease',
+  'present_stop',
+])
+
+const VALID_SCOMPOSITION_TEMPLATES = new Set(['symptom_based', 'status_based'])
+
+const FORBIDDEN_SCOMPOSITION_KEYS = new Set([
+  'adjustmentCodes',
+  'adherenceCodes',
+  'outcomeCodes',
+  'severity',
+])
+
+const FORBIDDEN_SCOMPOSITION_INTENTS = new Set([
+  'side_effect_absent',
+  'adherence_good',
+  'adherence_poor',
+])
+
+const FORBIDDEN_S_STRUCTURED_ROLES = new Set([
+  'treatment_adjustment_reason',
+  'adherence_observation',
+  'side_effect_observation',
+  'symptom_observation',
+])
+
+const FORBIDDEN_A_STRUCTURED_ROLES = new Set(['drug_mechanism'])
 
 // ─────────────────────────────────────────────────────────────
 // addon / followup 責務逸脱チェック用 禁止語
@@ -888,6 +940,85 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     )
     const brandCatalogKeySet = new Set(brandCatalog ? Object.keys(brandCatalog) : [])
     errors.push(...validateExpressModes(expressModesArr, brandCatalogKeySet, scenarioIdSet))
+  }
+
+  // 25) scenarios[].sideEffectPresence が有効 7 値であること（ERROR）
+  //     sideEffectPresence が未定義の場合はスキップ（後方互換）
+  if (Array.isArray(scenarios)) {
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const scId = String(sc.id ?? '(unknown)')
+      const sep = sc.sideEffectPresence
+      if (sep !== undefined && !VALID_SIDE_EFFECT_PRESENCE.has(sep as string)) {
+        errors.push({
+          code: 'SIDE_EFFECT_PRESENCE_INVALID',
+          detail: `scenarios["${scId}"].sideEffectPresence = "${sep}" は有効値ではありません（有効値: ${[...VALID_SIDE_EFFECT_PRESENCE].join(' / ')}）`,
+          isWarning: false,
+        })
+      }
+    }
+  }
+
+  // 26–29) sComposition / Structured.role 語彙チェック（WARNING）
+  if (Array.isArray(scenarios)) {
+    for (const sc of scenarios as Record<string, unknown>[]) {
+      const scId = String(sc.id ?? '(unknown)')
+      const sComp = sc.sComposition as Record<string, unknown> | undefined
+
+      // 26) sComposition.template 有効値チェック
+      if (sComp?.template !== undefined && !VALID_SCOMPOSITION_TEMPLATES.has(sComp.template as string)) {
+        errors.push({
+          code: 'SCOMPOSITION_TEMPLATE_NONSTANDARD',
+          detail: `scenarios["${scId}"].sComposition.template = "${sComp.template}" は有効値ではありません（有効値: status_based / symptom_based）`,
+          isWarning: true,
+        })
+      }
+
+      // 27) sComposition 禁止キー検出
+      if (sComp) {
+        for (const key of FORBIDDEN_SCOMPOSITION_KEYS) {
+          if (key in sComp) {
+            errors.push({
+              code: 'SCOMPOSITION_NONSTANDARD_KEY',
+              detail: `scenarios["${scId}"].sComposition に禁止キー "${key}" が存在します（symptomCodes / symptoms への置換が必要）`,
+              isWarning: true,
+            })
+          }
+        }
+      }
+
+      // 28) sComposition.intent 禁止値検出
+      if (sComp?.intent !== undefined && FORBIDDEN_SCOMPOSITION_INTENTS.has(sComp.intent as string)) {
+        errors.push({
+          code: 'SCOMPOSITION_INTENT_FORBIDDEN',
+          detail: `scenarios["${scId}"].sComposition.intent = "${sComp.intent}" は禁止値です（side_effect_check / adherence_check への置換が必要）`,
+          isWarning: true,
+        })
+      }
+
+      // 29) SStructured.role 禁止語彙検出
+      for (const entry of (sc.SStructured as Array<Record<string, unknown>> | undefined) ?? []) {
+        const role = entry.role
+        if (typeof role === 'string' && FORBIDDEN_S_STRUCTURED_ROLES.has(role)) {
+          errors.push({
+            code: 'STRUCTURED_ROLE_FORBIDDEN',
+            detail: `scenarios["${scId}"].SStructured に禁止 role "${role}" が存在します（dose_adjustment_reason / adherence_status / side_effect_status / side_effect_presence への置換が必要）`,
+            isWarning: true,
+          })
+        }
+      }
+
+      // 29) AStructured.role 禁止語彙検出
+      for (const entry of (sc.AStructured as Array<Record<string, unknown>> | undefined) ?? []) {
+        const role = entry.role
+        if (typeof role === 'string' && FORBIDDEN_A_STRUCTURED_ROLES.has(role)) {
+          errors.push({
+            code: 'STRUCTURED_ROLE_FORBIDDEN',
+            detail: `scenarios["${scId}"].AStructured に禁止 role "${role}" が存在します（treatment_assessment への置換が必要）`,
+            isWarning: true,
+          })
+        }
+      }
+    }
   }
 
   const fatalErrors = errors.filter(e => !e.isWarning)
