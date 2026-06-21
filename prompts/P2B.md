@@ -258,7 +258,6 @@ deterministic_derived:
   確定済み値から機械的に導出される項目
 例:
 - globalId
-- drugResolution.brandToTags
 reference_pattern:
 - 値継承ではなく
   構造パターンのみ参照した項目
@@ -276,7 +275,7 @@ P2Bは、P2A CHECK_ITEMS に付与された classification_hint を確認し、
 - RESOLVE_RECOMMENDED
   同一canonical build内の確定済みfieldから deterministic に解消可能な場合、
   P2Bで解消してよい。
-  例：drugResolution.brandToTags を drug.brandCatalog[brand].handlingTags から機械的に作成する。
+  例：scenarios[].globalId を moduleId + "_" + scenarios[].id から生成する。
 - DEFER_CANDIDATE
   対象moduleの成立・canonical JSON build・preservationを妨げないが、
   方針未確定の項目として CHECK に分類し、
@@ -336,13 +335,20 @@ Phase 10
 - P3 handoff
 ■ MODULE_BUILD_RULE
 drugResolution build補足：
-drugResolution.brandToTags は、
+drugResolution.brandToTags は handlingTags の copy ではない。
+brandToTags と handlingTags は別概念・別タグ空間である。
+- brandToTags: runtime の一般名解決 / drug component 識別タグ（TAG_TO_GENERIC_NAME 経路）
+- handlingTags: addonFilter 用の製品取扱タグ（別経路）
+両者の値が一致しないことは ERROR ではない。
+
+drugResolution.brandToTags の生成ルール：
 P2A実施時はP2A DRUG_RESOLUTION_RULEに従う。
-P2A未実施時は、最新Model JSON / P0-A / P0-Bで許可された構造に従い、
-drug.brandCatalog[brand].handlingTags から一意に生成できる場合のみ、
-P2Bでdeterministic mappingとして作成してよい。
-- これはbridge外補完ではなく、同一canonical JSON内の確定済み値からの構造写像として扱う。
-- handlingTagsに存在しないtagを追加してはならない。
+P2A未実施時は以下のルールに従う。
+- key は drug.brandCatalog のキーと一致すること
+- value は string[] であること
+- bridge に明示がある場合のみ値を設定する
+- bridge に明示がない場合、既存 canonical JSON の値を保持するか PENDING とする
+- handlingTags からのコピー生成・推測生成は禁止
 addons.orderPresets build原則：
 - 型・必須性は P0-A ADDON_REQUIRED_RULES を参照する（object必須・空{}許容・array/null/string禁止・omit禁止）
 - 目的：構造の標準化および将来の runtime 安全性確保
@@ -625,7 +631,9 @@ Persona:
 - baseline persona preservation
 DrugResolution:
 - drugResolution.brandToTags
-- brandCatalog[brand].handlingTags からの deterministic mapping 一致
+- key が drug.brandCatalog のキーと一致していること
+- value が string[] であること
+- （brandToTags と handlingTags の値一致は検査しない — 別概念）
 ■ ERROR_PENDING_RULE
 以下は推測補完せず停止する。
 ※ERROR / PENDING / CHECK の分類は、上記「ERROR / PENDING / CHECK 定義」に従う。
@@ -656,7 +664,6 @@ ERROR条件：
 - commonSearchTokens / formulationSearchTokens が aliases / normalizedAliases / aliasToBrand / search aliases へ展開された状態
 - bridge未明示の search token が推測生成された状態
 - bridgeに明示された commonSearchTokens / formulationSearchTokens / search token系matchPolicy が canonical JSON に反映されていない状態
-- drugResolution.brandToTags が、brandCatalog[brand].handlingTags からの deterministic mapping と一致しない状態
 - RESOLVE_RECOMMENDED項目を、deterministicに解消可能であるにもかかわらず未解決のままOUTPUT_JSONへ進めた状態
 - drug.nameAliases が drug.search.nameAliases と一致しない状態
 - addons.orderPresets キーが欠落している状態（addons.items が存在するにもかかわらず）
