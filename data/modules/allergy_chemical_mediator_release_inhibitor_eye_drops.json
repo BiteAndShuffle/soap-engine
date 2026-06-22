@@ -1,0 +1,4496 @@
+{
+  "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+  "moduleVersion": "1.0.0",
+  "categoryPath": [
+    "アレルギー",
+    "抗アレルギー点眼薬",
+    "ケミカルメディエーター遊離抑制薬",
+    "外用",
+    "点眼"
+  ],
+  "composition": {
+    "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
+    "nodeLabelShort": "遊離抑制点眼",
+    "nodeLabelLong": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+    "domain": "allergy",
+    "priority": "chronic",
+    "clinicalDomain": "allergy",
+    "searchDomain": "allergy",
+    "sMergeDomain": "allergy",
+    "classKey": "chemical_mediator_release_inhibitor",
+    "groupKeyRegistry": [
+      "treatment_start",
+      "treatment_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "as_needed",
+      "treatment_end",
+      "lifestyle_guidance"
+    ],
+    "sMergePolicy": {
+      "unit": "clinical_domain",
+      "conflictStrategy": "separate_by_domain",
+      "withinDomainStrategy": "groupKey_based_semantic_merge"
+    }
+  },
+  "drug": {
+    "genericName": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+    "brandNames": [
+      "ゼペリン点眼液",
+      "アレギサール点眼液",
+      "ペミラストン点眼液",
+      "リザベン点眼液",
+      "トラメラス点眼液PF",
+      "インタール点眼液"
+    ],
+    "drugClass": [
+      "CHEMICAL_MEDIATOR_RELEASE_INHIBITOR_EYE_DROPS"
+    ],
+    "route": "ophthalmic",
+    "dosageForms": [
+      "eye_drop"
+    ],
+    "drugSpecificTags": [
+      "chemical_mediator_release_inhibitor",
+      "antiallergic_eye_drop",
+      "antiallergic",
+      "eye_drops",
+      "ophthalmic",
+      "allergy",
+      "ocular_allergy",
+      "external_use",
+      "storage_instruction",
+      "formulation_instruction",
+      "contact_lens_caution"
+    ],
+    "search": {
+      "primaryDisplayName": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+      "exactAliases": [
+        "ゼペリン点眼液",
+        "アレギサール点眼液",
+        "ペミラストン点眼液",
+        "リザベン点眼液",
+        "トラメラス点眼液PF",
+        "インタール点眼液",
+        "アシタザノラスト点眼液",
+        "ペミロラスト点眼液",
+        "トラニラスト点眼液",
+        "クロモグリク酸点眼液",
+        "アシタザノラスト",
+        "ペミロラスト",
+        "トラニラスト",
+        "クロモグリク酸"
+      ],
+      "prefixAliases": [
+        "ぜぺりんてんがん",
+        "ぜぺりん",
+        "あしたざのらすとてんがん",
+        "あしたざのらすと",
+        "あれぎさーるてんがん",
+        "あれぎさーる",
+        "ぺみろらすとてんがん",
+        "ぺみろらすと",
+        "ぺみらすとんてんがん",
+        "ぺみらすとん",
+        "りざべんてんがん",
+        "りざべん",
+        "とらにらすとてんがん",
+        "とらにらすと",
+        "とらめらすてんがんぴーえふ",
+        "とらめらすぴーえふ",
+        "とらめらすてんがん",
+        "とらめらす",
+        "いんたーるてんがん",
+        "いんたーる",
+        "くろもぐりくさんてんがん",
+        "くろもぐりくさん"
+      ],
+      "nameAliases": [
+        "ぜぺりんてんがん",
+        "ぜぺりん",
+        "あしたざのらすとてんがん",
+        "あしたざのらすと",
+        "あれぎさーるてんがん",
+        "あれぎさーる",
+        "ぺみろらすとてんがん",
+        "ぺみろらすと",
+        "ぺみらすとんてんがん",
+        "ぺみらすとん",
+        "りざべんてんがん",
+        "りざべん",
+        "とらにらすとてんがん",
+        "とらにらすと",
+        "とらめらすてんがんぴーえふ",
+        "とらめらすぴーえふ",
+        "とらめらすてんがん",
+        "とらめらす",
+        "いんたーるてんがん",
+        "いんたーる",
+        "くろもぐりくさんてんがん",
+        "くろもぐりくさん"
+      ],
+      "keywords": [
+        "花粉症",
+        "アレルギー性結膜炎",
+        "目のかゆみ",
+        "目の充血",
+        "涙目",
+        "点眼",
+        "目薬",
+        "化学伝達物質",
+        "ケミカルメディエーター",
+        "遊離抑制"
+      ],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
+    },
+    "brandCatalog": {
+      "ゼペリン点眼液": {
+        "displayName": "ゼペリン点眼液",
+        "genericName": "アシタザノラスト",
+        "displayGenericName": "アシタザノラスト点眼液",
+        "storageType": "room_temperature",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "room_temperature_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "ぜぺりんてんがん",
+          "ぜぺりん",
+          "あしたざのらすとてんがん",
+          "あしたざのらすと"
+        ],
+        "normalizedAliases": [
+          "ぜぺりんてんがん",
+          "ぜぺりん",
+          "あしたざのらすとてんがん",
+          "あしたざのらすと"
+        ]
+      },
+      "アレギサール点眼液": {
+        "displayName": "アレギサール点眼液",
+        "genericName": "ペミロラスト",
+        "displayGenericName": "ペミロラスト点眼液",
+        "storageType": "room_temperature",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "room_temperature_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "あれぎさーるてんがん",
+          "あれぎさーる",
+          "ぺみろらすとてんがん",
+          "ぺみろらすと"
+        ],
+        "normalizedAliases": [
+          "あれぎさーるてんがん",
+          "あれぎさーる",
+          "ぺみろらすとてんがん",
+          "ぺみろらすと"
+        ]
+      },
+      "ペミラストン点眼液": {
+        "displayName": "ペミラストン点眼液",
+        "genericName": "ペミロラスト",
+        "displayGenericName": "ペミロラスト点眼液",
+        "storageType": "room_temperature",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "room_temperature_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "ぺみらすとんてんがん",
+          "ぺみらすとん"
+        ],
+        "normalizedAliases": [
+          "ぺみらすとんてんがん",
+          "ぺみらすとん"
+        ]
+      },
+      "リザベン点眼液": {
+        "displayName": "リザベン点眼液",
+        "genericName": "トラニラスト",
+        "displayGenericName": "トラニラスト点眼液",
+        "storageType": "light_protection",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "light_protection_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "りざべんてんがん",
+          "りざべん",
+          "とらにらすとてんがん",
+          "とらにらすと"
+        ],
+        "normalizedAliases": [
+          "りざべんてんがん",
+          "りざべん",
+          "とらにらすとてんがん",
+          "とらにらすと"
+        ]
+      },
+      "トラメラス点眼液PF": {
+        "displayName": "トラメラス点眼液PF",
+        "genericName": "トラニラスト",
+        "displayGenericName": "トラニラスト点眼液",
+        "storageType": "light_protection",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "product_specific",
+        "bakStatus": "bak_free",
+        "handlingTags": [
+          "light_protection_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_caution_product_specific",
+          "bak_status_bak_free"
+        ],
+        "aliases": [
+          "とらめらすてんがんぴーえふ",
+          "とらめらすぴーえふ",
+          "とらめらすてんがん",
+          "とらめらす"
+        ],
+        "normalizedAliases": [
+          "とらめらすてんがんぴーえふ",
+          "とらめらすぴーえふ",
+          "とらめらすてんがん",
+          "とらめらす"
+        ]
+      },
+      "インタール点眼液": {
+        "displayName": "インタール点眼液",
+        "genericName": "クロモグリク酸",
+        "displayGenericName": "クロモグリク酸点眼液",
+        "storageType": "light_protection",
+        "formulationType": "solution",
+        "contactLensCaution": true,
+        "contactLensCautionLevel": "remove_before_use",
+        "bakStatus": "contains_bak",
+        "handlingTags": [
+          "light_protection_storage",
+          "solution_eye_drop",
+          "contact_lens_caution",
+          "contact_lens_remove_before_use",
+          "bak_status_contains_bak"
+        ],
+        "aliases": [
+          "いんたーるてんがん",
+          "いんたーる",
+          "くろもぐりくさんてんがん",
+          "くろもぐりくさん"
+        ],
+        "normalizedAliases": [
+          "いんたーるてんがん",
+          "いんたーる",
+          "くろもぐりくさんてんがん",
+          "くろもぐりくさん"
+        ]
+      }
+    },
+    "nameAliases": [
+      "ぜぺりんてんがん",
+      "ぜぺりん",
+      "あしたざのらすとてんがん",
+      "あしたざのらすと",
+      "あれぎさーるてんがん",
+      "あれぎさーる",
+      "ぺみろらすとてんがん",
+      "ぺみろらすと",
+      "ぺみらすとんてんがん",
+      "ぺみらすとん",
+      "りざべんてんがん",
+      "りざべん",
+      "とらにらすとてんがん",
+      "とらにらすと",
+      "とらめらすてんがんぴーえふ",
+      "とらめらすぴーえふ",
+      "とらめらすてんがん",
+      "とらめらす",
+      "いんたーるてんがん",
+      "いんたーる",
+      "くろもぐりくさんてんがん",
+      "くろもぐりくさん"
+    ],
+    "aliasToBrand": {
+      "ぜぺりんてんがん": "ゼペリン点眼液",
+      "ぜぺりん": "ゼペリン点眼液",
+      "あしたざのらすとてんがん": "ゼペリン点眼液",
+      "あしたざのらすと": "ゼペリン点眼液",
+      "あれぎさーるてんがん": "アレギサール点眼液",
+      "あれぎさーる": "アレギサール点眼液",
+      "ぺみろらすとてんがん": "アレギサール点眼液",
+      "ぺみろらすと": "アレギサール点眼液",
+      "ぺみらすとんてんがん": "ペミラストン点眼液",
+      "ぺみらすとん": "ペミラストン点眼液",
+      "りざべんてんがん": "リザベン点眼液",
+      "りざべん": "リザベン点眼液",
+      "とらにらすとてんがん": "リザベン点眼液",
+      "とらにらすと": "リザベン点眼液",
+      "とらめらすてんがんぴーえふ": "トラメラス点眼液PF",
+      "とらめらすぴーえふ": "トラメラス点眼液PF",
+      "とらめらすてんがん": "トラメラス点眼液PF",
+      "とらめらす": "トラメラス点眼液PF",
+      "いんたーるてんがん": "インタール点眼液",
+      "いんたーる": "インタール点眼液",
+      "くろもぐりくさんてんがん": "インタール点眼液",
+      "くろもぐりくさん": "インタール点眼液"
+    }
+  },
+  "drugResolution": {
+    "brandToTags": {}
+  },
+  "regulatory": {
+    "psychotropicClass": "not_applicable",
+    "controlledSubstance": "not_applicable",
+    "notes": null
+  },
+  "topical": {
+    "steroidPotency": "not_applicable",
+    "notes": null
+  },
+  "template": {
+    "templateId": "allergy_chemical_mediator_release_inhibitor_eye_drops_v1",
+    "templateVersion": "1.0.0",
+    "situationTags": [
+      "general",
+      "seasonal",
+      "ocular_allergy"
+    ],
+    "severityTags": [
+      "mild",
+      "moderate",
+      "severe"
+    ],
+    "storageTags": [
+      "room_temperature_storage",
+      "light_protection_storage",
+      "cold_storage",
+      "storage_product_specific"
+    ],
+    "formulationTags": [
+      "solution_eye_drop",
+      "suspension_eye_drop"
+    ],
+    "handlingTags": [
+      "shake_before_use",
+      "contact_lens_caution",
+      "contact_lens_caution_product_specific",
+      "contact_lens_remove_before_use",
+      "bak_status_contains_bak",
+      "bak_status_bak_free",
+      "bak_status_product_specific",
+      "bak_status_unknown"
+    ]
+  },
+  "display": {
+    "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+    "subtitle": "アレルギー性結膜炎・目のかゆみに対する点眼治療",
+    "drugClassLabel": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+    "drugGeneric": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+    "nodeLabelShort": "遊離抑制点眼",
+    "nodeLabelLong": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+    "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
+    "menuGroupLabels": {
+      "増量": "回数増",
+      "減量": "回数減"
+    },
+    "adjustmentExpression": {
+      "increasePast": "点眼回数が増えた",
+      "decreasePast": "点眼回数が減った"
+    },
+    "localInput": {
+      "enabled": true,
+      "label": "点眼部位（任意）",
+      "placeholder": "左・右・両 など",
+      "targetField": "S",
+      "insertMode": "placeholder",
+      "siteButtonType": "eye",
+      "applyScenarioIds": [
+        "initial",
+        "restart",
+        "external_start"
+      ],
+      "emptyBehavior": "keep_original"
+    }
+  },
+  "defaults": {
+    "followup": {
+      "S": null,
+      "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+    },
+    "followupProfiles": {
+      "default_followup": {
+        "S": null,
+        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+      },
+      "end_followup": {
+        "S": null,
+        "P": "次回、治療経過および体調変化の有無を確認。"
+      },
+      "se_followup": {
+        "S": null,
+        "P": "次回、治療経過および副作用の有無を確認。"
+      }
+    }
+  },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "initial",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 初回",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "eye_itching"
+        ],
+        "symptoms": [
+          "目のかゆみ"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start"
+      ],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。\nケミカルメディエーターの遊離を抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_contact_lens_remove_before_use",
+          "addon_eye_drop_contact_lens_product_specific"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため追加となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として追加となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "ケミカルメディエーターの遊離を抑え、充血・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として使用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の改善のため、継続して使用することが大切です。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "restart",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.restart",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 再開",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "restart",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "eye_itching"
+        ],
+        "symptoms": [
+          "目のかゆみ"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "restart"
+      ],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため再開となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として再開となった。\nケミカルメディエーターの遊離を抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_contact_lens_remove_before_use",
+          "addon_eye_drop_contact_lens_product_specific"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、{{applicationSite}}眼のかゆみが気になるため再開となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として再開となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "ケミカルメディエーターの遊離を抑え、充血・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として使用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の改善のため、継続して使用することが大切です。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "external_start",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.external_start",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 他所開始",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "treatment_start",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "external_continuation",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "eye_itching"
+        ],
+        "symptoms": [
+          "目のかゆみ"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_start",
+        "external_start"
+      ],
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}は、{{applicationSite}}眼のかゆみに対して他院で開始され継続使用中であった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、アレルギー症状の改善を目的として継続使用中であった。\nケミカルメディエーターの遊離を抑え、充血・かゆみなどのアレルギー症状を改善する。\n症状の改善と再燃予防を目的として使用する。",
+      "P": "{{drug_subject}}は、アレルギー症状を改善する薬です。\n症状の改善のため、継続して使用することが大切です。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_contact_lens_remove_before_use",
+          "addon_eye_drop_contact_lens_product_specific"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_start",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、{{applicationSite}}眼のかゆみに対して他院で開始され継続使用中であった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、アレルギー症状の改善を目的として継続使用中であった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "ケミカルメディエーターの遊離を抑え、充血・かゆみなどのアレルギー症状を改善する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_3",
+          "text": "症状の改善と再燃予防を目的として使用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の改善のため、継続して使用することが大切です。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "dose_increase_low_perceived_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_increase_low_perceived_effect",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数増（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "increase"
+      ],
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "S": "{{drug_subject}}は、効果の実感が乏しいため点眼回数が増えた。",
+      "O": "{{drug_subject}}　点眼回数増",
+      "A": "{{drug_subject}}は、効果不十分のため点眼回数が増えた。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n使用後に気になる症状がある場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しいため点眼回数が増えた。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため点眼回数が増えた。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用後に気になる症状がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dose_increase_due_to_other_med_adjustment",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_increase_due_to_other_med_adjustment",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数増（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "increase"
+      ],
+      "intentTags": [
+        "dose_increase_explanation",
+        "concomitant_drug_attention"
+      ],
+      "S": "{{drug_subject}}は、他剤との調整により点眼回数が増えた。",
+      "O": "{{drug_subject}}　点眼回数増",
+      "A": "{{drug_subject}}は、併用薬との調整のため点眼回数が増えた。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n使用後に気になる症状がある場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤との調整により点眼回数が増えた。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬との調整のため点眼回数が増えた。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用後に気になる症状がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dose_decrease_improved",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_decrease_improved",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（症状改善）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状が改善した"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "S": "{{drug_subject}}は、症状が改善したため点眼回数が減った。",
+      "O": "{{drug_subject}}　点眼回数減",
+      "A": "{{drug_subject}}は、症状改善を踏まえ点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n症状や使用感に変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が改善したため点眼回数が減った。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状改善を踏まえ点眼回数が減った。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状や使用感に変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dose_decrease_low_perceived_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_decrease_low_perceived_effect",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "S": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
+      "O": "{{drug_subject}}　点眼回数減",
+      "A": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n症状の変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dose_decrease_due_to_other_med_adjustment",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_decrease_due_to_other_med_adjustment",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "treatment_adjustment",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "other_med_adjustment"
+        ],
+        "symptoms": [
+          "他剤との調整"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_adjustment",
+        "decrease"
+      ],
+      "intentTags": [
+        "dose_decrease_explanation",
+        "concomitant_drug_attention"
+      ],
+      "S": "{{drug_subject}}は、他剤との調整により点眼回数が減った。",
+      "O": "{{drug_subject}}　点眼回数減",
+      "A": "{{drug_subject}}は、併用薬との調整のため点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、指示された回数で使用してください。\n症状の変化がある場合はご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤との調整により点眼回数が減った。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬との調整のため点眼回数が減った。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、指示された回数で使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状の変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_irritation_none",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_irritation_none",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "irritation",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n刺激感は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による刺激感は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に刺激感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "刺激感は認めない。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による刺激感は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に刺激感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_foreign_body_sensation_none",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_foreign_body_sensation_none",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（異物感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "foreign_body_sensation",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n異物感は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による異物感は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に異物感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "異物感は認めない。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による異物感は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に異物感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_pruritus_none",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_pruritus_none",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（掻痒感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "pruritus",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n掻痒感は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による掻痒感は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に掻痒感が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "掻痒感は認めない。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による掻痒感は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に掻痒感が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_eye_redness_none",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_eye_redness_none",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（充血）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "eye_redness",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n充血は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による充血は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に充血が出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "充血は認めない。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による充血は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に充血が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_eye_discharge_none",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_eye_discharge_none",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（目やに）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "eye_discharge",
+        "absent"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n目やには認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に目やにが出ることがあります。\n症状が続く場合はご相談ください。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "目やには認めない。",
+          "role": "side_effect_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に目やにが出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cp_good",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_good",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP良好",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "good"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "薬を使用して症状は落ち着いている。\n継続して使用できている。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは良好である。\n治療継続に問題はない。",
+      "P": "引き続き用法を守って使用することで、アレルギー症状改善が期待できます。\n今後も継続して使用できるようにすることが大切です。",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "薬を使用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "継続して使用できている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは良好である。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "治療継続に問題はない。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "引き続き用法を守って使用することで、アレルギー症状改善が期待できます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "今後も継続して使用できるようにすることが大切です。",
+          "role": "adherence_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "cp_poor_missed_doses",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_missed_doses",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（使用忘れ）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "missed_doses"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "使用忘れがみられる。\n継続して使用できていない。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは不良で、使用忘れがみられる。",
+      "P": "継続して使用することでアレルギー症状改善が期待されます。\n使用忘れが続くとアレルギー症状が悪化する可能性があります。",
+      "addonsRef": {
+        "P": [
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_calendar_checklist",
+          "addon_adherence_visual_note",
+          "addon_adherence_prep_previous_night",
+          "addon_adherence_routine_link",
+          "addon_adherence_support_family_reminder"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "使用忘れがみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "継続して使用できていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、使用忘れがみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して使用することでアレルギー症状改善が期待されます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用忘れが続くとアレルギー症状が悪化する可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "cp_poor_self_adjust",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_self_adjust",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（自己判断）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "self_adjust"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "自己判断での使用調整がみられる。\n用法どおりの継続使用ができていない。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは不良で、自己判断による調整がみられる。",
+      "P": "継続して使用することでアレルギー症状の改善が期待されます。\n自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。\n体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "自己判断での使用調整がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "用法どおりの継続使用ができていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、自己判断による調整がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して使用することでアレルギー症状の改善が期待されます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "自己判断での中止・調整により症状が不安定となり、十分な治療効果が得られない可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_3",
+          "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+          "role": "adherence_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cp_poor_visit_delay",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_visit_delay",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（受診遅延）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "adherence",
+        "poor",
+        "visit_delay"
+      ],
+      "intentTags": [
+        "adherence_support"
+      ],
+      "S": "都合により受診遅延がみられる。\n継続した使用に不安がある。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "コンプライアンスは不良で、受診遅延がみられる。",
+      "P": "継続的な使用が治療効果の維持と症状悪化の予防につながります。\n治療が中断すると症状が悪化する可能性があります。\n次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "都合により受診遅延がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "継続した使用に不安がある。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、受診遅延がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続的な使用が治療効果の維持と症状悪化の予防につながります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "治療が中断すると症状が悪化する可能性があります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_3",
+          "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+          "role": "adherence_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご連絡ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "as_needed_refill_needed",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.as_needed_refill_needed",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 頓用使用（処方あり）",
+      "scenarioType": "usage",
+      "scenarioGroup": "as_needed",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "usage",
+        "as_needed"
+      ],
+      "intentTags": [
+        "usage_guidance"
+      ],
+      "S": "{{drug_subject}}は、症状が出た時に使用している。\n使用により残薬が少なくなったため、継続処方となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
+      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n使用頻度が増えている場合や、症状が続く場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "as_needed",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が出た時に使用している。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "使用により残薬が少なくなったため、継続処方となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用頻度が増えている場合や、症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "as_needed_refill_not_needed",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.as_needed_refill_not_needed",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 頓用使用（処方なし）",
+      "scenarioType": "usage",
+      "scenarioGroup": "as_needed",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "usage",
+        "as_needed"
+      ],
+      "intentTags": [
+        "usage_guidance"
+      ],
+      "S": "{{drug_subject}}は、症状が出た時に使用している。\n残薬があるため、今回は処方なしとなった。",
+      "O": "{{drug_subject}}　使用中",
+      "A": "{{drug_subject}}は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
+      "P": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。\n症状が続く場合や、使用頻度が増える場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "as_needed",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が出た時に使用している。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "s_2",
+          "text": "残薬があるため、今回は処方なしとなった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、症状が出た時に、指示された用法に従って使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "症状が続く場合や、使用頻度が増える場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "end_improved",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.end_improved",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 終了（改善）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "symptom_improved"
+        ],
+        "symptoms": [
+          "症状が改善した"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "improved"
+      ],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "S": "{{drug_subject}}は、症状が改善したため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、症状改善により終了となった。\n終了後に症状が悪化する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、症状が改善したため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、症状改善により終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "終了後に症状が悪化する可能性があるため、注意が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "end_insufficient_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.end_insufficient_effect",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 終了（効果不十分）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "insufficient_effect"
+      ],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "S": "{{drug_subject}}は、効果不十分のため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。\n終了後は、目の症状の変化について確認を要する。",
+      "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果不十分のため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "終了後は、目の症状の変化について確認を要する。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "end_ineffective",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.end_ineffective",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 終了（無効）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "treatment_end",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "ineffective"
+        ],
+        "symptoms": [
+          "効果なし"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "treatment_end",
+        "ineffective"
+      ],
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。\n終了後は、目の症状の変化について確認を要する。",
+      "P": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+      "followupRef": "end_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "a_2",
+          "text": "終了後は、目の症状の変化について確認を要する。",
+          "role": "treatment_end_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の終了後、目の症状の変化がある場合はご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_mild_continue",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_mild_continue",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE継続（軽症）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_mild",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "irritation_mild"
+        ],
+        "symptoms": [
+          "刺激感（軽度）"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "mild_continue"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}の使用により刺激感があるが、日常生活は送れている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による刺激感の副作用を軽度認めるが、治療継続が可能である。",
+      "P": "{{drug_subject}}による刺激感が軽い場合は経過をみて、刺激感が強くなる場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感があるが、日常生活は送れている。",
+          "role": "side_effect_presence",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による刺激感の副作用を軽度認めるが、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による刺激感が軽い場合は経過をみて、刺激感が強くなる場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_moderate_consider_dr",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_moderate_consider_dr",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE継続（中等度）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_moderate",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [
+          "irritation_moderate"
+        ],
+        "symptoms": [
+          "刺激感（中等度）"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "moderate_consider_dr"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による刺激感が強く、継続困難の可能性があるため対応を要する。",
+      "P": "{{drug_subject}}による刺激感の副作用が強い場合は、使用回数を減らすことや薬の変更が必要になることがあります。\n処方医へご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。",
+          "role": "side_effect_presence",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による刺激感が強く、継続困難の可能性があるため対応を要する。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による刺激感の副作用が強い場合は、使用回数を減らすことや薬の変更が必要になることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "処方医へご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_change_due_to_irritation",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_change_due_to_irritation",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE変更（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_change",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "change"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}の使用により刺激感が出現したため、他剤へ変更となった。",
+      "O": "{{drug_subject}}　処方変更",
+      "A": "{{drug_subject}}の使用による刺激感を認め、他剤変更後の経過確認を要する。",
+      "P": "{{drug_subject}}の変更後、目の症状の悪化や変化があればご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が出現したため、他剤へ変更となった。",
+          "role": "side_effect_presence",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の使用による刺激感を認め、他剤変更後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の変更後、目の症状の悪化や変化があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_dose_decrease_due_to_irritation",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_dose_decrease_due_to_irritation",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE減量（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_dose_decrease",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "decrease",
+        "dose_decrease"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}の使用により刺激感が強いため、点眼回数が減った。",
+      "O": "{{drug_subject}}　点眼回数減",
+      "A": "{{drug_subject}}の使用による刺激感を認め、点眼回数変更後の経過確認を要する。",
+      "P": "{{drug_subject}}の点眼回数が減った後も刺激感が続く場合はご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が強いため、点眼回数が減った。",
+          "role": "side_effect_presence",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の使用による刺激感を認め、点眼回数変更後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の点眼回数が減った後も刺激感が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "se_stop_due_to_irritation",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_stop_due_to_irritation",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE中止（刺激感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "side_effect",
+      "sideEffectPresence": "present_stop",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "side_effect",
+        "stop"
+      ],
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "S": "{{drug_subject}}の使用により刺激感が強いため、中止となった。",
+      "O": "{{drug_subject}}　処方中止",
+      "A": "{{drug_subject}}の使用による刺激感を認め、中止後の経過確認を要する。",
+      "P": "{{drug_subject}}の中止後、目の症状の悪化や変化があればご相談ください。",
+      "followupRef": "se_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の使用により刺激感が強いため、中止となった。",
+          "role": "side_effect_presence",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の使用による刺激感を認め、中止後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の中止後、目の症状の悪化や変化があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_tip_contamination",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_tip_contamination",
+      "title": "使用方法説明（接触使用）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "tip"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬の先端を、目や瞼などに触れて使用しています。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の使い方の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬の先端を、目や瞼などに触れると汚染されてしまいます。\n先端部分に触れないように使用してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬の先端を、目や瞼などに触れて使用しています。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の使い方の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬の先端を、目や瞼などに触れると汚染されてしまいます。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "先端部分に触れないように使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_interval",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_interval",
+      "title": "使用方法説明（間隔不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "interval"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬と点眼薬の使用間隔は、十分あけないで使用しています。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、目に十分行き渡るまでに時間がかかります。\n点眼後5〜10分程度あけてから、次の目薬を使用してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬と点眼薬の使用間隔は、十分あけないで使用しています。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、目に十分行き渡るまでに時間がかかります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "点眼後5〜10分程度あけてから、次の目薬を使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_after_opening_expiry",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_after_opening_expiry",
+      "title": "使用方法説明（開封後一ヶ月以上使用）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "opening"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、開封後一ヶ月以上経過後も使用を続けている。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、衛生面を考慮し、開封後1ヶ月を目安に使用を終了し、残っていても処分してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、開封後一ヶ月以上経過後も使用を続けている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、衛生面を考慮し、開封後1ヶ月を目安に使用を終了し、残っていても処分してください。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_suspension_shake",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_suspension_shake",
+      "title": "使用方法説明（懸濁不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "suspension"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、振らないまま使用を続けている。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。\n使用する前に、よく振り混ぜてから使用してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、振らないまま使用を続けている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用する前に、よく振り混ぜてから使用してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_storage_light_protection",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_light_protection",
+      "title": "保管方法説明（遮光不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、遮光せずに使用している。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、遮光せずに使用している。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、光の影響により、効果が十分に出ない可能性があります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用していない間は、遮光袋に入れて保管してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_storage_cold",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_cold",
+      "title": "保管方法説明（冷所保存不十分）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage",
+        "cold"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、冷所に保管せず、常温で保管している。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、温度の影響により、効果が十分に出ない可能性があります。\n使用していない間は、冷所で保管してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、冷所に保管せず、常温で保管している。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、温度の影響により、効果が十分に出ない可能性があります。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "使用していない間は、冷所で保管してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    },
+    {
+      "id": "lifestyle_guidance_storage_upright_suspension",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_upright_suspension",
+      "title": "保管方法説明（懸濁性・先端上向き）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "situationFilter": [
+        "general"
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "suspension",
+        "storage",
+        "upright"
+      ],
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "S": "点眼薬は、向きを気にせず保管していた。",
+      "O": "点眼薬　使用中",
+      "A": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+      "P": "点眼薬は、先端部分を上にして保管することで、目詰まりを防ぐことができます。\n保管するときは向きに注意してください。",
+      "followupRef": "default_followup",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "点眼薬は、向きを気にせず保管していた。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "点眼薬は、先端部分を上にして保管することで、目詰まりを防ぐことができます。",
+          "role": "administration_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": []
+        },
+        {
+          "id": "p_2",
+          "text": "保管するときは向きに注意してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": []
+        }
+      ]
+    }
+  ],
+  "addons": {
+    "items": {
+      "addon_eye_drop_tip_contamination": {
+        "key": "addon_eye_drop_tip_contamination",
+        "id": "addon_eye_drop_tip_contamination",
+        "title": "使用方法説明",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "目薬の先端が、目や瞼などに触れると汚染されることがあります。\n先端部分に触れないように使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_after_opening_expiry": {
+        "key": "addon_eye_drop_after_opening_expiry",
+        "id": "addon_eye_drop_after_opening_expiry",
+        "title": "使用方法説明（開封後1ヶ月まで）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "開封後の目薬は、衛生面を考慮し、1ヶ月を目安に処分してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_interval_5min": {
+        "key": "addon_eye_drop_interval_5min",
+        "id": "addon_eye_drop_interval_5min",
+        "title": "使用方法説明（間隔5分）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "複数の目薬を使用する場合は、5分以上あけて使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_interval_10min": {
+        "key": "addon_eye_drop_interval_10min",
+        "id": "addon_eye_drop_interval_10min",
+        "title": "使用方法説明（間隔10分）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "複数の目薬を使用する場合は、10分以上あけて使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_storage_light_protection": {
+        "key": "addon_eye_drop_storage_light_protection",
+        "id": "addon_eye_drop_storage_light_protection",
+        "title": "保管方法説明（遮光性）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。",
+        "intentTags": [
+          "administration_instruction"
+        ],
+        "requiredTags": [
+          "light_protection_storage"
+        ]
+      },
+      "addon_eye_drop_contact_lens_remove_before_use": {
+        "key": "addon_eye_drop_contact_lens_remove_before_use",
+        "id": "addon_eye_drop_contact_lens_remove_before_use",
+        "title": "使用方法説明（コンタクトレンズ・外して点眼）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "コンタクトレンズを装用している場合は、点眼前に外してください。\n再装用の可否やタイミングは、薬剤ごとの指示に従ってください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_contact_lens_product_specific": {
+        "key": "addon_eye_drop_contact_lens_product_specific",
+        "id": "addon_eye_drop_contact_lens_product_specific",
+        "title": "使用方法説明（コンタクトレンズ・薬剤別確認）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "コンタクトレンズ装用中の使用可否は、薬剤ごとに異なる場合があります。\n使用前に、コンタクトレンズに関する指示を確認してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_adherence_reminder_alarm": {
+        "key": "addon_adherence_reminder_alarm",
+        "id": "addon_adherence_reminder_alarm",
+        "title": "使用忘れ対策（通知：アラーム）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_reminder_app": {
+        "key": "addon_adherence_reminder_app",
+        "id": "addon_adherence_reminder_app",
+        "title": "使用忘れ対策（通知：記録アプリ）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_visual_calendar_checklist": {
+        "key": "addon_adherence_visual_calendar_checklist",
+        "id": "addon_adherence_visual_calendar_checklist",
+        "title": "使用忘れ対策（見える化：カレンダー・チェックリスト）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、カレンダーやチェックリストで確認する方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_visual_note": {
+        "key": "addon_adherence_visual_note",
+        "id": "addon_adherence_visual_note",
+        "title": "使用忘れ対策（見える化：貼り紙）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、点眼する時間を目立つ場所に書いておく方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_prep_previous_night": {
+        "key": "addon_adherence_prep_previous_night",
+        "id": "addon_adherence_prep_previous_night",
+        "title": "使用忘れ対策（準備：前夜）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の使用予定を確認しておく習慣も役立ちます。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_routine_link": {
+        "key": "addon_adherence_routine_link",
+        "id": "addon_adherence_routine_link",
+        "title": "使用忘れ対策（習慣化：生活習慣と結びつける）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、毎日の習慣と点眼を結びつけて覚える方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      },
+      "addon_adherence_support_family_reminder": {
+        "key": "addon_adherence_support_family_reminder",
+        "id": "addon_adherence_support_family_reminder",
+        "title": "使用忘れ対策（支援：家族などの声掛け）",
+        "group": "adherence",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
+        "intentTags": [
+          "adherence_support"
+        ]
+      }
+    },
+    "orderPresets": {}
+  },
+  "ui": {
+    "panels": [
+      {
+        "id": "panel_1",
+        "title": "基本",
+        "sections": [
+          "display",
+          "categoryPath",
+          "drug",
+          "template"
+        ]
+      },
+      {
+        "id": "panel_2",
+        "title": "指導（アドオン）",
+        "sections": [
+          "addons"
+        ]
+      },
+      {
+        "id": "panel_3",
+        "title": "SOAP（シナリオ）",
+        "sections": [
+          "scenarios"
+        ]
+      }
+    ],
+    "panelOrder": [
+      "panel_1",
+      "panel_2",
+      "panel_3"
+    ],
+    "defaultPanelId": "panel_1"
+  },
+  "risks": {
+    "primary": [],
+    "secondary": [],
+    "conditional": []
+  },
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "index": {
+    "searchableText": [
+      "ゼペリン点眼液",
+      "アレギサール点眼液",
+      "ペミラストン点眼液",
+      "リザベン点眼液",
+      "トラメラス点眼液PF",
+      "インタール点眼液",
+      "アシタザノラスト点眼液",
+      "ペミロラスト点眼液",
+      "トラニラスト点眼液",
+      "クロモグリク酸点眼液",
+      "アシタザノラスト",
+      "ペミロラスト",
+      "トラニラスト",
+      "クロモグリク酸",
+      "ぜぺりんてんがん",
+      "ぜぺりん",
+      "あしたざのらすとてんがん",
+      "あしたざのらすと",
+      "あれぎさーるてんがん",
+      "あれぎさーる",
+      "ぺみろらすとてんがん",
+      "ぺみろらすと",
+      "ぺみらすとんてんがん",
+      "ぺみらすとん",
+      "りざべんてんがん",
+      "りざべん",
+      "とらにらすとてんがん",
+      "とらにらすと",
+      "とらめらすてんがんぴーえふ",
+      "とらめらすぴーえふ",
+      "とらめらすてんがん",
+      "とらめらす",
+      "いんたーるてんがん",
+      "いんたーる",
+      "くろもぐりくさんてんがん",
+      "くろもぐりくさん",
+      "花粉症",
+      "アレルギー性結膜炎",
+      "目のかゆみ",
+      "目の充血",
+      "涙目",
+      "点眼",
+      "目薬",
+      "化学伝達物質",
+      "ケミカルメディエーター",
+      "遊離抑制",
+      "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
+      "アレルギー",
+      "抗アレルギー点眼薬",
+      "ケミカルメディエーター遊離抑制薬",
+      "外用"
+    ],
+    "normalizedTokens": [
+      "ぜぺりんてんがんえき",
+      "あれぎさーるてんがんえき",
+      "ぺみらすとんてんがんえき",
+      "りざべんてんがんえき",
+      "とらめらすてんがんえきぴーえふ",
+      "いんたーるてんがんえき",
+      "あしたざのらすとてんがんえき",
+      "ぺみろらすとてんがんえき",
+      "とらにらすとてんがんえき",
+      "くろもぐりくさんてんがんえき",
+      "あしたざのらすと",
+      "ぺみろらすと",
+      "とらにらすと",
+      "くろもぐりくさん",
+      "ぜぺりんてんがん",
+      "ぜぺりん",
+      "あしたざのらすとてんがん",
+      "あれぎさーるてんがん",
+      "あれぎさーる",
+      "ぺみろらすとてんがん",
+      "ぺみらすとんてんがん",
+      "ぺみらすとん",
+      "りざべんてんがん",
+      "りざべん",
+      "とらにらすとてんがん",
+      "とらめらすてんがんぴーえふ",
+      "とらめらすぴーえふ",
+      "とらめらすてんがん",
+      "とらめらす",
+      "いんたーるてんがん",
+      "いんたーる",
+      "くろもぐりくさんてんがん",
+      "かふんしょう",
+      "あれるぎーせいけつまくえん",
+      "めのかゆみ",
+      "めのじゅうけつ",
+      "なみだめ",
+      "てんがん",
+      "めぐすり",
+      "けみかるめでぃえーたーゆうりよくせいやく",
+      "あれるぎー",
+      "こうあれるぎーてんがんやく",
+      "けみかるめでぃえーたーゆうりよくせいやく",
+      "がいよう"
+    ],
+    "facets": {}
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "drug_effect_explanation",
+      "side_effect_attention",
+      "dose_increase_explanation",
+      "dose_decrease_explanation",
+      "treatment_end_explanation",
+      "adherence_support",
+      "usage_guidance",
+      "administration_instruction",
+      "concomitant_drug_attention",
+      "followup_monitoring"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
+  "expressModes": []
+}
