@@ -270,3 +270,21 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 |---|---|---|
 | `MODULE_ID_DUPLICATE` | ERROR | Structural |
 | `SCENARIO_GLOBALID_DUPLICATE_CROSS_MODULE` | ERROR | Structural |
+
+---
+
+## Appendix B: KNOWN_INTENTIONAL_WARNINGS
+
+Validator が検出するが、意図的に残存させている WARNING の台帳。
+`npm run build` / ModuleValidator 実行時にこれらが出力されても対応不要。
+
+### KW-001
+
+| 項目 | 内容 |
+|---|---|
+| **errorCode** | `ADDON_REQUIRED_TAG_UNREACHABLE` |
+| **module** | `allergy_h1_antihistamine_eye_drops` |
+| **対象** | `addons.items["addon_eye_drop_storage_cold"].requiredTags["cold_storage"]` |
+| **status** | `INTENTIONAL_KEEP` |
+| **理由** | H1点眼を ophthalmic module の base として使用しているため。現在の登録ブランド（アレジオン・ザジテン・パタノール・リボスチン）はいずれも室温保存であり `cold_storage` tag を持たないが、将来の冷所保存点眼薬 module 横展開時の canonical addon structure として保持する。 |
+| **対応方針** | 削除しない。冷所保存点眼薬 module 追加時に `cold_storage` ブランドが登録されることで自然解消する。 |
