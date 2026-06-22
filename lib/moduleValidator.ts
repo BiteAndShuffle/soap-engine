@@ -48,6 +48,9 @@
  *   28)  scenarios[].sComposition.intent が禁止値でないこと（WARNING）
  *        （side_effect_absent / adherence_good / adherence_poor）
  *   29)  scenarios[].SStructured / AStructured の role が禁止語彙でないこと（WARNING）
+ *   30)  scenarios[].SStructured / AStructured / PStructured の notes に
+ *        "ROLE_MAPPING_UNCLEAR" を含む item が存在しないこと（WARNING）
+ *   31)  scenarios[].PStructured の role が禁止語彙でないこと（WARNING）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -91,7 +94,8 @@ export type ModuleValidationErrorCode =
   | 'SCOMPOSITION_TEMPLATE_NONSTANDARD' // sComposition.template が symptom_based/status_based 以外（WARNING）
   | 'SCOMPOSITION_NONSTANDARD_KEY'  // sComposition に禁止キーが存在する（WARNING）
   | 'SCOMPOSITION_INTENT_FORBIDDEN' // sComposition.intent が禁止値（WARNING）
-  | 'STRUCTURED_ROLE_FORBIDDEN'     // SStructured/AStructured.role が禁止語彙（WARNING）
+  | 'STRUCTURED_ROLE_FORBIDDEN'     // SStructured/AStructured/PStructured.role が禁止語彙（WARNING）
+  | 'ROLE_MAPPING_NOTE_PRESENT'     // SStructured/AStructured/PStructured の notes に ROLE_MAPPING_UNCLEAR が残存（WARNING）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -142,9 +146,15 @@ const FORBIDDEN_S_STRUCTURED_ROLES = new Set([
   'adherence_observation',
   'side_effect_observation',
   'symptom_observation',
+  'lifestyle_assessment',
 ])
 
-const FORBIDDEN_A_STRUCTURED_ROLES = new Set(['drug_mechanism'])
+const FORBIDDEN_A_STRUCTURED_ROLES = new Set(['drug_mechanism', 'lifestyle_assessment'])
+
+const FORBIDDEN_P_STRUCTURED_ROLES = new Set([
+  'treatment_start_reason',
+  'followup_monitoring',
+])
 
 // ─────────────────────────────────────────────────────────────
 // addon / followup 責務逸脱チェック用 禁止語
@@ -1016,6 +1026,36 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
             detail: `scenarios["${scId}"].AStructured に禁止 role "${role}" が存在します（treatment_assessment への置換が必要）`,
             isWarning: true,
           })
+        }
+      }
+
+      // 31) PStructured.role 禁止語彙検出
+      for (const entry of (sc.PStructured as Array<Record<string, unknown>> | undefined) ?? []) {
+        const role = entry.role
+        if (typeof role === 'string' && FORBIDDEN_P_STRUCTURED_ROLES.has(role)) {
+          const hint = role === 'treatment_start_reason'
+            ? 'drug_effect_explanation への置換が必要'
+            : 'followup_guidance への置換が必要'
+          errors.push({
+            code: 'STRUCTURED_ROLE_FORBIDDEN',
+            detail: `scenarios["${scId}"].PStructured に禁止 role "${role}" が存在します（${hint}）`,
+            isWarning: true,
+          })
+        }
+      }
+
+      // 30) ROLE_MAPPING_UNCLEAR note 残存検出
+      const structuredFields = ['SStructured', 'AStructured', 'PStructured'] as const
+      for (const field of structuredFields) {
+        for (const entry of (sc[field] as Array<Record<string, unknown>> | undefined) ?? []) {
+          const notes = entry.notes
+          if (typeof notes === 'string' && notes.includes('ROLE_MAPPING_UNCLEAR')) {
+            errors.push({
+              code: 'ROLE_MAPPING_NOTE_PRESENT',
+              detail: `scenarios["${scId}"].${field} に ROLE_MAPPING_UNCLEAR note が残存しています（role を確立済み語彙へ置換し notes を削除してください）`,
+              isWarning: true,
+            })
+          }
         }
       }
     }

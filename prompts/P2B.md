@@ -233,6 +233,23 @@ P1原則に従い、bridge原稿をsingle source of truthとして扱う。
 - P0-B JSON RULEに従って格納する
 - 不明点は推測せずERROR / PENDINGとする
 - 既存canonical JSONから継承した項目は inherited_from_existing として明示する
+■ CROSS_MODULE_DERIVATION_CHECK
+既存モジュールを参照・横展開して新規 bridge を作成した場合の必須確認項目。
+本文中の旧モジュール固有文言残存チェック:
+  確認対象: 全シナリオの S / O / A / P フィールド
+  禁止状態:
+    - 旧モジュール固有の薬効分類名が非置換のまま残存している状態
+    - 旧モジュール固有の作用機序文が新規モジュールの A/P に混入している状態
+    例: CMRI 点眼への H1 横展開時、「ヒスタミンがH1受容体へ作用するのを抑え」が残存 → ERROR
+機序説明・作用機序の扱い:
+  - 新規モジュールの機序説明は bridge 本文を正本とする
+  - 旧モジュールの機序文を推測・自動置換で補完しない
+  - constitution.editingRules「A / P では薬剤が使用薬として使われている場合のみ
+    {{drug_subject}} へ読み替える」を遵守し、機序説明行は {{drug_subject}} に置換しない
+横展開ソースの明示:
+  - P2B 開始時に参照したソースモジュール ID を REFERENCE_USAGE_REPORT へ記録すること
+  - 横展開元と新規モジュールの薬効分類が異なる場合は、全 A/P フィールドを対象に
+    旧モジュール固有文言のリストと照合すること
 ■ VALUE_ORIGIN_CLASSIFICATION
 P2Bは各値の由来を以下の4分類で扱う。
 bridge_managed:
@@ -333,6 +350,19 @@ Phase 9
 - ERROR / PENDING / CHECK判定
 Phase 10
 - P3 handoff
+■ SCENARIO_DELIMITER_DETECTION_RULE
+=======SCENARIOS_START======= の standalone delimiter 検出ルール。
+有効な本文開始位置:
+  行全体が =======SCENARIOS_START======= に完全一致する行のみを standalone delimiter と判定する。
+  判定: line.strip() == "=======SCENARIOS_START=======" のみ許可
+無効（本文開始として扱わない）:
+  - scenarioEngine.scenarioSection.start: "=======SCENARIOS_START=======" （YAML プロパティ値行）
+  - constitution や outputRules 内の参照文字列行
+bridge ヘッダーと SCENARIOS 本文を結合する場合:
+  - ヘッダーは scenarioEngine / constitution を含めて保持すること
+  - constitution.outputRules の後に空行を置いてから standalone delimiter を配置すること
+  - scenarioEngine.scenarioSection.start の値を delimiter 検出に使用しないこと
+  - SCENARIOS_END も同ルールで判定すること
 ■ MODULE_BUILD_RULE
 drugResolution build補足：
 drugResolution.brandToTags は handlingTags の copy ではない。
@@ -596,25 +626,49 @@ SStructured.role 確立済み語彙:
 - side_effect_presence    : side_effect あり系（se_mild / se_moderate / se_change 等）の全 S 行
 - adherence_status        : adherence 系の全 S 行
 - treatment_end_reason    : treatment_end 系の S 行
+SStructured.role 追加規則（scenarioType 別）:
+- usage / as_needed 系の S 行: adherence_status（使用状況を記述する行）
+- lifestyle_guidance 系の S 行: adherence_status（使用行動・保管行動を記述する行）
+side_effect 系 S 行の区別（必須）:
+  - sideEffectPresence = absent_or_not_observed の S 行: side_effect_status
+  - sideEffectPresence = present_* の S 行:              side_effect_presence
+  両者を混同してはならない（例: se_*_none の全 S 行は side_effect_status、se_mild の全 S 行は side_effect_presence）
+treatment_start 系 intent 細分（必須）:
+  - id が initial / new_addition 系: intent: new_addition
+  - id が restart 系: intent: restart
+  - id が external_start 系: intent: external_continuation
+  全 treatment_start シナリオに一律 new_addition を設定してはならない
 禁止語彙（推測生成された非標準語の例）:
 - treatment_adjustment_reason → dose_adjustment_reason を使用
 - adherence_observation       → adherence_status を使用
 - side_effect_observation     → side_effect_status（なし系）/ side_effect_presence（あり系）を使用
 - symptom_observation         → scenarioType に応じて side_effect_status / adherence_status を使用
+- lifestyle_assessment        → adherence_status（S フィールド）/ treatment_assessment（A フィールド）を使用
 上記禁止語彙が存在する場合は ERROR とする。
 AStructured.role 確立済み語彙:
 - treatment_assessment      : treatment_start / treatment_adjustment / adherence 等の A 行（汎用）
 - side_effect_assessment    : side_effect 系の A 行
 - adherence_assessment      : adherence 系の A 行
 - treatment_end_assessment  : treatment_end 系の A 行（treatment_assessment との混用禁止）
+AStructured.role 追加規則（scenarioType 別）:
+- lifestyle_guidance / usage 系の A 行: treatment_assessment（汎用）
 禁止語彙（推測生成された非標準語の例）:
-- drug_mechanism → treatment_assessment を使用（機序説明行も treatment_assessment で扱う）
+- drug_mechanism      → treatment_assessment を使用（機序説明行も treatment_assessment で扱う）
+- lifestyle_assessment → treatment_assessment を使用（lifestyle_guidance / usage 系も treatment_assessment）
 上記禁止語彙が存在する場合は ERROR とする。
 PStructured.role 確立済み語彙（参考）:
 - drug_effect_explanation / side_effect_attention / side_effect_guidance
 - dose_adjustment_guidance / adherence_guidance / treatment_end_guidance
 - followup_guidance / lifestyle_guidance / administration_guidance
 - sickday_guidance / urgent_consult_guidance
+PStructured.role 追加規則（scenarioType 別）:
+- treatment_start 系 P 行（薬効説明）: drug_effect_explanation
+  ※ treatment_start_reason は SStructured 専用。PStructured では禁止
+- treatment_end / SE 変更 / SE 中止 系 P 行（終了後 followup 説明）: followup_guidance
+  ※ followup_monitoring は非標準。followup_guidance を使用すること
+PStructured.role 禁止語彙（追記）:
+- treatment_start_reason（P フィールド内）→ drug_effect_explanation を使用
+- followup_monitoring → followup_guidance を使用
 新規 role 語彙が必要な場合:
 1. 既存語彙での代替可能性を確認する
 2. 代替不能の場合のみ新規語彙を使用してよい
@@ -709,6 +763,26 @@ DrugResolution:
 - key が drug.brandCatalog のキーと一致していること
 - value が string[] であること
 - （brandToTags と handlingTags の値一致は検査しない — 別概念）
+■ POST_BUILD_MANDATORY_AUDIT
+canonical JSON 生成後・P3 移行前に必ず実施する追加監査。
+[A] ROLE_MAPPING_UNCLEAR 残存チェック
+  SStructured / AStructured / PStructured の全 item を対象に、
+  "notes" フィールドに "ROLE_MAPPING_UNCLEAR" を含む item が存在しないか確認する。
+  存在する場合: ERROR（P3 移行禁止）
+  対応: notes を持つ item の role を確立済み語彙へ置換し、notes フィールドを削除する
+[B] 旧モジュール固有文言残存チェック
+  CROSS_MODULE_DERIVATION_CHECK を参照。
+  横展開元モジュール固有の薬効分類名・機序説明が残存していないか S/O/A/P を全件確認する。
+[C] lifestyle_guidance / usage 系 Structured role チェック
+  type=lifestyle_guidance または type=usage の SStructured.role が
+  adherence_status 以外（特に lifestyle_assessment）になっていないか確認する。
+  該当する場合: ERROR（道標: adherence_status へ置換）
+[D] drugResolution.brandToTags 確認
+  bridge に明示がない場合: {} のまま維持すること
+  handlingTags からのコピー生成・推測生成は禁止（P2B では bridge 未明示なら {} のみ許可）
+[E] ADDON.requiredTags と handlingTags の整合確認
+  requiredTags が設定された ADDON を P_ADDON に持つシナリオの brandCatalog を確認し、
+  当該 tag に到達できる brand が存在することを確認する
 ■ ERROR_PENDING_RULE
 以下は推測補完せず停止する。
 ※ERROR / PENDING / CHECK の分類は、上記「ERROR / PENDING / CHECK 定義」に従う。

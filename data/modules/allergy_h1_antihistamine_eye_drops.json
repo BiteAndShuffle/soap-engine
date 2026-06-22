@@ -543,7 +543,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
-          "role": "treatment_start_reason",
+          "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -628,11 +628,10 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果の実感が乏しいため点眼回数が増えた。",
-          "role": "treatment_start_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
@@ -745,11 +744,10 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他剤との調整により点眼回数が増えた。",
-          "role": "treatment_start_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
@@ -856,11 +854,10 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、症状が改善したため点眼回数が減った。",
-          "role": "treatment_start_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
@@ -967,11 +964,10 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
-          "role": "treatment_start_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
@@ -1079,11 +1075,10 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他剤との調整により点眼回数が減った。",
-          "role": "treatment_start_reason",
+          "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所A — treatment_adjustment_reason がcatalogに未存在のためtreatment_start_reasonに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
@@ -1200,18 +1195,17 @@
         {
           "id": "s_2",
           "text": "刺激感は認めない。",
-          "role": "treatment_assessment",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
         {
           "id": "a_1",
           "text": "{{drug_subject}}による刺激感は現時点で認められず、治療継続が可能である。",
-          "role": "treatment_assessment",
+          "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -1313,18 +1307,17 @@
         {
           "id": "s_2",
           "text": "異物感は認めない。",
-          "role": "treatment_assessment",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
         {
           "id": "a_1",
           "text": "{{drug_subject}}による異物感は現時点で認められず、治療継続が可能である。",
-          "role": "treatment_assessment",
+          "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -1426,18 +1419,17 @@
         {
           "id": "s_2",
           "text": "掻痒感は認めない。",
-          "role": "treatment_assessment",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
         {
           "id": "a_1",
           "text": "{{drug_subject}}による掻痒感は現時点で認められず、治療継続が可能である。",
-          "role": "treatment_assessment",
+          "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -1539,18 +1531,17 @@
         {
           "id": "s_2",
           "text": "充血は認めない。",
-          "role": "treatment_assessment",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
         {
           "id": "a_1",
           "text": "{{drug_subject}}による充血は現時点で認められず、治療継続が可能である。",
-          "role": "treatment_assessment",
+          "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -1652,18 +1643,17 @@
         {
           "id": "s_2",
           "text": "目やには認めない。",
-          "role": "treatment_assessment",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
-          "lockTerms": [],
-          "notes": "ROLE_MAPPING_UNCLEAR: 難所B — side_effect_denial に直接対応するcatalog roleが未存在のためtreatment_assessmentに暫定マッピング"
+          "lockTerms": []
         }
       ],
       "AStructured": [
         {
           "id": "a_1",
           "text": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
-          "role": "treatment_assessment",
+          "role": "side_effect_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3218,7 +3208,7 @@
         {
           "id": "s_1",
           "text": "点眼薬の先端を、目や瞼などに触れて使用しています。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3228,7 +3218,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の使い方の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3317,7 +3307,7 @@
         {
           "id": "s_1",
           "text": "点眼薬と点眼薬の使用間隔は、十分あけないで使用しています。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3327,7 +3317,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3416,7 +3406,7 @@
         {
           "id": "s_1",
           "text": "点眼薬は、開封後一ヶ月以上経過後も使用を続けている。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3426,7 +3416,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3507,7 +3497,7 @@
         {
           "id": "s_1",
           "text": "点眼薬は、振らないまま使用を続けている。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3517,7 +3507,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3606,7 +3596,7 @@
         {
           "id": "s_1",
           "text": "点眼薬は、遮光せずに使用している。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3616,7 +3606,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3705,7 +3695,7 @@
         {
           "id": "s_1",
           "text": "点眼薬は、冷所に保管せず、常温で保管している。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3715,7 +3705,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3804,7 +3794,7 @@
         {
           "id": "s_1",
           "text": "点眼薬は、向きを気にせず保管していた。",
-          "role": "lifestyle_assessment",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3814,7 +3804,7 @@
         {
           "id": "a_1",
           "text": "点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。",
-          "role": "lifestyle_assessment",
+          "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -3955,7 +3945,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
-          "role": "treatment_start_reason",
+          "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
@@ -4086,7 +4076,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、アレルギー症状を改善する薬です。",
-          "role": "treatment_start_reason",
+          "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": []
