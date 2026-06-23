@@ -592,10 +592,10 @@
   box-shadow: inset -3px 0 0 #5a7fb8;
 }
 .addonBtnRightAccentLavender {
-  box-shadow: inset -3px 0 0 #b39ddb;
+  box-shadow: inset -3px 0 0 #c7b8ea;
 }
 .addonBtnRightAccentLavender:hover {
-  box-shadow: inset -3px 0 0 #9b82c8;
+  box-shadow: inset -3px 0 0 #b09dcf;
 }
 .addonBtnActive {
   background: #1a5cbf;
