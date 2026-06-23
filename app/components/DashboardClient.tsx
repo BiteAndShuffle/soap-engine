@@ -1299,6 +1299,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           {
             const addonItems = activeModuleData.addons?.items ?? {}
 
+            // {{drug_subject}} を実薬剤名に解決するヘルパー
+            // strip/add 両フェーズで同じ解決済みテキストを使うことで整合性を保つ
+            const rapidDrugName = activeDrugDisplayNameRef.current ?? activeBrandName ?? ''
+            const resolveAddonText = (t: string) =>
+              rapidDrugName ? t.replaceAll('{{drug_subject}}', rapidDrugName) : t
+
             // 全 ADDON テキストをセクション別に整理（剥がし対象）
             // 複数行テキストに対応するため section → texts[] の Map で管理する
             const allAddonTextsBySec = new Map<SoapKey, string[]>()
@@ -1308,13 +1314,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                   const t = item.sectionTexts[sec]
                   if (!t) continue
                   const list = allAddonTextsBySec.get(sec) ?? []
-                  list.push(t)
+                  list.push(resolveAddonText(t))
                   allAddonTextsBySec.set(sec, list)
                 }
               } else {
                 const sec = item.targetSection as SoapKey
                 const list = allAddonTextsBySec.get(sec) ?? []
-                list.push(item.text)
+                list.push(resolveAddonText(item.text))
                 allAddonTextsBySec.set(sec, list)
               }
             }
@@ -1346,12 +1352,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                   const t = item.sectionTexts[sec]
                   if (!t) continue
                   if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-                  sectionMap.get(sec)!.push(t)
+                  sectionMap.get(sec)!.push(resolveAddonText(t))
                 }
               } else {
                 const sec = item.targetSection
                 if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-                sectionMap.get(sec)!.push(item.text)
+                sectionMap.get(sec)!.push(resolveAddonText(item.text))
               }
             }
 

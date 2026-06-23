@@ -1,26 +1,22 @@
 # =========================================
 # SOAP-ENGINE MODULE (bridge原稿 / lightweight)
-# dm_glp1ra_injection
+# dm_gip_glp1ra_tirzepatide_injection
 # =========================================
-moduleId: "dm_glp1ra_injection"
+moduleId: "dm_gip_glp1ra_tirzepatide_injection"
 
 categoryPath:
   - "糖尿病"
-  - "GLP-1受容体作動薬"
+  - "GIP/GLP-1受容体作動薬"
   - "注射"
 
 drug:
-  genericName: "GLP-1受容体作動薬"
+  genericName: "GIP/GLP-1受容体作動薬"
 
   brandNames:
-    - "ビクトーザ"
-    - "バイエッタ"
-    - "リキスミア"
-    - "トルリシティ"
-    - "オゼンピック"
+    - "マンジャロ皮下注"
 
   drugClass:
-    - "GLP1_RA"
+    - "GIP_GLP1_RA"
 
   route: "injection"
 
@@ -28,51 +24,30 @@ drug:
     - "injection"
 
   drugSpecificTags:
-    - "glp1ra_injection"
+    - "gip_glp1ra_injection"
+    - "tirzepatide"
+    - "mounjaro"
 
   search:
-    primaryDisplayName: "GLP-1受容体作動薬（注射）"
+    primaryDisplayName: "GIP/GLP-1受容体作動薬（注射）"
 
     exactAliases:
-      - "ビクトーザ"
-      - "バイエッタ"
-      - "リキスミア"
-      - "トルリシティ"
-      - "オゼンピック"
+      - "マンジャロ皮下注"
+      - "マンジャロ"
+      - "チルゼパチド皮下注"
+      - "チルゼパチド"
 
     prefixAliases:
-      - "びくとーざ"
-      - "びく"
-      - "びくと"
-      - "ばいえった"
-      - "ばい"
-      - "ばいえ"
-      - "りきすみあ"
-      - "りき"
-      - "りきす"
-      - "とるりしてぃ"
-      - "とる"
-      - "とるり"
-      - "おぜんぴっく"
-      - "おぜ"
-      - "おぜん"
+      - "まんじゃろひかちゅう"
+      - "まんじゃろ"
+      - "ちるぜぱちどひかちゅう"
+      - "ちるぜぱちど"
 
     nameAliases:
-      - "びくとーざ"
-      - "びく"
-      - "びくと"
-      - "ばいえった"
-      - "ばい"
-      - "ばいえ"
-      - "りきすみあ"
-      - "りき"
-      - "りきす"
-      - "とるりしてぃ"
-      - "とる"
-      - "とるり"
-      - "おぜんぴっく"
-      - "おぜ"
-      - "おぜん"
+      - "まんじゃろひかちゅう"
+      - "まんじゃろ"
+      - "ちるぜぱちどひかちゅう"
+      - "ちるぜぱちど"
 
     keywords: []
 
@@ -84,127 +59,39 @@ drug:
       suppressCrossModuleSuggestionsOnExactHit: true
 
   nameAliases:
-    - "びくとーざ"
-    - "びく"
-    - "びくと"
-    - "ばいえった"
-    - "ばい"
-    - "ばいえ"
-    - "りきすみあ"
-    - "りき"
-    - "りきす"
-    - "とるりしてぃ"
-    - "とる"
-    - "とるり"
-    - "おぜんぴっく"
-    - "おぜ"
-    - "おぜん"
+    - "まんじゃろひかちゅう"
+    - "まんじゃろ"
+    - "ちるぜぱちどひかちゅう"
+    - "ちるぜぱちど"
 
   brandCatalog:
-    ビクトーザ:
-      displayName: "ビクトーザ"
+    マンジャロ皮下注:
+      displayName: "マンジャロ皮下注"
 
-      genericName: "リラグルチド"
+      genericName: "チルゼパチド"
 
-      displayGenericName: "リラグルチド"
-
-      aliases:
-        - "びくとーざ"
-        - "びく"
-        - "びくと"
-
-      normalizedAliases:
-        - "びくとーざ"
-        - "びく"
-        - "びくと"
-
-    バイエッタ:
-      displayName: "バイエッタ"
-
-      genericName: "エキセナチド"
-
-      displayGenericName: "エキセナチド"
+      displayGenericName: "チルゼパチド皮下注"
 
       aliases:
-        - "ばいえった"
-        - "ばい"
-        - "ばいえ"
+        - "まんじゃろひかちゅう"
+        - "まんじゃろ"
+        - "ちるぜぱちどひかちゅう"
+        - "ちるぜぱちど"
 
       normalizedAliases:
-        - "ばいえった"
-        - "ばい"
-        - "ばいえ"
-
-    リキスミア:
-      displayName: "リキスミア"
-
-      genericName: "リキシセナチド"
-
-      displayGenericName: "リキシセナチド"
-
-      aliases:
-        - "りきすみあ"
-        - "りき"
-        - "りきす"
-
-      normalizedAliases:
-        - "りきすみあ"
-        - "りき"
-        - "りきす"
-
-    トルリシティ:
-      displayName: "トルリシティ"
-
-      genericName: "デュラグルチド"
-
-      displayGenericName: "デュラグルチド"
-
-      aliases:
-        - "とるりしてぃ"
-        - "とる"
-        - "とるり"
-
-      normalizedAliases:
-        - "とるりしてぃ"
-        - "とる"
-        - "とるり"
-
-    オゼンピック:
-      displayName: "オゼンピック"
-
-      genericName: "セマグルチド"
-
-      displayGenericName: "セマグルチド"
-
-      aliases:
-        - "おぜんぴっく"
-        - "おぜ"
-        - "おぜん"
-
-      normalizedAliases:
-        - "おぜんぴっく"
-        - "おぜ"
-        - "おぜん"
+        - "まんじゃろひかちゅう"
+        - "まんじゃろ"
+        - "ちるぜぱちどひかちゅう"
+        - "ちるぜぱちど"
 
   aliasToBrand:
-    "びくとーざ": "ビクトーザ"
-    "びく": "ビクトーザ"
-    "びくと": "ビクトーザ"
-    "ばいえった": "バイエッタ"
-    "ばい": "バイエッタ"
-    "ばいえ": "バイエッタ"
-    "りきすみあ": "リキスミア"
-    "りき": "リキスミア"
-    "りきす": "リキスミア"
-    "とるりしてぃ": "トルリシティ"
-    "とる": "トルリシティ"
-    "とるり": "トルリシティ"
-    "おぜんぴっく": "オゼンピック"
-    "おぜ": "オゼンピック"
-    "おぜん": "オゼンピック"
+    "まんじゃろひかちゅう": "マンジャロ皮下注"
+    "まんじゃろ": "マンジャロ皮下注"
+    "ちるぜぱちどひかちゅう": "マンジャロ皮下注"
+    "ちるぜぱちど": "マンジャロ皮下注"
 
 template:
-  templateId: "dm_glp1ra_injection_v1"
+  templateId: "dm_gip_glp1ra_tirzepatide_injection_v1"
 
   templateVersion: "1.0.0"
 
@@ -218,19 +105,19 @@ template:
     - "severe"
 
 display:
-  title: "GLP-1受容体作動薬（注射）"
+  title: "GIP/GLP-1受容体作動薬（注射）"
 
-  subtitle: "GLP-1受容体作動薬（注射）"
+  subtitle: "マンジャロ皮下注 / チルゼパチド皮下注"
 
-  drugClassLabel: "GLP-1受容体作動薬"
+  drugClassLabel: "GIP/GLP-1受容体作動薬"
 
-  drugGeneric: "GLP-1受容体作動薬"
+  drugGeneric: "GIP/GLP-1受容体作動薬"
 
-  nodeLabelShort: "GLP1注射"
+  nodeLabelShort: "GIP/GLP1注射"
 
-  nodeLabelLong: "GLP-1受容体作動薬（注射）"
+  nodeLabelLong: "GIP/GLP-1受容体作動薬（注射）"
 
-  nodeKey: "glp1ra_injection"
+  nodeKey: "gip_glp1ra_tirzepatide_injection"
 
   menuGroupLabels:
     増量: "増量"
@@ -400,26 +287,27 @@ constitution:
 
 =======SCENARIOS_START=======
 
-【SCENARIO｜type=treatment_start｜id=initial｜title=GLP-1受容体作動薬(注射) 初回】
+【SCENARIO｜type=treatment_start｜id=initial｜title=GIP/GLP-1受容体作動薬（注射） 初回】
 S
-GLP-1受容体作動薬(注射)は、血糖値が高いため追加となった。
+GIP/GLP-1受容体作動薬（注射）は、血糖値が高いため追加となった。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)は、血糖コントロール不十分のため追加となった。
+GIP/GLP-1受容体作動薬（注射）は、血糖コントロール不十分のため追加となった。
 血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。
 血糖改善および体重管理の補助を目的として使用する。
 
 P
-GLP-1受容体作動薬(注射)は、血糖値を改善する薬です。
+GIP/GLP-1受容体作動薬（注射）は、血糖値を改善する薬です。
 悪心や食欲不振などの副作用が出ることがあります。
 副作用が出た場合はご相談ください。
 注射の具体的な手技については、指導せんを用いて説明しています。
 注射方法や使用手順に不安がある場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_glycemic_guidance
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
@@ -454,7 +342,7 @@ P_APPEND
 
 【ADDON｜type=side_effect_guidance｜id=addon_se_hypoglycemia_guidance｜title=副作用注意喚起（低血糖）】
 P_APPEND
-他の糖尿病薬と併用している場合は、ふらつき・動悸などの低血糖症状が出ることがあります。
+ふらつき・動悸などの低血糖症状が出ることがあります。
 低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 
 
@@ -468,27 +356,27 @@ P_APPEND
 嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
 
 
-
-【SCENARIO｜type=treatment_start｜id=restart｜title=GLP-1受容体作動薬(注射) 再開】
+【SCENARIO｜type=treatment_start｜id=restart｜title=GIP/GLP-1受容体作動薬（注射） 再開】
 S
-GLP-1受容体作動薬(注射)は、血糖値が高いため再開となった。
+GIP/GLP-1受容体作動薬（注射）は、血糖値が高いため再開となった。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)は、血糖コントロール不十分のため再開となった。
+GIP/GLP-1受容体作動薬（注射）は、血糖コントロール不十分のため再開となった。
 血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。
 血糖改善および体重管理の補助を目的として使用する。
 
 P
-GLP-1受容体作動薬(注射)は、血糖値を改善する薬です。
+GIP/GLP-1受容体作動薬（注射）は、血糖値を改善する薬です。
 悪心や食欲不振などの副作用が出ることがあります。
 副作用が出た場合はご相談ください。
 注射の具体的な手技については、指導せんを用いて説明しています。
 注射方法や使用手順に不安がある場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_glycemic_guidance
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
@@ -500,26 +388,27 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_start｜id=external_start｜title=GLP-1受容体作動薬(注射) 他所開始】
+【SCENARIO｜type=treatment_start｜id=external_start｜title=GIP/GLP-1受容体作動薬（注射） 他所開始】
 S
-GLP-1受容体作動薬(注射)は、他院で開始され継続使用中であった。
+GIP/GLP-1受容体作動薬（注射）は、他院で開始され継続使用中であった。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)は、血糖コントロール改善を目的として継続使用中であった。
+GIP/GLP-1受容体作動薬（注射）は、血糖コントロール改善を目的として継続使用中であった。
 血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。
 血糖改善および体重管理の補助を目的として使用する。
 
 P
-GLP-1受容体作動薬(注射)は、血糖値を改善する薬です。
+GIP/GLP-1受容体作動薬（注射）は、血糖値を改善する薬です。
 悪心や食欲不振などの副作用が出ることがあります。
 副作用が出た場合はご相談ください。
 注射の具体的な手技については、指導せんを用いて説明しています。
 注射方法や使用手順に不安がある場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_glycemic_guidance
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
@@ -531,21 +420,22 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=GLP-1受容体作動薬(注射) 増量（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=GIP/GLP-1受容体作動薬（注射） 増量（効果実感乏しい）】
 S
-GLP-1受容体作動薬(注射)は、効果の実感が乏しいため増量となった。
+GIP/GLP-1受容体作動薬（注射）は、効果の実感が乏しいため増量となった。
 
 O
-GLP-1受容体作動薬(注射)　増量
+{{drug_subject}}　増量
 
 A
-GLP-1受容体作動薬(注射)は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
+GIP/GLP-1受容体作動薬（注射）は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
 消化器症状が強い場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_se_hypoglycemia_guidance
 
 P_CLOSING
@@ -554,21 +444,22 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=GLP-1受容体作動薬(注射) 増量（検査値改善なし）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=GIP/GLP-1受容体作動薬（注射） 増量（検査値改善なし）】
 S
-GLP-1受容体作動薬(注射)は、検査値が改善しないため増量となった。
+GIP/GLP-1受容体作動薬（注射）は、検査値が改善しないため増量となった。
 
 O
-GLP-1受容体作動薬(注射)　増量
+{{drug_subject}}　増量
 
 A
-GLP-1受容体作動薬(注射)は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
+GIP/GLP-1受容体作動薬（注射）は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
 消化器症状が強い場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_se_hypoglycemia_guidance
 
 P_CLOSING
@@ -577,21 +468,22 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=GLP-1受容体作動薬(注射) 増量（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=GIP/GLP-1受容体作動薬（注射） 増量（他剤との調整）】
 S
-GLP-1受容体作動薬(注射)は、他剤変更に伴う調整により増量となった。
+GIP/GLP-1受容体作動薬（注射）は、他剤変更に伴う調整により増量となった。
 
 O
-GLP-1受容体作動薬(注射)　増量
+{{drug_subject}}　増量
 
 A
-GLP-1受容体作動薬(注射)は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
+GIP/GLP-1受容体作動薬（注射）は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
 消化器症状が強い場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_se_hypoglycemia_guidance
 
 P_CLOSING
@@ -600,18 +492,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=GLP-1受容体作動薬(注射) 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=GIP/GLP-1受容体作動薬（注射） 減量（症状改善）】
 S
-GLP-1受容体作動薬(注射)は、検査値が改善したため減量となった。
+GIP/GLP-1受容体作動薬（注射）は、検査値が改善したため減量となった。
 
 O
-GLP-1受容体作動薬(注射)　減量
+{{drug_subject}}　減量
 
 A
-GLP-1受容体作動薬(注射)は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)は、減量により血糖値が上がることがあります。
+GIP/GLP-1受容体作動薬（注射）は、減量により血糖値が上がることがあります。
 体調変化があればご相談ください。
 
 P_CLOSING
@@ -620,18 +512,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=GLP-1受容体作動薬(注射) 減量（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=GIP/GLP-1受容体作動薬（注射） 減量（効果実感乏しい）】
 S
-GLP-1受容体作動薬(注射)は、効果の実感が乏しいため減量を希望された。
+GIP/GLP-1受容体作動薬（注射）は、効果の実感が乏しいため減量を希望された。
 
 O
-GLP-1受容体作動薬(注射)　減量
+{{drug_subject}}　減量
 
 A
-GLP-1受容体作動薬(注射)は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)は、減量により血糖値が上昇する可能性があります。
+GIP/GLP-1受容体作動薬（注射）は、減量により血糖値が上昇する可能性があります。
 体調変化があればご相談ください。
 
 P_CLOSING
@@ -640,18 +532,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=GLP-1受容体作動薬(注射) 減量（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=GIP/GLP-1受容体作動薬（注射） 減量（他剤との調整）】
 S
-GLP-1受容体作動薬(注射)は、他剤変更に伴う調整のため減量となった。
+GIP/GLP-1受容体作動薬（注射）は、他剤変更に伴う調整のため減量となった。
 
 O
-GLP-1受容体作動薬(注射)　減量
+{{drug_subject}}　減量
 
 A
-GLP-1受容体作動薬(注射)は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)は、減量により血糖値が上昇する可能性があります。
+GIP/GLP-1受容体作動薬（注射）は、減量により血糖値が上昇する可能性があります。
 体調変化があればご相談ください。
 
 P_CLOSING
@@ -660,21 +552,28 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_induration_none｜title=GLP-1受容体作動薬(注射) 副作用なし（注射部固縮）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_induration_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（注射部固縮）】
 S
-GLP-1受容体作動薬(注射)を使用して症状は落ち着いている。
+GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
 注射部位が硬くなるような変化は認めない。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による注射部位反応は現時点で認められず、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による注射部位反応は現時点で認められず、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)の継続中に、注射部位が硬くなることがあります。
+GIP/GLP-1受容体作動薬（注射）の継続中に、注射部位が硬くなることがあります。
 毎回注射部位を変えることで予防できます。
 気になる症状があればご相談ください。
+
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -682,19 +581,19 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=GLP-1受容体作動薬(注射) 副作用なし（低血糖）】
+【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（低血糖）】
 S
-GLP-1受容体作動薬(注射)を使用して症状は落ち着いている。
+GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
 ふらつき・冷汗・動悸などの低血糖症状は認めない。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による低血糖は現時点で認められず、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による低血糖は現時点で認められず、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
+GIP/GLP-1受容体作動薬（注射）の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
 単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。
 症状が出た場合は糖分を摂取してください。
 改善しない場合はご相談ください。
@@ -712,22 +611,23 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_nausea_diarrhea_none｜title=GLP-1受容体作動薬(注射) 副作用なし（悪心・下痢）】
+【SCENARIO｜type=side_effect｜id=se_nausea_diarrhea_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（悪心・下痢）】
 S
-GLP-1受容体作動薬(注射)を使用して症状は落ち着いている。
+GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
 悪心・下痢などの消化器症状は認めない。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による消化器症状は現時点で認められず、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による消化器症状は現時点で認められず、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)の継続中に吐き気・下痢などが出ることがあります。
+GIP/GLP-1受容体作動薬（注射）の継続中に吐き気・下痢などが出ることがあります。
 症状が続く場合はご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
 - addon_hypertension_guidance
@@ -757,7 +657,6 @@ S_APPEND
 A_APPEND
 血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
 
-
 P_APPEND
 血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。
 食事療法や運動療法は、血圧のコントロールにおいて重要です。
@@ -786,7 +685,6 @@ S_APPEND
 A_APPEND
 尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。
 
-
 P_APPEND
 尿酸が高い状態が続くと、痛風発作などにつながることがあります。
 食事療法は、尿酸のコントロールにおいて重要です。
@@ -796,22 +694,23 @@ P_APPEND
 
 
 
-【SCENARIO｜type=side_effect｜id=se_appetite_loss_none｜title=GLP-1受容体作動薬(注射) 副作用なし（食欲不振）】
+【SCENARIO｜type=side_effect｜id=se_appetite_loss_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（食欲不振）】
 S
-GLP-1受容体作動薬(注射)を使用して症状は落ち着いている。
+GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
 食欲低下は認めない。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による食欲低下は現時点で認められず、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による食欲低下は現時点で認められず、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)の継続中に食欲低下が出ることがあります。
+GIP/GLP-1受容体作動薬（注射）の継続中に食欲低下が出ることがあります。
 食事量が落ちる・体重が急に減るなどの変化があればご相談ください。
 
 P_ADDON
+- addon_gi_tolerance_guidance
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
 - addon_hypertension_guidance
@@ -824,19 +723,19 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_pancreatitis_none｜title=GLP-1受容体作動薬(注射) 副作用なし（膵炎）】
+【SCENARIO｜type=side_effect｜id=se_pancreatitis_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（膵炎）】
 S
-GLP-1受容体作動薬(注射)を使用して症状は落ち着いている。
+GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
 強い腹痛や背部痛などの症状は認めない。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による膵炎は現時点で認められず、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による膵炎は現時点で認められず、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
+GIP/GLP-1受容体作動薬（注射）の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
 こうした症状が続く場合は膵炎の可能性があります。
 痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。
 
@@ -853,13 +752,13 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=adherence｜id=cp_good｜title=GLP-1受容体作動薬(注射) CP良好】
+【SCENARIO｜type=adherence｜id=cp_good｜title=GIP/GLP-1受容体作動薬（注射） CP良好】
 S
 薬を使用して症状は落ち着いている。
 継続して使用できている。
 
 O
-GLP-1受容体作動薬(注射)　使用中
+{{drug_subject}}　使用中
 
 A
 コンプライアンスは良好である。治療継続に問題はない。
@@ -881,13 +780,13 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=GLP-1受容体作動薬(注射) CP不良（使用忘れ）】
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=GIP/GLP-1受容体作動薬（注射） CP不良（使用忘れ）】
 S
 使用忘れがみられる。
 継続して使用できていない。
 
 O
-GLP-1受容体作動薬(注射)　使用中
+{{drug_subject}}　使用中
 
 A
 コンプライアンスは不良で、使用忘れがみられる。
@@ -946,13 +845,13 @@ P_APPEND
 
 
 
-【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=GLP-1受容体作動薬(注射) CP不良（自己判断）】
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=GIP/GLP-1受容体作動薬（注射） CP不良（自己判断）】
 S
 自己判断での使用調整がみられる。
 用法どおりの継続使用ができていない。
 
 O
-GLP-1受容体作動薬(注射)　使用中
+{{drug_subject}}　使用中
 
 A
 コンプライアンスは不良で、自己判断による調整がみられる。
@@ -968,13 +867,13 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=GLP-1受容体作動薬(注射) CP不良（受診遅延）】
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=GIP/GLP-1受容体作動薬（注射） CP不良（受診遅延）】
 S
 都合により受診遅延がみられる。
 継続した使用に不安がある。
 
 O
-GLP-1受容体作動薬(注射)　使用中
+{{drug_subject}}　使用中
 
 A
 コンプライアンスは不良で、受診遅延がみられる。
@@ -990,18 +889,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_end｜id=end_improved｜title=GLP-1受容体作動薬(注射) 終了（改善）】
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=GIP/GLP-1受容体作動薬（注射） 終了（改善）】
 S
-GLP-1受容体作動薬(注射)は、血糖コントロールが改善したため中止となった。
+GIP/GLP-1受容体作動薬（注射）は、血糖コントロールが改善したため中止となった。
 
 O
-GLP-1受容体作動薬(注射)　処方終了
+{{drug_subject}}　処方終了
 
 A
-GLP-1受容体作動薬(注射)は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
+GIP/GLP-1受容体作動薬（注射）は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
 
 P
-GLP-1受容体作動薬(注射)終了後、血糖上昇や体調変化がある場合はご相談ください。
+GIP/GLP-1受容体作動薬（注射）終了後、血糖上昇や体調変化がある場合はご相談ください。
 
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
@@ -1009,18 +908,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=GLP-1受容体作動薬(注射) 終了（効果不十分）】
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=GIP/GLP-1受容体作動薬（注射） 終了（効果不十分）】
 S
-GLP-1受容体作動薬(注射)は、効果不十分のため中止となった。
+GIP/GLP-1受容体作動薬（注射）は、効果不十分のため中止となった。
 
 O
-GLP-1受容体作動薬(注射)　処方終了
+{{drug_subject}}　処方終了
 
 A
-GLP-1受容体作動薬(注射)は、効果不十分のため終了となった。血糖管理の再評価が必要である。
+GIP/GLP-1受容体作動薬（注射）は、効果不十分のため終了となった。血糖管理の再評価が必要である。
 
 P
-GLP-1受容体作動薬(注射)終了後、血糖が上昇する可能性があります。
+GIP/GLP-1受容体作動薬（注射）終了後、血糖が上昇する可能性があります。
 次の治療方針については処方医にご相談ください。
 
 P_CLOSING
@@ -1029,18 +928,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=GLP-1受容体作動薬(注射) 終了（無効）】
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=GIP/GLP-1受容体作動薬（注射） 終了（無効）】
 S
-GLP-1受容体作動薬(注射)は、効果が認められなかったため中止となった。
+GIP/GLP-1受容体作動薬（注射）は、効果が認められなかったため中止となった。
 
 O
-GLP-1受容体作動薬(注射)　処方終了
+{{drug_subject}}　処方終了
 
 A
-GLP-1受容体作動薬(注射)は、効果が認められなかったため終了となった。治療方針の変更が必要である。
+GIP/GLP-1受容体作動薬（注射）は、効果が認められなかったため終了となった。治療方針の変更が必要である。
 
 P
-GLP-1受容体作動薬(注射)終了後、血糖が上昇する可能性があります。
+GIP/GLP-1受容体作動薬（注射）終了後、血糖が上昇する可能性があります。
 代替治療については処方医にご相談ください。
 
 P_CLOSING
@@ -1049,20 +948,23 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GLP-1受容体作動薬(注射) SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（軽症）】
 S
-GLP-1受容体作動薬(注射)の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。
+GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による消化器症状を軽度認めるが、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による消化器症状を軽度認めるが、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)による症状が軽い場合は、食事量を無理なく調整し、脂っこいものを控えることで改善することがあります。
+GIP/GLP-1受容体作動薬（注射）による症状が軽い場合は、食事量を無理なく調整し、脂っこいものを控えることで改善することがあります。
 便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。
 ご相談ください。
+
+P_ADDON
+- addon_gi_tolerance_guidance
 
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1070,18 +972,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=GLP-1受容体作動薬(注射) SE継続（注射部位・軽症）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・軽症）】
 S
-GLP-1受容体作動薬(注射)の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
+GIP/GLP-1受容体作動薬（注射）の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による注射部位反応を軽度認めるが、治療継続が可能である。
+GIP/GLP-1受容体作動薬（注射）による注射部位反応を軽度認めるが、治療継続が可能である。
 
 P
-GLP-1受容体作動薬(注射)により注射部位に軽い痛みやしこりが出ることがあります。
+GIP/GLP-1受容体作動薬（注射）により注射部位に軽い痛みやしこりが出ることがあります。
 毎回注射部位を変えることで予防や軽減につながります。
 症状が強くなる、長引く場合はご相談ください。
 
@@ -1091,18 +993,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GLP-1受容体作動薬(注射) SE継続（中等度）】
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（中等度）】
 S
-GLP-1受容体作動薬(注射)の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。
+GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による消化器症状が強く、継続困難の可能性があるため対応を要する。
+GIP/GLP-1受容体作動薬（注射）による消化器症状が強く、継続困難の可能性があるため対応を要する。
 
 P
-GLP-1受容体作動薬(注射)による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。
+GIP/GLP-1受容体作動薬（注射）による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。
 処方医へご相談ください。
 
 P_CLOSING
@@ -1111,18 +1013,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=GLP-1受容体作動薬(注射) SE継続（注射部位・中等度）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・中等度）】
 S
-GLP-1受容体作動薬(注射)の使用により注射部位の痛みや腫れが強く、気になることがある。
+GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが強く、気になることがある。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
-GLP-1受容体作動薬(注射)による注射部位反応が強く、継続困難の可能性があるため対応を要する。
+GIP/GLP-1受容体作動薬（注射）による注射部位反応が強く、継続困難の可能性があるため対応を要する。
 
 P
-GLP-1受容体作動薬(注射)により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。
+GIP/GLP-1受容体作動薬（注射）により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。
 症状が続く場合は処方医へご相談ください。
 
 P_CLOSING
@@ -1131,18 +1033,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_change_due_to_gi_symptoms｜title=GLP-1受容体作動薬(注射) SE変更（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_change_due_to_gi_symptoms｜title=GIP/GLP-1受容体作動薬（注射） SE変更（消化器症状）】
 S
-GLP-1受容体作動薬(注射)の使用により吐き気・下痢・便秘が出現したため、他剤へ変更となった。
+GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘が出現したため、他剤へ変更となった。
 
 O
-GLP-1受容体作動薬(注射)　処方変更
+{{drug_subject}}　処方変更
 
 A
-GLP-1受容体作動薬(注射)の使用による消化器症状を認め、他剤変更後の経過確認を要する。
+GIP/GLP-1受容体作動薬（注射）の使用による消化器症状を認め、他剤変更後の経過確認を要する。
 
 P
-GLP-1受容体作動薬(注射)の変更後、血糖上昇や体調変化があればご相談ください。
+GIP/GLP-1受容体作動薬（注射）の変更後、血糖上昇や体調変化があればご相談ください。
 
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1150,18 +1052,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_change_due_to_injection_site_reaction｜title=GLP-1受容体作動薬(注射) SE変更（注射部位）】
+【SCENARIO｜type=side_effect｜id=se_change_due_to_injection_site_reaction｜title=GIP/GLP-1受容体作動薬（注射） SE変更（注射部位）】
 S
-GLP-1受容体作動薬(注射)の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。
+GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。
 
 O
-GLP-1受容体作動薬(注射)　処方変更
+{{drug_subject}}　処方変更
 
 A
-GLP-1受容体作動薬(注射)の使用による注射部位反応を認め、他剤変更後の経過確認を要する。
+GIP/GLP-1受容体作動薬（注射）の使用による注射部位反応を認め、他剤変更後の経過確認を要する。
 
 P
-GLP-1受容体作動薬(注射)の変更後、注射部位の症状や体調変化があればご相談ください。
+GIP/GLP-1受容体作動薬（注射）の変更後、注射部位の症状や体調変化があればご相談ください。
 
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1169,18 +1071,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=GLP-1受容体作動薬(注射) SE減量（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=GIP/GLP-1受容体作動薬（注射） SE減量（消化器症状）】
 S
-GLP-1受容体作動薬(注射)の使用により吐き気・下痢・便秘がひどいため、減量となった。
+GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘がひどいため、減量となった。
 
 O
-GLP-1受容体作動薬(注射)　減量
+{{drug_subject}}　減量
 
 A
-GLP-1受容体作動薬(注射)の使用による消化器症状を認め、減量後の経過確認を要する。
+GIP/GLP-1受容体作動薬（注射）の使用による消化器症状を認め、減量後の経過確認を要する。
 
 P
-GLP-1受容体作動薬(注射)の減量後も消化器症状が続く場合はご相談ください。
+GIP/GLP-1受容体作動薬（注射）の減量後も消化器症状が続く場合はご相談ください。
 
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1188,19 +1090,18 @@ P_CLOSING
 
 
 
-
-【SCENARIO｜type=side_effect｜id=se_stop_due_to_gi_symptoms｜title=GLP-1受容体作動薬(注射) SE中止（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_gi_symptoms｜title=GIP/GLP-1受容体作動薬（注射） SE中止（消化器症状）】
 S
-GLP-1受容体作動薬(注射)の使用により吐き気・下痢・便秘がひどいため、中止となった。
+GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘がひどいため、中止となった。
 
 O
-GLP-1受容体作動薬(注射)　処方中止
+{{drug_subject}}　処方中止
 
 A
-GLP-1受容体作動薬(注射)の使用による消化器症状を認め、中止後の経過確認を要する。
+GIP/GLP-1受容体作動薬（注射）の使用による消化器症状を認め、中止後の経過確認を要する。
 
 P
-GLP-1受容体作動薬(注射)の中止後、血糖上昇や体調変化があればご相談ください。
+GIP/GLP-1受容体作動薬（注射）の中止後、血糖上昇や体調変化があればご相談ください。
 
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1208,18 +1109,18 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_stop_due_to_injection_site_reaction｜title=GLP-1受容体作動薬(注射) SE中止（注射部位）】
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_injection_site_reaction｜title=GIP/GLP-1受容体作動薬（注射） SE中止（注射部位）】
 S
-GLP-1受容体作動薬(注射)の使用により注射部位の痛みや腫れが強いため、中止となった。
+GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが強いため、中止となった。
 
 O
-GLP-1受容体作動薬(注射)　処方中止
+{{drug_subject}}　処方中止
 
 A
-GLP-1受容体作動薬(注射)の使用による注射部位反応を認め、中止後の経過確認を要する。
+GIP/GLP-1受容体作動薬（注射）の使用による注射部位反応を認め、中止後の経過確認を要する。
 
 P
-GLP-1受容体作動薬(注射)中止後も、注射部位の症状が続く場合や悪化する場合は、医療機関へご相談ください。
+GIP/GLP-1受容体作動薬（注射）中止後も、注射部位の症状が続く場合や悪化する場合は、医療機関へご相談ください。
 
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1227,12 +1128,12 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=GLP-1受容体作動薬(注射) 生活指導（血糖）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=GIP/GLP-1受容体作動薬（注射） 生活指導（血糖）】
 S
 血糖値がなかなか改善しない。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
 血糖コントロールが不十分であり、生活習慣の改善が重要である。食事・運動療法の継続が必要である。
@@ -1250,12 +1151,12 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=GLP-1受容体作動薬(注射) 生活指導（カリウム）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=GIP/GLP-1受容体作動薬（注射） 生活指導（カリウム）】
 S
 カリウムの値が高いと言われた。
 
 O
-GLP-1受容体作動薬(注射)　処方
+{{drug_subject}}　処方
 
 A
 カリウムコントロールが不十分であり、食事療法の継続が重要である。
@@ -1272,12 +1173,12 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=sickday｜id=sickday｜title=GLP-1受容体作動薬(注射) シックデイ】
+【SCENARIO｜type=sickday｜id=sickday｜title=GIP/GLP-1受容体作動薬（注射） シックデイ】
 S
 発熱・嘔吐・下痢などの体調不良がみられる。
 
 O
-GLP-1受容体作動薬(注射)　使用中
+{{drug_subject}}　使用中
 
 A
 食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。
@@ -1304,16 +1205,27 @@ P_APPEND
 
 
 
+【ADDON｜type=lifestyle_guidance｜id=addon_gi_tolerance_guidance｜title=生活指導（消化器症状対策）】
+P_APPEND
+{{drug_subject}}には、胃の動きをゆるやかにする作用があります。
+一度に多く食べると、胃もたれや吐き気が出やすくなることがあります。
+食事は少量ずつ分けて摂ることをおすすめします。
+一口ごとによく噛み、ゆっくり時間をかけて食事をしてください。
+脂っこい食事や食べすぎは、症状を悪化させることがあります。
+症状が強い場合はご相談ください。
+
+
+
 
 【SCENARIO｜type=followup｜id=injection_technique_check｜title=注射手技の確認】
 S
 注射手技に不安がみられる。
 
 O
-GLP-1受容体作動薬(注射)　使用中
+{{drug_subject}}　使用中
 
 A
-GLP-1受容体作動薬(注射)の注射手技の確認が必要である。
+GIP/GLP-1受容体作動薬（注射）の注射手技の確認が必要である。
 
 P
 注射の具体的な手技については、指導せんを用いて改めて説明しています。
