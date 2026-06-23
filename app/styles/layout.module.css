@@ -587,10 +587,10 @@
    背景のみ変更。文字色・枠色・opacity は通常と同一（visibility は維持）。
    .addonBtnActive は後に宣言されるため、選択中は active スタイルが優先される。 */
 .addonBtnMuted {
-  background: #e3e7ef;
+  background: #eef4ff;
 }
 .addonBtnMuted:hover {
-  background: #dbe1eb;
+  background: #e4eeff;
 }
 .addonBtnActive {
   background: #1a5cbf;
