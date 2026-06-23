@@ -224,7 +224,7 @@ function DrugInlineSearch({
         <ul id={listId} role="listbox" className={s.thirdSuggestionList} aria-label="薬剤候補">
           {suggestions.map((item, idx) => (
             <li
-              key={item.moduleId}
+              key={`${item.moduleId}:${item.matchedBrandName ?? ''}`}
               id={`${listId}-item-${idx}`}
               role="option"
               aria-selected={idx === focusedIdx}

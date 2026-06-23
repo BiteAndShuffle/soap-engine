@@ -179,7 +179,7 @@ export default function Topbar({
             >
               {drugSuggestions.map((item, idx) => (
                 <li
-                  key={item.moduleId}
+                  key={`${item.moduleId}:${item.matchedBrandName ?? ''}`}
                   id={`${listId}-item-${idx}`}
                   role="option"
                   aria-selected={idx === focusedIdx}
