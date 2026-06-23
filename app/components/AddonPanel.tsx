@@ -87,8 +87,8 @@ export default function AddonPanel({
                   key={fullKey}
                   className={[
                     s.addonBtn,
-                    item.uiVariant === 'leftAccent'  ? s.addonBtnLeftAccent  : '',
-                    item.uiVariant === 'rightAccent' ? s.addonBtnRightAccent : '',
+                    item.uiVariant === 'rightAccentBlue'     ? s.addonBtnRightAccentBlue     : '',
+                    item.uiVariant === 'rightAccentLavender' ? s.addonBtnRightAccentLavender : '',
                     isActive ? s.addonBtnActive : '',
                   ].filter(Boolean).join(' ')}
                   onClick={() => onToggle(fullKey, item.text)}

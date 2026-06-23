@@ -291,12 +291,12 @@ export interface AddonItem {
    */
   requiredTags?: string[]
   /**
-   * ボタンの視覚的バリアント。
-   * "leftAccent":  左アクセントライン（見える化系・支援系 — 補助的施策）。
-   * "rightAccent": 右アクセントライン（通知系・準備系 — 行動変容施策）。
+   * ボタンの視覚的バリアント。右アクセントライン色で分類を表現。
+   * "rightAccentBlue":     青ライン（通知系・準備系 — 行動変容施策）。
+   * "rightAccentLavender": ラベンダーライン（見える化系・支援系 — 補助的施策）。
    * 未定義: 通常スタイル。選択中は uiVariant によらず常に active スタイルが適用される。
    */
-  uiVariant?: 'leftAccent' | 'rightAccent'
+  uiVariant?: 'rightAccentBlue' | 'rightAccentLavender'
 }
 
 /**

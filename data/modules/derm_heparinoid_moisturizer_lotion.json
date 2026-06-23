@@ -2430,7 +2430,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_reminder_app": {
         "key": "addon_adherence_reminder_app",
@@ -2447,7 +2447,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_visual_checklist": {
         "key": "addon_adherence_visual_checklist",
@@ -2464,7 +2464,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "leftAccent"
+        "uiVariant": "rightAccentLavender"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -2481,7 +2481,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "leftAccent"
+        "uiVariant": "rightAccentLavender"
       },
       "addon_adherence_schedule_confirmation": {
         "key": "addon_adherence_schedule_confirmation",
@@ -2498,7 +2498,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_routine_link": {
         "key": "addon_adherence_routine_link",
@@ -2515,7 +2515,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_support_family_reminder": {
         "key": "addon_adherence_support_family_reminder",
@@ -2532,7 +2532,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "leftAccent"
+        "uiVariant": "rightAccentLavender"
       }
     },
     "orderPresets": {}

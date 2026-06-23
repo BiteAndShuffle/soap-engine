@@ -612,7 +612,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_reminder_app": {
         "key": "addon_adherence_reminder_app",
@@ -629,7 +629,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_visual_calendar_checklist": {
         "key": "addon_adherence_visual_calendar_checklist",
@@ -646,7 +646,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "leftAccent"
+        "uiVariant": "rightAccentLavender"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -663,7 +663,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "leftAccent"
+        "uiVariant": "rightAccentLavender"
       },
       "addon_adherence_schedule_confirmation": {
         "key": "addon_adherence_schedule_confirmation",
@@ -680,7 +680,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_fixed_weekday": {
         "key": "addon_adherence_fixed_weekday",
@@ -697,7 +697,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "rightAccent"
+        "uiVariant": "rightAccentBlue"
       },
       "addon_adherence_support_family_reminder": {
         "key": "addon_adherence_support_family_reminder",
@@ -714,7 +714,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "leftAccent"
+        "uiVariant": "rightAccentLavender"
       },
       "addon_sickday_hold_sglt2_metformin": {
         "key": "addon_sickday_hold_sglt2_metformin",
