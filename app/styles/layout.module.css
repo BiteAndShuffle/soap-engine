@@ -583,6 +583,18 @@
   border-color: #5a9bff;
   color: #1a4da0;
 }
+/* uiVariant="muted" — 補助的 addon（見える化・支援系）を視覚的に一段抑制する。
+   .addonBtnActive は後に宣言されるため、選択中は active スタイルが優先される。 */
+.addonBtnMuted {
+  background: #eceef2;
+  border-color: #c8ccd6;
+  color: #8a909e;
+}
+.addonBtnMuted:hover {
+  background: #e2e5eb;
+  border-color: #aab0c0;
+  color: #5a6070;
+}
 .addonBtnActive {
   background: #1a5cbf;
   border-color: #0a44a0;

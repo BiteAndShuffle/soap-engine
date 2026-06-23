@@ -85,7 +85,11 @@ export default function AddonPanel({
               return (
                 <button
                   key={fullKey}
-                  className={[s.addonBtn, isActive ? s.addonBtnActive : ''].join(' ')}
+                  className={[
+                    s.addonBtn,
+                    item.uiVariant === 'muted' ? s.addonBtnMuted : '',
+                    isActive ? s.addonBtnActive : '',
+                  ].filter(Boolean).join(' ')}
                   onClick={() => onToggle(fullKey, item.text)}
                   aria-pressed={isActive}
                   title={item.text}

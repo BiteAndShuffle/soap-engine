@@ -290,6 +290,12 @@ export interface AddonItem {
    * 未定義または空配列の場合は常時表示。
    */
   requiredTags?: string[]
+  /**
+   * ボタンの視覚的バリアント。
+   * "muted": 非選択時にグレー表示（見える化系・支援系など補助的 addon に使用）。
+   * 未定義: 通常スタイル。選択中は uiVariant によらず常に active スタイルが適用される。
+   */
+  uiVariant?: 'muted'
 }
 
 /**

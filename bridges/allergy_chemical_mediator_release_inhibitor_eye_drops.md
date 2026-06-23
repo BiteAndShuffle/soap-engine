@@ -54,6 +54,9 @@ drug:
       - "ペミロラスト"
       - "トラニラスト"
       - "クロモグリク酸"
+      # PF製剤
+      - "トラニラスト点眼液PF"
+      - "トラニラストPF"
     prefixAliases:
       - "ぜぺりんてんがん"
       - "ぜぺりん"
@@ -69,6 +72,10 @@ drug:
       - "りざべん"
       - "とらにらすとてんがん"
       - "とらにらすと"
+      - "とらにらすとてんがんぴーえふ"
+      - "とらにらすとぴーえふ"
+      - "とらにらすとてんがんpf"
+      - "とらにらすとpf"
       - "とらめらすてんがんぴーえふ"
       - "とらめらすぴーえふ"
       - "とらめらすてんがん"
@@ -92,6 +99,10 @@ drug:
       - "りざべん"
       - "とらにらすとてんがん"
       - "とらにらすと"
+      - "とらにらすとてんがんぴーえふ"
+      - "とらにらすとぴーえふ"
+      - "とらにらすとてんがんpf"
+      - "とらにらすとpf"
       - "とらめらすてんがんぴーえふ"
       - "とらめらすぴーえふ"
       - "とらめらすてんがん"
@@ -131,6 +142,10 @@ drug:
     - "りざべん"
     - "とらにらすとてんがん"
     - "とらにらすと"
+    - "とらにらすとてんがんぴーえふ"
+    - "とらにらすとぴーえふ"
+    - "とらにらすとてんがんpf"
+    - "とらにらすとpf"
     - "とらめらすてんがんぴーえふ"
     - "とらめらすぴーえふ"
     - "とらめらすてんがん"
@@ -239,7 +254,7 @@ drug:
     トラメラス点眼液PF:
       displayName: "トラメラス点眼液PF"
       genericName: "トラニラスト"
-      displayGenericName: "トラニラスト点眼液"
+      displayGenericName: "トラニラスト点眼液PF"
       storageType: "light_protection"
       formulationType: "solution"
       contactLensCaution: true
@@ -256,11 +271,19 @@ drug:
         - "とらめらすぴーえふ"
         - "とらめらすてんがん"
         - "とらめらす"
+        - "とらにらすとてんがんぴーえふ"
+        - "とらにらすとぴーえふ"
+        - "とらにらすとてんがんpf"
+        - "とらにらすとpf"
       normalizedAliases:
         - "とらめらすてんがんぴーえふ"
         - "とらめらすぴーえふ"
         - "とらめらすてんがん"
         - "とらめらす"
+        - "とらにらすとてんがんぴーえふ"
+        - "とらにらすとぴーえふ"
+        - "とらにらすとてんがんpf"
+        - "とらにらすとpf"
     インタール点眼液:
       displayName: "インタール点眼液"
       genericName: "クロモグリク酸"
@@ -305,6 +328,10 @@ drug:
     "とらめらすぴーえふ": "トラメラス点眼液PF"
     "とらめらすてんがん": "トラメラス点眼液PF"
     "とらめらす": "トラメラス点眼液PF"
+    "とらにらすとてんがんぴーえふ": "トラメラス点眼液PF"
+    "とらにらすとぴーえふ": "トラメラス点眼液PF"
+    "とらにらすとてんがんpf": "トラメラス点眼液PF"
+    "とらにらすとpf": "トラメラス点眼液PF"
     "いんたーるてんがん": "インタール点眼液"
     "いんたーる": "インタール点眼液"
     "くろもぐりくさんてんがん": "インタール点眼液"
@@ -448,6 +475,7 @@ P_ADDON
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_contact_lens_remove_before_use
 - addon_eye_drop_contact_lens_product_specific
+- addon_eye_drop_pf_product_specific
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_tip_contamination｜title=使用方法説明】
@@ -475,6 +503,11 @@ P_APPEND
 P_APPEND
 コンタクトレンズ装用中の使用可否は、薬剤ごとに異なる場合があります。
 使用前に、コンタクトレンズに関する指示を確認してください。
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_pf_product_specific｜title=使用方法説明（PF製剤）｜requiredTags=[contact_lens_caution_product_specific]】
+P_APPEND
+PF製剤は、防腐剤を含まない目薬です。
+容器の構造上、通常の目薬に比べて薬液が出るまでに時間がかかることがあります。
+強く押しすぎると薬液が出すぎることがあるため、ゆっくり押して使用してください。
 【SCENARIO｜type=treatment_start｜id=restart｜title=ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 再開】
 S
 ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬は、{{applicationSite}}眼のかゆみが気になるため再開となった。
@@ -492,6 +525,7 @@ P_ADDON
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_contact_lens_remove_before_use
 - addon_eye_drop_contact_lens_product_specific
+- addon_eye_drop_pf_product_specific
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【SCENARIO｜type=treatment_start｜id=external_start｜title=ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 他所開始】
@@ -511,6 +545,7 @@ P_ADDON
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_contact_lens_remove_before_use
 - addon_eye_drop_contact_lens_product_specific
+- addon_eye_drop_pf_product_specific
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数増（効果実感乏しい）】
@@ -631,19 +666,6 @@ A
 ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬による充血は現時点で認められず、治療継続が可能である。
 P
 ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬の継続中に充血が出ることがあります。
-症状が続く場合はご相談ください。
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-【SCENARIO｜type=side_effect｜id=se_eye_discharge_none｜title=ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（目やに）】
-S
-ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬を使用して症状は落ち着いている。
-目やには認めない。
-O
-ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬　処方
-A
-ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬による目やには現時点で認められず、治療継続が可能である。
-P
-ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬の継続中に目やにが出ることがあります。
 症状が続く場合はご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。

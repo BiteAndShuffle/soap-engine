@@ -473,6 +473,39 @@ export interface DrugSuggestionItem {
  * 各モジュールから代表1件のみ選出し、シナリオ名はドロップダウンに出さない。
  * getSuggestions と同じスコアリングを使いつつ、moduleId でデデュープする。
  */
+/**
+ * クエリ q に対して priority 1–4（完全一致・前方一致）で一致するブランド名をすべて返す。
+ * priority 5（部分一致）は一般名を含む広範クエリで全ブランドが暴発するため除外する。
+ * 同一モジュール内の複数ブランドを候補として列挙するために使用する。
+ */
+function resolveAllHighPrecisionBrands(entry: SearchEntry, q: string): string[] {
+  const matched = new Set<string>()
+  for (const b of entry.brandNames) {
+    const norm = normalizeText(b)
+    const aliases = entry.brandCatalogAliasMap[b] ?? []
+    if (
+      norm === q ||                            // priority 1: 正式名完全一致
+      aliases.some(a => a === q) ||            // priority 2: alias 完全一致
+      norm.startsWith(q) ||                    // priority 3: 正式名前方一致
+      aliases.some(a => a.startsWith(q))       // priority 4: alias 前方一致
+    ) {
+      matched.add(b)
+    }
+  }
+  return [...matched]
+}
+
+/**
+ * 正規化済みブランド名またはそのエイリアスに PF 指示子（"pf" / "ぴーえふ"）を含むか判定する。
+ * brandCatalogAliasMap はビルド時に normalizeText 済みのため、追加の正規化は不要。
+ */
+function isPFBrand(entry: SearchEntry, brand: string): boolean {
+  const norm = normalizeText(brand)
+  if (norm.includes('pf') || norm.includes('ぴーえふ')) return true
+  const aliases = entry.brandCatalogAliasMap[brand] ?? []
+  return aliases.some(a => a.includes('pf') || a.includes('ぴーえふ'))
+}
+
 export function getDrugSuggestions(
   query: string,
   index: SearchEntry[],
@@ -480,9 +513,14 @@ export function getDrugSuggestions(
 ): DrugSuggestionItem[] {
   const tokens = tokenizeQuery(query)
   if (tokens.length === 0) return []
-  const q = tokens[tokens.length - 1]  // ブランド名解決用（末尾トークン or 単一）
 
-  // スコアリング（getSuggestions と同じロジック、AND 対応）
+  // クエリに "pf" または "ぴーえふ" が単独トークンとして含まれる場合、
+  // PF 品のみを候補に残す（isPFBrand でフィルタ）。
+  // normalizeText 後の形が "pf" / "ぴーえふ" に一致するすべての入力変種（PF / ＰＦ / ピーエフ 等）を捕捉する。
+  const PF_TOKENS = new Set(['pf', 'ぴーえふ'])
+  const hasPFQuery = tokens.some(t => PF_TOKENS.has(t))
+
+  // スコアリング（AND 対応）
   const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
   for (let i = 0; i < index.length; i++) {
     const score = scoreEntryAND(index[i], tokens)
@@ -495,39 +533,96 @@ export function getDrugSuggestions(
     a.originalIndex - b.originalIndex,
   )
 
-  // moduleId 単位でデデュープ（先頭＝最高スコア代表のみ採用）
-  const seenModules = new Set<string>()
+  // (moduleId:matchedBrandName) 単位でデデュープ。
+  // 同一モジュール内で一般名が共通する複数ブランド（リザベン vs トラメラスPF 等）を
+  // それぞれ独立した候補として返せるようにするため moduleId 単位ではなく
+  // (moduleId:brandName) 単位で管理する。
+  const seenModuleBrands = new Set<string>()
   const results: DrugSuggestionItem[] = []
 
   for (const { entry } of scored) {
     if (results.length >= limit) break
-    if (seenModules.has(entry.moduleId)) continue
-    seenModules.add(entry.moduleId)
 
-    // 全トークンを順に評価し、最初にブランド名が特定できたトークンを採用する。
-    // lastToken だけでは 1 文字トークン（く/な/ろ）が全ステップ不一致になり
-    // undefined フォールバック → brandNames[0] 固定という問題を防ぐ。
-    let matchedBrandName: string | undefined
-    let matchedByToken: string | undefined
-    for (const t of tokens) {
-      const resolved = resolveBrandName(entry, t)
-      if (resolved !== undefined) { matchedBrandName = resolved; matchedByToken = t; break }
+    // ブランド候補リストを収集する
+    const candidates: Array<{ brand: string | undefined; displayLabel: string }> = []
+
+    // Step 1: 複数トークンの場合、全トークン連結を先に試す。
+    //   "とらにらすと pf" → concat "とらにらすとpf" → alias 完全一致 → トラメラスPF のみ返す
+    let concatBrand: string | undefined
+    let concatToken: string | undefined
+    if (tokens.length > 1) {
+      const concatenated = tokens.join('')
+      const resolved = resolveBrandName(entry, concatenated)
+      if (resolved !== undefined) { concatBrand = resolved; concatToken = concatenated }
     }
-    // isDirectBrandMatch: マッチしたトークンがブランド名本体と直接 eq/startsWith するか。
-    // true → ブランド名をそのまま表示。false → brandCatalogGenericMap の表示一般名を使用。
-    const isDirectBrandMatch = matchedBrandName !== undefined && matchedByToken !== undefined &&
-      entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
-    const resolvedDisplayLabel = (() => {
-      if (!matchedBrandName) return entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId
-      if (isDirectBrandMatch) return matchedBrandName
-      return entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName
-    })()
-    results.push({
-      moduleId: entry.moduleId,
-      drugDisplayLabel: resolvedDisplayLabel,
-      matchedBrandName,
-      representativeTemplateId: entry.templateId,
-    })
+
+    if (concatBrand !== undefined) {
+      // 連結で特定できた場合: 1 ブランドのみ返す（スペース区切り PF 指定など）
+      const isDirectBrandMatch = entry.brandNames.some(b =>
+        normalizeText(b) === concatToken || normalizeText(b).startsWith(concatToken!)
+      )
+      candidates.push({
+        brand: concatBrand,
+        displayLabel: isDirectBrandMatch ? concatBrand :
+          (entry.brandCatalogGenericMap[concatBrand] ?? concatBrand),
+      })
+    } else {
+      // Step 2: primaryToken に対して priority 1-4 で一致する全ブランドを展開。
+      //   "とらにらすと" → リザベン（exact alias）+ トラメラスPF（alias startsWith）を両方返す。
+      const pt = tokens[0]
+      const hpBrands = resolveAllHighPrecisionBrands(entry, pt)
+      const isDirectBrandMatchPt = entry.brandNames.some(b =>
+        normalizeText(b) === pt || normalizeText(b).startsWith(pt)
+      )
+      if (hpBrands.length > 0) {
+        for (const brand of hpBrands) {
+          candidates.push({
+            brand,
+            displayLabel: isDirectBrandMatchPt ? brand :
+              (entry.brandCatalogGenericMap[brand] ?? brand),
+          })
+        }
+      } else {
+        // Step 3: フォールバック — 各トークンを順に評価して最初の一致を採用する。
+        //   priority 5（部分一致）でしか一致しない場合や、高精度一致が 0 件の場合に使用。
+        //   lastToken だけでは 1 文字トークン（く/な/ろ）が不一致になるため前向き評価を継続。
+        let matchedBrandName: string | undefined
+        let matchedByToken: string | undefined
+        for (const t of tokens) {
+          const resolved = resolveBrandName(entry, t)
+          if (resolved !== undefined) { matchedBrandName = resolved; matchedByToken = t; break }
+        }
+        const isDirectBrandMatch = matchedBrandName !== undefined && matchedByToken !== undefined &&
+          entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
+        candidates.push({
+          brand: matchedBrandName,
+          displayLabel: !matchedBrandName
+            ? (entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId)
+            : isDirectBrandMatch
+              ? matchedBrandName
+              : (entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName),
+        })
+      }
+    }
+
+    // PF クエリの場合は PF品のみに絞る（concat-first が alias 未登録クエリにも対応する安全網）
+    const activeCandidates = hasPFQuery
+      ? candidates.filter(c => c.brand !== undefined && isPFBrand(entry, c.brand))
+      : candidates
+
+    // 候補を (moduleId:brand) dedup でフィルタして results に追加
+    for (const { brand, displayLabel } of activeCandidates) {
+      if (results.length >= limit) break
+      const key = `${entry.moduleId}:${brand ?? '__no_brand__'}`
+      if (seenModuleBrands.has(key)) continue
+      seenModuleBrands.add(key)
+      results.push({
+        moduleId: entry.moduleId,
+        drugDisplayLabel: displayLabel,
+        matchedBrandName: brand,
+        representativeTemplateId: entry.templateId,
+      })
+    }
   }
 
   return results

@@ -79,7 +79,9 @@
         "アシタザノラスト",
         "ペミロラスト",
         "トラニラスト",
-        "クロモグリク酸"
+        "クロモグリク酸",
+        "トラニラスト点眼液PF",
+        "トラニラストPF"
       ],
       "prefixAliases": [
         "ぜぺりんてんがん",
@@ -96,6 +98,10 @@
         "りざべん",
         "とらにらすとてんがん",
         "とらにらすと",
+        "とらにらすとpf",
+        "とらにらすとてんがんpf",
+        "とらにらすとぴーえふ",
+        "とらにらすとてんがんぴーえふ",
         "とらめらすてんがんぴーえふ",
         "とらめらすぴーえふ",
         "とらめらすてんがん",
@@ -120,6 +126,10 @@
         "りざべん",
         "とらにらすとてんがん",
         "とらにらすと",
+        "とらにらすとpf",
+        "とらにらすとてんがんpf",
+        "とらにらすとぴーえふ",
+        "とらにらすとてんがんぴーえふ",
         "とらめらすてんがんぴーえふ",
         "とらめらすぴーえふ",
         "とらめらすてんがん",
@@ -264,7 +274,7 @@
       "トラメラス点眼液PF": {
         "displayName": "トラメラス点眼液PF",
         "genericName": "トラニラスト",
-        "displayGenericName": "トラニラスト点眼液",
+        "displayGenericName": "トラニラスト点眼液PF",
         "storageType": "light_protection",
         "formulationType": "solution",
         "contactLensCaution": true,
@@ -281,13 +291,21 @@
           "とらめらすてんがんぴーえふ",
           "とらめらすぴーえふ",
           "とらめらすてんがん",
-          "とらめらす"
+          "とらめらす",
+          "とらにらすとてんがんぴーえふ",
+          "とらにらすとぴーえふ",
+          "とらにらすとてんがんpf",
+          "とらにらすとpf"
         ],
         "normalizedAliases": [
           "とらめらすてんがんぴーえふ",
           "とらめらすぴーえふ",
           "とらめらすてんがん",
-          "とらめらす"
+          "とらめらす",
+          "とらにらすとてんがんぴーえふ",
+          "とらにらすとぴーえふ",
+          "とらにらすとてんがんpf",
+          "とらにらすとpf"
         ]
       },
       "インタール点眼液": {
@@ -335,6 +353,10 @@
       "りざべん",
       "とらにらすとてんがん",
       "とらにらすと",
+      "とらにらすとpf",
+      "とらにらすとてんがんpf",
+      "とらにらすとぴーえふ",
+      "とらにらすとてんがんぴーえふ",
       "とらめらすてんがんぴーえふ",
       "とらめらすぴーえふ",
       "とらめらすてんがん",
@@ -366,7 +388,11 @@
       "いんたーるてんがん": "インタール点眼液",
       "いんたーる": "インタール点眼液",
       "くろもぐりくさんてんがん": "インタール点眼液",
-      "くろもぐりくさん": "インタール点眼液"
+      "くろもぐりくさん": "インタール点眼液",
+      "とらにらすとてんがんぴーえふ": "トラメラス点眼液PF",
+      "とらにらすとぴーえふ": "トラメラス点眼液PF",
+      "とらにらすとてんがんpf": "トラメラス点眼液PF",
+      "とらにらすとpf": "トラメラス点眼液PF"
     }
   },
   "drugResolution": {
@@ -520,7 +546,8 @@
           "addon_eye_drop_tip_contamination",
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
-          "addon_eye_drop_contact_lens_product_specific"
+          "addon_eye_drop_contact_lens_product_specific",
+          "addon_eye_drop_pf_product_specific"
         ]
       },
       "followupRef": "default_followup",
@@ -644,7 +671,8 @@
           "addon_eye_drop_tip_contamination",
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
-          "addon_eye_drop_contact_lens_product_specific"
+          "addon_eye_drop_contact_lens_product_specific",
+          "addon_eye_drop_pf_product_specific"
         ]
       },
       "followupRef": "default_followup",
@@ -768,7 +796,8 @@
           "addon_eye_drop_tip_contamination",
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
-          "addon_eye_drop_contact_lens_product_specific"
+          "addon_eye_drop_contact_lens_product_specific",
+          "addon_eye_drop_pf_product_specific"
         ]
       },
       "followupRef": "default_followup",
@@ -1840,118 +1869,6 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に充血が出ることがあります。",
-          "role": "side_effect_attention",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": []
-        },
-        {
-          "id": "p_2",
-          "text": "症状が続く場合はご相談ください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ]
-        }
-      ]
-    },
-    {
-      "id": "se_eye_discharge_none",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_eye_discharge_none",
-      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（目やに）",
-      "scenarioType": "side_effect",
-      "scenarioGroup": "side_effect",
-      "sideEffectPresence": "absent_or_not_observed",
-      "sComposition": {
-        "intent": "side_effect_check",
-        "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
-      },
-      "situationFilter": [
-        "general"
-      ],
-      "clinicalTags": [],
-      "counselingTags": [],
-      "workflowTags": [],
-      "scenarioTags": [
-        "side_effect",
-        "eye_discharge",
-        "absent"
-      ],
-      "intentTags": [
-        "side_effect_attention"
-      ],
-      "S": "{{drug_subject}}を使用して症状は落ち着いている。\n目やには認めない。",
-      "O": "{{drug_subject}}　処方",
-      "A": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に目やにが出ることがあります。\n症状が続く場合はご相談ください。",
-      "thirdPanelSPlacement": {
-        "enabled": true,
-        "trigger": "single_drug_only",
-        "mode": "replace",
-        "persistAsCompositionBase": true
-      },
-      "followupRef": "default_followup",
-      "mergePolicy": {
-        "S": {
-          "domain": "allergy",
-          "behavior": "replace",
-          "groupKey": "side_effect_monitoring",
-          "mergeLevel": "clinical_domain",
-          "sectionRole": "subjective"
-        },
-        "O": {
-          "behavior": "append",
-          "mergeLevel": "section_line",
-          "sectionRole": "objective"
-        },
-        "A": {
-          "behavior": "append",
-          "mergeLevel": "section_block",
-          "sectionRole": "assessment"
-        },
-        "P": {
-          "behavior": "append",
-          "mergeLevel": "section_block",
-          "closingBehavior": "dedupe_or_last",
-          "sectionRole": "plan"
-        }
-      },
-      "SStructured": [
-        {
-          "id": "s_1",
-          "text": "{{drug_subject}}を使用して症状は落ち着いている。",
-          "role": "side_effect_status",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": []
-        },
-        {
-          "id": "s_2",
-          "text": "目やには認めない。",
-          "role": "side_effect_status",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": []
-        }
-      ],
-      "AStructured": [
-        {
-          "id": "a_1",
-          "text": "{{drug_subject}}による目やには現時点で認められず、治療継続が可能である。",
-          "role": "side_effect_assessment",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": []
-        }
-      ],
-      "PStructured": [
-        {
-          "id": "p_1",
-          "text": "{{drug_subject}}の継続中に目やにが出ることがあります。",
           "role": "side_effect_attention",
           "transform": "moderate",
           "safety": "low",
@@ -4200,6 +4117,25 @@
         "counselingTags": [],
         "workflowTags": [],
         "text": "コンタクトレンズ装用中の使用可否は、薬剤ごとに異なる場合があります。\n使用前に、コンタクトレンズに関する指示を確認してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_pf_product_specific": {
+        "key": "addon_eye_drop_pf_product_specific",
+        "id": "addon_eye_drop_pf_product_specific",
+        "title": "使用方法説明（PF製剤）",
+        "group": "administration_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "requiredTags": [
+          "contact_lens_caution_product_specific"
+        ],
+        "text": "PF製剤は、防腐剤を含まない目薬です。\n容器の構造上、通常の目薬に比べて薬液が出るまでに時間がかかることがあります。\n強く押しすぎると薬液が出すぎることがあるため、ゆっくり押して使用してください。",
         "intentTags": [
           "administration_instruction"
         ]

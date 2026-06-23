@@ -467,7 +467,8 @@ P_CLOSING
 
 【ADDON｜type=lifestyle_guidance｜id=addon_driving_caution_guidance｜title=運転注意説明】
 P_APPEND
-服用後に眠気や集中力の低下を感じる場合は、自動車の運転など危険を伴う作業に注意してください。
+服用後に眠気や集中力の低下が出ることがあります。
+自動車の運転など危険を伴う作業には注意してください。
 
 
 【ADDON｜type=administration_guidance｜id=addon_bilastine_admin｜title=ビラノア（ビラスチン）説明】
