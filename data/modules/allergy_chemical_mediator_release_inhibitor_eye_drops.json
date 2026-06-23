@@ -4154,7 +4154,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_reminder_app": {
         "key": "addon_adherence_reminder_app",
@@ -4170,7 +4171,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_visual_calendar_checklist": {
         "key": "addon_adherence_visual_calendar_checklist",
@@ -4187,7 +4189,7 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "muted"
+        "uiVariant": "leftAccent"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -4204,7 +4206,7 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "muted"
+        "uiVariant": "leftAccent"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
@@ -4220,7 +4222,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の使用予定を確認しておく習慣も役立ちます。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_routine_link": {
         "key": "addon_adherence_routine_link",
@@ -4236,7 +4239,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、毎日の習慣と点眼を結びつけて覚える方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_support_family_reminder": {
         "key": "addon_adherence_support_family_reminder",
@@ -4253,7 +4257,7 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "muted"
+        "uiVariant": "leftAccent"
       }
     },
     "orderPresets": {}

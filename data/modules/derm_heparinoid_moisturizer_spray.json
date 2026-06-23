@@ -2441,7 +2441,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、アラームを使用タイミングに合わせて設定しておく方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_reminder_app": {
         "key": "addon_adherence_reminder_app",
@@ -2457,7 +2458,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_visual_checklist": {
         "key": "addon_adherence_visual_checklist",
@@ -2473,7 +2475,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、チェックリストなどで確認する方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "leftAccent"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -2489,7 +2492,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "leftAccent"
       },
       "addon_adherence_schedule_confirmation": {
         "key": "addon_adherence_schedule_confirmation",
@@ -2505,7 +2509,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_routine_link": {
         "key": "addon_adherence_routine_link",
@@ -2521,7 +2526,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、毎日の習慣と使用を結びつけて覚える方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_support_family_reminder": {
         "key": "addon_adherence_support_family_reminder",
@@ -2537,7 +2543,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "leftAccent"
       }
     },
     "orderPresets": {}

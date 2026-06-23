@@ -292,10 +292,11 @@ export interface AddonItem {
   requiredTags?: string[]
   /**
    * ボタンの視覚的バリアント。
-   * "muted": 非選択時にグレー表示（見える化系・支援系など補助的 addon に使用）。
+   * "leftAccent":  左アクセントライン（見える化系・支援系 — 補助的施策）。
+   * "rightAccent": 右アクセントライン（通知系・準備系 — 行動変容施策）。
    * 未定義: 通常スタイル。選択中は uiVariant によらず常に active スタイルが適用される。
    */
-  uiVariant?: 'muted'
+  uiVariant?: 'leftAccent' | 'rightAccent'
 }
 
 /**

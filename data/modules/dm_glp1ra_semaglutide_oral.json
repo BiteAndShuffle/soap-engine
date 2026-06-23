@@ -504,7 +504,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_reminder_app": {
         "key": "addon_adherence_reminder_app",
@@ -520,7 +521,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_visual_calendar_checklist": {
         "key": "addon_adherence_visual_calendar_checklist",
@@ -537,7 +539,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "muted"
+        "uiVariant": "leftAccent"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -554,7 +556,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "muted"
+        "uiVariant": "leftAccent"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
@@ -570,7 +572,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_prep_before_meal": {
         "key": "addon_adherence_prep_before_meal",
@@ -586,7 +589,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_support_family_reminder": {
         "key": "addon_adherence_support_family_reminder",
@@ -603,7 +607,7 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "uiVariant": "muted"
+        "uiVariant": "leftAccent"
       },
       "addon_sickday_hold_sglt2_metformin": {
         "key": "addon_sickday_hold_sglt2_metformin",

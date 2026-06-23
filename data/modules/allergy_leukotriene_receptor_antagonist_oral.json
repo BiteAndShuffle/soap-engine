@@ -445,7 +445,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_reminder_app": {
         "key": "addon_adherence_reminder_app",
@@ -461,7 +462,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_visual_calendar_checklist": {
         "key": "addon_adherence_visual_calendar_checklist",
@@ -470,7 +472,7 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。",
-        "uiVariant": "muted",
+        "uiVariant": "leftAccent",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -487,7 +489,7 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。",
-        "uiVariant": "muted",
+        "uiVariant": "leftAccent",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -511,7 +513,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_prep_before_meal": {
         "key": "addon_adherence_prep_before_meal",
@@ -527,7 +530,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "rightAccent"
       },
       "addon_adherence_support_family_reminder": {
         "key": "addon_adherence_support_family_reminder",
@@ -536,7 +540,7 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。",
-        "uiVariant": "muted",
+        "uiVariant": "leftAccent",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [

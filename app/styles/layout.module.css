@@ -583,14 +583,21 @@
   border-color: #5a9bff;
   color: #1a4da0;
 }
-/* uiVariant="muted" — 補助的 addon（見える化・支援系）を左アクセントラインで識別。
-   背景・文字色・枠色は addonBtn と同一。box-shadow: inset でレイアウト変化なし。
-   .addonBtnActive は後に宣言され box-shadow: none を持つため、選択中は accent が消える。 */
-.addonBtnMuted {
+/* uiVariant="leftAccent"  — 見える化・支援系（補助的施策）: 左アクセントライン */
+/* uiVariant="rightAccent" — 通知・準備系（行動変容施策）: 右アクセントライン    */
+/* 背景・文字色・枠色は addonBtn と同一。box-shadow: inset でレイアウト変化なし。 */
+/* .addonBtnActive は後に宣言され box-shadow: none を持つため選択中は accent 消去。 */
+.addonBtnLeftAccent {
   box-shadow: inset 3px 0 0 #7499cc;
 }
-.addonBtnMuted:hover {
+.addonBtnLeftAccent:hover {
   box-shadow: inset 3px 0 0 #5a7fb8;
+}
+.addonBtnRightAccent {
+  box-shadow: inset -3px 0 0 #7499cc;
+}
+.addonBtnRightAccent:hover {
+  box-shadow: inset -3px 0 0 #5a7fb8;
 }
 .addonBtnActive {
   background: #1a5cbf;
