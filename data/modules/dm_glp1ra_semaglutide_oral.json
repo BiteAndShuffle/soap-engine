@@ -536,7 +536,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "muted"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -552,7 +553,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "muted"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
@@ -600,7 +602,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "muted"
       },
       "addon_sickday_hold_sglt2_metformin": {
         "key": "addon_sickday_hold_sglt2_metformin",

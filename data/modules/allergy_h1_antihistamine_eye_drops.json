@@ -4266,7 +4266,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "muted"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -4282,7 +4283,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "muted"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
@@ -4330,7 +4332,8 @@
         ],
         "clinicalTags": [],
         "counselingTags": [],
-        "workflowTags": []
+        "workflowTags": [],
+        "uiVariant": "muted"
       },
       "addon_eye_drop_contact_lens_remove_before_use": {
         "key": "addon_eye_drop_contact_lens_remove_before_use",

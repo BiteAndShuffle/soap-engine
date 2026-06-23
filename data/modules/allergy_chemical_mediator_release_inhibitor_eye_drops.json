@@ -4186,7 +4186,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、カレンダーやチェックリストで確認する方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "muted"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -4202,7 +4203,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、点眼する時間を目立つ場所に書いておく方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "muted"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
@@ -4250,7 +4252,8 @@
         "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
         "intentTags": [
           "adherence_support"
-        ]
+        ],
+        "uiVariant": "muted"
       }
     },
     "orderPresets": {}
