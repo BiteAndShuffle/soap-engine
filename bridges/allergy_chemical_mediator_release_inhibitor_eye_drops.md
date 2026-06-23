@@ -704,25 +704,25 @@ P_ADDON
 - addon_adherence_support_family_reminder
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=使用忘れ対策（見える化：カレンダー・チェックリスト）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=使用忘れ対策（見える化：カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、カレンダーやチェックリストで確認する方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、点眼する時間を目立つ場所に書いておく方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=使用忘れ対策（準備：前夜）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=使用忘れ対策（準備：前夜）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の使用予定を確認しておく習慣も役立ちます。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_routine_link｜title=使用忘れ対策（習慣化：生活習慣と結びつける）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_routine_link｜title=使用忘れ対策（習慣化：生活習慣と結びつける）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、毎日の習慣と点眼を結びつけて覚える方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
 【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（自己判断）】
