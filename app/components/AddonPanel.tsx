@@ -17,6 +17,42 @@ const GROUP_LABELS: Record<string, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
+// サブグループ — addon id からラベルを導出（JSON 非依存）
+// ─────────────────────────────────────────────────────────────
+
+function getSubGroupLabel(id: string): string | null {
+  if (/_reminder_|_notification_/.test(id)) return '通知'
+  if (/_prep_|_routine_|_fixed_|_schedule_/.test(id)) return '準備'
+  if (/_visual_/.test(id)) return '見える化'
+  if (/_support_/.test(id)) return '支援'
+  return null
+}
+
+type SubCluster = {
+  uiVariant: AddonItem['uiVariant']
+  label: string | null
+  entries: [string, AddonItem][]
+}
+
+// 連続する同 uiVariant をひとつのクラスタにまとめる
+function buildSubClusters(entries: [string, AddonItem][]): SubCluster[] {
+  const clusters: SubCluster[] = []
+  for (const [key, item] of entries) {
+    const last = clusters[clusters.length - 1]
+    if (last && last.uiVariant === item.uiVariant) {
+      last.entries.push([key, item])
+    } else {
+      clusters.push({
+        uiVariant: item.uiVariant,
+        label: getSubGroupLabel(item.id ?? key),
+        entries: [[key, item]],
+      })
+    }
+  }
+  return clusters
+}
+
+// ─────────────────────────────────────────────────────────────
 // Props
 // ─────────────────────────────────────────────────────────────
 
@@ -77,27 +113,61 @@ export default function AddonPanel({
       {orderedGroups.map(group => {
         const entries = groupMap.get(group)!
         const label = GROUP_LABELS[group] ?? group
+        const clusters = buildSubClusters(entries)
+
         return (
           <div key={group} className={s.addonCategory}>
             <div className={s.addonCategoryLabel}>{label}</div>
-            {entries.map(([fullKey, item]) => {
-              const isActive = selectedAddonIds.has(fullKey)
-              return (
-                <button
-                  key={fullKey}
-                  className={[
-                    s.addonBtn,
-                    item.uiVariant === 'rightAccentBlue'     ? s.addonBtnRightAccentBlue     : '',
-                    item.uiVariant === 'rightAccentLavender' ? s.addonBtnRightAccentLavender : '',
-                    isActive ? s.addonBtnActive : '',
-                  ].filter(Boolean).join(' ')}
-                  onClick={() => onToggle(fullKey, item.text)}
-                  aria-pressed={isActive}
-                  title={item.text}
-                >
-                  <span className={s.addonBtnText}>{item.title ?? item.text}</span>
-                </button>
-              )
+            {clusters.map((cluster, ci) => {
+              if (cluster.uiVariant) {
+                // uiVariant あり → 枠付きサブグループとして表示
+                const isBlue = cluster.uiVariant === 'rightAccentBlue'
+                const groupCls = [
+                  s.addonSubGroup,
+                  isBlue ? s.addonSubGroupBlue : s.addonSubGroupLavender,
+                ].join(' ')
+                const labelCls = [
+                  s.addonSubGroupLabel,
+                  isBlue ? s.addonSubGroupLabelBlue : s.addonSubGroupLabelLavender,
+                ].join(' ')
+                return (
+                  <div key={ci} className={groupCls}>
+                    {cluster.label && (
+                      <div className={labelCls}>{cluster.label}</div>
+                    )}
+                    {cluster.entries.map(([fullKey, item]) => {
+                      const isActive = selectedAddonIds.has(fullKey)
+                      return (
+                        <button
+                          key={fullKey}
+                          className={[s.addonBtn, isActive ? s.addonBtnActive : ''].filter(Boolean).join(' ')}
+                          onClick={() => onToggle(fullKey, item.text)}
+                          aria-pressed={isActive}
+                          title={item.text}
+                        >
+                          <span className={s.addonBtnText}>{item.title ?? item.text}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )
+              }
+
+              // uiVariant なし → 通常ボタン（枠なし）
+              return cluster.entries.map(([fullKey, item]) => {
+                const isActive = selectedAddonIds.has(fullKey)
+                return (
+                  <button
+                    key={fullKey}
+                    className={[s.addonBtn, isActive ? s.addonBtnActive : ''].filter(Boolean).join(' ')}
+                    onClick={() => onToggle(fullKey, item.text)}
+                    aria-pressed={isActive}
+                    title={item.text}
+                  >
+                    <span className={s.addonBtnText}>{item.title ?? item.text}</span>
+                  </button>
+                )
+              })
             })}
           </div>
         )

@@ -573,7 +573,7 @@
   background: #f4f6fb;
   color: #334;
   cursor: pointer;
-  transition: background 0.1s, color 0.1s, border-color 0.1s, box-shadow 0.1s;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
   -webkit-tap-highlight-color: transparent;
   min-height: 36px;
   line-height: 1.3;
@@ -583,26 +583,39 @@
   border-color: #5a9bff;
   color: #1a4da0;
 }
-/* 右アクセントライン — 色でカテゴリを識別。背景・文字色・枠色は addonBtn と同一。  */
-/* box-shadow: inset でレイアウト変化なし。選択中は addonBtnActive が box-shadow: none で消去。 */
-.addonBtnRightAccentBlue {
-  box-shadow: inset -3px 0 0 #7499cc;
+/* addon サブグループ枠 — ボタン個別ではなくグループ単位で色分け。         */
+/* 通知・準備 → Blue枠 / 見える化・支援 → Lavender枠。                      */
+/* ボタン本体のスタイルは変更しない。                                         */
+.addonSubGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-radius: 6px;
+  padding: 5px;
 }
-.addonBtnRightAccentBlue:hover {
-  box-shadow: inset -3px 0 0 #5a7fb8;
+.addonSubGroupBlue {
+  border: 1.5px solid #7499cc;
 }
-.addonBtnRightAccentLavender {
-  box-shadow: inset -3px 0 0 #c7b8ea;
+.addonSubGroupLavender {
+  border: 1.5px solid #c7b8ea;
 }
-.addonBtnRightAccentLavender:hover {
-  box-shadow: inset -3px 0 0 #b09dcf;
+.addonSubGroupLabel {
+  font-size: 0.60rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0 2px 2px;
+}
+.addonSubGroupLabelBlue {
+  color: #5a7fb8;
+}
+.addonSubGroupLabelLavender {
+  color: #9b82c8;
 }
 .addonBtnActive {
   background: #1a5cbf;
   border-color: #0a44a0;
   color: #fff;
   font-weight: 700;
-  box-shadow: none;
 }
 .addonBtnActive:hover {
   background: #0a44a0;
