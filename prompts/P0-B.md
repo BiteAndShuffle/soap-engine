@@ -249,6 +249,13 @@ addons.orderPresets格納ルール：
 P2 ERROR条件（addons.orderPresets）：
 - addons.items が存在するがaddons.orderPresetsが欠落している
 - addons.orderPresetsがobject型以外（array / null / string）で格納されている
+type → group / targetSection 変換表（ADDON_MAPPING 時に必ず参照する）：
+- lifestyle_guidance   → group: "counseling",  targetSection: "P"
+- side_effect_guidance → group: "counseling",  targetSection: "P"
+- glycemic_guidance    → group: "counseling",  targetSection: "P"
+- sickday_guidance     → group: "sickday",     targetSection: "P"
+- adherence_guidance   → group: "adherence",   targetSection: "P"
+変換表に存在しない type が bridge に現れた場合は CHECK として停止し、マッピングを確認してから再開する。
 必須ルール：
 - addon件数一致をP2で監査対象とする
 - addon key / id完全一致をP2で監査対象とする
@@ -258,6 +265,7 @@ P2 ERROR条件（addons.orderPresets）：
 - addon本文を補足しない
 - bridgeにないaddonを追加しない
 - bridgeにあるaddonを省略しない
+- 全addon item に key / id / title / group / targetSection / text の6フィールドが存在することをP2で確認する
 9. ADDON_REFERENCE_MAPPING
 以下を定義する。
 - P_ADDON参照IDの格納先

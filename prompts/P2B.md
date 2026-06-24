@@ -498,12 +498,39 @@ build原則：
 - addon identity保持
 - P_ADDON保持
 - 参照先存在確認
+type → group / targetSection 変換表（ADDON_BUILD時に必ず参照する）：
+- lifestyle_guidance   → group: "counseling",  targetSection: "P"
+- side_effect_guidance → group: "counseling",  targetSection: "P"
+- glycemic_guidance    → group: "counseling",  targetSection: "P"
+- sickday_guidance     → group: "sickday",     targetSection: "P"
+- adherence_guidance   → group: "adherence",   targetSection: "P"
+未定義 type が出た場合: 推測生成せず CHECK として停止し、マッピングを確認してから再開する。
+targetSection が欠落した addon は buildNodeFields の P 挿入分岐に到達しないため、
+addon が UI に表示されない無声の失敗が起きる。欠落は ERROR とする。
 mandatory diff対象：
 - addon件数
 - addon identity
 - addon.text
 - addonsRef
 - P_ADDON
+- 全 addon item の group / targetSection 存在確認
+■ ADDON_ORDER_RULE
+P_ADDON / addonsRef.P の並び順は重要度順とする。bridge 生成段階で順序を決定する。
+末尾 append（後から追加した addon を機械的に末尾に追加すること）は禁止する。
+優先順位（高い順）:
+1. 薬剤固有で患者説明頻度が高い指導（例: GI 症状対策）
+2. 重大・重要な副作用注意（例: 低血糖注意喚起）
+3. 疾患・生活指導（例: 血糖指導 / カリウム / 血圧 / 脂質 / 尿酸）
+4. 状況依存指導（例: シックデイ）
+後から addon を追加する場合も、上記優先順位を維持して挿入位置を決定する。
+■ CLINICAL_VALIDITY_RULE
+シナリオは網羅性だけで作らない。薬剤特性・副作用機序と一致しないシナリオは生成しない。
+注射薬モジュールの禁止シナリオ:
+- 注射部位反応に対する「減量」シナリオ（注射部位反応は「量の問題」ではなく「手技・部位の問題」のため）
+  適切な対応: 注射手技確認 / 部位ローテーション / 経過観察 / 変更 / 中止
+薬剤特性と副作用機序の整合性確認:
+- ある副作用への対応シナリオを生成する前に、その対応が当該薬剤の副作用機序と合致しているか確認する
+- 合致しない場合はシナリオを作らない（bridge 原稿に明示がある場合でも要確認）
 ■ SCENARIO_BUILD_RULE
 intentTags / sComposition / mergePolicy.S.domain は、
 P0-BまたはP2A CHECK_ITEMSで対応表・決定済み値がある場合のみbuildする。
@@ -558,6 +585,13 @@ build原則：
 - 本文自然化禁止
 - JSON都合移動禁止
 - scenario統合禁止
+O フィールド薬剤名ルール（全シナリオ必須）:
+- O フィールドの薬剤名部分は必ず {{drug_subject}} とする
+- genericName / drugClass / classKey / bridge header 薬効分類名を固定値で書かない
+- 状態語（処方 / 使用中 / 減量 等）はそのまま保持する
+- 形式例: "{{drug_subject}}　処方" / "{{drug_subject}}　使用中"
+- P2後に全シナリオの O フィールドを grep し、{{drug_subject}} が含まれることを確認する
+- CROSS_MODULE_DERIVATION_CHECK の旧モジュール固有文言チェックと組み合わせて実施する
 mandatory diff対象：
 - scenario件数
 - scenario identity

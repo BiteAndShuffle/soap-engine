@@ -135,6 +135,36 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 `addons.orderPresets` の中身（preset キー）は bridge 原稿に明示がある場合のみ定義する。
 bridge 未記載の preset を推測生成しない。
 
+**addon item 必須フィールド（全件）**
+
+`addons.items[]` の各エントリには以下 6 フィールドがすべて必須。
+
+| フィールド | 内容 |
+|---|---|
+| `key` | addon マップキーと同値。ModuleValidator の参照先確認対象 |
+| `id` | addon マップキーと同値（`key` と同値） |
+| `title` | UI 表示名 |
+| `group` | `"counseling"` / `"sickday"` / `"adherence"` 等。bridge type → group 変換後の値 |
+| `targetSection` | `"P"`（ほぼ全件）。欠落すると addon が P に挿入されない無声の失敗が起きる |
+| `text` | 出力テキスト。薬剤名部分は `{{drug_subject}}` を使用可 |
+
+`targetSection` が欠落した addon は `buildNodeFields` の P 挿入分岐に到達しないため UI に反映されない。欠落は ERROR とする。
+
+**O フィールドルール（全シナリオ）**
+
+`scenarios[].O` フィールドの薬剤名部分は必ず `{{drug_subject}}` を使用する。
+
+```
+正: "{{drug_subject}}　処方"
+正: "{{drug_subject}}　使用中"
+誤: "マンジャロ　処方"（ブランド名固定）
+誤: "GIP/GLP-1受容体作動薬（注射）　処方"（薬効分類名固定）
+```
+
+`genericName` / `drugClass` / `classKey` / bridge header の薬効分類名を O フィールドに固定出力することを禁止する。
+状態語（処方 / 使用中 / 減量 等）はそのまま保持する。
+O フィールドは `resolveDrugSubject()` の対象であり、固定文字列のままだと UI 上で薬剤名が置換されない。
+
 ---
 
 ## JS-B: 条件付き必須
