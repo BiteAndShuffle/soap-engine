@@ -547,7 +547,9 @@
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_pf_product_specific"
+          "addon_eye_drop_pf_product_specific",
+          "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_10min"
         ]
       },
       "followupRef": "default_followup",
@@ -672,7 +674,9 @@
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_pf_product_specific"
+          "addon_eye_drop_pf_product_specific",
+          "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_10min"
         ]
       },
       "followupRef": "default_followup",
@@ -797,7 +801,9 @@
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_pf_product_specific"
+          "addon_eye_drop_pf_product_specific",
+          "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_10min"
         ]
       },
       "followupRef": "default_followup",
@@ -2571,7 +2577,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.end_improved",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 終了（改善）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_improved",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "treatment_end",
@@ -2672,7 +2678,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.end_insufficient_effect",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 終了（効果不十分）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_insufficient_effect",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "treatment_end",
@@ -2773,7 +2779,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.end_ineffective",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 終了（無効）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_ineffective",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "treatment_end",

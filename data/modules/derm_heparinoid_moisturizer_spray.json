@@ -13,7 +13,7 @@
     "nodeLabelShort": "ヘパF/S",
     "nodeLabelLong": "ヘパリン類似物質系保湿剤フォーム・スプレー",
     "domain": "dermatology",
-    "priority": 5,
+    "priority": "chronic",
     "clinicalDomain": "dermatology",
     "searchDomain": "dermatology_topical",
     "classKey": "heparinoid_moisturizer_spray",
@@ -1834,7 +1834,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.end_improved",
       "title": "ヘパリン類似物質系保湿剤スプレー 終了（改善）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_improved",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [
@@ -1899,7 +1899,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.end_insufficient_effect",
       "title": "ヘパリン類似物質系保湿剤スプレー 終了（効果不十分）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_insufficient_effect",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [
@@ -1964,7 +1964,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.end_ineffective",
       "title": "ヘパリン類似物質系保湿剤スプレー 終了（無効）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_ineffective",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [

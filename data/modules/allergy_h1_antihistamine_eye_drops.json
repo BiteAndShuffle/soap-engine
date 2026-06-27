@@ -470,7 +470,8 @@
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_suspension_shake"
+          "addon_eye_drop_suspension_shake",
+          "addon_eye_drop_interval"
         ]
       },
       "followupRef": "default_followup",
@@ -2359,7 +2360,7 @@
       "globalId": "allergy_h1_antihistamine_eye_drops.end_improved",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（改善）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_improved",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "stop",
@@ -2460,7 +2461,7 @@
       "globalId": "allergy_h1_antihistamine_eye_drops.end_insufficient_effect",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（効果不十分）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_insufficient_effect",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "stop",
@@ -2561,7 +2562,7 @@
       "globalId": "allergy_h1_antihistamine_eye_drops.end_ineffective",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（無効）",
       "scenarioType": "treatment_end",
-      "scenarioGroup": "treatment_end",
+      "scenarioGroup": "end_ineffective",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "stop",
@@ -3872,7 +3873,8 @@
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_suspension_shake"
+          "addon_eye_drop_suspension_shake",
+          "addon_eye_drop_interval"
         ]
       },
       "followupRef": "default_followup",
@@ -4003,7 +4005,8 @@
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_suspension_shake"
+          "addon_eye_drop_suspension_shake",
+          "addon_eye_drop_interval"
         ]
       },
       "followupRef": "default_followup",

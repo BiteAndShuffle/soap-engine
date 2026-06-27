@@ -1,22 +1,26 @@
 # =========================================
 # SOAP-ENGINE MODULE (bridge原稿 / lightweight)
-# dm_gip_glp1ra_tirzepatide_injection
+# dm_insulin_rapid_analog
 # =========================================
-moduleId: "dm_gip_glp1ra_tirzepatide_injection"
+moduleId: "dm_insulin_rapid_analog"
 
 categoryPath:
   - "糖尿病"
-  - "GIP/GLP-1受容体作動薬"
-  - "注射"
+  - "インスリン製剤"
+  - "超速効型"
 
 drug:
-  genericName: "GIP/GLP-1受容体作動薬"
+  genericName: "超速効型インスリン製剤"
 
   brandNames:
-    - "マンジャロ皮下注"
+    - "ヒューマログ"
+    - "ルムジェブ"
+    - "ノボラピッド"
+    - "フィアスプ"
+    - "アピドラ"
 
   drugClass:
-    - "GIP_GLP1_RA"
+    - "INSULIN_RAPID_ANALOG"
 
   route: "injection"
 
@@ -24,30 +28,56 @@ drug:
     - "injection"
 
   drugSpecificTags:
-    - "gip_glp1ra_injection"
-    - "tirzepatide"
-    - "mounjaro"
+    - "insulin_rapid_analog"
+    - "insulin_injection"
 
   search:
-    primaryDisplayName: "GIP/GLP-1受容体作動薬（注射）"
+    primaryDisplayName: "超速効型インスリン製剤"
 
     exactAliases:
-      - "マンジャロ皮下注"
-      - "マンジャロ"
-      - "チルゼパチド皮下注"
-      - "チルゼパチド"
+      - "ヒューマログ"
+      - "ルムジェブ"
+      - "ノボラピッド"
+      - "フィアスプ"
+      - "アピドラ"
 
     prefixAliases:
-      - "まんじゃろひかちゅう"
-      - "まんじゃろ"
-      - "ちるぜぱちどひかちゅう"
-      - "ちるぜぱちど"
+      - "ひゅーまろぐ"
+      - "ひゅーまろ"
+      - "ひゅーま"
+      - "ひゅー"
+      - "るむじぇぶ"
+      - "るむじぇ"
+      - "るむ"
+      - "のぼらぴっど"
+      - "のぼらぴ"
+      - "のぼら"
+      - "のぼ"
+      - "ふぃあすぷ"
+      - "ふぃあ"
+      - "ふぃ"
+      - "あぴどら"
+      - "あぴど"
+      - "あぴ"
 
     nameAliases:
-      - "まんじゃろひかちゅう"
-      - "まんじゃろ"
-      - "ちるぜぱちどひかちゅう"
-      - "ちるぜぱちど"
+      - "ひゅーまろぐ"
+      - "ひゅーまろ"
+      - "ひゅーま"
+      - "ひゅー"
+      - "るむじぇぶ"
+      - "るむじぇ"
+      - "るむ"
+      - "のぼらぴっど"
+      - "のぼらぴ"
+      - "のぼら"
+      - "のぼ"
+      - "ふぃあすぷ"
+      - "ふぃあ"
+      - "ふぃ"
+      - "あぴどら"
+      - "あぴど"
+      - "あぴ"
 
     keywords: []
 
@@ -59,39 +89,135 @@ drug:
       suppressCrossModuleSuggestionsOnExactHit: true
 
   nameAliases:
-    - "まんじゃろひかちゅう"
-    - "まんじゃろ"
-    - "ちるぜぱちどひかちゅう"
-    - "ちるぜぱちど"
+    - "ひゅーまろぐ"
+    - "ひゅーまろ"
+    - "ひゅーま"
+    - "ひゅー"
+    - "るむじぇぶ"
+    - "るむじぇ"
+    - "るむ"
+    - "のぼらぴっど"
+    - "のぼらぴ"
+    - "のぼら"
+    - "のぼ"
+    - "ふぃあすぷ"
+    - "ふぃあ"
+    - "ふぃ"
+    - "あぴどら"
+    - "あぴど"
+    - "あぴ"
 
   brandCatalog:
-    マンジャロ皮下注:
-      displayName: "マンジャロ皮下注"
+    ヒューマログ:
+      displayName: "ヒューマログ"
 
-      genericName: "チルゼパチド"
+      genericName: "インスリンリスプロ"
 
-      displayGenericName: "チルゼパチド皮下注"
+      displayGenericName: "インスリンリスプロ"
 
       aliases:
-        - "まんじゃろひかちゅう"
-        - "まんじゃろ"
-        - "ちるぜぱちどひかちゅう"
-        - "ちるぜぱちど"
+        - "ひゅーまろぐ"
+        - "ひゅーまろ"
+        - "ひゅーま"
+        - "ひゅー"
 
       normalizedAliases:
-        - "まんじゃろひかちゅう"
-        - "まんじゃろ"
-        - "ちるぜぱちどひかちゅう"
-        - "ちるぜぱちど"
+        - "ひゅーまろぐ"
+        - "ひゅーまろ"
+        - "ひゅーま"
+        - "ひゅー"
+
+    ルムジェブ:
+      displayName: "ルムジェブ"
+
+      genericName: "インスリンリスプロ"
+
+      displayGenericName: "インスリンリスプロ"
+
+      aliases:
+        - "るむじぇぶ"
+        - "るむじぇ"
+        - "るむ"
+
+      normalizedAliases:
+        - "るむじぇぶ"
+        - "るむじぇ"
+        - "るむ"
+
+    ノボラピッド:
+      displayName: "ノボラピッド"
+
+      genericName: "インスリンアスパルト"
+
+      displayGenericName: "インスリンアスパルト"
+
+      aliases:
+        - "のぼらぴっど"
+        - "のぼらぴ"
+        - "のぼら"
+        - "のぼ"
+
+      normalizedAliases:
+        - "のぼらぴっど"
+        - "のぼらぴ"
+        - "のぼら"
+        - "のぼ"
+
+    フィアスプ:
+      displayName: "フィアスプ"
+
+      genericName: "インスリンアスパルト"
+
+      displayGenericName: "インスリンアスパルト"
+
+      aliases:
+        - "ふぃあすぷ"
+        - "ふぃあ"
+        - "ふぃ"
+
+      normalizedAliases:
+        - "ふぃあすぷ"
+        - "ふぃあ"
+        - "ふぃ"
+
+    アピドラ:
+      displayName: "アピドラ"
+
+      genericName: "インスリングルリジン"
+
+      displayGenericName: "インスリングルリジン"
+
+      aliases:
+        - "あぴどら"
+        - "あぴど"
+        - "あぴ"
+
+      normalizedAliases:
+        - "あぴどら"
+        - "あぴど"
+        - "あぴ"
 
   aliasToBrand:
-    "まんじゃろひかちゅう": "マンジャロ皮下注"
-    "まんじゃろ": "マンジャロ皮下注"
-    "ちるぜぱちどひかちゅう": "マンジャロ皮下注"
-    "ちるぜぱちど": "マンジャロ皮下注"
+    "ひゅーまろぐ": "ヒューマログ"
+    "ひゅーまろ": "ヒューマログ"
+    "ひゅーま": "ヒューマログ"
+    "ひゅー": "ヒューマログ"
+    "るむじぇぶ": "ルムジェブ"
+    "るむじぇ": "ルムジェブ"
+    "るむ": "ルムジェブ"
+    "のぼらぴっど": "ノボラピッド"
+    "のぼらぴ": "ノボラピッド"
+    "のぼら": "ノボラピッド"
+    "のぼ": "ノボラピッド"
+    "ふぃあすぷ": "フィアスプ"
+    "ふぃあ": "フィアスプ"
+    "ふぃ": "フィアスプ"
+    "あぴどら": "アピドラ"
+    "あぴど": "アピドラ"
+    "あぴ": "アピドラ"
 
 template:
-  templateId: "dm_gip_glp1ra_tirzepatide_injection_v1"
+  templateId: "dm_insulin_rapid_analog_v1"
 
   templateVersion: "1.0.0"
 
@@ -105,19 +231,19 @@ template:
     - "severe"
 
 display:
-  title: "GIP/GLP-1受容体作動薬（注射）"
+  title: "超速効型インスリン製剤"
 
-  subtitle: "マンジャロ皮下注 / チルゼパチド皮下注"
+  subtitle: "超速効型インスリン製剤"
 
-  drugClassLabel: "GIP/GLP-1受容体作動薬"
+  drugClassLabel: "超速効型インスリン製剤"
 
-  drugGeneric: "GIP/GLP-1受容体作動薬"
+  drugGeneric: "超速効型インスリン製剤"
 
-  nodeLabelShort: "GIP/GLP1注射"
+  nodeLabelShort: "超速効INS"
 
-  nodeLabelLong: "GIP/GLP-1受容体作動薬（注射）"
+  nodeLabelLong: "超速効型インスリン製剤"
 
-  nodeKey: "gip_glp1ra_tirzepatide_injection"
+  nodeKey: "insulin_rapid_analog_injection"
 
   menuGroupLabels:
     増量: "増量"
@@ -284,35 +410,30 @@ constitution:
     - "提案は現在要件と将来拡張を明確に分離して述べる"
 
 
-
 =======SCENARIOS_START=======
-
-【SCENARIO｜type=treatment_start｜id=initial｜title=GIP/GLP-1受容体作動薬（注射） 初回】
+【SCENARIO｜type=treatment_start｜id=initial｜title=超速効型インスリン製剤 初回】
 S
-GIP/GLP-1受容体作動薬（注射）は、血糖値が高いため追加となった。
-
+超速効型インスリン製剤は、血糖値が高いため追加となった。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）は、血糖コントロール不十分のため追加となった。
-血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。
-血糖改善および体重管理の補助を目的として使用する。
-
+超速効型インスリン製剤は、血糖コントロール不十分のため追加となった。
+食事に合わせて血糖上昇を抑え、食後血糖の改善を目的として使用する。
+食事量や活動量の変化、食事時間のずれにより低血糖が起こる可能性があるため、注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、血糖値を改善する薬です。
-悪心や食欲不振などの副作用が出ることがあります。
-副作用が出た場合はご相談ください。
+超速効型インスリン製剤は、食後の血糖値を改善する薬です。
+食事に合わせて使用することが重要です。
+血糖値が下がりすぎることで、低血糖が起こることがあります。
+ふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 注射の具体的な手技については、指導せんを用いて説明しています。
 注射方法や使用手順に不安がある場合はご相談ください。
 
+
 P_ADDON
-- addon_gi_tolerance_guidance
 - addon_glycemic_guidance
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -324,316 +445,211 @@ P_APPEND
 間食はカロリーオフ・ノンシュガー食品への置き換えを取り入れてみてください。
 血糖が改善してきた際には低血糖症状が出ることがあります。
 気になる症状があればご相談ください。
-
-
 【ADDON｜type=lifestyle_guidance｜id=addon_hyperkalemia_guidance｜title=生活指導（カリウム）】
 S_APPEND
 カリウムの値が高いと言われた。
-
 A_APPEND
 カリウムコントロールが不十分であり、食事内容の見直しが必要である。
-
 P_APPEND
 カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
 食事療法は、カリウムのコントロールにおいて重要です。
 カリウムを多く含む食品の摂りすぎに注意しましょう。
 気になることがあればご相談ください。
-
-
 【ADDON｜type=side_effect_guidance｜id=addon_se_hypoglycemia_guidance｜title=副作用注意喚起（低血糖）】
 P_APPEND
-ふらつき・動悸などの低血糖症状が出ることがあります。
+ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
 低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
-
-
 【ADDON｜type=sickday_guidance｜id=addon_initial_sickday_guidance｜title=初回シックデイ】
 P_APPEND
 発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
 血糖測定が可能であれば行ってください。
 水分は少量ずつこまめに摂取してください。
-治療継続の可否は体調や摂取状況によって異なります。
-自己判断せず、処方医に相談してください。
+インスリンは自己判断で中止しないでください。
+治療継続の可否は体調や摂取状況によって異なるため、処方医に相談してください。
 嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
 
 
-【SCENARIO｜type=treatment_start｜id=restart｜title=GIP/GLP-1受容体作動薬（注射） 再開】
+
+
+【SCENARIO｜type=treatment_start｜id=restart｜title=超速効型インスリン製剤 再開】
 S
-GIP/GLP-1受容体作動薬（注射）は、血糖値が高いため再開となった。
-
+超速効型インスリン製剤は、血糖値が高いため再開となった。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）は、血糖コントロール不十分のため再開となった。
-血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。
-血糖改善および体重管理の補助を目的として使用する。
-
+超速効型インスリン製剤は、血糖コントロール不十分のため再開となった。
+食事に合わせて血糖上昇を抑え、食後血糖の改善を目的として使用する。
+再開後は低血糖や注射手技に注意しながら継続する必要がある。
 P
-GIP/GLP-1受容体作動薬（注射）は、血糖値を改善する薬です。
-悪心や食欲不振などの副作用が出ることがあります。
-副作用が出た場合はご相談ください。
+超速効型インスリン製剤は、食後の血糖値を改善する薬です。
+食事に合わせて使用することが重要です。
+血糖値が下がりすぎることで、低血糖が起こることがあります。
+ふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 注射の具体的な手技については、指導せんを用いて説明しています。
 注射方法や使用手順に不安がある場合はご相談ください。
 
+
 P_ADDON
-- addon_gi_tolerance_guidance
 - addon_glycemic_guidance
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_start｜id=external_start｜title=GIP/GLP-1受容体作動薬（注射） 他所開始】
+【SCENARIO｜type=treatment_start｜id=external_start｜title=超速効型インスリン製剤 他所開始】
 S
-GIP/GLP-1受容体作動薬（注射）は、他院で開始され継続使用中であった。
-
+超速効型インスリン製剤は、他院で開始され継続使用中であった。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）は、血糖コントロール改善を目的として継続使用中であった。
-血糖依存的にインスリン分泌を促進し、食欲抑制作用も併せ持つ。
-血糖改善および体重管理の補助を目的として使用する。
+超速効型インスリン製剤は、食後血糖の改善を目的として継続使用中であった。
+食事に合わせて血糖上昇を抑え、低血糖や注射手技に注意しながら継続する必要がある。
+
 
 P
-GIP/GLP-1受容体作動薬（注射）は、血糖値を改善する薬です。
-悪心や食欲不振などの副作用が出ることがあります。
-副作用が出た場合はご相談ください。
+超速効型インスリン製剤は、食後の血糖値を改善する薬です。
+食事に合わせて使用することが重要です。
+血糖値が下がりすぎることで、低血糖が起こることがあります。
+ふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 注射の具体的な手技については、指導せんを用いて説明しています。
 注射方法や使用手順に不安がある場合はご相談ください。
 
+
 P_ADDON
-- addon_gi_tolerance_guidance
 - addon_glycemic_guidance
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=GIP/GLP-1受容体作動薬（注射） 増量（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=超速効型インスリン製剤 増量（効果実感乏しい）】
 S
-GIP/GLP-1受容体作動薬（注射）は、効果の実感が乏しいため増量となった。
-
+超速効型インスリン製剤は、効果の実感が乏しいため増量となった。
 O
-{{drug_subject}}　増量
-
+超速効型インスリン製剤　増量
 A
-GIP/GLP-1受容体作動薬（注射）は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
-
+超速効型インスリン製剤は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
-消化器症状が強い場合はご相談ください。
-
+超速効型インスリン製剤は、増量により血糖値が下がりやすくなることがあります。
+ふらつき・冷汗・動悸などの低血糖症状に注意してください。
+低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
+症状が続く場合はご相談ください。
 P_ADDON
-- addon_gi_tolerance_guidance
 - addon_se_hypoglycemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=GIP/GLP-1受容体作動薬（注射） 増量（検査値改善なし）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=超速効型インスリン製剤 増量（検査値改善なし）】
 S
-GIP/GLP-1受容体作動薬（注射）は、検査値が改善しないため増量となった。
-
+超速効型インスリン製剤は、検査値が改善しないため増量となった。
 O
-{{drug_subject}}　増量
-
+超速効型インスリン製剤　増量
 A
-GIP/GLP-1受容体作動薬（注射）は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
-
+超速効型インスリン製剤は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
-消化器症状が強い場合はご相談ください。
-
+超速効型インスリン製剤は、増量により血糖値が下がりやすくなることがあります。
+ふらつき・冷汗・動悸などの低血糖症状に注意してください。
+低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
+症状が続く場合はご相談ください。
 P_ADDON
-- addon_gi_tolerance_guidance
 - addon_se_hypoglycemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=GIP/GLP-1受容体作動薬（注射） 増量（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=超速効型インスリン製剤 増量（他剤との調整）】
 S
-GIP/GLP-1受容体作動薬（注射）は、他剤変更に伴う調整により増量となった。
-
+超速効型インスリン製剤は、他剤変更に伴う調整により増量となった。
 O
-{{drug_subject}}　増量
-
+超速効型インスリン製剤　増量
 A
-GIP/GLP-1受容体作動薬（注射）は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
-
+超速効型インスリン製剤は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、増量により吐き気・下痢・便秘などの消化器症状や食欲低下が出やすくなることがあります。
-消化器症状が強い場合はご相談ください。
-
+超速効型インスリン製剤は、増量により血糖値が下がりやすくなることがあります。
+ふらつき・冷汗・動悸などの低血糖症状に注意してください。
+低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
+症状が続く場合はご相談ください。
 P_ADDON
-- addon_gi_tolerance_guidance
 - addon_se_hypoglycemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=GIP/GLP-1受容体作動薬（注射） 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=超速効型インスリン製剤 減量（症状改善）】
 S
-GIP/GLP-1受容体作動薬（注射）は、検査値が改善したため減量となった。
-
+超速効型インスリン製剤は、検査値が改善したため減量となった。
 O
-{{drug_subject}}　減量
-
+超速効型インスリン製剤　減量
 A
-GIP/GLP-1受容体作動薬（注射）は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
-
+超速効型インスリン製剤は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、減量により血糖値が上がることがあります。
+超速効型インスリン製剤は、減量により血糖値が上がることがあります。
 体調変化があればご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=GIP/GLP-1受容体作動薬（注射） 減量（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=超速効型インスリン製剤 減量（効果実感乏しい）】
 S
-GIP/GLP-1受容体作動薬（注射）は、効果の実感が乏しいため減量を希望された。
-
+超速効型インスリン製剤は、効果の実感が乏しいため減量を希望された。
 O
-{{drug_subject}}　減量
-
+超速効型インスリン製剤　減量
 A
-GIP/GLP-1受容体作動薬（注射）は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
-
+超速効型インスリン製剤は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、減量により血糖値が上昇する可能性があります。
+超速効型インスリン製剤は、減量により血糖値が上昇する可能性があります。
 体調変化があればご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=GIP/GLP-1受容体作動薬（注射） 減量（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=超速効型インスリン製剤 減量（他剤との調整）】
 S
-GIP/GLP-1受容体作動薬（注射）は、他剤変更に伴う調整のため減量となった。
-
+超速効型インスリン製剤は、他剤変更に伴う調整のため減量となった。
 O
-{{drug_subject}}　減量
-
+超速効型インスリン製剤　減量
 A
-GIP/GLP-1受容体作動薬（注射）は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
-
+超速効型インスリン製剤は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）は、減量により血糖値が上昇する可能性があります。
+超速効型インスリン製剤は、減量により血糖値が上昇する可能性があります。
 体調変化があればご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_injection_site_induration_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（注射部硬結）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_induration_none｜title=超速効型インスリン製剤 副作用なし（注射部硬結）】
 S
-GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
+超速効型インスリン製剤を使用して症状は落ち着いている。
 注射部位が硬くなるような変化は認めない。
-
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）による注射部位反応は現時点で認められず、治療継続が可能である。
-
+超速効型インスリン製剤による注射部位反応は現時点で認められず、治療継続が可能である。
 P
-GIP/GLP-1受容体作動薬（注射）の継続中に、注射部位が硬くなることがあります。
+超速効型インスリン製剤の継続中に、注射部位が硬くなることがあります。
 毎回注射部位を変えることで予防できます。
 気になる症状があればご相談ください。
-
-P_ADDON
-- addon_glycemic_guidance_followup
-- addon_hyperkalemia_guidance
-- addon_hypertension_guidance
-- addon_dyslipidemia_guidance
-- addon_hyperuricemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（低血糖）】
+【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=超速効型インスリン製剤 副作用なし（低血糖）】
 S
-GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
+超速効型インスリン製剤を使用して症状は落ち着いている。
 ふらつき・冷汗・動悸などの低血糖症状は認めない。
-
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）による低血糖は現時点で認められず、治療継続が可能である。
-
+超速効型インスリン製剤による低血糖は現時点で認められず、治療継続が可能である。
 P
-GIP/GLP-1受容体作動薬（注射）の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
-単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。
-症状が出た場合は糖分を摂取してください。
+超速効型インスリン製剤の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
+症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 改善しない場合はご相談ください。
-
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
 - addon_hypertension_guidance
 - addon_dyslipidemia_guidance
 - addon_hyperuricemia_guidance
-
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=side_effect｜id=se_nausea_diarrhea_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（悪心・下痢）】
-S
-GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
-悪心・下痢などの消化器症状は認めない。
-
-O
-{{drug_subject}}　処方
-
-A
-GIP/GLP-1受容体作動薬（注射）による消化器症状は現時点で認められず、治療継続が可能である。
-
-P
-GIP/GLP-1受容体作動薬（注射）の継続中に吐き気・下痢などが出ることがあります。
-症状が続く場合はご相談ください。
-
-P_ADDON
-- addon_gi_tolerance_guidance
-- addon_glycemic_guidance_followup
-- addon_hyperkalemia_guidance
-- addon_hypertension_guidance
-- addon_dyslipidemia_guidance
-- addon_hyperuricemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -641,50 +657,37 @@ P_CLOSING
 【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_followup｜title=生活指導（血糖指導）】
 A_APPEND
 血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
-
 P_APPEND
 高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。
 食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。
 間食や食事内容を見直すことも、血糖コントロールの改善につながります。
 血糖が改善してきた際には低血糖症状が出ることがあります。
 気になることがあればご相談ください。
-
-
 【ADDON｜type=lifestyle_guidance｜id=addon_hypertension_guidance｜title=生活指導（血圧）】
 S_APPEND
 血圧が高いと言われた。
-
 A_APPEND
 血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
-
 P_APPEND
 血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。
 食事療法や運動療法は、血圧のコントロールにおいて重要です。
 塩分の摂りすぎに注意しましょう。
 気になることがあればご相談ください。
-
-
 【ADDON｜type=lifestyle_guidance｜id=addon_dyslipidemia_guidance｜title=生活指導（脂質）】
 S_APPEND
 脂質が高いと言われた。
-
 A_APPEND
 脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
-
 P_APPEND
 脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。
 食事療法や運動療法は、脂質のコントロールにおいて重要です。
 食生活の見直しを継続していきましょう。
 気になることがあればご相談ください。
-
-
 【ADDON｜type=lifestyle_guidance｜id=addon_hyperuricemia_guidance｜title=生活指導（尿酸）】
 S_APPEND
 尿酸が高いと言われた。
-
 A_APPEND
 尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。
-
 P_APPEND
 尿酸が高い状態が続くと、痛風発作などにつながることがあります。
 食事療法は、尿酸のコントロールにおいて重要です。
@@ -692,109 +695,36 @@ P_APPEND
 気になることがあればご相談ください。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_appetite_loss_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（食欲不振）】
-S
-GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
-食欲低下は認めない。
-
-O
-{{drug_subject}}　処方
-
-A
-GIP/GLP-1受容体作動薬（注射）による食欲低下は現時点で認められず、治療継続が可能である。
-
-P
-GIP/GLP-1受容体作動薬（注射）の継続中に食欲低下が出ることがあります。
-食事量が落ちる・体重が急に減るなどの変化があればご相談ください。
-
-P_ADDON
-- addon_gi_tolerance_guidance
-- addon_glycemic_guidance_followup
-- addon_hyperkalemia_guidance
-- addon_hypertension_guidance
-- addon_dyslipidemia_guidance
-- addon_hyperuricemia_guidance
-
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=side_effect｜id=se_pancreatitis_none｜title=GIP/GLP-1受容体作動薬（注射） 副作用なし（膵炎）】
-S
-GIP/GLP-1受容体作動薬（注射）を使用して症状は落ち着いている。
-強い腹痛や背部痛などの症状は認めない。
-
-O
-{{drug_subject}}　処方
-
-A
-GIP/GLP-1受容体作動薬（注射）による膵炎は現時点で認められず、治療継続が可能である。
-
-P
-GIP/GLP-1受容体作動薬（注射）の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
-こうした症状が続く場合は膵炎の可能性があります。
-痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。
-
-P_ADDON
-- addon_glycemic_guidance_followup
-- addon_hyperkalemia_guidance
-- addon_hypertension_guidance
-- addon_dyslipidemia_guidance
-- addon_hyperuricemia_guidance
-
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=adherence｜id=cp_good｜title=GIP/GLP-1受容体作動薬（注射） CP良好】
+【SCENARIO｜type=adherence｜id=cp_good｜title=超速効型インスリン製剤 CP良好】
 S
 薬を使用して症状は落ち着いている。
 継続して使用できている。
-
 O
-{{drug_subject}}　使用中
-
+超速効型インスリン製剤　使用中
 A
 コンプライアンスは良好である。治療継続に問題はない。
-
 P
 引き続き用法を守って使用することで、血糖コントロールの維持および合併症予防が期待できます。
 今後も継続して使用できるようにすることが大切です。
-
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
 - addon_hypertension_guidance
 - addon_dyslipidemia_guidance
 - addon_hyperuricemia_guidance
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=GIP/GLP-1受容体作動薬（注射） CP不良（使用忘れ）】
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=超速効型インスリン製剤 CP不良（使用忘れ）】
 S
 使用忘れがみられる。
 継続して使用できていない。
-
 O
-{{drug_subject}}　使用中
-
+超速効型インスリン製剤　使用中
 A
 コンプライアンスは不良で、使用忘れがみられる。
-
 P
 継続して使用することで血糖コントロールの維持が期待されます。
 使用忘れが続くと血糖値が不安定となる可能性があります。
-
 P_ADDON
 - addon_adherence_reminder_alarm
 - addon_adherence_reminder_app
@@ -803,397 +733,264 @@ P_ADDON
 - addon_adherence_schedule_confirmation
 - addon_adherence_fixed_weekday
 - addon_adherence_support_family_reminder
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=使用忘れ対策（見える化：カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、次回の使用予定日を目立つ場所に書いておく方法があります。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用忘れ対策（予定確認）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、次回の使用予定日を事前に確認しておく方法があります。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_fixed_weekday｜title=使用忘れ対策（曜日固定）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、毎週同じ曜日に使用する習慣をつける方法があります。
-
-
 【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
-
-
-
-
-【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=GIP/GLP-1受容体作動薬（注射） CP不良（自己判断）】
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=超速効型インスリン製剤 CP不良（自己判断）】
 S
 自己判断での使用調整がみられる。
 用法どおりの継続使用ができていない。
-
 O
-{{drug_subject}}　使用中
-
+超速効型インスリン製剤　使用中
 A
 コンプライアンスは不良で、自己判断による調整がみられる。
-
 P
 継続して使用することで血糖コントロールが安定し、合併症予防につながります。
 自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があります。
 体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=GIP/GLP-1受容体作動薬（注射） CP不良（受診遅延）】
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=超速効型インスリン製剤 CP不良（受診遅延）】
 S
 都合により受診遅延がみられる。
 継続した使用に不安がある。
-
 O
-{{drug_subject}}　使用中
-
+超速効型インスリン製剤　使用中
 A
 コンプライアンスは不良で、受診遅延がみられる。
-
 P
 継続的な使用が血糖コントロールの維持と合併症予防につながります。
 治療が中断すると血糖値が悪化する可能性があります。
 次回受診が難しい場合は、早めに医療機関へご連絡ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_end｜id=end_improved｜title=GIP/GLP-1受容体作動薬（注射） 終了（改善）】
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=超速効型インスリン製剤 終了（改善）】
 S
-GIP/GLP-1受容体作動薬（注射）は、血糖コントロールが改善したため中止となった。
-
+超速効型インスリン製剤は、血糖コントロールが改善したため中止となった。
 O
-{{drug_subject}}　処方終了
-
+超速効型インスリン製剤　処方終了
 A
-GIP/GLP-1受容体作動薬（注射）は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
-
+超速効型インスリン製剤は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）終了後、血糖上昇や体調変化がある場合はご相談ください。
-
+超速効型インスリン製剤終了後、血糖上昇や体調変化がある場合はご相談ください。
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=GIP/GLP-1受容体作動薬（注射） 終了（効果不十分）】
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=超速効型インスリン製剤 終了（効果不十分）】
 S
-GIP/GLP-1受容体作動薬（注射）は、効果不十分のため中止となった。
-
+超速効型インスリン製剤は、効果不十分のため中止となった。
 O
-{{drug_subject}}　処方終了
-
+超速効型インスリン製剤　処方終了
 A
-GIP/GLP-1受容体作動薬（注射）は、効果不十分のため終了となった。血糖管理の再評価が必要である。
-
+超速効型インスリン製剤は、効果不十分のため終了となった。血糖管理の再評価が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）終了後、血糖が上昇する可能性があります。
+超速効型インスリン製剤終了後、血糖が上昇する可能性があります。
 次の治療方針については処方医にご相談ください。
-
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
-
-
-
-
-【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=GIP/GLP-1受容体作動薬（注射） 終了（無効）】
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=超速効型インスリン製剤 終了（無効）】
 S
-GIP/GLP-1受容体作動薬（注射）は、効果が認められなかったため中止となった。
-
+超速効型インスリン製剤は、効果が認められなかったため中止となった。
 O
-{{drug_subject}}　処方終了
-
+超速効型インスリン製剤　処方終了
 A
-GIP/GLP-1受容体作動薬（注射）は、効果が認められなかったため終了となった。治療方針の変更が必要である。
-
+超速効型インスリン製剤は、効果が認められなかったため終了となった。治療方針の変更が必要である。
 P
-GIP/GLP-1受容体作動薬（注射）終了後、血糖が上昇する可能性があります。
+超速効型インスリン製剤終了後、血糖が上昇する可能性があります。
 代替治療については処方医にご相談ください。
-
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=超速効型インスリン製剤 SE継続（軽症・低血糖）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。
-
+超速効型インスリン製剤の使用により軽いふらつきや冷汗などがあるが、糖分摂取により改善している。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）による消化器症状を軽度認めるが、治療継続が可能である。
-
+超速効型インスリン製剤による軽度の低血糖症状を認めるが、対応により改善しており、治療継続は可能である。
 P
-GIP/GLP-1受容体作動薬（注射）による症状が軽い場合は、食事量を無理なく調整し、脂っこいものを控えることで改善することがあります。
-便秘や下痢などの症状が強く続く場合は調整が必要なことがあります。
-ご相談ください。
-
-P_ADDON
-- addon_gi_tolerance_guidance
-
+低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
+食事量が少ない時や食事時間が遅れる時は、低血糖が起こりやすくなることがあります。
+症状が繰り返す場合は、用量調整が必要になることがあるためご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・軽症）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=超速効型インスリン製剤 SE継続（注射部位・軽症）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
-
+超速効型インスリン製剤の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）による注射部位反応を軽度認めるが、治療継続が可能である。
-
+超速効型インスリン製剤による注射部位反応を軽度認めるが、治療継続が可能である。
 P
-GIP/GLP-1受容体作動薬（注射）により注射部位に軽い痛みやしこりが出ることがあります。
+超速効型インスリン製剤により注射部位に軽い痛みやしこりが出ることがあります。
 毎回注射部位を変えることで予防や軽減につながります。
 症状が強くなる、長引く場合はご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（中等度）】
+【SCENARIO｜type=side_effect｜id=se_hypoglycemia_moderate_consider_dr｜title=超速効型インスリン製剤 SE継続（中等度・低血糖）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。
-
+超速効型インスリン製剤の使用によりふらつき・冷汗などが強く、辛いことがあるが、日常生活は送れている。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）による消化器症状が強く、継続困難の可能性があるため対応を要する。
-
+超速効型インスリン製剤による低血糖症状が強く、継続困難の可能性があるため対応を要する。
 P
-GIP/GLP-1受容体作動薬（注射）による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。
+超速効型インスリン製剤による症状が強い場合は、減量や薬の変更などが必要になることがあります。
 処方医へご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・中等度）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=超速効型インスリン製剤 SE継続（注射部位・中等度）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが強く、気になることがある。
-
+超速効型インスリン製剤の使用により注射部位の痛みや腫れが強く、気になることがある。
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
-GIP/GLP-1受容体作動薬（注射）による注射部位反応が強く、継続困難の可能性があるため対応を要する。
-
+超速効型インスリン製剤による注射部位反応が強く、継続困難の可能性があるため対応を要する。
 P
-GIP/GLP-1受容体作動薬（注射）により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。
+超速効型インスリン製剤により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。
 症状が続く場合は処方医へご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_change_due_to_gi_symptoms｜title=GIP/GLP-1受容体作動薬（注射） SE変更（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_change_due_to_hypoglycemia｜title=超速効型インスリン製剤 SE変更（低血糖）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘が出現したため、他剤へ変更となった。
-
+超速効型インスリン製剤の使用により低血糖症状が出現したため、他剤へ変更となった。
 O
-{{drug_subject}}　処方変更
-
+超速効型インスリン製剤　処方変更
 A
-GIP/GLP-1受容体作動薬（注射）の使用による消化器症状を認め、他剤変更後の経過確認を要する。
-
+超速効型インスリン製剤の使用による低血糖症状を認め、他剤変更後の経過確認を要する。
 P
-GIP/GLP-1受容体作動薬（注射）の変更後、血糖上昇や体調変化があればご相談ください。
-
+超速効型インスリン製剤の変更後、ふらつき・冷汗・動悸などの低血糖症状や、血糖上昇による体調変化に注意してください。
+気になる症状があればご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_change_due_to_injection_site_reaction｜title=GIP/GLP-1受容体作動薬（注射） SE変更（注射部位）】
+【SCENARIO｜type=side_effect｜id=se_change_due_to_injection_site_reaction｜title=超速効型インスリン製剤 SE変更（注射部位）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。
-
+超速効型インスリン製剤の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。
 O
-{{drug_subject}}　処方変更
-
+超速効型インスリン製剤　処方変更
 A
-GIP/GLP-1受容体作動薬（注射）の使用による注射部位反応を認め、他剤変更後の経過確認を要する。
-
+超速効型インスリン製剤の使用による注射部位反応を認め、他剤変更後の経過確認を要する。
 P
-GIP/GLP-1受容体作動薬（注射）の変更後、注射部位の症状や体調変化があればご相談ください。
-
+超速効型インスリン製剤の変更後、注射部位の症状や体調変化があればご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
-
-
-
-【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=GIP/GLP-1受容体作動薬（注射） SE減量（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_hypoglycemia｜title=超速効型インスリン製剤 SE減量（低血糖）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘がひどいため、減量となった。
-
+超速効型インスリン製剤の使用により低血糖症状が強いため、減量となった。
 O
-{{drug_subject}}　減量
-
+超速効型インスリン製剤　減量
 A
-GIP/GLP-1受容体作動薬（注射）の使用による消化器症状を認め、減量後の経過確認を要する。
-
+超速効型インスリン製剤の使用による低血糖症状を認め、減量後の経過確認を要する。
 P
-GIP/GLP-1受容体作動薬（注射）の減量後も消化器症状が続く場合はご相談ください。
-
+超速効型インスリン製剤の減量後は低血糖症状が改善することが期待されますが、血糖値が上昇する可能性もあります。
+ふらつき・冷汗・動悸などの症状や、体調変化があればご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=side_effect｜id=se_stop_due_to_gi_symptoms｜title=GIP/GLP-1受容体作動薬（注射） SE中止（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_hypoglycemia｜title=超速効型インスリン製剤 SE中止（低血糖）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘がひどいため、中止となった。
-
+超速効型インスリン製剤の使用により低血糖症状が強いため、中止となった。
 O
-{{drug_subject}}　処方中止
-
+超速効型インスリン製剤　処方中止
 A
-GIP/GLP-1受容体作動薬（注射）の使用による消化器症状を認め、中止後の経過確認を要する。
-
+超速効型インスリン製剤の使用による低血糖症状を認め、中止後の経過確認を要する。
 P
-GIP/GLP-1受容体作動薬（注射）の中止後、血糖上昇や体調変化があればご相談ください。
-
+超速効型インスリン製剤の中止後、低血糖症状が改善することが期待されますが、血糖値が上昇する可能性があります。
+血糖上昇による口渇・倦怠感などの体調変化にも注意してください。
+気になる症状があればご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
-
-
-
-【SCENARIO｜type=side_effect｜id=se_stop_due_to_injection_site_reaction｜title=GIP/GLP-1受容体作動薬（注射） SE中止（注射部位）】
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_injection_site_reaction｜title=超速効型インスリン製剤 SE中止（注射部位）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが強いため、中止となった。
-
+超速効型インスリン製剤の使用により注射部位の痛みや腫れが強いため、中止となった。
 O
-{{drug_subject}}　処方中止
-
+超速効型インスリン製剤　処方中止
 A
-GIP/GLP-1受容体作動薬（注射）の使用による注射部位反応を認め、中止後の経過確認を要する。
-
+超速効型インスリン製剤の使用による注射部位反応を認め、中止後の経過確認を要する。
 P
-GIP/GLP-1受容体作動薬（注射）中止後も、注射部位の症状が続く場合や悪化する場合は、医療機関へご相談ください。
-
+超速効型インスリン製剤中止後も、注射部位の症状が続く場合や悪化する場合は、医療機関へご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=GIP/GLP-1受容体作動薬（注射） 生活指導（血糖）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=超速効型インスリン製剤 生活指導（血糖）】
 S
 血糖値がなかなか改善しない。
-
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
 血糖コントロールが不十分であり、生活習慣の改善が重要である。食事・運動療法の継続が必要である。
-
 P
 高血糖が続くと、眼・腎・神経障害などのリスクが高まります。
 薬物療法に加え、食事・運動療法も血糖コントロールにおいて重要です。
 間食は控え、カロリーオフ・ノンシュガー食品への置き換えが有効です。
 血糖コントロールの改善に伴い、低血糖症状が出ることがあります。
 気になる症状があればご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=GIP/GLP-1受容体作動薬（注射） 生活指導（カリウム）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=超速効型インスリン製剤 生活指導（カリウム）】
 S
 カリウムの値が高いと言われた。
-
 O
-{{drug_subject}}　処方
-
+超速効型インスリン製剤　処方
 A
 カリウムコントロールが不十分であり、食事療法の継続が重要である。
-
 P
 カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
 食事療法は、カリウムのコントロールにおいて重要です。
 カリウムを多く含む食品の摂りすぎに注意しましょう。
 気になる症状があればご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-
-
-【SCENARIO｜type=sickday｜id=sickday｜title=GIP/GLP-1受容体作動薬（注射） シックデイ】
+【SCENARIO｜type=sickday｜id=sickday｜title=超速効型インスリン製剤 シックデイ】
 S
 発熱・嘔吐・下痢などの体調不良がみられる。
-
 O
-{{drug_subject}}　使用中
-
+超速効型インスリン製剤　使用中
 A
-食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。
-
+食事摂取低下および消化器症状により脱水リスクと低血糖リスクが上昇しており、シックデイ時の対応に注意が必要である。
 P
 発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
 血糖測定が可能であれば行ってください。
 水分は少量ずつこまめに摂取してください。
-治療継続の可否は体調や摂取状況によって異なります。
-自己判断せず、処方医に相談してください。
+インスリンは自己判断で中止しないでください。
+治療継続の可否は体調や摂取状況によって異なるため、処方医に相談してください。
 嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
-
 P_ADDON
 - addon_sickday_hold_sglt2_metformin
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -1202,39 +999,18 @@ P_CLOSING
 P_APPEND
 併用中のSGLT2阻害薬やメトホルミンは、脱水時は休薬が必要な場合があります。
 自己判断で中止せず、処方医へご相談ください。
-
-
-
-【ADDON｜type=lifestyle_guidance｜id=addon_gi_tolerance_guidance｜title=生活指導（消化器症状対策）】
-P_APPEND
-{{drug_subject}}には、胃の動きをゆるやかにする作用があります。
-一度に多く食べると、胃もたれや吐き気が出やすくなることがあります。
-食事は少量ずつ分けて摂ることをおすすめします。
-一口ごとによく噛み、ゆっくり時間をかけて食事をしてください。
-脂っこい食事や食べすぎは、症状を悪化させることがあります。
-症状が強い場合はご相談ください。
-
-
-
-
 【SCENARIO｜type=followup｜id=injection_technique_check｜title=注射手技の確認】
 S
 注射手技に不安がみられる。
-
 O
-{{drug_subject}}　使用中
-
+超速効型インスリン製剤　使用中
 A
-GIP/GLP-1受容体作動薬（注射）の注射手技の確認が必要である。
-
+超速効型インスリン製剤の注射手技の確認が必要である。
 P
 注射の具体的な手技については、指導せんを用いて改めて説明しています。
 同じ部位に繰り返し注射すると、皮膚が硬くなることがあります。
 注射部位は毎回適切に変えながら使用してください。
 不安が残る場合はご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
 =======SCENARIOS_END=======

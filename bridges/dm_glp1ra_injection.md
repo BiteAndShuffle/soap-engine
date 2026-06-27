@@ -660,7 +660,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_induration_none｜title=GLP-1受容体作動薬(注射) 副作用なし（注射部固縮）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_induration_none｜title=GLP-1受容体作動薬(注射) 副作用なし（注射部硬結）】
 S
 GLP-1受容体作動薬(注射)を使用して症状は落ち着いている。
 注射部位が硬くなるような変化は認めない。
