@@ -475,8 +475,8 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | `adherence_assessment` | adherence 系（treatment_assessment との混用不可） |
 | `treatment_end_assessment` | treatment_end 系（treatment_assessment との混用不可） |
 
-**AStructured.role 禁止語彙（ERROR）:** `drug_mechanism` / `lifestyle_assessment` / `sickday_assessment`
-（sickday 系 A 行は `treatment_assessment` を使用すること）
+**AStructured.role 禁止語彙（ERROR）:** `drug_mechanism` / `lifestyle_assessment` / `sickday_assessment` / `risk_assessment` / `clinical_guidance`
+（sickday 系 A 行は `treatment_assessment` を使用すること。risk_assessment / clinical_guidance は `treatment_assessment` で代替すること）
 
 **PStructured.role 確立済み語彙（参考）:**
 `drug_effect_explanation` / `side_effect_attention` / `side_effect_guidance` / `dose_adjustment_guidance` / `adherence_guidance` / `treatment_end_guidance` / `followup_guidance` / `lifestyle_guidance` / `administration_guidance` / `sickday_guidance` / `urgent_consult_guidance`
@@ -495,6 +495,24 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 1. 既存語彙での代替可能性を確認する
 2. 代替不能の場合のみ新規語彙を使用してよい
 3. 必ずユーザーに事前確認する
+
+---
+
+## 18. composition.priority 型ルール
+
+`composition.priority` は **文字列** を使用すること。整数値は禁止（ERROR）。
+
+**有効値（文字列）:**
+
+| 値 | 意味 |
+|---|---|
+| `"chronic"` | 慢性期維持管理薬（インスリン、GLP-1、抗アレルギー薬等） |
+| `"acute"` | 急性期治療薬 |
+| `"prn"` | 頓服・症状時使用薬 |
+
+**禁止値（ERROR）:** 整数 `5` 等の数値型 — 旧形式。bridge からの自動生成でも整数を設定してはならない。
+
+> 参照: `docs/JSON_STANDARD.md §JS-A-composition` / `prompts/vNext/PN2-Drug-Header.md フォールバックテーブル`
 
 ---
 

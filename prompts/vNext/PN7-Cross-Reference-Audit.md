@@ -100,9 +100,13 @@ aliasToBrand のキーとして存在すること
 ### E. groupKeyRegistry 整合
 
 ```
-composition.groupKeyRegistry が
+【正方向】composition.groupKeyRegistry が
 全 scenarios[].mergePolicy.S.groupKey の値を包含すること
 不足値 → FAIL（missing groupKey: {value}）
+
+【逆方向】composition.groupKeyRegistry に存在するが、
+どの scenarios[].mergePolicy.S.groupKey にも使われていない値 → CHECK（余剰 groupKey: {value}）
+※ 余剰は即 FAIL ではなく CHECK として報告する。削除要否はユーザー確認。
 ```
 
 ---
@@ -219,6 +223,37 @@ scenarioType: sickday のシナリオの situationFilter が ["sickday"] であ�
 
 ---
 
+### P. addon 未参照確認（接続漏れ）
+
+← RULES.md §15
+
+```
+全 addons.items のキー（= addon id）が、
+少なくとも 1 つの scenarios[].addonsRef.P に含まれていること
+
+未参照 addon id → FAIL（unreferenced addon: {addon_id}）
+```
+
+備考: intentional orphan（意図的に未接続）を許容する仕組みは現状ない。
+addon を追加した場合は必ずいずれかのシナリオの addonsRef.P に登録すること。
+
+---
+
+### Q. normalizedTokens 硬結チェック
+
+← RULES.md §17 / PN5-Non-Scenario.md
+
+```
+index.searchableText に "硬結" が含まれる場合、
+index.normalizedTokens に "こうけつ" が含まれていること
+
+欠落 → FAIL（"硬結" in searchableText but "こうけつ" missing from normalizedTokens）
+```
+
+備考: "硬結" はひらがな正規化で自動変換されない。injection module では必ず手動追加すること。
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -257,6 +292,8 @@ L. treatment_end scenarioGroup:       PASS / FAIL
 M. sickday situationFilter:          PASS / FAIL
 N. addon必須フィールド:               PASS / FAIL
 O. scenario omit禁止フィールド:       PASS / FAIL
+P. addon未参照確認:                   PASS / FAIL
+Q. normalizedTokens硬結:              PASS / FAIL / NOT_CHECKED
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件
@@ -290,7 +327,9 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "L_treatmentEndGroup": "PASS",
     "M_sickdaySituationFilter": "PASS",
     "N_addonRequiredFields": "PASS",
-    "O_scenarioRequiredFields": "PASS"
+    "O_scenarioRequiredFields": "PASS",
+    "P_addonUnreferenced": "PASS",
+    "Q_normalizedTokensKokketsu": "PASS"
   },
   "failCount": 0,
   "verdict": "PASS"

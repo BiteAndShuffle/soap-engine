@@ -593,7 +593,6 @@ P_ADDON
 - addon_adherence_visual_calendar_checklist
 - addon_adherence_visual_note
 - addon_adherence_schedule_confirmation
-- addon_adherence_fixed_weekday
 - addon_adherence_support_family_reminder
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -608,13 +607,10 @@ P_APPEND
 使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
 【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、次回の使用予定日を目立つ場所に書いておく方法があります。
+使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。
 【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用忘れ対策（予定確認）｜uiVariant=rightAccentBlue】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、次回の使用予定日を事前に確認しておく方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_fixed_weekday｜title=使用忘れ対策（曜日固定）｜uiVariant=rightAccentBlue】
-P_APPEND
-使用忘れを防ぐ方法の一つとして、毎週同じ曜日に使用する習慣をつける方法があります。
+使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。
 【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。

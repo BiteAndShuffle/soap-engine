@@ -655,7 +655,7 @@
         "title": "使用忘れ対策（見える化：貼り紙）",
         "group": "adherence",
         "targetSection": "P",
-        "text": "使用忘れを防ぐ方法の一つとして、次回の使用予定日を目立つ場所に書いておく方法があります。",
+        "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -672,24 +672,7 @@
         "title": "使用忘れ対策（予定確認）",
         "group": "adherence",
         "targetSection": "P",
-        "text": "使用忘れを防ぐ方法の一つとして、次回の使用予定日を事前に確認しておく方法があります。",
-        "tone": null,
-        "evidenceRefs": [],
-        "intentTags": [
-          "adherence_support"
-        ],
-        "clinicalTags": [],
-        "counselingTags": [],
-        "workflowTags": [],
-        "uiVariant": "rightAccentBlue"
-      },
-      "addon_adherence_fixed_weekday": {
-        "key": "addon_adherence_fixed_weekday",
-        "id": "addon_adherence_fixed_weekday",
-        "title": "使用忘れ対策（曜日固定）",
-        "group": "adherence",
-        "targetSection": "P",
-        "text": "使用忘れを防ぐ方法の一つとして、毎週同じ曜日に使用する習慣をつける方法があります。",
+        "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。",
         "tone": null,
         "evidenceRefs": [],
         "intentTags": [
@@ -869,7 +852,6 @@
         "addon_adherence_visual_calendar_checklist",
         "addon_adherence_visual_note",
         "addon_adherence_schedule_confirmation",
-        "addon_adherence_fixed_weekday",
         "addon_adherence_support_family_reminder"
       ],
       "sickday_default": [
@@ -2588,7 +2570,6 @@
           "addon_adherence_visual_calendar_checklist",
           "addon_adherence_visual_note",
           "addon_adherence_schedule_confirmation",
-          "addon_adherence_fixed_weekday",
           "addon_adherence_support_family_reminder"
         ]
       },

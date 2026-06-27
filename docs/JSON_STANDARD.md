@@ -81,7 +81,7 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `groupKeyRegistry` | array | — |
 | `nodeLabelShort` | string | — |
 | `nodeLabelLong` | string | — |
-| `priority` | string | 慢性期維持管理 module では `"chronic"`。旧形式の整数 `5` は使用禁止 |
+| `priority` | string | `"chronic"` / `"acute"` / `"prn"` のいずれか。整数値（`5` 等）は使用禁止（ERROR）。参照: RULES.md §18 |
 
 ### JS-A-drug: drug 必須サブフィールド
 

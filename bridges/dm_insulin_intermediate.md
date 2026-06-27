@@ -630,7 +630,6 @@ P_ADDON
 - addon_adherence_visual_calendar_checklist
 - addon_adherence_visual_note
 - addon_adherence_schedule_confirmation
-- addon_adherence_fixed_timing
 - addon_adherence_support_family_reminder
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -649,11 +648,6 @@ P_APPEND
 【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用忘れ対策（予定確認）｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。
-
-
-【ADDON｜type=adherence_guidance｜id=addon_adherence_fixed_timing｜title=使用忘れ対策（タイミング固定）｜uiVariant=rightAccentBlue】
-P_APPEND
-使用忘れを防ぐ方法の一つとして、決められたタイミングで確認する習慣をつける方法があります。
 
 
 【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
