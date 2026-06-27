@@ -41,8 +41,7 @@
       "allergy_dose_adjustment",
       "side_effect_monitoring",
       "adherence",
-      "treatment_end",
-      "lifestyle_guidance"
+      "treatment_end"
     ],
     "sMergePolicy": {
       "unit": "clinical_domain",

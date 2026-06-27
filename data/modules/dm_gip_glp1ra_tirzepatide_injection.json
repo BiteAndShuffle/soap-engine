@@ -723,7 +723,16 @@
         "title": "生活指導（消化器症状対策）",
         "group": "counseling",
         "targetSection": "P",
-        "text": "{{drug_subject}}には、胃の動きをゆるやかにする作用があります。\n一度に多く食べると、胃もたれや吐き気が出やすくなることがあります。\n食事は少量ずつ分けて摂ることをおすすめします。\n一口ごとによく噛み、ゆっくり時間をかけて食事をしてください。\n脂っこい食事や食べすぎは、症状を悪化させることがあります。\n症状が強い場合はご相談ください。"
+        "text": "{{drug_subject}}には、胃の動きをゆるやかにする作用があります。\n一度に多く食べると、胃もたれや吐き気が出やすくなることがあります。\n食事は少量ずつ分けて摂ることをおすすめします。\n一口ごとによく噛み、ゆっくり時間をかけて食事をしてください。\n脂っこい食事や食べすぎは、症状を悪化させることがあります。\n症状が強い場合はご相談ください。",
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [
+          "lifestyle_guidance",
+          "side_effect_attention"
+        ],
+        "tone": null
       }
     },
     "orderPresets": {
@@ -2607,6 +2616,12 @@
       "title": "GIP/GLP-1受容体作動薬（注射） CP良好",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_good",
+      "thirdPanelSPlacement": {
+        "enabled": true,
+        "trigger": "single_drug_only",
+        "mode": "replace",
+        "persistAsCompositionBase": true
+      },
       "scenarioTags": [
         "adherence",
         "good"

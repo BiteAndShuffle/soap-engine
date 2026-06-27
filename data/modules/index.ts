@@ -24,6 +24,7 @@ import rawDermHeparinoidMoisturizerSpray from './derm_heparinoid_moisturizer_spr
 import rawAllergyLeukotrieneReceptorAntagonistOral from './allergy_leukotriene_receptor_antagonist_oral.json'
 import rawAllergyChemicalMediatorReleaseInhibitorEyeDrops from './allergy_chemical_mediator_release_inhibitor_eye_drops.json'
 import rawInsulinRegular from './dm_insulin_regular.json'
+import rawInsulinRapidAnalog from './dm_insulin_rapid_analog.json'
 import rawInsulinIntermediate from './dm_insulin_intermediate.json'
 
 export const ALL_MODULES: ModuleData[] = [
@@ -39,5 +40,6 @@ export const ALL_MODULES: ModuleData[] = [
   rawAllergyLeukotrieneReceptorAntagonistOral as unknown as ModuleData,
   rawAllergyChemicalMediatorReleaseInhibitorEyeDrops as unknown as ModuleData,
   rawInsulinRegular as unknown as ModuleData,
+  rawInsulinRapidAnalog as unknown as ModuleData,
   rawInsulinIntermediate as unknown as ModuleData,
 ]
