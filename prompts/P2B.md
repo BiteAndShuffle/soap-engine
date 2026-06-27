@@ -41,44 +41,15 @@ mandatory preservation / mandatory diff / ERROR / PENDING / CHECK判定を行う
 ※bridgeにない値を既存canonical JSONから補完しない。
 ※既存canonical JSONから継承した項目は inherited_from_existing として明示する。
 ■ STANDARD_REFERENCE_PATHS
-ローカルリポジトリを参照できる場合、構造確認・登録状況確認・型確認・app受け口確認のため、以下の標準パスを確認してよい。
-リポジトリroot:
-- soap-engine/
-module / 登録確認:
-- data/modules/
-- data/modules/index.ts
-型・validator・runtime関連:
-※P2Bでは以下ファイルを参照してよいが、
-runtime動作確認・build確認・UI確認・検索挙動確認・SOAP生成実行は行わない。
-参照目的は、格納先・型定義・validator受け口・構造名の確認に限定する。
-実行確認が必要な項目は CHECK として P3/P4 に送る。
-- lib/types.ts
-- lib/moduleValidator.ts
-- lib/scenarioValidator.ts
-- lib/validationRunner.ts
-- lib/search.ts
-- lib/scenarioSelector.ts
-- lib/buildSoap.ts
-- lib/soapComposer.ts
-- lib/createSoapFromInput.ts
-- lib/addonFilter.ts
-- lib/menuGroups.ts
-- lib/personaGuard.ts
-- lib/applyPersona.ts
-package / build:
-- package.json
-- tsconfig.json
-注意:
-- この章は「参照してよい場所」を示すものであり、最新Model JSON / 既存canonical JSON をClaudeが自動選定してよいことを意味しない。
-- 最新Model JSON / P2A Model JSON draft / 既存canonical JSON は、人間が添付または明示指定したものを優先する。
-- 未指定の data/modules 内 JSON を、Claudeが勝手に「最新Model JSON」「既存canonical JSON」「対象moduleの参考正本」として選定してはならない。
-- 参照したファイル名・パス・用途を必ず出力に記録する。
-- ファイルが存在しない場合は推測せず、NOT_FOUND または NOT_CHECKED として扱う。
-- 既存ファイルの値を対象moduleへ無断流用してはならない。
-- P2Bではこれらのapp実装ファイルを参照してよいが、runtime判定・build判定・UI判定は行わない。
-- app実装参照は、格納先・型・validator受け口の構造確認に限定する。
-data/modules 内のJSONを参照できる場合でも、Claudeが自動で最新Model JSONを選定してはならない。
-latest_model_json_for_structure は、人間が添付または明示指定したもののみを使用する。
+→ 参照可能パス一覧は RULES.md §1 を参照すること。
+P2B での参照制約:
+- 参照目的を「格納先・型定義・validator受け口・構造名の確認」に限定する
+- runtime動作確認・build確認・UI確認・検索挙動確認は行わない（実行確認が必要な項目は CHECK として P3/P4 に送る）
+- 最新 Model JSON / P2A Model JSON draft / 既存 canonical JSON は人間が添付または明示指定したものを使用する
+- 未指定の data/modules 内 JSON を自動選定してはならない
+- 参照したファイル名・パス・用途を必ず出力に記録する
+- ファイル不存在は NOT_FOUND / NOT_CHECKED として扱う（推測しない）
+- 既存ファイルの値を対象 module へ無断流用してはならない
 ■ 出力
 [P2B_SUMMARY]
 - status:
@@ -164,57 +135,12 @@ PENDING:
 - pending_review_required
 - search token検証対象（詳細は P3_HANDOFF_RULE を参照）
 ■ ERROR / PENDING / CHECK 定義
-ERROR：
-- bridge preservation違反
-- bridge外追加
-- 件数不一致
-- 本文不一致
-- alias推定生成
-- followup不一致
-- addon参照欠落
-- mandatory diff未解決
-- baseline persona drift
-- deterministic外補完が発生した状態
-PENDING：
-- 格納先がP0-Bから一意に決まらない
-- 人間判断が必要
-- 対応表不足
-- Model JSON / JSON RULE / APP RULE間の前提不一致
-- 既存canonical JSONとの統合方針確認が必要
-- Express / thirdPanel参照方針が不明
-- persona構造の扱いが未確定
-CHECK：
-- commonSearchTokens / formulationSearchTokens の検索runtime確認が必要
-- multi-token AND検索 / formulation token検索のapp受け口確認が必要
-CHECK項目例：
-- module registry登録確認
-- app型定義確認
-- validator受け口確認
-- loader受け口確認
-- search runtime確認
-- search token反映仕様確認
-- Express Mode確認
-- thirdPanel確認
-- UI表示確認
-- merge確認
-- compose確認
-- typecheck対象
-- build対象
-- その他P3/P4確認対象
-CHECKの性質：
-- buildは可能
-- preservation違反ではない
-- JSONとしては成立する
-- ただしP3/P4で確認が必要
-- app受け口確認が必要
-- runtime確認が必要
-- 型定義・loader・UI・検索・合成挙動の確認が必要
-分類優先順位：
-1. bridge preservation違反を含む場合はERRORを優先する
-2. mandatory diffがFAILの場合はERRORを優先する
-3. 格納先・方針未確定で、preservation違反が未発生の場合はPENDINGとする
-4. JSONとして成立し、preservation違反もないが後続確認が必要な場合はCHECKとする
-5. NOT_CHECKEDが残る場合はBUILD_OKにしない
+→ 各定義・分類優先順位は RULES.md §3 に従う。
+P2B 固有補足:
+- NOT_CHECKED が残る場合は BUILD_OK にしない
+- JSON として成立し preservation 違反もないが P3/P4 確認が必要な場合は CHECK（build は可能）
+- 格納先・方針未確定で preservation 違反が未発生の場合は PENDING
+- bridge preservation 違反 / mandatory diff FAIL は ERROR を優先する
 ■ BUILD_SCOPE
 - build対象
 - module
@@ -225,14 +151,10 @@ CHECKの性質：
 - OUTPUT UNIT
 - build対象外範囲
 ■ SOURCE_OF_TRUTH_EXECUTION
-P1原則に従い、bridge原稿をsingle source of truthとして扱う。
-実行原則：
-- bridgeにある値を落とさない
-- bridgeにない値を足さない
-- canonical既存値よりbridge一致を優先する
-- P0-B JSON RULEに従って格納する
-- 不明点は推測せずERROR / PENDINGとする
-- 既存canonical JSONから継承した項目は inherited_from_existing として明示する
+→ P1 SOURCE_OF_TRUTH_PRINCIPLE（Rule 1）に従う。
+P2B 固有補足:
+- P0-B JSON RULE に従って格納する
+- 既存 canonical JSON から継承した項目は inherited_from_existing として明示する
 ■ CROSS_MODULE_DERIVATION_CHECK
 既存モジュールを参照・横展開して新規 bridge を作成した場合の必須確認項目。
 本文中の旧モジュール固有文言残存チェック:
@@ -379,10 +301,8 @@ P2A未実施時は以下のルールに従う。
 - bridge に明示がある場合のみ値を設定する
 - bridge に明示がない場合、既存 canonical JSON の値を保持するか PENDING とする
 - handlingTags からのコピー生成・推測生成は禁止
-addons.orderPresets build原則：
-- 型・必須性は P0-A ADDON_REQUIRED_RULES を参照する（object必須・空{}許容・array/null/string禁止・omit禁止）
-- 目的：構造の標準化および将来の runtime 安全性確保
-- orderPresets の値（preset key → addon key[] の対応）は bridge に明示がある場合のみ生成する
+addons.orderPresets build原則:
+→ RULES.md §11 参照（object 必須・{} 許容・omit 禁止）
 - bridge 未明示の preset key を推測生成してはならない
 以下をP0-B格納規則に従ってbuildする。
 - moduleId
@@ -489,6 +409,11 @@ mandatory diff対象：
 - text
 - intentTags
 - requiredTags
+- clinicalTags
+- counselingTags
+- workflowTags
+- evidenceRefs
+- tone
 - addons.orderPresets（build規則はMODULE_BUILD_RULEを参照）
 - addonsRef
 - P_ADDON
@@ -498,15 +423,14 @@ build原則：
 - addon identity保持
 - P_ADDON保持
 - 参照先存在確認
-type → group / targetSection 変換表（ADDON_BUILD時に必ず参照する）：
-- lifestyle_guidance   → group: "counseling",  targetSection: "P"
-- side_effect_guidance → group: "counseling",  targetSection: "P"
-- glycemic_guidance    → group: "counseling",  targetSection: "P"
-- sickday_guidance     → group: "sickday",     targetSection: "P"
-- adherence_guidance   → group: "adherence",   targetSection: "P"
-未定義 type が出た場合: 推測生成せず CHECK として停止し、マッピングを確認してから再開する。
-targetSection が欠落した addon は buildNodeFields の P 挿入分岐に到達しないため、
-addon が UI に表示されない無声の失敗が起きる。欠落は ERROR とする。
+- clinicalTags / counselingTags / workflowTags / evidenceRefs / intentTags は確定値がない場合でも `[]` で出力する（omit 禁止）
+- tone は確定値がない場合でも `"standard"` または `null`（既存同カテゴリ module 準拠）で出力する（omit 禁止）
+- 上記フィールドの欠落は tsc / build を通過しても構造 ERROR とする（型として optional でも世代差として禁止）
+type → group / targetSection 変換:
+→ P0-B の type→group 変換表に従う（→ RULES.md §5 も参照）。
+⚠️ 特に side_effect_guidance → group: "sideEffects"（"counseling" ではない）
+未定義 type: 推測生成せず CHECK として停止し、マッピングを確認してから再開する。
+targetSection 欠落は ERROR（addon が UI に表示されない無声の失敗が起きる）。
 mandatory diff対象：
 - addon件数
 - addon identity
@@ -514,6 +438,7 @@ mandatory diff対象：
 - addonsRef
 - P_ADDON
 - 全 addon item の group / targetSection 存在確認
+- 全 addon item の clinicalTags / counselingTags / workflowTags / evidenceRefs / intentTags / tone 存在確認
 ■ ADDON_ORDER_RULE
 P_ADDON / addonsRef.P の並び順は重要度順とする。bridge 生成段階で順序を決定する。
 末尾 append（後から追加した addon を機械的に末尾に追加すること）は禁止する。
@@ -585,129 +510,41 @@ build原則：
 - 本文自然化禁止
 - JSON都合移動禁止
 - scenario統合禁止
+- clinicalTags / counselingTags / workflowTags は確定値がない場合でも `[]` で出力する（omit 禁止）
+- 上記フィールドの欠落は tsc / build を通過しても構造 ERROR とする（型として optional でも世代差として禁止）
+treatment_end 系 scenarioGroup 個別値ルール（必須）:
+→ RULES.md §12 参照（end_improved / end_insufficient_effect / end_ineffective の個別値を使用。"treatment_end" を scenarioGroup に設定しない）
+sickday シナリオの situationFilter ルール（必須）:
+→ RULES.md §13 参照（["sickday"] のみ。"general" を含めてはならない）
 O フィールド薬剤名ルール（全シナリオ必須）:
-- O フィールドの薬剤名部分は必ず {{drug_subject}} とする
-- genericName / drugClass / classKey / bridge header 薬効分類名を固定値で書かない
-- 状態語（処方 / 使用中 / 減量 等）はそのまま保持する
-- 形式例: "{{drug_subject}}　処方" / "{{drug_subject}}　使用中"
-- P2後に全シナリオの O フィールドを grep し、{{drug_subject}} が含まれることを確認する
-- CROSS_MODULE_DERIVATION_CHECK の旧モジュール固有文言チェックと組み合わせて実施する
+→ RULES.md §16 参照。必ず {{drug_subject}} を使用する。P2 後に全シナリオの O フィールドを grep 確認する。
+CROSS_MODULE_DERIVATION_CHECK の旧モジュール固有文言チェックと組み合わせて実施する。
 mandatory diff対象：
 - scenario件数
 - scenario identity
 - S/O/A/P
-sideEffectPresence build原則:
-有効値（この7値のみ、それ以外は ERROR）:
-- not_applicable          : treatment_start / treatment_adjustment / adherence / treatment_end / lifestyle_guidance / sickday 等
-- absent_or_not_observed  : side_effect なし確認シナリオ（se_*_none 系）
-- present_mild            : 副作用あり・軽度・治療継続
-- present_moderate        : 副作用あり・中等度・治療継続
-- present_change          : 副作用による薬剤変更
-- present_dose_decrease   : 副作用による減量
-- present_stop            : 副作用による中止
-禁止値（本文から推測生成した無効値の例）: present_continue / present_severe / present_active
-sComposition build原則:
-template 有効値（2値のみ）:
-- "symptom_based"  : treatment_start 系（初回開始 / 再開 / 外部継続等）
-- "status_based"   : treatment_adjustment / side_effect / adherence / treatment_end 等
-禁止値（推測生成された非標準値の例）:
-- adjustment_based   → "status_based" を使用
-- adherence_based    → "status_based" を使用
-- continuation_based → "symptom_based" を使用
-- outcome_based      → "status_based" を使用
-上記禁止値が登場した場合は ERROR とする。
-sComposition 標準キースキーマ:
-格納フィールド: intent / template / symptomCodes / symptoms
-- symptomCodes: list[string]（状態・症状コード）
-- symptoms: list[string]（symptomCodes と同内容の日本語ラベル、1:1 対応）
-禁止キー（推測生成された非標準キーの例）:
-- adjustmentCodes → symptomCodes へ置換（値は確立済みコードで再設定）
-- adherenceCodes  → symptomCodes へ置換
-- outcomeCodes    → symptomCodes へ置換
-- severity        → symptomCodes の専用コード（drowsiness_mild / drowsiness_moderate 等）へ統合
-上記禁止キーが存在する場合は ERROR とする。
-sComposition.intent 有効値（scenarioType 別確立済み値）:
-- treatment_start 系:      new_addition / restart / external_continuation
-- treatment_adjustment 系: dose_increase / dose_decrease
-- side_effect（なし）:     side_effect_check
-- side_effect（あり）:     side_effect_present（H1系）/ stop / dose_decrease（GLP1系）
-- adherence 系:            adherence_check（H1系）/ continue / status_report / as_needed_use（GLP1系）
-- treatment_end 系:        treatment_end（H1系）/ stop（GLP1系）
-禁止値（推測生成された非標準値の例）:
-- side_effect_absent → side_effect_check を使用
-- adherence_good     → adherence_check を使用
-- adherence_poor     → adherence_check を使用
-上記禁止値が登場した場合は ERROR とする。
+sideEffectPresence / sComposition build原則:
+→ 有効値・禁止値・禁止キー・intent 有効値は RULES.md §17 に従う。
+- sideEffectPresence が有効 7 値以外 → ERROR
+- sComposition に禁止 template / 禁止キー（adjustmentCodes 等）/ 禁止 intent → ERROR
 ■ STRUCTURED_BUILD_RULE
-以下を扱う。
-- SStructured
-- OStructured
-- AStructured
-- PStructured
-- Structured.text
-build原則：
-- P0-B格納規則のみ使用
+以下を扱う: SStructured / OStructured / AStructured / PStructured / Structured.text
+build原則:
+- P0-B 格納規則のみ使用
 - 本文から推測生成しない
 - 医学的意味補完禁止
-- Structuredのために本文変更しない
-- 同期不能はERROR / PENDING
-Structured.role build原則:
-以下の確立済み語彙を優先する。推測生成・造語は禁止する。
-SStructured.role 確立済み語彙:
-- treatment_start_reason  : treatment_start 系の S 行
-- dose_adjustment_reason  : treatment_adjustment 系の S 行
-- side_effect_status      : side_effect なし確認系（se_*_none 等）の全 S 行
-- side_effect_presence    : side_effect あり系（se_mild / se_moderate / se_change 等）の全 S 行
-- adherence_status        : adherence 系の全 S 行
-- treatment_end_reason    : treatment_end 系の S 行
-SStructured.role 追加規則（scenarioType 別）:
-- usage / as_needed 系の S 行: adherence_status（使用状況を記述する行）
-- lifestyle_guidance 系の S 行: adherence_status（使用行動・保管行動を記述する行）
-side_effect 系 S 行の区別（必須）:
-  - sideEffectPresence = absent_or_not_observed の S 行: side_effect_status
-  - sideEffectPresence = present_* の S 行:              side_effect_presence
-  両者を混同してはならない（例: se_*_none の全 S 行は side_effect_status、se_mild の全 S 行は side_effect_presence）
-treatment_start 系 intent 細分（必須）:
-  - id が initial / new_addition 系: intent: new_addition
-  - id が restart 系: intent: restart
-  - id が external_start 系: intent: external_continuation
-  全 treatment_start シナリオに一律 new_addition を設定してはならない
-禁止語彙（推測生成された非標準語の例）:
-- treatment_adjustment_reason → dose_adjustment_reason を使用
-- adherence_observation       → adherence_status を使用
-- side_effect_observation     → side_effect_status（なし系）/ side_effect_presence（あり系）を使用
-- symptom_observation         → scenarioType に応じて side_effect_status / adherence_status を使用
-- lifestyle_assessment        → adherence_status（S フィールド）/ treatment_assessment（A フィールド）を使用
-上記禁止語彙が存在する場合は ERROR とする。
-AStructured.role 確立済み語彙:
-- treatment_assessment      : treatment_start / treatment_adjustment / adherence 等の A 行（汎用）
-- side_effect_assessment    : side_effect 系の A 行
-- adherence_assessment      : adherence 系の A 行
-- treatment_end_assessment  : treatment_end 系の A 行（treatment_assessment との混用禁止）
-AStructured.role 追加規則（scenarioType 別）:
-- lifestyle_guidance / usage 系の A 行: treatment_assessment（汎用）
-禁止語彙（推測生成された非標準語の例）:
-- drug_mechanism      → treatment_assessment を使用（機序説明行も treatment_assessment で扱う）
-- lifestyle_assessment → treatment_assessment を使用（lifestyle_guidance / usage 系も treatment_assessment）
-上記禁止語彙が存在する場合は ERROR とする。
-PStructured.role 確立済み語彙（参考）:
-- drug_effect_explanation / side_effect_attention / side_effect_guidance
-- dose_adjustment_guidance / adherence_guidance / treatment_end_guidance
-- followup_guidance / lifestyle_guidance / administration_guidance
-- sickday_guidance / urgent_consult_guidance
-PStructured.role 追加規則（scenarioType 別）:
-- treatment_start 系 P 行（薬効説明）: drug_effect_explanation
-  ※ treatment_start_reason は SStructured 専用。PStructured では禁止
-- treatment_end / SE 変更 / SE 中止 系 P 行（終了後 followup 説明）: followup_guidance
-  ※ followup_monitoring は非標準。followup_guidance を使用すること
-PStructured.role 禁止語彙（追記）:
-- treatment_start_reason（P フィールド内）→ drug_effect_explanation を使用
-- followup_monitoring → followup_guidance を使用
-新規 role 語彙が必要な場合:
-1. 既存語彙での代替可能性を確認する
-2. 代替不能の場合のみ新規語彙を使用してよい
-3. 必ずユーザーに事前確認する（推測生成禁止）
-推測生成された新規 role 語彙が存在する場合は ERROR とする。
+- Structured のために本文変更しない
+- 同期不能は ERROR / PENDING
+Structured.role 有効値・禁止語彙: → RULES.md §17 参照。
+P2B 確認必須事項:
+- SStructured.role に禁止語彙 → ERROR（禁止語彙: treatment_adjustment_reason / adherence_observation / side_effect_observation / symptom_observation）
+- AStructured.role に禁止語彙 → ERROR（禁止語彙: drug_mechanism / lifestyle_assessment）
+- PStructured.role に禁止語彙 → ERROR（treatment_start_reason / followup_monitoring）
+- Structured.role に推測生成新規語彙（ユーザー未確認）→ ERROR
+- usage / as_needed 系・lifestyle_guidance 系の S 行: adherence_status を使用
+- AStructured の lifestyle_guidance / usage 系 A 行: treatment_assessment を使用
+- side_effect 系 S 行の区別: sideEffectPresence=absent_or_not_observed → side_effect_status / present_* → side_effect_presence（混同禁止）
+- treatment_start 系 intent 細分: initial/new_addition系 → new_addition / restart系 → restart / external_start系 → external_continuation（一律 new_addition 禁止）
 ■ EXPRESS_THIRD_PANEL_BUILD_RULE
 以下をbuildする。
 - thirdPanelSPlacement
@@ -722,67 +559,23 @@ build原則：
 - thirdPanel都合変更禁止
 - 不明参照はERROR / PENDING
 - 参照整合の実判定（defaultBrandName / defaultScenarioId / genericBrandName / scenarioCandidates の参照先確認）はP3へ渡す
+注射薬モジュール（composition.nodeKey に `_injection` を含む）での thirdPanelSPlacement 必須追加:
+→ RULES.md §14 参照（固定値・対象 3 シナリオ id）。bridge 未記載でも model_managed 項目として必須追加する。
+欠落は構造 ERROR。
 ■ BASELINE_PERSONA_PRESERVATION_EXECUTION
-bridge本文はbaseline persona原本として扱う。
-preservation対象：
-- 温度感
-- 説明密度
-- 距離感
-- counseling weight
-- 文体重量
-- 薬剤別指導文トーン
-禁止：
-- persona機械生成
-- tone変更
-- 軽量化
-- 重量化
-- baseline drift
-mandatory diff対象：
+→ P1 BASELINE_PERSONA_PRESERVATION（Rule 3）に従う。
+mandatory diff 対象:
 - bridge tone
 - 説明密度
 - 距離感
 - counseling weight
 ■ MANDATORY_DIFF_EXECUTION
-P1 preservation対象についてmandatory diffを実行する。
-各checkは status: PASS / FAIL / NOT_CHECKED を必ず付ける。
-Count:
-- scenario件数
-- addon件数
-- brandCatalog件数
-- alias件数
-- followup件数
-Identity:
-- scenario id
-- scenario title
-- addon key/id/title
-- brand identity
-Brand:
-- alias
-- normalizedAliases
-- aliasToBrand
-- search aliases
-- drug.nameAliases
-- drug.nameAliases === drug.search.nameAliases（順序・表記・エントリ数の完全一致）
-SearchToken:
-- drug.search.commonSearchTokens
-- drug.search.formulationSearchTokens
-- drug.search.matchPolicy.allowMultiTokenAndMatch
-- drug.search.matchPolicy.allowFormulationTokenMatch
-Text:
-- S
-- O
-- A
-- P
-- P_APPEND
-- P_CLOSING
-Followup:
-- followup
-- followupProfiles
-- followupRef
-Reference:
-- addon参照
-- P_ADDON
-- addonsRef
+→ P1 MANDATORY_PRESERVATION_TARGETS（Rule 4）の全件について PASS / FAIL / NOT_CHECKED を付ける。
+対象項目の定義は P1 Rule 4 を参照すること。
+各 check は status: PASS / FAIL / NOT_CHECKED を必ず付ける。
+特記: drug.nameAliases === drug.search.nameAliases（順序・表記・エントリ数の完全一致を確認）
+
+P2B 固有追加チェック（P1 MANDATORY_PRESERVATION_TARGETS 外）:
 Structure:
 - addons.orderPresets が object として存在すること（欠落は FAIL、{} は PASS）
 MergePolicy:
@@ -790,8 +583,6 @@ MergePolicy:
   （groupKeyRegistry が空または未定義の場合は NOT_CHECKED）
 - check_name: mergePolicy_groupkey_check
 - status: PASS / FAIL / NOT_CHECKED
-Persona:
-- baseline persona preservation
 DrugResolution:
 - drugResolution.brandToTags
 - key が drug.brandCatalog のキーと一致していること
@@ -818,63 +609,18 @@ canonical JSON 生成後・P3 移行前に必ず実施する追加監査。
   requiredTags が設定された ADDON を P_ADDON に持つシナリオの brandCatalog を確認し、
   当該 tag に到達できる brand が存在することを確認する
 ■ ERROR_PENDING_RULE
-以下は推測補完せず停止する。
-※ERROR / PENDING / CHECK の分類は、上記「ERROR / PENDING / CHECK 定義」に従う。
-※同じ事象でも bridge preservation違反を含む場合はERRORを優先する。
-※mandatory diffがFAILの場合はERRORを優先する。
-※格納先・方針未確定で、preservation違反が未発生の場合はPENDINGとする。
-※JSONとして成立し、preservation違反もないが後続確認が必要な場合はCHECKとする。
-※NOT_CHECKEDが残る場合はBUILD_OKにしない。
-ERROR条件：
-- P2A実施時、P2A Model JSON draftにplaceholder markerが残存している
-- bridge欠落
-- build不能
-- bridge外追加
-- scenario件数不一致
-- addon件数不一致
-- brandCatalog件数不一致
-- alias件数不一致
-- followup件数不一致
-- alias推定生成
-- followup生成
-- P_CLOSING不一致
-- addon参照欠落
-- followupRef不能
-- Structured同期不能
-- Express参照不能
-- baseline persona drift
-- mandatory diff未解決
-- commonSearchTokens / formulationSearchTokens が aliases / normalizedAliases / aliasToBrand / search aliases へ展開された状態
-- bridge未明示の search token が推測生成された状態
-- bridgeに明示された commonSearchTokens / formulationSearchTokens / search token系matchPolicy が canonical JSON に反映されていない状態
-- RESOLVE_RECOMMENDED項目を、deterministicに解消可能であるにもかかわらず未解決のままOUTPUT_JSONへ進めた状態
-- drug.nameAliases が drug.search.nameAliases と一致しない状態
-- addons.orderPresets キーが欠落している状態（addons.items が存在するにもかかわらず）
-- addons.orderPresets が object 型以外（null / array / string）である状態
-- sideEffectPresence の値が有効 7 値以外（例: present_continue）
-- sComposition.template が "status_based" / "symptom_based" 以外の推測生成値（例: adjustment_based / adherence_based / continuation_based / outcome_based）
-- sComposition に禁止キーが存在する（adjustmentCodes / adherenceCodes / outcomeCodes / severity）
-- sComposition.intent に禁止値が存在する（side_effect_absent / adherence_good / adherence_poor）
-- SStructured.role に禁止語彙が存在する（treatment_adjustment_reason / adherence_observation / side_effect_observation / symptom_observation）
-- AStructured.role に禁止語彙が存在する（drug_mechanism）
-- Structured.role にユーザー確認なしで推測生成された新規語彙が存在する
-PENDING条件：
-- P2A実施時、P2A CHECK_ITEMSのうち、P2B前解決推奨項目が未解決
-- P2A実施時、P2A UNRESOLVED_STRUCTUREのうち、P2Bで確定不能な項目
-- 格納先不明
-- 型不明
-- 人間判断が必要
-- 対応表不足
-- Model JSON / JSON RULE / APP RULE間の前提不一致
-- 既存canonical JSONとの統合方針確認が必要
-- Express / thirdPanel参照方針が不明
-- persona構造の扱いが未確定
-ただし、P2A実施時、P2A CHECK_ITEMSで NOT_APPLICABLE_CANDIDATE と分類され、
-対象module非該当の理由が明示できる場合は、
-PENDINGではなく CHECKまたは非該当記録として扱う。
-ただし、P2A実施時、P2A CHECK_ITEMSで RESOLVE_RECOMMENDED と分類され、
-同一canonical JSON内の確定済みfieldから deterministic に解消可能な場合は、
-PENDINGにせずP2Bで解消してよい。
+→ 共通 ERROR / PENDING 条件は RULES.md §3 に従う。推測補完せず停止する。
+P2B 固有 ERROR 条件（RULES.md §3 に加えて）:
+- P2A実施時、P2A Model JSON draft に placeholder marker が残存
+- RESOLVE_RECOMMENDED 項目を deterministic に解消可能であるにもかかわらず未解決のまま OUTPUT_JSON へ進めた状態
+- bridge 明示の commonSearchTokens / formulationSearchTokens / matchPolicy が canonical JSON に反映されていない状態
+- Structured 同期不能 / Express 参照不能
+P2B 固有 PENDING 条件（RULES.md §3 に加えて）:
+- P2A実施時、P2A CHECK_ITEMS の P2B前解決推奨項目が未解決
+- P2A実施時、P2A UNRESOLVED_STRUCTURE のうち P2B で確定不能な項目
+P2A CHECK_ITEMS の例外処理:
+- NOT_APPLICABLE_CANDIDATE と分類され対象 module 非該当の理由が明示できる場合: PENDING ではなく CHECK または非該当記録として扱う
+- RESOLVE_RECOMMENDED と分類され同一 canonical JSON 内の確定済み field から deterministic に解消可能な場合: PENDING にせず P2B で解消してよい
 ■ OUTPUT_UNIT_RULE
 P0-B OUTPUT UNITに従う。
 - module
@@ -919,20 +665,11 @@ Structural Validation対象のみを引き継ぐ。
 - search動作確認
 これらはP4対象として扱う。
 ■ PROHIBITED_BUILD_ACTIONS
-- bridge本文修正
-- S/O/A/P変更
-- P_APPEND変更
-- P_CLOSING変更
-- alias生成
-- followup生成
-- persona生成
-- creative build
-- 医学補足
-- JSON再設計
-- app修正
-- deterministic外補完
-- P3/P4/P5先取り
-- ERROR存在時の修正済みcanonical JSON全文出力
+→ RULES.md §2 PROHIBITED_UNIVERSAL が全て適用される。
+P2B 固有の追加禁止事項:
+- P3/P4/P5 先取り
+- ERROR 存在時の修正済み canonical JSON 全文出力
+- OUTPUT UNIT 外の値生成
 ■ OUTPUT_REQUIREMENTS
 P2B出力では以下を守る。
 - 出力ブロックを分離する
@@ -995,18 +732,6 @@ BUILD_STOPPED:
 - not_final: true
 - pending_review_required: true
 - ERRORまたはbuild不能によりP3へ進めない
-■ 禁止
-- bridge本文を修正する
-- JSON再設計する
-- 医学判断する
-- alias生成する
-- followup生成する
-- persona生成する
-- creative buildする
-- app修正する
-- preservation violationを後工程補正する
-- P3/P4/P5監査を先取りする
-- ERROR存在時に修正済みcanonical JSON全文を出力する
 ■ 最重要指示
 bridgeを正本として扱う。
 P0-A/B/CとP1に従う。

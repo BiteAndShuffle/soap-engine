@@ -251,7 +251,7 @@ P2 ERROR条件（addons.orderPresets）：
 - addons.orderPresetsがobject型以外（array / null / string）で格納されている
 type → group / targetSection 変換表（ADDON_MAPPING 時に必ず参照する）：
 - lifestyle_guidance   → group: "counseling",  targetSection: "P"
-- side_effect_guidance → group: "counseling",  targetSection: "P"
+- side_effect_guidance → group: "sideEffects", targetSection: "P"
 - glycemic_guidance    → group: "counseling",  targetSection: "P"
 - sickday_guidance     → group: "sickday",     targetSection: "P"
 - adherence_guidance   → group: "adherence",   targetSection: "P"

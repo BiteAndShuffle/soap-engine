@@ -793,7 +793,7 @@
         "key": "addon_liver_warning_detail",
         "id": "addon_liver_warning_detail",
         "title": "肝障害関連症状の補足",
-        "group": "side_effect_guidance",
+        "group": "sideEffects",
         "targetSection": "P",
         "text": "強いだるさが続く、食欲が落ちる、皮膚や白目が黄色く見えるなどの変化がある場合は、早めに医療機関へご相談ください。",
         "tone": null,

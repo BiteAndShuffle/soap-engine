@@ -81,6 +81,7 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `groupKeyRegistry` | array | — |
 | `nodeLabelShort` | string | — |
 | `nodeLabelLong` | string | — |
+| `priority` | string | 慢性期維持管理 module では `"chronic"`。旧形式の整数 `5` は使用禁止 |
 
 ### JS-A-drug: drug 必須サブフィールド
 
@@ -137,18 +138,26 @@ bridge 未記載の preset を推測生成しない。
 
 **addon item 必須フィールド（全件）**
 
-`addons.items[]` の各エントリには以下 6 フィールドがすべて必須。
+`addons.items[]` の各エントリには以下 12 フィールドがすべて必須。
 
-| フィールド | 内容 |
-|---|---|
-| `key` | addon マップキーと同値。ModuleValidator の参照先確認対象 |
-| `id` | addon マップキーと同値（`key` と同値） |
-| `title` | UI 表示名 |
-| `group` | `"counseling"` / `"sickday"` / `"adherence"` 等。bridge type → group 変換後の値 |
-| `targetSection` | `"P"`（ほぼ全件）。欠落すると addon が P に挿入されない無声の失敗が起きる |
-| `text` | 出力テキスト。薬剤名部分は `{{drug_subject}}` を使用可 |
+| フィールド | 型 | 内容 |
+|---|---|---|
+| `key` | string | addon マップキーと同値。ModuleValidator の参照先確認対象 |
+| `id` | string | addon マップキーと同値（`key` と同値） |
+| `title` | string | UI 表示名 |
+| `group` | string | `"counseling"` / `"sideEffects"` / `"sickday"` / `"adherence"` / `"oral"` のいずれか（AddonPanel.tsx GROUP_ORDER 定義）。bridge type → group 変換後の値 |
+| `targetSection` | string | `"P"`（ほぼ全件）。欠落すると addon が P に挿入されない無声の失敗が起きる |
+| `text` | string | 出力テキスト。薬剤名部分は `{{drug_subject}}` を使用可 |
+| `clinicalTags` | array | 値未確定時は `[]`。omit 禁止 |
+| `counselingTags` | array | 値未確定時は `[]`。omit 禁止 |
+| `workflowTags` | array | 値未確定時は `[]`。omit 禁止 |
+| `evidenceRefs` | array | 値未確定時は `[]`。omit 禁止 |
+| `intentTags` | array | 値未確定時は `[]`。omit 禁止 |
+| `tone` | string\|null | 既存 module 準拠（通常は `"standard"` または `null`）。omit 禁止 |
 
 `targetSection` が欠落した addon は `buildNodeFields` の P 挿入分岐に到達しないため UI に反映されない。欠落は ERROR とする。
+
+上記 6〜12 番目のフィールドは TypeScript 型定義上は optional だが、世代差として禁止される欠落である。tsc / build が通過しても欠落は構造 ERROR として扱う。
 
 **O フィールドルール（全シナリオ）**
 
@@ -164,6 +173,45 @@ bridge 未記載の preset を推測生成しない。
 `genericName` / `drugClass` / `classKey` / bridge header の薬効分類名を O フィールドに固定出力することを禁止する。
 状態語（処方 / 使用中 / 減量 等）はそのまま保持する。
 O フィールドは `resolveDrugSubject()` の対象であり、固定文字列のままだと UI 上で薬剤名が置換されない。
+
+**scenarios[] 共通フィールド（全件・omit 禁止）**
+
+以下 3 フィールドは全シナリオに必須。値が未確定でも `[]` を明示出力する。
+
+| フィールド | 型 | 未確定時のデフォルト値 |
+|---|---|---|
+| `clinicalTags` | array | `[]` |
+| `counselingTags` | array | `[]` |
+| `workflowTags` | array | `[]` |
+
+TypeScript 型定義上は optional だが、世代差として欠落は構造 ERROR とする。
+
+**treatment_end 系 scenarioGroup 個別値ルール**
+
+treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。一律 `"treatment_end"` は禁止。
+
+| scenario id | scenarioGroup |
+|---|---|
+| `end_improved` | `"end_improved"` |
+| `end_insufficient_effect` | `"end_insufficient_effect"` |
+| `end_ineffective` | `"end_ineffective"` |
+
+注意: `"treatment_end"` は `mergePolicy.S.groupKey` の参照先であり、`scenarioGroup` に使用する値ではない。両者を混同しない。
+
+**sickday シナリオの situationFilter ルール**
+
+`sickday` シナリオの `situationFilter` は `["sickday"]` のみ。`"general"` を含めない。
+
+```
+正: "situationFilter": ["sickday"]
+誤: "situationFilter": ["general", "sickday"]
+```
+
+**index.normalizedTokens の注射部位副作用語彙ルール**
+
+injection module の `index.searchableText` に `"硬結"` を含める場合、`index.normalizedTokens` に `"こうけつ"` を必ず追加する。
+
+`"硬結"` はひらがな正規化で `"こうけつ"` に変換されないため、明示的に追加しないと部分一致検索が機能しない。
 
 ---
 
@@ -210,6 +258,27 @@ O フィールドは `resolveDrugSubject()` の対象であり、固定文字列
 - 外用薬・点眼薬など、部位入力 UI が必要な module のみ定義する
 - 未定義の場合は部位入力 UI を表示しない（バグではない）
 - UI 側では `mod.display?.localInput` および `localInputConfig?.enabled` による fallback を確認済み
+
+### 注射薬 module の thirdPanelSPlacement
+
+`composition.nodeKey` が `_injection` を含む注射薬 module では、以下のシナリオが存在する場合に `thirdPanelSPlacement` を必ず追加する。
+
+```json
+"thirdPanelSPlacement": {
+  "enabled": true,
+  "trigger": "single_drug_only",
+  "mode": "replace",
+  "persistAsCompositionBase": true
+}
+```
+
+| 対象シナリオ id | 条件 |
+|---|---|
+| `se_injection_site_induration_none` | 存在する場合 |
+| `se_hypo_none` | 存在する場合 |
+| `cp_good` | 存在する場合 |
+
+上記以外の SE なし確認系（例: `se_nausea_diarrhea_none`, `se_pancreatitis_none`）にも同値を付与してよい。bridge に明示がなくても「注射薬モジュール構造パターン」として適用する（推測生成ではなく model_managed 項目として扱う）。
 
 ---
 

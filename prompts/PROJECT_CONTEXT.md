@@ -48,6 +48,21 @@
 4. 不足しているファイル・添付があれば **最初に報告する**（推測で進まない）
 5. 作業計画を提示し、**承認を得てから** 修正・保存を開始する
 
+### vNext 体系で作業する場合（旧 P0-A〜P5 とは排他）
+
+`prompts/vNext/PN1〜PN8` を使う作業（主に大規模モジュールの JSON 化）を行う場合は、  
+上記手順 3 の代わりに以下を実行する:
+
+1. **`prompts/vNext/HANDOFF.md` を最初に読む**  
+   - HANDOFF.md は運用引き継ぎ文書。会話ログは正本ではなく、このファイルが正本。  
+   - 実行時の正本は `prompts/RULES.md` / `prompts/P1.md` / `prompts/vNext/PN1〜PN8`。
+2. **`prompts/vNext/AUTORUN.md` を読む**  
+   - PN1 / PN2 は手動承認。PN3A〜PN8 は AUTORUN モードで自動連続実行する。  
+   - MUST_STOP 条件・1 行報告フォーマット・AUTORUN 開始コマンドを確認する。
+3. HANDOFF.md の対象モジュールに対して PN1 から実行する  
+   - PN1 / PN2 完了後はユーザーへ報告して停止する。  
+   - PN2 承認後、ユーザーが AUTORUN 開始コマンドを送ったら PN3A〜PN8 を自動実行する。
+
 ---
 
 ## Current Phase
@@ -130,6 +145,17 @@
 - P0-E 保留継続
 
 **次フェーズでまだ実施しないこと** → セクション9参照
+
+**vNext フェーズ（大規模モジュール向け新体系 / 並行進行）**
+
+| 状態 | 内容 |
+|---|---|
+| 完了 | vNext PN1〜PN8 プロンプト体系の設計・整備・運用レビュー（全 10 ファイル）|
+| 完了 | `dm_insulin_rapid_analog.json` の vNext 体系での JSON 化 |
+| 完了 | `dm_insulin_regular.json` の vNext 体系での JSON 化 |
+| 完了 | `dm_insulin_intermediate.json` の vNext 体系での JSON 化 |
+
+vNext 作業手順の詳細は `prompts/vNext/HANDOFF.md` を参照。
 
 ---
 
@@ -378,6 +404,7 @@ prompts/PROJECT_CONTEXT.md
 prompts/P0-A.md  prompts/P0-B.md  prompts/P0-C.md  prompts/P0-D.md
 prompts/P1.md    prompts/P2A.md   prompts/P2B.md
 prompts/P3.md    prompts/P4.md    prompts/P5.md
+prompts/RULES.md
 
 lib/types.ts           lib/moduleValidator.ts
 lib/search.ts          lib/buildSoap.ts
@@ -387,4 +414,21 @@ data/modules/{moduleId}.json
 
 docs/DESIGN_PRINCIPLES.md    docs/JSON_STANDARD.md
 docs/BOOTSTRAP_STANDARD.md  docs/OPEN_DESIGN_QUESTIONS.md
+```
+
+**vNext 体系パス（大規模モジュール JSON 化専用）**
+
+```
+prompts/vNext/HANDOFF.md                      # vNext 作業の引き継ぎ文書（新規チャット起点）
+prompts/vNext/PN1-Text-Extraction.md          #
+prompts/vNext/PN2-Drug-Header.md              #
+prompts/vNext/PN3A-Scenario-Classification.md #
+prompts/vNext/PN3B-Scenario-Metadata-Apply.md #
+prompts/vNext/PN4A-Structured-GroupA.md       #
+prompts/vNext/PN4B-Structured-GroupB.md       #
+prompts/vNext/PN5-Non-Scenario.md             #
+prompts/vNext/PN6-Assembly.md                 #
+prompts/vNext/PN7-Cross-Reference-Audit.md    #
+prompts/vNext/PN8-Build-Runtime-Release.md    # （PN1〜PN8 の実行プロンプト正本）
+/tmp/soap-build/{moduleId}/                   # vNext 中間成果物（セッション固定パス）
 ```
