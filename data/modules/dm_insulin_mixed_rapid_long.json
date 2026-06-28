@@ -14,11 +14,26 @@
     "route": "injection",
     "clinicalDomain": "diabetes_mellitus",
     "search": {
+      "primaryDisplayName": "混合型インスリン製剤（超速効型＋持効型）",
+      "exactAliases": [
+        "ライゾデグ"
+      ],
+      "prefixAliases": [
+        "らいぞでぐ",
+        "らいぞ"
+      ],
       "nameAliases": [
         "らいぞでぐ",
         "らいぞ",
         "ライゾデグ"
-      ]
+      ],
+      "keywords": [],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
     },
     "aliasToBrand": {
       "らいぞでぐ": "ライゾデグ",
@@ -594,10 +609,7 @@
           "groupKey": "hyperglycemia_management"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_start",
         "initial_prescription",
@@ -771,10 +783,7 @@
           "groupKey": "hyperglycemia_management"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_start",
         "restart",
@@ -948,10 +957,7 @@
           "groupKey": "hyperglycemia_management"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_start",
         "external_start",
@@ -1112,10 +1118,7 @@
           "groupKey": "glycemic_control_adjustment"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_adjustment",
         "dose_increase",
@@ -1246,10 +1249,7 @@
           "groupKey": "glycemic_control_adjustment"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_adjustment",
         "dose_increase",
@@ -1380,10 +1380,7 @@
           "groupKey": "glycemic_control_adjustment"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_adjustment",
         "dose_increase",
@@ -1514,10 +1511,7 @@
           "groupKey": "glycemic_control_adjustment"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_adjustment",
         "dose_decrease",
@@ -1627,10 +1621,7 @@
           "groupKey": "glycemic_control_adjustment"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_adjustment",
         "dose_decrease",
@@ -1740,10 +1731,7 @@
           "groupKey": "glycemic_control_adjustment"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "treatment_adjustment",
         "dose_decrease",
@@ -1853,10 +1841,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "side_effect_monitoring",
         "no_adverse_event",
@@ -1995,10 +1980,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "side_effect_monitoring",
         "no_adverse_event",
@@ -2140,10 +2122,7 @@
           "groupKey": "adherence"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "adherence",
         "compliance_good"
@@ -2269,10 +2248,7 @@
           "groupKey": "adherence"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "adherence",
         "compliance_poor",
@@ -2399,10 +2375,7 @@
           "groupKey": "adherence"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "adherence",
         "compliance_poor",
@@ -2540,10 +2513,7 @@
           "groupKey": "adherence"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "adherence",
         "compliance_poor",
@@ -2681,10 +2651,7 @@
           "groupKey": "treatment_end"
         }
       },
-      "followupRef": {
-        "profileId": "end_followup",
-        "P": "次回、治療経過および体調変化の有無を確認。"
-      },
+      "followupRef": "end_followup",
       "intentTags": [
         "treatment_end",
         "treatment_end",
@@ -2784,10 +2751,7 @@
           "groupKey": "treatment_end"
         }
       },
-      "followupRef": {
-        "profileId": "end_followup",
-        "P": "次回、治療経過および体調変化の有無を確認。"
-      },
+      "followupRef": "end_followup",
       "intentTags": [
         "treatment_end",
         "treatment_end",
@@ -2896,10 +2860,7 @@
           "groupKey": "treatment_end"
         }
       },
-      "followupRef": {
-        "profileId": "end_followup",
-        "P": "次回、治療経過および体調変化の有無を確認。"
-      },
+      "followupRef": "end_followup",
       "intentTags": [
         "treatment_end",
         "treatment_end",
@@ -3008,10 +2969,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "mild_adverse_event",
@@ -3134,10 +3092,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "injection_site_reaction",
@@ -3258,10 +3213,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "hypoglycemia",
@@ -3372,10 +3324,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "injection_site_reaction",
@@ -3486,10 +3435,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "drug_change",
@@ -3599,10 +3545,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "drug_change",
@@ -3701,10 +3644,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "dose_decrease",
@@ -3814,10 +3754,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "discontinuation",
@@ -3936,10 +3873,7 @@
           "groupKey": "side_effect_monitoring"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "side_effect_monitoring",
         "discontinuation",
@@ -4040,10 +3974,7 @@
           "groupKey": "lifestyle_guidance"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "lifestyle_guidance",
         "hyperglycemia",
@@ -4179,10 +4110,7 @@
           "groupKey": "lifestyle_guidance"
         }
       },
-      "followupRef": {
-        "profileId": "se_followup",
-        "P": "次回、治療経過および副作用の有無を確認。"
-      },
+      "followupRef": "se_followup",
       "intentTags": [
         "lifestyle_guidance",
         "hyperkalemia",
@@ -4309,10 +4237,7 @@
           "groupKey": "sickday"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "sickday",
         "sick_day_management",
@@ -4469,10 +4394,7 @@
           "groupKey": "injection_technique"
         }
       },
-      "followupRef": {
-        "profileId": "default_followup",
-        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-      },
+      "followupRef": "default_followup",
       "intentTags": [
         "followup",
         "injection_technique"
@@ -5022,17 +4944,114 @@
   },
   "tagCatalog": {
     "intentTags": [
-      "drug_effect_explanation",
-      "side_effect_attention",
-      "hypoglycemia_attention",
-      "administration_instruction",
-      "followup_monitoring",
-      "sickday_guidance",
+      "adherence",
+      "adherence_guidance",
+      "compliance_good",
+      "compliance_poor",
+      "consider_dr",
+      "continue",
+      "dehydration_risk",
+      "diet",
+      "diet_exercise",
+      "discontinuation",
+      "dose_decrease",
+      "dose_increase",
+      "dose_setup",
+      "drug_change",
+      "dyslipidemia_management",
+      "external_start",
+      "followup",
+      "glycemic_control",
+      "hyperglycemia",
+      "hyperkalemia",
+      "hyperkalemia_management",
+      "hypertension_management",
+      "hyperuricemia_management",
+      "hypoglycemia",
+      "hypoglycemia_check",
+      "hypoglycemia_guidance",
+      "hypoglycemia_risk",
+      "improved",
+      "ineffective",
+      "initial_prescription",
+      "injection_site_check",
+      "injection_site_reaction",
+      "injection_technique",
+      "insufficient_effect",
       "lifestyle_guidance",
-      "adherence_guidance"
+      "low_perceived_effect",
+      "mild",
+      "mild_adverse_event",
+      "missed_doses",
+      "moderate",
+      "no_adverse_event",
+      "no_lab_improvement",
+      "other_med_adjustment",
+      "patient_request",
+      "restart",
+      "self_adjustment",
+      "sick_day_management",
+      "sickday",
+      "sickday_guidance",
+      "side_effect_attention",
+      "side_effect_monitoring",
+      "treatment_adjustment",
+      "treatment_end",
+      "treatment_start",
+      "visit_delay"
     ],
-    "clinicalTags": [],
-    "counselingTags": [],
-    "workflowTags": []
+    "clinicalTags": [
+      "adherence",
+      "adverse_event_monitoring",
+      "arteriosclerosis_risk",
+      "dehydration_risk",
+      "diabetes_management",
+      "diabetes_mellitus",
+      "dose_adjustment",
+      "dyslipidemia",
+      "gout_risk",
+      "hyperglycemia",
+      "hyperkalemia",
+      "hypertension",
+      "hyperuricemia",
+      "hypoglycemia",
+      "injection",
+      "insulin_therapy",
+      "lifestyle_modification",
+      "medication_adherence",
+      "metformin",
+      "sglt2_inhibitor",
+      "sick_day_rules",
+      "sickday",
+      "technique_check",
+      "treatment_discontinuation",
+      "treatment_initiation"
+    ],
+    "counselingTags": [
+      "adherence_support",
+      "diet",
+      "drug_counseling",
+      "drug_hold",
+      "exercise",
+      "glucose_management",
+      "injection_counseling",
+      "lifestyle",
+      "potassium_restriction",
+      "reminder",
+      "salt_restriction",
+      "schedule",
+      "sickday_management",
+      "side_effect_warning",
+      "social_support",
+      "visual_reminder"
+    ],
+    "workflowTags": [
+      "adherence_counseling",
+      "comorbidity_counseling",
+      "followup_counseling",
+      "initial_counseling",
+      "pharmacy_guidance",
+      "safety_counseling"
+    ]
   }
 }

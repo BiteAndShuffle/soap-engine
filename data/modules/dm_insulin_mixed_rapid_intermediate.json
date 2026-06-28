@@ -4592,14 +4592,19 @@
   },
   "tagCatalog": {
     "intentTags": [
-      "drug_effect_explanation",
-      "side_effect_attention",
-      "hypoglycemia_attention",
+      "adherence_support",
       "administration_instruction",
+      "dose_decrease_explanation",
+      "dose_increase_explanation",
+      "drug_effect_explanation",
       "followup_monitoring",
-      "sickday_guidance",
+      "hypoglycemia_attention",
+      "injection_site_attention",
       "lifestyle_guidance",
-      "adherence_guidance"
+      "sickday_guidance",
+      "side_effect_attention",
+      "treatment_end_explanation",
+      "urgent_consult_advice"
     ],
     "clinicalTags": [],
     "counselingTags": [],
