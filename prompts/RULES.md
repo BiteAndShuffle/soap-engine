@@ -1,4 +1,4 @@
-SOAPエンジン RULES.md — 横断ルール辞書 v1.0
+SOAPエンジン RULES.md — 横断ルール辞書 v1.1
 
 # 概要・使い方
 
@@ -9,7 +9,7 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.0
 - **preservation対象の完全リストは P1.md が正本**（Section 4 参照）
 - **bridge→JSON変換規則の正本は P0-B.md**（Section 5 の変換表はP0-Bと一部不整合あり→CHECK-T01）
 
-最終更新: 2026-06-26
+最終更新: 2026-06-29
 
 ---
 
@@ -103,6 +103,9 @@ package / build:
 - treatment_end 系シナリオの scenarioGroup が個別値以外（例: "treatment_end" を設定 → Section 12 参照）
 - sickday シナリオの situationFilter が ["sickday"] 以外（Section 13 参照）
 - O フィールドに {{drug_subject}} でない固定薬剤名（ブランド名 / genericName / drugClass 固定）
+  ※ O フィールドは全シナリオで {{drug_subject}} 必須。主語省略は O では許容しない。
+  ※ S / A / P の主語省略許容シナリオ（adherence 系 / lifestyle_guidance 系 / sickday 系 / injection_technique 等）では
+     S に {{drug_subject}} が含まれなくても正常（bridge 設計上の主語省略意図のため）。
 - injection module の対象シナリオに thirdPanelSPlacement 欠落（Section 14 参照）
 - addon 必須フィールドが1件でも欠落（Section 15 参照）
 - scenario の clinicalTags / counselingTags / workflowTags が欠落（[] でも必須 → Section 16 参照）
@@ -464,7 +467,9 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 `sickday_status` / `followup_status` という語彙は存在しない（ERROR）。`adherence_status` を使用すること。
 
-**SStructured.role 禁止語彙（ERROR）:** `treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation` / `symptom_observation` / `sickday_status` / `followup_status`
+**SStructured.role 禁止語彙（ERROR）:** `drug_status` / `treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation` / `symptom_observation` / `sickday_status` / `followup_status`
+
+> `drug_status` は未定義語彙。treatment_start 系 → `treatment_start_reason`、dose_change 系 → `dose_adjustment_reason`、end 系 → `treatment_end_reason` を使うこと。
 
 **AStructured.role:**
 
@@ -478,10 +483,25 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 **AStructured.role 禁止語彙（ERROR）:** `drug_mechanism` / `lifestyle_assessment` / `sickday_assessment` / `risk_assessment` / `clinical_guidance`
 （sickday 系 A 行は `treatment_assessment` を使用すること。risk_assessment / clinical_guidance は `treatment_assessment` で代替すること）
 
-**PStructured.role 確立済み語彙（参考）:**
-`drug_effect_explanation` / `side_effect_attention` / `side_effect_guidance` / `dose_adjustment_guidance` / `adherence_guidance` / `treatment_end_guidance` / `followup_guidance` / `lifestyle_guidance` / `administration_guidance` / `sickday_guidance` / `urgent_consult_guidance`
+**PStructured.role 確立済み語彙（正規）:**
 
-**PStructured.role 禁止語彙（ERROR）:** `treatment_start_reason`（P フィールド内での使用）/ `followup_monitoring`
+| role 値 | 適用対象 |
+|---|---|
+| `drug_effect_explanation` | 薬剤効果の説明 |
+| `side_effect_attention` | 副作用注意喚起 |
+| `side_effect_guidance` | 副作用時の対処指導 |
+| `dose_adjustment_guidance` | 増量・減量の指導 |
+| `treatment_end_guidance` | 中止・変更の指導 |
+| `adherence_guidance` | アドヒアランス指導 |
+| `followup_guidance` | 次回受診・経過観察の指示 |
+| `lifestyle_guidance` | 生活指導 |
+| `administration_guidance` | 投与方法・手技の指導 |
+| `sickday_guidance` | シックデイルール指導 |
+| `urgent_consult_guidance` | 緊急受診・医師相談の指示 |
+
+**PStructured.role 禁止語彙（ERROR）:** `treatment_start_reason`（P フィールド内での使用）/ `followup_monitoring` / `administration_instruction`
+
+> `administration_instruction` は未定義語彙 → `administration_guidance` を使うこと。
 
 **`followup_monitoring` のスコープ明確化（混同禁止）:**
 - `PStructured.role` に `followup_monitoring` を使用 → **ERROR**（`followup_guidance` を使用すること）
@@ -568,3 +588,44 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 **新規 module への影響:**
 - bridge type が `lifestyle_guidance` → Section 5 変換表に従い `group: "counseling"` とすること（`group: "lifestyle_guidance"` にしてはならない）
 - bridge type が `administration_guidance` → 変換表に未定義。新規 module での使用は PENDING として人間確認を要する
+
+---
+
+## 19. Semantic Equivalence Rule（意味論的等価性ルール）
+
+### 原則
+
+複数のデータ型が仕様として許容される項目（例: `string` / `string[]`）は、
+**値の意味・内容**を比較対象とする。
+
+**データ型のみを理由に FAIL としてはならない。**
+
+監査処理・検索処理・ランタイム処理はいずれも両形式をサポートし、
+型の違いで動作が変わらないよう実装すること。
+
+### 適用対象
+
+| フィールド | 許容型 | 判定方法 |
+|---|---|---|
+| `index.searchableText` | `string` / `string[]` | string: `"キーワード" in text` / string[]: `any("キーワード" in item for item in text)` |
+
+将来 string / string[] 等の複数表現を許容する項目が追加された場合、
+本セクションの表を更新し、各監査項目に判定方法を明記すること。
+
+### 監査での扱い
+
+- 各監査項目（PN7 等）はデータ型に応じた判定方法を個別に定義する（→ PN7-Q 参照）
+- 「string[] なので FAIL」「string なので FAIL」は禁止
+- 型変換（配列→文字列結合等）によって意味が失われる実装も禁止
+
+### 実装ガイドライン
+
+```typescript
+// searchableText の型安全な検索例
+function containsToken(searchableText: string | string[], token: string): boolean {
+  if (Array.isArray(searchableText)) {
+    return searchableText.some(item => item.includes(token));
+  }
+  return searchableText.includes(token);
+}
+```

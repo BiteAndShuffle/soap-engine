@@ -5,8 +5,13 @@
 → prompts/RULES.md §11 addons.orderPresets object必須ルール
 
 ## 位置づけ
+**PN5 の責務: 標準非シナリオ構造をすべて生成する。**
 シナリオ・addon 以外の JSON 構造を生成する。
 シナリオ本文・シナリオメタデータを変更しない。
+
+PN6 は PN5 の成果物を統合するだけであり、標準構造を独自補完しない。
+PN5 で生成漏れがあった場合、PN6 は MUST_STOP して PN5 へ差し戻す。
+**persona / composition.sMergePolicy / index（searchableText/normalizedTokens/facets/scenarioIds/addonIds/followupProfileIds/groupKeyRegistry）の欠落は PN5 の責務違反として扱う。**
 
 ---
 
@@ -128,11 +133,26 @@ drug.genericName / brandNames / nameAliases / categoryPath から `searchableTex
     "dosageForms": ["injection"],
     "situation": ["general", "sickday"],
     "drugClass": ["insulin", "insulin_regular"]
-  }
+  },
+  "scenarioIds": ["initial", "restart", "..."],
+  "addonIds": ["addon_glycemic_guidance", "..."],
+  "followupProfileIds": ["default_followup", "end_followup", "se_followup"],
+  "groupKeyRegistry": ["hyperglycemia_management", "..."]
 }
 ```
 
 `facets.situation` は phase3b_meta のシナリオ situationFilter の全ユニーク値を集約する。
+
+**index 標準フィールド（全モジュール必須）:**
+
+以下の4フィールドを必ず生成する。欠落は PN7 X 監査で FAIL になる。
+
+| フィールド | 値の出典 |
+|---|---|
+| `scenarioIds` | phase3b_meta の全シナリオ id（順序は scenarios[] と一致） |
+| `addonIds` | phase1_text_spine の addons キー一覧 |
+| `followupProfileIds` | phase1_text_spine の followupProfiles キー一覧 |
+| `groupKeyRegistry` | phase2_drug_header の composition.groupKeyRegistry（確定値） |
 
 **normalizedTokens の注射部位副作用語彙ルール:**
 injection module で `searchableText` に `"硬結"` を含めた場合、`normalizedTokens` に `"こうけつ"` を必ず追加すること。
@@ -207,10 +227,48 @@ Phase 6 が phase2_drug_header.json の暫定 `[]` に上書きする際の確�
 ui
 risks
 searchConfig
-index
+index          ← searchableText / normalizedTokens / facets /
+                  scenarioIds / addonIds / followupProfileIds / groupKeyRegistry
+                  を必ず含めること（全7フィールド必須）
 tagCatalog
 expressModes
+persona        ← JSON_STANDARD 標準フィールド。必ず生成する（下記参照）
 addons.orderPresets
+```
+
+### composition.sMergePolicy（必須 — phase2_drug_header.json へ追記）
+
+phase2_drug_header.json の `composition` に `sMergePolicy` が存在しない場合、以下を追記して保存する:
+
+```json
+"sMergePolicy": {
+  "unit": "clinical_domain",
+  "conflictStrategy": "separate_by_domain",
+  "withinDomainStrategy": "groupKey_based_semantic_merge"
+}
+```
+
+PN6 は composition をそのまま取り込むため、PN5 がここで確定させる。
+
+---
+
+### persona セクション（必須）
+
+bridge に記述がない場合は以下のデフォルト値で生成する:
+
+```json
+"persona": {
+  "defaultStyle": "standard",
+  "availableStyles": ["standard"],
+  "styleProfiles": {
+    "standard": {
+      "sentenceTone": null,
+      "warningTone": null,
+      "proposalTone": null,
+      "closingTone": null
+    }
+  }
+}
 ```
 
 ---
@@ -231,5 +289,8 @@ PN5 完了後、以下を報告する:
 - risks.primary / secondary 件数
 - risks.conditional 件数
 - addons.orderPresets が `{}` であることの確認
+- index.searchableText / normalizedTokens のエントリ数
+- index.scenarioIds / addonIds / followupProfileIds / groupKeyRegistry の件数
+- persona が生成済みであることの確認
 
 次工程: PN6（Assembly）

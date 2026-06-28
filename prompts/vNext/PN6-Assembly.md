@@ -4,8 +4,20 @@
 → prompts/RULES.md §1 STANDARD_REFERENCE_PATHS
 
 ## 位置づけ
+**PN6 の責務: 生成済み成果物を統合するだけ。不足項目の独自生成・補完は禁止。**
 PN1〜PN5 の全成果物を統合し、完成 JSON を生成する。
 新規コンテンツの生成・修正は行わない。統合と保存のみ。
+
+**PN5 成果物の事前確認（統合開始前に必ず確認）:**
+phase5_non_scenario.json に以下が存在しない場合、即 MUST_STOP → PN5 へ差し戻す:
+- `persona`
+- `index.searchableText` / `index.normalizedTokens` / `index.facets`
+- `index.scenarioIds` / `index.addonIds` / `index.followupProfileIds` / `index.groupKeyRegistry`
+- `ui` / `risks` / `searchConfig` / `tagCatalog` / `expressModes`
+
+**composition.sMergePolicy の確認:**
+phase2_drug_header.json の `composition` に `sMergePolicy` が存在しない場合、即 MUST_STOP → PN5 へ差し戻す。
+（PN6 が独自補完してはならない）
 
 ---
 
@@ -71,8 +83,40 @@ Phase 3B の scenarios[] をベースとし、各シナリオの空配列 `SStru
 5. 一致が確認できた場合のみ最終 JSON 生成を開始する
 
 **Step 4: addons の構築**
-Phase 3B の addons.items（テキスト + メタデータ）をそのまま採用する。
+Phase 3B の addons.items（テキスト + メタデータ）をベースとし、以下の標準ルールを適用して確定させる。
 Phase 5 の addons.orderPresets を追加する。
+
+#### addon.text 標準ルール（必須）
+
+`addons.items[].text` は bridge のコンテンツ本文を使用する。title を text に流用してはならない。
+
+- addon の `sectionTexts` に `P_APPEND` が存在する場合 → `text = P_APPEND` 本文
+- `P_APPEND` が存在せず `A_APPEND` のみの場合 → `text = A_APPEND` 本文
+- `P_APPEND` も `A_APPEND` もなく `S_APPEND` のみの場合 → `text = S_APPEND` 本文
+
+bridge を single source of truth とし、title は `title` フィールドにのみ使用する。
+
+#### addon.group 標準変換表（必須）
+
+bridge 上の type をそのまま `group` にコピーしない。必ず以下の変換表を経由する:
+
+| bridge type | group（JSON） |
+|---|---|
+| `lifestyle_guidance` | `counseling` |
+| `side_effect_guidance` | `sideEffects` |
+| `adherence_guidance` | `adherence` |
+| `sickday_guidance` | `sickday` |
+| `followup_monitoring` | `followup` |
+
+変換表にない type が出現した場合は MUST_STOP し、ユーザーへ確認する。
+
+この変換表は AUTORUN 標準仕様の SSOT である。
+
+#### addon.uiVariant 保持ルール（必須）
+
+bridge の ADDON ヘッダーに `uiVariant` が定義されている addon → JSON に `uiVariant` フィールドを含める。
+bridge に `uiVariant` の定義がない addon → `uiVariant` フィールドを生成しない。
+**推測生成は禁止。bridge に存在しない uiVariant を付与してはならない。**
 
 **Step 5: 非シナリオ構造の追加**
 Phase 5 の以下をそのまま追加する:
@@ -80,9 +124,20 @@ Phase 5 の以下をそのまま追加する:
 ui
 risks
 searchConfig
-index
+index          ← phase5 の index を完全マージ（searchableText/normalizedTokens/facets を含む）
 tagCatalog
 expressModes
+persona        ← phase5 の persona を top-level へ配置（defaults の直後）
+```
+
+**composition.sMergePolicy の必須確認:**
+Step 1 で取り込む `composition` に `sMergePolicy` が存在しない場合は以下を追加する:
+```json
+"sMergePolicy": {
+  "unit": "clinical_domain",
+  "conflictStrategy": "separate_by_domain",
+  "withinDomainStrategy": "groupKey_based_semantic_merge"
+}
 ```
 
 ### 除去する中間フィールド
@@ -156,6 +211,8 @@ xStructured 突き合わせ: PN4A {N}件 / PN4B {N}件 / 合計 {N}件（全シ�
 - 新規コンテンツを生成しない
 - 中間フィールド（_phase / _frozenAt / _closingText）を最終 JSON に含めない
 - Phase 1 凍結テキストを変更しない
+- **PN5 成果物に存在しない標準構造を PN6 が独自補完しない**（検出したら MUST_STOP → PN5 差し戻し）
+- **composition.sMergePolicy を PN6 が独自追加しない**（PN5 で生成すること）
 
 ---
 

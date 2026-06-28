@@ -70,9 +70,9 @@ PN3A完了: groupKey {N}件確定。MUST_STOP非該当。PN3Bを開始します�
 PN3B完了: {N}シナリオ / {N}addon。PN4Aを開始します。
 PN4A完了: {N}件xStructured生成。禁止role非該当。PN4Bを開始します。
 PN4B完了: {N}件xStructured生成。禁止role非該当。PN5を開始します。
-PN5完了: risks/searchConfig/expressModes生成。PN6を開始します。
-PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。PN7を開始します。
-PN7完了: 15項目PASS / verdict: PASS。PN8を開始します。
+PN5完了: risks/searchConfig/expressModes/persona/index生成。PN6を開始します。
+PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。addon.text/group標準変換適用済み。PN7を開始します。
+PN7完了: A〜T全項目PASS / verdict: PASS。PN8を開始します。
 PN8完了: tsc PASS / build PASS。RELEASE_OK。
 ```
 
@@ -89,15 +89,23 @@ PN8完了: tsc PASS / build PASS。RELEASE_OK。
 以下のいずれかに該当した場合、**即座に実行を停止**し、原因と差し戻し先 Phase を報告する。
 自動修正は行わない。
 
-| 条件 | 検出 Phase | 差し戻し先 |
+| 条件 | STOP 理由 | Return Phase |
 |---|---|---|
-| A: PN3B のシナリオ件数が phase1 と不一致 | PN3B | PN3B 再実行 |
-| B: PN4A/4B で禁止 role 語彙を検出 | PN4A または PN4B | 該当 Phase 再実行 |
-| C: PN4A/4B の xStructured[].text が phase1 テキストに存在しない文字列を含む | PN4A または PN4B | 該当 Phase 再実行 |
-| D: PN6 のアセンブリ後シナリオ件数が phase3b_meta と不一致 | PN6 | PN6 再実行 |
-| E: PN7 で FAIL 項目が 1 件以上 | PN7 | 該当 Phase に差し戻し |
-| F: PN8 で tsc FAIL または build FAIL | PN8 | 原因調査後にユーザー判断 |
-| G: PN6 Write 失敗 / 不完全出力（下記参照） | PN6 | ユーザー判断 |
+| A | PN3B のシナリオ件数が phase1 と不一致 | PN3B |
+| B | PN4A/4B で禁止 role 語彙を使用 | 該当 PN4A または PN4B |
+| C | xStructured[].text が phase1 テキストに存在しない文字列を含む | 該当 PN4A または PN4B |
+| D | PN6 アセンブリ後シナリオ件数が phase3b_meta と不一致 | PN6 |
+| E | PN7 で FAIL 項目が 1 件以上 | PN7 が指定する Phase |
+| F | tsc FAIL または build FAIL | PN8（ユーザー判断） |
+| G | PN6 Write 失敗 / JSON parse 不可 / 件数確認前の異常 | PN6（ユーザー判断） |
+| H | phase4a_structured.json が未生成（phase3b_meta を直接更新した） | PN4A |
+| I | phase4b_structured.json が未生成（phase3b_meta を直接更新した） | PN4B |
+| J | xStructured に `content` フィールドが混入 | 該当 PN4A または PN4B |
+| K | persona が phase5_non_scenario.json に欠落 | PN5 |
+| L | composition.sMergePolicy が phase2_drug_header.json に欠落 | PN5 |
+| M | PN6 が PN5 成果物に存在しない標準構造を独自補完しようとした | PN5 |
+| N | PN6 addon.group が標準変換表に従っていない（lifestyle_guidance 等が未変換） | PN6 |
+| O | PN5 が index.scenarioIds / addonIds / followupProfileIds / groupKeyRegistry を生成していない | PN5 |
 
 **条件 G の詳細:**
 以下のいずれかに該当した場合、即座に MUST_STOP とする。

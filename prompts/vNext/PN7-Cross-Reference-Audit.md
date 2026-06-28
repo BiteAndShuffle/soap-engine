@@ -12,6 +12,8 @@
 → prompts/RULES.md §15 addon 必須フィールド
 → prompts/RULES.md §16 scenario omit 禁止フィールド
 → prompts/P1.md Rule 4
+→ PN6-Assembly.md addon.text 標準ルール / addon.group 標準変換表 / addon.uiVariant 保持ルール
+→ PN5-Non-Scenario.md index 標準フィールド
 
 ## 位置づけ
 完成 JSON の構造整合性を全項目検証する。
@@ -165,6 +167,33 @@ data/modules/{moduleId}.json の
 不一致 → FAIL（scenario/addon id と不一致フィールド名を明記）
 ```
 
+**I 補足: {{drug_subject}} プレースホルダー確認**
+
+← RULES.md §9（O フィールドの薬剤名ルール）
+
+`phase1_text_spine.json` が利用不可の場合でも、以下のルールで独立確認すること:
+
+```
+【O フィールド — 全シナリオ必須】
+  全 scenarios[].O に {{drug_subject}} が含まれること
+  固定薬剤名（ブランド名 / genericName / drugClass）が O に直書きされている → FAIL
+
+【S / A / P フィールド — scenarioType 依存】
+  以下のシナリオ分類では、S に {{drug_subject}} がなくても正常:
+    - adherence 系（cp_good / cp_poor_* 等）
+    - lifestyle_guidance 系
+    - sickday 系
+    - injection_technique_check 等の followup 系
+  （これらは主語省略または状態報告が bridge 設計の意図であるため）
+
+  上記以外（treatment_start / treatment_adjustment / side_effect / treatment_end 系）の
+  S / A / P には {{drug_subject}} が含まれることを確認すること。
+  欠落の場合は FAIL ではなく CHECK として報告する（bridge 本文凍結との一致を優先するため）。
+
+不一致 → FAIL（scenario id と欠落フィールドを明記）
+主語省略該当シナリオの S への {{drug_subject}} 欠落 → PASS（正常）
+```
+
 ---
 
 ### J. scenario id 重複確認
@@ -239,18 +268,195 @@ addon を追加した場合は必ずいずれかのシナリオの addonsRef.P �
 
 ---
 
-### Q. normalizedTokens 硬結チェック
+### Q. searchableText / normalizedTokens 整合監査（hardening: 硬結チェック）
 
 ← RULES.md §17 / PN5-Non-Scenario.md
 
-```
-index.searchableText に "硬結" が含まれる場合、
-index.normalizedTokens に "こうけつ" が含まれていること
+**searchableText の型について:**
 
-欠落 → FAIL（"硬結" in searchableText but "こうけつ" missing from normalizedTokens）
+`index.searchableText` は **string** および **string[]（配列）** の両形式を許容する。
+型の違いのみを理由に FAIL としてはならない。
+
+```
+【searchableText が string の場合】
+  "硬結" in searchableText  で判定する。
+
+【searchableText が string[] の場合】
+  any("硬結" in item for item in searchableText)  で判定する。
+```
+
+**判定フロー:**
+
+```
+1. injection module（composition.nodeKey が "_injection" で終わる）の場合:
+     searchableText（string / string[] を問わず）に
+       "硬結" または "注射部位硬結" のいずれかが含まれること
+     かつ
+     normalizedTokens に "こうけつ" が含まれること
+     いずれか欠落 → FAIL
+
+2. injection module 以外の場合:
+     searchableText（string / string[] を問わず）に "硬結" が含まれる場合のみ判定:
+       normalizedTokens に "こうけつ" が含まれていること
+       欠落 → FAIL
+     "硬結" が含まれない場合 → NOT_CHECKED
+
+共通: 型の違い（string vs string[]）のみを理由に FAIL としてはならない。
 ```
 
 備考: "硬結" はひらがな正規化で自動変換されない。injection module では必ず手動追加すること。
+
+---
+
+### R. persona 存在確認
+
+```
+top-level に persona フィールドが存在すること
+persona.defaultStyle / availableStyles / styleProfiles が存在すること
+欠落 → FAIL
+```
+
+---
+
+### S. composition.sMergePolicy 存在確認
+
+```
+composition.sMergePolicy が存在すること
+unit / conflictStrategy / withinDomainStrategy の3フィールドを持つこと
+欠落 → FAIL
+```
+
+---
+
+### T. xStructured 構造確認
+
+← RULES.md §17 Structured.role 確立済み語彙
+
+```
+全 scenarios[].SStructured / AStructured / PStructured の各アイテムについて:
+  - `text` フィールドが存在すること
+  - `content` フィールドが存在しないこと（禁止）
+  - id / role / transform / safety / lockTerms / notes が存在すること
+  - role が以下の確立済み語彙であること（未定義 role は FAIL）
+違反 → FAIL（scenario id / field / item id を明記）
+```
+
+**T 監査: SStructured.role 確立済み語彙（許可）:**
+
+| role 値 | 適用対象 |
+|---|---|
+| `treatment_start_reason` | treatment_start 系の S 行 |
+| `dose_adjustment_reason` | treatment_adjustment 系の S 行 |
+| `side_effect_status` | sideEffectPresence=absent_or_not_observed |
+| `side_effect_presence` | sideEffectPresence=present_\* |
+| `adherence_status` | adherence 系 / lifestyle / sickday / followup 系 |
+| `treatment_end_reason` | treatment_end 系の S 行 |
+
+**T 監査: AStructured.role 確立済み語彙（許可）:**
+
+| role 値 | 適用対象 |
+|---|---|
+| `treatment_assessment` | 汎用（treatment_start / adjustment / adherence / lifestyle 等） |
+| `side_effect_assessment` | side_effect 系の A 行 |
+| `adherence_assessment` | adherence 系 |
+| `treatment_end_assessment` | treatment_end 系 |
+
+**T 監査: PStructured.role 確立済み語彙（許可）:**
+
+`drug_effect_explanation` / `side_effect_attention` / `side_effect_guidance` /
+`dose_adjustment_guidance` / `treatment_end_guidance` / `adherence_guidance` /
+`followup_guidance` / `lifestyle_guidance` / `administration_guidance` /
+`sickday_guidance` / `urgent_consult_guidance`
+
+**T 監査で必ず FAIL にする禁止 role:**
+
+| role | 禁止スコープ | 代替 |
+|---|---|---|
+| `drug_status` | SStructured | scenarioType に応じた treatment_start_reason / dose_adjustment_reason / treatment_end_reason |
+| `administration_instruction` | PStructured | `administration_guidance` |
+| `followup_monitoring` | PStructured | `followup_guidance` |
+| `content` フィールド混入 | 全 Structured | `text` フィールドを使用すること |
+
+**SStructured.role 追加禁止語彙（ERROR）:**
+`treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation` /
+`symptom_observation` / `sickday_status` / `followup_status`
+
+**AStructured.role 追加禁止語彙（ERROR）:**
+`drug_mechanism` / `lifestyle_assessment` / `sickday_assessment` / `risk_assessment` / `clinical_guidance`
+
+**確認手順:** 禁止 role 一覧を xStructured.role 全件に対して明示的にスキャンすること。
+許可語彙に含まれない role が出現した場合は FAIL（未確認推測生成語彙）として報告すること。
+
+---
+
+### U. addon.text 内容確認
+
+← PN6-Assembly.md addon.text 標準ルール
+
+```
+全 addons.items の各エントリについて:
+  sectionTexts に P_APPEND が存在する addon:
+    text === P_APPEND 本文であること
+  P_APPEND が存在しない addon:
+    text === A_APPEND または S_APPEND 本文であること
+
+  text が title フィールドの値と一致している場合 → FAIL（title を text に流用している）
+不一致 → FAIL（addon: {id}）
+```
+
+---
+
+### V. addon.group 標準変換確認
+
+← PN6-Assembly.md addon.group 標準変換表
+
+```
+全 addons.items の group 値が以下の変換表に従っていること:
+  lifestyle_guidance  → counseling
+  side_effect_guidance → sideEffects
+  adherence_guidance  → adherence
+  sickday_guidance    → sickday
+
+未変換の値（変換前の bridge type がそのまま残っている）→ FAIL
+変換表外の値が存在する場合 → CHECK（変換表に追加が必要な可能性）
+```
+
+---
+
+### W. uiVariant 保持確認
+
+← PN6-Assembly.md addon.uiVariant 保持ルール
+
+```
+phase3b_meta.json に uiVariant が記録されている addon:
+  JSON の addons.items[]{addon_id}.uiVariant が存在すること
+  かつ bridge の定義値と一致すること
+  欠落または不一致 → FAIL
+
+bridge に uiVariant が定義されていない addon:
+  JSON に uiVariant フィールドが存在しないこと
+  推測生成による uiVariant の付与 → FAIL
+
+phase3b_meta.json に uiVariant 情報が記録されていない場合 → NOT_CHECKED
+（phase3b_meta に uiVariant を記録することを次回以降推奨）
+```
+
+---
+
+### X. index 標準フィールド確認
+
+← PN5-Non-Scenario.md index 標準フィールド
+
+```
+以下の4フィールドが index に存在すること（型: 配列）:
+  index.scenarioIds
+  index.addonIds
+  index.followupProfileIds
+  index.groupKeyRegistry
+
+欠落 → FAIL（欠落フィールド名を明記）
+型が配列でない → FAIL
+```
 
 ---
 
@@ -294,6 +500,13 @@ N. addon必須フィールド:               PASS / FAIL
 O. scenario omit禁止フィールド:       PASS / FAIL
 P. addon未参照確認:                   PASS / FAIL
 Q. normalizedTokens硬結:              PASS / FAIL / NOT_CHECKED
+R. persona存在:                       PASS / FAIL
+S. composition.sMergePolicy存在:      PASS / FAIL
+T. xStructured構造:                   PASS / FAIL
+U. addon.text内容確認:                PASS / FAIL
+V. addon.group標準変換確認:           PASS / FAIL
+W. uiVariant保持確認:                 PASS / FAIL / NOT_CHECKED
+X. index標準フィールド確認:           PASS / FAIL
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件
@@ -329,7 +542,14 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "N_addonRequiredFields": "PASS",
     "O_scenarioRequiredFields": "PASS",
     "P_addonUnreferenced": "PASS",
-    "Q_normalizedTokensKokketsu": "PASS"
+    "Q_normalizedTokensKokketsu": "PASS",
+    "R_persona": "PASS",
+    "S_sMergePolicy": "PASS",
+    "T_xStructured": "PASS",
+    "U_addonText": "PASS",
+    "V_addonGroup": "PASS",
+    "W_uiVariant": "NOT_CHECKED",
+    "X_indexStandardFields": "PASS"
   },
   "failCount": 0,
   "verdict": "PASS"
@@ -346,6 +566,7 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 - 報告のみ行う
 - FAIL を PENDING に格下げしない
 - FAIL の根拠を曖昧にしない
+- **A〜T の標準監査項目を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
 
 ---
 

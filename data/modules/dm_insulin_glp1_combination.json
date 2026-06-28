@@ -1,118 +1,68 @@
 {
-  "moduleId": "dm_insulin_rapid_analog",
+  "moduleId": "dm_insulin_glp1_combination",
   "moduleVersion": "1.0.0",
   "categoryPath": [
     "糖尿病",
-    "インスリン製剤",
-    "超速効型"
+    "配合剤",
+    "インスリン／GLP-1受容体作動薬配合剤"
   ],
   "composition": {
     "domain": "diabetes",
-    "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
-    "nodeLabelShort": "超速効INS",
-    "nodeLabelLong": "超速効型インスリン製剤",
-    "nodeKey": "insulin_rapid_analog_injection",
-    "classKey": "insulin_rapid_analog",
-    "defaultSMergeLevel": "clinical_domain",
-    "canonicalSource": {
-      "nodeIdentity": "composition",
-      "displayProjection": "display",
-      "scenarioMergePolicy": "scenarios[].mergePolicy"
-    },
-    "domainPolicy": {
-      "clinicalDomainUnit": "disease_area",
-      "sMergeDomainUnit": "disease_area",
-      "defaultSGrouping": "clinical_domain"
-    },
-    "groupKeyRegistry": [
-      "hyperglycemia_management",
-      "glycemic_control_adjustment",
-      "side_effect_monitoring",
-      "adherence",
-      "treatment_end",
-      "lifestyle_guidance",
-      "sickday",
-      "injection_technique"
-    ],
+    "priority": "chronic",
+    "nodeKey": "insulin_glp1_combination_injection",
+    "nodeLabelLong": "インスリン／GLP-1受容体作動薬配合剤",
+    "classKey": "insulin_glp1_combination",
     "sMergePolicy": {
       "unit": "clinical_domain",
       "conflictStrategy": "separate_by_domain",
       "withinDomainStrategy": "groupKey_based_semantic_merge"
     },
-    "nodeIdentityPolicy": {
-      "source": "composition",
-      "overrideAllowed": false
-    }
+    "groupKeyRegistry": [
+      "adherence",
+      "glycemic_control_adjustment",
+      "hyperglycemia_management",
+      "injection_technique",
+      "lifestyle_guidance",
+      "sickday",
+      "side_effect_monitoring",
+      "treatment_end"
+    ],
+    "nodeLabelShort": "INS/GLP-1配合剤"
   },
   "drug": {
-    "genericName": "超速効型インスリン製剤",
+    "genericName": "インスリン／GLP-1受容体作動薬配合剤",
     "brandNames": [
-      "ヒューマログ",
-      "ルムジェブ",
-      "ノボラピッド",
-      "フィアスプ",
-      "アピドラ"
+      "ソリクア",
+      "ゾルトファイ"
     ],
     "drugClass": [
-      "INSULIN_RAPID_ANALOG"
+      "INSULIN_GLP1_COMBINATION"
     ],
     "route": "injection",
     "dosageForms": [
       "injection"
     ],
     "drugSpecificTags": [
-      "insulin_rapid_analog",
+      "insulin_glp1_combination",
       "insulin_injection"
     ],
     "search": {
-      "primaryDisplayName": "超速効型インスリン製剤",
+      "primaryDisplayName": "インスリン／GLP-1受容体作動薬配合剤",
       "exactAliases": [
-        "ヒューマログ",
-        "ルムジェブ",
-        "ノボラピッド",
-        "フィアスプ",
-        "アピドラ"
+        "ソリクア",
+        "ゾルトファイ"
       ],
       "prefixAliases": [
-        "ひゅーまろぐ",
-        "ひゅーまろ",
-        "ひゅーま",
-        "ひゅー",
-        "るむじぇぶ",
-        "るむじぇ",
-        "るむ",
-        "のぼらぴっど",
-        "のぼらぴ",
-        "のぼら",
-        "のぼ",
-        "ふぃあすぷ",
-        "ふぃあ",
-        "ふぃ",
-        "あぴどら",
-        "あぴど",
-        "あぴ"
+        "そりくあ",
+        "ぞるとふぁい"
       ],
       "nameAliases": [
-        "ひゅーまろぐ",
-        "ひゅーまろ",
-        "ひゅーま",
-        "ひゅー",
-        "るむじぇぶ",
-        "るむじぇ",
-        "るむ",
-        "のぼらぴっど",
-        "のぼらぴ",
-        "のぼら",
-        "のぼ",
-        "ふぃあすぷ",
-        "ふぃあ",
-        "ふぃ",
-        "あぴどら",
-        "あぴど",
-        "あぴ"
+        "そりくあ",
+        "ソリクア",
+        "ぞるとふぁい",
+        "ゾルトファイ"
       ],
       "keywords": [],
       "priority": 5,
@@ -123,165 +73,60 @@
       }
     },
     "nameAliases": [
-      "ひゅーまろぐ",
-      "ひゅーまろ",
-      "ひゅーま",
-      "ひゅー",
-      "るむじぇぶ",
-      "るむじぇ",
-      "るむ",
-      "のぼらぴっど",
-      "のぼらぴ",
-      "のぼら",
-      "のぼ",
-      "ふぃあすぷ",
-      "ふぃあ",
-      "ふぃ",
-      "あぴどら",
-      "あぴど",
-      "あぴ"
+      "そりくあ",
+      "ソリクア",
+      "ぞるとふぁい",
+      "ゾルトファイ"
     ],
     "brandCatalog": {
-      "ヒューマログ": {
-        "displayName": "ヒューマログ",
-        "genericName": "インスリンリスプロ",
-        "displayGenericName": "インスリンリスプロ",
+      "ソリクア": {
+        "displayName": "ソリクア",
+        "genericName": "インスリングラルギン/リキシセナチド",
+        "displayGenericName": "インスリングラルギン/リキシセナチド",
         "aliases": [
-          "ひゅーまろぐ",
-          "ひゅーまろ",
-          "ひゅーま",
-          "ひゅー"
+          "そりくあ",
+          "ソリクア"
         ],
         "normalizedAliases": [
-          "ひゅーまろぐ",
-          "ひゅーまろ",
-          "ひゅーま",
-          "ひゅー"
+          "そりくあ",
+          "ソリクア"
         ]
       },
-      "ルムジェブ": {
-        "displayName": "ルムジェブ",
-        "genericName": "インスリンリスプロ",
-        "displayGenericName": "インスリンリスプロ",
+      "ゾルトファイ": {
+        "displayName": "ゾルトファイ",
+        "genericName": "インスリンデグルデク/リラグルチド",
+        "displayGenericName": "インスリンデグルデク/リラグルチド",
         "aliases": [
-          "るむじぇぶ",
-          "るむじぇ",
-          "るむ"
+          "ぞるとふぁい",
+          "ゾルトファイ"
         ],
         "normalizedAliases": [
-          "るむじぇぶ",
-          "るむじぇ",
-          "るむ"
-        ]
-      },
-      "ノボラピッド": {
-        "displayName": "ノボラピッド",
-        "genericName": "インスリンアスパルト",
-        "displayGenericName": "インスリンアスパルト",
-        "aliases": [
-          "のぼらぴっど",
-          "のぼらぴ",
-          "のぼら",
-          "のぼ"
-        ],
-        "normalizedAliases": [
-          "のぼらぴっど",
-          "のぼらぴ",
-          "のぼら",
-          "のぼ"
-        ]
-      },
-      "フィアスプ": {
-        "displayName": "フィアスプ",
-        "genericName": "インスリンアスパルト",
-        "displayGenericName": "インスリンアスパルト",
-        "aliases": [
-          "ふぃあすぷ",
-          "ふぃあ",
-          "ふぃ"
-        ],
-        "normalizedAliases": [
-          "ふぃあすぷ",
-          "ふぃあ",
-          "ふぃ"
-        ]
-      },
-      "アピドラ": {
-        "displayName": "アピドラ",
-        "genericName": "インスリングルリジン",
-        "displayGenericName": "インスリングルリジン",
-        "aliases": [
-          "あぴどら",
-          "あぴど",
-          "あぴ"
-        ],
-        "normalizedAliases": [
-          "あぴどら",
-          "あぴど",
-          "あぴ"
+          "ぞるとふぁい",
+          "ゾルトファイ"
         ]
       }
     },
     "aliasToBrand": {
-      "ひゅーまろぐ": "ヒューマログ",
-      "ひゅーまろ": "ヒューマログ",
-      "ひゅーま": "ヒューマログ",
-      "ひゅー": "ヒューマログ",
-      "るむじぇぶ": "ルムジェブ",
-      "るむじぇ": "ルムジェブ",
-      "るむ": "ルムジェブ",
-      "のぼらぴっど": "ノボラピッド",
-      "のぼらぴ": "ノボラピッド",
-      "のぼら": "ノボラピッド",
-      "のぼ": "ノボラピッド",
-      "ふぃあすぷ": "フィアスプ",
-      "ふぃあ": "フィアスプ",
-      "ふぃ": "フィアスプ",
-      "あぴどら": "アピドラ",
-      "あぴど": "アピドラ",
-      "あぴ": "アピドラ"
+      "そりくあ": "ソリクア",
+      "ソリクア": "ソリクア",
+      "ぞるとふぁい": "ゾルトファイ",
+      "ゾルトファイ": "ゾルトファイ"
     }
   },
   "drugResolution": {
     "brandToTags": {
-      "ヒューマログ": [
-        "lispro",
-        "insulin_rapid_analog",
-        "insulin_injection"
+      "ソリクア": [
+        "insulin_glp1_combination",
+        "glargine_lixisenatide"
       ],
-      "ルムジェブ": [
-        "lispro_ultra_fast",
-        "insulin_rapid_analog",
-        "insulin_injection"
-      ],
-      "ノボラピッド": [
-        "aspart",
-        "insulin_rapid_analog",
-        "insulin_injection"
-      ],
-      "フィアスプ": [
-        "aspart_ultra_fast",
-        "insulin_rapid_analog",
-        "insulin_injection"
-      ],
-      "アピドラ": [
-        "glulisine",
-        "insulin_rapid_analog",
-        "insulin_injection"
+      "ゾルトファイ": [
+        "insulin_glp1_combination",
+        "degludec_liraglutide"
       ]
     }
   },
-  "regulatory": {
-    "psychotropicClass": "not_applicable",
-    "controlledSubstance": "not_applicable",
-    "notes": null
-  },
-  "topical": {
-    "steroidPotency": "not_applicable",
-    "notes": null
-  },
   "template": {
-    "templateId": "dm_insulin_rapid_analog_v1",
+    "templateId": "dm_insulin_glp1_combination_v1",
     "templateVersion": "1.0.0",
     "situationTags": [
       "general",
@@ -291,41 +136,16 @@
       "mild",
       "moderate",
       "severe"
-    ],
-    "expectedAddonFormat": [
-      "header",
-      "S_APPEND(optional)",
-      "A_APPEND(optional)",
-      "P_APPEND(optional)"
-    ],
-    "urgentFlag": true,
-    "urgentCriteria": {
-      "seekUrgentCareIf": [
-        "意識障害がある",
-        "低血糖症状が改善しない",
-        "嘔吐が続く",
-        "水分が摂れない",
-        "尿量が減っている",
-        "強い倦怠感がある"
-      ],
-      "contactPrescriberIf": [
-        "ふらつき・冷汗・動悸などの症状が続く",
-        "食事が十分に摂れない",
-        "注射部位の症状が悪化する",
-        "血糖値が著しく変動している",
-        "体調不良が続く",
-        "使用継続の可否に迷う"
-      ]
-    }
+    ]
   },
   "display": {
-    "title": "超速効型インスリン製剤",
-    "subtitle": "超速効型インスリン製剤",
-    "drugClassLabel": "超速効型インスリン製剤",
-    "drugGeneric": "超速効型インスリン製剤",
-    "nodeLabelShort": "超速効INS",
-    "nodeLabelLong": "超速効型インスリン製剤",
-    "nodeKey": "insulin_rapid_analog_injection",
+    "title": "インスリン／GLP-1受容体作動薬配合剤",
+    "subtitle": "インスリン／GLP-1受容体作動薬配合剤",
+    "drugClassLabel": "インスリン／GLP-1受容体作動薬配合剤",
+    "drugGeneric": "インスリン／GLP-1受容体作動薬配合剤",
+    "nodeLabelShort": "INS/GLP-1配合剤",
+    "nodeLabelLong": "インスリン／GLP-1受容体作動薬配合剤",
+    "nodeKey": "insulin_glp1_combination_injection",
     "menuGroupLabels": {
       "増量": "増量",
       "減量": "減量"
@@ -336,10 +156,7 @@
     }
   },
   "defaults": {
-    "followup": {
-      "S": null,
-      "P": "次回、引き続き使用できているか、副作用の有無を確認。"
-    },
+    "followup": "default_followup",
     "followupProfiles": {
       "default_followup": {
         "S": null,
@@ -372,13 +189,14 @@
   "scenarios": [
     {
       "id": "initial",
-      "globalId": "dm_insulin_rapid_analog.initial",
-      "title": "超速効型インスリン製剤 初回",
+      "globalId": "dm_insulin_glp1_combination.initial",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 初回",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
-        "initial",
-        "start_or_change"
+        "treatment_start",
+        "start_or_change",
+        "initial"
       ],
       "situationFilter": [
         "general"
@@ -396,8 +214,8 @@
       },
       "S": "{{drug_subject}}は、血糖値が高いため追加となった。",
       "O": "{{drug_subject}}　処方",
-      "A": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。\n食事に合わせて血糖上昇を抑え、食後血糖の改善を目的として使用する。\n食事量や活動量の変化、食事時間のずれにより低血糖が起こる可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}は、食後の血糖値を改善する薬です。\n食事に合わせて使用することが重要です。\n血糖値が下がりすぎることで、低血糖が起こることがあります。\nふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
+      "A": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。\n基礎インスリンを補い、GLP-1受容体作動薬により血糖推移を整える目的で使用する。\n食事量や活動量の変化、食事時間のずれにより低血糖が起こる可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、基礎インスリンを補い、血糖推移を整える薬です。\n決められたタイミングで、毎日継続して使用することが重要です。\n血糖値が下がりすぎることで、低血糖が起こることがあります。\nふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -427,16 +245,10 @@
       "intentTags": [
         "drug_effect_explanation",
         "side_effect_attention",
-        "administration_instruction"
+        "hypoglycemia_attention",
+        "administration_instruction",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance",
-          "addon_se_hypoglycemia_guidance",
-          "addon_initial_sickday_guidance",
-          "addon_hyperkalemia_guidance"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -460,7 +272,7 @@
         },
         {
           "id": "a_2",
-          "text": "食事に合わせて血糖上昇を抑え、食後血糖の改善を目的として使用する。",
+          "text": "基礎インスリンを補い、GLP-1受容体作動薬により血糖推移を整える目的で使用する。",
           "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
@@ -480,7 +292,7 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}は、食後の血糖値を改善する薬です。",
+          "text": "{{drug_subject}}は、基礎インスリンを補い、血糖推移を整える薬です。",
           "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
@@ -489,9 +301,9 @@
         },
         {
           "id": "p_2",
-          "text": "食事に合わせて使用することが重要です。",
+          "text": "決められたタイミングで、毎日継続して使用することが重要です。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -500,7 +312,7 @@
           "id": "p_3",
           "text": "血糖値が下がりすぎることで、低血糖が起こることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -508,13 +320,12 @@
         {
           "id": "p_4",
           "text": "ふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-          "role": "side_effect_guidance",
+          "role": "side_effect_attention",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [
             "ブドウ糖",
-            "糖分",
-            "摂取してください"
+            "糖分を摂取"
           ],
           "notes": null
         },
@@ -522,7 +333,7 @@
           "id": "p_5",
           "text": "注射の具体的な手技については、指導せんを用いて説明しています。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -530,28 +341,34 @@
         {
           "id": "p_6",
           "text": "注射方法や使用手順に不安がある場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance",
+          "addon_initial_sickday_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      }
     },
     {
       "id": "restart",
-      "globalId": "dm_insulin_rapid_analog.restart",
-      "title": "超速効型インスリン製剤 再開",
+      "globalId": "dm_insulin_glp1_combination.restart",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 再開",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
-        "restart",
-        "start_or_change"
+        "treatment_start",
+        "start_or_change",
+        "restart"
       ],
       "situationFilter": [
         "general"
@@ -569,8 +386,8 @@
       },
       "S": "{{drug_subject}}は、血糖値が高いため再開となった。",
       "O": "{{drug_subject}}　処方",
-      "A": "{{drug_subject}}は、血糖コントロール不十分のため再開となった。\n食事に合わせて血糖上昇を抑え、食後血糖の改善を目的として使用する。\n再開後は低血糖や注射手技に注意しながら継続する必要がある。",
-      "P": "{{drug_subject}}は、食後の血糖値を改善する薬です。\n食事に合わせて使用することが重要です。\n血糖値が下がりすぎることで、低血糖が起こることがあります。\nふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
+      "A": "{{drug_subject}}は、血糖コントロール不十分のため再開となった。\n基礎インスリンを補い、GLP-1受容体作動薬により血糖推移を整える目的で使用する。\n再開後は低血糖や注射手技に注意しながら継続する必要がある。",
+      "P": "{{drug_subject}}は、基礎インスリンを補い、血糖推移を整える薬です。\n決められたタイミングで、毎日継続して使用することが重要です。\n血糖値が下がりすぎることで、低血糖が起こることがあります。\nふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -600,16 +417,10 @@
       "intentTags": [
         "drug_effect_explanation",
         "side_effect_attention",
-        "administration_instruction"
+        "hypoglycemia_attention",
+        "administration_instruction",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance",
-          "addon_se_hypoglycemia_guidance",
-          "addon_initial_sickday_guidance",
-          "addon_hyperkalemia_guidance"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -633,7 +444,7 @@
         },
         {
           "id": "a_2",
-          "text": "食事に合わせて血糖上昇を抑え、食後血糖の改善を目的として使用する。",
+          "text": "基礎インスリンを補い、GLP-1受容体作動薬により血糖推移を整える目的で使用する。",
           "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
@@ -653,7 +464,7 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}は、食後の血糖値を改善する薬です。",
+          "text": "{{drug_subject}}は、基礎インスリンを補い、血糖推移を整える薬です。",
           "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
@@ -662,9 +473,9 @@
         },
         {
           "id": "p_2",
-          "text": "食事に合わせて使用することが重要です。",
+          "text": "決められたタイミングで、毎日継続して使用することが重要です。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -673,7 +484,7 @@
           "id": "p_3",
           "text": "血糖値が下がりすぎることで、低血糖が起こることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -681,13 +492,12 @@
         {
           "id": "p_4",
           "text": "ふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-          "role": "side_effect_guidance",
+          "role": "side_effect_attention",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [
             "ブドウ糖",
-            "糖分",
-            "摂取してください"
+            "糖分を摂取"
           ],
           "notes": null
         },
@@ -695,7 +505,7 @@
           "id": "p_5",
           "text": "注射の具体的な手技については、指導せんを用いて説明しています。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -703,43 +513,49 @@
         {
           "id": "p_6",
           "text": "注射方法や使用手順に不安がある場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance",
+          "addon_initial_sickday_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      }
     },
     {
       "id": "external_start",
-      "globalId": "dm_insulin_rapid_analog.external_start",
-      "title": "超速効型インスリン製剤 他所開始",
+      "globalId": "dm_insulin_glp1_combination.external_start",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 他所開始",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
-        "external_start",
-        "start_or_change"
+        "treatment_start",
+        "start_or_change",
+        "external"
       ],
       "situationFilter": [
         "general"
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "continue",
-        "template": "status_based",
+        "intent": "external_continuation",
+        "template": "symptom_based",
         "symptomCodes": [],
         "symptoms": []
       },
       "S": "{{drug_subject}}は、他院で開始され継続使用中であった。",
       "O": "{{drug_subject}}　処方",
-      "A": "{{drug_subject}}は、食後血糖の改善を目的として継続使用中であった。\n食事に合わせて血糖上昇を抑え、低血糖や注射手技に注意しながら継続する必要がある。",
-      "P": "{{drug_subject}}は、食後の血糖値を改善する薬です。\n食事に合わせて使用することが重要です。\n血糖値が下がりすぎることで、低血糖が起こることがあります。\nふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
+      "A": "{{drug_subject}}は、血糖コントロールの改善を目的として継続使用中であった。\n基礎インスリンを補い、GLP-1受容体作動薬により血糖推移を整え、低血糖や注射手技に注意しながら継続する必要がある。",
+      "P": "{{drug_subject}}は、基礎インスリンを補い、血糖推移を整える薬です。\n決められたタイミングで、毎日継続して使用することが重要です。\n血糖値が下がりすぎることで、低血糖が起こることがあります。\nふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n注射の具体的な手技については、指導せんを用いて説明しています。\n注射方法や使用手順に不安がある場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -769,21 +585,15 @@
       "intentTags": [
         "drug_effect_explanation",
         "side_effect_attention",
-        "administration_instruction"
+        "hypoglycemia_attention",
+        "administration_instruction",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance",
-          "addon_se_hypoglycemia_guidance",
-          "addon_initial_sickday_guidance",
-          "addon_hyperkalemia_guidance"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他院で開始され継続使用中であった。",
-          "role": "treatment_continuation_status",
+          "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -793,7 +603,7 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}は、食後血糖の改善を目的として継続使用中であった。",
+          "text": "{{drug_subject}}は、血糖コントロールの改善を目的として継続使用中であった。",
           "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
@@ -802,7 +612,7 @@
         },
         {
           "id": "a_2",
-          "text": "食事に合わせて血糖上昇を抑え、低血糖や注射手技に注意しながら継続する必要がある。",
+          "text": "基礎インスリンを補い、GLP-1受容体作動薬により血糖推移を整え、低血糖や注射手技に注意しながら継続する必要がある。",
           "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "medium",
@@ -813,7 +623,7 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}は、食後の血糖値を改善する薬です。",
+          "text": "{{drug_subject}}は、基礎インスリンを補い、血糖推移を整える薬です。",
           "role": "drug_effect_explanation",
           "transform": "moderate",
           "safety": "low",
@@ -822,9 +632,9 @@
         },
         {
           "id": "p_2",
-          "text": "食事に合わせて使用することが重要です。",
+          "text": "決められたタイミングで、毎日継続して使用することが重要です。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -833,7 +643,7 @@
           "id": "p_3",
           "text": "血糖値が下がりすぎることで、低血糖が起こることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -841,13 +651,12 @@
         {
           "id": "p_4",
           "text": "ふらつき・冷汗・動悸などの症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-          "role": "side_effect_guidance",
+          "role": "side_effect_attention",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [
             "ブドウ糖",
-            "糖分",
-            "摂取してください"
+            "糖分を摂取"
           ],
           "notes": null
         },
@@ -855,7 +664,7 @@
           "id": "p_5",
           "text": "注射の具体的な手技については、指導せんを用いて説明しています。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -863,29 +672,34 @@
         {
           "id": "p_6",
           "text": "注射方法や使用手順に不安がある場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance",
+          "addon_initial_sickday_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      }
     },
     {
       "id": "dose_increase_low_perceived_effect",
-      "globalId": "dm_insulin_rapid_analog.dose_increase_low_perceived_effect",
-      "title": "超速効型インスリン製剤 増量（効果実感乏しい）",
+      "globalId": "dm_insulin_glp1_combination.dose_increase_low_perceived_effect",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 増量（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
+        "treatment_adjustment",
         "dose_change",
-        "increase",
-        "low_perceived_effect"
+        "increase"
       ],
       "situationFilter": [
         "general"
@@ -893,18 +707,14 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_increase",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "low_perceived_effect"
-        ],
-        "symptoms": [
-          "効果の実感が乏しい"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
       "O": "{{drug_subject}}　増量",
       "A": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。\nふらつき・冷汗・動悸などの低血糖症状に注意してください。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n症状が続く場合はご相談ください。",
+      "P": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。\nふらつき・冷汗・動悸などの低血糖症状に注意してください。\nまた、吐き気・胃部不快感・食欲低下などが出ることがあります。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n症状が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -933,11 +743,10 @@
       "followupRef": "default_followup",
       "intentTags": [
         "dose_increase_explanation",
-        "hypoglycemia_attention"
+        "side_effect_attention",
+        "hypoglycemia_attention",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": []
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -964,9 +773,9 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。",
-          "role": "drug_effect_explanation",
+          "role": "dose_adjustment_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -975,23 +784,35 @@
           "text": "ふらつき・冷汗・動悸などの低血糖症状に注意してください。",
           "role": "side_effect_attention",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_3",
-          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "text": "また、吐き気・胃部不快感・食欲低下などが出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_4",
+          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "ブドウ糖",
+            "糖分を摂取"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_5",
           "text": "症状が続く場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -1004,14 +825,14 @@
     },
     {
       "id": "dose_increase_no_lab_improvement",
-      "globalId": "dm_insulin_rapid_analog.dose_increase_no_lab_improvement",
-      "title": "超速効型インスリン製剤 増量（検査値改善なし）",
+      "globalId": "dm_insulin_glp1_combination.dose_increase_no_lab_improvement",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 増量（検査値改善なし）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
+        "treatment_adjustment",
         "dose_change",
-        "increase",
-        "no_lab_improvement"
+        "increase"
       ],
       "situationFilter": [
         "general"
@@ -1019,18 +840,14 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_increase",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "no_lab_improvement"
-        ],
-        "symptoms": [
-          "検査値が改善しない"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、検査値が改善しないため増量となった。",
       "O": "{{drug_subject}}　増量",
       "A": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。\nふらつき・冷汗・動悸などの低血糖症状に注意してください。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n症状が続く場合はご相談ください。",
+      "P": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。\nふらつき・冷汗・動悸などの低血糖症状に注意してください。\nまた、吐き気・胃部不快感・食欲低下などが出ることがあります。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n症状が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1059,11 +876,10 @@
       "followupRef": "default_followup",
       "intentTags": [
         "dose_increase_explanation",
-        "hypoglycemia_attention"
+        "side_effect_attention",
+        "hypoglycemia_attention",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": []
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1090,9 +906,9 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。",
-          "role": "drug_effect_explanation",
+          "role": "dose_adjustment_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -1101,23 +917,35 @@
           "text": "ふらつき・冷汗・動悸などの低血糖症状に注意してください。",
           "role": "side_effect_attention",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_3",
-          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "text": "また、吐き気・胃部不快感・食欲低下などが出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_4",
+          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "ブドウ糖",
+            "糖分を摂取"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_5",
           "text": "症状が続く場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -1130,14 +958,14 @@
     },
     {
       "id": "dose_increase_due_to_other_med_adjustment",
-      "globalId": "dm_insulin_rapid_analog.dose_increase_due_to_other_med_adjustment",
-      "title": "超速効型インスリン製剤 増量（他剤との調整）",
+      "globalId": "dm_insulin_glp1_combination.dose_increase_due_to_other_med_adjustment",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 増量（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
+        "treatment_adjustment",
         "dose_change",
-        "increase",
-        "med_adjustment"
+        "increase"
       ],
       "situationFilter": [
         "general"
@@ -1152,7 +980,7 @@
       "S": "{{drug_subject}}は、他剤変更に伴う調整により増量となった。",
       "O": "{{drug_subject}}　増量",
       "A": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
-      "P": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。\nふらつき・冷汗・動悸などの低血糖症状に注意してください。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n症状が続く場合はご相談ください。",
+      "P": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。\nふらつき・冷汗・動悸などの低血糖症状に注意してください。\nまた、吐き気・胃部不快感・食欲低下などが出ることがあります。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n症状が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1181,11 +1009,10 @@
       "followupRef": "default_followup",
       "intentTags": [
         "dose_increase_explanation",
-        "hypoglycemia_attention"
+        "side_effect_attention",
+        "hypoglycemia_attention",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": []
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1212,9 +1039,9 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、増量により血糖値が下がりやすくなることがあります。",
-          "role": "drug_effect_explanation",
+          "role": "dose_adjustment_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -1223,23 +1050,35 @@
           "text": "ふらつき・冷汗・動悸などの低血糖症状に注意してください。",
           "role": "side_effect_attention",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_3",
-          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "text": "また、吐き気・胃部不快感・食欲低下などが出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_4",
+          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "ブドウ糖",
+            "糖分を摂取"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_5",
           "text": "症状が続く場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -1252,14 +1091,14 @@
     },
     {
       "id": "dose_decrease_improved",
-      "globalId": "dm_insulin_rapid_analog.dose_decrease_improved",
-      "title": "超速効型インスリン製剤 減量（症状改善）",
+      "globalId": "dm_insulin_glp1_combination.dose_decrease_improved",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 減量（症状改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
+        "treatment_adjustment",
         "dose_change",
-        "decrease",
-        "improved"
+        "decrease"
       ],
       "situationFilter": [
         "general"
@@ -1267,13 +1106,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_decrease",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "lab_improved"
-        ],
-        "symptoms": [
-          "検査値が改善した"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、検査値が改善したため減量となった。",
       "O": "{{drug_subject}}　減量",
@@ -1335,16 +1170,16 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、減量により血糖値が上がることがあります。",
-          "role": "drug_effect_explanation",
+          "role": "dose_adjustment_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "体調変化があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -1357,14 +1192,14 @@
     },
     {
       "id": "dose_decrease_low_perceived_effect",
-      "globalId": "dm_insulin_rapid_analog.dose_decrease_low_perceived_effect",
-      "title": "超速効型インスリン製剤 減量（効果実感乏しい）",
+      "globalId": "dm_insulin_glp1_combination.dose_decrease_low_perceived_effect",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 減量（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
+        "treatment_adjustment",
         "dose_change",
-        "decrease",
-        "patient_request"
+        "decrease"
       ],
       "situationFilter": [
         "general"
@@ -1372,13 +1207,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "dose_decrease",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "patient_request"
-        ],
-        "symptoms": [
-          "患者希望"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、効果の実感が乏しいため減量を希望された。",
       "O": "{{drug_subject}}　減量",
@@ -1440,16 +1271,16 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。",
-          "role": "drug_effect_explanation",
+          "role": "dose_adjustment_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "体調変化があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -1462,14 +1293,14 @@
     },
     {
       "id": "dose_decrease_due_to_other_med_adjustment",
-      "globalId": "dm_insulin_rapid_analog.dose_decrease_due_to_other_med_adjustment",
-      "title": "超速効型インスリン製剤 減量（他剤との調整）",
+      "globalId": "dm_insulin_glp1_combination.dose_decrease_due_to_other_med_adjustment",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 減量（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
+        "treatment_adjustment",
         "dose_change",
-        "decrease",
-        "med_adjustment"
+        "decrease"
       ],
       "situationFilter": [
         "general"
@@ -1541,16 +1372,16 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。",
-          "role": "drug_effect_explanation",
+          "role": "dose_adjustment_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "体調変化があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -1563,8 +1394,8 @@
     },
     {
       "id": "se_injection_site_induration_none",
-      "globalId": "dm_insulin_rapid_analog.se_injection_site_induration_none",
-      "title": "超速効型インスリン製剤 副作用なし（注射部硬結）",
+      "globalId": "dm_insulin_glp1_combination.se_injection_site_induration_none",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 副作用なし（注射部硬結）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -1614,14 +1445,14 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "administration_instruction",
-        "injection_site_attention"
+        "injection_site_attention",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。",
-          "role": "treatment_continuation_status",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1653,7 +1484,7 @@
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に、注射部位が硬くなることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -1661,8 +1492,8 @@
         {
           "id": "p_2",
           "text": "毎回注射部位を変えることで予防できます。",
-          "role": "administration_guidance",
-          "transform": "minimal",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -1670,12 +1501,10 @@
         {
           "id": "p_3",
           "text": "気になる症状があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -1691,8 +1520,8 @@
     },
     {
       "id": "se_hypo_none",
-      "globalId": "dm_insulin_rapid_analog.se_hypo_none",
-      "title": "超速効型インスリン製剤 副作用なし（低血糖）",
+      "globalId": "dm_insulin_glp1_combination.se_hypo_none",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 副作用なし（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -1745,20 +1574,11 @@
         "hypoglycemia_attention",
         "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance_followup",
-          "addon_hyperkalemia_guidance",
-          "addon_hypertension_guidance",
-          "addon_dyslipidemia_guidance",
-          "addon_hyperuricemia_guidance"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。",
-          "role": "treatment_continuation_status",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1790,7 +1610,7 @@
           "id": "p_1",
           "text": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -1800,29 +1620,35 @@
           "text": "症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [
             "ブドウ糖",
-            "糖分",
-            "摂取してください"
+            "糖分を摂取"
           ],
           "notes": null
         },
         {
           "id": "p_3",
           "text": "改善しない場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "thirdPanelSPlacement": {
         "enabled": true,
         "trigger": "single_drug_only",
@@ -1832,16 +1658,18 @@
     },
     {
       "id": "cp_good",
-      "globalId": "dm_insulin_rapid_analog.cp_good",
-      "title": "超速効型インスリン製剤 CP良好",
+      "globalId": "dm_insulin_glp1_combination.cp_good",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 CP良好",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
+        "adherence_good",
         "good"
       ],
       "situationFilter": [
-        "general"
+        "general",
+        "sickday"
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
@@ -1881,17 +1709,8 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "adherence_support"
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance_followup",
-          "addon_hyperkalemia_guidance",
-          "addon_hypertension_guidance",
-          "addon_dyslipidemia_guidance",
-          "addon_hyperuricemia_guidance"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -1946,6 +1765,15 @@
       "clinicalTags": [],
       "counselingTags": [],
       "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "thirdPanelSPlacement": {
         "enabled": true,
         "trigger": "single_drug_only",
@@ -1955,13 +1783,13 @@
     },
     {
       "id": "cp_poor_missed_doses",
-      "globalId": "dm_insulin_rapid_analog.cp_poor_missed_doses",
-      "title": "超速効型インスリン製剤 CP不良（使用忘れ）",
+      "globalId": "dm_insulin_glp1_combination.cp_poor_missed_doses",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 CP不良（使用忘れ）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
-        "poor",
+        "adherence_poor",
         "missed_doses"
       ],
       "situationFilter": [
@@ -1970,13 +1798,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "missed_doses"
-        ],
-        "symptoms": [
-          "使用忘れ"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "使用忘れがみられる。\n継続して使用できていない。",
       "O": "{{drug_subject}}　使用中",
@@ -2009,18 +1833,9 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "adherence_support"
+        "adherence_support",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_adherence_reminder_alarm",
-          "addon_adherence_reminder_app",
-          "addon_adherence_visual_calendar_checklist",
-          "addon_adherence_visual_note",
-          "addon_adherence_schedule_confirmation",
-          "addon_adherence_support_family_reminder"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
@@ -2047,7 +1862,7 @@
           "text": "コンプライアンスは不良で、使用忘れがみられる。",
           "role": "adherence_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -2074,18 +1889,28 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_calendar_checklist",
+          "addon_adherence_visual_note",
+          "addon_adherence_schedule_confirmation",
+          "addon_adherence_support_family_reminder"
+        ]
+      }
     },
     {
       "id": "cp_poor_self_adjust",
-      "globalId": "dm_insulin_rapid_analog.cp_poor_self_adjust",
-      "title": "超速効型インスリン製剤 CP不良（自己判断）",
+      "globalId": "dm_insulin_glp1_combination.cp_poor_self_adjust",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 CP不良（自己判断）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
-        "poor",
-        "self_adjustment"
+        "adherence_poor",
+        "self_adjust"
       ],
       "situationFilter": [
         "general"
@@ -2093,13 +1918,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "self_adjustment"
-        ],
-        "symptoms": [
-          "自己判断"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "自己判断での使用調整がみられる。\n用法どおりの継続使用ができていない。",
       "O": "{{drug_subject}}　使用中",
@@ -2133,7 +1954,7 @@
       "followupRef": "default_followup",
       "intentTags": [
         "adherence_support",
-        "urgent_consult_advice"
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -2161,7 +1982,7 @@
           "text": "コンプライアンスは不良で、自己判断による調整がみられる。",
           "role": "adherence_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -2188,12 +2009,10 @@
         {
           "id": "p_3",
           "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
-          "role": "urgent_consult_advice",
+          "role": "urgent_consult_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "safety": "high",
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2203,13 +2022,13 @@
     },
     {
       "id": "cp_poor_visit_delay",
-      "globalId": "dm_insulin_rapid_analog.cp_poor_visit_delay",
-      "title": "超速効型インスリン製剤 CP不良（受診遅延）",
+      "globalId": "dm_insulin_glp1_combination.cp_poor_visit_delay",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 CP不良（受診遅延）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
-        "poor",
+        "adherence_poor",
         "visit_delay"
       ],
       "situationFilter": [
@@ -2218,13 +2037,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "visit_delay"
-        ],
-        "symptoms": [
-          "受診遅延"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "都合により受診遅延がみられる。\n継続した使用に不安がある。",
       "O": "{{drug_subject}}　使用中",
@@ -2257,7 +2072,8 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "adherence_support"
+        "adherence_support",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -2285,7 +2101,7 @@
           "text": "コンプライアンスは不良で、受診遅延がみられる。",
           "role": "adherence_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -2312,9 +2128,9 @@
         {
           "id": "p_3",
           "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
-          "role": "urgent_consult_advice",
+          "role": "urgent_consult_guidance",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -2325,12 +2141,13 @@
     },
     {
       "id": "end_improved",
-      "globalId": "dm_insulin_rapid_analog.end_improved",
-      "title": "超速効型インスリン製剤 終了（改善）",
+      "globalId": "dm_insulin_glp1_combination.end_improved",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 終了（改善）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_improved",
       "scenarioTags": [
         "treatment_end",
+        "end_improved",
         "improved"
       ],
       "situationFilter": [
@@ -2338,14 +2155,10 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "stop",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "glycemic_improved"
-        ],
-        "symptoms": [
-          "血糖コントロールが改善した"
-        ]
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、血糖コントロールが改善したため中止となった。",
       "O": "{{drug_subject}}　処方終了",
@@ -2378,7 +2191,8 @@
       },
       "followupRef": "end_followup",
       "intentTags": [
-        "treatment_end_explanation"
+        "treatment_end_explanation",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -2395,7 +2209,7 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
@@ -2406,7 +2220,7 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖上昇や体調変化がある場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "low",
           "lockTerms": [],
@@ -2419,12 +2233,13 @@
     },
     {
       "id": "end_insufficient_effect",
-      "globalId": "dm_insulin_rapid_analog.end_insufficient_effect",
-      "title": "超速効型インスリン製剤 終了（効果不十分）",
+      "globalId": "dm_insulin_glp1_combination.end_insufficient_effect",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 終了（効果不十分）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_insufficient_effect",
       "scenarioTags": [
         "treatment_end",
+        "end_insufficient_effect",
         "insufficient_effect"
       ],
       "situationFilter": [
@@ -2432,14 +2247,10 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "stop",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "insufficient_effect"
-        ],
-        "symptoms": [
-          "効果不十分"
-        ]
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、効果不十分のため中止となった。",
       "O": "{{drug_subject}}　処方終了",
@@ -2472,7 +2283,8 @@
       },
       "followupRef": "end_followup",
       "intentTags": [
-        "treatment_end_explanation"
+        "treatment_end_explanation",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -2489,9 +2301,9 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -2500,8 +2312,8 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "role": "treatment_end_guidance",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -2509,12 +2321,10 @@
         {
           "id": "p_2",
           "text": "次の治療方針については処方医にご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2524,12 +2334,13 @@
     },
     {
       "id": "end_ineffective",
-      "globalId": "dm_insulin_rapid_analog.end_ineffective",
-      "title": "超速効型インスリン製剤 終了（無効）",
+      "globalId": "dm_insulin_glp1_combination.end_ineffective",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 終了（無効）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_ineffective",
       "scenarioTags": [
         "treatment_end",
+        "end_ineffective",
         "ineffective"
       ],
       "situationFilter": [
@@ -2537,14 +2348,10 @@
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "stop",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "no_effect"
-        ],
-        "symptoms": [
-          "効果なし"
-        ]
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
       "O": "{{drug_subject}}　処方終了",
@@ -2577,7 +2384,8 @@
       },
       "followupRef": "end_followup",
       "intentTags": [
-        "treatment_end_explanation"
+        "treatment_end_explanation",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -2594,9 +2402,9 @@
         {
           "id": "a_1",
           "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
-          "role": "treatment_assessment",
+          "role": "treatment_end_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -2605,8 +2413,8 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "role": "treatment_end_guidance",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -2614,12 +2422,10 @@
         {
           "id": "p_2",
           "text": "代替治療については処方医にご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2629,8 +2435,8 @@
     },
     {
       "id": "se_mild_continue",
-      "globalId": "dm_insulin_rapid_analog.se_mild_continue",
-      "title": "超速効型インスリン製剤 SE継続（軽症・低血糖）",
+      "globalId": "dm_insulin_glp1_combination.se_mild_continue",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（軽症・低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -2644,8 +2450,8 @@
       ],
       "sideEffectPresence": "present_mild",
       "sComposition": {
-        "intent": "side_effect_check",
-        "template": "symptom_based",
+        "intent": "side_effect_present",
+        "template": "status_based",
         "symptomCodes": [
           "hypoglycemia"
         ],
@@ -2684,6 +2490,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
         "hypoglycemia_attention",
         "followup_monitoring"
       ],
@@ -2715,11 +2522,10 @@
           "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [
             "ブドウ糖",
-            "糖分",
-            "摂取してください"
+            "糖分を摂取"
           ],
           "notes": null
         },
@@ -2727,7 +2533,7 @@
           "id": "p_2",
           "text": "食事量が少ない時や食事時間が遅れる時は、低血糖が起こりやすくなることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -2735,12 +2541,10 @@
         {
           "id": "p_3",
           "text": "症状が繰り返す場合は、用量調整が必要になることがあるためご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2750,8 +2554,8 @@
     },
     {
       "id": "se_injection_site_reaction_mild_continue",
-      "globalId": "dm_insulin_rapid_analog.se_injection_site_reaction_mild_continue",
-      "title": "超速効型インスリン製剤 SE継続（注射部位・軽症）",
+      "globalId": "dm_insulin_glp1_combination.se_injection_site_reaction_mild_continue",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（注射部位・軽症）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -2765,8 +2569,8 @@
       ],
       "sideEffectPresence": "present_mild",
       "sComposition": {
-        "intent": "side_effect_check",
-        "template": "symptom_based",
+        "intent": "side_effect_present",
+        "template": "status_based",
         "symptomCodes": [
           "injection_site_reaction"
         ],
@@ -2805,8 +2609,9 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
         "injection_site_attention",
-        "administration_instruction"
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -2835,7 +2640,7 @@
           "id": "p_1",
           "text": "{{drug_subject}}により注射部位に軽い痛みやしこりが出ることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -2843,8 +2648,8 @@
         {
           "id": "p_2",
           "text": "毎回注射部位を変えることで予防や軽減につながります。",
-          "role": "administration_guidance",
-          "transform": "minimal",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -2852,12 +2657,10 @@
         {
           "id": "p_3",
           "text": "症状が強くなる、長引く場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2867,8 +2670,8 @@
     },
     {
       "id": "se_hypoglycemia_moderate_consider_dr",
-      "globalId": "dm_insulin_rapid_analog.se_hypoglycemia_moderate_consider_dr",
-      "title": "超速効型インスリン製剤 SE継続（中等度・低血糖）",
+      "globalId": "dm_insulin_glp1_combination.se_hypoglycemia_moderate_consider_dr",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（中等度・低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -2881,11 +2684,10 @@
       ],
       "sideEffectPresence": "present_moderate",
       "sComposition": {
-        "intent": "side_effect_check",
-        "template": "symptom_based",
+        "intent": "side_effect_present",
+        "template": "status_based",
         "symptomCodes": [
-          "hypoglycemia",
-          "moderate"
+          "hypoglycemia"
         ],
         "symptoms": [
           "低血糖症状（中等度）"
@@ -2922,6 +2724,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
         "hypoglycemia_attention",
         "urgent_consult_advice"
       ],
@@ -2931,7 +2734,7 @@
           "text": "{{drug_subject}}の使用によりふらつき・冷汗などが強く、辛いことがあるが、日常生活は送れている。",
           "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -2952,20 +2755,18 @@
           "id": "p_1",
           "text": "{{drug_subject}}による症状が強い場合は、減量や薬の変更などが必要になることがあります。",
           "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "medium",
+          "transform": "moderate",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "処方医へご相談ください。",
-          "role": "urgent_consult_advice",
+          "role": "urgent_consult_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "safety": "high",
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -2975,8 +2776,8 @@
     },
     {
       "id": "se_injection_site_reaction_moderate_consider_dr",
-      "globalId": "dm_insulin_rapid_analog.se_injection_site_reaction_moderate_consider_dr",
-      "title": "超速効型インスリン製剤 SE継続（注射部位・中等度）",
+      "globalId": "dm_insulin_glp1_combination.se_injection_site_reaction_moderate_consider_dr",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（注射部位・中等度）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -2989,11 +2790,10 @@
       ],
       "sideEffectPresence": "present_moderate",
       "sComposition": {
-        "intent": "side_effect_check",
-        "template": "symptom_based",
+        "intent": "side_effect_present",
+        "template": "status_based",
         "symptomCodes": [
-          "injection_site_reaction",
-          "moderate"
+          "injection_site_reaction"
         ],
         "symptoms": [
           "注射部位反応（中等度）"
@@ -3030,6 +2830,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
         "injection_site_attention",
         "urgent_consult_advice"
       ],
@@ -3039,7 +2840,7 @@
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが強く、気になることがある。",
           "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3060,20 +2861,18 @@
           "id": "p_1",
           "text": "{{drug_subject}}により注射部位の痛みや腫れが強い場合は、使用方法の見直しや薬の変更が必要になることがあります。",
           "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "medium",
+          "transform": "moderate",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "症状が続く場合は処方医へご相談ください。",
-          "role": "urgent_consult_advice",
+          "role": "urgent_consult_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "safety": "high",
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3083,8 +2882,8 @@
     },
     {
       "id": "se_change_due_to_hypoglycemia",
-      "globalId": "dm_insulin_rapid_analog.se_change_due_to_hypoglycemia",
-      "title": "超速効型インスリン製剤 SE変更（低血糖）",
+      "globalId": "dm_insulin_glp1_combination.se_change_due_to_hypoglycemia",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE変更（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -3097,13 +2896,13 @@
       ],
       "sideEffectPresence": "present_change",
       "sComposition": {
-        "intent": "drug_change",
-        "template": "symptom_based",
+        "intent": "side_effect_present",
+        "template": "status_based",
         "symptomCodes": [
           "hypoglycemia"
         ],
         "symptoms": [
-          "低血糖症状"
+          "低血糖症状による変更"
         ]
       },
       "S": "{{drug_subject}}の使用により低血糖症状が出現したため、他剤へ変更となった。",
@@ -3137,16 +2936,17 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "treatment_end_explanation",
+        "side_effect_attention",
+        "hypoglycemia_attention",
         "followup_monitoring"
       ],
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により低血糖症状が出現したため、他剤へ変更となった。",
-          "role": "treatment_end_reason",
+          "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3157,7 +2957,7 @@
           "text": "{{drug_subject}}の使用による低血糖症状を認め、他剤変更後の経過確認を要する。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3166,8 +2966,8 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の変更後、ふらつき・冷汗・動悸などの低血糖症状や、血糖上昇による体調変化に注意してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "role": "side_effect_attention",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -3175,12 +2975,10 @@
         {
           "id": "p_2",
           "text": "気になる症状があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3190,8 +2988,8 @@
     },
     {
       "id": "se_change_due_to_injection_site_reaction",
-      "globalId": "dm_insulin_rapid_analog.se_change_due_to_injection_site_reaction",
-      "title": "超速効型インスリン製剤 SE変更（注射部位）",
+      "globalId": "dm_insulin_glp1_combination.se_change_due_to_injection_site_reaction",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE変更（注射部位）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -3204,13 +3002,13 @@
       ],
       "sideEffectPresence": "present_change",
       "sComposition": {
-        "intent": "drug_change",
-        "template": "symptom_based",
+        "intent": "side_effect_present",
+        "template": "status_based",
         "symptomCodes": [
           "injection_site_reaction"
         ],
         "symptoms": [
-          "注射部位反応"
+          "注射部位反応による変更"
         ]
       },
       "S": "{{drug_subject}}の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。",
@@ -3244,16 +3042,17 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "treatment_end_explanation",
+        "side_effect_attention",
+        "injection_site_attention",
         "followup_monitoring"
       ],
       "SStructured": [
         {
           "id": "s_1",
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが出現したため、他剤へ変更となった。",
-          "role": "treatment_end_reason",
+          "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3264,7 +3063,7 @@
           "text": "{{drug_subject}}の使用による注射部位反応を認め、他剤変更後の経過確認を要する。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3273,12 +3072,10 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}の変更後、注射部位の症状や体調変化があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3288,8 +3085,8 @@
     },
     {
       "id": "se_dose_decrease_due_to_hypoglycemia",
-      "globalId": "dm_insulin_rapid_analog.se_dose_decrease_due_to_hypoglycemia",
-      "title": "超速効型インスリン製剤 SE減量（低血糖）",
+      "globalId": "dm_insulin_glp1_combination.se_dose_decrease_due_to_hypoglycemia",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE減量（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -3303,12 +3100,12 @@
       "sideEffectPresence": "present_dose_decrease",
       "sComposition": {
         "intent": "dose_decrease",
-        "template": "symptom_based",
+        "template": "status_based",
         "symptomCodes": [
           "hypoglycemia"
         ],
         "symptoms": [
-          "低血糖症状"
+          "低血糖症状による減量"
         ]
       },
       "S": "{{drug_subject}}の使用により低血糖症状が強いため、減量となった。",
@@ -3342,8 +3139,10 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
+        "hypoglycemia_attention",
         "dose_decrease_explanation",
-        "hypoglycemia_attention"
+        "followup_monitoring"
       ],
       "SStructured": [
         {
@@ -3351,7 +3150,7 @@
           "text": "{{drug_subject}}の使用により低血糖症状が強いため、減量となった。",
           "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3362,7 +3161,7 @@
           "text": "{{drug_subject}}の使用による低血糖症状を認め、減量後の経過確認を要する。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3372,7 +3171,7 @@
           "id": "p_1",
           "text": "{{drug_subject}}の減量後は低血糖症状が改善することが期待されますが、血糖値が上昇する可能性もあります。",
           "role": "side_effect_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -3380,12 +3179,10 @@
         {
           "id": "p_2",
           "text": "ふらつき・冷汗・動悸などの症状や、体調変化があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "safety": "medium",
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3395,8 +3192,8 @@
     },
     {
       "id": "se_stop_due_to_hypoglycemia",
-      "globalId": "dm_insulin_rapid_analog.se_stop_due_to_hypoglycemia",
-      "title": "超速効型インスリン製剤 SE中止（低血糖）",
+      "globalId": "dm_insulin_glp1_combination.se_stop_due_to_hypoglycemia",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE中止（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -3410,12 +3207,12 @@
       "sideEffectPresence": "present_stop",
       "sComposition": {
         "intent": "stop",
-        "template": "symptom_based",
+        "template": "status_based",
         "symptomCodes": [
           "hypoglycemia"
         ],
         "symptoms": [
-          "低血糖症状"
+          "低血糖症状による中止"
         ]
       },
       "S": "{{drug_subject}}の使用により低血糖症状が強いため、中止となった。",
@@ -3449,6 +3246,8 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
+        "hypoglycemia_attention",
         "treatment_end_explanation",
         "followup_monitoring"
       ],
@@ -3458,7 +3257,7 @@
           "text": "{{drug_subject}}の使用により低血糖症状が強いため、中止となった。",
           "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3469,7 +3268,7 @@
           "text": "{{drug_subject}}の使用による低血糖症状を認め、中止後の経過確認を要する。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3479,7 +3278,7 @@
           "id": "p_1",
           "text": "{{drug_subject}}の中止後、低血糖症状が改善することが期待されますが、血糖値が上昇する可能性があります。",
           "role": "side_effect_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -3487,8 +3286,8 @@
         {
           "id": "p_2",
           "text": "血糖上昇による口渇・倦怠感などの体調変化にも注意してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
+          "role": "side_effect_attention",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -3496,12 +3295,10 @@
         {
           "id": "p_3",
           "text": "気になる症状があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3511,8 +3308,8 @@
     },
     {
       "id": "se_stop_due_to_injection_site_reaction",
-      "globalId": "dm_insulin_rapid_analog.se_stop_due_to_injection_site_reaction",
-      "title": "超速効型インスリン製剤 SE中止（注射部位）",
+      "globalId": "dm_insulin_glp1_combination.se_stop_due_to_injection_site_reaction",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE中止（注射部位）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -3526,12 +3323,12 @@
       "sideEffectPresence": "present_stop",
       "sComposition": {
         "intent": "stop",
-        "template": "symptom_based",
+        "template": "status_based",
         "symptomCodes": [
           "injection_site_reaction"
         ],
         "symptoms": [
-          "注射部位反応"
+          "注射部位反応による中止"
         ]
       },
       "S": "{{drug_subject}}の使用により注射部位の痛みや腫れが強いため、中止となった。",
@@ -3565,6 +3362,8 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
+        "side_effect_attention",
+        "injection_site_attention",
         "treatment_end_explanation",
         "followup_monitoring"
       ],
@@ -3574,7 +3373,7 @@
           "text": "{{drug_subject}}の使用により注射部位の痛みや腫れが強いため、中止となった。",
           "role": "side_effect_status",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3585,7 +3384,7 @@
           "text": "{{drug_subject}}の使用による注射部位反応を認め、中止後の経過確認を要する。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         }
@@ -3594,12 +3393,10 @@
         {
           "id": "p_1",
           "text": "{{drug_subject}}中止後も、注射部位の症状が続く場合や悪化する場合は、医療機関へご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3609,8 +3406,8 @@
     },
     {
       "id": "lifestyle_guidance_hyperglycemia",
-      "globalId": "dm_insulin_rapid_analog.lifestyle_guidance_hyperglycemia",
-      "title": "超速効型インスリン製剤 生活指導（血糖）",
+      "globalId": "dm_insulin_glp1_combination.lifestyle_guidance_hyperglycemia",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 生活指導（血糖）",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
@@ -3623,12 +3420,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
+        "template": "status_based",
         "symptomCodes": [
-          "poor_glycemic_control"
+          "hyperglycemia"
         ],
         "symptoms": [
-          "血糖コントロール不良"
+          "血糖値が高い"
         ]
       },
       "S": "血糖値がなかなか改善しない。",
@@ -3663,13 +3460,14 @@
       "followupRef": "se_followup",
       "intentTags": [
         "lifestyle_guidance",
-        "hypoglycemia_attention"
+        "hypoglycemia_attention",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
           "id": "s_1",
           "text": "血糖値がなかなか改善しない。",
-          "role": "patient_report",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3682,7 +3480,7 @@
           "text": "血糖コントロールが不十分であり、生活習慣の改善が重要である。食事・運動療法の継続が必要である。",
           "role": "treatment_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -3693,7 +3491,7 @@
           "text": "高血糖が続くと、眼・腎・神経障害などのリスクが高まります。",
           "role": "lifestyle_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -3719,7 +3517,7 @@
           "id": "p_4",
           "text": "血糖コントロールの改善に伴い、低血糖症状が出ることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -3727,12 +3525,10 @@
         {
           "id": "p_5",
           "text": "気になる症状があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3742,8 +3538,8 @@
     },
     {
       "id": "lifestyle_guidance_hyperkalemia",
-      "globalId": "dm_insulin_rapid_analog.lifestyle_guidance_hyperkalemia",
-      "title": "超速効型インスリン製剤 生活指導（カリウム）",
+      "globalId": "dm_insulin_glp1_combination.lifestyle_guidance_hyperkalemia",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 生活指導（カリウム）",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
@@ -3756,12 +3552,12 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
+        "template": "status_based",
         "symptomCodes": [
           "hyperkalemia"
         ],
         "symptoms": [
-          "カリウム高値"
+          "カリウムが高い"
         ]
       },
       "S": "カリウムの値が高いと言われた。",
@@ -3795,13 +3591,14 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "lifestyle_guidance"
+        "lifestyle_guidance",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
           "id": "s_1",
           "text": "カリウムの値が高いと言われた。",
-          "role": "patient_report",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3814,7 +3611,7 @@
           "text": "カリウムコントロールが不十分であり、食事療法の継続が重要である。",
           "role": "treatment_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -3825,7 +3622,7 @@
           "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。",
           "role": "lifestyle_guidance",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -3850,12 +3647,10 @@
         {
           "id": "p_4",
           "text": "気になる症状があればご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -3865,8 +3660,8 @@
     },
     {
       "id": "sickday",
-      "globalId": "dm_insulin_rapid_analog.sickday",
-      "title": "超速効型インスリン製剤 シックデイ",
+      "globalId": "dm_insulin_glp1_combination.sickday",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 シックデイ",
       "scenarioType": "sickday",
       "scenarioGroup": "sickday",
       "scenarioTags": [
@@ -3878,17 +3673,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "fever",
-          "vomiting",
-          "diarrhea"
-        ],
-        "symptoms": [
-          "発熱",
-          "嘔吐",
-          "下痢"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "発熱・嘔吐・下痢などの体調不良がみられる。",
       "O": "{{drug_subject}}　使用中",
@@ -3922,20 +3709,16 @@
       "followupRef": "default_followup",
       "intentTags": [
         "sickday_guidance",
-        "urgent_consult_advice"
+        "concomitant_drug_attention",
+        "followup_monitoring"
       ],
-      "addonsRef": {
-        "P": [
-          "addon_sickday_hold_sglt2_metformin"
-        ]
-      },
       "SStructured": [
         {
           "id": "s_1",
           "text": "発熱・嘔吐・下痢などの体調不良がみられる。",
-          "role": "symptom_observation",
+          "role": "adherence_status",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -3957,7 +3740,7 @@
           "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。",
           "role": "sickday_guidance",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
@@ -3965,8 +3748,8 @@
           "id": "p_2",
           "text": "血糖測定が可能であれば行ってください。",
           "role": "sickday_guidance",
-          "transform": "minimal",
-          "safety": "low",
+          "transform": "moderate",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -3974,8 +3757,8 @@
           "id": "p_3",
           "text": "水分は少量ずつこまめに摂取してください。",
           "role": "sickday_guidance",
-          "transform": "minimal",
-          "safety": "low",
+          "transform": "moderate",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         },
@@ -3993,33 +3776,37 @@
           "text": "治療継続の可否は体調や摂取状況によって異なるため、処方医に相談してください。",
           "role": "sickday_guidance",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "high",
           "lockTerms": [],
           "notes": null
         },
         {
           "id": "p_6",
           "text": "嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
-          "role": "urgent_consult_advice",
+          "role": "urgent_consult_guidance",
           "transform": "minimal",
           "safety": "high",
-          "lockTerms": [
-            "受診してください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_sickday_hold_sglt2_metformin"
+        ]
+      }
     },
     {
       "id": "injection_technique_check",
-      "globalId": "dm_insulin_rapid_analog.injection_technique_check",
+      "globalId": "dm_insulin_glp1_combination.injection_technique_check",
       "title": "注射手技の確認",
       "scenarioType": "followup",
       "scenarioGroup": "injection_technique",
       "scenarioTags": [
+        "followup",
         "injection_technique"
       ],
       "situationFilter": [
@@ -4028,13 +3815,9 @@
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "status_report",
-        "template": "symptom_based",
-        "symptomCodes": [
-          "injection_technique_issue"
-        ],
-        "symptoms": [
-          "注射手技の問題"
-        ]
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
       },
       "S": "注射手技に不安がみられる。",
       "O": "{{drug_subject}}　使用中",
@@ -4068,13 +3851,14 @@
       "followupRef": "default_followup",
       "intentTags": [
         "administration_instruction",
-        "injection_site_attention"
+        "injection_site_attention",
+        "followup_monitoring"
       ],
       "SStructured": [
         {
           "id": "s_1",
           "text": "注射手技に不安がみられる。",
-          "role": "patient_report",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4097,7 +3881,7 @@
           "id": "p_1",
           "text": "注射の具体的な手技については、指導せんを用いて改めて説明しています。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -4106,7 +3890,7 @@
           "id": "p_2",
           "text": "同じ部位に繰り返し注射すると、皮膚が硬くなることがあります。",
           "role": "side_effect_attention",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
           "notes": null
@@ -4115,7 +3899,7 @@
           "id": "p_3",
           "text": "注射部位は毎回適切に変えながら使用してください。",
           "role": "administration_guidance",
-          "transform": "minimal",
+          "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
           "notes": null
@@ -4123,12 +3907,10 @@
         {
           "id": "p_4",
           "text": "不安が残る場合はご相談ください。",
-          "role": "side_effect_guidance",
+          "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
+          "lockTerms": [],
           "notes": null
         }
       ],
@@ -4146,34 +3928,10 @@
         "group": "counseling",
         "targetSection": "P",
         "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になる症状があればご相談ください。",
-        "clinicalTags": [],
-        "counselingTags": [],
-        "workflowTags": [],
-        "evidenceRefs": [],
-        "intentTags": [],
-        "tone": "standard"
-      },
-      "addon_se_hypoglycemia_guidance": {
-        "key": "addon_se_hypoglycemia_guidance",
-        "id": "addon_se_hypoglycemia_guidance",
-        "title": "副作用注意喚起（低血糖）",
-        "group": "sideEffects",
-        "targetSection": "P",
-        "text": "ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
-        "clinicalTags": [],
-        "counselingTags": [],
-        "workflowTags": [],
-        "evidenceRefs": [],
-        "intentTags": [],
-        "tone": "standard"
-      },
-      "addon_initial_sickday_guidance": {
-        "key": "addon_initial_sickday_guidance",
-        "id": "addon_initial_sickday_guidance",
-        "title": "初回シックデイ",
-        "group": "sickday",
-        "targetSection": "P",
-        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\nインスリンは自己判断で中止しないでください。\n治療継続の可否は体調や摂取状況によって異なるため、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+        "sectionTexts": {
+          "P": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になる症状があればご相談ください。"
+        },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4193,6 +3951,25 @@
           "A": "カリウムコントロールが不十分であり、食事内容の見直しが必要である。",
           "P": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
         },
+        "uiVariant": null,
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_initial_sickday_guidance": {
+        "key": "addon_initial_sickday_guidance",
+        "id": "addon_initial_sickday_guidance",
+        "title": "初回シックデイ",
+        "group": "sickday",
+        "targetSection": "P",
+        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\nインスリンは自己判断で中止しないでください。\n治療継続の可否は体調や摂取状況によって異なるため、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+        "sectionTexts": {
+          "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\nインスリンは自己判断で中止しないでください。\n治療継続の可否は体調や摂取状況によって異なるため、処方医に相談してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。"
+        },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4211,6 +3988,7 @@
           "A": "血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
           "P": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。"
         },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4230,6 +4008,7 @@
           "A": "血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
           "P": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
         },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4249,6 +4028,7 @@
           "A": "脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
           "P": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
         },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4268,6 +4048,7 @@
           "A": "尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。",
           "P": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
         },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4282,6 +4063,9 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。",
+        "sectionTexts": {
+          "P": "使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。"
+        },
         "uiVariant": "rightAccentBlue",
         "clinicalTags": [],
         "counselingTags": [],
@@ -4297,6 +4081,9 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。",
+        "sectionTexts": {
+          "P": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。"
+        },
         "uiVariant": "rightAccentBlue",
         "clinicalTags": [],
         "counselingTags": [],
@@ -4312,6 +4099,9 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。",
+        "sectionTexts": {
+          "P": "使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。"
+        },
         "uiVariant": "rightAccentLavender",
         "clinicalTags": [],
         "counselingTags": [],
@@ -4327,6 +4117,9 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。",
+        "sectionTexts": {
+          "P": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。"
+        },
         "uiVariant": "rightAccentLavender",
         "clinicalTags": [],
         "counselingTags": [],
@@ -4342,6 +4135,9 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。",
+        "sectionTexts": {
+          "P": "使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。"
+        },
         "uiVariant": "rightAccentBlue",
         "clinicalTags": [],
         "counselingTags": [],
@@ -4357,6 +4153,9 @@
         "group": "adherence",
         "targetSection": "P",
         "text": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。",
+        "sectionTexts": {
+          "P": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。"
+        },
         "uiVariant": "rightAccentLavender",
         "clinicalTags": [],
         "counselingTags": [],
@@ -4372,6 +4171,10 @@
         "group": "sickday",
         "targetSection": "P",
         "text": "併用中のSGLT2阻害薬やメトホルミンは、脱水時は休薬が必要な場合があります。\n自己判断で中止せず、処方医へご相談ください。",
+        "sectionTexts": {
+          "P": "併用中のSGLT2阻害薬やメトホルミンは、脱水時は休薬が必要な場合があります。\n自己判断で中止せず、処方医へご相談ください。"
+        },
+        "uiVariant": null,
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -4457,86 +4260,22 @@
   },
   "index": {
     "searchableText": [
-      "ヒューマログ",
-      "ルムジェブ",
-      "ノボラピッド",
-      "フィアスプ",
-      "アピドラ",
-      "超速効型インスリン製剤",
-      "超速効型インスリン",
-      "インスリン",
-      "インスリンリスプロ",
-      "インスリンアスパルト",
-      "インスリングルリジン",
-      "INSULIN_RAPID_ANALOG",
-      "糖尿病",
-      "血糖",
-      "血糖コントロール",
-      "食後血糖",
-      "低血糖",
-      "シックデイ",
-      "体調不良",
-      "発熱",
-      "嘔吐",
-      "下痢",
-      "脱水",
-      "注射部位",
-      "しこり",
-      "腫れ",
-      "注射部位の痛み",
-      "硬結",
-      "注射手技",
-      "使用忘れ",
-      "自己判断",
-      "受診遅延",
-      "倦怠感"
+      "インスリン／GLP-1受容体作動薬配合剤",
+      "ソリクア",
+      "ゾルトファイ",
+      "インスリングラルギン/リキシセナチド",
+      "インスリンデグルデク/リラグルチド",
+      "配合剤",
+      "注射部位硬結"
     ],
     "normalizedTokens": [
-      "ひゅーまろぐ",
-      "ひゅーまろ",
-      "ひゅーま",
-      "ひゅー",
-      "るむじぇぶ",
-      "るむじぇ",
-      "るむ",
-      "のぼらぴっど",
-      "のぼらぴ",
-      "のぼら",
-      "のぼ",
-      "ふぃあすぷ",
-      "ふぃあ",
-      "ふぃ",
-      "あぴどら",
-      "あぴど",
-      "あぴ",
-      "ちょうそっこうがたいんすりんせいざい",
-      "ちょうそっこうがたいんすりん",
-      "いんすりん",
-      "いんすりんりすぷろ",
-      "いんすりんあすぱると",
-      "いんすりんぐるりじん",
-      "insulin_rapid_analog",
-      "とうにょうびょう",
-      "けっとう",
-      "けっとうこんとろーる",
-      "しょくごけっとう",
-      "ていけっとう",
-      "しっくでい",
-      "たいちょうふりょう",
-      "はつねつ",
-      "おうと",
-      "げり",
-      "だっすい",
-      "ちゅうしゃぶい",
-      "しこり",
-      "はれ",
-      "ちゅうしゃぶいのいたみ",
-      "こしゅく",
-      "ちゅうしゃしゅぎ",
-      "しようわすれ",
-      "じこはんだん",
-      "じゅしんちえん",
-      "けんたいかん",
+      "いんすりんぐるぴーわんじゅようたいさどうやくはいごうざい",
+      "そりくあ",
+      "ぞるとふぁい",
+      "いんすりんぐらるぎんりきしせなちど",
+      "いんすりんでぐるでくりらぐるちど",
+      "はいごうざい",
+      "ちゅうしゃぶいこうけつ",
       "こうけつ"
     ],
     "facets": {
@@ -4549,26 +4288,90 @@
         "sickday"
       ],
       "drugClass": [
-        "INSULIN_RAPID_ANALOG"
+        "insulin_glp1_combination"
       ]
-    }
+    },
+    "scenarioIds": [
+      "initial",
+      "restart",
+      "external_start",
+      "dose_increase_low_perceived_effect",
+      "dose_increase_no_lab_improvement",
+      "dose_increase_due_to_other_med_adjustment",
+      "dose_decrease_improved",
+      "dose_decrease_low_perceived_effect",
+      "dose_decrease_due_to_other_med_adjustment",
+      "se_injection_site_induration_none",
+      "se_hypo_none",
+      "cp_good",
+      "cp_poor_missed_doses",
+      "cp_poor_self_adjust",
+      "cp_poor_visit_delay",
+      "end_improved",
+      "end_insufficient_effect",
+      "end_ineffective",
+      "se_mild_continue",
+      "se_injection_site_reaction_mild_continue",
+      "se_hypoglycemia_moderate_consider_dr",
+      "se_injection_site_reaction_moderate_consider_dr",
+      "se_change_due_to_hypoglycemia",
+      "se_change_due_to_injection_site_reaction",
+      "se_dose_decrease_due_to_hypoglycemia",
+      "se_stop_due_to_hypoglycemia",
+      "se_stop_due_to_injection_site_reaction",
+      "lifestyle_guidance_hyperglycemia",
+      "lifestyle_guidance_hyperkalemia",
+      "sickday",
+      "injection_technique_check"
+    ],
+    "addonIds": [
+      "addon_glycemic_guidance",
+      "addon_hyperkalemia_guidance",
+      "addon_initial_sickday_guidance",
+      "addon_glycemic_guidance_followup",
+      "addon_hypertension_guidance",
+      "addon_dyslipidemia_guidance",
+      "addon_hyperuricemia_guidance",
+      "addon_adherence_reminder_alarm",
+      "addon_adherence_reminder_app",
+      "addon_adherence_visual_calendar_checklist",
+      "addon_adherence_visual_note",
+      "addon_adherence_schedule_confirmation",
+      "addon_adherence_support_family_reminder",
+      "addon_sickday_hold_sglt2_metformin"
+    ],
+    "followupProfileIds": [
+      "default_followup",
+      "end_followup",
+      "se_followup"
+    ],
+    "groupKeyRegistry": [
+      "adherence",
+      "glycemic_control_adjustment",
+      "hyperglycemia_management",
+      "injection_technique",
+      "lifestyle_guidance",
+      "sickday",
+      "side_effect_monitoring",
+      "treatment_end"
+    ]
   },
   "tagCatalog": {
     "intentTags": [
+      "adherence_support",
+      "administration_instruction",
+      "concomitant_drug_attention",
+      "dose_decrease_explanation",
+      "dose_increase_explanation",
       "drug_effect_explanation",
-      "side_effect_attention",
+      "followup_monitoring",
       "hypoglycemia_attention",
       "injection_site_attention",
-      "dose_increase_explanation",
-      "dose_decrease_explanation",
-      "treatment_end_explanation",
       "lifestyle_guidance",
-      "adherence_support",
       "sickday_guidance",
-      "urgent_consult_advice",
-      "followup_monitoring",
-      "administration_instruction",
-      "concomitant_drug_attention"
+      "side_effect_attention",
+      "treatment_end_explanation",
+      "urgent_consult_advice"
     ],
     "clinicalTags": [],
     "counselingTags": [],
@@ -4579,51 +4382,27 @@
       "enabled": false,
       "expressCategory": "内科",
       "expressGroup": "糖尿病",
-      "expressSubGroup": "超速効型インスリン",
-      "label": "ヒューマログ",
+      "expressSubGroup": "インスリン／GLP-1受容体作動薬配合剤",
+      "label": "ソリクア",
       "defaultScenarioId": "initial",
-      "defaultBrandName": "ヒューマログ",
+      "defaultBrandName": "ソリクア",
       "sortOrder": 99
     },
     {
       "enabled": false,
       "expressCategory": "内科",
       "expressGroup": "糖尿病",
-      "expressSubGroup": "超速効型インスリン",
-      "label": "ルムジェブ",
+      "expressSubGroup": "インスリン／GLP-1受容体作動薬配合剤",
+      "label": "ゾルトファイ",
       "defaultScenarioId": "initial",
-      "defaultBrandName": "ルムジェブ",
-      "sortOrder": 99
-    },
-    {
-      "enabled": false,
-      "expressCategory": "内科",
-      "expressGroup": "糖尿病",
-      "expressSubGroup": "超速効型インスリン",
-      "label": "ノボラピッド",
-      "defaultScenarioId": "initial",
-      "defaultBrandName": "ノボラピッド",
-      "sortOrder": 99
-    },
-    {
-      "enabled": false,
-      "expressCategory": "内科",
-      "expressGroup": "糖尿病",
-      "expressSubGroup": "超速効型インスリン",
-      "label": "フィアスプ",
-      "defaultScenarioId": "initial",
-      "defaultBrandName": "フィアスプ",
-      "sortOrder": 99
-    },
-    {
-      "enabled": false,
-      "expressCategory": "内科",
-      "expressGroup": "糖尿病",
-      "expressSubGroup": "超速効型インスリン",
-      "label": "アピドラ",
-      "defaultScenarioId": "initial",
-      "defaultBrandName": "アピドラ",
+      "defaultBrandName": "ゾルトファイ",
       "sortOrder": 99
     }
-  ]
+  ],
+  "regulatory": {
+    "psychotropicClass": "not_applicable",
+    "controlledSubstance": "not_applicable",
+    "notes": null
+  },
+  "topical": false
 }

@@ -61,7 +61,9 @@ Phase 1 で凍結した S / A / P テキストを文単位に分解し、SStruct
 - `treatment_end_reason`（treatment_end 系の S 行）
 
 **SStructured.role 禁止語彙（ERROR）:**
-`symptom_observation` / `treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation`
+`drug_status` / `symptom_observation` / `treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation`
+
+> `drug_status` は未定義語彙。treatment_start 系 → `treatment_start_reason`、dose_change 系 → `dose_adjustment_reason`、end 系 → `treatment_end_reason` を使うこと。
 
 **AStructured.role（確立済み語彙のみ使用）:**
 - `treatment_assessment`（汎用: treatment_start / adjustment / lifestyle 等の A 行）
@@ -81,7 +83,10 @@ Phase 1 で凍結した S / A / P テキストを文単位に分解し、SStruct
 - `followup_guidance`（経過確認）← `followup_monitoring` は禁止
 
 **PStructured.role 禁止語彙（ERROR）:**
-`treatment_start_reason` / `followup_monitoring`
+`treatment_start_reason` / `followup_monitoring` / `administration_instruction`
+
+> `administration_instruction` は未定義語彙 → `administration_guidance` を使うこと。
+> `followup_monitoring` は intentTags では使用可だが PStructured.role では禁止 → `followup_guidance` を使うこと。
 
 ### transform の基準
 
@@ -161,6 +166,9 @@ P フィールドの注意喚起・指示文は `"minimal"` を優先する。
 - text を意訳・要約・改変・補完しない
 - Group B シナリオ（side_effect / adherence / lifestyle_guidance / sickday / followup）を処理しない
 - Phase 1 凍結テキストを変更しない
+- **phase3b_meta.json を直接更新しない**（必ず `phase4a_structured.json` を新規生成すること）
+- **`content` フィールドを xStructured に使用しない**（`text` フィールドのみ使用）
+- **RULES.md §17 に未定義の role を使用した場合は即 MUST_STOP**
 
 ---
 

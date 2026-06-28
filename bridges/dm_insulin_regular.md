@@ -413,7 +413,6 @@ P
 低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 症状が続く場合はご相談ください。
 P_ADDON
-- addon_se_hypoglycemia_guidance
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=速効型インスリン製剤 増量（検査値改善なし）】
@@ -429,7 +428,6 @@ P
 低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 症状が続く場合はご相談ください。
 P_ADDON
-- addon_se_hypoglycemia_guidance
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=速効型インスリン製剤 増量（他剤との調整）】
@@ -445,7 +443,6 @@ P
 低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 症状が続く場合はご相談ください。
 P_ADDON
-- addon_se_hypoglycemia_guidance
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=速効型インスリン製剤 減量（症状改善）】

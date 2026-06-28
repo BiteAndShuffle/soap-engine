@@ -903,9 +903,7 @@
       "counselingTags": [],
       "workflowTags": [],
       "addonsRef": {
-        "P": [
-          "addon_se_hypoglycemia_guidance"
-        ]
+        "P": []
       }
     },
     {
@@ -1033,9 +1031,7 @@
       "counselingTags": [],
       "workflowTags": [],
       "addonsRef": {
-        "P": [
-          "addon_se_hypoglycemia_guidance"
-        ]
+        "P": []
       }
     },
     {
@@ -1164,9 +1160,7 @@
       "counselingTags": [],
       "workflowTags": [],
       "addonsRef": {
-        "P": [
-          "addon_se_hypoglycemia_guidance"
-        ]
+        "P": []
       }
     },
     {
