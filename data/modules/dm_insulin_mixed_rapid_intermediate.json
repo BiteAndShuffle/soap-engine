@@ -270,7 +270,34 @@
   },
   "drugResolution": {
     "strategy": "aliasLookup",
-    "fallback": "genericName"
+    "fallback": "genericName",
+    "brandToTags": {
+      "ノボラピッドミックス30": [
+        "insulin_mixed_rapid_intermediate",
+        "biphasic_insulin",
+        "injection"
+      ],
+      "ノボラピッドミックス50": [
+        "insulin_mixed_rapid_intermediate",
+        "biphasic_insulin",
+        "injection"
+      ],
+      "ノボラピッドミックス70": [
+        "insulin_mixed_rapid_intermediate",
+        "biphasic_insulin",
+        "injection"
+      ],
+      "ヒューマログミックス25": [
+        "insulin_mixed_rapid_intermediate",
+        "biphasic_insulin",
+        "injection"
+      ],
+      "ヒューマログミックス50": [
+        "insulin_mixed_rapid_intermediate",
+        "biphasic_insulin",
+        "injection"
+      ]
+    }
   },
   "regulatory": {
     "approvedIndications": [
