@@ -115,10 +115,19 @@ aliasToBrand のキーとして存在すること
 
 ### F. drugResolution.brandToTags 整合
 
+**MUST_STOP（実機クラッシュ要因: DashboardClient が brandToTags[brand] を直接参照）**
+
 ```
-drugResolution.brandToTags のキーが drug.brandCatalog のキーと一致すること
-各値が string[] であること
-不一致 / 非 string[] → FAIL
+1. drugResolution.brandToTags が object として存在すること
+   → null / undefined / 欠落 → FAIL（MUST_STOP）
+
+2. brandToTags のキーが drug.brandCatalog の全キーと完全一致すること
+   → 片側のみに存在するキーがある → FAIL
+
+3. 各値が string[]（配列）であること
+   → null / string / number → FAIL
+
+欠落または型不正は PN7 の他項目より優先して報告すること。
 ```
 
 ---

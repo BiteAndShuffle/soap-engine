@@ -109,7 +109,12 @@ defaults.followup         ← followupProfiles[phase1_text_spine.defaultFollowup
 
 ### drugResolution セクション
 
-`brandToTags` のキーは `drug.brandCatalog` のキーと一致させること。
+**MUST_STOP（実機クラッシュ要因）:**
+
+- `drugResolution.brandToTags` は必須。`null` / `undefined` / キー欠落 → 実装禁止
+- `brandToTags` のキーは `drug.brandCatalog` の全キーと完全一致させること
+- 各値は `string[]`（空配列 `[]` は許容、`null` / 文字列は禁止）
+- 欠落・不一致の場合は生成を停止し MUST_STOP を報告すること
 
 ---
 

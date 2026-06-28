@@ -62,6 +62,8 @@ phase3b_meta.json が 2,000 行を超える場合は分割 Read する:
 以下をすべて Phase 2 からそのまま採用する:
 `moduleId / moduleVersion / categoryPath / composition / drug / drugResolution / regulatory / topical / template / display / defaults / persona`
 
+> ⚠️ **MUST_STOP**: `drugResolution.brandToTags` が null / undefined / キー欠落の場合は組み立てを停止し報告すること（実機クラッシュ要因 → PN7-F 参照）。
+
 `defaults` セクション（`defaults.followup` / `defaults.followupProfiles` を含む）は Phase 2 の値をそのまま採用する。
 Phase 1 の `followupProfiles` が Phase 2 に正しく取り込まれていることを前提とする。
 
