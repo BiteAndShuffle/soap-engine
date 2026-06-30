@@ -1919,15 +1919,6 @@
           "notes": null
         }
       ],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance_followup",
-          "addon_hyperkalemia_guidance",
-          "addon_hypertension_guidance",
-          "addon_dyslipidemia_guidance",
-          "addon_hyperuricemia_guidance"
-        ]
-      },
       "thirdPanelSPlacement": {
         "enabled": true,
         "trigger": "single_drug_only",
@@ -2453,16 +2444,6 @@
           "notes": null
         }
       ],
-      "addonsRef": {
-        "P": [
-          "addon_adherence_reminder_alarm",
-          "addon_adherence_reminder_app",
-          "addon_adherence_visual_calendar_checklist",
-          "addon_adherence_visual_note",
-          "addon_adherence_schedule_confirmation",
-          "addon_adherence_support_family_reminder"
-        ]
-      },
       "globalId": "dm_insulin_mixed_rapid_long.cp_poor_self_adjust",
       "title": "混合型インスリン製剤（超速効型＋持効型） CP不良（自己判断）",
       "scenarioTags": [
@@ -2591,16 +2572,6 @@
           "notes": null
         }
       ],
-      "addonsRef": {
-        "P": [
-          "addon_adherence_reminder_alarm",
-          "addon_adherence_reminder_app",
-          "addon_adherence_visual_calendar_checklist",
-          "addon_adherence_visual_note",
-          "addon_adherence_schedule_confirmation",
-          "addon_adherence_support_family_reminder"
-        ]
-      },
       "globalId": "dm_insulin_mixed_rapid_long.cp_poor_visit_delay",
       "title": "混合型インスリン製剤（超速効型＋持効型） CP不良（受診遅延）",
       "scenarioTags": [
@@ -2945,10 +2916,10 @@
       "id": "se_mild_continue",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
-      "S": "{{drug_subject}}の使用により軽いふらつきや冷汗などがあるが、糖分摂取により改善している。",
+      "S": "{{drug_subject}}の使用により軽いふらつきや冷汗などがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
-      "A": "{{drug_subject}}による軽度の低血糖症状を認めるが、対応により改善しており、治療継続は可能である。",
-      "P": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。\n食事量が少ない時や食事時間が遅れる時は、低血糖が起こりやすくなることがあります。\n症状が繰り返す場合は、用量調整が必要になることがあるためご相談ください。",
+      "A": "{{drug_subject}}による低血糖症状を軽度認めるが、治療継続が可能である。",
+      "P": "{{drug_subject}}による症状が軽い場合は、ブドウ糖や糖分を摂取して対処してください。\n食事量が少ない時や食事時間が遅れる時は、低血糖が起こりやすくなることがあります。\n低血糖症状が強く続く場合は調整が必要なことがあります。\nご相談ください。",
       "mergePolicy": {
         "S": {
           "groupKey": "side_effect_monitoring",
@@ -2988,10 +2959,10 @@
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}の使用により軽いふらつきや冷汗などがあるが、糖分摂取により改善している。",
-          "role": "side_effect_status",
+          "text": "{{drug_subject}}の使用により軽いふらつきや冷汗などがあるが、日常生活は送れている。",
+          "role": "side_effect_presence",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -2999,10 +2970,10 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}による軽度の低血糖症状を認めるが、対応により改善しており、治療継続は可能である。",
+          "text": "{{drug_subject}}による低血糖症状を軽度認めるが、治療継続が可能である。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -3010,20 +2981,20 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。",
+          "text": "{{drug_subject}}による症状が軽い場合は、ブドウ糖や糖分を摂取して対処してください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "high",
           "lockTerms": [
             "ブドウ糖",
-            "糖分を摂取"
+            "糖分"
           ],
           "notes": null
         },
         {
           "id": "p_2",
           "text": "食事量が少ない時や食事時間が遅れる時は、低血糖が起こりやすくなることがあります。",
-          "role": "side_effect_guidance",
+          "role": "side_effect_attention",
           "transform": "moderate",
           "safety": "medium",
           "lockTerms": [],
@@ -3031,7 +3002,16 @@
         },
         {
           "id": "p_3",
-          "text": "症状が繰り返す場合は、用量調整が必要になることがあるためご相談ください。",
+          "text": "低血糖症状が強く続く場合は調整が必要なことがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "moderate",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "ご相談ください。",
           "role": "followup_guidance",
           "transform": "minimal",
           "safety": "low",
