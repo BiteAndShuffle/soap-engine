@@ -256,7 +256,6 @@ P
 注射方法や使用手順に不安がある場合はご相談ください。
 P_ADDON
 - addon_glycemic_guidance
-- addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -308,7 +307,6 @@ P
 注射方法や使用手順に不安がある場合はご相談ください。
 P_ADDON
 - addon_glycemic_guidance
-- addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -330,7 +328,6 @@ P
 注射方法や使用手順に不安がある場合はご相談ください。
 P_ADDON
 - addon_glycemic_guidance
-- addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING

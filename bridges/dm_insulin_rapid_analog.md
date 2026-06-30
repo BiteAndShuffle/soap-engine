@@ -431,7 +431,6 @@ P
 
 P_ADDON
 - addon_glycemic_guidance
-- addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -491,7 +490,6 @@ P
 
 P_ADDON
 - addon_glycemic_guidance
-- addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -521,7 +519,6 @@ P
 
 P_ADDON
 - addon_glycemic_guidance
-- addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
