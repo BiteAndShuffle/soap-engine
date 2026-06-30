@@ -1305,10 +1305,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             const resolveAddonText = (t: string) =>
               rapidDrugName ? t.replaceAll('{{drug_subject}}', rapidDrugName) : t
 
-            // 全 ADDON テキストをセクション別に整理（剥がし対象）
-            // 複数行テキストに対応するため section → texts[] の Map で管理する
+            // 現在アクティブな ADDON テキストのみをセクション別に整理（剥がし対象）
+            // 全アドオンではなく prev（トグル前のアクティブ set）のみを対象にすることで
+            // 非アクティブなアドオンのテキストがシナリオ本文と一致しても誤 strip しない
             const allAddonTextsBySec = new Map<SoapKey, string[]>()
-            for (const item of Object.values(addonItems)) {
+            for (const key of prev) {
+              const item = addonItems[key]
+              if (!item) continue
               if (item.sectionTexts) {
                 for (const sec of ['S', 'A', 'P'] as const) {
                   const t = item.sectionTexts[sec]
