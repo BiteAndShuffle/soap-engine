@@ -2062,6 +2062,15 @@
       "O": "GLP-1受容体作動薬(注射)　処方",
       "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に吐き気・下痢などが出ることがあります。\n症状が続く場合はご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2182,6 +2191,15 @@
       "O": "GLP-1受容体作動薬(注射)　処方",
       "A": "{{drug_subject}}による食欲低下は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に食欲低下が出ることがあります。\n食事量が落ちる・体重が急に減るなどの変化があればご相談ください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2300,6 +2318,15 @@
       "O": "GLP-1受容体作動薬(注射)　処方",
       "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
       "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      },
       "mergePolicy": {
         "S": {
           "domain": "diabetes",

@@ -549,9 +549,7 @@
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_pf_product_specific",
-          "addon_eye_drop_interval_5min",
-          "addon_eye_drop_interval_10min"
+          "addon_eye_drop_pf_product_specific"
         ]
       },
       "followupRef": "default_followup",
@@ -676,9 +674,7 @@
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_pf_product_specific",
-          "addon_eye_drop_interval_5min",
-          "addon_eye_drop_interval_10min"
+          "addon_eye_drop_pf_product_specific"
         ]
       },
       "followupRef": "default_followup",
@@ -803,9 +799,7 @@
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_pf_product_specific",
-          "addon_eye_drop_interval_5min",
-          "addon_eye_drop_interval_10min"
+          "addon_eye_drop_pf_product_specific"
         ]
       },
       "followupRef": "default_followup",

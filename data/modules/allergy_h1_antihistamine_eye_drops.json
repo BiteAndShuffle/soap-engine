@@ -470,8 +470,7 @@
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_suspension_shake",
-          "addon_eye_drop_interval"
+          "addon_eye_drop_suspension_shake"
         ]
       },
       "followupRef": "default_followup",
@@ -3873,8 +3872,7 @@
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_suspension_shake",
-          "addon_eye_drop_interval"
+          "addon_eye_drop_suspension_shake"
         ]
       },
       "followupRef": "default_followup",
@@ -4005,8 +4003,7 @@
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_contact_lens_remove_before_use",
           "addon_eye_drop_contact_lens_product_specific",
-          "addon_eye_drop_suspension_shake",
-          "addon_eye_drop_interval"
+          "addon_eye_drop_suspension_shake"
         ]
       },
       "followupRef": "default_followup",
