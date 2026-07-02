@@ -158,6 +158,7 @@
         "displayName": "ヒューマログ",
         "genericName": "インスリンリスプロ",
         "displayGenericName": "インスリンリスプロ",
+        "genericKey": "insulin_lispro",
         "aliases": [
           "ひゅーまろぐ",
           "ひゅーまろ",
@@ -177,6 +178,7 @@
         "displayName": "ルムジェブ",
         "genericName": "インスリンリスプロ",
         "displayGenericName": "インスリンリスプロ",
+        "genericKey": "insulin_lispro",
         "aliases": [
           "るむじぇぶ",
           "るむじぇ",
@@ -194,6 +196,7 @@
         "displayName": "ノボラピッド",
         "genericName": "インスリンアスパルト",
         "displayGenericName": "インスリンアスパルト",
+        "genericKey": "insulin_aspart",
         "aliases": [
           "のぼらぴっど",
           "のぼらぴ",
@@ -213,6 +216,7 @@
         "displayName": "フィアスプ",
         "genericName": "インスリンアスパルト",
         "displayGenericName": "インスリンアスパルト",
+        "genericKey": "insulin_aspart",
         "aliases": [
           "ふぃあすぷ",
           "ふぃあ",
@@ -230,6 +234,7 @@
         "displayName": "アピドラ",
         "genericName": "インスリングルリジン",
         "displayGenericName": "インスリングルリジン",
+        "genericKey": "insulin_glulisine",
         "aliases": [
           "あぴどら",
           "あぴど",

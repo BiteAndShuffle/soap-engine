@@ -128,6 +128,8 @@ drug:
 
       displayGenericName: "インスリンリスプロ"
 
+      genericKey: "insulin_lispro"
+
       aliases:
         - "ひゅーまろぐ"
         - "ひゅーまろ"
@@ -149,6 +151,8 @@ drug:
 
       displayGenericName: "インスリンリスプロ"
 
+      genericKey: "insulin_lispro"
+
       aliases:
         - "るむじぇぶ"
         - "るむじぇ"
@@ -167,6 +171,8 @@ drug:
       genericName: "インスリンアスパルト"
 
       displayGenericName: "インスリンアスパルト"
+
+      genericKey: "insulin_aspart"
 
       aliases:
         - "のぼらぴっど"
@@ -189,6 +195,8 @@ drug:
 
       displayGenericName: "インスリンアスパルト"
 
+      genericKey: "insulin_aspart"
+
       aliases:
         - "ふぃあすぷ"
         - "ふぃあ"
@@ -207,6 +215,8 @@ drug:
       genericName: "インスリングルリジン"
 
       displayGenericName: "インスリングルリジン"
+
+      genericKey: "insulin_glulisine"
 
       aliases:
         - "あぴどら"

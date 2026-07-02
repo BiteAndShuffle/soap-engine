@@ -393,6 +393,15 @@ export interface BrandEntry {
    * 省略時は genericName を使用する。
    */
   displayGenericName?: string
+  /**
+   * 検索サジェストの「同一成分グルーピング」判定専用キー（表示には使わない）。
+   * displayGenericName / genericName とは独立した値空間（例: "insulin_lispro"）。
+   * 人間可読な表示文言が変わってもグルーピングが揺れないようにするための識別子。
+   * 省略時は genericKey ?? displayGenericName ?? genericName の優先順でフォールバックする。
+   * 配合剤には単剤の genericKey と重複しない専用キー（例: "insulin_degludec_aspart_combo"）を
+   * 割り当てること。単剤・配合剤間のクロス検索は現時点では非対応（genericKeys[] は未導入）。
+   */
+  genericKey?: string
   aliases: string[]
   normalizedAliases: string[]
   /** ブランド固有の取り扱いタグ（遮光保存・懸濁など）。addonFilter で使用 */

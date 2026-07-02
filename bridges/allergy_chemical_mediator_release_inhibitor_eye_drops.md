@@ -230,6 +230,7 @@ drug:
       displayName: "リザベン点眼液"
       genericName: "トラニラスト"
       displayGenericName: "トラニラスト点眼液"
+      genericKey: "tranilast_ophthalmic"
       storageType: "light_protection"
       formulationType: "solution"
       contactLensCaution: true
@@ -255,6 +256,7 @@ drug:
       displayName: "トラメラス点眼液PF"
       genericName: "トラニラスト"
       displayGenericName: "トラニラスト点眼液PF"
+      genericKey: "tranilast_ophthalmic_pf"
       storageType: "light_protection"
       formulationType: "solution"
       contactLensCaution: true

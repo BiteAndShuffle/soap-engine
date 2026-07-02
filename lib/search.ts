@@ -75,10 +75,17 @@ export interface SearchEntry {
    */
   brandCatalogAliasMap: Record<string, string[]>
   /**
-   * ブランド名 → 一般名（brandCatalog[brand].genericName から構築）。
+   * ブランド名 → 一般名（表示専用。brandCatalog[brand].displayGenericName ?? genericName から構築）。
    * 一般名検索時に drugDisplayLabel を一般名寄りに解決するために使用。
+   * 同一成分グルーピングの判定には使わない（→ brandCatalogGenericKeyMap を使う）。
    */
   brandCatalogGenericMap: Record<string, string>
+  /**
+   * ブランド名 → 一般名グルーピングキー（判定専用）。
+   * brandCatalog[brand].genericKey ?? displayGenericName ?? genericName の優先順で構築。
+   * 「同一成分として展開してよいか」の判定にのみ使用し、表示文字列には使わない。
+   */
+  brandCatalogGenericKeyMap: Record<string, string>
   /**
    * 剤形識別トークン（drug.search.formulationSearchTokens の正規化済みリスト）。
    * AND 検索の第2トークン以降でこのリストを優先評価し、剤形による絞り込みを強化する。
@@ -135,14 +142,18 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   // brandCatalog[brand].genericName もマップ化（一般名検索時の drugDisplayLabel 解決用）
   const brandCatalogAliasMap: Record<string, string[]> = {}
   const brandCatalogGenericMap: Record<string, string> = {}
+  const brandCatalogGenericKeyMap: Record<string, string> = {}
   const brandCatalog = drug?.brandCatalog ?? {}
   for (const [brand, entry] of Object.entries(brandCatalog)) {
     const aliases = (entry as { aliases?: string[]; genericName?: string }).aliases ?? []
     brandCatalogAliasMap[brand] = aliases.map(normalizeText).filter(Boolean)
     // displayGenericName を優先（Topbar・S先頭文・{{drug_subject}} 解決で統一表示するため）
-    const e = entry as { displayGenericName?: string; genericName?: string }
+    const e = entry as { genericKey?: string; displayGenericName?: string; genericName?: string }
     const resolvedGenericName = e.displayGenericName ?? e.genericName
     if (resolvedGenericName) brandCatalogGenericMap[brand] = resolvedGenericName
+    // グルーピング判定専用キー: genericKey が未設定のモジュールは表示文字列に後方互換フォールバックする
+    const resolvedGenericKey = e.genericKey ?? resolvedGenericName
+    if (resolvedGenericKey) brandCatalogGenericKeyMap[brand] = resolvedGenericKey
   }
 
   // 剤形識別トークン（AND 検索の第2トークン以降で優先評価）
@@ -183,6 +194,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       brandNames,
       brandCatalogAliasMap,
       brandCatalogGenericMap,
+      brandCatalogGenericKeyMap,
       formulationTokens,
     }
   })
@@ -596,55 +608,68 @@ export function getDrugSuggestions(
       if (hpBrands.length > 0) {
         if (!isDirectBrandMatchPt) {
           // 一般名（成分名）検索:
-          //   1) 一般名単独の見出し候補を先頭に追加する（選択時は代表ブランド=hpBrands[0]として扱う。
-          //      drugDisplayLabel=一般名 のため {{drug_subject}} は一般名表示になる＝既存のGE検索挙動と同じ）
-          //   2) 各ブランド候補は drugDisplayLabel=ブランド名 のまま（{{drug_subject}}挙動は
-          //      直接ブランド名検索と同一）にしつつ、UI表示のみ uiLabel で「ブランド名（一般名）」とする
-          //   ヒットしたブランドが1件のみでも（他モジュール共有ブランドなし）一般名候補は追加する。
-          const sharedGenericName = entry.brandCatalogGenericMap[hpBrands[0]]
-          const allShareSameGeneric = sharedGenericName !== undefined &&
-            hpBrands.every(b => entry.brandCatalogGenericMap[b] === sharedGenericName)
-
-          if (allShareSameGeneric && sharedGenericName) {
+          //   ヒットしたブランドを genericKey（判定専用）でグルーピングし、
+          //   グループごとに「一般名見出し（先頭・代表ブランド=グループ先頭ブランドとして扱う）
+          //   → ブランド候補（uiLabelで「ブランド名（一般名）」表示）」を展開する。
+          //   例: "とらにらすと" が リザベン（tranilast_ophthalmic）と
+          //       トラメラスPF（tranilast_ophthalmic_pf）の両方に前方一致する場合、
+          //       genericKeyが異なるため2グループとして別々に見出し付きで表示する。
+          //   genericKeyが解決できないブランドは従来通り個別表示にフォールバックする。
+          const groups = new Map<string, string[]>()
+          const ungrouped: string[] = []
+          for (const brand of hpBrands) {
+            const key = entry.brandCatalogGenericKeyMap[brand]
+            if (key === undefined) { ungrouped.push(brand); continue }
+            if (!groups.has(key)) groups.set(key, [])
+            groups.get(key)!.push(brand)
+          }
+          for (const [key, brandsInGroup] of groups) {
+            const genericName = entry.brandCatalogGenericMap[brandsInGroup[0]]
+            if (genericName) {
+              candidates.push({
+                brand: brandsInGroup[0],
+                displayLabel: genericName,
+                uiLabel: genericName,
+                isGenericLabel: true,
+                dedupKeyOverride: `${entry.moduleId}:__generic__:${key}`,
+              })
+              for (const brand of brandsInGroup) {
+                candidates.push({
+                  brand,
+                  displayLabel: brand,
+                  uiLabel: `${brand}（${genericName}）`,
+                })
+              }
+            } else {
+              for (const brand of brandsInGroup) {
+                candidates.push({ brand, displayLabel: brand })
+              }
+            }
+          }
+          for (const brand of ungrouped) {
             candidates.push({
-              brand: hpBrands[0],
-              displayLabel: sharedGenericName,
-              uiLabel: sharedGenericName,
-              isGenericLabel: true,
-              dedupKeyOverride: `${entry.moduleId}:__generic__:${sharedGenericName}`,
+              brand,
+              displayLabel: entry.brandCatalogGenericMap[brand] ?? brand,
             })
-            for (const brand of hpBrands) {
-              candidates.push({
-                brand,
-                displayLabel: brand,
-                uiLabel: `${brand}（${sharedGenericName}）`,
-              })
-            }
-          } else {
-            for (const brand of hpBrands) {
-              candidates.push({
-                brand,
-                displayLabel: entry.brandCatalogGenericMap[brand] ?? brand,
-              })
-            }
           }
         } else {
           // ブランド名検索（入力が公式ブランド名そのもの、またはその前方一致）:
           //   1) 入力にヒットした各ブランドを先頭に追加し、uiLabel で「ブランド名（一般名）」を表示する
           //      （drugDisplayLabel=ブランド名のまま＝{{drug_subject}}挙動は従来のブランド名検索と同一）
-          //   2) 同一 genericName/displayGenericName を持つ同モジュール内の他ブランドを
-          //      brandNames 宣言順で後続に展開する
+          //   2) 同一 genericKey（判定専用）を持つ同モジュール内の他ブランドを
+          //      brandNames 宣言順で後続に展開する（表示は genericMap の表示文字列を使う）
           //   3) 最後に一般名単独候補を追加する（{{drug_subject}}は一般名表示＝GEモードと同じ挙動）
           const pushedBrands = new Set<string>()
           let trailingGeneric: string | undefined
           for (const brand of hpBrands) {
             if (pushedBrands.has(brand)) continue
             pushedBrands.add(brand)
+            const genericKey = entry.brandCatalogGenericKeyMap[brand]
             const generic = entry.brandCatalogGenericMap[brand]
-            if (generic) {
+            if (genericKey && generic) {
               candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${generic}）` })
               const siblings = entry.brandNames.filter(
-                b => b !== brand && entry.brandCatalogGenericMap[b] === generic,
+                b => b !== brand && entry.brandCatalogGenericKeyMap[b] === genericKey,
               )
               for (const sib of siblings) {
                 if (pushedBrands.has(sib)) continue
