@@ -594,39 +594,75 @@ export function getDrugSuggestions(
         normalizeText(b) === pt || normalizeText(b).startsWith(pt)
       )
       if (hpBrands.length > 0) {
-        // 一般名（成分名）検索かつ同一成分を複数ブランドが共有する場合:
-        //   1) 一般名単独の見出し候補を先頭に追加する（選択時は代表ブランド=hpBrands[0]として扱う。
-        //      drugDisplayLabel=一般名 のため {{drug_subject}} は一般名表示になる＝既存のGE検索挙動と同じ）
-        //   2) 各ブランド候補は drugDisplayLabel=ブランド名 のまま（{{drug_subject}}挙動は
-        //      直接ブランド名検索と同一）にしつつ、UI表示のみ uiLabel で「ブランド名（一般名）」とする
-        // ブランド名そのものを直接入力した場合（isDirectBrandMatchPt）は対象外（既存のブランド名検索を維持）。
-        const sharedGenericName = !isDirectBrandMatchPt && hpBrands.length > 1
-          ? entry.brandCatalogGenericMap[hpBrands[0]]
-          : undefined
-        const allShareSameGeneric = sharedGenericName !== undefined &&
-          hpBrands.every(b => entry.brandCatalogGenericMap[b] === sharedGenericName)
+        if (!isDirectBrandMatchPt) {
+          // 一般名（成分名）検索:
+          //   1) 一般名単独の見出し候補を先頭に追加する（選択時は代表ブランド=hpBrands[0]として扱う。
+          //      drugDisplayLabel=一般名 のため {{drug_subject}} は一般名表示になる＝既存のGE検索挙動と同じ）
+          //   2) 各ブランド候補は drugDisplayLabel=ブランド名 のまま（{{drug_subject}}挙動は
+          //      直接ブランド名検索と同一）にしつつ、UI表示のみ uiLabel で「ブランド名（一般名）」とする
+          //   ヒットしたブランドが1件のみでも（他モジュール共有ブランドなし）一般名候補は追加する。
+          const sharedGenericName = entry.brandCatalogGenericMap[hpBrands[0]]
+          const allShareSameGeneric = sharedGenericName !== undefined &&
+            hpBrands.every(b => entry.brandCatalogGenericMap[b] === sharedGenericName)
 
-        if (allShareSameGeneric && sharedGenericName) {
-          candidates.push({
-            brand: hpBrands[0],
-            displayLabel: sharedGenericName,
-            uiLabel: sharedGenericName,
-            isGenericLabel: true,
-            dedupKeyOverride: `${entry.moduleId}:__generic__:${sharedGenericName}`,
-          })
-          for (const brand of hpBrands) {
+          if (allShareSameGeneric && sharedGenericName) {
             candidates.push({
-              brand,
-              displayLabel: brand,
-              uiLabel: `${brand}（${sharedGenericName}）`,
+              brand: hpBrands[0],
+              displayLabel: sharedGenericName,
+              uiLabel: sharedGenericName,
+              isGenericLabel: true,
+              dedupKeyOverride: `${entry.moduleId}:__generic__:${sharedGenericName}`,
             })
+            for (const brand of hpBrands) {
+              candidates.push({
+                brand,
+                displayLabel: brand,
+                uiLabel: `${brand}（${sharedGenericName}）`,
+              })
+            }
+          } else {
+            for (const brand of hpBrands) {
+              candidates.push({
+                brand,
+                displayLabel: entry.brandCatalogGenericMap[brand] ?? brand,
+              })
+            }
           }
         } else {
+          // ブランド名検索（入力が公式ブランド名そのもの、またはその前方一致）:
+          //   1) 入力にヒットした各ブランドを先頭に追加し、uiLabel で「ブランド名（一般名）」を表示する
+          //      （drugDisplayLabel=ブランド名のまま＝{{drug_subject}}挙動は従来のブランド名検索と同一）
+          //   2) 同一 genericName/displayGenericName を持つ同モジュール内の他ブランドを
+          //      brandNames 宣言順で後続に展開する
+          //   3) 最後に一般名単独候補を追加する（{{drug_subject}}は一般名表示＝GEモードと同じ挙動）
+          const pushedBrands = new Set<string>()
+          let trailingGeneric: string | undefined
           for (const brand of hpBrands) {
+            if (pushedBrands.has(brand)) continue
+            pushedBrands.add(brand)
+            const generic = entry.brandCatalogGenericMap[brand]
+            if (generic) {
+              candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${generic}）` })
+              const siblings = entry.brandNames.filter(
+                b => b !== brand && entry.brandCatalogGenericMap[b] === generic,
+              )
+              for (const sib of siblings) {
+                if (pushedBrands.has(sib)) continue
+                pushedBrands.add(sib)
+                candidates.push({ brand: sib, displayLabel: sib, uiLabel: `${sib}（${generic}）` })
+              }
+              trailingGeneric = generic
+            } else {
+              candidates.push({ brand, displayLabel: brand })
+            }
+          }
+          if (trailingGeneric) {
             candidates.push({
-              brand,
-              displayLabel: isDirectBrandMatchPt ? brand :
-                (entry.brandCatalogGenericMap[brand] ?? brand),
+              brand: hpBrands[0],
+              displayLabel: trailingGeneric,
+              uiLabel: trailingGeneric,
+              isGenericLabel: true,
+              dedupKeyOverride: `${entry.moduleId}:__generic__:${trailingGeneric}`,
             })
           }
         }
