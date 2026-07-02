@@ -179,7 +179,7 @@ export default function Topbar({
             >
               {drugSuggestions.map((item, idx) => (
                 <li
-                  key={`${item.moduleId}:${item.matchedBrandName ?? ''}`}
+                  key={`${item.moduleId}:${item.matchedBrandName ?? ''}:${item.drugDisplayLabel}`}
                   id={`${listId}-item-${idx}`}
                   role="option"
                   aria-selected={idx === focusedIdx}
@@ -190,8 +190,8 @@ export default function Topbar({
                   onMouseDown={() => commitSuggestion(item)}
                 >
                   {/* 薬剤名のみ表示（シナリオ名なし） */}
-                  <span className={s.suggestionMain}>{item.drugDisplayLabel}</span>
-                  {item.matchedBrandName && item.matchedBrandName !== item.drugDisplayLabel && (
+                  <span className={s.suggestionMain}>{item.uiLabel ?? item.drugDisplayLabel}</span>
+                  {!item.isGenericLabel && item.matchedBrandName && item.matchedBrandName !== item.drugDisplayLabel && (
                     <span className={s.suggestionSubGroup}>
                       <span className={s.suggestionDrug}>{item.matchedBrandName}</span>
                     </span>

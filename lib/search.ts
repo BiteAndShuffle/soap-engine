@@ -466,6 +466,18 @@ export interface DrugSuggestionItem {
   displayName?: string
   /** モジュール代表シナリオのID（モジュール特定用） */
   representativeTemplateId: string
+  /**
+   * UI 表示専用のラベル（例: "ヒューマログ（インスリンリスプロ）"）。
+   * 指定時は drugDisplayLabel の代わりにこちらを画面表示に使う。
+   * drugDisplayLabel 自体は {{drug_subject}} 解決に使われる意味的な値のため、
+   * 装飾目的の合成文字列を drugDisplayLabel に混在させない。
+   */
+  uiLabel?: string
+  /**
+   * true の場合、UI側で matchedBrandName を別途セカンドラインとして重複表示してはならない
+   * （一般名単独の見出し候補など、drugDisplayLabel と matchedBrandName が意図的に異なる場合）。
+   */
+  isGenericLabel?: boolean
 }
 
 /**
@@ -544,7 +556,14 @@ export function getDrugSuggestions(
     if (results.length >= limit) break
 
     // ブランド候補リストを収集する
-    const candidates: Array<{ brand: string | undefined; displayLabel: string }> = []
+    const candidates: Array<{
+      brand: string | undefined
+      displayLabel: string
+      uiLabel?: string
+      isGenericLabel?: boolean
+      /** dedup キーの上書き（一般名見出し候補が特定ブランドのキーと衝突しないようにする） */
+      dedupKeyOverride?: string
+    }> = []
 
     // Step 1: 複数トークンの場合、全トークン連結を先に試す。
     //   "とらにらすと pf" → concat "とらにらすとpf" → alias 完全一致 → トラメラスPF のみ返す
@@ -575,12 +594,41 @@ export function getDrugSuggestions(
         normalizeText(b) === pt || normalizeText(b).startsWith(pt)
       )
       if (hpBrands.length > 0) {
-        for (const brand of hpBrands) {
+        // 一般名（成分名）検索かつ同一成分を複数ブランドが共有する場合:
+        //   1) 一般名単独の見出し候補を先頭に追加する（選択時は代表ブランド=hpBrands[0]として扱う。
+        //      drugDisplayLabel=一般名 のため {{drug_subject}} は一般名表示になる＝既存のGE検索挙動と同じ）
+        //   2) 各ブランド候補は drugDisplayLabel=ブランド名 のまま（{{drug_subject}}挙動は
+        //      直接ブランド名検索と同一）にしつつ、UI表示のみ uiLabel で「ブランド名（一般名）」とする
+        // ブランド名そのものを直接入力した場合（isDirectBrandMatchPt）は対象外（既存のブランド名検索を維持）。
+        const sharedGenericName = !isDirectBrandMatchPt && hpBrands.length > 1
+          ? entry.brandCatalogGenericMap[hpBrands[0]]
+          : undefined
+        const allShareSameGeneric = sharedGenericName !== undefined &&
+          hpBrands.every(b => entry.brandCatalogGenericMap[b] === sharedGenericName)
+
+        if (allShareSameGeneric && sharedGenericName) {
           candidates.push({
-            brand,
-            displayLabel: isDirectBrandMatchPt ? brand :
-              (entry.brandCatalogGenericMap[brand] ?? brand),
+            brand: hpBrands[0],
+            displayLabel: sharedGenericName,
+            uiLabel: sharedGenericName,
+            isGenericLabel: true,
+            dedupKeyOverride: `${entry.moduleId}:__generic__:${sharedGenericName}`,
           })
+          for (const brand of hpBrands) {
+            candidates.push({
+              brand,
+              displayLabel: brand,
+              uiLabel: `${brand}（${sharedGenericName}）`,
+            })
+          }
+        } else {
+          for (const brand of hpBrands) {
+            candidates.push({
+              brand,
+              displayLabel: isDirectBrandMatchPt ? brand :
+                (entry.brandCatalogGenericMap[brand] ?? brand),
+            })
+          }
         }
       } else {
         // Step 3: フォールバック — 各トークンを順に評価して最初の一致を採用する。
@@ -611,9 +659,9 @@ export function getDrugSuggestions(
       : candidates
 
     // 候補を (moduleId:brand) dedup でフィルタして results に追加
-    for (const { brand, displayLabel } of activeCandidates) {
+    for (const { brand, displayLabel, uiLabel, isGenericLabel, dedupKeyOverride } of activeCandidates) {
       if (results.length >= limit) break
-      const key = `${entry.moduleId}:${brand ?? '__no_brand__'}`
+      const key = dedupKeyOverride ?? `${entry.moduleId}:${brand ?? '__no_brand__'}`
       if (seenModuleBrands.has(key)) continue
       seenModuleBrands.add(key)
       results.push({
@@ -621,6 +669,8 @@ export function getDrugSuggestions(
         drugDisplayLabel: displayLabel,
         matchedBrandName: brand,
         representativeTemplateId: entry.templateId,
+        uiLabel,
+        isGenericLabel,
       })
     }
   }

@@ -224,7 +224,7 @@ function DrugInlineSearch({
         <ul id={listId} role="listbox" className={s.thirdSuggestionList} aria-label="薬剤候補">
           {suggestions.map((item, idx) => (
             <li
-              key={`${item.moduleId}:${item.matchedBrandName ?? ''}`}
+              key={`${item.moduleId}:${item.matchedBrandName ?? ''}:${item.drugDisplayLabel}`}
               id={`${listId}-item-${idx}`}
               role="option"
               aria-selected={idx === focusedIdx}
@@ -232,7 +232,7 @@ function DrugInlineSearch({
               onMouseDown={() => commit(item)}
             >
               {/* 薬剤名のみ表示 */}
-              <span className={s.suggestionMain}>{item.drugDisplayLabel}</span>
+              <span className={s.suggestionMain}>{item.uiLabel ?? item.drugDisplayLabel}</span>
             </li>
           ))}
         </ul>
