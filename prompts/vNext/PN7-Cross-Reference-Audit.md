@@ -11,6 +11,7 @@
 → prompts/RULES.md §14 thirdPanelSPlacement
 → prompts/RULES.md §15 addon 必須フィールド
 → prompts/RULES.md §16 scenario omit 禁止フィールド
+→ prompts/RULES.md §20 addonsRef Source of Truth 原則
 → prompts/P1.md Rule 4
 → PN6-Assembly.md addon.text 標準ルール / addon.group 標準変換表 / addon.uiVariant 保持ルール
 → PN5-Non-Scenario.md index 標準フィールド
@@ -24,6 +25,7 @@
 ## 入力
 - `data/modules/{moduleId}.json`（PN6 完成 JSON）
 - `/tmp/soap-build/{moduleId}/phase1_text_spine.json`（本文凍結照合用）
+- `bridges/{moduleId}.md`（原稿。check Y の bridge P_ADDON 突合に使用）
 
 ### 大規模 JSON の読み込み手順（必須）
 
@@ -469,6 +471,26 @@ phase3b_meta.json に uiVariant 情報が記録されていない場合 → NOT_
 
 ---
 
+### Y. bridge P_ADDON ⇔ addonsRef 完全一致 + AddonPanel 到達確認
+
+← RULES.md §20（`scripts/audit-addon-bridge-chain.ts` と同一ロジック）
+
+Aは JSON 内部の参照切れのみを確認する。Y は bridge 本文まで遡って比較する唯一の監査項目であり、A とは独立して必ず実行する。
+
+```
+対象: 全 scenarios[]
+1. bridge の P_ADDON 記載一覧と scenarios[].addonsRef.P を突合する
+   - bridge にあるが addonsRef に無い → FAIL（欠落: {addon_id} in scenario {scenario_id}）
+   - addonsRef にあるが bridge に無い → FAIL（bridge外追加: {addon_id} in scenario {scenario_id}）
+   - bridge に P_ADDON が無いシナリオに addonsRef が存在する → FAIL（bridge外追加）
+2. addonsRef.P の各 id が addons.items に存在すること（A と重複する場合は一本化してよい）
+3. lib/addonFilter.ts の getVisibleAddonKeys() と同じロジックで
+   実際に AddonPanel へ表示されるキーを再現し、bridge 宣言分がすべて含まれることを確認する
+   - 表示されないキーがある → FAIL（AddonPanel 到達不能: {addon_id}）
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -516,6 +538,7 @@ U. addon.text内容確認:                PASS / FAIL
 V. addon.group標準変換確認:           PASS / FAIL
 W. uiVariant保持確認:                 PASS / FAIL / NOT_CHECKED
 X. index標準フィールド確認:           PASS / FAIL
+Y. bridge P_ADDON⇔addonsRef一致:      PASS / FAIL
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件
@@ -558,7 +581,8 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "U_addonText": "PASS",
     "V_addonGroup": "PASS",
     "W_uiVariant": "NOT_CHECKED",
-    "X_indexStandardFields": "PASS"
+    "X_indexStandardFields": "PASS",
+    "Y_addonsRefBridgeMatch": "PASS"
   },
   "failCount": 0,
   "verdict": "PASS"

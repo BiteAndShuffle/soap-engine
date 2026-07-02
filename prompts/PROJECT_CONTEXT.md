@@ -236,6 +236,15 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 - `lib/types.ts` に 13フィールド定義済み（`ExpressModeEntry`）
 - P0-A〜P5すべてで13フィールド整合済み（Phase 1 SSOT回復完了）
 
+### addonsRef の正本
+- `scenarios[].addonsRef` は bridge の `P_ADDON` 記載を正本とする（RULES.md §20）
+- bridge⇔JSON⇔runtime（AddonPanel到達）の横断監査は `scripts/audit-addon-bridge-chain.ts` が担う
+
+### genericName / genericKey の役割分離
+- `brandCatalog[brand].genericName` / `displayGenericName` は表示専用、`genericKey` は検索グルーピング判定専用（RULES.md §21）
+- `genericKey` は任意フィールド。省略時は `genericKey ?? displayGenericName ?? genericName` にフォールバックする
+- 配合剤の複数成分対応（`genericKeys: string[]`）は未導入（`docs/OPEN_DESIGN_QUESTIONS.md` Q-G1）
+
 ---
 
 ## 5. UI / 機能用語
@@ -414,6 +423,9 @@ data/modules/{moduleId}.json
 
 docs/DESIGN_PRINCIPLES.md    docs/JSON_STANDARD.md
 docs/BOOTSTRAP_STANDARD.md  docs/OPEN_DESIGN_QUESTIONS.md
+docs/VALIDATOR_STANDARD.md  docs/IMPLEMENTATION_CHECKLIST.md
+
+scripts/audit-addon-bridge-chain.ts   # bridge⇔JSON⇔runtime addonsRef横断監査
 ```
 
 **vNext 体系パス（大規模モジュール JSON 化専用）**

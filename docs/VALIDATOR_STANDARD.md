@@ -167,12 +167,14 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 | P4 | Runtime レビュー | AI | 生成 JSON が runtime で正しく動くか。描画・addon フィルタ・persona |
 | ModuleValidator | 単一モジュール機械判定 | コード | Reference + Structural + Design Rule（WARNING）の 31 checks。build 時に必ず通る |
 | CrossModuleValidator | クロスモジュール機械判定 | コード | moduleId + globalId の横断一意性。build 時に必ず通る |
+| `scripts/audit-addon-bridge-chain.ts` | bridge⇔JSON⇔runtime 横断監査 | コード | bridge の `P_ADDON` 記載まで遡って `addonsRef` と突合し、`getVisibleAddonKeys()` を実行して AddonPanel に実際に届くかまで確認する。ModuleValidator / P3 は JSON 内部の整合のみを見るため代替できない。既存モジュール改修時は毎回実行する（`docs/IMPLEMENTATION_CHECKLIST.md` 参照） |
 
 ### 具体的な責務分担例
 
 | 判定内容 | 担当 |
 |---|---|
 | `addonsRef["foo"]` → `addons.items["foo"]` が存在するか | **ModuleValidator** (check 5) |
+| bridge の `P_ADDON` と `addonsRef` が完全一致するか、AddonPanel に実際に表示されるか | **`scripts/audit-addon-bridge-chain.ts`**（PN7 check Y） |
 | `brandToTags` のタグが `TAG_TO_GENERIC_NAME` で解決できるか | **P3** |
 | `brandToTags` のタグが成分名として医学的に正しいか | **人間レビュー** |
 | `scenario.S` が医療記録として適切な文言か | **P3** + **人間レビュー** |

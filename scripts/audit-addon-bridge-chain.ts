@@ -13,6 +13,10 @@
  * 実行:
  *   npx tsx scripts/audit-addon-bridge-chain.ts
  *
+ * 正式な監査ルールは prompts/vNext/PN7-Cross-Reference-Audit.md の check Y、
+ * 原則は prompts/RULES.md §20 を参照。標準実行タイミングは
+ * docs/IMPLEMENTATION_CHECKLIST.md を参照。
+ *
  * 検出する不整合:
  *   A. bridge に P_ADDON があるのに JSON の scenario.addonsRef が
  *      存在しない、または内容が一致しない

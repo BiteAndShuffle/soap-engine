@@ -112,6 +112,7 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `displayName` | — |
 | `genericName` | — |
 | `displayGenericName` | **全 brand 必須**。参照優先順: `displayGenericName ?? genericName` |
+| `genericKey` | 任意。検索グルーピング判定専用（表示には使わない）。省略時は `genericKey ?? displayGenericName ?? genericName` にフォールバック。→ RULES.md §21 / PN2-Drug-Header.md |
 | `aliases` | — |
 | `normalizedAliases` | — |
 

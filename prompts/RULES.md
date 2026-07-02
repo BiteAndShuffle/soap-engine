@@ -629,3 +629,33 @@ function containsToken(searchableText: string | string[], token: string): boolea
   return searchableText.includes(token);
 }
 ```
+
+---
+
+## 20. addonsRef Source of Truth 原則
+
+`scenarios[].addonsRef` は bridge の `P_ADDON` 記載を正本とする。
+
+- bridge に無い addon を `addonsRef` にJSON側だけで追加してはならない
+- bridge にある `P_ADDON` を `addonsRef` からJSON側だけで省略してはならない
+- `addonsRef` の追加・削除のみで解決できる場合は `addonsRef` のみを修正する
+- S/O/A/P・`addons.items` の本文変更が必要な場合は、判断せずに停止して報告する
+
+（監査手順・チェック項目の詳細は `prompts/vNext/PN7-Cross-Reference-Audit.md` を参照）
+
+---
+
+## 21. genericName / genericKey 分離原則
+
+`brandCatalog[brand]` の一般名関連フィールドは、表示用と判定用で役割を分離する。
+
+| フィールド | 役割 |
+|---|---|
+| `genericName` / `displayGenericName` | 表示専用。人間が読む文字列 |
+| `genericKey` | 検索グルーピング判定専用。表示には使わない |
+
+- 「同一成分としてまとめてよいか」の判定は `genericKey` の一致で行い、表示文字列の一致に依存してはならない
+- `genericKey` 省略時は `genericKey ?? displayGenericName ?? genericName` の優先順でフォールバックする
+- 配合剤は単剤と同じ `genericKey` を使わず、専用の単一文字列キーを割り当てる（複数成分配列化は未導入 → `docs/OPEN_DESIGN_QUESTIONS.md` 参照）
+
+（生成規則・命名規則の詳細は `prompts/vNext/PN2-Drug-Header.md` を参照）

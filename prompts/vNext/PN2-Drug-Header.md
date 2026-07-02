@@ -35,6 +35,17 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 3. `aliasToBrand` が brandCatalog の全 aliases を網羅していること
    - 各ブランドの aliases の全値が aliasToBrand のキーとして存在すること
 
+### genericKey 生成規則（任意フィールド）
+
+← RULES.md §21（役割分離の原則）
+
+`brandCatalog.{brand}.genericKey` は検索グルーピング判定専用のキーであり、無理に全ブランドへ設定する必要はない（省略時は `displayGenericName ?? genericName` へフォールバックする）。設定する場合は以下に従う。
+
+- 命名規則: `{成分}_{系統/剤形差分}` のスネークケース（例: `insulin_lispro`, `tranilast_ophthalmic_pf`）
+- 同一成分でも表示上区別したい製剤（PF製剤・ウルトラファースト製剤等）には別の `genericKey` を割り当てること
+- 同一 `genericKey` を持つブランド同士は検索候補で同一成分グループとして展開されるため、臨床的に別グループとして扱うべき場合は必ずキーを分けること
+- 配合剤には単剤の `genericKey` を流用せず、専用の単一文字列キーを割り当てること（例: `insulin_degludec_aspart_combo`）。単剤・配合剤間のクロス検索は現時点で非対応
+
 ### composition セクション生成
 
 bridge の composition フィールドおよび同系統モジュールを参考に生成する。
