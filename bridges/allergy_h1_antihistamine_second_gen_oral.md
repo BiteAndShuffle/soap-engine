@@ -460,6 +460,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -504,6 +506,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -530,6 +534,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -556,6 +562,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -582,6 +590,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -608,6 +618,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -631,6 +643,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -654,6 +668,8 @@ P
 
 P_ADDON
 - addon_driving_caution_guidance
+- addon_bilastine_admin
+- addon_fexofenadine_admin
 
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
