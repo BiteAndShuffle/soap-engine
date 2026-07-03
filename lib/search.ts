@@ -792,6 +792,26 @@ export function getDrugSuggestions(
     return true
   }
 
+  // direct bucket 内をブランドファミリー単位でまとめる。
+  // クエリに一致した部分より後ろの文字列（suffix）を安定ソートすることで、
+  // 共通する接頭辞を持つブランド同士が自然に隣接する（例: "ひゅーま" クエリで
+  // "りんr"/"りんn"/"りん37"はソート後に隣接し、"ろぐ"/"ろぐみっくす25"とは分離される）。
+  // 特定ブランド名のハードコードは行わず、文字列比較のみで判定する。
+  // sibling / genericMode / genericHeader の並び順には影響しない。
+  const queryPt = tokens[0] ?? ''
+  const sortedDirect = [...bucketed.direct]
+    .map((c, originalIndex) => {
+      const norm = normalizeText(c.brand ?? c.displayLabel ?? '')
+      const suffix = norm.startsWith(queryPt) ? norm.slice(queryPt.length) : norm
+      return { c, suffix, originalIndex }
+    })
+    .sort((a, b) => {
+      if (a.suffix < b.suffix) return -1
+      if (a.suffix > b.suffix) return 1
+      return a.originalIndex - b.originalIndex
+    })
+    .map(x => x.c)
+
   // Step 1: genericMode（一般名検索の見出し→ブランド群）は従来どおり limit を直接消費する
   for (const c of bucketed.genericMode) {
     if (results.length >= limit) break
@@ -806,9 +826,9 @@ export function getDrugSuggestions(
   const reserved = Math.min(uniqueHeaderKeys.size, 3, remainingAfterGenericMode)
   const directSiblingBudget = remainingAfterGenericMode - reserved
 
-  // Step 3: direct → sibling の順で、確保した残り枠まで詰める
+  // Step 3: direct（ファミリー順にソート済み） → sibling の順で、確保した残り枠まで詰める
   let directSiblingAdded = 0
-  for (const c of [...bucketed.direct, ...bucketed.sibling]) {
+  for (const c of [...sortedDirect, ...bucketed.sibling]) {
     if (directSiblingAdded >= directSiblingBudget) break
     if (pushCandidate(c)) directSiblingAdded++
   }
@@ -823,7 +843,7 @@ export function getDrugSuggestions(
   // Step 5: 予約枠・direct/sibling枠のいずれかが余った場合（候補数が枠より少なかった等）、
   // 余った枠を direct → sibling → genericHeader の優先順で埋め直す
   if (results.length < limit) {
-    for (const c of [...bucketed.direct, ...bucketed.sibling, ...bucketed.genericHeader]) {
+    for (const c of [...sortedDirect, ...bucketed.sibling, ...bucketed.genericHeader]) {
       if (results.length >= limit) break
       pushCandidate(c)
     }
