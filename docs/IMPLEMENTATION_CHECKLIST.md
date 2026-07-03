@@ -17,6 +17,7 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
 □ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合）
+□ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）
 □ 既知の不整合・warning件数を変更前後で比較する（増減していないか）
 □ 実機確認（変更内容に応じて: 検索候補の表示順序 / AddonPanel表示 / SOAP生成結果 等）
 □ push後、Vercel Preview のデプロイ成功を確認（GitHub Commit Status API）

@@ -491,6 +491,42 @@ Aは JSON 内部の参照切れのみを確認する。Y は bridge 本文まで
 
 ---
 
+### Z. Addon Responsibility Consistency（Addon責務一貫性監査）
+
+← RULES.md §22
+
+目的: Addonが担う責務が、本文編集や周辺シナリオ整理の過程で失われていないかを監査する。
+手段: 責務が近いシナリオ間でaddonsRef構成を比較し、責務では説明できない差分を検出する
+      （近似シナリオ比較は目的ではなく手段である）。
+
+```
+対象: 同一モジュール内で「責務が近い」と判断できるシナリオ群
+
+例)
+  ・安定継続フォロー（例: type=side_effect かつ id末尾が `_none`、type=adherence の cp_good系）
+  ・副作用なしフォロー
+  ・同一治療段階の生活指導
+  ・その他、設計上同一責務を持つシナリオ群
+
+  上記は例示であり、領域（糖尿病・吸入薬・外用薬・漢方等）ごとに
+  「責務が近い」の具体的な括り方は異なってよい。
+
+1. 対象シナリオ群の addonsRef.P を横並びで比較する
+2. あるシナリオにのみ存在するaddonについて:
+   - requiredTags等、当該シナリオ固有の制約がある → 説明可能な差分 → PASS
+   - 制約が無い汎用addon（例: group=counseling かつ requiredTags無し）にも
+     かかわらず一部シナリオにのみ存在する → 説明できない差分 → CHECK
+3. CHECK とは、Addon責務の変更として説明できない差分を指す。
+   本文変更・文章整理・重複排除・表現変更のみを根拠として説明される差分は CHECK とする
+   （= 「本文に書いたからaddonを消した／付けなかった」は説明にならない）。
+   Addon自身の責務変化（対象患者像の変更・requiredTagsの見直し等）を根拠として
+   説明できる差分のみが PASS となる。
+4. CHECK は FAIL ではない。完全一致を要求する監査ではなく、
+   「責務の欠落らしき差分」を人が確認するためのフラグである
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -539,9 +575,10 @@ V. addon.group標準変換確認:           PASS / FAIL
 W. uiVariant保持確認:                 PASS / FAIL / NOT_CHECKED
 X. index標準フィールド確認:           PASS / FAIL
 Y. bridge P_ADDON⇔addonsRef一致:      PASS / FAIL
+Z. Addon責務一貫性:                   PASS / CHECK
 
 ---
-FAIL: {N} 件 / NOT_CHECKED: {N} 件
+FAIL: {N} 件 / NOT_CHECKED: {N} 件 / CHECK: {N} 件
 
 FAIL が 0 件 → PN8 へ進む
 FAIL がある場合 → 差し戻し先 Phase を明記して報告する
@@ -582,14 +619,19 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "V_addonGroup": "PASS",
     "W_uiVariant": "NOT_CHECKED",
     "X_indexStandardFields": "PASS",
-    "Y_addonsRefBridgeMatch": "PASS"
+    "Y_addonsRefBridgeMatch": "PASS",
+    "Z_addonResponsibilityConsistency": "PASS"
   },
   "failCount": 0,
+  "checkCount": 0,
   "verdict": "PASS"
 }
 ```
 
 `verdict` は `"PASS"` / `"FAIL"` のいずれか。PN8 はこのファイルを読んで判定する。
+`Z_addonResponsibilityConsistency` が `"CHECK"` の場合は `verdict` を FAIL にはしない
+（CHECK は要確認フラグであり、PN8 進行のブロッカーではない）。ただしチャット出力では
+CHECK の内容を必ず報告する。
 
 ---
 

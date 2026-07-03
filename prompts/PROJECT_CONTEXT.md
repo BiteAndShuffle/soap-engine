@@ -245,6 +245,10 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 - `genericKey` は任意フィールド。省略時は `genericKey ?? displayGenericName ?? genericName` にフォールバックする
 - 配合剤の複数成分対応（`genericKeys: string[]`）は未導入（`docs/OPEN_DESIGN_QUESTIONS.md` Q-G1）
 
+### addonsRef の責務独立性
+- Addonは本文（S/O/A/P）の付随物ではなく独立した責務を持つ。本文編集を理由に`addonsRef`を変更してはならない（RULES.md §22）
+- 近似責務シナリオ間の`addonsRef`構成一貫性はPN7 check Zで監査する。責務の構造化方法自体は未確定（`docs/OPEN_DESIGN_QUESTIONS.md` Q-A1）
+
 ---
 
 ## 5. UI / 機能用語

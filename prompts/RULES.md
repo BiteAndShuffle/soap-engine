@@ -659,3 +659,22 @@ function containsToken(searchableText: string | string[], token: string): boolea
 - 配合剤は単剤と同じ `genericKey` を使わず、専用の単一文字列キーを割り当てる（複数成分配列化は未導入 → `docs/OPEN_DESIGN_QUESTIONS.md` 参照）
 
 （生成規則・命名規則の詳細は `prompts/vNext/PN2-Drug-Header.md` を参照）
+
+---
+
+## 22. Addon Independent Responsibility Principle（addonsRef 独立責務原則）
+
+Addonは本文（S/O/A/P）を補助するための付随物ではなく、独立した責務を持つ。
+
+- 本文の整理・移動・言い換えは、addonsRefを追加・削除・変更する理由にはならない
+- addonsRefを変更してよいのは、Addon自身が担う責務が変化した場合のみである
+- 「本文に同じ内容を書いた／書かなくなった」は、Addonの責務変化の根拠にはならない
+- 本文とAddonは内容が重複していてもよい。責務が異なる限り、重複は削除理由にならない
+
+§20（addonsRef Source of Truth 原則）との違い:
+- §20 は「addonsRefはbridgeを正本とし、bridgeとJSONを一致させる」という同期の原則
+- §22 は「addonsRefは本文編集の副作用で変更してはならない」という独立性の原則
+- 両者は独立して適用する。addonsRefを変更する場合、その根拠が
+  Addon自身の責務変化であることを常に説明できなければならない
+
+（監査手順の詳細は `prompts/vNext/PN7-Cross-Reference-Audit.md` check Z を参照）
