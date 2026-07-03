@@ -968,7 +968,7 @@ P_CLOSING
 
 【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・軽症）】
 S
-GIP/GLP-1受容体作動薬（注射）の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
+GIP/GLP-1受容体作動薬（注射）の使用により注射部位に軽い痛みやしこりがあるが、治療は継続できている。
 
 O
 {{drug_subject}}　処方

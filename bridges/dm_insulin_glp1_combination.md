@@ -642,7 +642,7 @@ P_CLOSING
 次回、治療経過および副作用の有無を確認。
 【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=インスリン／GLP-1受容体作動薬配合剤 SE継続（注射部位・軽症）】
 S
-インスリン／GLP-1受容体作動薬配合剤の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
+インスリン／GLP-1受容体作動薬配合剤の使用により注射部位に軽い痛みやしこりがあるが、治療は継続できている。
 O
 インスリン／GLP-1受容体作動薬配合剤　処方
 A

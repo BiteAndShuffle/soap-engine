@@ -872,7 +872,7 @@ P_CLOSING
 
 【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=超速効型インスリン製剤 SE継続（注射部位・軽症）】
 S
-超速効型インスリン製剤の使用により注射部位に軽い痛みやしこりがあるが、日常生活は送れている。
+超速効型インスリン製剤の使用により注射部位に軽い痛みやしこりがあるが、治療は継続できている。
 O
 超速効型インスリン製剤　処方
 A
