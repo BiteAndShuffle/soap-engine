@@ -557,16 +557,36 @@ export function getDrugSuggestions(
     a.originalIndex - b.originalIndex,
   )
 
-  // (moduleId:matchedBrandName) 単位でデデュープ。
-  // 同一モジュール内で一般名が共通する複数ブランド（リザベン vs トラメラスPF 等）を
-  // それぞれ独立した候補として返せるようにするため moduleId 単位ではなく
-  // (moduleId:brandName) 単位で管理する。
-  const seenModuleBrands = new Set<string>()
-  const results: DrugSuggestionItem[] = []
+  // 候補は最終的に4つのバケツへ振り分け、
+  // [genericMode] → [direct] → [sibling] → [genericHeader] の順で結合する。
+  //
+  // - genericMode: 一般名（成分名）検索の結果（見出し→同一genericKeyブランド群、
+  //   モジュールごとの相対順序をそのまま維持する）
+  // - direct: ブランド名検索で入力に直接一致したブランド候補（モジュール横断でまとめる）
+  // - sibling: ブランド名検索で同一genericKeyの併売ブランド候補（モジュール横断でまとめる）
+  // - genericHeader: ブランド名検索時の一般名単独候補（モジュール横断で最後にまとめる）
+  //
+  // これにより、同一ブランドファミリー（例: ヒューマリン系）が複数モジュール
+  // （regular / intermediate / mixed 等）に分散していても、直接一致ブランドが
+  // 先頭にまとまって表示される。
+  type Bucket = 'genericMode' | 'direct' | 'sibling' | 'genericHeader'
+  interface BucketedCandidate {
+    moduleId: string
+    templateId: string
+    brand: string | undefined
+    displayLabel: string
+    uiLabel?: string
+    isGenericLabel?: boolean
+    dedupKeyOverride?: string
+  }
+  const bucketed: Record<Bucket, BucketedCandidate[]> = {
+    genericMode: [],
+    direct: [],
+    sibling: [],
+    genericHeader: [],
+  }
 
   for (const { entry } of scored) {
-    if (results.length >= limit) break
-
     // ブランド候補リストを収集する
     const candidates: Array<{
       brand: string | undefined
@@ -575,6 +595,7 @@ export function getDrugSuggestions(
       isGenericLabel?: boolean
       /** dedup キーの上書き（一般名見出し候補が特定ブランドのキーと衝突しないようにする） */
       dedupKeyOverride?: string
+      bucket: Bucket
     }> = []
 
     // Step 1: 複数トークンの場合、全トークン連結を先に試す。
@@ -596,6 +617,7 @@ export function getDrugSuggestions(
         brand: concatBrand,
         displayLabel: isDirectBrandMatch ? concatBrand :
           (entry.brandCatalogGenericMap[concatBrand] ?? concatBrand),
+        bucket: 'direct',
       })
     } else {
       // Step 2: primaryToken に対して priority 1-4 で一致する全ブランドを展開。
@@ -636,17 +658,19 @@ export function getDrugSuggestions(
                 // （例: dm_insulin_rapid_analog と dm_insulin_mixed_rapid_intermediate が
                 // 同じ「インスリンアスパルト」を指す場合、見出しは1回のみ表示する）
                 dedupKeyOverride: `__generic__:${genericName}`,
+                bucket: 'genericMode',
               })
               for (const brand of brandsInGroup) {
                 candidates.push({
                   brand,
                   displayLabel: brand,
                   uiLabel: `${brand}（${genericName}）`,
+                  bucket: 'genericMode',
                 })
               }
             } else {
               for (const brand of brandsInGroup) {
-                candidates.push({ brand, displayLabel: brand })
+                candidates.push({ brand, displayLabel: brand, bucket: 'genericMode' })
               }
             }
           }
@@ -654,6 +678,7 @@ export function getDrugSuggestions(
             candidates.push({
               brand,
               displayLabel: entry.brandCatalogGenericMap[brand] ?? brand,
+              bucket: 'genericMode',
             })
           }
         } else {
@@ -671,18 +696,18 @@ export function getDrugSuggestions(
             const genericKey = entry.brandCatalogGenericKeyMap[brand]
             const generic = entry.brandCatalogGenericMap[brand]
             if (genericKey && generic) {
-              candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${generic}）` })
+              candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${generic}）`, bucket: 'direct' })
               const siblings = entry.brandNames.filter(
                 b => b !== brand && entry.brandCatalogGenericKeyMap[b] === genericKey,
               )
               for (const sib of siblings) {
                 if (pushedBrands.has(sib)) continue
                 pushedBrands.add(sib)
-                candidates.push({ brand: sib, displayLabel: sib, uiLabel: `${sib}（${generic}）` })
+                candidates.push({ brand: sib, displayLabel: sib, uiLabel: `${sib}（${generic}）`, bucket: 'sibling' })
               }
               trailingGeneric = generic
             } else {
-              candidates.push({ brand, displayLabel: brand })
+              candidates.push({ brand, displayLabel: brand, bucket: 'direct' })
             }
           }
           if (trailingGeneric) {
@@ -694,6 +719,7 @@ export function getDrugSuggestions(
               // モジュール横断で同一表示一般名の見出しが重複しないよう、
               // moduleId を含めず表示文字列のみで dedup する
               dedupKeyOverride: `__generic__:${trailingGeneric}`,
+              bucket: 'genericHeader',
             })
           }
         }
@@ -716,6 +742,7 @@ export function getDrugSuggestions(
             : isDirectBrandMatch
               ? matchedBrandName
               : (entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName),
+          bucket: isDirectBrandMatch ? 'direct' : 'genericMode',
         })
       }
     }
@@ -725,21 +752,40 @@ export function getDrugSuggestions(
       ? candidates.filter(c => c.brand !== undefined && isPFBrand(entry, c.brand))
       : candidates
 
-    // 候補を (moduleId:brand) dedup でフィルタして results に追加
-    for (const { brand, displayLabel, uiLabel, isGenericLabel, dedupKeyOverride } of activeCandidates) {
-      if (results.length >= limit) break
-      const key = dedupKeyOverride ?? `${entry.moduleId}:${brand ?? '__no_brand__'}`
-      if (seenModuleBrands.has(key)) continue
-      seenModuleBrands.add(key)
-      results.push({
+    // バケツへ振り分ける（モジュール横断の結合は最後にまとめて行う）
+    for (const { brand, displayLabel, uiLabel, isGenericLabel, dedupKeyOverride, bucket } of activeCandidates) {
+      bucketed[bucket].push({
         moduleId: entry.moduleId,
-        drugDisplayLabel: displayLabel,
-        matchedBrandName: brand,
-        representativeTemplateId: entry.templateId,
+        templateId: entry.templateId,
+        brand,
+        displayLabel,
         uiLabel,
         isGenericLabel,
+        dedupKeyOverride,
       })
     }
+  }
+
+  // [genericMode] → [direct] → [sibling] → [genericHeader] の順で結合し、
+  // (moduleId:matchedBrandName) 単位でデデュープする。
+  // 同一モジュール内で一般名が共通する複数ブランド（リザベン vs トラメラスPF 等）を
+  // それぞれ独立した候補として返せるようにするため moduleId 単位ではなく
+  // (moduleId:brandName) 単位で管理する。
+  const seenModuleBrands = new Set<string>()
+  const results: DrugSuggestionItem[] = []
+  for (const c of [...bucketed.genericMode, ...bucketed.direct, ...bucketed.sibling, ...bucketed.genericHeader]) {
+    if (results.length >= limit) break
+    const key = c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`
+    if (seenModuleBrands.has(key)) continue
+    seenModuleBrands.add(key)
+    results.push({
+      moduleId: c.moduleId,
+      drugDisplayLabel: c.displayLabel,
+      matchedBrandName: c.brand,
+      representativeTemplateId: c.templateId,
+      uiLabel: c.uiLabel,
+      isGenericLabel: c.isGenericLabel,
+    })
   }
 
   return results
