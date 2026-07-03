@@ -438,6 +438,13 @@ P
 インスリン／GLP-1受容体作動薬配合剤の継続中に、注射部位が硬くなることがあります。
 毎回注射部位を変えることで予防できます。
 気になる症状があればご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=インスリン／GLP-1受容体作動薬配合剤 副作用なし（低血糖）】

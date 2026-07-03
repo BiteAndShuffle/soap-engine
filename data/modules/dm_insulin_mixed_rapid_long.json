@@ -1941,7 +1941,16 @@
       },
       "situationFilter": [
         "general"
-      ]
+      ],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
     },
     {
       "id": "se_hypo_none",
