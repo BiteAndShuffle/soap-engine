@@ -766,17 +766,20 @@ export function getDrugSuggestions(
     }
   }
 
-  // [genericMode] → [direct] → [sibling] → [genericHeader] の順で結合し、
-  // (moduleId:matchedBrandName) 単位でデデュープする。
-  // 同一モジュール内で一般名が共通する複数ブランド（リザベン vs トラメラスPF 等）を
-  // それぞれ独立した候補として返せるようにするため moduleId 単位ではなく
-  // (moduleId:brandName) 単位で管理する。
+  // 最終結合は [genericMode] → [direct] → [sibling] → [genericHeader] の順を維持しつつ、
+  // ブランド名検索（direct/sibling/genericHeader が使われるケース）では genericHeader に
+  // 最低表示枠を確保する。direct+sibling候補が多いクエリ（例: 複数モジュールにまたがる
+  // ブランドファミリー）でも、一般名見出しが limit 切れで全滅しないようにするため。
+  //
+  // 予約数 = min(genericHeaderの種類数, 3, 残り枠)。genericMode（一般名検索）は
+  // この予約ロジックの対象外で、従来どおり limit を直接消費する。
   const seenModuleBrands = new Set<string>()
   const results: DrugSuggestionItem[] = []
-  for (const c of [...bucketed.genericMode, ...bucketed.direct, ...bucketed.sibling, ...bucketed.genericHeader]) {
-    if (results.length >= limit) break
+
+  const pushCandidate = (c: BucketedCandidate): boolean => {
+    if (results.length >= limit) return false
     const key = c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`
-    if (seenModuleBrands.has(key)) continue
+    if (seenModuleBrands.has(key)) return false
     seenModuleBrands.add(key)
     results.push({
       moduleId: c.moduleId,
@@ -786,6 +789,44 @@ export function getDrugSuggestions(
       uiLabel: c.uiLabel,
       isGenericLabel: c.isGenericLabel,
     })
+    return true
+  }
+
+  // Step 1: genericMode（一般名検索の見出し→ブランド群）は従来どおり limit を直接消費する
+  for (const c of bucketed.genericMode) {
+    if (results.length >= limit) break
+    pushCandidate(c)
+  }
+
+  // Step 2: genericHeader の予約枠を決定する（重複キーを除いた種類数 / 上限3 / 残り枠が上限）
+  const uniqueHeaderKeys = new Set(
+    bucketed.genericHeader.map(c => c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`),
+  )
+  const remainingAfterGenericMode = Math.max(limit - results.length, 0)
+  const reserved = Math.min(uniqueHeaderKeys.size, 3, remainingAfterGenericMode)
+  const directSiblingBudget = remainingAfterGenericMode - reserved
+
+  // Step 3: direct → sibling の順で、確保した残り枠まで詰める
+  let directSiblingAdded = 0
+  for (const c of [...bucketed.direct, ...bucketed.sibling]) {
+    if (directSiblingAdded >= directSiblingBudget) break
+    if (pushCandidate(c)) directSiblingAdded++
+  }
+
+  // Step 4: genericHeader を予約枠まで詰める（種類の重複は pushCandidate の dedup で自然に防がれる）
+  let headerAdded = 0
+  for (const c of bucketed.genericHeader) {
+    if (headerAdded >= reserved) break
+    if (pushCandidate(c)) headerAdded++
+  }
+
+  // Step 5: 予約枠・direct/sibling枠のいずれかが余った場合（候補数が枠より少なかった等）、
+  // 余った枠を direct → sibling → genericHeader の優先順で埋め直す
+  if (results.length < limit) {
+    for (const c of [...bucketed.direct, ...bucketed.sibling, ...bucketed.genericHeader]) {
+      if (results.length >= limit) break
+      pushCandidate(c)
+    }
   }
 
   return results
