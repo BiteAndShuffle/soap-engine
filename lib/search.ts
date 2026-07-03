@@ -792,25 +792,24 @@ export function getDrugSuggestions(
     return true
   }
 
-  // direct bucket 内をブランドファミリー単位でまとめる。
-  // クエリに一致した部分より後ろの文字列（suffix）を安定ソートすることで、
-  // 共通する接頭辞を持つブランド同士が自然に隣接する（例: "ひゅーま" クエリで
-  // "りんr"/"りんn"/"りん37"はソート後に隣接し、"ろぐ"/"ろぐみっくす25"とは分離される）。
+  // direct bucket 内をブランドファミリー単位でまとめる（安定グルーピング）。
+  // クエリに一致した部分より後ろの文字列の先頭1文字を「ファミリーキー」とし、
+  // 同じキーを持つ候補をまとめる。グループの並び順・グループ内の並び順は
+  // どちらも元の bucketed.direct の出現順（stable order）を維持する
+  // （辞書順ソートはしない）。例: "ひゅーま" クエリでは "りんr"/"りんn"/"りん37"が
+  // 先頭1文字"り"で1グループにまとまり、"ろぐ"/"ろぐみっくす25"は"ろ"で別グループになる。
   // 特定ブランド名のハードコードは行わず、文字列比較のみで判定する。
   // sibling / genericMode / genericHeader の並び順には影響しない。
   const queryPt = tokens[0] ?? ''
-  const sortedDirect = [...bucketed.direct]
-    .map((c, originalIndex) => {
-      const norm = normalizeText(c.brand ?? c.displayLabel ?? '')
-      const suffix = norm.startsWith(queryPt) ? norm.slice(queryPt.length) : norm
-      return { c, suffix, originalIndex }
-    })
-    .sort((a, b) => {
-      if (a.suffix < b.suffix) return -1
-      if (a.suffix > b.suffix) return 1
-      return a.originalIndex - b.originalIndex
-    })
-    .map(x => x.c)
+  const familyGroups = new Map<string, BucketedCandidate[]>()
+  for (const c of bucketed.direct) {
+    const norm = normalizeText(c.brand ?? c.displayLabel ?? '')
+    const suffix = norm.startsWith(queryPt) ? norm.slice(queryPt.length) : norm
+    const familyKey = suffix.length > 0 ? suffix[0] : suffix
+    if (!familyGroups.has(familyKey)) familyGroups.set(familyKey, [])
+    familyGroups.get(familyKey)!.push(c)
+  }
+  const sortedDirect = [...familyGroups.values()].flat()
 
   // Step 1: genericMode（一般名検索の見出し→ブランド群）は従来どおり limit を直接消費する
   for (const c of bucketed.genericMode) {
