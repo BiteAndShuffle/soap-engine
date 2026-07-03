@@ -631,7 +631,11 @@ export function getDrugSuggestions(
                 displayLabel: genericName,
                 uiLabel: genericName,
                 isGenericLabel: true,
-                dedupKeyOverride: `${entry.moduleId}:__generic__:${key}`,
+                // モジュール横断で同一表示一般名の見出しが重複しないよう、
+                // moduleId を含めず表示文字列のみで dedup する
+                // （例: dm_insulin_rapid_analog と dm_insulin_mixed_rapid_intermediate が
+                // 同じ「インスリンアスパルト」を指す場合、見出しは1回のみ表示する）
+                dedupKeyOverride: `__generic__:${genericName}`,
               })
               for (const brand of brandsInGroup) {
                 candidates.push({
@@ -687,7 +691,9 @@ export function getDrugSuggestions(
               displayLabel: trailingGeneric,
               uiLabel: trailingGeneric,
               isGenericLabel: true,
-              dedupKeyOverride: `${entry.moduleId}:__generic__:${trailingGeneric}`,
+              // モジュール横断で同一表示一般名の見出しが重複しないよう、
+              // moduleId を含めず表示文字列のみで dedup する
+              dedupKeyOverride: `__generic__:${trailingGeneric}`,
             })
           }
         }
