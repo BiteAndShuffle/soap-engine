@@ -527,6 +527,33 @@ Aは JSON 内部の参照切れのみを確認する。Y は bridge 本文まで
 
 ---
 
+### AA. Alias Field Bridge Parity（alias系フィールド同期監査）
+
+← RULES.md §23
+
+Y（addonsRef）と同じ構造の監査を、alias系フィールドに適用する。
+詳細な機械比較は `scripts/audit-alias-bridge-chain.ts` に委譲し、
+本チェックでは対象範囲と判定基準のみを定義する（PN7自体を肥大化させない）。
+
+```
+対象:
+  - brandCatalog[brand].aliases
+  - brandCatalog[brand].normalizedAliases
+  - drug.aliasToBrand
+  - drug.nameAliases
+  - drug.search.nameAliases
+  - drug.search.exactAliases
+
+1. npx tsx scripts/audit-alias-bridge-chain.ts を実行する
+2. 出力された不整合はすべて bridge⇔JSON の同期漏れとして扱う
+3. 修正方針は RULES.md §23 に従う（機械的にどちらかを勝たせず、
+   内容を確認したうえでbridge/JSONいずれを直すか判断する）
+4. drug.search.prefixAliases は runtime から参照されない情報的フィールドのため、
+   本チェックの対象外とする（moduleValidator の別チェックで形式のみ確認する）
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -576,6 +603,7 @@ W. uiVariant保持確認:                 PASS / FAIL / NOT_CHECKED
 X. index標準フィールド確認:           PASS / FAIL
 Y. bridge P_ADDON⇔addonsRef一致:      PASS / FAIL
 Z. Addon責務一貫性:                   PASS / CHECK
+AA. alias系フィールド同期:            PASS / FAIL
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件 / CHECK: {N} 件
@@ -620,7 +648,8 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "W_uiVariant": "NOT_CHECKED",
     "X_indexStandardFields": "PASS",
     "Y_addonsRefBridgeMatch": "PASS",
-    "Z_addonResponsibilityConsistency": "PASS"
+    "Z_addonResponsibilityConsistency": "PASS",
+    "AA_aliasFieldBridgeParity": "PASS"
   },
   "failCount": 0,
   "checkCount": 0,

@@ -677,4 +677,31 @@ Addonは本文（S/O/A/P）を補助するための付随物ではなく、独�
 - 両者は独立して適用する。addonsRefを変更する場合、その根拠が
   Addon自身の責務変化であることを常に説明できなければならない
 
+---
+
+## 23. Alias Fields Synchronization Principle（alias系フィールド同期原則）
+
+`brandCatalog[].aliases` / `normalizedAliases` / `aliasToBrand` / `drug.nameAliases` /
+`drug.search.nameAliases` / `drug.search.exactAliases` は、bridgeとJSONが常に
+同期されている必要がある。
+
+- これらのフィールドをJSON側だけで追加・変更した場合、bridgeへの反映漏れ
+  （同期違反）として扱う
+- 同期違反を検出した場合、機械的にどちらかを勝たせるのではなく、内容を確認して
+  判断する。多くの場合はJSON側が実運用で検証済みであるため、bridge側を
+  JSONに合わせて追記する対応になるが、JSON側に誤りが混入していた場合は
+  逆にJSON側を修正する
+- `drug.nameAliases` と `drug.search.nameAliases` はJSON内で常に完全一致していること
+  （§8）に加え、bridge記載ともそれぞれ一致していること
+
+§20（Addon Independent Responsibility Principle の前段、addonsRef Source of Truth）
+との関係:
+- §20 は「addonsRefの編集起点はbridgeであるべき」という**編集ワークフロー**の原則
+- §23 は「alias系フィールドについて、bridgeとJSONの**状態が今一致しているか**」
+  という同期状態そのものを扱う原則。§20と同じ編集規律をalias系フィールドにも
+  適用する
+
+（機械検証は `scripts/audit-alias-bridge-chain.ts`、監査手順の詳細は
+`prompts/vNext/PN7-Cross-Reference-Audit.md` check AA を参照）
+
 （監査手順の詳細は `prompts/vNext/PN7-Cross-Reference-Audit.md` check Z を参照）

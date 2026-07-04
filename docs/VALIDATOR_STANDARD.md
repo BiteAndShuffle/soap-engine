@@ -169,6 +169,7 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 | CrossModuleValidator | クロスモジュール機械判定 | コード | moduleId + globalId の横断一意性。build 時に必ず通る |
 | `scripts/audit-addon-bridge-chain.ts` | bridge⇔JSON⇔runtime 横断監査 | コード | bridge の `P_ADDON` 記載まで遡って `addonsRef` と突合し、`getVisibleAddonKeys()` を実行して AddonPanel に実際に届くかまで確認する。ModuleValidator / P3 は JSON 内部の整合のみを見るため代替できない。既存モジュール改修時は毎回実行する（`docs/IMPLEMENTATION_CHECKLIST.md` 参照） |
 | PN7 check Z（Addon Responsibility Consistency） | 近似シナリオ間の addon 責務一貫性監査 | 現状は AI（PN7 実行時） | 責務が近いシナリオ間で `addonsRef` 構成を比較し、責務では説明できない差分を CHECK として報告する（RULES.md §22）。将来的に `scripts/audit-addon-bridge-chain.ts` 等への自動化を予定するが、現時点ではコード化されていない |
+| `scripts/audit-alias-bridge-chain.ts` | alias系フィールドの bridge⇔JSON 同期監査 | コード | `brandCatalog[].aliases`/`normalizedAliases`・`aliasToBrand`・`nameAliases`・`search.nameAliases`・`search.exactAliases` がbridgeとJSONで一致しているかを確認する（RULES.md §23）。`scripts/audit-addon-bridge-chain.ts` とはモジュール一覧取得・出力形式（`scripts/auditShared.ts`）のみ共有し、パース対象は別（フレームワーク化は将来課題） |
 
 ### 具体的な責務分担例
 
@@ -177,6 +178,7 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 | `addonsRef["foo"]` → `addons.items["foo"]` が存在するか | **ModuleValidator** (check 5) |
 | bridge の `P_ADDON` と `addonsRef` が完全一致するか、AddonPanel に実際に表示されるか | **`scripts/audit-addon-bridge-chain.ts`**（PN7 check Y） |
 | 近似責務シナリオ間で addon 構成に説明できない差分が無いか | **PN7 check Z**（将来的に自動化予定） |
+| alias系フィールドがbridgeとJSONで一致しているか | **`scripts/audit-alias-bridge-chain.ts`**（PN7 check AA） |
 | `brandToTags` のタグが `TAG_TO_GENERIC_NAME` で解決できるか | **P3** |
 | `brandToTags` のタグが成分名として医学的に正しいか | **人間レビュー** |
 | `scenario.S` が医療記録として適切な文言か | **P3** + **人間レビュー** |

@@ -35,19 +35,10 @@ import fs from 'fs'
 import path from 'path'
 import { getVisibleAddonKeys } from '../lib/addonFilter'
 import type { ModuleData, Scenario } from '../lib/types'
+import { listModuleIds, printAuditReport, type AuditIssue } from './auditShared'
 
 const MODULES_DIR = path.resolve('./data/modules')
 const BRIDGES_DIR = path.resolve('./bridges')
-
-// ─────────────────────────────────────────────────────────────
-// index.ts からモジュール一覧を抽出（自動選定・ハードコード禁止）
-// ─────────────────────────────────────────────────────────────
-
-function listModuleIds(): string[] {
-  const indexSrc = fs.readFileSync(path.join(MODULES_DIR, 'index.ts'), 'utf-8')
-  const matches = [...indexSrc.matchAll(/from '\.\/([a-zA-Z0-9_]+)\.json'/g)]
-  return matches.map(m => m[1])
-}
 
 // ─────────────────────────────────────────────────────────────
 // bridge から scenario id ごとの P_ADDON 一覧を抽出
@@ -104,14 +95,7 @@ function parseBridgeAddonRefs(bridgeText: string): Map<string, string[]> {
 // 監査本体
 // ─────────────────────────────────────────────────────────────
 
-interface Issue {
-  moduleId: string
-  scenarioId: string
-  code: string
-  detail: string
-}
-
-const issues: Issue[] = []
+const issues: AuditIssue[] = []
 const moduleIds = listModuleIds()
 
 for (const moduleId of moduleIds) {
@@ -119,7 +103,7 @@ for (const moduleId of moduleIds) {
   const bridgePath = path.join(BRIDGES_DIR, `${moduleId}.md`)
 
   if (!fs.existsSync(jsonPath)) {
-    issues.push({ moduleId, scenarioId: '-', code: 'JSON_NOT_FOUND', detail: jsonPath })
+    issues.push({ moduleId, target: '-', code: 'JSON_NOT_FOUND', detail: jsonPath })
     continue
   }
   if (!fs.existsSync(bridgePath)) {
@@ -142,7 +126,7 @@ for (const moduleId of moduleIds) {
     if (JSON.stringify(bridgeSorted) !== JSON.stringify(jsonSorted)) {
       issues.push({
         moduleId,
-        scenarioId: scenario.id,
+        target: scenario.id,
         code: 'BRIDGE_JSON_ADDONSREF_MISMATCH',
         detail: `bridge=${JSON.stringify(bridgeAddons)} json=${JSON.stringify(jsonAddons)}`,
       })
@@ -153,7 +137,7 @@ for (const moduleId of moduleIds) {
       if (!(key in (mod.addons?.items ?? {}))) {
         issues.push({
           moduleId,
-          scenarioId: scenario.id,
+          target: scenario.id,
           code: 'ADDON_ITEM_NOT_FOUND',
           detail: `key=${key} not in addons.items`,
         })
@@ -168,7 +152,7 @@ for (const moduleId of moduleIds) {
       if (JSON.stringify(visibleSorted) !== JSON.stringify(bridgeSorted)) {
         issues.push({
           moduleId,
-          scenarioId: scenario.id,
+          target: scenario.id,
           code: 'ADDON_NOT_VISIBLE_IN_PANEL',
           detail: `bridge宣言=${JSON.stringify(bridgeAddons)} だが getVisibleAddonKeys=${JSON.stringify(visible)}（AddonPanel に届かない）`,
         })
@@ -183,7 +167,7 @@ for (const moduleId of moduleIds) {
           if (withBrand.length === 0 && bridgeAddons.length > 0) {
             issues.push({
               moduleId,
-              scenarioId: scenario.id,
+              target: scenario.id,
               code: 'ADDON_HIDDEN_FOR_BRAND',
               detail: `brand=${brandName}: handlingTags=${JSON.stringify(brand.handlingTags ?? [])} により全 addon が非表示（bridge宣言=${JSON.stringify(bridgeAddons)}）`,
             })
@@ -198,26 +182,5 @@ for (const moduleId of moduleIds) {
 // レポート出力
 // ─────────────────────────────────────────────────────────────
 
-console.log(`\n監査対象モジュール: ${moduleIds.length}件\n`)
-
-if (issues.length === 0) {
-  console.log('\x1b[32m\x1b[1m✅ ADDON bridge→JSON→UI chain: 全モジュール PASS\x1b[0m\n')
-  process.exit(0)
-}
-
-const byCode = new Map<string, Issue[]>()
-for (const issue of issues) {
-  if (!byCode.has(issue.code)) byCode.set(issue.code, [])
-  byCode.get(issue.code)!.push(issue)
-}
-
-for (const [code, list] of byCode) {
-  console.log(`\x1b[31m\x1b[1m❌ ${code} (${list.length}件)\x1b[0m`)
-  for (const issue of list) {
-    console.log(`   ${issue.moduleId} / ${issue.scenarioId}: ${issue.detail}`)
-  }
-  console.log('')
-}
-
-console.log(`\x1b[31m\x1b[1m合計 ${issues.length} 件の不整合\x1b[0m\n`)
-process.exit(1)
+const exitCode = printAuditReport('ADDON bridge→JSON→UI chain', moduleIds.length, issues)
+process.exit(exitCode)

@@ -35,6 +35,11 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 3. `aliasToBrand` が brandCatalog の全 aliases を網羅していること
    - 各ブランドの aliases の全値が aliasToBrand のキーとして存在すること
 
+4. 生成した alias 系フィールド（aliases / normalizedAliases / aliasToBrand / nameAliases /
+   search.nameAliases / search.exactAliases）は、bridge.md 側にも同じ内容で反映すること
+   （JSON側だけの追加・変更は禁止 → RULES.md §23。機械検証は
+   `scripts/audit-alias-bridge-chain.ts`）
+
 ### genericKey 生成規則（任意フィールド）
 
 ← RULES.md §21（役割分離の原則）
