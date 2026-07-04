@@ -34,7 +34,7 @@ drug:
     exactAliases:
       - "ノボリンR"
       - "ヒューマリンR"
-      - "ヒトインスリン"
+      - "インスリンヒト"
 
     prefixAliases:
       - "のぼりんあーる"
@@ -85,9 +85,9 @@ drug:
     ノボリンR:
       displayName: "ノボリンR"
 
-      genericName: "ヒトインスリン"
+      genericName: "インスリンヒト"
 
-      displayGenericName: "ヒトインスリン"
+      displayGenericName: "インスリンヒト"
 
       aliases:
         - "のぼりんあーる"
@@ -106,9 +106,9 @@ drug:
     ヒューマリンR:
       displayName: "ヒューマリンR"
 
-      genericName: "ヒトインスリン"
+      genericName: "インスリンヒト"
 
-      displayGenericName: "ヒトインスリン"
+      displayGenericName: "インスリンヒト"
 
       aliases:
         - "ひゅーまりんあーる"

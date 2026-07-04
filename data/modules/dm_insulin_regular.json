@@ -69,7 +69,7 @@
       "exactAliases": [
         "ノボリンR",
         "ヒューマリンR",
-        "ヒトインスリン"
+        "インスリンヒト"
       ],
       "prefixAliases": [
         "のぼりんあーる",
@@ -118,8 +118,8 @@
     "brandCatalog": {
       "ノボリンR": {
         "displayName": "ノボリンR",
-        "genericName": "ヒトインスリン",
-        "displayGenericName": "ヒトインスリン",
+        "genericName": "インスリンヒト",
+        "displayGenericName": "インスリンヒト",
         "aliases": [
           "のぼりんあーる",
           "のぼりんr",
@@ -137,8 +137,8 @@
       },
       "ヒューマリンR": {
         "displayName": "ヒューマリンR",
-        "genericName": "ヒトインスリン",
-        "displayGenericName": "ヒトインスリン",
+        "genericName": "インスリンヒト",
+        "displayGenericName": "インスリンヒト",
         "aliases": [
           "ひゅーまりんあーる",
           "ひゅーまりんr",

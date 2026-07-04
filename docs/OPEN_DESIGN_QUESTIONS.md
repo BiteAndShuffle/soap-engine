@@ -21,6 +21,7 @@ SOAP Engine — 設計保留事項
 | Q-J1 | derm 3系 `composition.classKey` の剤形込み設計 | 🟡 中 | heparinoid 複数剤形の同時処方ユースケースが確定した時 |
 | Q-F4 | `composition.canonicalSource` の必須化範囲 | 🟡 中 | 多剤合成機能が安定した時 |
 | Q-G1 | 配合剤の `genericKey` 複数成分対応（`genericKeys: string[]`） | 🟢 低 | 単剤↔配合剤のクロス成分検索が要件化した時 |
+| Q-S1 | 一般名検索が module 単位 `exactAlias` 命中時に `brandNames[0]` へ縮退する検索ロジック | 🟡 中 | brandCatalog.aliases への一般名フルストリング拡張、または `lib/search.ts` 横断修正の要否を判断する時 |
 
 優先度の凡例:
 - 🔴 要判断: 新規 module 追加前に確定が必要
@@ -195,6 +196,38 @@ JSON_STANDARD.md JS-B で「多剤合成対象のみ必須」として暫定定�
 
 **現時点の扱い**
 選択肢Aで運用（`genericKey: string` のみ、配列は未導入）。
+
+---
+
+## Q-S1: 一般名検索が module 単位 exactAlias 命中時に brandNames[0] へ縮退する検索ロジック
+
+**論点**
+`lib/search.ts` の `getDrugSuggestions()` は、クエリが `drug.search.exactAliases`（module 単位の一般名エイリアス）にのみ完全一致し、`brandCatalog[brand].aliases`（brand 単位のエイリアス）には一致しない場合、`resolveAllHighPrecisionBrands()` が候補ブランドを1件も特定できず、フォールバック経路で `entry.drugDisplayLabel ?? brandNames[0]` の**1件のみ**を返す。
+
+**現状（2026-07 確認）**
+- `dm_insulin_regular`（ノボリンR / ヒューマリンR）と `dm_insulin_mixed_regular_intermediate`（ノボリン30R / イノレット30R / ヒューマリン3/7）は、一般名 `インスリンヒト` で共通する（2026-07 に `dm_insulin_regular` 側の表記を「ヒトインスリン」→「インスリンヒト」に統一済み）
+- `getDrugSuggestions("インスリンヒト")` は両 module を候補に含めるようになったが、各 module から `brandNames[0]` の代表1件（ノボリン30R / ノボリンR）しか返らない。イノレット30R・ヒューマリン3/7・ヒューマリンR は候補に出ない
+- 同じ挙動が `dm_insulin_long_acting`（`インスリングラルギン` で検索するとランタスのみ）でも再現しており、insulin ヒト固有ではなく複数ブランドを持つ一般名検索全般に共通する挙動
+- 短縮語（例: `ひと`）で検索した場合は `brandCatalog[brand].aliases` に短縮形が brand 単位で登録されているため、全ブランドが正しく展開される（この経路は問題なし）
+
+**原因**
+`resolveAllHighPrecisionBrands()` は `brandCatalog[brand].aliases` のみを参照し、module 単位の `exactAliasTokens` を見ない。一般名のフルストリングが brand 単位の `aliases` に複製されていない module では、このギャップが常に発生する。
+
+**選択肢**
+
+**選択肢A: brandCatalog.aliases に一般名フルストリングを複製する（データ側で対応）**
+- メリット: `lib/search.ts` のロジックを変更しない。既存挙動への影響がない
+- デメリット: module 追加のたびに bridge / JSON 双方で全 brand の aliases に同一文字列を複製する必要があり、50〜300+ module 規模の量産局面でスケールしない。`docs/VALIDATOR_STANDARD.md` §5 が「`exactAliases` の網羅性は設計判断」と明記する領域のため、機械的な自動複製もできない
+
+**選択肢B: `lib/search.ts` の `resolveAllHighPrecisionBrands()` を拡張し、module 単位 `exactAliasTokens` 一致時に同一 module 内の全 brand を候補として展開する（ロジック側で対応）**
+- メリット: データ複製が不要になり、将来 module 追加時も自動的に正しく展開される
+- デメリット: 全 module 共通ロジックの変更のため、既存の検索挙動（特に `suppressCrossModuleSuggestionsOnExactHit` との相互作用）に対する回帰確認が必要。`docs/VALIDATOR_STANDARD.md` の Runtime Compatibility（P4相当）検証が要る
+
+**推奨判断タイミング**
+brandCatalog.aliases への一般名フルストリング追加、または `lib/search.ts` 横断修正のどちらで対応するかを決定する時（2026-07 の insulin ヒト表記統一作業では意図的にスコープ外とした）。
+
+**現時点の扱い**
+未対応。次回対応時にどちらの選択肢を取るか要判断。
 
 ---
 
