@@ -143,6 +143,7 @@
 **次フェーズ候補**（優先順位未確定）
 
 - P0-E 保留継続
+- DPP4実装（別薬効領域への展開。着手前に本ファイル・HANDOFF.md・DESIGN_PRINCIPLES.md DP-09 を確認すること）
 
 **次フェーズでまだ実施しないこと** → セクション9参照
 
@@ -154,6 +155,7 @@
 | 完了 | `dm_insulin_rapid_analog.json` の vNext 体系での JSON 化 |
 | 完了 | `dm_insulin_regular.json` の vNext 体系での JSON 化 |
 | 完了 | `dm_insulin_intermediate.json` の vNext 体系での JSON 化 |
+| 完了 | 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field既存不具合修正、2026-07。詳細: DESIGN_PRINCIPLES.md DP-09 / OPEN_DESIGN_QUESTIONS.md Q-S1 / RULES.md CHECK-O01） |
 
 vNext 作業手順の詳細は `prompts/vNext/HANDOFF.md` を参照。
 

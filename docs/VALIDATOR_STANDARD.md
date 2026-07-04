@@ -202,6 +202,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 |---|---|---|
 | `SCENARIO_ID_MISSING` | `scenario.id` が未定義 | 中（scenarioValidator でカバー済みか確認要） |
 | `ADDON_P_APPEND_MISSING` | addon に `P_APPEND` が存在しない | 中（P3 が現在 ERROR とする） |
+| `GENERIC_NAME_UNREACHABLE` | `brandCatalog[brand].displayGenericName` の正規化形が、module 単位・brand 単位いずれの alias にも存在しない brand の存在確認（Q-S1 Tier2/3 再発防止。「読みが1件もないか」の存在確認のみで内容判断は含まない） | 中（`docs/OPEN_DESIGN_QUESTIONS.md` Q-S1 参照。未実装） |
 
 ### Reference（単一モジュール内）
 

@@ -201,6 +201,8 @@ JSON_STANDARD.md JS-B で「多剤合成対象のみ必須」として暫定定�
 
 ## Q-S1: 一般名検索が module 単位 exactAlias 命中時に brandNames[0] へ縮退する検索ロジック
 
+→ 確定した設計原則は `docs/DESIGN_PRINCIPLES.md` DP-09（一般名検索到達性原則）を参照。本節は Tier 分類・調査経緯・残課題の詳細記録。
+
 **現象**
 module 単位 `exactAlias` 命中時に `resolveAllHighPrecisionBrands()` がブランドを1件も特定できず、`entry.drugDisplayLabel ?? brandNames[0]`（module 内で最初に宣言されたブランド）へ縮退する。同一一般名に属する兄弟ブランドが検索結果から欠落する。
 

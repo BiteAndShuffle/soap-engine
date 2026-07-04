@@ -544,6 +544,7 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | CHECK-G01 | OPEN | `"adherence"` group が JSON_STANDARD.md に有効値として定義されているが AddonPanel.tsx GROUP_ORDER 未登録（下記詳細参照） | app/components/AddonPanel.tsx / docs/JSON_STANDARD.md | AddonPanel に `"adherence"` を追加するか GROUP_LABELS に日本語ラベルを定義するか要判断 |
 | CHECK-G02 | OPEN | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_ORDER 未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | 新規 module では使用しないこと。既存ファイルの migration 要否は別途判断 |
 | CHECK-TP01 | OPEN | `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` に `thirdPanelSPlacement` キーが存在しない（Section 14 ルール違反） | data/modules/dm_gip_glp1ra_tirzepatide_injection.json | 次回 audit 時に thirdPanelSPlacement 固定値を追加する |
+| CHECK-O01 | **RESOLVED** | `dm_glp1ra_semaglutide_oral`（全28シナリオ）・`dm_glp1ra_injection`（全34シナリオ）の O フィールドが `{{drug_subject}}` ではなく薬効分類名固定（`GLP-1受容体作動薬(内服)`/`(注射)`）になっていた（Section 16 O フィールドルール違反）。旧体系生成時からの既存欠陥で、2026-07 の多剤合成テストで発見 | data/modules/dm_glp1ra_semaglutide_oral.json / data/modules/dm_glp1ra_injection.json | 2026-07 修正済み（状態語は保持したまま `{{drug_subject}}` へ置換）。新規 module では Section 16 を厳守すること |
 
 ---
 

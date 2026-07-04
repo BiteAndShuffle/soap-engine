@@ -28,7 +28,7 @@
 
 `data/modules/` に薬剤ごとの JSON モジュールを追加する段階です。
 
-**現時点で登録済みモジュール（全 14件 — tsc / build / ModuleValidator / CrossModuleValidator PASS）:**
+**現時点で登録済みモジュール（全 19件 — tsc / build / ModuleValidator / CrossModuleValidator PASS）:**
 
 | moduleId | bridge | JSON | index.ts |
 |---|---|---|---|
@@ -46,8 +46,13 @@
 | dm_insulin_regular | ✅ | ✅ | ✅ |
 | dm_insulin_rapid_analog | ✅ | ✅ | ✅ |
 | dm_insulin_intermediate | ✅ | ✅ | ✅ |
+| dm_insulin_mixed_regular_intermediate | ✅ | ✅ | ✅ |
+| dm_insulin_long_acting | ✅ | ✅ | ✅ |
+| dm_insulin_mixed_rapid_intermediate | ✅ | ✅ | ✅ |
+| dm_insulin_mixed_rapid_long | ✅ | ✅ | ✅ |
+| dm_insulin_glp1_combination | ✅ | ✅ | ✅ |
 
-**bridge はあるが JSON / index.ts 未着手のモジュール:** なし（全 14件完了）
+**bridge はあるが JSON / index.ts 未着手のモジュール:** なし（全 19件完了）
 
 **次の作業:** 新規モジュールの bridge 作成 → PN1〜PN8 実行
 
@@ -558,6 +563,17 @@ PN2 で `composition.classKey` などが PENDING になった場合:
 vNext には対応する明示的なチェック項目がない。  
 **現状**: 運用ルール「RULES.md §1 — 未指定の data/modules 内 JSON を自動選定してはならない」で代替している。  
 **対応**: vNext への正式追加は未定。
+
+## 一般名検索到達性（Q-S1）と O field 修正（2026-07 完了）
+
+糖尿病領域モジュール群で、一般名（成分名）検索が同一成分の兄弟ブランドへ正しく展開されない問題（Tier1〜3）と、  
+`dm_glp1ra_semaglutide_oral` / `dm_glp1ra_injection` の O field が薬効分類名固定になっていた問題（RULES.md §16 違反）を修正済みです。
+
+- 採用した設計原則: `docs/DESIGN_PRINCIPLES.md` DP-09（一般名検索到達性原則）
+- Tier 分類・残課題の詳細経緯: `docs/OPEN_DESIGN_QUESTIONS.md` Q-S1
+- O field 修正の記録: `prompts/RULES.md` CHECK-O01
+
+新規モジュール（DPP4 等）を作成する際は、上記 DP-09 と PN2-Drug-Header.md の brandCatalog alias 心得を確認してください。
 
 ---
 

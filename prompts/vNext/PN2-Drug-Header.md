@@ -51,6 +51,17 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 - 同一 `genericKey` を持つブランド同士は検索候補で同一成分グループとして展開されるため、臨床的に別グループとして扱うべき場合は必ずキーを分けること
 - 配合剤には単剤の `genericKey` を流用せず、専用の単一文字列キーを割り当てること（例: `insulin_degludec_aspart_combo`）。単剤・配合剤間のクロス検索は現時点で非対応
 
+### brandCatalog alias 生成時の心得（一般名検索到達性）
+
+← `docs/DESIGN_PRINCIPLES.md` DP-09（一般名検索到達性原則）
+
+一般名（成分名）検索で当該 brand に到達できるよう、`brandCatalog.{brand}.aliases` に一般名の読みを含めることが望ましい。
+
+- 新規 alias を推測生成しない（RULES.md §2 PROHIBITED_UNIVERSAL）
+- 既に確立済みの読みが同系統モジュールに存在する場合はそれを流用する（例: `ぐらるぎん` / `でぐるでく` は `dm_insulin_long_acting`、`あすぱると` は `dm_insulin_mixed_rapid_intermediate` で確立済み）
+- 配合剤は構成成分ごとに読みを個別登録し、どちらの成分名からでも到達できるようにする
+- alias 追加の要否自体は人間判断（`docs/VALIDATOR_STANDARD.md` §5「exactAliases の網羅性は設計判断」）であり、機械的な網羅性チェックは行わない
+
 ### composition セクション生成
 
 bridge の composition フィールドおよび同系統モジュールを参考に生成する。

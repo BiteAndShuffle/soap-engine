@@ -284,6 +284,33 @@ preset は実運用で確定した ADDON の組み合わせを固定するもの
 
 ---
 
+## DP-09: 一般名検索到達性原則（Generic Name Search Reachability Principle）
+
+**目的**
+ユーザーが一般名（成分名）で検索した場合、その成分に属する全ブランドへ到達できるようにする。
+
+**適用範囲**
+複数 brand を持つ全 module（単剤・配合剤とも）
+
+**方針**
+- `brandCatalog[brand].displayGenericName` を検索解決に活用する。`lib/search.ts` の `resolveAllHighPrecisionBrands()` がクエリと各 brand の `displayGenericName`（正規化形）を照合し、一致した brand を検索候補として抽出する
+- `genericKey` によるグルーピング判断（RULES.md §21）とは役割を分離する。`displayGenericName` はクエリとの一致判定のみに使い、「どの brand を束ねるか」の判断には使わない
+- 配合剤（例: ソリクア＝インスリングラルギン／リキシセナチド）は、構成成分ごとの読みを個別に登録し、単剤側（例: ランタス）からも配合剤側（例: ソリクア）からも、どちらの成分名で検索しても到達できるようにする
+
+**不採用とした方針**
+`brandCatalog[brand].aliases` へ一般名のフルストリングを brand ごとに複製する方式は、50〜300+ module 規模の量産局面で bridge / JSON 双方への複製作業が線形に増え保守負荷が高すぎるため不採用とした。複製漏れは実際に発見されており（無関係な brand が代表候補として誤表示される事例）、データ複製に依存しない現方針の採用理由となっている。
+
+**採用理由**
+`displayGenericName` は JS-A-drug（`docs/JSON_STANDARD.md`）で全 brand 必須のフィールドであり、bridge 記載時点で既に人間レビュー済みである。新たな alias データを追加生成せず、既存の正本データを検索にも活用することで、bridge への追記なしに全 module へ適用される。
+
+**関連フィールド**
+`brandCatalog[brand].displayGenericName` / `genericKey`（RULES.md §21）/ `lib/search.ts` の `resolveAllHighPrecisionBrands()`
+
+**詳細経緯**
+Tier 分類・残課題（cross-module 欠落・genericKey 命名不統一等）は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S1 を参照。
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -303,6 +330,7 @@ preset は実運用で確定した ADDON の組み合わせを固定するもの
 | addons.orderPresets | DP-08 |
 | bridge と JSON の乖離 | DP-07 |
 | moduleVersion | DP-04 |
+| 一般名検索到達性 / brandCatalog alias | DP-09 |
 
 ### 失われると事故要因になる原則
 
