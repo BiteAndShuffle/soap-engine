@@ -1,7 +1,7 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-06-27（次モジュール開始用に更新）  
+最終更新: 2026-07-05（Q-S1/O field修正・多剤合成テスト正式化を反映）  
 対象ブランチ: `feat/nlp-input-panel-and-new-schema`  
 リポジトリ: `/Users/AdNauseumTendrils/Desktop/soap-engine`
 
@@ -555,7 +555,6 @@ PN2 で `composition.classKey` などが PENDING になった場合:
 |---|---|
 | `.claude/settings.local.json` | Claude Code 自動更新。コミット対象外 |
 | `bridges/dm_gip_glp1ra_tirzepatide_injection.md.bak` | .bak ファイル。不要なら手動削除可 |
-| `scripts/test-multi-drug-synthesis.ts` | 用途未確認スクリプト。不要なら削除可 |
 
 ## GAP-01: vNext に CROSS_MODULE_DERIVATION_CHECK が存在しない
 
@@ -574,6 +573,22 @@ vNext には対応する明示的なチェック項目がない。
 - O field 修正の記録: `prompts/RULES.md` CHECK-O01
 
 新規モジュール（DPP4 等）を作成する際は、上記 DP-09 と PN2-Drug-Header.md の brandCatalog alias 心得を確認してください。
+
+## 多剤合成テスト（`npm run test:multi-drug`）— 正式回帰テストとして運用
+
+**なぜ正式化したか**  
+検索・alias・drug 構造（Q-S1 対応）を変更した際、複数薬剤を同時選択して SOAP を合成する経路（`buildNodeFields` + `mergeBlocks`）に悪影響がないかを、UI 実機確認だけでは見落としやすいと判明したため、`scripts/test-multi-drug-synthesis.ts` として Node/tsx のみで再実行できる形に整備しました。当初は一時スクリプトでしたが、DP-00（強くてニューゲーム原則）に基づき「検証手段も会話履歴に依存させずリポジトリへ永続化する」方針のもと、`npm run test:multi-drug` として正式にコミットしています。会話ログに検証手順が残っているだけでは、生成AIの担当交代（新規チャットへの切替、利用するAIサービスの変更を含む）が起きた瞬間に再現不能になるためです。
+
+**何を検出するか**  
+{{drug_subject}} 未解決 / O フィールドが薬効分類名固定のまま残っていないか（CHECK-O01 の回帰確認）/ uiVariant 等の内部文字列の SOAP 混入 / addonsRef 参照切れ / `getVisibleAddonKeys()`（AddonPanel が実際に呼ぶ関数）でのキー解決可否 / P closing の不自然な重複 / 同一成分・類似成分を含む薬剤同士の合成破綻。
+
+**いつ実行するか**
+- 検索・alias・drug 構造（`drug.search` / `brandCatalog` / `aliasToBrand` 等）を変更した場合（`docs/IMPLEMENTATION_CHECKLIST.md` に明記済み）
+- **糖尿病領域を完了とみなす前、および DPP4 など次の薬効領域に着手する前**（現状 20 ケース全 PASS が前提条件）
+- 新しい薬効領域のモジュールを追加した後（下記参照）
+
+**今後の運用**  
+新しい薬効領域（DPP4 等）のモジュールを追加したら、既存の 20 ケース（`scripts/test-multi-drug-synthesis.ts` の `TEST_CASES` 配列）に、その領域を含む組み合わせケースを追加していくこと。既存モジュールとの多剤併用（例: DPP4 + 既存インスリン/GLP-1）を必ず1ケース以上含める。ケースを削除する場合は「なぜ不要になったか」を PR やコミットメッセージに残すこと（DP-00 準拠）。
 
 ---
 

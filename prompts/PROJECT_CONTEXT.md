@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
 > **Version:** 2.0
-> **Last Updated:** 2026-06-19
-> **Current Focus:** P0-B / P1統合は現時点で見送り。基盤プロンプト整理完了。
+> **Last Updated:** 2026-07-05
+> **Current Focus:** 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field修正 + 多剤合成テスト正式化）完了。次フェーズ候補は DPP4実装（詳細: `prompts/vNext/HANDOFF.md`）。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -156,6 +156,7 @@
 | 完了 | `dm_insulin_regular.json` の vNext 体系での JSON 化 |
 | 完了 | `dm_insulin_intermediate.json` の vNext 体系での JSON 化 |
 | 完了 | 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field既存不具合修正、2026-07。詳細: DESIGN_PRINCIPLES.md DP-09 / OPEN_DESIGN_QUESTIONS.md Q-S1 / RULES.md CHECK-O01） |
+| 完了 | 多剤合成テストを `npm run test:multi-drug` として正式回帰テスト化（20ケース、2026-07。運用ルール: `prompts/vNext/HANDOFF.md`） |
 
 vNext 作業手順の詳細は `prompts/vNext/HANDOFF.md` を参照。
 
