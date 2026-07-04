@@ -501,17 +501,30 @@ export interface DrugSuggestionItem {
  * クエリ q に対して priority 1–4（完全一致・前方一致）で一致するブランド名をすべて返す。
  * priority 5（部分一致）は一般名を含む広範クエリで全ブランドが暴発するため除外する。
  * 同一モジュール内の複数ブランドを候補として列挙するために使用する。
+ *
+ * priority 1–4 は brandNames / brandCatalog[brand].aliases（表記揺れ）のみを見るため、
+ * 一般名のフルストリング自体がクエリの module の brandCatalog[brand].aliases に
+ * 複製されていない場合は該当ブランドを1件も返せない（Q-S1）。
+ * これを避けるため、brandCatalogGenericMap（brand → displayGenericName ?? genericName）
+ * との完全一致・前方一致も同精度で追加評価する。
+ * この一致判定は「クエリ文字列がこのブランド自身の一般名と一致するか」の
+ * 1ブランド単位の判定にのみ使い、「どのブランドを同一成分としてまとめるか」という
+ * グルーピング判断（genericKey の役割）には使わない（RULES.md §21）。
  */
 function resolveAllHighPrecisionBrands(entry: SearchEntry, q: string): string[] {
   const matched = new Set<string>()
   for (const b of entry.brandNames) {
     const norm = normalizeText(b)
     const aliases = entry.brandCatalogAliasMap[b] ?? []
+    const generic = entry.brandCatalogGenericMap[b]
+    const normGeneric = generic ? normalizeText(generic) : undefined
     if (
-      norm === q ||                            // priority 1: 正式名完全一致
-      aliases.some(a => a === q) ||            // priority 2: alias 完全一致
-      norm.startsWith(q) ||                    // priority 3: 正式名前方一致
-      aliases.some(a => a.startsWith(q))       // priority 4: alias 前方一致
+      norm === q ||                                    // priority 1: 正式名完全一致
+      aliases.some(a => a === q) ||                    // priority 2: alias 完全一致
+      norm.startsWith(q) ||                            // priority 3: 正式名前方一致
+      aliases.some(a => a.startsWith(q)) ||            // priority 4: alias 前方一致
+      normGeneric === q ||                             // priority 5: displayGenericName 完全一致
+      (normGeneric !== undefined && normGeneric.startsWith(q)) // priority 6: displayGenericName 前方一致
     ) {
       matched.add(b)
     }

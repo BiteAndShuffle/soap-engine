@@ -201,33 +201,36 @@ JSON_STANDARD.md JS-B で「多剤合成対象のみ必須」として暫定定�
 
 ## Q-S1: 一般名検索が module 単位 exactAlias 命中時に brandNames[0] へ縮退する検索ロジック
 
-**論点**
-`lib/search.ts` の `getDrugSuggestions()` は、クエリが `drug.search.exactAliases`（module 単位の一般名エイリアス）にのみ完全一致し、`brandCatalog[brand].aliases`（brand 単位のエイリアス）には一致しない場合、`resolveAllHighPrecisionBrands()` が候補ブランドを1件も特定できず、フォールバック経路で `entry.drugDisplayLabel ?? brandNames[0]` の**1件のみ**を返す。
+**現象**
+module 単位 `exactAlias` 命中時に `resolveAllHighPrecisionBrands()` がブランドを1件も特定できず、`entry.drugDisplayLabel ?? brandNames[0]`（module 内で最初に宣言されたブランド）へ縮退する。同一一般名に属する兄弟ブランドが検索結果から欠落する。
 
-**現状（2026-07 確認）**
-- `dm_insulin_regular`（ノボリンR / ヒューマリンR）と `dm_insulin_mixed_regular_intermediate`（ノボリン30R / イノレット30R / ヒューマリン3/7）は、一般名 `インスリンヒト` で共通する（2026-07 に `dm_insulin_regular` 側の表記を「ヒトインスリン」→「インスリンヒト」に統一済み）
-- `getDrugSuggestions("インスリンヒト")` は両 module を候補に含めるようになったが、各 module から `brandNames[0]` の代表1件（ノボリン30R / ノボリンR）しか返らない。イノレット30R・ヒューマリン3/7・ヒューマリンR は候補に出ない
-- 同じ挙動が `dm_insulin_long_acting`（`インスリングラルギン` で検索するとランタスのみ）でも再現しており、insulin ヒト固有ではなく複数ブランドを持つ一般名検索全般に共通する挙動
-- 短縮語（例: `ひと`）で検索した場合は `brandCatalog[brand].aliases` に短縮形が brand 単位で登録されているため、全ブランドが正しく展開される（この経路は問題なし）
+**論点（原因）**
+`lib/search.ts` の `getDrugSuggestions()` は、クエリが `drug.search.exactAliases`（module 単位の一般名エイリアス）にのみ完全一致し、`brandCatalog[brand].aliases`（brand 単位のエイリアス）には一致しない場合、`resolveAllHighPrecisionBrands()` が `brandCatalog[brand].aliases` と `brandNames` のみを参照し、`drug.search.exactAliases` も `brandCatalog[brand].displayGenericName` も見ないため、候補ブランドを1件も特定できない。
 
-**原因**
-`resolveAllHighPrecisionBrands()` は `brandCatalog[brand].aliases` のみを参照し、module 単位の `exactAliasTokens` を見ない。一般名のフルストリングが brand 単位の `aliases` に複製されていない module では、このギャップが常に発生する。
+**2026-07 調査で判明した Tier 分類（全19モジュール横断スキャンで実測確認）**
 
-**選択肢**
+| Tier | 内容 | 実例 |
+|---|---|---|
+| Tier1: 兄弟ブランド脱落 | 正しい成分の代表1ブランドは出るが、同成分の他ブランドが出ない | `インスリンヒト`（5ブランド→2）/ `イソフェンインスリン`（`dm_insulin_intermediate`、2→1）/ `インスリングラルギン`（`dm_insulin_long_acting`、2→1）/ `インスリンアスパルト`・`インスリンリスプロ`（`dm_insulin_mixed_rapid_intermediate` / `dm_insulin_rapid_analog`、各2→1〜3→1） |
+| Tier2: cross-module 欠落 | module 単位 `exactAliases` に成分名自体が登録されておらず、スコア0で候補から完全に消える。他 module 経由でも救済されない | `dm_glp1ra_injection`（「セマグルチド」で検索してもオゼンピックが一切出ない。同成分の `dm_glp1ra_semaglutide_oral` のリベルサスのみヒット） |
+| Tier3: 無関係な代表ブランド表示の危険 | クエリに一致する成分と無関係な薬剤が、その module の `brandNames[0]` というだけで単独表示される（最も深刻） | `allergy_chemical_mediator_release_inhibitor_eye_drops`（「ペミロラスト点眼液」で検索→無関係な「ゼペリン点眼液」(アシタザノラスト) が返る） |
 
-**選択肢A: brandCatalog.aliases に一般名フルストリングを複製する（データ側で対応）**
-- メリット: `lib/search.ts` のロジックを変更しない。既存挙動への影響がない
-- デメリット: module 追加のたびに bridge / JSON 双方で全 brand の aliases に同一文字列を複製する必要があり、50〜300+ module 規模の量産局面でスケールしない。`docs/VALIDATOR_STANDARD.md` §5 が「`exactAliases` の網羅性は設計判断」と明記する領域のため、機械的な自動複製もできない
+逆に `allergy_leukotriene_receptor_antagonist_oral`（モンテルカスト等）・`derm_heparinoid_moisturizer_cream/lotion/oil_cream`（ヘパリン類似物質）は正常動作していた。理由は `brandCatalog[brand].aliases` に一般名のひらがな読み（例: `もんてるかすと`）を各ブランドへ既に複製していたため。
 
-**選択肢B: `lib/search.ts` の `resolveAllHighPrecisionBrands()` を拡張し、module 単位 `exactAliasTokens` 一致時に同一 module 内の全 brand を候補として展開する（ロジック側で対応）**
-- メリット: データ複製が不要になり、将来 module 追加時も自動的に正しく展開される
-- デメリット: 全 module 共通ロジックの変更のため、既存の検索挙動（特に `suppressCrossModuleSuggestionsOnExactHit` との相互作用）に対する回帰確認が必要。`docs/VALIDATOR_STANDARD.md` の Runtime Compatibility（P4相当）検証が要る
+**採用方針: displayGenericName / brandCatalogGenericMap を解決に使う（旧選択肢Cを採用）**
+`resolveAllHighPrecisionBrands()` で `brandCatalogGenericMap`（`buildSearchIndex()` が既に構築済みの `brand → displayGenericName ?? genericName` マップ）を参照し、クエリと一致する brand を high precision brand として抽出する。`brandCatalog[brand].displayGenericName` は JS-A-drug で全 brand 必須の既存フィールドであり、bridge への新規追記なしに正しく機能する。genericKey によるグルーピング判断（`groups` 構築ロジック）は変更しない。displayGenericName は「クエリと一致するか」の単純な一致判定にのみ使い、「どのブランドを束ねるか」というグルーピング判定には使わない（RULES.md §21 の genericName/genericKey 役割分離を維持）。
 
-**推奨判断タイミング**
-brandCatalog.aliases への一般名フルストリング追加、または `lib/search.ts` 横断修正のどちらで対応するかを決定する時（2026-07 の insulin ヒト表記統一作業では意図的にスコープ外とした）。
+**不採用: brandCatalog.aliases への一般名フルストリング複製（旧選択肢A）**
+`allergy_leukotriene_receptor_antagonist_oral` 等で既に実践されていたが、300+ module 規模では module 追加のたびに bridge / JSON 双方で全 brand の aliases に同一文字列を手動複製し続ける必要があり保守負荷が高すぎる。複製漏れが `ペミロラスト点眼液`（Tier3）のように実際に発生していたことも確認済み。`docs/VALIDATOR_STANDARD.md` §5 が「`exactAliases` の網羅性は設計判断」と明記する領域のため、機械的な自動複製もできない。
+
+**残課題1: Tier2（cross-module 欠落）は本対応の対象外**
+`resolveAllHighPrecisionBrands()` は `scoreEntryAND()`（`scoreEntry`）で一度 `score > 0` と判定された `scored` エントリに対してのみ呼ばれる。`dm_glp1ra_injection` は module 単位の `exactAliases`/`nameAliases`/corpus のいずれにも「セマグルチド」（ひらがな含む）を含まないため、`resolveAllHighPrecisionBrands` に到達する前の `scoreEntryAND` 時点でスコア0となり `scored` に一切入らない。今回の修正は `resolveAllHighPrecisionBrands` 内部（`scored` 通過後の候補ブランド抽出）のみのスコープであり、`scored` に入るかどうかの判定（`scoreEntry`/corpus）には影響しないため、Tier2 は本対応では解決しない。修正実装後に実測で確認済み（`getDrugSuggestions("セマグルチド")` は `dm_insulin_glp1ra_semaglutide_oral` のリベルサスのみで、`dm_glp1ra_injection` のオゼンピックは依然出ない）。Tier2 に対応する場合は `scoreEntry`/corpus 構築側に `brandCatalogGenericMap` 相当の一般名を含める別途の変更が必要であり、影響範囲が本対応より広いため別タスクとする。
+
+**残課題2: genericKey 不統一（cross-module 統合への影響は実測上ないことを確認）**
+`dm_insulin_rapid_analog` は `genericKey: "insulin_lispro"` のように明示キーを設定しているが、`dm_insulin_mixed_rapid_intermediate` は `genericKey` 未設定で `displayGenericName`（"インスリンリスプロ"）へフォールバックしている。当初は文字列不一致によりこの2 module が合流しないと想定していたが、修正実装後に `getDrugSuggestions("インスリンリスプロ")` / `getDrugSuggestions("インスリンアスパルト")` で実測したところ、**両 module の全ブランドが1つの結果セットに正しく展開されることを確認した**（cross-module の候補結合は `moduleId:brand` 単位の dedup と、`displayGenericName` 文字列一致によるヘッダー dedup（`__generic__:${genericName}` キー）で行われており、`genericKey` の値そのものはこの結合処理に使われないため）。したがって genericKey 不統一は現時点の検索 UX には影響しない。ただし `genericKey` は「同一成分としてまとめてよいか」の判定専用キー（RULES.md §21）であり、将来 `genericKey` を基準にした結合ロジックへ変更された場合に問題が顕在化しうるため、命名規則の統一（明示キー化 or フォールバック文字列の統一）は引き続き別タスクの検討対象とする。
 
 **現時点の扱い**
-未対応。次回対応時にどちらの選択肢を取るか要判断。
+2026-07、`lib/search.ts` の `resolveAllHighPrecisionBrands()` に `brandCatalogGenericMap` 参照を追加し、Tier1・Tier3 は解決済み（実測確認済み）。Tier2（cross-module 欠落）は上記の理由により本対応のスコープ外・未対応のまま残存する。
 
 ---
 
