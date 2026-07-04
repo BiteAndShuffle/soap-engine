@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "npx tsx --test tests/**/*.test.ts",
+    "test:multi-drug": "npx tsx scripts/test-multi-drug-synthesis.ts",
     "audit": "npx tsx scripts/audit-addon-bridge-chain.ts && npx tsx scripts/audit-alias-bridge-chain.ts"
   },
   "dependencies": {
