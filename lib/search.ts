@@ -520,6 +520,32 @@ function resolveAllHighPrecisionBrands(entry: SearchEntry, q: string): string[] 
 }
 
 /**
+ * クエリの全トークンのうち、指定ブランドの正式名・alias・一般名のいずれかに
+ * 含まれるトークン数を数える（数字・XR/OD/HD等の剤形サフィックスを特別扱いしない
+ * 汎用ロジック）。同一ファミリー/同一一般名グループ内で、より多くのトークンに
+ * 一致した候補を上位表示するための並び替えキーとして使う。
+ * tokens[0] は候補選定条件そのものなので通常は全候補が一致し、
+ * tokens[1] 以降（数字・剤形サフィックス等）の一致差でグループ内の順位が変わる。
+ */
+function countMatchedTokens(entry: SearchEntry, brand: string, tokens: string[]): number {
+  const normBrand = normalizeText(brand)
+  const aliases = entry.brandCatalogAliasMap[brand] ?? []
+  const generic = entry.brandCatalogGenericMap[brand]
+  const normGeneric = generic ? normalizeText(generic) : undefined
+  let count = 0
+  for (const t of tokens) {
+    if (
+      normBrand.includes(t) ||
+      aliases.some(a => a.includes(t)) ||
+      (normGeneric !== undefined && normGeneric.includes(t))
+    ) {
+      count++
+    }
+  }
+  return count
+}
+
+/**
  * 正規化済みブランド名またはそのエイリアスに PF 指示子（"pf" / "ぴーえふ"）を含むか判定する。
  * brandCatalogAliasMap はビルド時に normalizeText 済みのため、追加の正規化は不要。
  */
@@ -578,6 +604,11 @@ export function getDrugSuggestions(
     uiLabel?: string
     isGenericLabel?: boolean
     dedupKeyOverride?: string
+    /**
+     * クエリの全トークンのうち、このブランドの正式名・alias・一般名に一致した数。
+     * ファミリーグルーピング後の並び替え（第2トークン以降による優先順位付け）に使う。
+     */
+    tokenMatchScore: number
   }
   const bucketed: Record<Bucket, BucketedCandidate[]> = {
     genericMode: [],
@@ -645,6 +676,19 @@ export function getDrugSuggestions(
             if (!groups.has(key)) groups.set(key, [])
             groups.get(key)!.push(brand)
           }
+          // 各グループ内を、第2トークン以降（数字・XR/OD/HD等の剤形サフィックス）まで
+          // 一致したブランドが上位に来るよう並び替える（tokens[0] は全員一致するため
+          // 通常は差が出ず、tokens[1] 以降の一致差で順位が決まる）。
+          // 単一トークンのクエリでは全候補が同スコアになり安定ソートで元の順序を維持するため、
+          // 既存の単一トークン時の挙動は変わらない。
+          if (tokens.length > 1) {
+            for (const brandsInGroup of groups.values()) {
+              brandsInGroup
+                .map((brand, originalIndex) => ({ brand, originalIndex, score: countMatchedTokens(entry, brand, tokens) }))
+                .sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex)
+                .forEach((x, i) => { brandsInGroup[i] = x.brand })
+            }
+          }
           for (const [key, brandsInGroup] of groups) {
             const genericName = entry.brandCatalogGenericMap[brandsInGroup[0]]
             if (genericName) {
@@ -688,9 +732,21 @@ export function getDrugSuggestions(
           //   2) 同一 genericKey（判定専用）を持つ同モジュール内の他ブランドを
           //      brandNames 宣言順で後続に展開する（表示は genericMap の表示文字列を使う）
           //   3) 最後に一般名単独候補を追加する（{{drug_subject}}は一般名表示＝GEモードと同じ挙動）
+          // 第2トークン以降（数字・XR/OD/HD等の剤形サフィックス）まで一致するブランドを
+          // 先頭に来るよう並び替える。これにより、そのブランドが「direct」候補になり、
+          // 残りは「sibling」に回る（direct が sibling より優先表示されるため、
+          // 一致トークン数が多い候補が結果的に上位に来る）。単一トークンのクエリでは
+          // 全 hpBrands が同スコアになり安定ソートで元の順序を維持するため、
+          // 既存の単一トークン時の挙動は変わらない。
+          const orderedHpBrands = tokens.length > 1
+            ? [...hpBrands]
+                .map((brand, originalIndex) => ({ brand, originalIndex, score: countMatchedTokens(entry, brand, tokens) }))
+                .sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex)
+                .map(x => x.brand)
+            : hpBrands
           const pushedBrands = new Set<string>()
           let trailingGeneric: string | undefined
-          for (const brand of hpBrands) {
+          for (const brand of orderedHpBrands) {
             if (pushedBrands.has(brand)) continue
             pushedBrands.add(brand)
             const genericKey = entry.brandCatalogGenericKeyMap[brand]
@@ -712,7 +768,7 @@ export function getDrugSuggestions(
           }
           if (trailingGeneric) {
             candidates.push({
-              brand: hpBrands[0],
+              brand: orderedHpBrands[0],
               displayLabel: trailingGeneric,
               uiLabel: trailingGeneric,
               isGenericLabel: true,
@@ -760,6 +816,7 @@ export function getDrugSuggestions(
         brand,
         displayLabel,
         uiLabel,
+        tokenMatchScore: brand !== undefined ? countMatchedTokens(entry, brand, tokens) : 0,
         isGenericLabel,
         dedupKeyOverride,
       })
@@ -794,10 +851,10 @@ export function getDrugSuggestions(
 
   // direct bucket 内をブランドファミリー単位でまとめる（安定グルーピング）。
   // クエリに一致した部分より後ろの文字列の先頭1文字を「ファミリーキー」とし、
-  // 同じキーを持つ候補をまとめる。グループの並び順・グループ内の並び順は
-  // どちらも元の bucketed.direct の出現順（stable order）を維持する
-  // （辞書順ソートはしない）。例: "ひゅーま" クエリでは "りんr"/"りんn"/"りん37"が
-  // 先頭1文字"り"で1グループにまとまり、"ろぐ"/"ろぐみっくす25"は"ろ"で別グループになる。
+  // 同じキーを持つ候補をまとめる。グループの並び順は元の bucketed.direct の
+  // 出現順（stable order）を維持する（辞書順ソートはしない）。例: "ひゅーま" クエリでは
+  // "りんr"/"りんn"/"りん37"が先頭1文字"り"で1グループにまとまり、
+  // "ろぐ"/"ろぐみっくす25"は"ろ"で別グループになる。
   // 特定ブランド名のハードコードは行わず、文字列比較のみで判定する。
   // sibling / genericMode / genericHeader の並び順には影響しない。
   const queryPt = tokens[0] ?? ''
@@ -808,6 +865,18 @@ export function getDrugSuggestions(
     const familyKey = suffix.length > 0 ? suffix[0] : suffix
     if (!familyGroups.has(familyKey)) familyGroups.set(familyKey, [])
     familyGroups.get(familyKey)!.push(c)
+  }
+  // グループ内は、第2トークン以降（数字・XR/OD/HD等の剤形サフィックス）まで
+  // 一致した候補が上位に来るよう並び替える（tokenMatchScore 降順・同点は元の順序を維持）。
+  // 単一トークンのクエリでは全候補が同スコアになり安定ソートで元の順序を維持するため、
+  // 既存の単一トークン時の挙動は変わらない。
+  if (tokens.length > 1) {
+    for (const group of familyGroups.values()) {
+      group
+        .map((c, originalIndex) => ({ c, originalIndex }))
+        .sort((a, b) => b.c.tokenMatchScore - a.c.tokenMatchScore || a.originalIndex - b.originalIndex)
+        .forEach((x, i) => { group[i] = x.c })
+    }
   }
   const sortedDirect = [...familyGroups.values()].flat()
 
