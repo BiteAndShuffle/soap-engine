@@ -33,6 +33,7 @@
 | `docs/JSON_STANDARD.md` | canonical JSON 構造標準（どう書くか）|
 | `docs/BOOTSTRAP_STANDARD.md` | Bootstrap 設計標準（P0-A 工程の設計意図）|
 | `docs/OPEN_DESIGN_QUESTIONS.md` | 設計保留事項（まだ決めていないこと）|
+| `docs/TEAM_CHARTER.md` | Human / ChatGPT / Claude の役割分担・協業原則 |
 
 `prompts/` は工程実行用プロンプト。設計意図の記録・参照は `docs/` を用いる。
 
