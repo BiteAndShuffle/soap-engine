@@ -3,16 +3,16 @@
 # dm_thiazolidinedione_pioglitazone_oral
 # =========================================
 #
-# ⚠️ STATUS: DRAFT ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
 # ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜SCENARIOS_END の
-# シナリオ本文・ADDON本文が追加済み。ユーザーによる確認・凍結宣言は未了。
-# 本ファイルはまだ PN1 の入力として使用できない（RULES.md §24 参照）。
+# シナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー（PASS確認済み）を経て
+# 確定しました。
 #
 # 目的: チアゾリジン系糖尿病薬（ピオグリタゾン）の brandCatalog / alias /
 # drugResolution.brandToTags 設計、およびシナリオ本文を、会話ログではなく
 # リポジトリ上に固定するための作業ファイルです
-# （2026-07-05 ヘッダー作成、同日シナリオ本文追加）。
+# （2026-07-05 ヘッダー作成、同日シナリオ本文追加・凍結）。
 #
 # シナリオ本文追加時の対応: ユーザー提供文に addon_hyperkalemia_guidance の重複定義
 # （initial直後・se_edema_none直後の2箇所、内容完全一致）があったため、initial直後の
@@ -20,8 +20,7 @@
 # （dm_biguanide_metformin_oral.md / dm_dpp4_biguanide_combination_oral.md での
 # 同型の対応実績に倣う。S/O/A/P本文・P_ADDON参照・addon本文そのものは変更していない）。
 #
-# 次の作業: ユーザー確認・凍結宣言（STATUS: DRAFT → FROZEN_FOR_PN1）→ PN1 開始
-# （prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
 #   - bridges/dm_dpp4_oral.md（単剤・直近実績。alias/brandCatalog設計の基本形）
@@ -200,7 +199,7 @@ display:
 # - OD錠等の詳細剤形分離: 現時点では drug.dosageForms = ["tablet"] のみを扱う
 #
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END（STATUS: DRAFT）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: FROZEN_FOR_PN1）
 # =========================================
 
 =======SCENARIOS_START=======
