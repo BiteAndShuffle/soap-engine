@@ -201,7 +201,28 @@
     ]
   },
   "drugResolution": {
-    "brandToTags": {}
+    "brandToTags": {
+      "オノン": [
+        "leukotriene_receptor_antagonist",
+        "pranlukast"
+      ],
+      "プランルカスト": [
+        "leukotriene_receptor_antagonist",
+        "pranlukast"
+      ],
+      "キプレス": [
+        "leukotriene_receptor_antagonist",
+        "montelukast"
+      ],
+      "シングレア": [
+        "leukotriene_receptor_antagonist",
+        "montelukast"
+      ],
+      "モンテルカスト": [
+        "leukotriene_receptor_antagonist",
+        "montelukast"
+      ]
+    }
   },
   "template": {
     "templateId": "allergy_leukotriene_receptor_antagonist_oral_v1",
@@ -302,7 +323,58 @@
       "drugClass": [
         "LEUKOTRIENE_RECEPTOR_ANTAGONIST"
       ]
-    }
+    },
+    "scenarioIds": [
+      "initial_nasal",
+      "initial_cough",
+      "restart_nasal",
+      "restart_cough",
+      "external_start_nasal",
+      "external_start_cough",
+      "dose_increase_low_perceived_effect",
+      "dose_increase_due_to_other_med_adjustment",
+      "dose_decrease_improved",
+      "dose_decrease_low_perceived_effect",
+      "dose_decrease_due_to_other_med_adjustment",
+      "se_drowsiness_none",
+      "se_liver_symptom_none",
+      "se_abdominal_discomfort_none",
+      "cp_good",
+      "cp_poor_missed_doses",
+      "cp_poor_self_adjust",
+      "cp_poor_visit_delay",
+      "end_improved",
+      "end_insufficient_effect",
+      "end_ineffective",
+      "se_mild_continue",
+      "se_moderate_consider_dr",
+      "se_change_due_to_drowsiness",
+      "se_dose_decrease_due_to_drowsiness",
+      "se_stop_due_to_drowsiness"
+    ],
+    "addonIds": [
+      "addon_driving_caution_guidance",
+      "addon_liver_warning_detail",
+      "addon_adherence_reminder_alarm",
+      "addon_adherence_reminder_app",
+      "addon_adherence_visual_calendar_checklist",
+      "addon_adherence_visual_note",
+      "addon_adherence_prep_previous_night",
+      "addon_adherence_prep_before_meal",
+      "addon_adherence_support_family_reminder"
+    ],
+    "followupProfileIds": [
+      "default_followup",
+      "end_followup",
+      "se_followup"
+    ],
+    "groupKeyRegistry": [
+      "allergy_symptom_management",
+      "allergy_dose_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "treatment_end"
+    ]
   },
   "display": {
     "title": "ロイコトリエン受容体拮抗薬（内服）",
