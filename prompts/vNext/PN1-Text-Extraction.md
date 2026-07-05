@@ -79,12 +79,22 @@ P_CLOSING テキストから followupRef を決定する。
 
 決定した followupRef と P_CLOSING 元テキストの両方を保存する。
 
-**対応表にないP_CLOSINGテキストが出現した場合:**
-本文（bridge既存の凍結テキスト）は変更せず、新規 followupRef を仮の名称で記録した上で、
-正式採用してよいかを PN2 着手前にユーザーへ確認する（PENDING 扱い）。
-Claude が独断で対応表に追加・確定してはならない。ユーザー確認後、正式採用が決まった時点で
-本表に追記し、以後の同一テキスト出現時の再発防止とする（`dm_dpp4_oral` の
-`dose_decrease_renal_function` で確認済み・2026-07-05）。
+**対応表にないP_CLOSINGテキストが出現した場合（MUST_STOP）:**
+- 本文（bridge既存の凍結テキスト。P_CLOSING 原文を含む）は一切変更しない
+- followupRef を Claude が独自の名称で仮決め・確定してはならない。該当シナリオの
+  followupRef には文字列 `"PENDING"` を設定し、`_closingText` には bridge の原文を
+  そのまま保存する
+- PN1 はこの時点で通常の完了報告を行わず、以下を明示してユーザーへ報告し停止する:
+  - 検出した未知の P_CLOSING 原文
+  - 該当 scenario id
+  - 「対応表にない P_CLOSING のため PENDING とし、PN1 を停止しました」という趣旨の一文
+- ユーザーが正式な followupRef 名称を承認するまで PN2 以降には進まない
+- 承認後、本セクション上部の対応表に確定値として追記する。以後、同一モジュール内・
+  他モジュールで同じテキストが出現した場合は表引きで確定でき、再度停止する必要はない
+
+**確定済み実績（表に反映済み）:** `dm_dpp4_oral` の `dose_decrease_renal_function`
+（P_CLOSING = "次回、血糖推移および体調変化の有無を確認。"）は `renal_followup` として
+正式承認済み（2026-07-05）。この文言が再出現した場合は停止せず `renal_followup` を採用する。
 
 ### 5. followupProfiles の構築
 

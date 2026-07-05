@@ -72,9 +72,17 @@ PN4A完了: {N}件xStructured生成。禁止role非該当。PN4Bを開始しま�
 PN4B完了: {N}件xStructured生成。禁止role非該当。PN5を開始します。
 PN5完了: risks/searchConfig/expressModes/persona/index生成。PN6を開始します。
 PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。addon.text/group標準変換適用済み。PN7を開始します。
-PN7完了: A〜T全項目PASS / verdict: PASS。PN8を開始します。
+PN7完了: FAIL 0件 / CHECK 0件 / PENDING 0件 / verdict: PASS。PN8を開始します。
 PN8完了: tsc PASS / build PASS。RELEASE_OK。
 ```
+
+**PN7 に CHECK または PENDING が残る場合の報告フォーマット（PN8 を開始しない）:**
+```
+PN7完了: FAIL 0件 / CHECK {N}件（{該当項目と内容}）/ PENDING {N}件（{該当項目と内容}）。
+人間確認が必要なため停止します。承認が得られ次第 PN8 を実行します。
+```
+この場合、1 行報告の後で PN8 を自動実行しない。CHECK・PENDING の内容を具体的に提示し、
+ユーザーからの明示的な承認（「CHECK は追加漏れとして扱う」等）を得てから PN8 を実行する。
 
 **PN3B の thirdPanelSPlacement 報告ルール:**
 - injection module（drug.route = "injection"）の場合: 末尾に `/ thirdPanelSPlacement {N}件確定` を追加する
@@ -106,6 +114,21 @@ PN8完了: tsc PASS / build PASS。RELEASE_OK。
 | M | PN6 が PN5 成果物に存在しない標準構造を独自補完しようとした | PN5 |
 | N | PN6 addon.group が標準変換表に従っていない（lifestyle_guidance 等が未変換） | PN6 |
 | O | PN5 が index.scenarioIds / addonIds / followupProfileIds / groupKeyRegistry を生成していない | PN5 |
+| P | PN7 に CHECK 項目が 1 件でも残る（Z の Addon責務一貫性等） | PN7（ユーザー承認待ち） |
+| Q | PN7 監査中、または data/modules/{moduleId}.json 内に未確定の `"PENDING"` 文字列が残存している | 該当 PENDING が発生した元 Phase |
+
+**条件 P の詳細:**
+CHECK は ERROR ではなく build 可能な状態だが、AUTORUN は CHECK を FAIL と同様に **PN8 進行のブロッカー**として扱う。
+- CHECK の内容（対象 scenario/addon・具体的な差分）をユーザーへ提示する
+- ユーザーが「CHECK は問題ない」「追加漏れとして扱う」等、明示的に承認した場合のみ PN8 へ進む
+- 承認内容が JSON/bridge の修正を伴う場合（`dm_dpp4_oral` の `se_bullous_pemphigoid_none` 追加漏れ対応が実例）は、
+  該当 Phase（多くの場合 PN1 の bridge 追記 + PN6 再アセンブリ、または PN7 直接修正が禁止のため人間指示による最小反映）で
+  対応してから PN7 を再実行し、CHECK が解消したことを確認してから PN8 を実行する
+
+**条件 Q の詳細:**
+`display.subtitle` の PENDING、`composition.classKey` の PENDING、addon group の PENDING（例: `administration_guidance` の変換先未確定）等、
+前工程で発生した PENDING が確定されないまま後工程まで残っている状態を指す。PENDING を検出した場合、
+値を推測で埋めて先へ進めてはならない。
 
 **条件 G の詳細:**
 以下のいずれかに該当した場合、即座に MUST_STOP とする。
@@ -184,3 +207,5 @@ build:            PASS
 - AUTORUN 開始指示なしに PN3A 以降を自動実行する
 - bridge の内容を変更する
 - 凍結テキスト（PN1 以降の S/O/A/P/addon text）を変更する
+- PN7 に CHECK または PENDING が残っている状態で PN8 を自動実行する（条件 P / Q 参照）
+- PN1 で対応表にない P_CLOSING に遭遇した際、followupRef を独自に命名して確定する

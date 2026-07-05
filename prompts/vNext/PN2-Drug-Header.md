@@ -110,6 +110,37 @@ model_managed 項目であり、後工程で別途追加可能。
 }
 ```
 
+### display.subtitle の確定ルール（推測生成禁止）
+
+**bridge に `display.subtitle` が明記されている場合:** その値をそのまま使用する。
+
+**bridge に明記がない場合:** ブランド名の列挙（例:「トラゼンタ・マリゼブ・ザファテック 他」）や
+同系統モジュールの表示パターンを模倣して生成してはならない（copied/reference pattern による
+creative build と判定される）。以下の標準 fallback を確定値として使用する。
+
+```
+display.subtitle = "{drug.genericName}（{routeLabel}）"
+```
+
+`routeLabel` は `drug.route` から以下のとおり導出する:
+
+| drug.route | routeLabel |
+|---|---|
+| oral | 内服 |
+| injection | 注射 |
+| topical | 外用 |
+| ophthalmic | 点眼 |
+| inhalation | 吸入 |
+
+例（`dm_dpp4_oral`: `drug.genericName="DPP-4阻害薬"`, `route="oral"`）:
+```
+display.subtitle = "DPP-4阻害薬（内服）"
+```
+
+この fallback は `display.title` / `display.drugClassLabel` と同一値になる場合があるが、
+それ自体は問題ない（`dm_insulin_rapid_analog.json` の title / drugClassLabel / nodeLabelLong が
+同値である実績と同型）。
+
 ### defaults セクション
 
 `defaults.followup` と `defaults.followupProfiles` は bridge から直接生成しない。

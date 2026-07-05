@@ -523,6 +523,18 @@ PN2 で `composition.classKey` などが PENDING になった場合:
 その時点でユーザーへ確認を求め、回答を得てから PN2 を完成させてください。  
 確認前に仮の値を埋めないでください。
 
+**PN1 で対応表にない P_CLOSING に遭遇した場合**（2026-07-05 DPP4 対応で確定）:  
+followupRef を独自命名で確定せず、`"PENDING"` として PN1 を停止し、ユーザー承認を待ってください。  
+詳細は `prompts/vNext/PN1-Text-Extraction.md`「対応表にないP_CLOSINGテキストが出現した場合」を参照。
+
+**PN2 で `display.subtitle` が bridge 未記載の場合**（同上）:  
+ブランド列挙や他モジュール模倣で生成せず、`prompts/vNext/PN2-Drug-Header.md` の標準 fallback
+（`"{drug.genericName}（{routeLabel}）"`）を使用してください。
+
+**AUTORUN 中に PN7 で CHECK / PENDING が残った場合**（同上）:  
+FAIL と同様に PN8 進行のブロッカーとして扱い、人間承認を得るまで PN8 を自動実行しないでください。  
+詳細は `prompts/vNext/AUTORUN.md` MUST_STOP 条件 P / Q を参照。
+
 ---
 
 # 6. 技術的負債（修正見送り中）

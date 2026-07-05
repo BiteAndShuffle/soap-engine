@@ -65,6 +65,8 @@ package / build:
 - bridge にない alias を補完しない
 - bridge にない search token を追加しない
 - followup 文を生成しない（bridge 以外から）
+- bridge に明記のない `display.subtitle` をブランド列挙や他モジュール模倣で生成しない
+  （標準 fallback は `prompts/vNext/PN2-Drug-Header.md` の display.subtitle 確定ルールを参照）
 - persona 本文を生成しない
 - 医学的判断・医学的補足をしない
 - creative build・creative 補完をしない
@@ -120,6 +122,8 @@ package / build:
 - 既存 canonical JSON との統合方針確認が必要
 - Express / thirdPanel 参照方針が不明
 - persona 構造の扱いが未確定
+- PN1 の P_CLOSING 対応表にない文言が出現した場合の followupRef 確定
+  （Claude が独自命名で確定してはならない。停止して人間承認を待つ → `prompts/vNext/PN1-Text-Extraction.md` 参照）
 
 ### CHECK（build 可能・後続工程で確認が必要）
 - commonSearchTokens / formulationSearchTokens の検索 runtime 確認が必要
@@ -130,6 +134,10 @@ package / build:
 - search runtime 確認・UI 表示確認・SOAP 生成確認
 - Express Mode / thirdPanel 動作確認
 - persona 受け口確認
+
+**AUTORUN モード（vNext）における CHECK の扱い:** CHECK は ERROR ではなく build 可能な状態だが、
+AUTORUN モードでは無視して PN8 へ自動継続してはならない。CHECK が 1 件でも残る場合は停止し、
+人間が内容を確認・明示承認した場合のみ PN8 へ進める（詳細: `prompts/vNext/AUTORUN.md` MUST_STOP 条件）。
 
 ### 分類優先順位
 1. bridge preservation 違反 → ERROR 優先
