@@ -75,8 +75,16 @@ P_CLOSING テキストから followupRef を決定する。
 | 次回、引き続き使用できているか、副作用の有無を確認。 | `"default_followup"` |
 | 次回、治療経過および体調変化の有無を確認。 | `"end_followup"` |
 | 次回、治療経過および副作用の有無を確認。 | `"se_followup"` |
+| 次回、血糖推移および体調変化の有無を確認。 | `"renal_followup"` |
 
 決定した followupRef と P_CLOSING 元テキストの両方を保存する。
+
+**対応表にないP_CLOSINGテキストが出現した場合:**
+本文（bridge既存の凍結テキスト）は変更せず、新規 followupRef を仮の名称で記録した上で、
+正式採用してよいかを PN2 着手前にユーザーへ確認する（PENDING 扱い）。
+Claude が独断で対応表に追加・確定してはならない。ユーザー確認後、正式採用が決まった時点で
+本表に追記し、以後の同一テキスト出現時の再発防止とする（`dm_dpp4_oral` の
+`dose_decrease_renal_function` で確認済み・2026-07-05）。
 
 ### 5. followupProfiles の構築
 
