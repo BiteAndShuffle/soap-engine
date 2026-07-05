@@ -882,6 +882,12 @@ DPP4阻害薬による皮膚症状は現時点で認められず、治療継続�
 P
 DPP4阻害薬の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。
 こうした症状が続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
