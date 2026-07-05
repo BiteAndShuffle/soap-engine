@@ -459,18 +459,20 @@ bridge の必須セクション:
 ### 作業順序
 
 ```
-1. bridge ヘッダーを作成
+1. bridge ヘッダーを作成（STATUS: HEADER_ONLY）
      ↓
-2. SCENARIOS_START〜SCENARIOS_END を作成（シナリオ・ADDON 本文の確定）
+2. SCENARIOS_START〜SCENARIOS_END を作成（STATUS: DRAFT）
      ↓
-3. ユーザー確認・凍結宣言
+3. ユーザー確認・凍結宣言（STATUS: DRAFT → FROZEN_FOR_PN1 へ更新）
      ↓
 4. PN1 開始
      ↓
-5. PN1 → [承認] → PN2 → [承認 + AUTORUN開始コマンド] → PN3A〜PN8 自動連続実行
+5. PN1 → [承認] → PN2 → [承認 + AUTORUN開始コマンド] → PN3A〜PN8 自動連続実行（完了後 STATUS: JSON_COMPLETE）
 ```
 
-**bridge が既に完成している場合**: 手順 4 から開始してください。
+bridge の STATUS 値の定義・遷移ルール・PN1 開始条件は `prompts/RULES.md` §24（Bridge Status State Machine）を正本とする。
+
+**bridge が既に完成している場合**: bridge ヘッダーの STATUS が `FROZEN_FOR_PN1` であることを確認してから手順 4 へ進んでください。STATUS が `DRAFT` / `HEADER_ONLY` の場合は PN1 を開始せず、ユーザーへ凍結宣言を確認してください。会話ログで「凍結済み」と伝えられていても、ファイル上の STATUS がそれと異なる場合はファイル側を優先し、矛盾があれば作業を停止してユーザーへ報告します（RULES.md §24）。
 
 ## PN1〜PN8 開始手順
 
@@ -493,6 +495,7 @@ wc -l /Users/AdNauseumTendrils/Desktop/soap-engine/bridges/{moduleId}.md
 ```
 
 **PN1 実行前の確認チェックリスト:**
+- [ ] bridge ヘッダーの STATUS が `FROZEN_FOR_PN1` であることを確認した（RULES.md §24。`DRAFT` / `HEADER_ONLY` の場合は開始しない）
 - [ ] bridge の SCENARIOS_START〜SCENARIOS_END 範囲を確認した
 - [ ] シナリオ数・ADDON 数を把握した
 - [ ] P_CLOSING パターン数と件数内訳を把握した

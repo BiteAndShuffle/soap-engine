@@ -706,3 +706,54 @@ Addonは本文（S/O/A/P）を補助するための付随物ではなく、独�
 `prompts/vNext/PN7-Cross-Reference-Audit.md` check AA を参照）
 
 （監査手順の詳細は `prompts/vNext/PN7-Cross-Reference-Audit.md` check Z を参照）
+
+---
+
+## 24. Bridge Status State Machine（bridge凍結状態遷移ルール）
+
+bridge（`bridges/{moduleId}.md`）の凍結状態は、会話ログではなく **ファイル冒頭のヘッダーコメント内 STATUS 表記** で機械的に判定する。
+
+### 定義済み STATUS 値（4値のみ）
+
+| STATUS 値 | 意味 |
+|---|---|
+| `HEADER_ONLY` | ヘッダー案（drug / composition / editingRules 等）のみ存在。SCENARIOS_START〜SCENARIOS_END が未作成または空 |
+| `DRAFT` | シナリオ・addon本文が追加済みだが、ユーザーによる確認・凍結宣言を経ていない |
+| `FROZEN_FOR_PN1` | ユーザーが本文を確認し、正式に凍結宣言した状態。PN1 の入力として使用してよい |
+| `JSON_COMPLETE` | PN6（Assembly）で canonical JSON（`data/modules/{moduleId}.json`）へ反映済みの状態 |
+
+STATUS はヘッダーコメント内に以下の形式で明記する。
+
+```
+# ⚠️ STATUS: {STATUS値} ⚠️
+```
+
+`{STATUS値}` は上記4値のいずれかの厳密な文字列を使用する（`FROZEN FOR PN1` のような表記ゆれ・空白区切りは不可。アンダースコア区切りの正規値のみ有効）。
+
+### 状態遷移
+
+```
+HEADER_ONLY → DRAFT → FROZEN_FOR_PN1 → JSON_COMPLETE
+```
+
+- 逆行（例: FROZEN_FOR_PN1 → DRAFT への差し戻し）は、本文修正が必要になった場合にユーザーが明示的に指示した場合のみ行う。Claude が自主的に降格させてはならない
+- 遷移を伴う変更は STATUS 行（および直後の説明コメント）のみを対象とする。SCENARIOS_START〜SCENARIOS_END 本文、ヘッダー設計（drug / brandCatalog / aliases / handlingTags / scenarioRequiredTags / composition 等）は STATUS 更新時に変更しない
+
+### PN1 開始条件
+
+- **PN1 を開始できるのは STATUS が `FROZEN_FOR_PN1` の bridge のみ**
+- STATUS が `DRAFT` または `HEADER_ONLY` の bridge では PN1 を開始しない（ユーザーが「凍結済み」と発言していても、ファイル側の STATUS が異なる場合はファイルを優先する）
+- STATUS が `JSON_COMPLETE` の bridge に対して PN1 を再実行する場合は、canonical JSON の再生成を意味するため、着手前にユーザーへ意図を確認する
+
+### 優先順位ルール（会話ログ vs ファイル）
+
+- **会話ログよりファイル上の STATUS を優先する**。ユーザーが会話で「凍結済み」「PN1へ進めます」と述べても、bridge ファイルの STATUS がそれと矛盾する場合は、ファイル側が正本
+- STATUS とユーザー指示が矛盾する場合、Claude は推測で解決せず **作業を停止し、矛盾の内容をユーザーへ報告する**（例: STATUS=DRAFT のまま「PN1を開始してください」と指示された場合、PN1を開始せずに矛盾を報告する）
+- STATUS を変更してよいのはユーザーが明示的に状態遷移を指示した場合のみ（例: 本メッセージのような「正式に凍結します」という指示）
+
+### JSON_COMPLETE への遷移
+
+- `JSON_COMPLETE` は PN6（Assembly）で `data/modules/{moduleId}.json` への Write が完了した時点、または PN8（Build/Runtime/Release）で RELEASE_OK と判定された時点でユーザーの指示に基づき設定する
+- PN7（Cross Reference Audit）で FAIL が出た場合は `JSON_COMPLETE` へ遷移しない（`FROZEN_FOR_PN1` のまま差し戻し対応を行う）
+
+（bridge作成〜PN1開始手順の全体像は `prompts/vNext/HANDOFF.md` を参照）

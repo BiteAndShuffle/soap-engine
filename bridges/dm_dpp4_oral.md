@@ -3,7 +3,7 @@
 # dm_dpp4_oral
 # =========================================
 #
-# ⚠️ STATUS: FROZEN FOR PN1 ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
 # ヘッダー案および SCENARIOS_START〜SCENARIOS_END のシナリオ本文は
 # ユーザーによる確認・凍結宣言を経て確定しました。
