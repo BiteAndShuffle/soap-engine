@@ -51,6 +51,10 @@
  *   30)  scenarios[].SStructured / AStructured / PStructured の notes に
  *        "ROLE_MAPPING_UNCLEAR" を含む item が存在しないこと（WARNING）
  *   31)  scenarios[].PStructured の role が禁止語彙でないこと（WARNING）
+ *   32)  scenarios[].scenarioRequiredTags の各タグがいずれかの brandCatalog[].handlingTags に
+ *        存在すること（ERROR）。addons.items[].requiredTags の到達可能性チェック（check 15、
+ *        WARNING）とは独立した別チェック。タグの typo によるシナリオのサイレントな非表示を防ぐ
+ *        （brandCatalog 未定義の場合はスキップ）
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -96,6 +100,7 @@ export type ModuleValidationErrorCode =
   | 'SCOMPOSITION_INTENT_FORBIDDEN' // sComposition.intent が禁止値（WARNING）
   | 'STRUCTURED_ROLE_FORBIDDEN'     // SStructured/AStructured/PStructured.role が禁止語彙（WARNING）
   | 'ROLE_MAPPING_NOTE_PRESENT'     // SStructured/AStructured/PStructured の notes に ROLE_MAPPING_UNCLEAR が残存（WARNING）
+  | 'SCENARIO_REQUIRED_TAG_UNREACHABLE' // scenarios[].scenarioRequiredTags のタグをいずれの brandCatalog も持たない（ERROR）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -1056,6 +1061,32 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
               isWarning: true,
             })
           }
+        }
+      }
+    }
+  }
+
+  // 32) scenarios[].scenarioRequiredTags の到達可能性チェック（ERROR）
+  //     addons.items[].requiredTags の到達可能性チェック（check 15、WARNING）とは
+  //     独立した別チェック。scenarioRequiredTags の各タグをいずれの brandCatalog
+  //     エントリも持たない場合、タグの typo によりシナリオがどのブランドでも
+  //     表示されなくなる（サイレントな非表示事故）ため ERROR とする。
+  if (Array.isArray(scenarios) && brandCatalog) {
+    const allBrandHandlingTagsForScenario = new Set<string>(
+      Object.values(brandCatalog)
+        .flatMap(entry => (entry.handlingTags as string[] | undefined) ?? []),
+    )
+    for (const sc of scenarios as Array<Record<string, unknown>>) {
+      const scId = String(sc.id ?? '(unknown)')
+      const required = sc.scenarioRequiredTags as string[] | undefined
+      if (!required || required.length === 0) continue
+      for (const tag of required) {
+        if (!allBrandHandlingTagsForScenario.has(tag)) {
+          errors.push({
+            code: 'SCENARIO_REQUIRED_TAG_UNREACHABLE',
+            detail: `scenarios["${scId}"].scenarioRequiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません`,
+            isWarning: false,
+          })
         }
       }
     }

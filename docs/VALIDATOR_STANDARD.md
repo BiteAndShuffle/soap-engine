@@ -68,6 +68,7 @@ build/runtime を停止させる致命的問題。
 | 23 | `SCENARIO_ID_DUPLICATE` | Structural | `scenarios[].id` のモジュール内一意性 |
 | 24 | `SCENARIO_GLOBALID_DUPLICATE` | Structural | `scenarios[].globalId` のモジュール内一意性 |
 | 25 | `SIDE_EFFECT_PRESENCE_INVALID` | Design Rule | `scenarios[].sideEffectPresence` が有効 7 値（`not_applicable` / `absent_or_not_observed` / `present_mild` / `present_moderate` / `present_change` / `present_dose_decrease` / `present_stop`）以外 |
+| 32 | `SCENARIO_REQUIRED_TAG_UNREACHABLE` | Reference | `scenarios[].scenarioRequiredTags` → `brandCatalog[].handlingTags`（いずれかの brand が保持していること）。`addons.items[].requiredTags` の到達可能性チェック（check 15、WARNING）とは独立。タグ typo によるシナリオのサイレント非表示を防ぐため ERROR |
 
 ### 3-B. WARNING（isWarning: true）
 
@@ -270,6 +271,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `SCOMPOSITION_INTENT_FORBIDDEN` | WARN | Design Rule |
 | `STRUCTURED_ROLE_FORBIDDEN` | WARN | Design Rule |
 | `ROLE_MAPPING_NOTE_PRESENT` | WARN | Design Rule |
+| `SCENARIO_REQUIRED_TAG_UNREACHABLE` | ERROR | Reference |
 
 ### CrossModuleValidator（lib/crossModuleValidator.ts）
 
