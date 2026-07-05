@@ -33,6 +33,7 @@ import rawInsulinMixedRapidLong from './dm_insulin_mixed_rapid_long.json'
 import rawInsulinMixedRapidIntermediate from './dm_insulin_mixed_rapid_intermediate.json'
 import rawDpp4Oral from './dm_dpp4_oral.json'
 import rawBiguanideMetforminOral from './dm_biguanide_metformin_oral.json'
+import rawDpp4BiguanideCombinationOral from './dm_dpp4_biguanide_combination_oral.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
@@ -56,4 +57,5 @@ export const ALL_MODULES: ModuleData[] = [
   rawInsulinMixedRapidIntermediate as unknown as ModuleData,
   rawDpp4Oral as unknown as ModuleData,
   rawBiguanideMetforminOral as unknown as ModuleData,
+  rawDpp4BiguanideCombinationOral as unknown as ModuleData,
 ]

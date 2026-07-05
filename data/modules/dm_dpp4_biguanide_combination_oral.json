@@ -1,0 +1,4783 @@
+{
+  "moduleId": "dm_dpp4_biguanide_combination_oral",
+  "moduleVersion": "1.0.0",
+  "categoryPath": [
+    "糖尿病",
+    "配合剤",
+    "DPP-4阻害薬／ビグアナイド配合剤"
+  ],
+  "composition": {
+    "domain": "diabetes",
+    "priority": "chronic",
+    "clinicalDomain": "diabetes",
+    "searchDomain": "diabetes",
+    "sMergeDomain": "diabetes",
+    "nodeLabelShort": "DPP4/BG配合剤",
+    "nodeLabelLong": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+    "nodeKey": "dpp4_biguanide_combination_oral",
+    "classKey": "dpp4_biguanide_combination",
+    "defaultSMergeLevel": "clinical_domain",
+    "canonicalSource": {
+      "nodeIdentity": "composition",
+      "displayProjection": "display",
+      "scenarioMergePolicy": "scenarios[].mergePolicy"
+    },
+    "domainPolicy": {
+      "clinicalDomainUnit": "disease_area",
+      "sMergeDomainUnit": "disease_area",
+      "defaultSGrouping": "clinical_domain"
+    },
+    "groupKeyRegistry": [
+      "hyperglycemia_management",
+      "glycemic_control_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "treatment_end",
+      "lifestyle_guidance",
+      "sickday"
+    ],
+    "nodeIdentityPolicy": {
+      "source": "composition",
+      "overrideAllowed": false
+    },
+    "sMergePolicy": {
+      "unit": "clinical_domain",
+      "conflictStrategy": "separate_by_domain",
+      "withinDomainStrategy": "groupKey_based_semantic_merge"
+    }
+  },
+  "drug": {
+    "genericName": "DPP-4阻害薬／ビグアナイド配合剤",
+    "brandNames": [
+      "メトアナ",
+      "エクメット",
+      "イニシンク",
+      "メホビル"
+    ],
+    "drugClass": [
+      "DPP4_BIGUANIDE_COMBINATION"
+    ],
+    "route": "oral",
+    "dosageForms": [
+      "tablet"
+    ],
+    "drugSpecificTags": [
+      "dpp4_biguanide_combination_oral"
+    ],
+    "search": {
+      "primaryDisplayName": "DPP-4阻害薬／ビグアナイド配合剤",
+      "exactAliases": [
+        "メトアナ",
+        "エクメット",
+        "イニシンク",
+        "メホビル"
+      ],
+      "prefixAliases": [
+        "めとあな",
+        "えくめっと",
+        "いにしんく",
+        "めほびる",
+        "あなぐりぷちん",
+        "びるだぐりぷちん",
+        "あろぐりぷちん",
+        "めとほるみん",
+        "めとほるみんえんさんえん"
+      ],
+      "nameAliases": [
+        "めとあな",
+        "えくめっと",
+        "いにしんく",
+        "めほびる",
+        "あなぐりぷちん",
+        "びるだぐりぷちん",
+        "あろぐりぷちん",
+        "めとほるみん",
+        "めとほるみんえんさんえん"
+      ],
+      "keywords": [],
+      "priority": 5,
+      "matchPolicy": {
+        "preferExactAlias": true,
+        "allowPrefixMatch": true,
+        "suppressCrossModuleSuggestionsOnExactHit": true
+      }
+    },
+    "nameAliases": [
+      "めとあな",
+      "えくめっと",
+      "いにしんく",
+      "めほびる",
+      "あなぐりぷちん",
+      "びるだぐりぷちん",
+      "あろぐりぷちん",
+      "めとほるみん",
+      "めとほるみんえんさんえん"
+    ],
+    "brandCatalog": {
+      "メトアナ": {
+        "displayName": "メトアナ",
+        "genericName": "アナグリプチン/メトホルミン塩酸塩",
+        "displayGenericName": "アナグリプチン/メトホルミン塩酸塩",
+        "genericKey": "anagliptin_metformin_combo",
+        "handlingTags": [
+          "renal_dose_adjustment"
+        ],
+        "aliases": [
+          "めとあな"
+        ],
+        "normalizedAliases": [
+          "めとあな"
+        ]
+      },
+      "エクメット": {
+        "displayName": "エクメット",
+        "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
+        "displayGenericName": "ビルダグリプチン/メトホルミン塩酸塩",
+        "genericKey": "vildagliptin_metformin_combo",
+        "handlingTags": [
+          "renal_dose_adjustment"
+        ],
+        "aliases": [
+          "えくめっと"
+        ],
+        "normalizedAliases": [
+          "えくめっと"
+        ]
+      },
+      "イニシンク": {
+        "displayName": "イニシンク",
+        "genericName": "アログリプチン/メトホルミン塩酸塩",
+        "displayGenericName": "アログリプチン/メトホルミン塩酸塩",
+        "genericKey": "alogliptin_metformin_combo",
+        "handlingTags": [
+          "renal_dose_adjustment"
+        ],
+        "aliases": [
+          "いにしんく"
+        ],
+        "normalizedAliases": [
+          "いにしんく"
+        ]
+      },
+      "メホビル": {
+        "displayName": "メホビル",
+        "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
+        "displayGenericName": "ビルダグリプチン/メトホルミン塩酸塩",
+        "genericKey": "vildagliptin_metformin_combo_generic",
+        "handlingTags": [
+          "renal_dose_adjustment",
+          "generic_equivalent"
+        ],
+        "aliases": [
+          "めほびる"
+        ],
+        "normalizedAliases": [
+          "めほびる"
+        ]
+      }
+    },
+    "aliasToBrand": {
+      "めとあな": "メトアナ",
+      "えくめっと": "エクメット",
+      "いにしんく": "イニシンク",
+      "めほびる": "メホビル"
+    }
+  },
+  "drugResolution": {
+    "brandToTags": {
+      "メトアナ": [
+        "dpp4_biguanide_combination",
+        "anagliptin_metformin_combo"
+      ],
+      "エクメット": [
+        "dpp4_biguanide_combination",
+        "vildagliptin_metformin_combo"
+      ],
+      "イニシンク": [
+        "dpp4_biguanide_combination",
+        "alogliptin_metformin_combo"
+      ],
+      "メホビル": [
+        "dpp4_biguanide_combination",
+        "vildagliptin_metformin_combo_generic"
+      ]
+    }
+  },
+  "regulatory": {
+    "psychotropicClass": "not_applicable",
+    "controlledSubstance": "not_applicable",
+    "notes": null
+  },
+  "topical": {
+    "steroidPotency": "not_applicable",
+    "notes": null
+  },
+  "template": {
+    "templateId": "dm_dpp4_biguanide_combination_oral_v1",
+    "templateVersion": "1.0.0",
+    "situationTags": [
+      "general",
+      "sickday"
+    ],
+    "severityTags": [
+      "mild",
+      "moderate",
+      "severe"
+    ],
+    "urgentFlag": false,
+    "urgentCriteria": null
+  },
+  "display": {
+    "title": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+    "subtitle": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+    "drugClassLabel": "DPP-4阻害薬／ビグアナイド配合剤",
+    "drugGeneric": "DPP-4阻害薬／ビグアナイド配合剤",
+    "nodeLabelShort": "DPP4/BG配合剤",
+    "nodeLabelLong": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+    "nodeKey": "dpp4_biguanide_combination_oral",
+    "menuGroupLabels": {
+      "増量": "増量",
+      "減量": "減量"
+    },
+    "adjustmentExpression": {
+      "increasePast": "増量となった",
+      "decreasePast": "減量となった"
+    }
+  },
+  "defaults": {
+    "followup": {
+      "S": null,
+      "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+    },
+    "followupProfiles": {
+      "default_followup": {
+        "S": null,
+        "P": "次回、引き続き使用できているか、副作用の有無を確認。"
+      },
+      "renal_followup": {
+        "S": null,
+        "P": "次回、血糖推移および体調変化の有無を確認。"
+      },
+      "end_followup": {
+        "S": null,
+        "P": "次回、治療経過および体調変化の有無を確認。"
+      },
+      "se_followup": {
+        "S": null,
+        "P": "次回、治療経過および副作用の有無を確認。"
+      }
+    }
+  },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "initial",
+      "globalId": "dm_dpp4_biguanide_combination_oral.initial",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 初回",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "initial"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "new_addition",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperglycemia"
+        ],
+        "symptoms": [
+          "血糖値が高い"
+        ]
+      },
+      "S": "{{drug_subject}}は、血糖値が高いため追加となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。\nメトホルミンによる肝臓での糖新生抑制や末梢組織での糖利用促進に加え、DPP-4阻害薬によるインクレチン作用の増強により、血糖改善を目的として服用する。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n下痢や吐き気など、お腹の調子が悪くなることがあります。\n脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "hyperglycemia_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、血糖値が高いため追加となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖コントロール不十分のため追加となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "メトホルミンによる肝臓での糖新生抑制や末梢組織での糖利用促進に加え、DPP-4阻害薬によるインクレチン作用の増強により、血糖改善を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、血糖値を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "下痢や吐き気など、お腹の調子が悪くなることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_initial_sickday_guidance",
+          "addon_glycemic_guidance_initial",
+          "addon_se_hypoglycemia_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "restart",
+      "globalId": "dm_dpp4_biguanide_combination_oral.restart",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 再開",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "restart"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "restart",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperglycemia"
+        ],
+        "symptoms": [
+          "血糖値が高い"
+        ]
+      },
+      "S": "{{drug_subject}}は、血糖値が高いため再開となった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、血糖コントロール不十分のため再開となった。\nメトホルミンによる肝臓での糖新生抑制や末梢組織での糖利用促進に加え、DPP-4阻害薬によるインクレチン作用の増強により、血糖改善を目的として服用する。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n下痢や吐き気など、お腹の調子が悪くなることがあります。\n脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "hyperglycemia_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、血糖値が高いため再開となった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖コントロール不十分のため再開となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "メトホルミンによる肝臓での糖新生抑制や末梢組織での糖利用促進に加え、DPP-4阻害薬によるインクレチン作用の増強により、血糖改善を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、血糖値を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "下痢や吐き気など、お腹の調子が悪くなることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_initial_sickday_guidance",
+          "addon_glycemic_guidance_initial",
+          "addon_se_hypoglycemia_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "external_start",
+      "globalId": "dm_dpp4_biguanide_combination_oral.external_start",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 他所開始",
+      "scenarioType": "treatment_start",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "external_start"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "external_continuation",
+        "template": "symptom_based",
+        "symptomCodes": [
+          "hyperglycemia"
+        ],
+        "symptoms": [
+          "血糖値が高い"
+        ]
+      },
+      "S": "{{drug_subject}}は、他院で開始され継続使用中であった。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}は、血糖コントロール改善を目的として使用中であった。\nメトホルミンによる肝臓での糖新生抑制や末梢組織での糖利用促進に加え、DPP-4阻害薬によるインクレチン作用の増強により、血糖改善を目的として服用する。",
+      "P": "{{drug_subject}}は、血糖値を改善する薬です。\n下痢や吐き気など、お腹の調子が悪くなることがあります。\n脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "hyperglycemia_management",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他院で開始され継続使用中であった。",
+          "role": "treatment_start_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖コントロール改善を目的として使用中であった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "メトホルミンによる肝臓での糖新生抑制や末梢組織での糖利用促進に加え、DPP-4阻害薬によるインクレチン作用の増強により、血糖改善を目的として服用する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、血糖値を改善する薬です。",
+          "role": "drug_effect_explanation",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "下痢や吐き気など、お腹の調子が悪くなることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_initial_sickday_guidance",
+          "addon_glycemic_guidance_initial",
+          "addon_se_hypoglycemia_guidance",
+          "addon_hyperkalemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "dose_increase_low_perceived_effect",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_increase_low_perceived_effect",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 増量（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
+      "O": "{{drug_subject}}　増量",
+      "A": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、増量によりお腹の調子が悪くなることがあります。\n消化器症状が強い場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_increase_explanation",
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しいため増量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "副作用が増強"
+          ],
+          "notes": "risk: adverse effect enhancement after dose increase"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、増量によりお腹の調子が悪くなることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "消化器症状が強い場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_se_hypoglycemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "dose_increase_no_lab_improvement",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_increase_no_lab_improvement",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 増量（検査値改善なし）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [
+          "no_lab_improvement"
+        ],
+        "symptoms": [
+          "検査値が改善しない"
+        ]
+      },
+      "S": "{{drug_subject}}は、検査値が改善しないため増量となった。",
+      "O": "{{drug_subject}}　増量",
+      "A": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、増量によりお腹の調子が悪くなることがあります。\n消化器症状が強い場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_increase_explanation",
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、検査値が改善しないため増量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "副作用が増強"
+          ],
+          "notes": "risk: adverse effect enhancement after dose increase"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、増量によりお腹の調子が悪くなることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "消化器症状が強い場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_se_hypoglycemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "dose_increase_due_to_other_med_adjustment",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_increase_due_to_other_med_adjustment",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 増量（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_increase",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}は、他剤変更に伴う調整により増量となった。",
+      "O": "{{drug_subject}}　増量",
+      "A": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、増量によりお腹の調子が悪くなることがあります。\n消化器症状が強い場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_increase_explanation",
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤変更に伴う調整により増量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "副作用が増強"
+          ],
+          "notes": "risk: adverse effect enhancement after dose increase"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、増量によりお腹の調子が悪くなることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "消化器症状が強い場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_se_hypoglycemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "dose_decrease_renal_function",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_decrease_renal_function",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 減量（腎機能低下）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "renal_function_decline"
+        ],
+        "symptoms": [
+          "腎機能低下"
+        ]
+      },
+      "S": "{{drug_subject}}は、腎機能を考慮して減量となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、腎機能低下に伴い用量調整となった。減量後の血糖推移に注意が必要である。",
+      "P": "{{drug_subject}}は、腎機能に応じて用量調整が必要になることがあります。\n減量後は血糖値が変動する可能性があります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "renal_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、腎機能を考慮して減量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、腎機能低下に伴い用量調整となった。減量後の血糖推移に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量",
+            "血糖推移"
+          ],
+          "notes": "risk: glycemic monitoring needed after dose decrease (renal function based)"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、腎機能に応じて用量調整が必要になることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "減量後は血糖値が変動する可能性があります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "体調変化があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "dose_decrease_improved",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_decrease_improved",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 減量（症状改善）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "lab_improved"
+        ],
+        "symptoms": [
+          "検査値が改善した"
+        ]
+      },
+      "S": "{{drug_subject}}は、検査値が改善したため減量となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}は、減量により血糖値が上がることがあります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、検査値が改善したため減量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量",
+            "血糖が上昇"
+          ],
+          "notes": "risk: glycemic rise after dose decrease"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、減量により血糖値が上がることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "体調変化があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "dose_decrease_low_perceived_effect",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_decrease_low_perceived_effect",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 減量（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "low_perceived_effect"
+        ],
+        "symptoms": [
+          "効果の実感が乏しい"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果の実感が乏しいため減量を希望された。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。",
+      "P": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しいため減量を希望された。",
+          "role": "dose_adjustment_reason",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": "risk: glycemic monitoring needed after dose decrease"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "体調変化があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "dose_decrease_due_to_other_med_adjustment",
+      "globalId": "dm_dpp4_biguanide_combination_oral.dose_decrease_due_to_other_med_adjustment",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 減量（他剤との調整）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}は、他剤変更に伴う調整のため減量となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。",
+      "P": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。\n体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "glycemic_control_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、他剤変更に伴う調整のため減量となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": "risk: glycemic monitoring needed after dose decrease"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、減量により血糖値が上昇する可能性があります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "体調変化があればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "体調変化",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "se_hypo_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_hypo_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（低血糖）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "hypoglycemia",
+      "scenarioTags": [
+        "side_effect",
+        "hypoglycemia",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\nふらつき・冷汗・動悸などの低血糖症状は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。\n改善しない場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "hypoglycemia_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "ふらつき・冷汗・動悸などの低血糖症状は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": "observation: high-risk symptom absence; minimal/medium: risk term protected"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "ブドウ糖",
+            "糖分を含む"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "改善しない場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_diarrhea_abdominal_pain_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_diarrhea_abdominal_pain_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（下痢・腹痛）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n下痢や腹痛は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、お腹の調子が悪くなることがあります。\n下痢や腹痛が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "下痢や腹痛は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、お腹の調子が悪くなることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "下痢や腹痛が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_appetite_loss_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_appetite_loss_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（食欲不振）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n食欲不振は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、お腹の調子が悪くなることがあります。\n食欲不振が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "食欲不振は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、お腹の調子が悪くなることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "食欲不振が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_lactic_acidosis_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_lactic_acidosis_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（乳酸アシドーシス）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "lactic_acidosis",
+      "scenarioTags": [
+        "side_effect",
+        "lactic_acidosis",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強いだるさ、吐き気、腹痛、息苦しさなどの症状は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による乳酸アシドーシスは現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、強いだるさ、吐き気、腹痛、息苦しさなどが出ることがあります。\n脱水や体調不良時には、まれに乳酸アシドーシスのリスクが高まることがあります。\n症状が強い場合や、水分が摂れない場合は、自己判断せず処方医へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "lactic_acidosis_attention",
+        "urgent_consult_advice"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "強いだるさ、吐き気、腹痛、息苦しさなどの症状は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "息苦しさ"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による乳酸アシドーシスは現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "乳酸アシドーシス"
+          ],
+          "notes": "observation: critical-risk symptom absence; minimal/high: risk term strictly protected"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、強いだるさ、吐き気、腹痛、息苦しさなどが出ることがあります。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "強いだるさ",
+            "息苦しさ"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "脱水や体調不良時には、まれに乳酸アシドーシスのリスクが高まることがあります。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "乳酸アシドーシス"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "症状が強い場合や、水分が摂れない場合は、自己判断せず処方医へご相談ください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "自己判断せず",
+            "処方医へご相談",
+            "処方医",
+            "ご相談ください",
+            "水分が摂れない"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_abdominal_distension_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_abdominal_distension_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（腹部膨満感）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\nお腹が張った感じは認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、お腹の調子が悪くなることがあります。\nお腹の張りが続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "お腹が張った感じは認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による消化器症状は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、お腹の調子が悪くなることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "お腹の張りが続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_pancreatitis_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_pancreatitis_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（膵炎）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "pancreatitis",
+      "scenarioTags": [
+        "side_effect",
+        "pancreatitis",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強い腹痛や背部痛などの症状は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "pancreatitis_attention",
+        "urgent_consult_advice"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "強い腹痛や背部痛などの症状は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "強い腹痛",
+            "背部痛"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "膵炎"
+          ],
+          "notes": "observation: critical-risk symptom absence; minimal/high: risk term strictly protected"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "強い腹痛",
+            "背中に響く痛み"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "こうした症状が続く場合は膵炎の可能性があります。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "膵炎"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "救急受診",
+            "発熱を伴う",
+            "我慢できない"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_bullous_pemphigoid_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_bullous_pemphigoid_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（類天疱瘡）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "skin_reaction",
+      "scenarioTags": [
+        "side_effect",
+        "skin_reaction",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\nかゆみや湿疹、水ぶくれなどの症状は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による皮膚症状は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。\nこうした症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "skin_reaction_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "かゆみや湿疹、水ぶくれなどの症状は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による皮膚症状は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "こうした症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "cp_good",
+      "globalId": "dm_dpp4_biguanide_combination_oral.cp_good",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 CP良好",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_good",
+      "scenarioTags": [
+        "adherence",
+        "adherence_good",
+        "good"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "continue",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "薬を服用して症状は落ち着いている。\n継続して服用できている。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは良好である。治療継続に問題はない。",
+      "P": "引き続き用法を守って服用することで、血糖コントロールの維持および合併症予防が期待できます。\n今後も継続して服用できるようにすることが大切です。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "薬を服用して症状は落ち着いている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "継続して服用できている。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは良好である。治療継続に問題はない。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "judgment: continuation assessment"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "引き続き用法を守って服用することで、血糖コントロールの維持および合併症予防が期待できます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "今後も継続して服用できるようにすることが大切です。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "cp_poor_missed_doses",
+      "globalId": "dm_dpp4_biguanide_combination_oral.cp_poor_missed_doses",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 CP不良（服薬忘れ）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "missed_doses"
+        ],
+        "symptoms": [
+          "服薬忘れ"
+        ]
+      },
+      "S": "服薬忘れがみられる。\n継続して服用できていない。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは不良で、服薬忘れがみられる。",
+      "P": "継続して服用することで血糖コントロールの維持が期待されます。\n服薬忘れが続くと血糖値が不安定となる可能性があります。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "服薬忘れがみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "継続して服用できていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、服薬忘れがみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して服用することで血糖コントロールの維持が期待されます。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "服薬忘れが続くと血糖値が不安定となる可能性があります。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_adherence_reminder_alarm",
+          "addon_adherence_reminder_app",
+          "addon_adherence_visual_calendar_checklist",
+          "addon_adherence_visual_note",
+          "addon_adherence_prep_previous_night",
+          "addon_adherence_prep_before_meal",
+          "addon_adherence_support_family_reminder"
+        ]
+      }
+    },
+    {
+      "id": "cp_poor_self_adjust",
+      "globalId": "dm_dpp4_biguanide_combination_oral.cp_poor_self_adjust",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 CP不良（自己判断）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "self_adjustment"
+        ],
+        "symptoms": [
+          "自己判断での服用調整"
+        ]
+      },
+      "S": "自己判断での服用調整がみられる。\n用法どおりの継続服用ができていない。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは不良で、自己判断による調整がみられる。",
+      "P": "継続して服用することで血糖コントロールが安定し、合併症予防につながります。\n自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があります。\n体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "adherence_support",
+        "urgent_consult_advice"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "自己判断での服用調整がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "用法どおりの継続服用ができていない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、自己判断による調整がみられる。",
+          "role": "adherence_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続して服用することで血糖コントロールが安定し、合併症予防につながります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があります。",
+          "role": "followup_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "医療機関へご相談",
+            "自己判断せず",
+            "体調変化",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "cp_poor_visit_delay",
+      "globalId": "dm_dpp4_biguanide_combination_oral.cp_poor_visit_delay",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 CP不良（受診遅延）",
+      "scenarioType": "adherence",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "visit_delay"
+        ],
+        "symptoms": [
+          "受診遅延がみられる"
+        ]
+      },
+      "S": "都合により受診遅延がみられる。\n継続した服用に不安がある。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "コンプライアンスは不良で、受診遅延がみられる。",
+      "P": "継続的な服用が血糖コントロールの維持と合併症予防につながります。\n治療が中断すると血糖値が悪化する可能性があります。\n次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "adherence",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "adherence_support",
+        "urgent_consult_advice"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "都合により受診遅延がみられる。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "継続した服用に不安がある。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "コンプライアンスは不良で、受診遅延がみられる。",
+          "role": "adherence_assessment",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [],
+          "notes": "visit behavior judgment; minimal to preserve clinical meaning"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "継続的な服用が血糖コントロールの維持と合併症予防につながります。",
+          "role": "adherence_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "治療が中断すると血糖値が悪化する可能性があります。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "医療機関へご連絡"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "end_improved",
+      "globalId": "dm_dpp4_biguanide_combination_oral.end_improved",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 終了（改善）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "end_improved",
+      "scenarioTags": [
+        "treatment_end",
+        "end_improved"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "glycemic_improved"
+        ],
+        "symptoms": [
+          "血糖コントロールが改善した"
+        ]
+      },
+      "S": "{{drug_subject}}は、血糖コントロールが改善したため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
+      "P": "{{drug_subject}}終了後、血糖上昇や体調変化がある場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "end_followup",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、血糖コントロールが改善したため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "fixed",
+          "safety": "medium",
+          "lockTerms": [
+            "終了後",
+            "血糖が変動"
+          ],
+          "notes": "risk: post-termination glycemic fluctuation"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}終了後、血糖上昇や体調変化がある場合はご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "終了後",
+            "体調変化",
+            "ご相談ください",
+            "血糖上昇"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "end_insufficient_effect",
+      "globalId": "dm_dpp4_biguanide_combination_oral.end_insufficient_effect",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 終了（効果不十分）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "end_insufficient_effect",
+      "scenarioTags": [
+        "treatment_end",
+        "end_insufficient_effect"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "insufficient_effect"
+        ],
+        "symptoms": [
+          "効果不十分"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果不十分のため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
+      "P": "{{drug_subject}}終了後、血糖が上昇する可能性があります。\n次の治療方針については処方医にご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "end_followup",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果不十分のため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "fixed",
+          "safety": "medium",
+          "lockTerms": [
+            "再評価"
+          ],
+          "notes": "judgment: re-evaluation required; fixed: must not be paraphrased"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "終了後",
+            "血糖が上昇"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "次の治療方針については処方医にご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "処方医にご相談",
+            "処方医",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "end_ineffective",
+      "globalId": "dm_dpp4_biguanide_combination_oral.end_ineffective",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 終了（無効）",
+      "scenarioType": "treatment_end",
+      "scenarioGroup": "end_ineffective",
+      "scenarioTags": [
+        "treatment_end",
+        "end_ineffective"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "treatment_end",
+        "template": "status_based",
+        "symptomCodes": [
+          "ineffective"
+        ],
+        "symptoms": [
+          "効果が認められなかった"
+        ]
+      },
+      "S": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+      "O": "{{drug_subject}}　処方終了",
+      "A": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+      "P": "{{drug_subject}}終了後、血糖が上昇する可能性があります。\n代替治療については処方医にご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "treatment_end",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "end_followup",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため中止となった。",
+          "role": "treatment_end_reason",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
+          "role": "treatment_end_assessment",
+          "transform": "fixed",
+          "safety": "medium",
+          "lockTerms": [
+            "治療方針の変更"
+          ],
+          "notes": "judgment: treatment plan change required; fixed: must not be paraphrased"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}終了後、血糖が上昇する可能性があります。",
+          "role": "treatment_end_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "終了後",
+            "血糖が上昇"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "代替治療については処方医にご相談ください。",
+          "role": "treatment_end_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "処方医にご相談",
+            "処方医",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "se_mild_continue",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_mild_continue",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 SE継続（軽症 消化器症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "se_mild_continue"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "present_mild",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "abdominal_discomfort"
+        ],
+        "symptoms": [
+          "お腹の調子が悪い"
+        ]
+      },
+      "S": "{{drug_subject}}の服用によりお腹の調子が悪いが、日常生活は送れている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
+      "P": "{{drug_subject}}によるお腹の不調が軽い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。\nお腹の不調が強く続く場合は、薬の調整が必要になることがあります。\nご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用によりお腹の調子が悪いが、日常生活は送れている。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "fixed",
+          "safety": "medium",
+          "lockTerms": [
+            "治療継続が可能"
+          ],
+          "notes": "mild SE with continuation judgment; fixed: continuation judgment must not be paraphrased"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}によるお腹の不調が軽い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "お腹の不調が強く続く場合は、薬の調整が必要になることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "ご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "se_moderate_consider_dr",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_moderate_consider_dr",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 SE継続（中等度 消化器症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "se_moderate_consider_dr"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "present_moderate",
+      "sComposition": {
+        "intent": "side_effect_present",
+        "template": "status_based",
+        "symptomCodes": [
+          "diarrhea"
+        ],
+        "symptoms": [
+          "下痢"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により下痢が強く、辛いことがあるが、日常生活は送れている。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
+      "P": "{{drug_subject}}による下痢が強い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。\n下痢が強く続く場合は、薬の調整や変更が必要になることがあります。\n自己判断せず、処方医へご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "gi_symptom_attention",
+        "urgent_consult_advice"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により下痢が強く、辛いことがあるが、日常生活は送れている。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
+          "role": "side_effect_assessment",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "継続困難",
+            "対応を要する"
+          ],
+          "notes": "moderate SE with continuation difficulty judgment; fixed: judgment phrases present"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}による下痢が強い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "下痢が強く続く場合は、薬の調整や変更が必要になることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "自己判断せず、処方医へご相談ください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "自己判断せず",
+            "処方医へご相談",
+            "処方医",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "se_change_due_to_gi_symptoms",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_change_due_to_gi_symptoms",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 SE変更（消化器症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "se_change_due_to_gi_symptoms"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "present_change",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "diarrhea"
+        ],
+        "symptoms": [
+          "下痢"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により下痢が出現したため、他剤へ変更となった。",
+      "O": "{{drug_subject}}　処方変更",
+      "A": "{{drug_subject}}の服用による消化器症状を認め、他剤変更後の経過確認を要する。",
+      "P": "{{drug_subject}}の変更後、血糖上昇や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により下痢が出現したため、他剤へ変更となった。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の服用による消化器症状を認め、他剤変更後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "他剤変更後の経過確認"
+          ],
+          "notes": "follow-up assessment after treatment change"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の変更後、血糖上昇や体調変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "変更後",
+            "体調変化",
+            "ご相談ください",
+            "血糖上昇"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "se_dose_decrease_due_to_gi_symptoms",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_dose_decrease_due_to_gi_symptoms",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 SE減量（消化器症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "se_dose_decrease_due_to_gi_symptoms"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [
+          "diarrhea"
+        ],
+        "symptoms": [
+          "下痢"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により下痢がひどいため、減量となった。",
+      "O": "{{drug_subject}}　減量",
+      "A": "{{drug_subject}}の服用による消化器症状を認め、減量後の経過確認を要する。",
+      "P": "{{drug_subject}}の減量後も消化器症状が続く場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "gi_symptom_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により下痢がひどいため、減量となった。",
+          "role": "side_effect_presence",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の服用による消化器症状を認め、減量後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "fixed",
+          "safety": "medium",
+          "lockTerms": [
+            "減量後の経過確認"
+          ],
+          "notes": "follow-up assessment after dose decrease"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の減量後も消化器症状が続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "減量",
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "se_stop_due_to_gi_symptoms",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_stop_due_to_gi_symptoms",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 SE中止（消化器症状）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "digestive",
+      "scenarioTags": [
+        "side_effect",
+        "digestive",
+        "se_stop_due_to_gi_symptoms"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "present_stop",
+      "sComposition": {
+        "intent": "stop",
+        "template": "status_based",
+        "symptomCodes": [
+          "diarrhea"
+        ],
+        "symptoms": [
+          "下痢"
+        ]
+      },
+      "S": "{{drug_subject}}の服用により下痢がひどいため、中止となった。",
+      "O": "{{drug_subject}}　処方中止",
+      "A": "{{drug_subject}}の服用による消化器症状を認め、中止後の経過確認を要する。",
+      "P": "{{drug_subject}}の中止後、血糖上昇や体調変化があればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}の服用により下痢がひどいため、中止となった。",
+          "role": "side_effect_presence",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}の服用による消化器症状を認め、中止後の経過確認を要する。",
+          "role": "side_effect_assessment",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止後の経過確認"
+          ],
+          "notes": "follow-up assessment after discontinuation"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の中止後、血糖上昇や体調変化があればご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "中止",
+            "中止後",
+            "体調変化",
+            "ご相談ください",
+            "血糖上昇"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "lifestyle_guidance_hyperglycemia",
+      "globalId": "dm_dpp4_biguanide_combination_oral.lifestyle_guidance_hyperglycemia",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 生活指導（血糖）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance",
+        "lifestyle_guidance_hyperglycemia"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "poor_glycemic_control"
+        ],
+        "symptoms": [
+          "血糖値がなかなか改善しない"
+        ]
+      },
+      "S": "血糖値がなかなか改善しない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+      "P": "高血糖が続くと、眼・腎・神経障害などのリスクが高まります。\n薬物療法に加え、食事・運動療法も血糖コントロールにおいて重要です。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖コントロールの改善に伴い、低血糖症状が出ることがあります。\n気になることがあればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "lifestyle_guidance",
+        "hypoglycemia_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "血糖値がなかなか改善しない。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": "guidance: lifestyle therapy continuation required"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "高血糖が続くと、眼・腎・神経障害などのリスクが高まります。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "薬物療法に加え、食事・運動療法も血糖コントロールにおいて重要です。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "血糖コントロールの改善に伴い、低血糖症状が出ることがあります。",
+          "role": "side_effect_attention",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_5",
+          "text": "気になることがあればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "lifestyle_guidance_hyperkalemia",
+      "globalId": "dm_dpp4_biguanide_combination_oral.lifestyle_guidance_hyperkalemia",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 生活指導（カリウム）",
+      "scenarioType": "lifestyle_guidance",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance",
+        "lifestyle_guidance_hyperkalemia"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "hyperkalemia"
+        ],
+        "symptoms": [
+          "カリウムの値が高い"
+        ]
+      },
+      "S": "カリウムの値が高いと言われた。",
+      "O": "{{drug_subject}}　処方",
+      "A": "カリウムコントロールが不十分であり、食事内容の見直しが必要である。",
+      "P": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "lifestyle_guidance",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "se_followup",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "カリウムの値が高いと言われた。",
+          "role": "adherence_status",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "カリウムコントロールが不十分であり、食事内容の見直しが必要である。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "食事療法は、カリウムのコントロールにおいて重要です。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "カリウムを多く含む食品の摂りすぎに注意しましょう。",
+          "role": "lifestyle_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "気になることがあればご相談ください。",
+          "role": "followup_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    },
+    {
+      "id": "sickday",
+      "globalId": "dm_dpp4_biguanide_combination_oral.sickday",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 シックデイ",
+      "scenarioType": "sickday",
+      "scenarioGroup": "sickday",
+      "scenarioTags": [
+        "sickday",
+        "sickday"
+      ],
+      "situationFilter": [
+        "sickday"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "status_report",
+        "template": "status_based",
+        "symptomCodes": [
+          "fever",
+          "vomiting",
+          "diarrhea"
+        ],
+        "symptoms": [
+          "発熱",
+          "嘔吐",
+          "下痢"
+        ]
+      },
+      "S": "発熱・嘔吐・下痢などの体調不良がみられる。",
+      "O": "{{drug_subject}}　服用中",
+      "A": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
+      "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n{{drug_subject}}は、脱水時に副作用のリスクが高まることがあるため、服用を続けてよいか自己判断せず、処方医へご相談ください。\n血糖測定が可能であれば行ってください。\n水分は少量ずつこまめに摂取してください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "sickday",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "sickday_guidance",
+        "urgent_consult_advice"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "発熱・嘔吐・下痢などの体調不良がみられる。",
+          "role": "adherence_status",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "発熱"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
+          "role": "treatment_assessment",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "脱水",
+            "低血糖"
+          ],
+          "notes": "risk: hypoglycemia risk with concomitant drugs in sickday; fixed/critical: must not be paraphrased"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。",
+          "role": "sickday_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "低血糖",
+            "脱水",
+            "発熱"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "{{drug_subject}}は、脱水時に副作用のリスクが高まることがあるため、服用を続けてよいか自己判断せず、処方医へご相談ください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "自己判断せず",
+            "処方医へご相談",
+            "処方医",
+            "ご相談ください",
+            "脱水"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "血糖測定が可能であれば行ってください。",
+          "role": "sickday_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "水分は少量ずつこまめに摂取してください。",
+          "role": "sickday_guidance",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_5",
+          "text": "嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "受診してください",
+            "尿量が減る",
+            "水分が摂れない",
+            "嘔吐が続く"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": []
+    }
+  ],
+  "addons": {
+    "items": {
+      "addon_initial_sickday_guidance": {
+        "key": "addon_initial_sickday_guidance",
+        "id": "addon_initial_sickday_guidance",
+        "title": "初回シックデイ",
+        "group": "sickday",
+        "targetSection": "P",
+        "text": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n体調不良時は水分を少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なるため、自己判断せず処方医へご相談ください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。",
+        "sectionTexts": {
+          "P": "発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。\n体調不良時は水分を少量ずつこまめに摂取してください。\n治療継続の可否は体調や摂取状況によって異なるため、自己判断せず処方医へご相談ください。\n嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_glycemic_guidance_initial": {
+        "key": "addon_glycemic_guidance_initial",
+        "id": "addon_glycemic_guidance_initial",
+        "title": "生活指導（血糖指導）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "P": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_se_hypoglycemia_guidance": {
+        "key": "addon_se_hypoglycemia_guidance",
+        "id": "addon_se_hypoglycemia_guidance",
+        "title": "副作用注意喚起（低血糖）",
+        "group": "sideEffects",
+        "targetSection": "P",
+        "text": "他の糖尿病薬と併用している場合は、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n低血糖症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。",
+        "sectionTexts": {
+          "P": "他の糖尿病薬と併用している場合は、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n低血糖症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_hyperkalemia_guidance": {
+        "key": "addon_hyperkalemia_guidance",
+        "id": "addon_hyperkalemia_guidance",
+        "title": "生活指導（カリウム）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "カリウムの値が高いと言われた。",
+          "A": "カリウムコントロールが不十分であり、食事内容の見直しが必要である。",
+          "P": "カリウムが高い状態が続くと、心臓へ負担がかかることがあります。\n食事療法は、カリウムのコントロールにおいて重要です。\nカリウムを多く含む食品の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_glycemic_guidance_followup": {
+        "key": "addon_glycemic_guidance_followup",
+        "id": "addon_glycemic_guidance_followup",
+        "title": "生活指導（血糖指導）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "A": "血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。\n食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。\n間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。\n血糖が改善してきた際には低血糖症状が出ることがあります。\n気になることがあればご相談ください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_hypertension_guidance": {
+        "key": "addon_hypertension_guidance",
+        "id": "addon_hypertension_guidance",
+        "title": "生活指導（血圧）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "血圧が高いと言われた。",
+          "A": "血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。\n食事療法や運動療法は、血圧のコントロールにおいて重要です。\n塩分の摂りすぎに注意しましょう。\n気になることがあればご相談ください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_dyslipidemia_guidance": {
+        "key": "addon_dyslipidemia_guidance",
+        "id": "addon_dyslipidemia_guidance",
+        "title": "生活指導（脂質）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "脂質が高いと言われた。",
+          "A": "脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。",
+          "P": "脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。\n食事療法や運動療法は、脂質のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_hyperuricemia_guidance": {
+        "key": "addon_hyperuricemia_guidance",
+        "id": "addon_hyperuricemia_guidance",
+        "title": "生活指導（尿酸）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。",
+        "sectionTexts": {
+          "S": "尿酸が高いと言われた。",
+          "A": "尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。",
+          "P": "尿酸が高い状態が続くと、痛風発作などにつながることがあります。\n食事療法は、尿酸のコントロールにおいて重要です。\n食生活の見直しを継続していきましょう。\n気になることがあればご相談ください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_adherence_reminder_alarm": {
+        "key": "addon_adherence_reminder_alarm",
+        "id": "addon_adherence_reminder_alarm",
+        "title": "服薬忘れ対策（通知：アラーム）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentBlue"
+      },
+      "addon_adherence_reminder_app": {
+        "key": "addon_adherence_reminder_app",
+        "id": "addon_adherence_reminder_app",
+        "title": "服薬忘れ対策（通知：服薬アプリ）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentBlue"
+      },
+      "addon_adherence_visual_calendar_checklist": {
+        "key": "addon_adherence_visual_calendar_checklist",
+        "id": "addon_adherence_visual_calendar_checklist",
+        "title": "服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentLavender"
+      },
+      "addon_adherence_visual_note": {
+        "key": "addon_adherence_visual_note",
+        "id": "addon_adherence_visual_note",
+        "title": "服薬忘れ対策（見える化：貼り紙）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentLavender"
+      },
+      "addon_adherence_prep_previous_night": {
+        "key": "addon_adherence_prep_previous_night",
+        "id": "addon_adherence_prep_previous_night",
+        "title": "服薬忘れ対策（準備：前夜）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentBlue"
+      },
+      "addon_adherence_prep_before_meal": {
+        "key": "addon_adherence_prep_before_meal",
+        "id": "addon_adherence_prep_before_meal",
+        "title": "服薬忘れ対策（準備：食前）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentBlue"
+      },
+      "addon_adherence_support_family_reminder": {
+        "key": "addon_adherence_support_family_reminder",
+        "id": "addon_adherence_support_family_reminder",
+        "title": "服薬忘れ対策（支援：家族などの声掛け）",
+        "group": "adherence",
+        "targetSection": "P",
+        "text": "飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。",
+        "sectionTexts": {
+          "P": "飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "uiVariant": "rightAccentLavender"
+      }
+    },
+    "orderPresets": {}
+  },
+  "ui": {
+    "panels": [
+      {
+        "id": "panel_1",
+        "title": "基本",
+        "sections": [
+          "display",
+          "categoryPath",
+          "drug",
+          "template",
+          "risks",
+          "searchConfig",
+          "index"
+        ]
+      },
+      {
+        "id": "panel_2",
+        "title": "指導（アドオン）",
+        "sections": [
+          "addons"
+        ]
+      },
+      {
+        "id": "panel_3",
+        "title": "SOAP（シナリオ）",
+        "sections": [
+          "scenarios"
+        ]
+      }
+    ],
+    "panelOrder": [
+      "panel_1",
+      "panel_2",
+      "panel_3"
+    ],
+    "defaultPanelId": "panel_1"
+  },
+  "risks": {
+    "primary": [
+      "gastrointestinal_symptoms",
+      "lactic_acidosis_risk",
+      "pancreatitis_risk",
+      "bullous_pemphigoid_risk"
+    ],
+    "secondary": [
+      "hypoglycemia_risk",
+      "dehydration_risk",
+      "renal_function_monitoring"
+    ],
+    "conditional": [
+      {
+        "risk": "ketoacidosis_risk_sglt2",
+        "rule": {
+          "whenAny": [
+            "concomitant_sglt2"
+          ],
+          "whenAll": []
+        }
+      }
+    ]
+  },
+  "searchConfig": {
+    "minPrefixLen": 2,
+    "normalize": {
+      "toHiragana": true,
+      "lowerLatin": true,
+      "stripSymbols": true,
+      "zenkakuToHankaku": true,
+      "trimSpaces": true
+    },
+    "multiTerm": {
+      "enabled": true,
+      "operator": "AND",
+      "match": "prefix"
+    }
+  },
+  "index": {
+    "searchableText": [
+      "メトアナ",
+      "エクメット",
+      "イニシンク",
+      "メホビル",
+      "アナグリプチン",
+      "ビルダグリプチン",
+      "アログリプチン",
+      "メトホルミン",
+      "メトホルミン塩酸塩",
+      "DPP-4阻害薬",
+      "DPP4",
+      "DPP-4",
+      "DPP4阻害薬",
+      "ビグアナイド系糖尿病薬",
+      "ビグアナイド",
+      "配合剤",
+      "糖尿病",
+      "シックデイ",
+      "体調不良",
+      "発熱",
+      "嘔吐",
+      "下痢",
+      "脱水",
+      "低血糖",
+      "食欲不振",
+      "腹部膨満感",
+      "お腹の張り",
+      "膵炎",
+      "腹痛",
+      "背部痛",
+      "類天疱瘡",
+      "水ぶくれ",
+      "乳酸アシドーシス",
+      "服薬忘れ",
+      "自己判断",
+      "受診遅延",
+      "腎機能"
+    ],
+    "normalizedTokens": [
+      "めとあな",
+      "えくめっと",
+      "いにしんく",
+      "めほびる",
+      "あなぐりぷちん",
+      "びるだぐりぷちん",
+      "あろぐりぷちん",
+      "めとほるみん",
+      "めとほるみんえんさんえん",
+      "dpp-4阻害薬",
+      "dpp4",
+      "dpp-4",
+      "dpp4阻害薬",
+      "びぐあないどけいとうにょうびょうやく",
+      "びぐあないど",
+      "はいごうざい",
+      "とうにょうびょう",
+      "しっくでい",
+      "たいちょうふりょう",
+      "はつねつ",
+      "おうと",
+      "げり",
+      "だっすい",
+      "ていけっとう",
+      "しょくよくふしん",
+      "ふくぶぼうまんかん",
+      "おなかのはり",
+      "すいえん",
+      "ふくつう",
+      "はいぶつう",
+      "るいてんぽうそう",
+      "みずぶくれ",
+      "にゅうさんあしどーしす",
+      "ふくやくわすれ",
+      "じこはんだん",
+      "じゅしんちえん",
+      "じんきのう"
+    ],
+    "facets": {
+      "route": "oral",
+      "dosageForms": [
+        "tablet"
+      ],
+      "situation": [
+        "general",
+        "sickday"
+      ],
+      "drugClass": [
+        "DPP4_BIGUANIDE_COMBINATION"
+      ]
+    },
+    "scenarioIds": [
+      "initial",
+      "restart",
+      "external_start",
+      "dose_increase_low_perceived_effect",
+      "dose_increase_no_lab_improvement",
+      "dose_increase_due_to_other_med_adjustment",
+      "dose_decrease_renal_function",
+      "dose_decrease_improved",
+      "dose_decrease_low_perceived_effect",
+      "dose_decrease_due_to_other_med_adjustment",
+      "se_hypo_none",
+      "se_diarrhea_abdominal_pain_none",
+      "se_appetite_loss_none",
+      "se_lactic_acidosis_none",
+      "se_abdominal_distension_none",
+      "se_pancreatitis_none",
+      "se_bullous_pemphigoid_none",
+      "cp_good",
+      "cp_poor_missed_doses",
+      "cp_poor_self_adjust",
+      "cp_poor_visit_delay",
+      "end_improved",
+      "end_insufficient_effect",
+      "end_ineffective",
+      "se_mild_continue",
+      "se_moderate_consider_dr",
+      "se_change_due_to_gi_symptoms",
+      "se_dose_decrease_due_to_gi_symptoms",
+      "se_stop_due_to_gi_symptoms",
+      "lifestyle_guidance_hyperglycemia",
+      "lifestyle_guidance_hyperkalemia",
+      "sickday"
+    ],
+    "addonIds": [
+      "addon_initial_sickday_guidance",
+      "addon_glycemic_guidance_initial",
+      "addon_se_hypoglycemia_guidance",
+      "addon_hyperkalemia_guidance",
+      "addon_glycemic_guidance_followup",
+      "addon_hypertension_guidance",
+      "addon_dyslipidemia_guidance",
+      "addon_hyperuricemia_guidance",
+      "addon_adherence_reminder_alarm",
+      "addon_adherence_reminder_app",
+      "addon_adherence_visual_calendar_checklist",
+      "addon_adherence_visual_note",
+      "addon_adherence_prep_previous_night",
+      "addon_adherence_prep_before_meal",
+      "addon_adherence_support_family_reminder"
+    ],
+    "followupProfileIds": [
+      "default_followup",
+      "renal_followup",
+      "end_followup",
+      "se_followup"
+    ],
+    "groupKeyRegistry": [
+      "hyperglycemia_management",
+      "glycemic_control_adjustment",
+      "side_effect_monitoring",
+      "adherence",
+      "treatment_end",
+      "lifestyle_guidance",
+      "sickday"
+    ]
+  },
+  "tagCatalog": {
+    "intentTags": [
+      "adherence_support",
+      "dose_decrease_explanation",
+      "dose_increase_explanation",
+      "drug_effect_explanation",
+      "followup_monitoring",
+      "gi_symptom_attention",
+      "hypoglycemia_attention",
+      "lactic_acidosis_attention",
+      "lifestyle_guidance",
+      "pancreatitis_attention",
+      "sickday_guidance",
+      "side_effect_attention",
+      "skin_reaction_attention",
+      "treatment_end_explanation",
+      "urgent_consult_advice"
+    ],
+    "clinicalTags": [],
+    "counselingTags": [],
+    "workflowTags": []
+  },
+  "expressModes": [
+    {
+      "enabled": false,
+      "expressCategory": "内科",
+      "expressGroup": "糖尿病",
+      "expressSubGroup": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+      "label": "メトアナ",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "メトアナ",
+      "sortOrder": 99
+    },
+    {
+      "enabled": false,
+      "expressCategory": "内科",
+      "expressGroup": "糖尿病",
+      "expressSubGroup": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+      "label": "エクメット",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "エクメット",
+      "sortOrder": 99
+    },
+    {
+      "enabled": false,
+      "expressCategory": "内科",
+      "expressGroup": "糖尿病",
+      "expressSubGroup": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+      "label": "イニシンク",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "イニシンク",
+      "sortOrder": 99
+    },
+    {
+      "enabled": false,
+      "expressCategory": "内科",
+      "expressGroup": "糖尿病",
+      "expressSubGroup": "DPP-4阻害薬／ビグアナイド配合剤（内服）",
+      "label": "メホビル",
+      "defaultScenarioId": "initial",
+      "defaultBrandName": "メホビル",
+      "sortOrder": 99
+    }
+  ]
+}
