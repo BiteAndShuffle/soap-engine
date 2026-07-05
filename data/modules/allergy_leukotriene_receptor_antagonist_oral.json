@@ -478,7 +478,7 @@
         "key": "addon_driving_caution_guidance",
         "id": "addon_driving_caution_guidance",
         "title": "運転注意説明",
-        "group": "lifestyle_guidance",
+        "group": "counseling",
         "targetSection": "P",
         "text": "服用後に眠気や集中力の低下が出ることがあります。\n自動車の運転など危険を伴う作業には注意してください。",
         "tone": null,
