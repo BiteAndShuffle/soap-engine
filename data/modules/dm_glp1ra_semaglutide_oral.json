@@ -3157,7 +3157,7 @@
       "S": "{{drug_subject}}の服用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
-      "P": "{{drug_subject}}による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。\n処方医へご相談ください。",
+      "P": "{{drug_subject}}による症状が強い場合は、少量ずつ食事を摂り、脂っこい食事を控えることで改善することがあります。\n水分を十分に摂るよう心がけてください。\n症状が強く続く場合は、減量や薬の変更、症状に応じた薬の追加が必要になることがあります。\n自己判断せず、処方医へご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -3220,8 +3220,26 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}による症状が強い場合は、減量や薬の変更、便秘薬などの追加が必要になることがあります。",
+          "text": "{{drug_subject}}による症状が強い場合は、少量ずつ食事を摂り、脂っこい食事を控えることで改善することがあります。",
           "role": "side_effect_guidance",
+          "transform": "moderate",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "水分を十分に摂るよう心がけてください。",
+          "role": "side_effect_guidance",
+          "transform": "moderate",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "症状が強く続く場合は、減量や薬の変更、症状に応じた薬の追加が必要になることがあります。",
+          "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
@@ -3230,8 +3248,8 @@
           "notes": null
         },
         {
-          "id": "p_2",
-          "text": "処方医へご相談ください。",
+          "id": "p_4",
+          "text": "自己判断せず、処方医へご相談ください。",
           "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
