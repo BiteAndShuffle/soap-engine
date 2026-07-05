@@ -3,20 +3,17 @@
 # dm_biguanide_metformin_oral
 # =========================================
 #
-# ⚠️ STATUS: DRAFT ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
-# ヘッダー案（drug / composition / display 等）を vNext / DPP4 基準へ整形し、
-# ユーザー提供のシナリオ本文・ADDON本文を SCENARIOS_START〜SCENARIOS_END として
-# 追加済みです。ただし、まだユーザーによる確認・凍結宣言（本文の最終確定）を
-# 経ていません。PN1 を実行してはいけません
-# （prompts/RULES.md §24 Bridge Status State Machine 参照）。
+# ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜SCENARIOS_END の
+# シナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー（PASS確認済み）を経て
+# 確定しました。
 #
 # 目的: ビグアナイド系糖尿病薬（メトホルミン塩酸塩）の brandCatalog / handlingTags /
 # drugResolution.brandToTags 設計を、会話ログではなくリポジトリ上に固定するための
-# 作業ファイルです（2026-07-05 作成、同日シナリオ本文追加）。
+# 作業ファイルです（2026-07-05 作成、同日シナリオ本文追加・凍結）。
 #
-# 次の作業: シナリオ本文のレビュー → ユーザー確認・凍結宣言（STATUS: FROZEN_FOR_PN1）→
-# PN1 開始（prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
 #   - bridges/dm_dpp4_oral.md（同形式の直近実績・DPP4）
