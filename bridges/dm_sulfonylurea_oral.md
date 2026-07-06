@@ -583,31 +583,6 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_renal_impairment_none｜title=スルホニルウレア系経口血糖降下剤 副作用なし（腎障害）】
-S
-スルホニルウレア系経口血糖降下剤を服用して症状は落ち着いている。
-むくみなどの明らかな体調変化は認めない。
-O
-スルホニルウレア系経口血糖降下剤　処方
-A
-スルホニルウレア系経口血糖降下剤による腎障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。
-P
-スルホニルウレア系経口血糖降下剤の継続中に、腎臓値が悪化することがあります。
-むくみの症状が続く場合はご相談ください。
-P_ADDON
-- addon_glycemic_guidance_followup
-- addon_hyperkalemia_guidance
-- addon_hypertension_guidance
-- addon_dyslipidemia_guidance
-- addon_hyperuricemia_guidance
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-
-
 【SCENARIO｜type=side_effect｜id=se_anemia_none｜title=スルホニルウレア系経口血糖降下剤 副作用なし（貧血）】
 S
 スルホニルウレア系経口血糖降下剤を服用して症状は落ち着いている。
