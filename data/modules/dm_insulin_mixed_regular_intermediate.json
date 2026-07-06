@@ -1049,16 +1049,7 @@
       "AStructured": [
         {
           "id": "a_dil_1",
-          "text": "{{drug_subject}}は、効果不十分のため増量となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_dil_2",
-          "text": "増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+          "text": "{{drug_subject}}は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -1180,16 +1171,7 @@
       "AStructured": [
         {
           "id": "a_dinl_1",
-          "text": "{{drug_subject}}は、検査値改善が不十分なため増量となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_dinl_2",
-          "text": "増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+          "text": "{{drug_subject}}は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -1312,16 +1294,7 @@
       "AStructured": [
         {
           "id": "a_dioma_1",
-          "text": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_dioma_2",
-          "text": "増量に伴い副作用が増強する可能性があるため、注意が必要である。",
+          "text": "{{drug_subject}}は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -1442,16 +1415,7 @@
       "AStructured": [
         {
           "id": "a_ddi_1",
-          "text": "{{drug_subject}}は、血糖推移を踏まえ減量となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_ddi_2",
-          "text": "減量後に血糖が上昇する可能性があるため、注意が必要である。",
+          "text": "{{drug_subject}}は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -1551,16 +1515,7 @@
       "AStructured": [
         {
           "id": "a_ddl_1",
-          "text": "{{drug_subject}}は、患者希望を踏まえ減量となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_ddl_2",
-          "text": "減量後の血糖推移に注意が必要である。",
+          "text": "{{drug_subject}}は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -1661,16 +1616,7 @@
       "AStructured": [
         {
           "id": "a_ddoma_1",
-          "text": "{{drug_subject}}は、併用薬変更に伴う血糖調整のため減量となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_ddoma_2",
-          "text": "減量後の血糖推移に注意が必要である。",
+          "text": "{{drug_subject}}は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -2520,16 +2466,7 @@
       "AStructured": [
         {
           "id": "a_ei_1",
-          "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_ei_2",
-          "text": "終了後に血糖が変動する可能性があるため、注意が必要である。",
+          "text": "{{drug_subject}}は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -2619,16 +2556,7 @@
       "AStructured": [
         {
           "id": "a_eie_1",
-          "text": "{{drug_subject}}は、効果不十分のため終了となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_eie_2",
-          "text": "血糖管理の再評価が必要である。",
+          "text": "{{drug_subject}}は、効果不十分のため終了となった。血糖管理の再評価が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
@@ -2727,16 +2655,7 @@
       "AStructured": [
         {
           "id": "a_ein_1",
-          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。",
-          "role": "treatment_assessment",
-          "transform": "none",
-          "safety": "safe",
-          "lockTerms": [],
-          "notes": ""
-        },
-        {
-          "id": "a_ein_2",
-          "text": "治療方針の変更が必要である。",
+          "text": "{{drug_subject}}は、効果が認められなかったため終了となった。治療方針の変更が必要である。",
           "role": "treatment_assessment",
           "transform": "none",
           "safety": "safe",
