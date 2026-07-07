@@ -3,11 +3,11 @@
 # dm_sulfonylurea_oral
 # =========================================
 #
-# ⚠️ STATUS: DRAFT ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
 # ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜SCENARIOS_END の
-# シナリオ本文・ADDON本文が追加済み。ユーザーによる確認・凍結宣言は未了。
-# 本ファイルはまだ PN1 の入力として使用できない（RULES.md §24 参照）。
+# シナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー（PASS確認済み）を経て
+# 確定しました。
 #
 # 目的: スルホニルウレア系経口血糖降下剤（アマリール／オイグルコン／グリミクロン）の
 # brandCatalog / alias / drugResolution.brandToTags 設計、およびシナリオ本文を、
@@ -20,8 +20,7 @@
 # （既存単剤bridgeでの同型の対応実績に倣う。S/O/A/P本文・P_ADDON参照・
 # addon本文そのものは変更していない）。
 #
-# 次の作業: ユーザー確認・凍結宣言（STATUS: DRAFT → FROZEN_FOR_PN1）→ PN1 開始
-# （prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
 #   - bridges/dm_dpp4_oral.md（単剤・複数ブランド構成の直近実績。各ブランドが
@@ -243,7 +242,7 @@ display:
 # - GEブランドの追加: 現時点ではユーザー指定の3ブランドのみを扱う
 
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END（STATUS: DRAFT）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: FROZEN_FOR_PN1）
 # =========================================
 
 =======SCENARIOS_START=======
