@@ -38,6 +38,7 @@ import rawThiazolidinedionePioglitazoneOral from './dm_thiazolidinedione_pioglit
 import rawDpp4ThiazolidinedioneCombinationOral from './dm_dpp4_thiazolidinedione_combination_oral.json'
 import rawThiazolidinedioneBiguanideCombinationOral from './dm_thiazolidinedione_biguanide_combination_oral.json'
 import rawSulfonylureaOral from './dm_sulfonylurea_oral.json'
+import rawThiazolidinedioneSulfonylureaCombinationOral from './dm_thiazolidinedione_sulfonylurea_combination_oral.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
@@ -66,4 +67,5 @@ export const ALL_MODULES: ModuleData[] = [
   rawDpp4ThiazolidinedioneCombinationOral as unknown as ModuleData,
   rawThiazolidinedioneBiguanideCombinationOral as unknown as ModuleData,
   rawSulfonylureaOral as unknown as ModuleData,
+  rawThiazolidinedioneSulfonylureaCombinationOral as unknown as ModuleData,
 ]
