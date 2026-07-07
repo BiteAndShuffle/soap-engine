@@ -118,15 +118,13 @@ drug:
   # ─────────────────────────────────────────
   # brandCatalog: 1 ブランド（ソニアスのみ、単一ブランドとして扱う）
   # ─────────────────────────────────────────
-  # genericKey はユーザー指定値「pioglitazone_glimepiride」をそのまま採用する
-  # （既存配合剤3件は "{成分A}_{成分B}_combo" 命名だが、本モジュールはユーザーの
-  # 明示指定を優先し "_combo" 接尾辞なしで確定する）。
+  # genericKey は既存配合剤3件の "{成分A}_{成分B}_combo" 命名規則に統一する。
   brandCatalog:
     ソニアス:
       displayName: "ソニアス"
       genericName: "ピオグリタゾン塩酸塩／グリメピリド"
       displayGenericName: "ピオグリタゾン塩酸塩／グリメピリド"
-      genericKey: "pioglitazone_glimepiride"
+      genericKey: "pioglitazone_glimepiride_combo"
       handlingTags: []
       aliases:
         - "そにあす"
@@ -152,7 +150,7 @@ drugResolution:
   brandToTags:
     ソニアス:
       - "thiazolidinedione_sulfonylurea_combination"
-      - "pioglitazone_glimepiride"
+      - "pioglitazone_glimepiride_combo"
 
 composition:
   classKey: "thiazolidinedione_sulfonylurea_combination"
@@ -175,8 +173,8 @@ display:
 #    既存配合剤の命名規則と同型で確定
 # 4. brandCatalog.genericName（「ピオグリタゾン塩酸塩／グリメピリド」）→
 #    ユーザー指定成分（ピオグリタゾン塩酸塩・グリメピリド）どおり確定
-# 5. genericKey（"pioglitazone_glimepiride"）→ ユーザー指定値をそのまま採用して確定
-#    （既存配合剤の "_combo" 接尾辞命名とは異なるが、ユーザー明示指定を優先）
+# 5. genericKey（"pioglitazone_glimepiride_combo"）→ 既存配合剤3件の
+#    "{成分A}_{成分B}_combo" 命名規則に統一して確定
 # 6. 成分名読みの流用範囲（ぴおぐりたぞん／ぴおぐりたぞんえんさんえん／
 #    ぐりめぴりど）→ 既存TZD/SUモジュールに確立済みの読みのみを流用して確定
 # 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読みのみ、成分名読みは
