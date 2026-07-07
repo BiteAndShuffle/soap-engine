@@ -40,6 +40,7 @@ import rawThiazolidinedioneBiguanideCombinationOral from './dm_thiazolidinedione
 import rawSulfonylureaOral from './dm_sulfonylurea_oral.json'
 import rawThiazolidinedioneSulfonylureaCombinationOral from './dm_thiazolidinedione_sulfonylurea_combination_oral.json'
 import rawGlinideOral from './dm_glinide_oral.json'
+import rawAlphaGlucosidaseInhibitorOral from './dm_alpha_glucosidase_inhibitor_oral.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
@@ -70,4 +71,5 @@ export const ALL_MODULES: ModuleData[] = [
   rawSulfonylureaOral as unknown as ModuleData,
   rawThiazolidinedioneSulfonylureaCombinationOral as unknown as ModuleData,
   rawGlinideOral as unknown as ModuleData,
+  rawAlphaGlucosidaseInhibitorOral as unknown as ModuleData,
 ]
