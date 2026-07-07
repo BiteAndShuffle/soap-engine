@@ -3,18 +3,24 @@
 # dm_alpha_glucosidase_inhibitor_oral
 # =========================================
 #
-# ⚠️ STATUS: HEADER_ONLY ⚠️
+# ⚠️ STATUS: DRAFT ⚠️
 #
-# ヘッダー案（drug / composition / display 等）のみ作成済み。
-# SCENARIOS_START〜SCENARIOS_END は未作成。
-# 本ファイルはまだ PN1 の入力として使用できない（RULES.md §24 参照）。
+# ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜SCENARIOS_END の
+# シナリオ本文・ADDON本文を作成済み。ユーザーによる凍結前レビュー（DRAFT → FROZEN_FOR_PN1）は
+# 未実施。本ファイルはまだ PN1 の入力として使用できない（RULES.md §24 参照）。
 #
 # 目的: α-グルコシダーゼ阻害薬（セイブル／ベイスン／グルコバイ）の
-# brandCatalog / alias / drugResolution.brandToTags 設計を、会話ログではなく
-# リポジトリ上に固定するための作業ファイルです（2026-07-07 ヘッダー作成）。
+# brandCatalog / alias / drugResolution.brandToTags 設計、およびシナリオ本文を、
+# 会話ログではなくリポジトリ上に固定するための作業ファイルです
+# （2026-07-07 ヘッダー作成、同日シナリオ本文追加）。
 #
-# 次の作業: SCENARIOS_START〜SCENARIOS_END の追加（STATUS: HEADER_ONLY → DRAFT）。
-# その後ユーザー確認・凍結宣言（DRAFT → FROZEN_FOR_PN1）を経て PN1 開始
+# シナリオ本文追加時の対応: ユーザー提供文に addon_hyperkalemia_guidance の重複定義
+# （initial直後・se_hypo_none直後の2箇所、内容完全一致）があったため、initial直後の
+# 定義を正本として残し、se_hypo_none直後の重複ブロックのみ削除した
+# （既存配合剤・単剤bridgeでの同型の対応実績に倣う。S/O/A/P本文・P_ADDON参照・
+# addon本文そのものは変更していない）。
+#
+# 次の作業: ユーザー確認・凍結宣言（DRAFT → FROZEN_FOR_PN1）を経て PN1 開始
 # （prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
@@ -235,5 +241,710 @@ display:
 # - GEブランドの追加: 現時点ではユーザー指定の3ブランドのみを扱う
 
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END（未作成・STATUS: HEADER_ONLY）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: DRAFT）
 # =========================================
+
+=======SCENARIOS_START=======
+【SCENARIO｜type=treatment_start｜id=initial｜title=α-グルコシダーゼ阻害薬 初回】
+S
+α-グルコシダーゼ阻害薬は、血糖値が高いため追加となった。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬は、血糖コントロール不十分のため追加となった。
+糖質の分解を遅らせ、食後血糖の上昇を抑えることで血糖改善を目的として服用する。
+P
+α-グルコシダーゼ阻害薬は、食後血糖の上昇を抑える薬です。
+腹部膨満感や下痢などの消化器症状が出ることがあります。
+症状が強い場合や続く場合はご相談ください。
+単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は注意が必要です。
+低血糖症状が出た場合は、砂糖ではなくブドウ糖を摂取して対処してください。
+P_ADDON
+- addon_alpha_gi_before_meal_guidance
+- addon_glycemic_guidance_initial
+- addon_initial_sickday_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_alpha_gi_before_meal_guidance｜title=α-グルコシダーゼ阻害薬 服用タイミング】
+P_APPEND
+食事の直前に服用する薬です。
+食事を摂らない時は服用を控え、対応に迷う場合は処方医へご相談ください。
+飲み忘れたことに気付いた時は、自己判断せずご相談ください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_initial｜title=生活指導（血糖指導）】
+P_APPEND
+高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。
+食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。
+間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
+血糖が改善してきた際には低血糖症状が出ることがあります。
+気になることがあればご相談ください。
+
+
+
+
+【ADDON｜type=sickday_guidance｜id=addon_initial_sickday_guidance｜title=初回シックデイ】
+P_APPEND
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
+体調不良時は水分を少量ずつこまめに摂取してください。
+治療継続の可否は体調や摂取状況によって異なるため、自己判断せず処方医へご相談ください。
+嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hyperkalemia_guidance｜title=生活指導（カリウム）】
+S_APPEND
+カリウムの値が高いと言われた。
+A_APPEND
+カリウムコントロールが不十分であり、食事内容の見直しが必要である。
+P_APPEND
+カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
+食事療法は、カリウムのコントロールにおいて重要です。
+カリウムを多く含む食品の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart｜title=α-グルコシダーゼ阻害薬 再開】
+S
+α-グルコシダーゼ阻害薬は、血糖値が高いため再開となった。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬は、血糖コントロール不十分のため再開となった。
+糖質の分解を遅らせ、食後血糖の上昇を抑えることで血糖改善を目的として服用する。
+P
+α-グルコシダーゼ阻害薬は、食後血糖の上昇を抑える薬です。
+腹部膨満感や下痢などの消化器症状が出ることがあります。
+症状が強い場合や続く場合はご相談ください。
+単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は注意が必要です。
+低血糖症状が出た場合は、砂糖ではなくブドウ糖を摂取して対処してください。
+P_ADDON
+- addon_alpha_gi_before_meal_guidance
+- addon_glycemic_guidance_initial
+- addon_initial_sickday_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start｜title=α-グルコシダーゼ阻害薬 他所開始】
+S
+α-グルコシダーゼ阻害薬は、他院で開始され継続使用中であった。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬は、血糖コントロール改善を目的として使用中であった。
+糖質の分解を遅らせ、食後血糖の上昇を抑えることで血糖改善を目的として服用する。
+P
+α-グルコシダーゼ阻害薬は、食後血糖の上昇を抑える薬です。
+腹部膨満感や下痢などの消化器症状が出ることがあります。
+症状が強い場合や続く場合はご相談ください。
+単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は注意が必要です。
+低血糖症状が出た場合は、砂糖ではなくブドウ糖を摂取して対処してください。
+P_ADDON
+- addon_alpha_gi_before_meal_guidance
+- addon_glycemic_guidance_initial
+- addon_initial_sickday_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=α-グルコシダーゼ阻害薬 増量（効果実感乏しい）】
+S
+α-グルコシダーゼ阻害薬は、効果の実感が乏しいため増量となった。
+O
+α-グルコシダーゼ阻害薬　増量
+A
+α-グルコシダーゼ阻害薬は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+P
+α-グルコシダーゼ阻害薬は、増量によりお腹が張ったり、お腹の調子が変わることがあります。
+症状が強い場合や続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=α-グルコシダーゼ阻害薬 増量（検査値改善なし）】
+S
+α-グルコシダーゼ阻害薬は、検査値が改善しないため増量となった。
+O
+α-グルコシダーゼ阻害薬　増量
+A
+α-グルコシダーゼ阻害薬は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+P
+α-グルコシダーゼ阻害薬は、増量によりお腹が張ったり、お腹の調子が変わることがあります。
+症状が強い場合や続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=α-グルコシダーゼ阻害薬 増量（他剤との調整）】
+S
+α-グルコシダーゼ阻害薬は、他剤変更に伴う調整により増量となった。
+O
+α-グルコシダーゼ阻害薬　増量
+A
+α-グルコシダーゼ阻害薬は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+P
+α-グルコシダーゼ阻害薬は、増量によりお腹が張ったり、お腹の調子が変わることがあります。
+症状が強い場合や続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=α-グルコシダーゼ阻害薬 減量（症状改善）】
+S
+α-グルコシダーゼ阻害薬は、検査値が改善したため減量となった。
+O
+α-グルコシダーゼ阻害薬　減量
+A
+α-グルコシダーゼ阻害薬は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
+P
+α-グルコシダーゼ阻害薬は、減量により血糖値が上がることがあります。
+体調変化があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=α-グルコシダーゼ阻害薬 減量（効果実感乏しい）】
+S
+α-グルコシダーゼ阻害薬は、効果の実感が乏しいため減量を希望された。
+O
+α-グルコシダーゼ阻害薬　減量
+A
+α-グルコシダーゼ阻害薬は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
+P
+α-グルコシダーゼ阻害薬は、減量により血糖値が上昇する可能性があります。
+体調変化があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=α-グルコシダーゼ阻害薬 減量（他剤との調整）】
+S
+α-グルコシダーゼ阻害薬は、他剤変更に伴う調整のため減量となった。
+O
+α-グルコシダーゼ阻害薬　減量
+A
+α-グルコシダーゼ阻害薬は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
+P
+α-グルコシダーゼ阻害薬は、減量により血糖値が上昇する可能性があります。
+体調変化があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=α-グルコシダーゼ阻害薬 副作用なし（低血糖）】
+S
+α-グルコシダーゼ阻害薬を服用して症状は落ち着いている。
+ふらつき・冷汗・動悸などの低血糖症状は認めない。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬による低血糖は現時点で認められず、治療継続が可能である。
+P
+α-グルコシダーゼ阻害薬の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
+単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。
+低血糖症状が出た場合は、砂糖ではなくブドウ糖を摂取して対処してください。
+改善しない場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_followup｜title=生活指導（血糖指導）】
+A_APPEND
+血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。
+食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。
+間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
+血糖が改善してきた際には低血糖症状が出ることがあります。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hypertension_guidance｜title=生活指導（血圧）】
+S_APPEND
+血圧が高いと言われた。
+A_APPEND
+血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。
+食事療法や運動療法は、血圧のコントロールにおいて重要です。
+塩分の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_dyslipidemia_guidance｜title=生活指導（脂質）】
+S_APPEND
+脂質が高いと言われた。
+A_APPEND
+脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。
+食事療法や運動療法は、脂質のコントロールにおいて重要です。
+食生活の見直しを継続していきましょう。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hyperuricemia_guidance｜title=生活指導（尿酸）】
+S_APPEND
+尿酸が高いと言われた。
+A_APPEND
+尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。
+P_APPEND
+尿酸が高い状態が続くと、痛風発作などにつながることがあります。
+食事療法は、尿酸のコントロールにおいて重要です。
+食生活の見直しを継続していきましょう。
+気になることがあればご相談ください。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_diarrhea_none｜title=α-グルコシダーゼ阻害薬 副作用なし（下痢）】
+S
+α-グルコシダーゼ阻害薬を服用して症状は落ち着いている。
+下痢は認めない。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
+P
+α-グルコシダーゼ阻害薬の継続中に、お腹の調子が悪くなることがあります。
+下痢が続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_abdominal_distension_none｜title=α-グルコシダーゼ阻害薬 副作用なし（腹部膨満感）】
+S
+α-グルコシダーゼ阻害薬を服用して症状は落ち着いている。
+お腹が張った感じは認めない。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
+P
+α-グルコシダーゼ阻害薬の継続中に、お腹の調子が悪くなることがあります。
+お腹の張りが続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_liver_dysfunction_none｜title=α-グルコシダーゼ阻害薬 副作用なし（肝障害関連症状）】
+S
+α-グルコシダーゼ阻害薬を服用して症状は落ち着いている。
+強い倦怠感などの明らかな体調変化は認めない。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬による肝障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。
+P
+α-グルコシダーゼ阻害薬の継続中に、肝機能が悪くなることがあります。
+強い倦怠感が続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_good｜title=α-グルコシダーゼ阻害薬 CP良好】
+S
+薬を服用して症状は落ち着いている。
+継続して服用できている。
+O
+α-グルコシダーゼ阻害薬　服用中
+A
+コンプライアンスは良好である。治療継続に問題はない。
+P
+引き続き用法を守って服用することで、血糖コントロールの維持および合併症予防が期待できます。
+今後も継続して服用できるようにすることが大切です。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=α-グルコシダーゼ阻害薬 CP不良（服薬忘れ）】
+S
+服薬忘れがみられる。
+継続して服用できていない。
+O
+α-グルコシダーゼ阻害薬　服用中
+A
+コンプライアンスは不良で、服薬忘れがみられる。
+P
+継続して服用することで血糖コントロールの維持が期待されます。
+服薬忘れが続くと血糖値が不安定となる可能性があります。
+P_ADDON
+- addon_alpha_gi_before_meal_guidance
+- addon_adherence_reminder_alarm
+- addon_adherence_reminder_app
+- addon_adherence_visual_calendar_checklist
+- addon_adherence_visual_note
+- addon_adherence_prep_previous_night
+- addon_adherence_prep_before_meal
+- addon_adherence_support_family_reminder
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=服薬忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=服薬忘れ対策（通知：服薬アプリ）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=服薬忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（準備：前夜）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（準備：食前）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=服薬忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=α-グルコシダーゼ阻害薬 CP不良（自己判断）】
+S
+自己判断での服用調整がみられる。
+用法どおりの継続服用ができていない。
+O
+α-グルコシダーゼ阻害薬　服用中
+A
+コンプライアンスは不良で、自己判断による調整がみられる。
+P
+継続して服用することで血糖コントロールが安定し、合併症予防につながります。
+自己判断での中止・調整により血糖値が不安定となり、十分な治療効果が得られない可能性があります。
+体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=α-グルコシダーゼ阻害薬 CP不良（受診遅延）】
+S
+都合により受診遅延がみられる。
+継続した服用に不安がある。
+O
+α-グルコシダーゼ阻害薬　服用中
+A
+コンプライアンスは不良で、受診遅延がみられる。
+P
+継続的な服用が血糖コントロールの維持と合併症予防につながります。
+治療が中断すると血糖値が悪化する可能性があります。
+次回受診が難しい場合は、早めに医療機関へご連絡ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=α-グルコシダーゼ阻害薬 終了（改善）】
+S
+α-グルコシダーゼ阻害薬は、血糖コントロールが改善したため中止となった。
+O
+α-グルコシダーゼ阻害薬　処方終了
+A
+α-グルコシダーゼ阻害薬は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
+P
+α-グルコシダーゼ阻害薬終了後、血糖上昇や体調変化がある場合はご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=α-グルコシダーゼ阻害薬 終了（効果不十分）】
+S
+α-グルコシダーゼ阻害薬は、効果不十分のため中止となった。
+O
+α-グルコシダーゼ阻害薬　処方終了
+A
+α-グルコシダーゼ阻害薬は、効果不十分のため終了となった。血糖管理の再評価が必要である。
+P
+α-グルコシダーゼ阻害薬終了後、血糖が上昇する可能性があります。
+次の治療方針については処方医にご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=α-グルコシダーゼ阻害薬 終了（無効）】
+S
+α-グルコシダーゼ阻害薬は、効果が認められなかったため中止となった。
+O
+α-グルコシダーゼ阻害薬　処方終了
+A
+α-グルコシダーゼ阻害薬は、効果が認められなかったため終了となった。治療方針の変更が必要である。
+P
+α-グルコシダーゼ阻害薬終了後、血糖が上昇する可能性があります。
+代替治療については処方医にご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_mild_continue_abdominal_distension｜title=α-グルコシダーゼ阻害薬 SE継続（軽症 腹部膨満感）】
+S
+α-グルコシダーゼ阻害薬の服用によりお腹が張った感じが出ることがあるが、日常生活は送れている。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+α-グルコシダーゼ阻害薬による消化器症状を軽度認めるが、治療継続が可能である。
+P
+α-グルコシダーゼ阻害薬によるお腹の張りが軽い場合は、経過をみながら継続してください。
+症状が強くなる、長引く場合は、薬の調整が必要になることがあります。
+ご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_abdominal_distension｜title=α-グルコシダーゼ阻害薬 SE変更（腹部膨満感）】
+S
+α-グルコシダーゼ阻害薬の服用によりお腹が張ったため、他剤へ変更となった。
+O
+α-グルコシダーゼ阻害薬　処方変更
+A
+α-グルコシダーゼ阻害薬の服用による消化器症状を認め、他剤変更後の経過確認を要する。
+P
+α-グルコシダーゼ阻害薬の変更後、血糖上昇や体調変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_abdominal_distension｜title=α-グルコシダーゼ阻害薬 SE減量（腹部膨満感）】
+S
+α-グルコシダーゼ阻害薬の服用によりお腹の張りがひどいため、減量となった。
+O
+α-グルコシダーゼ阻害薬　減量
+A
+α-グルコシダーゼ阻害薬の服用による消化器症状を認め、減量後の経過確認を要する。
+P
+α-グルコシダーゼ阻害薬の減量後も消化器症状が続く場合はご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_abdominal_distension｜title=α-グルコシダーゼ阻害薬 SE中止（腹部膨満感）】
+S
+α-グルコシダーゼ阻害薬の服用によりお腹の張りがひどいため、中止となった。
+O
+α-グルコシダーゼ阻害薬　処方中止
+A
+α-グルコシダーゼ阻害薬の服用による消化器症状を認め、中止後の経過確認を要する。
+P
+α-グルコシダーゼ阻害薬の中止後、血糖上昇や体調変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=α-グルコシダーゼ阻害薬 生活指導（血糖）】
+S
+血糖値がなかなか改善しない。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P
+高血糖が続くと、眼・腎・神経障害などのリスクが高まります。
+薬物療法に加え、食事・運動療法も血糖コントロールにおいて重要です。
+間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
+血糖コントロールの改善に伴い、低血糖症状が出ることがあります。
+気になることがあればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=α-グルコシダーゼ阻害薬 生活指導（カリウム）】
+S
+カリウムの値が高いと言われた。
+O
+α-グルコシダーゼ阻害薬　処方
+A
+カリウムコントロールが不十分であり、食事内容の見直しが必要である。
+P
+カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
+食事療法は、カリウムのコントロールにおいて重要です。
+カリウムを多く含む食品の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=sickday｜id=sickday｜title=α-グルコシダーゼ阻害薬 シックデイ】
+S
+発熱・嘔吐・下痢などの体調不良がみられる。
+O
+α-グルコシダーゼ阻害薬　服用中
+A
+食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。
+P
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
+血糖測定が可能であれば行ってください。
+水分は少量ずつこまめに摂取してください。
+治療継続の可否は体調や摂取状況によって異なります。
+自己判断せず、処方医に相談してください。
+嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
+P_ADDON
+- addon_sickday_hold_sglt2_metformin
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=sickday_guidance｜id=addon_sickday_hold_sglt2_metformin｜title=シックデイ時併用薬注意】
+P_APPEND
+併用中のSGLT2阻害薬やメトホルミンは、脱水時は休薬が必要な場合があります。
+自己判断で中止せず、処方医へご相談ください。
+=======SCENARIOS_END=======
