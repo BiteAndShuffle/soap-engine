@@ -51,18 +51,8 @@
 
 ### vNext 体系で作業する場合（旧 P0-A〜P5 とは排他）
 
-`prompts/vNext/PN1〜PN8` を使う作業（主に大規模モジュールの JSON 化）を行う場合は、  
-上記手順 3 の代わりに以下を実行する:
-
-1. **`prompts/vNext/HANDOFF.md` を最初に読む**  
-   - HANDOFF.md は運用引き継ぎ文書。会話ログは正本ではなく、このファイルが正本。  
-   - 実行時の正本は `prompts/RULES.md` / `prompts/P1.md` / `prompts/vNext/PN1〜PN8`。
-2. **`prompts/vNext/AUTORUN.md` を読む**  
-   - PN1 / PN2 は手動承認。PN3A〜PN8 は AUTORUN モードで自動連続実行する。  
-   - MUST_STOP 条件・1 行報告フォーマット・AUTORUN 開始コマンドを確認する。
-3. HANDOFF.md の対象モジュールに対して PN1 から実行する  
-   - PN1 / PN2 完了後はユーザーへ報告して停止する。  
-   - PN2 承認後、ユーザーが AUTORUN 開始コマンドを送ったら PN3A〜PN8 を自動実行する。
+vNext PN1〜PN8を使う作業では、スタートアップ手順の正本として
+`prompts/vNext/STARTUP_PROMPT.md` を参照する。PROJECT_CONTEXT.md では詳細手順を重複管理しない。
 
 ---
 
