@@ -296,7 +296,7 @@ P_CLOSING
 
 
 
-【ADDON｜type=administration_guidance｜id=addon_glinide_before_meal_guidance｜title=グリニド系経口血糖降下剤 服用タイミング】
+【ADDON｜type=adherence_guidance｜id=addon_glinide_before_meal_guidance｜title=グリニド系経口血糖降下剤 服用タイミング】
 P_APPEND
 食事の直前に服用する薬です。
 食事を摂らない時は、低血糖を避けるため服用を控え、対応に迷う場合は処方医へご相談ください。
