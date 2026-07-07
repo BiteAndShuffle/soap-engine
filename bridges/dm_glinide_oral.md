@@ -3,11 +3,13 @@
 # dm_glinide_oral
 # =========================================
 #
-# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
+# ⚠️ STATUS: JSON_COMPLETE ⚠️
 #
 # ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜SCENARIOS_END の
-# シナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー（PASS確認済み）を経て
-# 確定しました。
+# シナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー（PASS確認済み）を経て確定し、
+# canonical JSON（data/modules/dm_glinide_oral.json）への反映が完了しました
+# （PN1 一括実行・build / tsc / ModuleValidator / CrossModuleValidator 全 PASS・
+# 2026-07-07）。
 #
 # 目的: グリニド系経口血糖降下剤（スターシス／ファスティック／グルファスト／
 # シュアポスト）の brandCatalog / alias / drugResolution.brandToTags 設計、
@@ -18,7 +20,8 @@
 # initial直後の1箇所のみに定義されており、重複定義は含まれていなかった
 # （既存配合剤・単剤bridgeで見られた重複パターンには該当しない）。
 #
-# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 次の作業: なし（本モジュールは完了）。次モジュール着手時は新規 bridge を
+# ヘッダー作成から開始する（prompts/vNext/HANDOFF.md 参照）。
 #
 # 参照:
 #   - bridges/dm_dpp4_oral.md（単剤・複数ブランド構成の直近実績。各ブランドが
@@ -268,7 +271,7 @@ display:
 # - GEブランドの追加: 現時点ではユーザー指定の4ブランドのみを扱う
 
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END（STATUS: FROZEN_FOR_PN1）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: JSON_COMPLETE）
 # =========================================
 
 =======SCENARIOS_START=======
