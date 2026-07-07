@@ -1635,7 +1635,7 @@
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強い倦怠感などの明らかな体調変化は認めない。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による肝障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、肝臓値が悪化することがあります。\n強い倦怠感が続く場合はご相談ください。",
+      "P": "{{drug_subject}}の継続中に、肝機能が悪くなることがあります。\n強い倦怠感が続く場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1703,12 +1703,12 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}の継続中に、肝臓値が悪化することがあります。",
+          "text": "{{drug_subject}}の継続中に、肝機能が悪くなることがあります。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
-            "肝臓値"
+            "肝機能"
           ],
           "notes": null
         },
