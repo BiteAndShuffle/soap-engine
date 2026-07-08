@@ -3,19 +3,18 @@
 # dm_epalrestat_oral
 # =========================================
 #
-# ⚠️ STATUS: DRAFT ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
-# ヘッダー案（drug / composition / display 等）に加え、SCENARIOS_START〜
-# SCENARIOS_END のシナリオ本文・ADDON本文を追加済み。ユーザーによる凍結前レビュー
-# （PASS確認・STATUS: DRAFT→FROZEN_FOR_PN1 遷移の指示）は未実施。
+# ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜
+# SCENARIOS_END のシナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー
+# （PASS確認済み）を経て確定しました。
 #
 # 目的: アルドース還元酵素阻害薬（キネダック）の brandCatalog / alias /
 # drugResolution.brandToTags 設計を、会話ログではなくリポジトリ上に固定するための
 # 作業ファイルです（2026-07-09 ヘッダー作成、同日シナリオ本文追加）。
 #
-# 次の作業: ユーザーによる本文レビュー・凍結宣言。凍結後に STATUS を
-# DRAFT → FROZEN_FOR_PN1 へ遷移させ、PN1 を開始する
-# （prompts/vNext/HANDOFF.md「bridge 作成から開始する」手順に従う）。
+# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md「bridge 作成から開始する」
+# 手順に従う）。
 #
 # 参照:
 #   - bridges/dm_imeglimin_oral.md（単剤・単一ブランド・直近実績。
@@ -185,7 +184,7 @@ display:
 # - GEブランドの追加: 現時点ではキネダック1ブランドのみを扱う
 #
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END（STATUS: DRAFT）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: FROZEN_FOR_PN1）
 # =========================================
 #
 # シナリオ本文追加時の対応: ユーザー提供文に addon_hyperkalemia_guidance の重複定義
