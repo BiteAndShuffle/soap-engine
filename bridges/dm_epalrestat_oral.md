@@ -194,15 +194,13 @@ display:
 # 削除した（既存単剤・配合剤bridgeでの同型の対応実績に倣う。S/O/A/P本文・P_ADDON参照・
 # addon本文そのものは変更していない）。
 #
-# 未確認事項（本文は変更せずそのまま保持・PN1開始前にユーザー確認が必要）:
+# followupRef確定事項（ユーザー承認済み・2026-07-09）:
 #   dose_decrease_renal_function の P_CLOSING「次回、症状変化および体調変化の有無を
 #   確認。」は、既存の確定済み followupRef 対応表（default_followup / end_followup /
-#   se_followup / renal_followup）のいずれとも一致しない新規テキストである。
-#   本剤は血糖降下薬ではないため、既存の renal_followup（「次回、血糖推移および
-#   体調変化の有無を確認。」）をそのまま流用せず、本文どおり「症状変化」表記で
-#   保持した。PN1開始前に、この文言を新規 followupRef（例:
-#   symptom_change_followup）として確定するか、既存表現へ合わせるかをユーザーに
-#   確認する必要がある（本文は無断で書き換えていない）。
+#   se_followup / renal_followup）のいずれとも一致しない新規テキストであったが、
+#   本剤は血糖降下薬ではなく「血糖推移」表現（既存 renal_followup）は不適切なため、
+#   新規 followupRef `symptom_change_followup` としてユーザー承認により確定した。
+#   本文（P_CLOSING原文）は変更していない。
 #
 
 =======SCENARIOS_START=======
