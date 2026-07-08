@@ -76,7 +76,6 @@ P_CLOSING テキストから followupRef を決定する。
 | 次回、治療経過および体調変化の有無を確認。 | `"end_followup"` |
 | 次回、治療経過および副作用の有無を確認。 | `"se_followup"` |
 | 次回、血糖推移および体調変化の有無を確認。 | `"renal_followup"` |
-| 次回、症状変化および体調変化の有無を確認。 | `"symptom_change_followup"` |
 
 決定した followupRef と P_CLOSING 元テキストの両方を保存する。
 
@@ -96,12 +95,6 @@ P_CLOSING テキストから followupRef を決定する。
 **確定済み実績（表に反映済み）:** `dm_dpp4_oral` の `dose_decrease_renal_function`
 （P_CLOSING = "次回、血糖推移および体調変化の有無を確認。"）は `renal_followup` として
 正式承認済み（2026-07-05）。この文言が再出現した場合は停止せず `renal_followup` を採用する。
-
-`dm_epalrestat_oral` の `dose_decrease_renal_function`
-（P_CLOSING = "次回、症状変化および体調変化の有無を確認。"）は `symptom_change_followup`
-として正式承認済み（2026-07-09）。血糖降下薬ではない薬効クラス（神経障害治療薬等）で
-「血糖推移」表現が不適切な場合の代替パターン。この文言が再出現した場合は停止せず
-`symptom_change_followup` を採用する。
 
 ### 5. followupProfiles の構築
 
