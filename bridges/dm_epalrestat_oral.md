@@ -194,13 +194,11 @@ display:
 # 削除した（既存単剤・配合剤bridgeでの同型の対応実績に倣う。S/O/A/P本文・P_ADDON参照・
 # addon本文そのものは変更していない）。
 #
-# followupRef確定事項（ユーザー承認済み・2026-07-09）:
-#   dose_decrease_renal_function の P_CLOSING「次回、症状変化および体調変化の有無を
-#   確認。」は、既存の確定済み followupRef 対応表（default_followup / end_followup /
-#   se_followup / renal_followup）のいずれとも一致しない新規テキストであったが、
-#   本剤は血糖降下薬ではなく「血糖推移」表現（既存 renal_followup）は不適切なため、
-#   新規 followupRef `symptom_change_followup` としてユーザー承認により確定した。
-#   本文（P_CLOSING原文）は変更していない。
+# 設計方針変更（2026-07-09）: エパルレスタットは腎機能低下による定型的な減量
+# シナリオを持たせない方針としたため、dose_decrease_renal_function シナリオを削除した。
+# これに伴い、いったん承認された新規 followupRef `symptom_change_followup`
+# （P_CLOSING = "次回、症状変化および体調変化の有無を確認。"）も本 bridge 内では
+# 未使用となった（prompts/vNext/PN1-Text-Extraction.md の対応表からも削除済み）。
 #
 
 =======SCENARIOS_START=======
@@ -343,27 +341,6 @@ P
 気になる症状があればご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-
-
-
-
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_renal_function｜title=アルドース還元酵素阻害薬 減量（腎機能低下）】
-S
-アルドース還元酵素阻害薬は、腎機能を考慮して減量となった。
-O
-アルドース還元酵素阻害薬　減量
-A
-アルドース還元酵素阻害薬は、腎機能低下に伴い用量調整となった。減量後の症状変化に注意が必要である。
-P
-アルドース還元酵素阻害薬は、腎機能に応じて用量調整が必要になることがあります。
-減量後はしびれや痛みなどの症状が変化する可能性があります。
-体調変化があればご相談ください。
-P_CLOSING
-次回、症状変化および体調変化の有無を確認。
 
 
 
