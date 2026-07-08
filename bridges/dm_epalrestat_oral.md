@@ -3,18 +3,19 @@
 # dm_epalrestat_oral
 # =========================================
 #
-# ⚠️ STATUS: HEADER_ONLY ⚠️
+# ⚠️ STATUS: DRAFT ⚠️
 #
-# ヘッダー案（drug / composition / display 等）のみ確定済み。
-# SCENARIOS_START〜SCENARIOS_END は未作成（本ファイルには含まれない）。
+# ヘッダー案（drug / composition / display 等）に加え、SCENARIOS_START〜
+# SCENARIOS_END のシナリオ本文・ADDON本文を追加済み。ユーザーによる凍結前レビュー
+# （PASS確認・STATUS: DRAFT→FROZEN_FOR_PN1 遷移の指示）は未実施。
 #
 # 目的: アルドース還元酵素阻害薬（キネダック）の brandCatalog / alias /
 # drugResolution.brandToTags 設計を、会話ログではなくリポジトリ上に固定するための
-# 作業ファイルです（2026-07-09 ヘッダー作成）。
+# 作業ファイルです（2026-07-09 ヘッダー作成、同日シナリオ本文追加）。
 #
-# 次の作業: シナリオ本文・ADDON本文の追加（SCENARIOS_START〜SCENARIOS_END）。
-# 本文確定・ユーザー凍結宣言後に STATUS を DRAFT → FROZEN_FOR_PN1 へ遷移させ、
-# PN1 を開始する（prompts/vNext/HANDOFF.md「bridge 作成から開始する」手順に従う）。
+# 次の作業: ユーザーによる本文レビュー・凍結宣言。凍結後に STATUS を
+# DRAFT → FROZEN_FOR_PN1 へ遷移させ、PN1 を開始する
+# （prompts/vNext/HANDOFF.md「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
 #   - bridges/dm_imeglimin_oral.md（単剤・単一ブランド・直近実績。
@@ -184,5 +185,651 @@ display:
 # - GEブランドの追加: 現時点ではキネダック1ブランドのみを扱う
 #
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END: 未作成（STATUS: HEADER_ONLY）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: DRAFT）
 # =========================================
+#
+# シナリオ本文追加時の対応: ユーザー提供文に addon_hyperkalemia_guidance の重複定義
+# （initial直後・se_liver_dysfunction_none直後の2箇所、内容完全一致）があったため、
+# initial直後の定義を正本として残し、se_liver_dysfunction_none直後の重複ブロックのみ
+# 削除した（既存単剤・配合剤bridgeでの同型の対応実績に倣う。S/O/A/P本文・P_ADDON参照・
+# addon本文そのものは変更していない）。
+#
+# 未確認事項（本文は変更せずそのまま保持・PN1開始前にユーザー確認が必要）:
+#   dose_decrease_renal_function の P_CLOSING「次回、症状変化および体調変化の有無を
+#   確認。」は、既存の確定済み followupRef 対応表（default_followup / end_followup /
+#   se_followup / renal_followup）のいずれとも一致しない新規テキストである。
+#   本剤は血糖降下薬ではないため、既存の renal_followup（「次回、血糖推移および
+#   体調変化の有無を確認。」）をそのまま流用せず、本文どおり「症状変化」表記で
+#   保持した。PN1開始前に、この文言を新規 followupRef（例:
+#   symptom_change_followup）として確定するか、既存表現へ合わせるかをユーザーに
+#   確認する必要がある（本文は無断で書き換えていない）。
+#
+
+=======SCENARIOS_START=======
+【SCENARIO｜type=treatment_start｜id=initial｜title=アルドース還元酵素阻害薬 初回】
+S
+アルドース還元酵素阻害薬は、しびれがひどいため追加となった。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬は、糖尿病神経障害の改善を目的として開始となった。
+糖尿病神経障害に伴う症状の改善が期待される。
+P
+アルドース還元酵素阻害薬は、糖尿病神経障害によるしびれや痛みなどの症状を改善する薬です。
+効果が現れるまで時間がかかることがあります。
+体調の変化や気になる症状があればご相談ください。
+P_ADDON
+- addon_glycemic_guidance_initial
+- addon_initial_sickday_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_initial｜title=生活指導（血糖指導）】
+P_APPEND
+高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。
+食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。
+間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
+血糖が改善してきた際には低血糖症状が出ることがあります。
+気になることがあればご相談ください。
+
+
+
+
+【ADDON｜type=sickday_guidance｜id=addon_initial_sickday_guidance｜title=初回シックデイ】
+P_APPEND
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
+体調不良時は水分を少量ずつこまめに摂取してください。
+治療継続の可否は体調や摂取状況によって異なるため、自己判断せず処方医へご相談ください。
+嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hyperkalemia_guidance｜title=生活指導（カリウム）】
+S_APPEND
+カリウムの値が高いと言われた。
+A_APPEND
+カリウムコントロールが不十分であり、食事内容の見直しが必要である。
+P_APPEND
+カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
+食事療法は、カリウムのコントロールにおいて重要です。
+カリウムを多く含む食品の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart｜title=アルドース還元酵素阻害薬 再開】
+S
+アルドース還元酵素阻害薬は、しびれがひどいため再開となった。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬は、糖尿病神経障害の改善を目的として再開となった。
+糖尿病神経障害に伴う症状の改善が期待される。
+P
+アルドース還元酵素阻害薬は、糖尿病神経障害によるしびれや痛みなどの症状を改善する薬です。
+効果が現れるまで時間がかかることがあります。
+体調の変化や気になる症状があればご相談ください。
+P_ADDON
+- addon_glycemic_guidance_initial
+- addon_initial_sickday_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start｜title=アルドース還元酵素阻害薬 他所開始】
+S
+アルドース還元酵素阻害薬は、他院で開始され継続使用中であった。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬は、糖尿病神経障害の改善を目的として使用中であった。
+糖尿病神経障害に伴う症状の改善が期待される。
+P
+アルドース還元酵素阻害薬は、糖尿病神経障害によるしびれや痛みなどの症状を改善する薬です。
+効果が現れるまで時間がかかることがあります。
+体調の変化や気になる症状があればご相談ください。
+P_ADDON
+- addon_glycemic_guidance_initial
+- addon_initial_sickday_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=アルドース還元酵素阻害薬 増量（効果実感乏しい）】
+S
+アルドース還元酵素阻害薬は、効果の実感が乏しいため増量となった。
+O
+アルドース還元酵素阻害薬　増量
+A
+アルドース還元酵素阻害薬は、効果不十分のため増量となった。
+増量後の効果および副作用の経過確認が必要である。
+P
+アルドース還元酵素阻害薬の増量後は体調の変化や副作用に注意してください。
+気になる症状があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=アルドース還元酵素阻害薬 増量（他剤との調整）】
+S
+アルドース還元酵素阻害薬は、他剤変更に伴う調整により増量となった。
+O
+アルドース還元酵素阻害薬　増量
+A
+アルドース還元酵素阻害薬は、他剤変更に伴う調整のため増量となった。
+増量後の効果および副作用の経過確認が必要である。
+P
+アルドース還元酵素阻害薬の増量後は体調の変化や副作用に注意してください。
+気になる症状があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_renal_function｜title=アルドース還元酵素阻害薬 減量（腎機能低下）】
+S
+アルドース還元酵素阻害薬は、腎機能を考慮して減量となった。
+O
+アルドース還元酵素阻害薬　減量
+A
+アルドース還元酵素阻害薬は、腎機能低下に伴い用量調整となった。減量後の症状変化に注意が必要である。
+P
+アルドース還元酵素阻害薬は、腎機能に応じて用量調整が必要になることがあります。
+減量後はしびれや痛みなどの症状が変化する可能性があります。
+体調変化があればご相談ください。
+P_CLOSING
+次回、症状変化および体調変化の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=アルドース還元酵素阻害薬 減量（効果実感乏しい）】
+S
+アルドース還元酵素阻害薬は、効果の実感が乏しいため減量を希望された。
+O
+アルドース還元酵素阻害薬　減量
+A
+アルドース還元酵素阻害薬は、患者希望を踏まえ減量となった。減量後の症状変化に注意が必要である。
+P
+アルドース還元酵素阻害薬は、減量後にしびれや痛みなどの症状が悪化する可能性があります。
+体調変化があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=アルドース還元酵素阻害薬 減量（他剤との調整）】
+S
+アルドース還元酵素阻害薬は、他剤変更に伴う調整のため減量となった。
+O
+アルドース還元酵素阻害薬　減量
+A
+アルドース還元酵素阻害薬は、併用薬変更に伴う治療調整のため減量となった。減量後の症状変化に注意が必要である。
+P
+アルドース還元酵素阻害薬は、減量によりしびれや痛みなどの症状が再燃・悪化する可能性があります。
+体調変化があればご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_liver_dysfunction_none｜title=アルドース還元酵素阻害薬 副作用なし（肝障害関連症状）】
+S
+アルドース還元酵素阻害薬を服用して症状は落ち着いている。
+強い倦怠感などの明らかな体調変化は認めない。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬による肝障害を疑う明らかな自覚症状は現時点で認められず、治療継続が可能である。
+P
+アルドース還元酵素阻害薬の継続中に、肝機能が悪くなることがあります。
+強い倦怠感が続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_followup｜title=生活指導（血糖指導）】
+A_APPEND
+血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+高血糖が持続すると、網膜症・腎症・神経障害などの合併症が生じる可能性があります。
+食事療法および運動療法は、血糖コントロールを維持するうえで重要な柱となります。
+間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
+血糖が改善してきた際には低血糖症状が出ることがあります。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hypertension_guidance｜title=生活指導（血圧）】
+S_APPEND
+血圧が高いと言われた。
+A_APPEND
+血圧コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+血圧が高い状態が続くと、心臓や血管へ負担がかかることがあります。
+食事療法や運動療法は、血圧のコントロールにおいて重要です。
+塩分の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_dyslipidemia_guidance｜title=生活指導（脂質）】
+S_APPEND
+脂質が高いと言われた。
+A_APPEND
+脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。
+食事療法や運動療法は、脂質のコントロールにおいて重要です。
+食生活の見直しを継続していきましょう。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hyperuricemia_guidance｜title=生活指導（尿酸）】
+S_APPEND
+尿酸が高いと言われた。
+A_APPEND
+尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。
+P_APPEND
+尿酸が高い状態が続くと、痛風発作などにつながることがあります。
+食事療法は、尿酸のコントロールにおいて重要です。
+食生活の見直しを継続していきましょう。
+気になることがあればご相談ください。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_appetite_loss_none｜title=アルドース還元酵素阻害薬 副作用なし（食欲不振）】
+S
+アルドース還元酵素阻害薬を服用して症状は落ち着いている。
+食欲不振は認めない。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
+P
+アルドース還元酵素阻害薬の継続中に、お腹の調子が悪くなることがあります。
+食欲不振が続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_anemia_none｜title=アルドース還元酵素阻害薬 副作用なし（貧血）】
+S
+アルドース還元酵素阻害薬を服用して症状は落ち着いている。
+疲れやすさやだるさなどの症状は認めない。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬による貧血は現時点で認められず、治療継続が可能である。
+P
+アルドース還元酵素阻害薬の継続中に、貧血が出ることがあります。
+疲れやすさやだるさなどの症状が続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_good｜title=アルドース還元酵素阻害薬 CP良好】
+S
+薬を服用して症状は落ち着いている。
+継続して服用できている。
+O
+アルドース還元酵素阻害薬　服用中
+A
+コンプライアンスは良好である。治療継続に問題はない。
+P
+引き続き用法を守って服用することで、糖尿病神経障害に伴う症状の改善が期待できます。
+今後も継続して服用できるようにすることが大切です。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=アルドース還元酵素阻害薬 CP不良（服薬忘れ）】
+S
+服薬忘れがみられる。
+継続して服用できていない。
+O
+アルドース還元酵素阻害薬　服用中
+A
+コンプライアンスは不良で、服薬忘れがみられる。
+P
+継続して服用することで糖尿病神経障害に伴う症状の改善が期待されます。
+服薬忘れが続くと、しびれや痛みなどの症状改善が得られにくくなる可能性があります。
+P_ADDON
+- addon_adherence_reminder_alarm
+- addon_adherence_reminder_app
+- addon_adherence_visual_calendar_checklist
+- addon_adherence_visual_note
+- addon_adherence_prep_previous_night
+- addon_adherence_prep_before_meal
+- addon_adherence_support_family_reminder
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=服薬忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=服薬忘れ対策（通知：服薬アプリ）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=服薬忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（準備：前夜）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（準備：食前）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=服薬忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=アルドース還元酵素阻害薬 CP不良（自己判断）】
+S
+自己判断での服用調整がみられる。
+用法どおりの継続服用ができていない。
+O
+アルドース還元酵素阻害薬　服用中
+A
+コンプライアンスは不良で、自己判断による調整がみられる。
+P
+継続して服用することで糖尿病神経障害に伴う症状の改善が期待されます。
+自己判断での中止・調整により症状改善が得られにくくなり、十分な治療効果が得られない可能性があります。
+体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=アルドース還元酵素阻害薬 CP不良（受診遅延）】
+S
+都合により受診遅延がみられる。
+継続した服用に不安がある。
+O
+アルドース還元酵素阻害薬　服用中
+A
+コンプライアンスは不良で、受診遅延がみられる。
+P
+継続的な服用が症状改善の維持につながります。
+治療が中断すると、しびれや痛みなどの症状が再燃・悪化する可能性があります。
+次回受診が難しい場合は、早めに医療機関へご連絡ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=アルドース還元酵素阻害薬 終了（改善）】
+S
+アルドース還元酵素阻害薬は、しびれや痛みなどの症状が改善したため中止となった。
+O
+アルドース還元酵素阻害薬　処方終了
+A
+アルドース還元酵素阻害薬は、しびれや痛みなどの症状改善により終了となった。終了後に症状が再燃・変化する可能性があるため、注意が必要である。
+P
+アルドース還元酵素阻害薬終了後、しびれや痛みの変化、体調変化があればご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=アルドース還元酵素阻害薬 終了（効果不十分）】
+S
+アルドース還元酵素阻害薬は、効果不十分のため中止となった。
+O
+アルドース還元酵素阻害薬　処方終了
+A
+アルドース還元酵素阻害薬は、効果不十分のため終了となった。神経障害症状に対する治療方針の再評価が必要である。
+P
+アルドース還元酵素阻害薬終了後、しびれや痛みなどの症状が続く可能性があります。
+次の治療方針については処方医にご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=アルドース還元酵素阻害薬 終了（無効）】
+S
+アルドース還元酵素阻害薬は、効果が認められなかったため中止となった。
+O
+アルドース還元酵素阻害薬　処方終了
+A
+アルドース還元酵素阻害薬は、効果が認められなかったため終了となった。治療方針の変更が必要である。
+P
+アルドース還元酵素阻害薬終了後、しびれや痛みなどの症状が続く可能性があります。
+代替治療については処方医にご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=アルドース還元酵素阻害薬 SE継続（軽症 消化器症状）】
+S
+アルドース還元酵素阻害薬の服用によりお腹の調子が悪いが、日常生活は送れている。
+O
+アルドース還元酵素阻害薬　処方
+A
+アルドース還元酵素阻害薬による消化器症状を軽度認めるが、治療継続が可能である。
+P
+アルドース還元酵素阻害薬による消化器症状が軽い場合は、経過を確認しながら継続してください。
+症状が強くなる、長引く場合は、薬の調整が必要になることがあります。
+ご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_liver_dysfunction｜title=アルドース還元酵素阻害薬 SE変更（肝機能障害）】
+S
+アルドース還元酵素阻害薬の服用により激しい倦怠感が出現したため、他剤へ変更となった。
+O
+アルドース還元酵素阻害薬　処方変更
+A
+アルドース還元酵素阻害薬の服用による肝機能障害を認め、他剤変更後の経過確認を要する。
+P
+アルドース還元酵素阻害薬の変更後、しびれや痛みの変化、体調変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_liver_dysfunction｜title=アルドース還元酵素阻害薬 SE中止（肝機能障害）】
+S
+アルドース還元酵素阻害薬の服用により激しい倦怠感がひどいため、中止となった。
+O
+アルドース還元酵素阻害薬　処方中止
+A
+アルドース還元酵素阻害薬の服用による肝機能障害を認め、中止後の経過確認を要する。
+P
+アルドース還元酵素阻害薬の中止後、しびれや痛みの変化、体調変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=アルドース還元酵素阻害薬 生活指導（血糖）】
+S
+血糖値がなかなか改善しない。
+O
+アルドース還元酵素阻害薬　処方
+A
+血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P
+高血糖が続くと、眼・腎・神経障害などのリスクが高まります。
+薬物療法に加え、食事・運動療法も血糖コントロールにおいて重要です。
+間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
+血糖コントロールの改善に伴い、低血糖症状が出ることがあります。
+気になることがあればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=アルドース還元酵素阻害薬 生活指導（カリウム）】
+S
+カリウムの値が高いと言われた。
+O
+アルドース還元酵素阻害薬　処方
+A
+カリウムコントロールが不十分であり、食事内容の見直しが必要である。
+P
+カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
+食事療法は、カリウムのコントロールにおいて重要です。
+カリウムを多く含む食品の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=sickday｜id=sickday｜title=アルドース還元酵素阻害薬 シックデイ】
+S
+発熱・嘔吐・下痢などの体調不良がみられる。
+O
+アルドース還元酵素阻害薬　服用中
+A
+食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。
+P
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
+血糖測定が可能であれば行ってください。
+水分は少量ずつこまめに摂取してください。
+治療継続の可否は体調や摂取状況によって異なります。
+自己判断せず、処方医に相談してください。
+嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
+P_ADDON
+- addon_sickday_hold_sglt2_metformin
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+【ADDON｜type=sickday_guidance｜id=addon_sickday_hold_sglt2_metformin｜title=シックデイ時併用薬注意】
+P_APPEND
+併用中のSGLT2阻害薬やメトホルミンは、脱水時は休薬が必要な場合があります。
+自己判断で中止せず、処方医へご相談ください。
+=======SCENARIOS_END=======
