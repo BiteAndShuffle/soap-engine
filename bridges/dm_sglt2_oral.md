@@ -35,8 +35,10 @@
 #   - bridges/dm_dpp4_oral.md（単剤・複数ブランド構成の直近実績。各ブランドが
 #     異なる成分を持つ場合の brandCatalog / genericKey 個別付与・成分名読みを
 #     module 単位 nameAliases のみに留める設計の直接参考）
-#   - bridges/dm_sulfonylurea_oral.md（単剤・複数ブランド構成の直近実績。
-#     handlingTags を今回のヘッダー段階では空配列とする判断の直接参考）
+#   - bridges/dm_sulfonylurea_oral.md（単剤・複数ブランド構成の直近実績）
+#   - bridges/dm_dpp4_oral.md の handlingTags 設計（dpp4_standard_titration /
+#     タグ不在パターン）を "dose_adjustment_supported" 付与判断の直接参考とした
+#     （2026-07-09 追記）
 #   - docs/DESIGN_PRINCIPLES.md DP-02（classKey設計方針。用途分離によるS統合防止）
 #   - docs/DESIGN_PRINCIPLES.md DP-09（一般名検索到達性原則）
 #   - prompts/RULES.md §8（drug.nameAliases と drug.search.nameAliases 完全一致）
@@ -173,17 +175,25 @@ drug:
   # ─────────────────────────────────────────
   # genericKey 命名規則: 成分名の英語スネークケース（PN2-Drug-Header.md 準拠、
   # dm_dpp4_oral の linagliptin / omarigliptin 等と同型）。
-  # handlingTags は今回のヘッダー段階では全ブランド空配列とする
-  # （ブランド間の腎機能・重篤度差分に基づく scenarioRequiredTags 制御が
-  # 必要かどうかは、SCENARIOS作成時に臨床的な差分の有無を確認したうえで判断する。
-  # dm_sulfonylurea_oral / dm_thiazolidinedione_pioglitazone_oral と同型の先送り）。
+  #
+  # handlingTags: 増量・減量シナリオの表示可否制御タグ（ユーザー確定・2026-07-09）。
+  #   "dose_adjustment_supported": 増量・減量シナリオを表示するブランド
+  #     （フォシーガ／ジャディアンス／スーグラ／ルセフィ）
+  #   タグ不在（カナグル／デベルザ）: 増量・減量シナリオは自動的に非表示になる
+  #     （RULES.md §21、dm_dpp4_oral のトラゼンタと同型のタグ不在パターン）。
+  #   このタグは糖尿病用途の増減量制御専用であり、心不全・腎疾患用途の情報は
+  #   混入しない。
+  #   将来のシナリオ作成時、増量・減量シナリオ（dose_increase_* / dose_decrease_*）
+  #   には scenarioRequiredTags: ["dose_adjustment_supported"] を付与する前提とする
+  #   （dm_dpp4_oral の dpp4_standard_titration と同型の運用）。
   brandCatalog:
     フォシーガ:
       displayName: "フォシーガ"
       genericName: "ダパグリフロジン"
       displayGenericName: "ダパグリフロジン"
       genericKey: "dapagliflozin"
-      handlingTags: []
+      handlingTags:
+        - "dose_adjustment_supported"
       aliases:
         - "ふぉしーが"
       normalizedAliases:
@@ -194,7 +204,8 @@ drug:
       genericName: "エンパグリフロジン"
       displayGenericName: "エンパグリフロジン"
       genericKey: "empagliflozin"
-      handlingTags: []
+      handlingTags:
+        - "dose_adjustment_supported"
       aliases:
         - "じゃでぃあんす"
       normalizedAliases:
@@ -216,7 +227,8 @@ drug:
       genericName: "イプラグリフロジン"
       displayGenericName: "イプラグリフロジン"
       genericKey: "ipragliflozin"
-      handlingTags: []
+      handlingTags:
+        - "dose_adjustment_supported"
       aliases:
         - "すーぐら"
       normalizedAliases:
@@ -227,7 +239,8 @@ drug:
       genericName: "ルセオグリフロジン"
       displayGenericName: "ルセオグリフロジン"
       genericKey: "luseogliflozin"
-      handlingTags: []
+      handlingTags:
+        - "dose_adjustment_supported"
       aliases:
         - "るせふぃ"
       normalizedAliases:
@@ -329,9 +342,14 @@ display:
 # 9. display.nodeLabelLong に用途区分「（糖尿病）」を明示 → ユーザー確定
 #    （2026-07-09）。primaryDisplayName / genericName には用途区分を付けない
 #    （{{drug_subject}} フォールバック解決・検索候補到達性への影響を避けるため）。
-# 10. handlingTags → 6ブランドとも空配列で確定。ブランド間の腎機能・重篤度差分に
-#     基づく scenarioRequiredTags 制御が必要かどうかは、SCENARIOS作成時に判断する
-#     （dm_sulfonylurea_oral と同型の先送り）。
+# 10. handlingTags → ユーザー確定（2026-07-09）。増量・減量シナリオの表示可否を
+#     "dose_adjustment_supported" タグで制御する。
+#     付与（増減あり）: フォシーガ／ジャディアンス／スーグラ／ルセフィ
+#     タグ不在（増減なし）: カナグル／デベルザ
+#     将来のシナリオ作成時、増量・減量シナリオ（dose_increase_* / dose_decrease_*）
+#     に scenarioRequiredTags: ["dose_adjustment_supported"] を付与する前提とする
+#     （dm_dpp4_oral の dpp4_standard_titration と同型の運用）。
+#     心不全・腎疾患用途の情報は本タグに混入しない。
 #
 # =========================================
 # 残る未確定事項（PENDING）
@@ -343,10 +361,12 @@ display:
 # 将来拡張事項（今回のヘッダーでは扱わない・スコープ外）
 # =========================================
 #
-# - SCENARIOS_START〜SCENARIOS_END の作成（本ファイルはヘッダーのみ）
+# - SCENARIOS_START〜SCENARIOS_END の作成（本ファイルはヘッダーのみ）。
+#   増量・減量シナリオには scenarioRequiredTags: ["dose_adjustment_supported"] を
+#   付与すること（brandCatalog.handlingTags 側で確定済み・上記10参照）。
 # - cardiorenal_sglt2_oral（心不全・腎疾患目的）の新規bridge作成
 #   （classKey="sglt2_cardiorenal" / nodeKey="sglt2_cardiorenal_oral" 想定）
-# - handlingTags（ブランド間の腎機能・重篤度差分等の制御用タグ）: SCENARIOS作成時に
+# - handlingTags への追加タグ（腎機能に応じた減量制御等）: SCENARIOS作成時に
 #   臨床的な差分の有無を確認したうえで必要に応じて追加する
 # - OD錠等の詳細剤形分離: 現時点では drug.dosageForms = ["tablet"] のみを扱う
 # - GEブランドの追加: 現時点ではユーザー指定の6ブランドのみを扱う
