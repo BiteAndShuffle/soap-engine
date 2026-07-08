@@ -43,6 +43,7 @@ import rawGlinideOral from './dm_glinide_oral.json'
 import rawAlphaGlucosidaseInhibitorOral from './dm_alpha_glucosidase_inhibitor_oral.json'
 import rawGlinideAlphaGlucosidaseInhibitorCombinationOral from './dm_glinide_alpha_glucosidase_inhibitor_combination_oral.json'
 import rawImegliminOral from './dm_imeglimin_oral.json'
+import rawEpalrestatOral from './dm_epalrestat_oral.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
@@ -76,4 +77,5 @@ export const ALL_MODULES: ModuleData[] = [
   rawAlphaGlucosidaseInhibitorOral as unknown as ModuleData,
   rawGlinideAlphaGlucosidaseInhibitorCombinationOral as unknown as ModuleData,
   rawImegliminOral as unknown as ModuleData,
+  rawEpalrestatOral as unknown as ModuleData,
 ]
