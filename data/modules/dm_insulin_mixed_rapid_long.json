@@ -1596,7 +1596,7 @@
         }
       ],
       "globalId": "dm_insulin_mixed_rapid_long.dose_decrease_improved",
-      "title": "混合型インスリン製剤（超速効型＋持効型） 減量（症状改善）",
+      "title": "混合型インスリン製剤（超速効型＋持効型） 減量（検査値改善）",
       "scenarioTags": [
         "dose_change",
         "decrease",

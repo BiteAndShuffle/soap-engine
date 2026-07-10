@@ -416,7 +416,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=チアゾリジン系糖尿病薬・メトホルミン配合剤 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=チアゾリジン系糖尿病薬・メトホルミン配合剤 減量（検査値改善）】
 S
 チアゾリジン系糖尿病薬・メトホルミン配合剤は、検査値が改善したため減量となった。
 O

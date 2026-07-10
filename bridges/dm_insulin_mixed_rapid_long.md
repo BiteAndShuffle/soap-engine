@@ -401,7 +401,7 @@ P
 P_ADDON
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=混合型インスリン製剤（超速効型＋持効型） 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=混合型インスリン製剤（超速効型＋持効型） 減量（検査値改善）】
 S
 混合型インスリン製剤（超速効型＋持効型）は、検査値が改善したため減量となった。
 O

@@ -402,7 +402,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=イメグリミン 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=イメグリミン 減量（検査値改善）】
 S
 イメグリミンは、検査値が改善したため減量となった。
 O

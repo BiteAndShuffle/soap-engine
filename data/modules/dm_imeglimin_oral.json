@@ -1060,7 +1060,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_imeglimin_oral.dose_decrease_improved",
-      "title": "イメグリミン 減量（症状改善）",
+      "title": "イメグリミン 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

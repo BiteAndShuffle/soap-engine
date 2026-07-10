@@ -1147,7 +1147,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_dpp4_biguanide_combination_oral.dose_decrease_improved",
-      "title": "DPP-4阻害薬・メトホルミン配合剤 減量（症状改善）",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

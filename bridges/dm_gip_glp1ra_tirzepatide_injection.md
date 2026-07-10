@@ -492,7 +492,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=GIP/GLP-1受容体作動薬（注射） 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=GIP/GLP-1受容体作動薬（注射） 減量（検査値改善）】
 S
 GIP/GLP-1受容体作動薬（注射）は、検査値が改善したため減量となった。
 

@@ -1305,7 +1305,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_insulin_mixed_rapid_intermediate.dose_decrease_improved",
-      "title": "混合型インスリン製剤（超速効型＋中間型） 減量（症状改善）",
+      "title": "混合型インスリン製剤（超速効型＋中間型） 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

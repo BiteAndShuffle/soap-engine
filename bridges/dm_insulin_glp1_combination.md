@@ -426,7 +426,7 @@ P
 症状が続く場合はご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=インスリン／GLP-1受容体作動薬配合剤 減量（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=インスリン／GLP-1受容体作動薬配合剤 減量（検査値改善）】
 S
 インスリン／GLP-1受容体作動薬配合剤は、検査値が改善したため減量となった。
 O

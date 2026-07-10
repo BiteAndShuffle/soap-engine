@@ -665,7 +665,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=DPP4阻害薬 減量（症状改善）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=DPP4阻害薬 減量（検査値改善）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
 DPP4阻害薬は、検査値が改善したため減量となった。
 O

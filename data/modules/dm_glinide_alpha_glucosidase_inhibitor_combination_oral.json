@@ -1192,7 +1192,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral.dose_decrease_improved",
-      "title": "グリニド系経口血糖降下剤・α-グルコシダーゼ阻害薬配合剤 減量（症状改善）",
+      "title": "グリニド系経口血糖降下剤・α-グルコシダーゼ阻害薬配合剤 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

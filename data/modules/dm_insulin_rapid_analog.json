@@ -1280,7 +1280,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_insulin_rapid_analog.dose_decrease_improved",
-      "title": "超速効型インスリン製剤 減量（症状改善）",
+      "title": "超速効型インスリン製剤 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

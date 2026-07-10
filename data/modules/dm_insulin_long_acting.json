@@ -1574,7 +1574,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_insulin_long_acting.dose_decrease_improved",
-      "title": "持効型インスリン製剤 減量（症状改善）",
+      "title": "持効型インスリン製剤 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

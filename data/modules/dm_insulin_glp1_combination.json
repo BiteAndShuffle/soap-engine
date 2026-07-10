@@ -1128,7 +1128,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_insulin_glp1_combination.dose_decrease_improved",
-      "title": "インスリン／GLP-1受容体作動薬配合剤 減量（症状改善）",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

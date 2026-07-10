@@ -1162,7 +1162,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_thiazolidinedione_sulfonylurea_combination_oral.dose_decrease_improved",
-      "title": "チアゾリジン系糖尿病薬・スルホニルウレア系経口血糖降下剤配合剤 減量（症状改善）",
+      "title": "チアゾリジン系糖尿病薬・スルホニルウレア系経口血糖降下剤配合剤 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

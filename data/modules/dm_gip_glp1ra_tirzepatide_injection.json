@@ -1576,7 +1576,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_gip_glp1ra_tirzepatide_injection.dose_decrease_improved",
-      "title": "GIP/GLP-1受容体作動薬（注射） 減量（症状改善）",
+      "title": "GIP/GLP-1受容体作動薬（注射） 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

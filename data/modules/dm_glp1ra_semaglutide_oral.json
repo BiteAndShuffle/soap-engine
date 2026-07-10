@@ -1329,7 +1329,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_glp1ra_semaglutide_oral.dose_decrease_improved",
-      "title": "GLP-1受容体作動薬(内服) 減量（症状改善）",
+      "title": "GLP-1受容体作動薬(内服) 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

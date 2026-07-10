@@ -1326,7 +1326,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_dpp4_oral.dose_decrease_improved",
-      "title": "DPP4阻害薬 減量（症状改善）",
+      "title": "DPP4阻害薬 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
