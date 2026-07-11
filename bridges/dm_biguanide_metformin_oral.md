@@ -3,17 +3,23 @@
 # dm_biguanide_metformin_oral
 # =========================================
 #
-# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
+# ⚠️ STATUS: DRAFT ⚠️
 #
-# ヘッダー案（drug / composition / display 等）および SCENARIOS_START〜SCENARIOS_END の
-# シナリオ本文・ADDON本文は、ユーザーによる凍結前レビュー（PASS確認済み）を経て
-# 確定しました。
+# ヘッダー案（drug / composition / display 等）は確定済み（変更なし）。
+# SCENARIOS_START〜SCENARIOS_END は、2026-07-12 にユーザー提示の最新版本文へ
+# 全面更新した。更新後の再凍結前レビューはまだ実施していない。
+# 本ファイルは以前 FROZEN_FOR_PN1 として PN1 着手可能な状態だったが、
+# SCENARIOS 本文更新に伴い STATUS を DRAFT へ差し戻した（RULES.md §24）。
+# PN1 は未再開（ユーザーの再凍結宣言を待つ）。
 #
 # 目的: ビグアナイド系糖尿病薬（メトホルミン塩酸塩）の brandCatalog / handlingTags /
 # drugResolution.brandToTags 設計を、会話ログではなくリポジトリ上に固定するための
-# 作業ファイルです（2026-07-05 作成、同日シナリオ本文追加・凍結）。
+# 作業ファイルです（2026-07-05 作成・同日シナリオ本文追加・凍結／2026-07-12
+# SCENARIOS 本文更新）。
 #
-# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 次の作業: ユーザーによる更新後 SCENARIOS_START〜SCENARIOS_END の再確認・再凍結宣言。
+# 再凍結後に STATUS を FROZEN_FOR_PN1 へ更新し PN1 を開始する
+# （prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
 #   - bridges/dm_dpp4_oral.md（同形式の直近実績・DPP4）
@@ -223,16 +229,24 @@ display:
 # ブランド系統の区分ラベルとして brandCatalog に保持するが、scenarioRequiredTags には
 # 使用しない（本モジュールでは全シナリオがタグなしで全ブランド共通表示となる）。
 #
-# 乳酸アシドーシス（本剤の代表的な重大リスク）の表現方針（ユーザー指定・確定）:
-#   - 初回シナリオの P、およびシックデイシナリオで表現する
-#   - 初回シナリオの ADDON としては配置しない
+# 乳酸アシドーシス（本剤の代表的な重大リスク）の表現方針
+# （ユーザー指定・2026-07-12 更新。旧方針「初回シナリオの ADDON としては配置しない」は
+# 本更新により置き換え、以後は以下を正本とする）:
+#   - initial / restart / external_start の P で、食事や水分が十分に摂れない
+#     体調不良時の休薬・相談を案内する
+#   - addon_metformin_initial_sickday_guidance で、脱水による乳酸アシドーシスリスク、
+#     休薬、水分摂取、受診目安、再開時期の相談を案内する
+#   - se_lactic_acidosis_none で、乳酸アシドーシスを疑う症状がないことを評価し、
+#     疑わしい症状または水分摂取不能時の直ちの休薬・受診を案内する
+#   - sickday で、脱水および乳酸アシドーシスリスク、休薬、受診判断、再開相談を案内する
 #
 # =========================================
 # addon 設計（現時点の設計意図。本文は SCENARIOS 作成時に記載）
 # =========================================
 #
 # 選択候補として想定する addon（ユーザー指定 addonPolicy.selectableAddons より）:
-#   - addon_initial_sickday_guidance
+#   - addon_metformin_initial_sickday_guidance（旧 addon_initial_sickday_guidance を
+#     2026-07-12 にメトホルミン専用IDへ変更。詳細は確定済み事項参照）
 #   - addon_glycemic_guidance_initial
 #   - addon_se_hypoglycemia_guidance（薬剤師判断で必要時選択・ユーザー指定）
 #   - addon_hyperkalemia_guidance
@@ -259,8 +273,11 @@ display:
 #    renal_dose_adjustment）を意味に応じて brandToTags と分離し確定
 # 6. composition.classKey（"biguanide"）/ nodeKey（"biguanide_oral"）/ priority（"chronic"）
 #    → DPP4 と同型の命名規則で確定
-# 7. 乳酸アシドーシスの表現方針（初回P・シックデイで表現、初回ADDONには置かない）
-#    → ユーザー指定どおり確定
+# 7. 乳酸アシドーシスの表現方針 → 2026-07-12 更新。旧方針（初回P・シックデイで表現、
+#    初回ADDONには置かない）を、初回ADDON（addon_metformin_initial_sickday_guidance）
+#    でも乳酸アシドーシスリスクを明示する新方針へ置き換えて確定（詳細は上記
+#    scenario availability 設計の「乳酸アシドーシスの表現方針」参照。本項目は旧方針の
+#    記録ではなく現行方針の確定記録として更新済み）。
 # 8. 成分名「メトホルミン塩酸塩」の読み仮名（めとほるみんえんさんえん）の扱い →
 #    brandCatalog[brand].aliases / normalizedAliases / aliasToBrand へは複製せず、
 #    drug.search.prefixAliases / drug.search.nameAliases / drug.nameAliases の
@@ -278,12 +295,44 @@ display:
 #     停止する要因のため）。initial 後の定義を正本として残し、se_hypo_none 後の
 #     重複ブロックを削除した。P_ADDON 参照・addon本文・S/O/A/P本文は変更していない
 #     （ユーザー確定・2026-07-05）。ADDON定義は全15件、ユニーク。
+# 12. SCENARIOS本文の全面更新 → 2026-07-12、ユーザー提示の最新版
+#     SCENARIOS_START〜SCENARIOS_END へ完全置換した（29シナリオ・15addon、件数は
+#     旧版から変更なし）。主な変更点:
+#     - 初回シックデイADDON IDを addon_initial_sickday_guidance から
+#       addon_metformin_initial_sickday_guidance へ変更（メトホルミン専用命名。
+#       他のADDON IDは変更なし）
+#     - initial / restart / external_start の P: 体調不良時の案内を
+#       「ご相談ください」中心の表現から「いったん休薬し、処方医へご相談ください」
+#       （休薬指導を明示）へ更新
+#     - addon_metformin_initial_sickday_guidance: 想定リスクを「脱水や低血糖」から
+#       「脱水による乳酸アシドーシス」へ明確化し、休薬指導・医師から水分制限を
+#       指示されている場合への配慮（「指示されていない場合は」の条件分岐）・
+#       受診目安症状の拡充・再開時期相談の案内を追加
+#     - se_mild_continue / se_moderate_consider_dr（軽症・中等度消化器症状）:
+#       水分摂取指導を「十分に摂取」から「少量ずつこまめに摂取」へ変更し、
+#       症状が続き食事や水分が摂れない場合の休薬指導を明示
+#     - se_lactic_acidosis_none（乳酸アシドーシスなし）: A の評価表現を
+#       「乳酸アシドーシスは認められず」から「乳酸アシドーシスを疑う症状は
+#       認められず」へ精緻化し、P の受診案内を「自己判断せず処方医へご相談」から
+#       「直ちに休薬して医療機関を受診」へ強化
+#     - sickday: A/P を全面更新。脱水・乳酸アシドーシスリスクの明示、休薬指導、
+#       医師から水分制限を指示されている場合への配慮、受診目安症状の拡充、
+#       再開時期相談の案内を追加（血糖測定の案内文は本更新で削除）
+#     - 乳酸アシドーシスの表現方針変更に伴う詳細は上記「乳酸アシドーシスの表現方針」
+#       および本項目7を参照
+#     更新に伴い STATUS を FROZEN_FOR_PN1 から DRAFT へ差し戻した。再凍結および
+#     PN1 開始は本更新の時点では未実施（ユーザーの再確認・再凍結宣言待ち）。
+#     header設計（moduleId / categoryPath / drug / search / nameAliases /
+#     brandCatalog / aliasToBrand / drugResolution / composition / display /
+#     scenario availability のブランド制御方針・handlingTags方針・
+#     scenarioRequiredTagsを使用しない方針）は変更していない。
 #
 # =========================================
 # 残る未確定事項（PENDING）
 # =========================================
 #
-# なし（2026-07-05 時点、シナリオ本文追加により解消）
+# 本文内容上のPENDINGはなし。
+# ただし、今回のSCENARIOS更新後のユーザー再確認・再凍結待ち。
 #
 # =========================================
 # 将来拡張事項（今回のヘッダーでは扱わない・スコープ外）
@@ -304,9 +353,9 @@ A
 P
 ビグアナイド系糖尿病薬は、血糖値を改善する薬です。
 下痢や吐き気など、お腹の調子が悪くなることがあります。
-脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
+食事や水分が十分に摂れない体調不良時は、いったん休薬し、処方医へご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -316,14 +365,13 @@ P_CLOSING
 
 
 
-【ADDON｜type=sickday_guidance｜id=addon_initial_sickday_guidance｜title=初回シックデイ】
+【ADDON｜type=sickday_guidance｜id=addon_metformin_initial_sickday_guidance｜title=初回シックデイ】
 P_APPEND
-発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
-体調不良時は水分を少量ずつこまめに摂取してください。
-治療継続の可否は体調や摂取状況によって異なるため、自己判断せず処方医へご相談ください。
-嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
-
-
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水により乳酸アシドーシスのリスクが高まります。
+このような体調不良時はビグアナイド系糖尿病薬を休薬してください。
+医師から水分制限を指示されていない場合は、水分を少量ずつこまめに摂取してください。
+嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感、吐き気、腹痛、息苦しさなどがある場合は受診してください。
+服用の再開時期については、自己判断せず処方医へご相談ください。
 
 
 【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_initial｜title=生活指導（血糖指導）】
@@ -335,14 +383,10 @@ P_APPEND
 気になることがあればご相談ください。
 
 
-
-
 【ADDON｜type=side_effect_guidance｜id=addon_se_hypoglycemia_guidance｜title=副作用注意喚起（低血糖）】
 P_APPEND
 他の糖尿病薬と併用している場合は、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
 低血糖症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。
-
-
 
 
 【ADDON｜type=lifestyle_guidance｜id=addon_hyperkalemia_guidance｜title=生活指導（カリウム）】
@@ -372,9 +416,9 @@ A
 P
 ビグアナイド系糖尿病薬は、血糖値を改善する薬です。
 下痢や吐き気など、お腹の調子が悪くなることがあります。
-脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
+食事や水分が十分に摂れない体調不良時は、いったん休薬し、処方医へご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -397,9 +441,9 @@ A
 P
 ビグアナイド系糖尿病薬は、血糖値を改善する薬です。
 下痢や吐き気など、お腹の調子が悪くなることがあります。
-脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
+食事や水分が十分に摂れない体調不良時は、いったん休薬し、処方医へご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -471,8 +515,6 @@ P_CLOSING
 
 
 
-
-
 【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_renal_function｜title=ビグアナイド系糖尿病薬 減量（腎機能低下）】
 S
 ビグアナイド系糖尿病薬は、腎機能を考慮して減量となった。
@@ -486,8 +528,6 @@ P
 体調変化があればご相談ください。
 P_CLOSING
 次回、血糖推移および体調変化の有無を確認。
-
-
 
 
 
@@ -681,11 +721,11 @@ S
 O
 ビグアナイド系糖尿病薬　処方
 A
-ビグアナイド系糖尿病薬による乳酸アシドーシスは現時点で認められず、治療継続が可能である。
+ビグアナイド系糖尿病薬による乳酸アシドーシスを疑う症状は現時点で認められず、治療継続が可能である。
 P
 ビグアナイド系糖尿病薬の継続中に、強いだるさ、吐き気、腹痛、息苦しさなどが出ることがあります。
 脱水や体調不良時には、重い副作用が起こりやすくなることがあります。
-症状が強い場合や、水分が摂れない場合は、自己判断せず処方医へご相談ください。
+このような症状がある場合や、水分が摂れない場合は、直ちに休薬して医療機関を受診してください。
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
@@ -880,8 +920,6 @@ P_CLOSING
 
 
 
-
-
 【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=ビグアナイド系糖尿病薬 SE継続（軽症 消化器症状）】
 S
 ビグアナイド系糖尿病薬の服用によりお腹の調子が悪いが、日常生活は送れている。
@@ -890,11 +928,9 @@ O
 A
 ビグアナイド系糖尿病薬による消化器症状を軽度認めるが、治療継続が可能である。
 P
-ビグアナイド系糖尿病薬によるお腹の不調が軽い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。
+ビグアナイド系糖尿病薬によるお腹の不調が軽い場合は、水分を少量ずつこまめに摂取し、無理のない範囲で食事内容を見直して様子をみてください。
 お腹の不調が強く続く場合は、薬の調整が必要になることがあります。
-ご相談ください。
-
-
+下痢や吐き気が続き、食事や水分が十分に摂れない場合は、休薬してご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -911,9 +947,9 @@ O
 A
 ビグアナイド系糖尿病薬による消化器症状が強く、継続困難の可能性があるため対応を要する。
 P
-ビグアナイド系糖尿病薬による下痢が強い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。
+ビグアナイド系糖尿病薬による下痢が強い場合は、水分を少量ずつこまめに摂取してください。
 下痢が強く続く場合は、薬の調整や変更が必要になることがあります。
-自己判断せず、処方医へご相談ください。
+食事や水分が十分に摂れない場合は、休薬して処方医へご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1012,21 +1048,19 @@ P_CLOSING
 
 
 
-
-
 【SCENARIO｜type=sickday｜id=sickday｜title=ビグアナイド系糖尿病薬 シックデイ】
 S
 発熱・嘔吐・下痢などの体調不良がみられる。
 O
 ビグアナイド系糖尿病薬　服用中
 A
-食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。
+食事および水分摂取の低下により脱水および乳酸アシドーシスのリスクが上昇している。シックデイ時の休薬および受診判断が必要である。
 P
-発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
-ビグアナイド系糖尿病薬は、脱水時に副作用のリスクが高まることがあるため、服用を続けてよいか自己判断せず、処方医へご相談ください。
-血糖測定が可能であれば行ってください。
-水分は少量ずつこまめに摂取してください。
-嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感がある場合は受診してください。
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、ビグアナイド系糖尿病薬を休薬してください。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、水分を少量ずつこまめに摂取してください。
+強い倦怠感、吐き気、腹痛、息苦しさなどがある場合は、乳酸アシドーシスの可能性があります。
+嘔吐が続く、水分が摂れない、尿量が減る、強い倦怠感、吐き気、腹痛、息苦しさなどがある場合は受診してください。
+服用の再開時期については、自己判断せず処方医へご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
