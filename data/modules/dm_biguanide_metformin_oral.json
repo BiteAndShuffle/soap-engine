@@ -1963,7 +1963,8 @@
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "乳酸アシドーシス"
+            "脱水",
+            "重い副作用"
           ],
           "notes": null
         },
