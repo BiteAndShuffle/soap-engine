@@ -296,7 +296,7 @@ display:
 # 選択候補として想定する addon（DPP4 / ビグアナイド両単剤bridgeで確立済みの
 # addon id命名を踏襲する想定。本文は本モジュール独自に記載する。
 # モジュール間のJSON参照共有は行わない — RULES.md §1 STANDARD_REFERENCE_PATHS）:
-#   - addon_initial_sickday_guidance
+#   - addon_metformin_initial_sickday_guidance
 #   - addon_glycemic_guidance_initial / addon_glycemic_guidance_followup
 #   - addon_se_hypoglycemia_guidance
 #   - addon_se_pancreatitis_guidance（DPP4由来）
@@ -368,7 +368,7 @@ DPP-4阻害薬・メトホルミン配合剤は、血糖値を改善する薬で
 下痢や吐き気など、お腹の調子が悪くなることがあります。
 脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -378,7 +378,7 @@ P_CLOSING
 
 
 
-【ADDON｜type=sickday_guidance｜id=addon_initial_sickday_guidance｜title=初回シックデイ】
+【ADDON｜type=sickday_guidance｜id=addon_metformin_initial_sickday_guidance｜title=初回シックデイ】
 P_APPEND
 発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
 体調不良時は水分を少量ずつこまめに摂取してください。
@@ -436,7 +436,7 @@ DPP-4阻害薬・メトホルミン配合剤は、血糖値を改善する薬で
 下痢や吐き気など、お腹の調子が悪くなることがあります。
 脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -461,7 +461,7 @@ DPP-4阻害薬・メトホルミン配合剤は、血糖値を改善する薬で
 下痢や吐き気など、お腹の調子が悪くなることがあります。
 脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance

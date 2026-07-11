@@ -228,7 +228,7 @@ P
 むくみや、下痢・吐き気などのお腹の不調が出ることがあります。
 また、脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -238,7 +238,7 @@ P_CLOSING
 
 
 
-【ADDON｜type=sickday_guidance｜id=addon_initial_sickday_guidance｜title=初回シックデイ】
+【ADDON｜type=sickday_guidance｜id=addon_metformin_initial_sickday_guidance｜title=初回シックデイ】
 P_APPEND
 発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水や低血糖のリスクが高まります。
 体調不良時は水分を少量ずつこまめに摂取してください。
@@ -296,7 +296,7 @@ P
 むくみや、下痢・吐き気などのお腹の不調が出ることがあります。
 また、脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
@@ -321,7 +321,7 @@ P
 むくみや、下痢・吐き気などのお腹の不調が出ることがあります。
 また、脱水や体調不良時は副作用が出やすくなることがあるため、食事や水分が摂れない時はご相談ください。
 P_ADDON
-- addon_initial_sickday_guidance
+- addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
