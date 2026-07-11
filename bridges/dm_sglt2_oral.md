@@ -3,12 +3,12 @@
 # dm_sglt2_oral
 # =========================================
 #
-# ⚠️ STATUS: DRAFT ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
-# ヘッダー案（drug / composition / display 等）に加え、
-# SCENARIOS_START〜SCENARIOS_END（シナリオ・ADDON本文）を追加済み（2026-07-11）。
-# ユーザーによる本文確認・凍結宣言はまだ行われていない
-# （STATUS: DRAFT → FROZEN_FOR_PN1 は凍結宣言後に更新する。RULES.md §24）。
+# ヘッダー案（drug / composition / display 等）および
+# SCENARIOS_START〜SCENARIOS_END（シナリオ・ADDON本文）は、
+# ユーザーによる最終レビュー（構造・本文整合・ブランド制御・P_CLOSING確認）を経て
+# 2026-07-11 に凍結宣言されました。PN1 の入力として使用してよい状態です。
 #
 # 目的: 糖尿病治療目的の SGLT2阻害薬（フォシーガ／ジャディアンス／カナグル／
 # スーグラ／ルセフィ／デベルザ）の brandCatalog / alias /
@@ -29,9 +29,8 @@
 #   将来 cardiorenal 側: classKey="sglt2_cardiorenal"  nodeKey="sglt2_cardiorenal_oral"
 #   （cardiorenal 側の実際の値は、当該モジュール作成時に改めて確定する）
 #
-# 次の作業: ユーザーによる SCENARIOS_START〜SCENARIOS_END の本文確認・凍結宣言。
-# 凍結宣言後に STATUS を FROZEN_FOR_PN1 へ更新し、PN1 を開始する
-# （prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 次の作業: PN1 開始（prompts/vNext/HANDOFF.md の
+# 「bridge 作成から開始する」手順に従う）。
 #
 # 参照:
 #   - bridges/dm_dpp4_oral.md（単剤・複数ブランド構成の直近実績。各ブランドが
@@ -400,7 +399,7 @@ display:
 # - GEブランドの追加: 現時点ではユーザー指定の6ブランドのみを扱う
 
 # =========================================
-# SCENARIOS_START〜SCENARIOS_END（STATUS: DRAFT）
+# SCENARIOS_START〜SCENARIOS_END（STATUS: FROZEN_FOR_PN1）
 # =========================================
 
 =======SCENARIOS_START=======
