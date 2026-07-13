@@ -412,6 +412,7 @@
         "P": [
           "addon_metformin_initial_sickday_guidance",
           "addon_glycemic_guidance_initial",
+          "addon_se_pancreatitis_guidance",
           "addon_se_hypoglycemia_guidance",
           "addon_hyperkalemia_guidance"
         ]
@@ -546,6 +547,7 @@
         "P": [
           "addon_metformin_initial_sickday_guidance",
           "addon_glycemic_guidance_initial",
+          "addon_se_pancreatitis_guidance",
           "addon_se_hypoglycemia_guidance",
           "addon_hyperkalemia_guidance"
         ]
@@ -680,6 +682,7 @@
         "P": [
           "addon_metformin_initial_sickday_guidance",
           "addon_glycemic_guidance_initial",
+          "addon_se_pancreatitis_guidance",
           "addon_se_hypoglycemia_guidance",
           "addon_hyperkalemia_guidance"
         ]
@@ -2167,7 +2170,7 @@
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強い腹痛や背部痛などの症状は認めない。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+      "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2260,14 +2263,13 @@
         },
         {
           "id": "p_3",
-          "text": "痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+          "text": "強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。",
           "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "救急受診",
-            "発熱を伴う",
-            "我慢できない"
+            "速やかに",
+            "医療機関を受診"
           ],
           "notes": null
         }
@@ -2310,7 +2312,7 @@
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\nかゆみや湿疹、水ぶくれなどの症状は認めない。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による皮膚症状は現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。\nこうした症状が続く場合はご相談ください。",
+      "P": "{{drug_subject}}の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2374,21 +2376,14 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。",
+          "text": "{{drug_subject}}の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "こうした症状が続く場合はご相談ください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
-            "ご相談ください"
+            "水ぶくれ",
+            "皮膚のただれ",
+            "お早めにご相談"
           ],
           "notes": null
         }
@@ -3383,7 +3378,7 @@
       "S": "{{drug_subject}}の服用により下痢が強く、辛いことがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による消化器症状が強く、継続困難の可能性があるため対応を要する。",
-      "P": "{{drug_subject}}による下痢が強い場合は、水分を少量ずつこまめに摂取してください。\n下痢が強く続く場合は、薬の調整や変更が必要になることがあります。\n食事や水分が十分に摂れない場合は、休薬して処方医へご相談ください。",
+      "P": "{{drug_subject}}による下痢が強い場合や続く場合は、薬の調整や変更が必要になることがあります。\n脱水につながる可能性があるため、自己判断で継続せず、処方医へご相談ください。\n水分が摂れない、嘔吐が続く、尿量が減る、強い倦怠感などがある場合は、速やかに受診してください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -3442,16 +3437,7 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}による下痢が強い場合は、水分を少量ずつこまめに摂取してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "下痢が強く続く場合は、薬の調整や変更が必要になることがあります。",
+          "text": "{{drug_subject}}による下痢が強い場合や続く場合は、薬の調整や変更が必要になることがあります。",
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "medium",
@@ -3459,16 +3445,26 @@
           "notes": null
         },
         {
-          "id": "p_3",
-          "text": "食事や水分が十分に摂れない場合は、休薬して処方医へご相談ください。",
+          "id": "p_2",
+          "text": "脱水につながる可能性があるため、自己判断で継続せず、処方医へご相談ください。",
           "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "high",
           "lockTerms": [
-            "休薬して",
-            "処方医へご相談",
-            "処方医",
-            "ご相談ください"
+            "自己判断で継続せず",
+            "処方医へご相談"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "水分が摂れない、嘔吐が続く、尿量が減る、強い倦怠感などがある場合は、速やかに受診してください。",
+          "role": "urgent_consult_guidance",
+          "transform": "fixed",
+          "safety": "critical",
+          "lockTerms": [
+            "水分が摂れない",
+            "速やかに受診"
           ],
           "notes": null
         }
@@ -4244,6 +4240,23 @@
         "intentTags": [],
         "tone": "standard"
       },
+      "addon_se_pancreatitis_guidance": {
+        "key": "addon_se_pancreatitis_guidance",
+        "id": "addon_se_pancreatitis_guidance",
+        "title": "副作用注意喚起（膵炎）",
+        "group": "sideEffects",
+        "targetSection": "P",
+        "text": "DPP-4阻害薬・ビグアナイド配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。",
+        "sectionTexts": {
+          "P": "DPP-4阻害薬・ビグアナイド配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
       "addon_se_hypoglycemia_guidance": {
         "key": "addon_se_hypoglycemia_guidance",
         "id": "addon_se_hypoglycemia_guidance",
@@ -4689,6 +4702,7 @@
     "addonIds": [
       "addon_metformin_initial_sickday_guidance",
       "addon_glycemic_guidance_initial",
+      "addon_se_pancreatitis_guidance",
       "addon_se_hypoglycemia_guidance",
       "addon_hyperkalemia_guidance",
       "addon_glycemic_guidance_followup",

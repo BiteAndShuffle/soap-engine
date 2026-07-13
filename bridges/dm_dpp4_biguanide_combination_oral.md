@@ -370,6 +370,7 @@ DPP-4阻害薬・メトホルミン配合剤は、血糖値を改善する薬で
 P_ADDON
 - addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
+- addon_se_pancreatitis_guidance
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -395,6 +396,15 @@ P_APPEND
 間食や食事量の変化は血糖値に影響するため、食事内容の見直しを継続していきましょう。
 血糖が改善してきた際には低血糖症状が出ることがあります。
 気になることがあればご相談ください。
+
+
+
+
+【ADDON｜type=side_effect_guidance｜id=addon_se_pancreatitis_guidance｜title=副作用注意喚起（膵炎）】
+P_APPEND
+DPP-4阻害薬・ビグアナイド配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
+こうした症状が続く場合は膵炎の可能性があります。
+強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。
 
 
 
@@ -438,6 +448,7 @@ DPP-4阻害薬・メトホルミン配合剤は、血糖値を改善する薬で
 P_ADDON
 - addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
+- addon_se_pancreatitis_guidance
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -463,6 +474,7 @@ DPP-4阻害薬・メトホルミン配合剤は、血糖値を改善する薬で
 P_ADDON
 - addon_metformin_initial_sickday_guidance
 - addon_glycemic_guidance_initial
+- addon_se_pancreatitis_guidance
 - addon_se_hypoglycemia_guidance
 - addon_hyperkalemia_guidance
 P_CLOSING
@@ -798,7 +810,7 @@ DPP-4阻害薬・メトホルミン配合剤による膵炎は現時点で認め
 P
 DPP-4阻害薬・メトホルミン配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
 こうした症状が続く場合は膵炎の可能性があります。
-痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。
+強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
@@ -822,8 +834,7 @@ DPP-4阻害薬・メトホルミン配合剤　処方
 A
 DPP-4阻害薬・メトホルミン配合剤による皮膚症状は現時点で認められず、治療継続が可能である。
 P
-DPP-4阻害薬・メトホルミン配合剤の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。
-こうした症状が続く場合はご相談ください。
+DPP-4阻害薬・メトホルミン配合剤の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
@@ -1049,9 +1060,9 @@ DPP-4阻害薬・メトホルミン配合剤　処方
 A
 DPP-4阻害薬・メトホルミン配合剤による消化器症状が強く、継続困難の可能性があるため対応を要する。
 P
-DPP-4阻害薬・メトホルミン配合剤による下痢が強い場合は、水分を十分に摂取し、無理のない範囲で食事内容を見直して様子をみてください。
-下痢が強く続く場合は、薬の調整や変更が必要になることがあります。
-自己判断せず、処方医へご相談ください。
+DPP-4阻害薬・メトホルミン配合剤による下痢が強い場合や続く場合は、薬の調整や変更が必要になることがあります。
+脱水につながる可能性があるため、自己判断で継続せず、処方医へご相談ください。
+水分が摂れない、嘔吐が続く、尿量が減る、強い倦怠感などがある場合は、速やかに受診してください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 

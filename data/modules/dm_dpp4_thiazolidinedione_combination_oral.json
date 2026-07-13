@@ -327,6 +327,7 @@
         "P": [
           "addon_se_hypoglycemia_guidance",
           "addon_glycemic_guidance_initial",
+          "addon_se_pancreatitis_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
         ]
@@ -460,6 +461,7 @@
         "P": [
           "addon_se_hypoglycemia_guidance",
           "addon_glycemic_guidance_initial",
+          "addon_se_pancreatitis_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
         ]
@@ -593,6 +595,7 @@
         "P": [
           "addon_se_hypoglycemia_guidance",
           "addon_glycemic_guidance_initial",
+          "addon_se_pancreatitis_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
         ]
@@ -1831,7 +1834,7 @@
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\n強い腹痛や背部痛などの症状は認めない。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による膵炎は現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+      "P": "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -1924,14 +1927,13 @@
         },
         {
           "id": "p_3",
-          "text": "痛みが強い・発熱を伴う・我慢できないほどの場合は、救急受診も検討してください。",
+          "text": "強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。",
           "role": "urgent_consult_guidance",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
-            "救急受診",
-            "発熱を伴う",
-            "我慢できない"
+            "速やかに",
+            "医療機関を受診"
           ],
           "notes": null
         }
@@ -1974,7 +1976,7 @@
       "S": "{{drug_subject}}を服用して症状は落ち着いている。\nかゆみや湿疹、水ぶくれなどの症状は認めない。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による皮膚症状は現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。\nこうした症状が続く場合はご相談ください。",
+      "P": "{{drug_subject}}の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2038,21 +2040,14 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}の継続中に、かゆみや湿疹、水ぶくれなどが出ることがあります。",
+          "text": "{{drug_subject}}の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "こうした症状が続く場合はご相談ください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
-            "ご相談ください"
+            "水ぶくれ",
+            "皮膚のただれ",
+            "お早めにご相談"
           ],
           "notes": null
         }
@@ -3803,6 +3798,23 @@
         "intentTags": [],
         "tone": "standard"
       },
+      "addon_se_pancreatitis_guidance": {
+        "key": "addon_se_pancreatitis_guidance",
+        "id": "addon_se_pancreatitis_guidance",
+        "title": "副作用注意喚起（膵炎）",
+        "group": "sideEffects",
+        "targetSection": "P",
+        "text": "DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。",
+        "sectionTexts": {
+          "P": "DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。\nこうした症状が続く場合は膵炎の可能性があります。\n強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
       "addon_initial_sickday_guidance": {
         "key": "addon_initial_sickday_guidance",
         "id": "addon_initial_sickday_guidance",
@@ -4260,6 +4272,7 @@
     "addonIds": [
       "addon_se_hypoglycemia_guidance",
       "addon_glycemic_guidance_initial",
+      "addon_se_pancreatitis_guidance",
       "addon_initial_sickday_guidance",
       "addon_hyperkalemia_guidance",
       "addon_glycemic_guidance_followup",
