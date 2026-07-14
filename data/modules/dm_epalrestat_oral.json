@@ -2206,7 +2206,7 @@
       "S": "{{drug_subject}}の服用によりお腹の調子が悪いが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
-      "P": "{{drug_subject}}による消化器症状が軽い場合は、経過を確認しながら継続してください。\n症状が強くなる、長引く場合は、薬の調整が必要になることがあります。\nご相談ください。",
+      "P": "{{drug_subject}}によるお腹の不調が軽い場合は、経過を確認しながら継続してください。\nお腹の不調が強い、または続く場合は、薬の調整が必要になることがありますので、ご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2262,7 +2262,7 @@
       ],
       "PStructured": [
         {
-          "text": "{{drug_subject}}による消化器症状が軽い場合は、経過を確認しながら継続してください。",
+          "text": "{{drug_subject}}によるお腹の不調が軽い場合は、経過を確認しながら継続してください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
@@ -2271,24 +2271,15 @@
           "id": "p_1"
         },
         {
-          "text": "症状が強くなる、長引く場合は、薬の調整が必要になることがあります。",
-          "role": "dose_adjustment_guidance",
-          "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
-          "notes": null,
-          "id": "p_2"
-        },
-        {
-          "text": "ご相談ください。",
+          "text": "お腹の不調が強い、または続く場合は、薬の調整が必要になることがありますので、ご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [
             "ご相談ください"
           ],
           "notes": null,
-          "id": "p_3"
+          "id": "p_2"
         }
       ],
       "clinicalTags": [],
