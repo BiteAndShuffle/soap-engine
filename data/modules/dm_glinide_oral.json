@@ -2721,7 +2721,7 @@
       "S": "{{drug_subject}}の服用により軽い低血糖が出ることがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による低血糖症状を軽度認めるが、治療継続が可能である。",
-      "P": "{{drug_subject}}による症状が軽い場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。\n低血糖症状が強く続く場合は、薬の調整が必要になることがあります。\nご相談ください。",
+      "P": "{{drug_subject}}による症状が軽い場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。\n低血糖症状が強く続く場合は、薬の調整が必要になることがありますので、ご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -2790,22 +2790,12 @@
         },
         {
           "id": "p_2",
-          "text": "低血糖症状が強く続く場合は、薬の調整が必要になることがあります。",
-          "role": "dose_adjustment_guidance",
+          "text": "低血糖症状が強く続く場合は、薬の調整が必要になることがありますので、ご相談ください。",
+          "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
           "lockTerms": [
-            "低血糖"
-          ],
-          "notes": null
-        },
-        {
-          "id": "p_3",
-          "text": "ご相談ください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [
+            "低血糖",
             "ご相談ください"
           ],
           "notes": null
