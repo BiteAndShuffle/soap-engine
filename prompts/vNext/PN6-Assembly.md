@@ -16,7 +16,7 @@ phase5_non_scenario.json に以下が存在しない場合、即 MUST_STOP → P
 - `ui` / `risks` / `searchConfig` / `tagCatalog` / `expressModes`
 
 **composition.sMergePolicy の確認:**
-phase2_drug_header.json の `composition` に `sMergePolicy` が存在しない場合、即 MUST_STOP → PN5 へ差し戻す。
+phase2_drug_header.json の `composition` に `sMergePolicy` が存在しない場合、即 MUST_STOP → PN2 へ差し戻す。
 （PN6 が独自補完してはならない）
 
 ---
@@ -132,16 +132,6 @@ expressModes
 persona        ← phase5 の persona を top-level へ配置（defaults の直後）
 ```
 
-**composition.sMergePolicy の必須確認:**
-Step 1 で取り込む `composition` に `sMergePolicy` が存在しない場合は以下を追加する:
-```json
-"sMergePolicy": {
-  "unit": "clinical_domain",
-  "conflictStrategy": "separate_by_domain",
-  "withinDomainStrategy": "groupKey_based_semantic_merge"
-}
-```
-
 ### 除去する中間フィールド
 
 最終 JSON から以下を削除する:
@@ -214,7 +204,7 @@ xStructured 突き合わせ: PN4A {N}件 / PN4B {N}件 / 合計 {N}件（全シ�
 - 中間フィールド（_phase / _frozenAt / _closingText）を最終 JSON に含めない
 - Phase 1 凍結テキストを変更しない
 - **PN5 成果物に存在しない標準構造を PN6 が独自補完しない**（検出したら MUST_STOP → PN5 差し戻し）
-- **composition.sMergePolicy を PN6 が独自追加しない**（PN5 で生成すること）
+- **composition.sMergePolicy を PN6 が独自追加しない**（PN2 で生成すること）
 
 ---
 

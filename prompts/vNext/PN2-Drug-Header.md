@@ -85,6 +85,19 @@ Phase 3A が完成次第、Phase 6 が確定値（groupKeyRegistry: Phase 3A 出
 **nodeKey / classKey は bridge.composition から取得する。**
 存在しない場合は上記フォールバック表に従う。
 
+**composition.sMergePolicy（必須・PN2が常に生成する固定値）:**
+
+bridge の記載有無に関わらず、以下の固定値を composition に含める（bridge からは抽出しない、
+全モジュール共通の model_managed 値。PENDING にしない）:
+
+```json
+"sMergePolicy": {
+  "unit": "clinical_domain",
+  "conflictStrategy": "separate_by_domain",
+  "withinDomainStrategy": "groupKey_based_semantic_merge"
+}
+```
+
 ### display / template / persona / regulatory / topical
 
 bridge の対応フィールドから移植する。

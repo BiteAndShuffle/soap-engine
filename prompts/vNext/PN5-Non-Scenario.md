@@ -11,7 +11,8 @@
 
 PN6 は PN5 の成果物を統合するだけであり、標準構造を独自補完しない。
 PN5 で生成漏れがあった場合、PN6 は MUST_STOP して PN5 へ差し戻す。
-**persona / composition.sMergePolicy / index（searchableText/normalizedTokens/facets/scenarioIds/addonIds/followupProfileIds/groupKeyRegistry）の欠落は PN5 の責務違反として扱う。**
+**persona / index（searchableText/normalizedTokens/facets/scenarioIds/addonIds/followupProfileIds/groupKeyRegistry）の欠落は PN5 の責務違反として扱う。**
+composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関与しない。
 
 ---
 
@@ -235,22 +236,6 @@ expressModes
 persona        ← JSON_STANDARD 標準フィールド。必ず生成する（下記参照）
 addons.orderPresets
 ```
-
-### composition.sMergePolicy（必須 — phase2_drug_header.json へ追記）
-
-phase2_drug_header.json の `composition` に `sMergePolicy` が存在しない場合、以下を追記して保存する:
-
-```json
-"sMergePolicy": {
-  "unit": "clinical_domain",
-  "conflictStrategy": "separate_by_domain",
-  "withinDomainStrategy": "groupKey_based_semantic_merge"
-}
-```
-
-PN6 は composition をそのまま取り込むため、PN5 がここで確定させる。
-
----
 
 ### persona セクション（必須）
 
