@@ -3,10 +3,11 @@
 # cardiorenal_sglt2_oral
 # =========================================
 #
-# ⚠️ STATUS: HEADER_ONLY ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
-# ヘッダー案（drug / composition / display 等）のみ作成済み。
-# SCENARIOS_START〜SCENARIOS_END は未作成（本ファイルでは扱わない）。
+# ヘッダー（drug / composition / display 等）および SCENARIOS_START〜
+# SCENARIOS_END（シナリオ本文・ADDON本文、21シナリオ・13ADDON）作成済み。
+# ブランド別適応制御（handlingTags / scenarioRequiredTags 付与予定）も確定済み。
 #
 # 目的: 心不全・腎疾患治療目的の SGLT2阻害薬（フォシーガ／ジャディアンス／
 # カナグル）の brandCatalog / alias / drugResolution.brandToTags /
@@ -46,9 +47,8 @@
 #   dm_sglt2_oral と同様に用途区分なしの "SGLT2阻害薬" のまま据え置く
 #   （SOAP文中への挿入で不自然にならないようにするため）。
 #
-# 次の作業: SCENARIOS_START〜SCENARIOS_END の作成（本ファイルはヘッダーのみで
-# 完結し、シナリオ本文追加後にユーザーが凍結宣言し STATUS を FROZEN_FOR_PN1 へ
-# 更新する。prompts/vNext/HANDOFF.md の「bridge 作成から開始する」手順に従う）。
+# 状態: PN1〜PN8完了・canonical JSON生成済み・registry登録済み
+# （commit ad6e8056b3a3590b5a4f675379e17efca016a0d4）。次の作業なし。
 #
 # 参照:
 #   - bridges/dm_sglt2_oral.md（用途分離の兄弟モジュール。classKey/nodeKey
@@ -167,18 +167,23 @@ drug:
   # genericKey 命名規則: 成分名の英語スネークケース（PN2-Drug-Header.md 準拠、
   # dm_sglt2_oral / dm_dpp4_oral と同型）。
   #
-  # handlingTags: 原則空配列（ユーザー確定・2026-07-09）。
-  #   本モジュールは増量・減量シナリオを基本作成しない前提のため、
-  #   dm_sglt2_oral 側の "dose_adjustment_supported" タグは付与しない
-  #   （糖尿病用増減量制御タグの混入防止）。将来、心不全・腎疾患用途固有の
-  #   制御タグが必要になった場合は SCENARIOS作成時に個別検討する。
+  # handlingTags: 適応範囲制御タグを付与（ユーザー確定・2026-07-14。
+  #   2026-07-09時点の空配列決定を更新）。
+  #   増量・減量シナリオは引き続き基本作成しない前提のため、dm_sglt2_oral 側の
+  #   "dose_adjustment_supported" タグは付与しない（糖尿病用増減量制御タグの
+  #   混入防止方針は変更なし）。心不全・腎疾患シナリオの表示制御に用いる
+  #   "heart_failure_supported" / "ckd_supported" を付与する。
+  #   詳細は下記「適応範囲の設計意図」「scenarioRequiredTags 付与予定」および
+  #   確定済み事項11・12を参照。
   brandCatalog:
     フォシーガ:
       displayName: "フォシーガ"
       genericName: "ダパグリフロジン"
       displayGenericName: "ダパグリフロジン"
       genericKey: "dapagliflozin"
-      handlingTags: []
+      handlingTags:
+        - "heart_failure_supported"
+        - "ckd_supported"
       aliases:
         - "ふぉしーが"
       normalizedAliases:
@@ -189,7 +194,9 @@ drug:
       genericName: "エンパグリフロジン"
       displayGenericName: "エンパグリフロジン"
       genericKey: "empagliflozin"
-      handlingTags: []
+      handlingTags:
+        - "heart_failure_supported"
+        - "ckd_supported"
       aliases:
         - "じゃでぃあんす"
       normalizedAliases:
@@ -200,11 +207,37 @@ drug:
       genericName: "カナグリフロジン"
       displayGenericName: "カナグリフロジン"
       genericKey: "canagliflozin"
-      handlingTags: []
+      handlingTags:
+        - "ckd_supported"
       aliases:
         - "かなぐる"
       normalizedAliases:
         - "かなぐる"
+
+  # ─────────────────────────────────────────
+  # 適応範囲の設計意図（ユーザー確定・2026-07-14）
+  # ─────────────────────────────────────────
+  # - フォシーガは慢性心不全・慢性腎臓病の両シナリオに対応する。
+  # - ジャディアンスは慢性心不全・慢性腎臓病の両シナリオに対応する。
+  # - カナグルは心不全シナリオには対応しない。
+  # - カナグルの ckd_supported は「2型糖尿病を伴う慢性腎臓病」に限る。
+  # - カナグルの ckd_supported は、非糖尿病CKDを含む一般的な慢性腎臓病適応を
+  #   意味しない。
+  # - 初期実装では薬剤師が患者背景と処方目的を判断してCKDシナリオを選択する。
+  # - カナグル専用CKDシナリオの分離は現時点では行わない。
+  #
+  # ─────────────────────────────────────────
+  # scenarioRequiredTags 付与予定（PN3A、ユーザー確定・2026-07-14）
+  # ─────────────────────────────────────────
+  # 本 bridge 段階では SCENARIOS 本文のシナリオヘッダーに
+  # scenarioRequiredTags を追記しない（PN3A の責務）。付与予定は以下の通り。
+  #   scenarioRequiredTags: ["heart_failure_supported"] を付与する3件:
+  #     initial_heart_failure / restart_heart_failure /
+  #     external_start_heart_failure
+  #   scenarioRequiredTags: ["ckd_supported"] を付与する3件:
+  #     initial_ckd / restart_ckd / external_start_ckd
+  #   それ以外の15シナリオには scenarioRequiredTags を付与しない
+  #   （3ブランド共通表示のまま）。
 
   aliasToBrand:
     "ふぉしーが": "フォシーガ"
@@ -284,25 +317,577 @@ display:
 #    ユーザー確定（2026-07-09）。汎用クエリでの標準候補を dm_sglt2_oral 側に
 #    維持するための誤選択防止措置（上記ヘッダー冒頭参照）。drug.genericName は
 #    {{drug_subject}} 解決用のため用途区分なし「SGLT2阻害薬」のまま据え置く。
-# 10. handlingTags → 3ブランドとも空配列で確定（ユーザー確定・2026-07-09）。
-#     増量・減量シナリオは基本作成しない前提のため、dm_sglt2_oral 側の
-#     "dose_adjustment_supported" タグは付与しない。
+# 10. handlingTags → ユーザー確定（2026-07-14。2026-07-09時点の空配列決定を
+#     更新）。フォシーガ／ジャディアンスは ["heart_failure_supported",
+#     "ckd_supported"]、カナグルは ["ckd_supported"] のみを付与する。
+#     増量・減量シナリオは引き続き基本作成しない前提のため、dm_sglt2_oral 側の
+#     "dose_adjustment_supported" タグは付与しない（この点は変更なし）。
+# 11. 適応範囲の設計意図 → ユーザー確定（2026-07-14）。フォシーガ／
+#     ジャディアンスは慢性心不全・慢性腎臓病の両シナリオに対応する。カナグルは
+#     心不全シナリオに対応せず、ckd_supported は「2型糖尿病を伴う慢性腎臓病」
+#     に限定する（非糖尿病CKDを含む一般的な慢性腎臓病適応は意味しない）。
+#     初期実装では薬剤師が患者背景と処方目的を判断してCKDシナリオを選択する
+#     前提とし、カナグル専用CKDシナリオの分離は現時点では行わない。
+# 12. scenarioRequiredTags 付与予定（PN3A） → ユーザー確定（2026-07-14）。
+#     initial_heart_failure / restart_heart_failure /
+#     external_start_heart_failure の3件に ["heart_failure_supported"]、
+#     initial_ckd / restart_ckd / external_start_ckd の3件に
+#     ["ckd_supported"] を付与する。それ以外の15シナリオには付与しない。
+#     本 bridge 段階では SCENARIOS 本文へ直接追記せず、PN3A の責務として扱う。
+# 13. P_CLOSING内訳 → ユーザー確定（2026-07-14）。sickdayシナリオの
+#     P_CLOSINGは既存のdefault_followup定型文のまま確定し、本文は変更しない。
+#     内訳: default_followup 14件 / end_followup 3件 / se_followup 4件 /
+#     既知対応表外 0件（全21シナリオ）。
+# 14. PN1〜PN8完了・canonical JSON生成済み → 2026-07-14。
+#     data/modules/cardiorenal_sglt2_oral.json 生成・registry登録済み
+#     （data/modules/index.ts）。canonical JSON commit:
+#     ad6e8056b3a3590b5a4f675379e17efca016a0d4。
 #
 # =========================================
 # 残る未確定事項（PENDING）
 # =========================================
 #
-# なし（2026-07-09 時点、本 bridge のヘッダー設計に関する未確定事項はなし）
+# なし（2026-07-14 時点。PN1〜PN8完了・canonical JSON生成済みの現在も
+# 本 bridge のヘッダー・シナリオ設計に関する未確定事項はなし）。
 #
 # =========================================
 # 将来拡張事項（今回のヘッダーでは扱わない・スコープ外）
 # =========================================
 #
-# - SCENARIOS_START〜SCENARIOS_END の作成（本ファイルはヘッダーのみ）
 # - スーグラ／ルセフィ／デベルザの心不全・腎疾患用途での収載要否:
 #   現時点では対象外。臨床的なエビデンス・適応追加等の状況変化があれば
 #   ユーザー判断のもと改めて検討する
-# - handlingTags（心不全・腎疾患用途固有の制御タグ）: SCENARIOS作成時に
-#   臨床的な差分の有無を確認したうえで必要に応じて追加する
 # - OD錠等の詳細剤形分離: 現時点では drug.dosageForms = ["tablet"] のみを扱う
 # - GEブランドの追加: 現時点ではユーザー指定の3ブランドのみを扱う
+# - カナグル専用CKDシナリオの分離: 初期実装では行わない
+#   （確定済み事項11参照。将来、臨床的必要性が生じた場合に改めて検討する）
+
+# =========================================
+# SCENARIOS_START〜SCENARIOS_END（STATUS: FROZEN_FOR_PN1）
+# =========================================
+
+=======SCENARIOS_START=======
+【SCENARIO｜type=treatment_start｜id=initial_heart_failure｜title=SGLT2阻害薬（心不全・腎疾患） 初回（心不全）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、心不全の治療のため追加となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）は、心不全の悪化を抑え、心臓への負担を軽減する目的で追加となった。
+尿中への糖およびナトリウムの排泄を促し、体液量を調整することで、心不全の治療効果が期待される。
+P
+SGLT2阻害薬（心不全・腎疾患）は、体内の余分な水分を調整し、心臓への負担を軽くする薬です。
+尿量が増えたり、のどが渇きやすくなることがあります。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+息苦しさやむくみ、急な体重増加などがみられた場合は、お早めにご相談ください。
+P_ADDON
+- addon_se_genitourinary_guidance
+- addon_sglt2_initial_sickday_guidance
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=side_effect_guidance｜id=addon_se_genitourinary_guidance｜title=副作用注意喚起（尿路・性器感染症）】
+P_APPEND
+SGLT2阻害薬（心不全・腎疾患）の継続中に、陰部のかゆみ、排尿時の痛み、残尿感、発熱などが現れることがあります。
+このような症状があれば、お早めにご相談ください。
+
+
+【ADDON｜type=sickday_guidance｜id=addon_sglt2_initial_sickday_guidance｜title=初回シックデイ】
+P_APPEND
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、脱水やケトアシドーシスのリスクが高まります。
+このような体調不良時はSGLT2阻害薬（心不全・腎疾患）を休薬してください。
+医師から水分制限を指示されていない場合は、水分を少量ずつこまめに摂取してください。
+嘔吐が続く、水分が摂れない、尿量が減る、吐き気・腹痛・強い倦怠感・息苦しさなどがある場合は受診してください。
+服用の再開時期については、自己判断せず処方医へご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_cardiorenal_sodium_guidance｜title=生活指導（塩分）】
+P_APPEND
+塩分を摂りすぎると、体内に水分がたまりやすくなり、心臓や腎臓へ負担がかかることがあります。
+食事療法は、心臓や腎臓への負担を減らすうえで重要です。
+塩分の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hyperkalemia_guidance｜title=生活指導（カリウム）】
+S_APPEND
+カリウムの値が高いと言われた。
+A_APPEND
+カリウムコントロールが不十分であり、食事内容の見直しが必要である。
+P_APPEND
+カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
+食事療法は、カリウムのコントロールにおいて重要です。
+カリウムを多く含む食品の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=initial_ckd｜title=SGLT2阻害薬（心不全・腎疾患） 初回（腎疾患）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、腎機能の悪化を抑えるため追加となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）は、慢性腎臓病の進行を抑える目的で追加となった。
+腎臓にかかる負担を軽減することで、腎機能低下の進行抑制が期待される。
+P
+SGLT2阻害薬（心不全・腎疾患）は、腎臓への負担を軽くし、腎機能の低下を緩やかにするための薬です。
+尿量が増えたり、のどが渇きやすくなることがあります。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+定期的に腎機能などを確認しながら治療を継続します。
+P_ADDON
+- addon_se_genitourinary_guidance
+- addon_sglt2_initial_sickday_guidance
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart_heart_failure｜title=SGLT2阻害薬（心不全・腎疾患） 再開（心不全）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、心不全の治療のため再開となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）は、心不全の悪化を抑え、心臓への負担を軽減する目的で再開となった。
+尿中への糖およびナトリウムの排泄を促し、体液量を調整することで、心不全の治療効果が期待される。
+P
+SGLT2阻害薬（心不全・腎疾患）は、体内の余分な水分を調整し、心臓への負担を軽くする薬です。
+尿量が増えたり、のどが渇きやすくなることがあります。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+息苦しさやむくみ、急な体重増加などがみられた場合は、お早めにご相談ください。
+P_ADDON
+- addon_se_genitourinary_guidance
+- addon_sglt2_initial_sickday_guidance
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart_ckd｜title=SGLT2阻害薬（心不全・腎疾患） 再開（腎疾患）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、腎機能の悪化を抑えるため再開となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）は、慢性腎臓病の進行を抑える目的で再開となった。
+腎臓にかかる負担を軽減することで、腎機能低下の進行抑制が期待される。
+P
+SGLT2阻害薬（心不全・腎疾患）は、腎臓への負担を軽くし、腎機能の低下を緩やかにするための薬です。
+尿量が増えたり、のどが渇きやすくなることがあります。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+定期的に腎機能などを確認しながら治療を継続します。
+P_ADDON
+- addon_se_genitourinary_guidance
+- addon_sglt2_initial_sickday_guidance
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start_heart_failure｜title=SGLT2阻害薬（心不全・腎疾患） 他所開始（心不全）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、他院で開始され継続使用中であった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）は、心不全の悪化を抑え、心臓への負担を軽減する目的で使用中であった。
+尿中への糖およびナトリウムの排泄を促し、体液量を調整することで、心不全の治療効果が期待される。
+P
+SGLT2阻害薬（心不全・腎疾患）は、体内の余分な水分を調整し、心臓への負担を軽くする薬です。
+尿量が増えたり、のどが渇きやすくなることがあります。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+息苦しさやむくみ、急な体重増加などがみられた場合は、お早めにご相談ください。
+P_ADDON
+- addon_se_genitourinary_guidance
+- addon_sglt2_initial_sickday_guidance
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start_ckd｜title=SGLT2阻害薬（心不全・腎疾患） 他所開始（腎疾患）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、他院で開始され継続使用中であった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）は、慢性腎臓病の進行を抑える目的で使用中であった。
+腎臓にかかる負担を軽減することで、腎機能低下の進行抑制が期待される。
+P
+SGLT2阻害薬（心不全・腎疾患）は、腎臓への負担を軽くし、腎機能の低下を緩やかにするための薬です。
+尿量が増えたり、のどが渇きやすくなることがあります。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+定期的に腎機能などを確認しながら治療を継続します。
+P_ADDON
+- addon_se_genitourinary_guidance
+- addon_sglt2_initial_sickday_guidance
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_urinary_frequency_none｜title=SGLT2阻害薬（心不全・腎疾患） 副作用なし（頻尿）】
+S
+SGLT2阻害薬（心不全・腎疾患）を服用して症状は落ち着いている。
+排尿回数の増加は気にならない。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）による頻尿は日常生活上問題となっておらず、治療継続が可能である。
+P
+SGLT2阻害薬（心不全・腎疾患）の継続中は、尿量が増えたり、トイレが近くなることがあります。
+日常生活に支障がある場合はご相談ください。
+脱水を防ぐため、こまめな水分補給を心がけてください。
+P_ADDON
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_dyslipidemia_guidance｜title=生活指導（脂質）】
+S_APPEND
+脂質が高いと言われた。
+A_APPEND
+脂質コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
+P_APPEND
+脂質が高い状態が続くと、動脈硬化のリスクが高まることがあります。
+食事療法や運動療法は、脂質のコントロールにおいて重要です。
+食生活の見直しを継続していきましょう。
+気になることがあればご相談ください。
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_hyperuricemia_guidance｜title=生活指導（尿酸）】
+S_APPEND
+尿酸が高いと言われた。
+A_APPEND
+尿酸コントロールが不十分であり、食事療法および生活習慣の見直しが必要である。
+P_APPEND
+尿酸が高い状態が続くと、痛風発作などにつながることがあります。
+食事療法は、尿酸のコントロールにおいて重要です。
+食生活の見直しを継続していきましょう。
+気になることがあればご相談ください。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_dehydration_none｜title=SGLT2阻害薬（心不全・腎疾患） 副作用なし（脱水）】
+S
+SGLT2阻害薬（心不全・腎疾患）を服用して症状は落ち着いている。
+強い口渇やふらつきは認めない。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）による脱水は現時点で認められず、治療継続が可能である。
+P
+SGLT2阻害薬（心不全・腎疾患）の継続中は、脱水を起こすことがあります。
+こまめな水分補給を心がけてください。
+強い口の渇きやふらつき、尿量の減少などが続く場合はご相談ください。
+P_ADDON
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_genitourinary_infection_none｜title=SGLT2阻害薬（心不全・腎疾患） 副作用なし（尿路・性器感染症）】
+S
+SGLT2阻害薬（心不全・腎疾患）を服用して症状は落ち着いている。
+陰部のかゆみや排尿時の痛み、残尿感は認めない。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）による尿路・性器感染症は現時点で認められず、治療継続が可能である。
+P
+SGLT2阻害薬（心不全・腎疾患）の継続中に、陰部のかゆみ、排尿時の痛み、残尿感、発熱などが現れることがあります。
+このような症状があれば、お早めにご相談ください。
+P_ADDON
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_good｜title=SGLT2阻害薬（心不全・腎疾患） CP良好】
+S
+薬を服用して症状は落ち着いている。
+継続して服用できている。
+O
+SGLT2阻害薬（心不全・腎疾患）　服用中
+A
+コンプライアンスは良好である。治療継続に問題はない。
+P
+引き続き用法を守って服用することで、治療効果の維持が期待されます。
+今後も継続して服用できるようにすることが大切です。
+P_ADDON
+- addon_cardiorenal_sodium_guidance
+- addon_hyperkalemia_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=SGLT2阻害薬（心不全・腎疾患） CP不良（服薬忘れ）】
+S
+服薬忘れがみられる。
+継続して服用できていない。
+O
+SGLT2阻害薬（心不全・腎疾患）　服用中
+A
+コンプライアンスは不良で、服薬忘れがみられる。
+P
+継続して服用することで、十分な治療効果が期待されます。
+服薬忘れが続くと、期待される治療効果が十分に得られない可能性があります。
+P_ADDON
+- addon_adherence_reminder_alarm
+- addon_adherence_reminder_app
+- addon_adherence_visual_calendar_checklist
+- addon_adherence_visual_note
+- addon_adherence_prep_previous_night
+- addon_adherence_prep_before_meal
+- addon_adherence_support_family_reminder
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=服薬忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=服薬忘れ対策（通知：服薬アプリ）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=服薬忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（準備：前夜）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（準備：食前）｜uiVariant=rightAccentBlue】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=服薬忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
+P_APPEND
+飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=SGLT2阻害薬（心不全・腎疾患） CP不良（自己判断）】
+S
+自己判断での服用調整がみられる。
+用法どおりの継続服用ができていない。
+O
+SGLT2阻害薬（心不全・腎疾患）　服用中
+A
+コンプライアンスは不良で、自己判断による調整がみられる。
+P
+継続して服用することで、十分な治療効果が期待されます。
+自己判断で中止・調整すると、期待される治療効果が十分に得られない可能性があります。
+体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=SGLT2阻害薬（心不全・腎疾患） CP不良（受診遅延）】
+S
+都合により受診遅延がみられる。
+処方どおりの継続服用ができていない。
+O
+SGLT2阻害薬（心不全・腎疾患）　服用中
+A
+コンプライアンスは不良で、受診遅延がみられる。
+P
+継続的な服用により、十分な治療効果が期待されます。
+治療が中断すると、期待される治療効果が十分に得られない可能性があります。
+次回受診が難しい場合は、早めに医療機関へご連絡ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_treatment_plan_change｜title=SGLT2阻害薬（心不全・腎疾患） 終了（治療方針変更）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、治療方針の見直しにより中止となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方終了
+A
+SGLT2阻害薬（心不全・腎疾患）は、治療方針の見直しにより終了となった。終了後の治療経過を確認する必要がある。
+P
+終了後も体調変化や症状の変化がみられる場合はご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=SGLT2阻害薬（心不全・腎疾患） 終了（効果不十分）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、効果不十分のため中止となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方終了
+A
+SGLT2阻害薬（心不全・腎疾患）は、効果不十分のため終了となった。治療方針の再評価が必要である。
+P
+SGLT2阻害薬（心不全・腎疾患）終了後も治療経過を確認しながら、今後の治療方針について処方医とご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=SGLT2阻害薬（心不全・腎疾患） 終了（無効）】
+S
+SGLT2阻害薬（心不全・腎疾患）は、効果が認められなかったため中止となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方終了
+A
+SGLT2阻害薬（心不全・腎疾患）は、効果が認められなかったため終了となった。治療方針の変更が必要である。
+P
+SGLT2阻害薬（心不全・腎疾患）終了後も治療経過を確認しながら、代替治療について処方医とご相談ください。
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=SGLT2阻害薬（心不全・腎疾患） SE継続（軽症・頻尿）】
+S
+SGLT2阻害薬（心不全・腎疾患）の服用によりトイレが近くなったが、日常生活は送れている。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+SGLT2阻害薬（心不全・腎疾患）による頻尿を軽度認めるが、治療継続が可能である。
+P
+SGLT2阻害薬（心不全・腎疾患）により尿量が増えたり、トイレが近くなることがあります。
+頻尿が軽く、日常生活に支障がなければ、経過を確認しながら継続できます。
+日常生活に支障がある場合はご相談ください。
+脱水を防ぐため、こまめな水分補給を心がけてください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_urinary_frequency｜title=SGLT2阻害薬（心不全・腎疾患） SE変更（頻尿）】
+S
+SGLT2阻害薬（心不全・腎疾患）の服用によりトイレが近くなったため、他剤へ変更となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方変更
+A
+SGLT2阻害薬（心不全・腎疾患）の服用による頻尿を認め、他剤変更後の経過確認を要する。
+P
+SGLT2阻害薬（心不全・腎疾患）の変更後、体調変化や症状の変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_urinary_frequency｜title=SGLT2阻害薬（心不全・腎疾患） SE中止（頻尿）】
+S
+SGLT2阻害薬（心不全・腎疾患）の服用によりトイレが近くなったため、中止となった。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方中止
+A
+SGLT2阻害薬（心不全・腎疾患）の服用による頻尿を認め、中止後の経過確認を要する。
+P
+SGLT2阻害薬（心不全・腎疾患）の中止後、体調変化や症状の変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=SGLT2阻害薬（心不全・腎疾患） 生活指導（カリウム）】
+S
+カリウムの値が高いと言われた。
+O
+SGLT2阻害薬（心不全・腎疾患）　処方
+A
+カリウムコントロールが不十分であり、食事内容の見直しが必要である。
+P
+カリウムが高い状態が続くと、心臓へ負担がかかることがあります。
+食事療法は、カリウムのコントロールにおいて重要です。
+カリウムを多く含む食品の摂りすぎに注意しましょう。
+気になることがあればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=sickday｜id=sickday｜title=SGLT2阻害薬（心不全・腎疾患） シックデイ】
+S
+発熱・嘔吐・下痢などの体調不良がみられる。
+O
+SGLT2阻害薬（心不全・腎疾患）　服用中
+A
+食事および水分摂取の低下により、脱水やケトアシドーシスのリスクが上昇している。シックデイ時の休薬および受診判断が必要である。
+P
+発熱・嘔吐・下痢などで食事や水分が十分に摂れない場合は、SGLT2阻害薬（心不全・腎疾患）を休薬してください。
+医師から水分制限を指示されていない場合は、脱水を防ぐため、こまめな水分補給を心がけてください。
+血糖値がそれほど高くなくても、強い倦怠感、吐き気、腹痛、息苦しさなどがある場合は、ケトアシドーシスの可能性があります。
+嘔吐が続く、水分が摂れない、尿量が減る、吐き気・腹痛・強い倦怠感・息苦しさなどがある場合は受診してください。
+再開時期については、自己判断せず処方医へご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+=======SCENARIOS_END=======
