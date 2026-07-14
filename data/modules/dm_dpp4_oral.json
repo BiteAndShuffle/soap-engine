@@ -176,7 +176,8 @@
         "genericKey": "omarigliptin",
         "handlingTags": [
           "weekly_dpp4",
-          "dpp4_renal_dose_adjustment"
+          "dpp4_renal_dose_adjustment",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "まりぜぶ"
@@ -192,7 +193,8 @@
         "genericKey": "trelagliptin",
         "handlingTags": [
           "weekly_dpp4",
-          "dpp4_renal_dose_adjustment"
+          "dpp4_renal_dose_adjustment",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "ざふぁてっく"
@@ -207,7 +209,8 @@
         "displayGenericName": "アナグリプチン",
         "genericKey": "anagliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "すいにー"
@@ -222,7 +225,8 @@
         "displayGenericName": "サキサグリプチン",
         "genericKey": "saxagliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "おんぐりざ"
@@ -237,7 +241,8 @@
         "displayGenericName": "テネリグリプチン",
         "genericKey": "teneligliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "てねりあ"
@@ -252,7 +257,8 @@
         "displayGenericName": "アログリプチン",
         "genericKey": "alogliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "ねしーな"
@@ -267,7 +273,8 @@
         "displayGenericName": "ビルダグリプチン",
         "genericKey": "vildagliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "えくあ"
@@ -282,7 +289,8 @@
         "displayGenericName": "シタグリプチン",
         "genericKey": "sitagliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "じゃぬびあ"
@@ -297,7 +305,8 @@
         "displayGenericName": "シタグリプチン",
         "genericKey": "sitagliptin",
         "handlingTags": [
-          "dpp4_standard_titration"
+          "dpp4_standard_titration",
+          "dpp4_dose_decrease_supported"
         ],
         "aliases": [
           "ぐらくてぃぶ"
@@ -3179,7 +3188,7 @@
       "S": "{{drug_subject}}の服用により便秘やお腹が張った感じなどがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による消化器症状を軽度認めるが、治療継続が可能である。",
-      "P": "{{drug_subject}}による症状が軽い場合は、水分摂取や食事内容を無理のない範囲で見直すことで改善することがあります。\n便秘やお腹が張った感じなどの症状が強く続く場合は、薬の調整が必要になることがあります。\nご相談ください。",
+      "P": "{{drug_subject}}による症状が軽い場合は、水分摂取や食事内容を無理のない範囲で見直すことで改善することがあります。\n便秘やお腹が張った感じなどの症状が強い、または続く場合は、薬の調整が必要になることがありますので、ご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -3245,21 +3254,10 @@
         },
         {
           "id": "p_2",
-          "text": "便秘やお腹が張った感じなどの症状が強く続く場合は、薬の調整が必要になることがあります。",
+          "text": "便秘やお腹が張った感じなどの症状が強い、または続く場合は、薬の調整が必要になることがありますので、ご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [
-            "症状が強く続く"
-          ],
-          "notes": null
-        },
-        {
-          "id": "p_3",
-          "text": "ご相談ください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "low",
           "lockTerms": [
             "ご相談ください"
           ],
@@ -3606,7 +3604,10 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "scenarioRequiredTags": [
+        "dpp4_dose_decrease_supported"
+      ]
     },
     {
       "id": "se_stop_due_to_gi_symptoms",

@@ -162,11 +162,14 @@ drug:
   # ジャヌビア / グラクティブ は同一成分（シタグリプチン）の共同販売品のため
   # genericKey を共有する（RULES.md §21、ノボリンR/ヒューマリンR と同型）。
   #
-  # handlingTags 方針（3種、DashboardClient.tsx 既存フィルタ + addonFilter.ts
+  # handlingTags 方針（4種、DashboardClient.tsx 既存フィルタ + addonFilter.ts
   # requiredTags と同一の AND 条件メカニズムを使用）:
   #   - "dpp4_standard_titration": 通常の増量・減量シナリオを表示するブランド
   #   - "dpp4_renal_dose_adjustment": 腎機能に応じた減量シナリオのみ表示するブランド
   #   - "weekly_dpp4": 週1回製剤（addon_weekly_dpp4_admin 表示条件）
+  #   - "dpp4_dose_decrease_supported": SE起因の減量シナリオ
+  #     （se_dose_decrease_due_to_gi_symptoms）を表示するブランド
+  #     （ユーザー確定・2026-07-14。トラゼンタ以外の9ブランドに付与）
   #   - トラゼンタは上記いずれのタグも持たない
   #     （タグ不在 → 増量・減量系シナリオが自動的に非表示になる。RULES.md §21 参照）
   #
@@ -195,6 +198,7 @@ drug:
       handlingTags:
         - "weekly_dpp4"
         - "dpp4_renal_dose_adjustment"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "まりぜぶ"
       normalizedAliases:
@@ -208,6 +212,7 @@ drug:
       handlingTags:
         - "weekly_dpp4"
         - "dpp4_renal_dose_adjustment"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "ざふぁてっく"
       normalizedAliases:
@@ -220,6 +225,7 @@ drug:
       genericKey: "anagliptin"
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "すいにー"
       normalizedAliases:
@@ -232,6 +238,7 @@ drug:
       genericKey: "saxagliptin"
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "おんぐりざ"
       normalizedAliases:
@@ -244,6 +251,7 @@ drug:
       genericKey: "teneligliptin"
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "てねりあ"
       normalizedAliases:
@@ -256,6 +264,7 @@ drug:
       genericKey: "alogliptin"
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "ねしーな"
       normalizedAliases:
@@ -268,6 +277,7 @@ drug:
       genericKey: "vildagliptin"
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "えくあ"
       normalizedAliases:
@@ -280,6 +290,7 @@ drug:
       genericKey: "sitagliptin"
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "じゃぬびあ"
       normalizedAliases:
@@ -293,6 +304,7 @@ drug:
       # ↑ ジャヌビアと同一 genericKey（共同販売・同一成分）
       handlingTags:
         - "dpp4_standard_titration"
+        - "dpp4_dose_decrease_supported"
       aliases:
         - "ぐらくてぃぶ"
       normalizedAliases:
@@ -376,7 +388,7 @@ display:
 #
 # 全ブランド共通で表示するシナリオ（scenarioRequiredTags なし）:
 #   - initial / restart / external_start
-#   - side_effect 系（全種）
+#   - side_effect 系（se_dose_decrease_due_to_gi_symptoms を除く全種）
 #   - adherence 系（全種）
 #   - treatment_end 系（全種）
 #   - lifestyle_guidance 系（全種）
@@ -395,8 +407,16 @@ display:
 # （マリゼブ/ザファテックのみ表示）:
 #   - dose_decrease_renal_function（新規 scenario id・本文確定済み）
 #
+# scenarioRequiredTags: ["dpp4_dose_decrease_supported"] を付与済みシナリオ
+# （トラゼンタ以外の9ブランドで表示。ユーザー確定・2026-07-14）:
+#   - se_dose_decrease_due_to_gi_symptoms
+#   → トラゼンタは増減量シナリオを一切持たない設計のため、SE起因の減量
+#     シナリオも非表示とする。マリゼブ/ザファテックは dpp4_renal_dose_adjustment
+#     とは別に本タグを保有し、到達性を維持する。
+#
 # トラゼンタは上記いずれの handlingTags も持たないため、
-# dose_increase_* / dose_decrease_*（renal 含む）は自動的に全て非表示になる。
+# dose_increase_* / dose_decrease_*（renal 含む）/
+# se_dose_decrease_due_to_gi_symptoms は自動的に全て非表示になる。
 #
 # =========================================
 # addon 設計（確定済み・2026-07-05 シナリオ本文へ反映済み）
@@ -1086,8 +1106,7 @@ A
 DPP4阻害薬による消化器症状を軽度認めるが、治療継続が可能である。
 P
 DPP4阻害薬による症状が軽い場合は、水分摂取や食事内容を無理のない範囲で見直すことで改善することがあります。
-便秘やお腹が張った感じなどの症状が強く続く場合は、薬の調整が必要になることがあります。
-ご相談ください。
+便秘やお腹が張った感じなどの症状が強い、または続く場合は、薬の調整が必要になることがありますので、ご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1132,7 +1151,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=DPP4阻害薬 SE減量（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=DPP4阻害薬 SE減量（消化器症状）｜scenarioRequiredTags=[dpp4_dose_decrease_supported]】
 S
 DPP4阻害薬の服用により便秘やお腹が張った感じがひどいため、減量となった。
 O
