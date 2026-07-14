@@ -34,11 +34,20 @@ function kataToHira(s: string): string {
  * - カタカナ → ひらがな
  * - 空白・中点・ハイフン系を除去
  */
+/**
+ * normalizeText が除去する区切り文字パターン（空白・中点・ハイフン系）。
+ * buildSearchIndex 側で「区切り文字で分割してからトークンごとに正規化する」際に
+ * normalizeText と同一の区切り文字集合を使うことで、区切り文字をまたいだ
+ * ゴースト一致（例: display.subtitle の「アレグラ・クラリチン・ザイザル」のような
+ * 「・」区切り列挙が単一トークンとして残ってしまう問題）を防止する。
+ */
+const SEPARATOR_PATTERN = /[\s\u3000\u30FB\u00B7\-_/()（）・]/
+
 export function normalizeText(s: string): string {
   return kataToHira(
     s.normalize('NFKC')
       .toLowerCase()
-      .replace(/[\s\u3000\u30FB\u00B7\-_/()（）・]+/g, ''),
+      .replace(new RegExp(SEPARATOR_PATTERN.source, 'g'), ''),
   )
 }
 
@@ -50,7 +59,14 @@ export interface SearchEntry {
   /** 新スキーマ: scenario.globalId（アプリ全体で一意） */
   templateId: string
   moduleId: string
-  corpus: string
+  /**
+   * 正規化済みコーパストークン配列（旧 corpus: string から置換）。
+   * 各トークンは個別に normalizeText() 済みであり、結合前に正規化することで
+   * トークン境界をまたいだ部分一致（ゴースト一致）を構造的に防止する。
+   * 部分一致判定は必ず `corpusTokens.some(t => t.includes(q))` のように
+   * 単一トークン内で行うこと（結合してからの includes は禁止）。
+   */
+  corpusTokens: string[]
   exactAliasTokens: string[]
   primaryDisplayNameNorm: string
   aliasTokens: string[]
@@ -123,6 +139,8 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const keywordTexts: string[] = drugSearch?.keywords ?? []
 
   // グローバルコーパス: drug情報 + display.title/subtitle + categoryPath
+  // 各タグは個別に normalizeText() してからトークン配列として保持する（結合してから
+  // 正規化すると、トークン境界をまたいだ部分一致＝ゴースト一致が発生するため禁止）。
   const globalTags: string[] = [
     ...(drug?.drugSpecificTags ?? []),
     ...(drug?.drugClass ?? []),
@@ -133,7 +151,16 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     moduleData.display?.subtitle ?? '',
     ...(moduleData.categoryPath ?? []),
   ]
-  const globalCorpus = normalizeText(globalTags.join(' '))
+  // 各タグを SEPARATOR_PATTERN で分割してから正規化する。
+  // display.subtitle 等、著者が「・」区切りでブランド名を列挙した単一フィールド
+  // （例:「アレグラ・クラリチン・ザイザル・ビラノア 他」）が1トークンのまま残ると、
+  // フィールド内部でも境界またぎのゴースト一致が発生するため、区切り文字ごとに
+  // 独立したトークンへ分割する。区切り文字を持たないタグ（ブランド名単体等）は
+  // 分割してもそのまま1要素の配列になるため無害。
+  const globalCorpusTokens: string[] = globalTags
+    .flatMap(tag => tag.split(SEPARATOR_PATTERN))
+    .map(normalizeText)
+    .filter(Boolean)
 
   const exampleDrugName = drug?.brandNames?.[0]
   const brandNames = drug?.brandNames ?? []
@@ -166,22 +193,25 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const priority = drugSearch?.priority ?? 0
 
   return moduleData.scenarios.map(scenario => {
-    // per-scenario コーパス: title + scenarioGroup + S / O / A / P 全文
-    const perScenario = [
+    // per-scenario コーパス: title / scenarioGroup / S / O / A / P を個別に正規化する。
+    // フィールドをまとめて join してから正規化すると、フィールド境界をまたいだ
+    // ゴースト一致（例: S の末尾 + O の先頭が偶然クエリと一致）が発生するため、
+    // 各フィールドを独立したトークンとして保持する。
+    const perScenarioTokens: string[] = [
       scenario.title,
       scenario.scenarioGroup,
       scenario.S ?? '',
       scenario.O ?? '',
       scenario.A ?? '',
       scenario.P ?? '',
-    ].join(' ')
-    const corpus = normalizeText(perScenario) + ' ' + globalCorpus
+    ].map(normalizeText).filter(Boolean)
+    const corpusTokens: string[] = [...new Set([...perScenarioTokens, ...globalCorpusTokens])]
     const groupLabel = getMenuGroupFromScenario(scenario)
 
     return {
       templateId: scenario.globalId,
       moduleId: moduleData.moduleId,
-      corpus,
+      corpusTokens,
       exactAliasTokens,
       primaryDisplayNameNorm,
       aliasTokens,
@@ -282,7 +312,7 @@ function scoreEntry(entry: SearchEntry, q: string): number {
     if (alias.includes(q)) return 2
   }
   if (normLabel.includes(q)) return 1
-  if (entry.corpus.includes(q)) return 1
+  if (entry.corpusTokens.some(t => t.includes(q))) return 1
   return 0
 }
 
@@ -608,7 +638,10 @@ export function getDrugSuggestions(
   // これにより、同一ブランドファミリー（例: ヒューマリン系）が複数モジュール
   // （regular / intermediate / mixed 等）に分散していても、直接一致ブランドが
   // 先頭にまとまって表示される。
-  type Bucket = 'genericMode' | 'direct' | 'sibling' | 'genericHeader'
+  // lowConfidence: ブランド名・一般名のいずれも解決できず、corpus部分一致（keywords等の
+  // 弱い一致）だけで候補に残ったエントリ専用のバケツ。genericMode（正当な一般名検索）とは
+  // 区別し、既存4バケツをすべて処理し終えた後、残り枠がある場合のみ追加する。
+  type Bucket = 'genericMode' | 'direct' | 'sibling' | 'genericHeader' | 'lowConfidence'
   interface BucketedCandidate {
     moduleId: string
     templateId: string
@@ -628,6 +661,7 @@ export function getDrugSuggestions(
     direct: [],
     sibling: [],
     genericHeader: [],
+    lowConfidence: [],
   }
 
   for (const { entry } of scored) {
@@ -802,17 +836,26 @@ export function getDrugSuggestions(
           const resolved = resolveBrandName(entry, t)
           if (resolved !== undefined) { matchedBrandName = resolved; matchedByToken = t; break }
         }
-        const isDirectBrandMatch = matchedBrandName !== undefined && matchedByToken !== undefined &&
-          entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
-        candidates.push({
-          brand: matchedBrandName,
-          displayLabel: !matchedBrandName
-            ? (entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId)
-            : isDirectBrandMatch
+        if (matchedBrandName === undefined) {
+          // ブランド名・一般名のいずれも解決できなかった候補。
+          // corpus部分一致（keywords等）のみで scored に残っているため、
+          // 正当な一般名検索（genericMode）とは区別し、専用バケツへ送る。
+          candidates.push({
+            brand: undefined,
+            displayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
+            bucket: 'lowConfidence',
+          })
+        } else {
+          const isDirectBrandMatch = matchedByToken !== undefined &&
+            entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
+          candidates.push({
+            brand: matchedBrandName,
+            displayLabel: isDirectBrandMatch
               ? matchedBrandName
               : (entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName),
-          bucket: isDirectBrandMatch ? 'direct' : 'genericMode',
-        })
+            bucket: isDirectBrandMatch ? 'direct' : 'genericMode',
+          })
+        }
       }
     }
 
@@ -930,6 +973,16 @@ export function getDrugSuggestions(
     }
   }
 
+  // Step 6: lowConfidence（ブランド未解決の弱い fallback）は genericMode/direct/sibling/
+  // genericHeader をすべて処理し終えた後、残り枠がある場合のみ末尾に追加する。
+  // 既存4バケツの処理順・優先度には一切影響しない。
+  if (results.length < limit) {
+    for (const c of bucketed.lowConfidence) {
+      if (results.length >= limit) break
+      pushCandidate(c)
+    }
+  }
+
   return results
 }
 
@@ -945,7 +998,7 @@ export function filterTemplates(
   const q = normalizeText(query)
   if (!q) return scenarios
   const hitIds = new Set(
-    index.filter(e => e.corpus.includes(q)).map(e => e.templateId),
+    index.filter(e => e.corpusTokens.some(t => t.includes(q))).map(e => e.templateId),
   )
   return scenarios.filter(s => hitIds.has(s.globalId))
 }
