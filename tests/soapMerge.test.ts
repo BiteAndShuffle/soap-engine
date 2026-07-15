@@ -201,13 +201,13 @@ describe('S合成: H1内服 + H1点眼 (同一domain=allergy, groupKey異なる)
     assert.equal(b2.groupKey, 'treatment_start')
   })
 
-  test('S 各行は鼻水と目のかゆみをそれぞれ含む', () => {
+  test('S 各行は鼻水と眼のかゆみをそれぞれ含む', () => {
     const b1 = makeBlock(h1,  'initial_nasal', 'ビラノア')
     const b2 = makeBlock(eye, 'initial',       'アレジオン点眼')
     const result = runMerge(b1, [b2])
     const lines = result.S.split('\n').filter(Boolean)
     assert.ok(lines.some(l => l.includes('鼻水')),         'S should contain 鼻水')
-    assert.ok(lines.some(l => l.includes('目のかゆみ')),   'S should contain 目のかゆみ')
+    assert.ok(lines.some(l => l.includes('眼のかゆみ')),   'S should contain 眼のかゆみ')
   })
 
   test('「と」による subject 結合は行われない', () => {
