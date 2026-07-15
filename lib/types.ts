@@ -346,6 +346,20 @@ export interface DrugSearchMatchPolicy {
   preferExactAlias: boolean
   allowPrefixMatch: boolean
   suppressCrossModuleSuggestionsOnExactHit: boolean
+  /**
+   * direct候補内で、ブランド自身の正式名・alias一致（tier1）を
+   * brandCatalog.genericName経由のみの一致（tier2）より優先して並び替える。
+   * 省略時（false相当）は従来どおり brandNames 宣言順を維持する。
+   * 対象モジュールが明示的に opt-in した場合のみ有効（既定は無効）。
+   */
+  preferOwnNameMatchOverGenericMatch?: boolean
+  /**
+   * direct候補内に同一成分を示すブランド候補が既に存在する場合、
+   * 冗長な塩名（displayGenericName／genericName）単独の generic header 候補を追加しない。
+   * 検索用alias（塩名読み等）の到達性には影響しない。
+   * 対象モジュールが明示的に opt-in した場合のみ有効（既定は無効）。
+   */
+  suppressRedundantGenericHeaderOnDirectMatch?: boolean
 }
 
 export interface DrugSearch {

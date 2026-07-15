@@ -168,3 +168,149 @@ describe('⑥ 単一トークン内部の正当な部分一致（keywords）', (
     )
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 7. matchPolicy opt-in: 塩名header抑制 + tier優先順位（メトホルミン/ピオグリタゾン）
+// ─────────────────────────────────────────────────────────────
+
+describe('⑦ メトホルミン系: preferOwnNameMatchOverGenericMatch / suppressRedundantGenericHeaderOnDirectMatch', () => {
+  test('"めとほる" → メトホルミン/メトグルコ/グリコランの順、メトアナ/メタクトが後続、メトホルミン塩酸塩は非表示', () => {
+    const results = getDrugSuggestions('めとほる', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.equal(labels[0], 'メトホルミン', `1位はメトホルミンであるべき: ${JSON.stringify(labels)}`)
+    assert.equal(labels[1], 'メトグルコ', `2位はメトグルコであるべき: ${JSON.stringify(labels)}`)
+    assert.equal(labels[2], 'グリコラン', `3位はグリコランであるべき: ${JSON.stringify(labels)}`)
+    assert.ok(
+      results.some(r => r.moduleId === 'dm_dpp4_biguanide_combination_oral'),
+      'メトアナ（配合剤）が候補に含まれるべき',
+    )
+    assert.ok(
+      results.some(r => r.moduleId === 'dm_thiazolidinedione_biguanide_combination_oral'),
+      'メタクト（配合剤）が候補に含まれるべき',
+    )
+    assert.ok(
+      !labels.includes('メトホルミン塩酸塩'),
+      'メトホルミン塩酸塩が独立候補として表示されてはならない',
+    )
+  })
+
+  test('"めとほるみんえんさんえん" → メトホルミン系候補へ到達し、メトホルミン塩酸塩の独立候補は出ない', () => {
+    const results = getDrugSuggestions('めとほるみんえんさんえん', fullIndex, 8)
+    assert.ok(results.length > 0, '候補が1件も返らない')
+    assert.equal(results[0].drugDisplayLabel, 'メトホルミン', `1位はメトホルミンであるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    assert.equal(results[0].matchedBrandName, 'メトホルミン')
+    assert.ok(
+      !results.some(r => r.drugDisplayLabel === 'メトホルミン塩酸塩'),
+      'メトホルミン塩酸塩が独立候補として表示されてはならない',
+    )
+  })
+
+  test('主語解決条件（drugDisplayLabel === matchedBrandName）: メトホルミン/メトグルコ/グリコラン', () => {
+    const results = getDrugSuggestions('めとほる', fullIndex, 8)
+    for (const brand of ['メトホルミン', 'メトグルコ', 'グリコラン']) {
+      const item = results.find(r => r.matchedBrandName === brand)
+      assert.ok(item, `${brand} の候補が見つからない`)
+      assert.equal(
+        item!.drugDisplayLabel, brand,
+        `${brand} 選択時の drugDisplayLabel は matchedBrandName と一致し、{{drug_subject}} が ${brand} に解決される必要がある`,
+      )
+    }
+  })
+})
+
+describe('⑧ ピオグリタゾン系: preferOwnNameMatchOverGenericMatch / suppressRedundantGenericHeaderOnDirectMatch', () => {
+  test('"ぴおぐり" → ピオグリタゾン/アクトスの順、配合剤はその後、ピオグリタゾン塩酸塩は非表示', () => {
+    const results = getDrugSuggestions('ぴおぐり', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.equal(labels[0], 'ピオグリタゾン', `1位はピオグリタゾンであるべき: ${JSON.stringify(labels)}`)
+    assert.equal(labels[1], 'アクトス', `2位はアクトスであるべき: ${JSON.stringify(labels)}`)
+    const monoIndices = [0, 1]
+    const comboIndex = results.findIndex(r => r.moduleId !== 'dm_thiazolidinedione_pioglitazone_oral')
+    assert.ok(comboIndex === -1 || comboIndex > Math.max(...monoIndices), '配合剤は単剤候補より後ろに表示されるべき')
+    assert.ok(
+      !labels.includes('ピオグリタゾン塩酸塩'),
+      'ピオグリタゾン塩酸塩が独立候補として表示されてはならない',
+    )
+  })
+
+  test('"ぴおぐりたぞんえんさんえん" → ピオグリタゾン系候補へ到達し、ピオグリタゾン塩酸塩の独立候補は出ない', () => {
+    const results = getDrugSuggestions('ぴおぐりたぞんえんさんえん', fullIndex, 8)
+    assert.ok(results.length > 0, '候補が1件も返らない')
+    assert.equal(results[0].drugDisplayLabel, 'ピオグリタゾン', `1位はピオグリタゾンであるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    assert.equal(results[0].matchedBrandName, 'ピオグリタゾン')
+    assert.ok(
+      !results.some(r => r.drugDisplayLabel === 'ピオグリタゾン塩酸塩'),
+      'ピオグリタゾン塩酸塩が独立候補として表示されてはならない',
+    )
+  })
+
+  test('主語解決条件（drugDisplayLabel === matchedBrandName）: ピオグリタゾン/アクトス/メタクト（配合剤）', () => {
+    const results = getDrugSuggestions('ぴおぐり', fullIndex, 8)
+    for (const brand of ['ピオグリタゾン', 'アクトス', 'メタクト']) {
+      // 配合剤（メタクト等）は genericMode ヘッダー候補（isGenericLabel=true）と
+      // ブランド本体候補の2件を持ちうるため、ブランド本体（drugDisplayLabel === brand）側を見る。
+      const item = results.find(r => r.matchedBrandName === brand && r.drugDisplayLabel === brand)
+      assert.ok(item, `${brand} の候補（ブランド本体）が見つからない`)
+      assert.equal(
+        item!.drugDisplayLabel, brand,
+        `${brand} 選択時の drugDisplayLabel は matchedBrandName と一致し、{{drug_subject}} が ${brand} に解決される必要がある`,
+      )
+    }
+  })
+})
+
+describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数が変化しないこと）', () => {
+  test('"とらにらすと" → 既存のgenericMode構造を維持', () => {
+    const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
+    assert.equal(results.length, 4)
+    assert.equal(results[0].drugDisplayLabel, 'トラニラスト点眼液')
+    assert.equal(results[0].isGenericLabel, true)
+  })
+
+  test('"いんすりんりすぷろ" → 既存のgenericMode構造を維持', () => {
+    const results = getDrugSuggestions('いんすりんりすぷろ', fullIndex, 8)
+    assert.equal(results.length, 5)
+    assert.equal(results[0].drugDisplayLabel, 'インスリンリスプロ')
+    assert.equal(results[0].isGenericLabel, true)
+  })
+
+  test('"あくとす"（正式ブランド名検索）→ アクトス1件のみ、順位不変', () => {
+    const results = getDrugSuggestions('あくとす', fullIndex, 8)
+    assert.equal(results.length, 1, `候補は1件のみのはず: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    assert.equal(results[0].matchedBrandName, 'アクトス')
+  })
+
+  test('"めとぐるこ" → メトグルコ1件のみ', () => {
+    const results = getDrugSuggestions('めとぐるこ', fullIndex, 8)
+    assert.equal(results.length, 1)
+    assert.equal(results[0].matchedBrandName, 'メトグルコ')
+  })
+
+  test('"ぐりこらん" → グリコラン1件のみ', () => {
+    const results = getDrugSuggestions('ぐりこらん', fullIndex, 8)
+    assert.equal(results.length, 1)
+    assert.equal(results[0].matchedBrandName, 'グリコラン')
+  })
+
+  test('"ぐらく" → グラクティブが上位、アレグラは含まれない（既存回帰）', () => {
+    const results = getDrugSuggestions('ぐらく', fullIndex, 8)
+    assert.ok(results.length > 0)
+    assert.equal(results[0].matchedBrandName, 'グラクティブ')
+    assert.ok(!results.some(r => r.matchedBrandName === 'アレグラ'))
+  })
+
+  test('"ひるどいど" → 候補順・件数が変化しない（先発品優先モジュールの代表検索）', () => {
+    const results = getDrugSuggestions('ひるどいど', fullIndex, 8)
+    assert.equal(results.length, 8)
+    assert.equal(results[0].matchedBrandName, 'ヒルドイドソフト軟膏')
+    assert.equal(results[1].matchedBrandName, 'ヒルドイドクリーム')
+    assert.equal(results[2].matchedBrandName, 'ヒルドイドローション')
+  })
+
+  test('"もんてるかすと" → 候補順・件数が変化しない', () => {
+    const results = getDrugSuggestions('もんてるかすと', fullIndex, 8)
+    assert.equal(results.length, 4)
+    assert.equal(results[0].matchedBrandName, 'キプレス')
+    assert.equal(results[1].matchedBrandName, 'シングレア')
+  })
+})

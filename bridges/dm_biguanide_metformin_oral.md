@@ -66,10 +66,18 @@ drug:
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
   # 成分名（メトホルミン塩酸塩）の読み「めとほるみんえんさんえん」は module 単位の
-  # prefixAliases/nameAliases にのみ追加し、brandCatalog[brand].aliases への複製は
-  # 行わない（DPP4 と同型。理由: 「メトホルミン」というブランド名自体が存在するため、
-  # 成分名読みを複数ブランドへ複製すると aliasToBrand の解決先ブランドが曖昧になる。
-  # ユーザー確定・2026-07-05）。
+  # prefixAliases/nameAliases に加え、brandCatalog.メトホルミン.aliases/normalizedAliases
+  # にも追加する（2026-07 改訂）。
+  #
+  # 【2026-07-05 決定からの変更点】
+  # 旧方針: 複数ブランドへの複製で aliasToBrand の解決先が曖昧になることを避けるため、
+  #         brandCatalog[brand].aliases への複製を行わなかった。
+  # 新方針: 「メトホルミン」1ブランドのみへ限定して追加する（メトグルコ／グリコランへは
+  #         複製しない）。曖昧化の懸念は「複数ブランドへの複製」が原因であり、単一ブランド
+  #         への追加はこの懸念に該当しない。この追加により、検索語「めとほるみんえんさんえん」
+  #         が resolveAllHighPrecisionBrands の priority2（alias完全一致）で「メトホルミン」
+  #         へ直接解決できるようになり、塩名（メトホルミン塩酸塩）を独立候補として
+  #         表示することなく、検索結果を「メトホルミン」へ収束できる（ユーザー確定・2026-07）。
   search:
     primaryDisplayName: "ビグアナイド系糖尿病薬"
 
@@ -98,6 +106,13 @@ drug:
       preferExactAlias: true
       allowPrefixMatch: true
       suppressCrossModuleSuggestionsOnExactHit: true
+      # 2026-07 追加（メトホルミン/ピオグリタゾン検索順位・塩名header共通修正）:
+      # direct候補内でブランド自身の正式名/alias一致（tier1）をgenericName経由の
+      # 一致（tier2）より優先する。未設定モジュールは従来どおり brandNames 宣言順を維持する。
+      preferOwnNameMatchOverGenericMatch: true
+      # direct候補内に同一成分のブランド候補が既に存在する場合、冗長な塩名
+      # （メトホルミン塩酸塩）単独の generic header 候補を追加しない。
+      suppressRedundantGenericHeaderOnDirectMatch: true
 
   nameAliases:
     - "めとぐるこ"
@@ -150,8 +165,10 @@ drug:
         - "renal_dose_adjustment"
       aliases:
         - "めとほるみん"
+        - "めとほるみんえんさんえん"
       normalizedAliases:
         - "めとほるみん"
+        - "めとほるみんえんさんえん"
 
     グリコラン:
       displayName: "グリコラン"
@@ -170,8 +187,9 @@ drug:
     "めとぐるこ": "メトグルコ"
     "めとほるみん": "メトホルミン"
     "ぐりこらん": "グリコラン"
-  # aliasToBrand は brandCatalog[brand].normalizedAliases（ブランド名読みのみ）を
-  # 過不足なく網羅する（RULES.md §10）。3件・3件で一致。
+    "めとほるみんえんさんえん": "メトホルミン"
+  # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
+  # （RULES.md §10）。4件・4件で一致（2026-07: メトホルミンへ塩名読み追加に伴い増加）。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags: 確定（2026-07-05）

@@ -87,7 +87,9 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "preferOwnNameMatchOverGenericMatch": true,
+        "suppressRedundantGenericHeaderOnDirectMatch": true
       }
     },
     "nameAliases": [
@@ -123,10 +125,12 @@
           "renal_dose_adjustment"
         ],
         "aliases": [
-          "めとほるみん"
+          "めとほるみん",
+          "めとほるみんえんさんえん"
         ],
         "normalizedAliases": [
-          "めとほるみん"
+          "めとほるみん",
+          "めとほるみんえんさんえん"
         ]
       },
       "グリコラン": {
@@ -149,7 +153,8 @@
     "aliasToBrand": {
       "めとぐるこ": "メトグルコ",
       "めとほるみん": "メトホルミン",
-      "ぐりこらん": "グリコラン"
+      "ぐりこらん": "グリコラン",
+      "めとほるみんえんさんえん": "メトホルミン"
     }
   },
   "drugResolution": {

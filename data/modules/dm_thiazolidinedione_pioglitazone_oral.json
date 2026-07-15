@@ -83,7 +83,9 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "preferOwnNameMatchOverGenericMatch": true,
+        "suppressRedundantGenericHeaderOnDirectMatch": true
       }
     },
     "nameAliases": [
@@ -112,16 +114,19 @@
         "genericKey": "pioglitazone_actos_generic",
         "handlingTags": [],
         "aliases": [
-          "ぴおぐりたぞん"
+          "ぴおぐりたぞん",
+          "ぴおぐりたぞんえんさんえん"
         ],
         "normalizedAliases": [
-          "ぴおぐりたぞん"
+          "ぴおぐりたぞん",
+          "ぴおぐりたぞんえんさんえん"
         ]
       }
     },
     "aliasToBrand": {
       "あくとす": "アクトス",
-      "ぴおぐりたぞん": "ピオグリタゾン"
+      "ぴおぐりたぞん": "ピオグリタゾン",
+      "ぴおぐりたぞんえんさんえん": "ピオグリタゾン"
     }
   },
   "drugResolution": {

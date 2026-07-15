@@ -108,6 +108,10 @@ export interface SearchEntry {
    * 未定義モジュールでは空配列となり、既存の scoreEntry にフォールバックする。
    */
   formulationTokens: string[]
+  /** drug.search.matchPolicy.preferOwnNameMatchOverGenericMatch のコピー（既定 false） */
+  preferOwnNameMatchOverGenericMatch: boolean
+  /** drug.search.matchPolicy.suppressRedundantGenericHeaderOnDirectMatch のコピー（既定 false） */
+  suppressRedundantGenericHeaderOnDirectMatch: boolean
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -191,6 +195,10 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const suppressOnExactHit =
     drugSearch?.matchPolicy?.suppressCrossModuleSuggestionsOnExactHit ?? false
   const priority = drugSearch?.priority ?? 0
+  const preferOwnNameMatchOverGenericMatch =
+    drugSearch?.matchPolicy?.preferOwnNameMatchOverGenericMatch ?? false
+  const suppressRedundantGenericHeaderOnDirectMatch =
+    drugSearch?.matchPolicy?.suppressRedundantGenericHeaderOnDirectMatch ?? false
 
   return moduleData.scenarios.map(scenario => {
     // per-scenario コーパス: title / scenarioGroup / S / O / A / P を個別に正規化する。
@@ -226,6 +234,8 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       brandCatalogGenericMap,
       brandCatalogGenericKeyMap,
       formulationTokens,
+      preferOwnNameMatchOverGenericMatch,
+      suppressRedundantGenericHeaderOnDirectMatch,
     }
   })
 }
@@ -541,25 +551,37 @@ export interface DrugSuggestionItem {
  * 1ブランド単位の判定にのみ使い、「どのブランドを同一成分としてまとめるか」という
  * グルーピング判断（genericKey の役割）には使わない（RULES.md §21）。
  */
-function resolveAllHighPrecisionBrands(entry: SearchEntry, q: string): string[] {
-  const matched = new Set<string>()
+/**
+ * ブランドの一致根拠を示す tier。
+ *   1 = 自身のブランド識別（正式名／alias の完全一致・前方一致。priority 1-4）
+ *   2 = brandCatalog.genericName 経由のみの一致（priority 5-6）
+ * preferOwnNameMatchOverGenericMatch が有効なモジュールでのみ、tier1 を tier2 より
+ * 優先する並び替えに使用する（RULES.md 新設 §matchPolicy 拡張・2026-07 確定）。
+ */
+type BrandMatchTier = 1 | 2
+
+function resolveAllHighPrecisionBrands(entry: SearchEntry, q: string): Array<{ brand: string; tier: BrandMatchTier }> {
+  const matched = new Map<string, BrandMatchTier>()
   for (const b of entry.brandNames) {
     const norm = normalizeText(b)
     const aliases = entry.brandCatalogAliasMap[b] ?? []
     const generic = entry.brandCatalogGenericMap[b]
     const normGeneric = generic ? normalizeText(generic) : undefined
-    if (
+    const ownNameMatch =
       norm === q ||                                    // priority 1: 正式名完全一致
       aliases.some(a => a === q) ||                    // priority 2: alias 完全一致
       norm.startsWith(q) ||                            // priority 3: 正式名前方一致
-      aliases.some(a => a.startsWith(q)) ||            // priority 4: alias 前方一致
+      aliases.some(a => a.startsWith(q))                // priority 4: alias 前方一致
+    const genericOnlyMatch =
       normGeneric === q ||                             // priority 5: displayGenericName 完全一致
       (normGeneric !== undefined && normGeneric.startsWith(q)) // priority 6: displayGenericName 前方一致
-    ) {
-      matched.add(b)
+    if (ownNameMatch) {
+      matched.set(b, 1)
+    } else if (genericOnlyMatch && !matched.has(b)) {
+      matched.set(b, 2)
     }
   }
-  return [...matched]
+  return [...matched.entries()].map(([brand, tier]) => ({ brand, tier }))
 }
 
 /**
@@ -664,6 +686,12 @@ export function getDrugSuggestions(
     lowConfidence: [],
   }
 
+  // opt-in モジュール（preferOwnNameMatchOverGenericMatch / suppressRedundantGenericHeaderOnDirectMatch）
+  // が、このクエリで実際に自身のブランド識別による direct 候補を得た場合に true になる。
+  // true の場合のみ、最終結合順で [direct/sibling/genericHeader] を [genericMode] より先に処理する
+  // （未設定モジュールはこのフラグが立たないため、従来の [genericMode] 優先順を完全維持する）。
+  let promoteDirectOverGenericMode = false
+
   for (const { entry } of scored) {
     // ブランド候補リストを収集する
     const candidates: Array<{
@@ -717,7 +745,7 @@ export function getDrugSuggestions(
           //   genericKeyが解決できないブランドは従来通り個別表示にフォールバックする。
           const groups = new Map<string, string[]>()
           const ungrouped: string[] = []
-          for (const brand of hpBrands) {
+          for (const { brand } of hpBrands) {
             const key = entry.brandCatalogGenericKeyMap[brand]
             if (key === undefined) { ungrouped.push(brand); continue }
             if (!groups.has(key)) groups.set(key, [])
@@ -739,18 +767,23 @@ export function getDrugSuggestions(
           for (const [key, brandsInGroup] of groups) {
             const genericName = entry.brandCatalogGenericMap[brandsInGroup[0]]
             if (genericName) {
-              candidates.push({
-                brand: brandsInGroup[0],
-                displayLabel: genericName,
-                uiLabel: genericName,
-                isGenericLabel: true,
-                // モジュール横断で同一表示一般名の見出しが重複しないよう、
-                // moduleId を含めず表示文字列のみで dedup する
-                // （例: dm_insulin_rapid_analog と dm_insulin_mixed_rapid_intermediate が
-                // 同じ「インスリンアスパルト」を指す場合、見出しは1回のみ表示する）
-                dedupKeyOverride: `__generic__:${genericName}`,
-                bucket: 'genericMode',
-              })
+              // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
+              // このグループ自体が既にブランド候補（brandsInGroup）を持つため、
+              // 同じ成分を示す塩名単独見出し（genericHeader相当）は追加しない。
+              if (!entry.suppressRedundantGenericHeaderOnDirectMatch) {
+                candidates.push({
+                  brand: brandsInGroup[0],
+                  displayLabel: genericName,
+                  uiLabel: genericName,
+                  isGenericLabel: true,
+                  // モジュール横断で同一表示一般名の見出しが重複しないよう、
+                  // moduleId を含めず表示文字列のみで dedup する
+                  // （例: dm_insulin_rapid_analog と dm_insulin_mixed_rapid_intermediate が
+                  // 同じ「インスリンアスパルト」を指す場合、見出しは1回のみ表示する）
+                  dedupKeyOverride: `__generic__:${genericName}`,
+                  bucket: 'genericMode',
+                })
+              }
               for (const brand of brandsInGroup) {
                 candidates.push({
                   brand,
@@ -785,12 +818,27 @@ export function getDrugSuggestions(
           // 一致トークン数が多い候補が結果的に上位に来る）。単一トークンのクエリでは
           // 全 hpBrands が同スコアになり安定ソートで元の順序を維持するため、
           // 既存の単一トークン時の挙動は変わらない。
-          const orderedHpBrands = tokens.length > 1
+          //
+          // preferOwnNameMatchOverGenericMatch が有効なモジュールでは、まず tier
+          // （1=自身のブランド識別一致 / 2=genericName経由のみの一致）を優先キーとし、
+          // 同tier内でのみ従来の tokenMatchScore → 宣言順を適用する。未設定モジュールは
+          // 従来どおり tier を無視し、宣言順（tokenMatchScoreありなら score 優先）を維持する。
+          const orderedHpBrands: string[] = entry.preferOwnNameMatchOverGenericMatch
             ? [...hpBrands]
-                .map((brand, originalIndex) => ({ brand, originalIndex, score: countMatchedTokens(entry, brand, tokens) }))
-                .sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex)
+                .map((x, originalIndex) => ({
+                  brand: x.brand,
+                  tier: x.tier,
+                  originalIndex,
+                  score: tokens.length > 1 ? countMatchedTokens(entry, x.brand, tokens) : 0,
+                }))
+                .sort((a, b) => a.tier - b.tier || b.score - a.score || a.originalIndex - b.originalIndex)
                 .map(x => x.brand)
-            : hpBrands
+            : tokens.length > 1
+              ? [...hpBrands]
+                  .map((x, originalIndex) => ({ brand: x.brand, originalIndex, score: countMatchedTokens(entry, x.brand, tokens) }))
+                  .sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex)
+                  .map(x => x.brand)
+              : hpBrands.map(x => x.brand)
           const pushedBrands = new Set<string>()
           let trailingGeneric: string | undefined
           for (const brand of orderedHpBrands) {
@@ -813,7 +861,10 @@ export function getDrugSuggestions(
               candidates.push({ brand, displayLabel: brand, bucket: 'direct' })
             }
           }
-          if (trailingGeneric) {
+          // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
+          // direct/sibling 候補が既にブランドを提示しているため、同じ成分を示す
+          // 塩名単独の generic header（例:「メトホルミン塩酸塩」）は追加しない。
+          if (trailingGeneric && !entry.suppressRedundantGenericHeaderOnDirectMatch) {
             candidates.push({
               brand: orderedHpBrands[0],
               displayLabel: trailingGeneric,
@@ -876,6 +927,9 @@ export function getDrugSuggestions(
         isGenericLabel,
         dedupKeyOverride,
       })
+      if (bucket === 'direct' && entry.preferOwnNameMatchOverGenericMatch) {
+        promoteDirectOverGenericMode = true
+      }
     }
   }
 
@@ -936,32 +990,51 @@ export function getDrugSuggestions(
   }
   const sortedDirect = [...familyGroups.values()].flat()
 
-  // Step 1: genericMode（一般名検索の見出し→ブランド群）は従来どおり limit を直接消費する
-  for (const c of bucketed.genericMode) {
-    if (results.length >= limit) break
-    pushCandidate(c)
+  const runGenericModeStep = () => {
+    // genericMode（一般名検索の見出し→ブランド群）は従来どおり limit を直接消費する
+    for (const c of bucketed.genericMode) {
+      if (results.length >= limit) break
+      pushCandidate(c)
+    }
   }
 
-  // Step 2: genericHeader の予約枠を決定する（重複キーを除いた種類数 / 上限3 / 残り枠が上限）
-  const uniqueHeaderKeys = new Set(
-    bucketed.genericHeader.map(c => c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`),
-  )
-  const remainingAfterGenericMode = Math.max(limit - results.length, 0)
-  const reserved = Math.min(uniqueHeaderKeys.size, 3, remainingAfterGenericMode)
-  const directSiblingBudget = remainingAfterGenericMode - reserved
+  const runDirectSiblingAndHeaderSteps = () => {
+    // genericHeader の予約枠を決定する（重複キーを除いた種類数 / 上限3 / 残り枠が上限）
+    const uniqueHeaderKeys = new Set(
+      bucketed.genericHeader.map(c => c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`),
+    )
+    const remaining = Math.max(limit - results.length, 0)
+    const reserved = Math.min(uniqueHeaderKeys.size, 3, remaining)
+    const directSiblingBudget = remaining - reserved
 
-  // Step 3: direct（ファミリー順にソート済み） → sibling の順で、確保した残り枠まで詰める
-  let directSiblingAdded = 0
-  for (const c of [...sortedDirect, ...bucketed.sibling]) {
-    if (directSiblingAdded >= directSiblingBudget) break
-    if (pushCandidate(c)) directSiblingAdded++
+    // direct（ファミリー順にソート済み） → sibling の順で、確保した残り枠まで詰める
+    let directSiblingAdded = 0
+    for (const c of [...sortedDirect, ...bucketed.sibling]) {
+      if (directSiblingAdded >= directSiblingBudget) break
+      if (pushCandidate(c)) directSiblingAdded++
+    }
+
+    // genericHeader を予約枠まで詰める（種類の重複は pushCandidate の dedup で自然に防がれる）
+    let headerAdded = 0
+    for (const c of bucketed.genericHeader) {
+      if (headerAdded >= reserved) break
+      if (pushCandidate(c)) headerAdded++
+    }
   }
 
-  // Step 4: genericHeader を予約枠まで詰める（種類の重複は pushCandidate の dedup で自然に防がれる）
-  let headerAdded = 0
-  for (const c of bucketed.genericHeader) {
-    if (headerAdded >= reserved) break
-    if (pushCandidate(c)) headerAdded++
+  // Step 1〜4: 通常は [genericMode] → [direct/sibling] → [genericHeader] の順で結合する。
+  // ただし promoteDirectOverGenericMode が true の場合（opt-in モジュールが自身のブランド
+  // 識別で direct 候補を得ている場合）のみ、[direct/sibling] → [genericHeader] を先に処理する。
+  // これにより、無関係な他モジュールが偶然 genericName 経由で一致しただけの弱い候補
+  // （例: 配合剤の成分名がたまたま前方一致するケース）が、opt-in モジュール自身の
+  // ブランド一致候補より先に表示されることを防ぐ。フラグが立たない場合は
+  // 従来の [genericMode] 優先順を完全に維持する（他モジュールへの影響なし）。
+  if (promoteDirectOverGenericMode) {
+    runDirectSiblingAndHeaderSteps()
+    runGenericModeStep()
+  } else {
+    runGenericModeStep()
+    runDirectSiblingAndHeaderSteps()
   }
 
   // Step 5: 予約枠・direct/sibling枠のいずれかが余った場合（候補数が枠より少なかった等）、
