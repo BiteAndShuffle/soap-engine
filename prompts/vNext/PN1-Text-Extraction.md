@@ -20,6 +20,8 @@ bridge.md の SCENARIOS_START ～ SCENARIOS_END セクション
 
 ## 責務
 
+各セクションの本文は、次のラベル行の直前までとする。
+
 ### 1. シナリオ本文の抽出
 
 各 SCENARIO ヘッダー行を識別する。
@@ -116,6 +118,8 @@ P_CLOSING テキストから followupRef を決定する。
 
 ### 6. {{drug_subject}} 置換
 
+原則: 患者が使用している薬剤を示す場合のみ置換する。一般的な薬効説明や疾患説明は置換しない。
+
 bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `{{drug_subject}}` に置換する。
 
 **置換する場合（治療薬・対象薬として使われている）:**
@@ -187,6 +191,20 @@ bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `
 
 ---
 
+## 検証
+
+出力後・本文凍結宣言の前に確認する。
+
+1. 逆置換整合: `{{drug_subject}}` をbridgeの薬剤名へ戻し、bridge原文と完全一致することを確認する。一致しない場合はERRORとして停止する。
+2. addonsRef整合: P_ADDON未定義参照・未参照ADDONがないことを確認する。
+3. followupRef整合: bridgeのP_CLOSING内訳とfollowupRef内訳が一致することを確認する。対応表にないP_CLOSINGがあればERRORとして停止する（責務4のMUST_STOPに従う）。
+4. JSON構文確認: 保存したJSONが正常に読み込めることを確認する。
+5. 軽量チェック: SCENARIO/ADDON ID重複・不可視文字がないことを確認する。
+
+いずれかで不一致・ERRORが検出された場合、本文凍結宣言を行わず報告して停止する。
+
+---
+
 ## 本文凍結宣言
 
 Phase 1 完了時に以下を宣言する。
@@ -224,8 +242,14 @@ Phase 1 完了時に以下を宣言する。
 
 PN1 完了後、以下を報告する:
 - 保存先
-- 抽出シナリオ数
-- 抽出 addon 数
+- scenarios件数
+- addons件数
+- followupRef内訳
+- 逆置換不一致件数
+- 未定義参照件数
+- 未参照ADDON件数
+- PENDING
+- ERROR
 - 本文凍結宣言の完了
 
 次工程: PN2（Drug Header）および PN3A（Scenario Classification）。
