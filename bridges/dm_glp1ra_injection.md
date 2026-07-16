@@ -886,7 +886,7 @@ P_CLOSING
 【SCENARIO｜type=adherence｜id=cp_good｜title=GLP-1受容体作動薬(注射) CP良好】
 S
 薬を使用して症状は落ち着いている。
-継続して使用できている。
+使用忘れなく継続できている。
 
 O
 {{drug_subject}}　使用中
@@ -913,8 +913,8 @@ P_CLOSING
 
 【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=GLP-1受容体作動薬(注射) CP不良（使用忘れ）】
 S
-使用忘れがみられる。
-継続して使用できていない。
+使用を忘れることがある。
+症状は大きく変わっていない。
 
 O
 {{drug_subject}}　使用中
@@ -972,8 +972,8 @@ P_APPEND
 
 【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=GLP-1受容体作動薬(注射) CP不良（自己判断）】
 S
-自己判断での使用調整がみられる。
-用法どおりの継続使用ができていない。
+自己判断で使用を調整することがある。
+症状は大きく変わっていない。
 
 O
 {{drug_subject}}　使用中
@@ -994,8 +994,8 @@ P_CLOSING
 
 【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=GLP-1受容体作動薬(注射) CP不良（受診遅延）】
 S
-都合により受診遅延がみられる。
-処方どおりの継続使用ができていない。
+受診が遅れ、使用を調整することがある。
+症状は大きく変わっていない。
 
 O
 {{drug_subject}}　使用中

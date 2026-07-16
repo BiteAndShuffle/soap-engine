@@ -610,7 +610,7 @@ P_CLOSING
 【SCENARIO｜type=adherence｜id=cp_good｜title=イメグリミン CP良好】
 S
 薬を服用して症状は落ち着いている。
-継続して服用できている。
+飲み忘れなく服用している。
 O
 イメグリミン　服用中
 A
@@ -634,8 +634,8 @@ P_CLOSING
 
 【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=イメグリミン CP不良（服薬忘れ）】
 S
-服薬忘れがみられる。
-継続して服用できていない。
+飲み忘れることがある。
+症状は大きく変わっていない。
 O
 イメグリミン　服用中
 A
@@ -696,8 +696,8 @@ P_APPEND
 
 【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=イメグリミン CP不良（自己判断）】
 S
-自己判断での服用調整がみられる。
-用法どおりの継続服用ができていない。
+自己判断で服用を調整することがある。
+症状は大きく変わっていない。
 O
 イメグリミン　服用中
 A
@@ -716,8 +716,8 @@ P_CLOSING
 
 【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=イメグリミン CP不良（受診遅延）】
 S
-都合により受診遅延がみられる。
-処方どおりの継続服用ができていない。
+受診が遅れ、服用を調整することがある。
+症状は大きく変わっていない。
 O
 イメグリミン　服用中
 A
