@@ -2975,7 +2975,7 @@
       "S": "{{drug_subject}}の使用により注射部位の痛みや腫れが強く、気になることがある。",
       "O": "{{drug_subject}}　処方",
       "A": "{{drug_subject}}による注射部位反応が強く、継続困難の可能性があるため対応を要する。",
-      "P": "{{drug_subject}}により注射部位の痛みや腫れが強い場合は、注射方法の見直しや薬の変更が必要になることがあります。\n毎回注射部位を少しずつ変えて注射することで、痛みや腫れの予防・軽減につながります。\n症状が続く場合は処方医へご相談ください。",
+      "P": "{{drug_subject}}の使用では、毎回注射部位を少しずつ変えて注射することで、痛みや腫れの予防・軽減につながります。\n症状が強く続く場合は、注射方法の見直しや薬の変更が必要になることがあります。\n自己判断せず、処方医へご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "diabetes",
@@ -3032,16 +3032,7 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}により注射部位の痛みや腫れが強い場合は、注射方法の見直しや薬の変更が必要になることがあります。",
-          "role": "dose_adjustment_guidance",
-          "transform": "moderate",
-          "safety": "medium",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "毎回注射部位を少しずつ変えて注射することで、痛みや腫れの予防・軽減につながります。",
+          "text": "{{drug_subject}}の使用では、毎回注射部位を少しずつ変えて注射することで、痛みや腫れの予防・軽減につながります。",
           "role": "administration_guidance",
           "transform": "moderate",
           "safety": "medium",
@@ -3049,12 +3040,22 @@
           "notes": null
         },
         {
+          "id": "p_2",
+          "text": "症状が強く続く場合は、注射方法の見直しや薬の変更が必要になることがあります。",
+          "role": "dose_adjustment_guidance",
+          "transform": "moderate",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
           "id": "p_3",
-          "text": "症状が続く場合は処方医へご相談ください。",
+          "text": "自己判断せず、処方医へご相談ください。",
           "role": "urgent_consult_guidance",
-          "transform": "minimal",
+          "transform": "fixed",
           "safety": "high",
           "lockTerms": [
+            "自己判断せず",
             "ご相談ください"
           ],
           "notes": null
