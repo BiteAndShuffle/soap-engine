@@ -119,11 +119,8 @@ for (const moduleId of moduleIds) {
     const bridgeAddons = bridgeRefs.get(scenario.id) ?? []
     const jsonAddons = scenario.addonsRef?.P ?? []
 
-    const bridgeSorted = [...bridgeAddons].sort()
-    const jsonSorted = [...jsonAddons].sort()
-
-    // A + B: bridge ⇔ JSON 値一致監査
-    if (JSON.stringify(bridgeSorted) !== JSON.stringify(jsonSorted)) {
+    // A + B: bridge ⇔ JSON 順序一致監査（表示順もデータの一部として扱う）
+    if (JSON.stringify(bridgeAddons) !== JSON.stringify(jsonAddons)) {
       issues.push({
         moduleId,
         target: scenario.id,
@@ -145,16 +142,16 @@ for (const moduleId of moduleIds) {
     }
 
     // D: bridge に P_ADDON がある場合、実際に getVisibleAddonKeys() で
-    //    表示されるか確認する（brandHandlingTags なし = フィルタ未適用の基本ケース）
+    //    同じ順序で表示されるか確認する（brandHandlingTags なし = フィルタ未適用の基本ケース）
+    //    順序もデータの一部として扱うため、集合一致ではなく配列の直接比較で検証する。
     if (bridgeAddons.length > 0) {
       const visible = getVisibleAddonKeys(mod.addons, scenario as Scenario, undefined)
-      const visibleSorted = [...visible].sort()
-      if (JSON.stringify(visibleSorted) !== JSON.stringify(bridgeSorted)) {
+      if (JSON.stringify(visible) !== JSON.stringify(bridgeAddons)) {
         issues.push({
           moduleId,
           target: scenario.id,
           code: 'ADDON_NOT_VISIBLE_IN_PANEL',
-          detail: `bridge宣言=${JSON.stringify(bridgeAddons)} だが getVisibleAddonKeys=${JSON.stringify(visible)}（AddonPanel に届かない）`,
+          detail: `bridge宣言=${JSON.stringify(bridgeAddons)} だが getVisibleAddonKeys=${JSON.stringify(visible)}（AddonPanel に届かない、または順序不一致）`,
         })
       }
 

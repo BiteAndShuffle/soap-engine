@@ -189,24 +189,31 @@ P2B ADDON_BUILD 時に参照する。
 
 ## 6. addon group 有効値
 
-### アプリ正式定義: AddonPanel.tsx GROUP_ORDER（4グループ）
+### アプリ正式定義: AddonPanel.tsx GROUP_LABELS（4グループ）
+
+表示順は DP-10 / §25 の通り、bridge の `P_ADDON` 記載順（＝ canonical JSON の `addonsRef.P` 配列順）をそのまま使用し、コード側の固定順（旧 GROUP_ORDER）は廃止済みである。グループ見出しの正式ラベルは以下の `GROUP_LABELS` が定義する。
 
 ```typescript
-const GROUP_ORDER: string[] = ['counseling', 'oral', 'sickday', 'sideEffects']
+const GROUP_LABELS: Record<string, string> = {
+  counseling:  '服薬指導',
+  oral:        '内服アドオン',
+  sickday:     'シックデイ',
+  sideEffects: '副作用',
+}
 ```
 
-GROUP_ORDER に定義されたグループのみ正式ラベル（「服薬指導」/「内服アドオン」/「シックデイ」/「副作用」）で表示される。
-GROUP_ORDER 外のグループは「未定義グループ」としてグループ名をそのままラベルとして末尾に表示（graceful fallback）。
+`GROUP_LABELS` に定義されたグループは正式ラベル（「服薬指導」/「内服アドオン」/「シックデイ」/「副作用」）で表示される。
+`GROUP_LABELS` 未定義のグループは「未定義グループ」としてグループ名をそのままラベルとして表示する（graceful fallback。表示順自体は他グループと同様、JSON内での初出順に従う）。
 
 ### JSON_STANDARD.md 定義（5グループ）
 
 `"counseling"` / `"sideEffects"` / `"sickday"` / `"adherence"` / `"oral"`
 
-> ⚠️ **CHECK-G01（AddonPanel不整合）**: JSON_STANDARD.md では `"adherence"` を有効値として定義しているが、AddonPanel.tsx の GROUP_ORDER には `"adherence"` が含まれていない。`"adherence"` を group に設定した addon は「未定義グループ」として末尾に表示される（機能はするが正式ラベルなし）。AddonPanel.tsx に `"adherence"` を追加するか、JSON_STANDARD.md を修正するか要判断。
+> ⚠️ **CHECK-G01（AddonPanel不整合）**: JSON_STANDARD.md では `"adherence"` を有効値として定義しているが、AddonPanel.tsx の GROUP_LABELS には `"adherence"` のラベル定義がない。`"adherence"` を group に設定した addon は「未定義グループ」としてグループ名がそのまま表示される（機能はするが正式ラベルなし。表示順自体はJSON記載順どおりで問題ない）。AddonPanel.tsx に `"adherence"` のラベルを追加するか、JSON_STANDARD.md を修正するか要判断。
 
 ### 実 JSON での使用状況
 
-| group値 | GROUP_ORDER | JSON_STANDARD.md | 実 JSON 使用状況 |
+| group値 | GROUP_LABELS | JSON_STANDARD.md | 実 JSON 使用状況 |
 |---|---|---|---|
 | counseling | ✓ | ✓ | 全 module |
 | oral | ✓ | ✓ | allergy 内服 module |
@@ -216,7 +223,7 @@ GROUP_ORDER 外のグループは「未定義グループ」としてグルー�
 | administration_guidance | — | — | allergy_eye_drops 系 |
 | lifestyle_guidance | — | — | allergy / derm 系 |
 
-> ⚠️ **CHECK-G02（legacy group）**: `administration_guidance` / `lifestyle_guidance` は複数の実 JSON で group 値として使用されているが、JSON_STANDARD.md にも AddonPanel GROUP_ORDER にも未登録。type→group 変換表では `lifestyle_guidance（bridge type）→ "counseling"（JSON group）` と定義されており、新規 module でこれらの値を group として直接使用しないこと。既存ファイルの migration 要否は別途判断。
+> ⚠️ **CHECK-G02（legacy group）**: `administration_guidance` / `lifestyle_guidance` は複数の実 JSON で group 値として使用されているが、JSON_STANDARD.md にも AddonPanel GROUP_LABELS にもラベル未登録。type→group 変換表では `lifestyle_guidance（bridge type）→ "counseling"（JSON group）` と定義されており、新規 module でこれらの値を group として直接使用しないこと。既存ファイルの migration 要否は別途判断。
 
 ### 新規 module での使用基準
 
@@ -549,8 +556,8 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | ID | ステータス | 内容 | 影響ファイル | 推奨対応 |
 |---|---|---|---|---|
 | CHECK-T01 | **RESOLVED** | P0-B.md の変換表に `side_effect_guidance → "counseling"` と記載されていたが `"sideEffects"` が正しい | prompts/P0-B.md | Step 1.5 で修正済み |
-| CHECK-G01 | OPEN | `"adherence"` group が JSON_STANDARD.md に有効値として定義されているが AddonPanel.tsx GROUP_ORDER 未登録（下記詳細参照） | app/components/AddonPanel.tsx / docs/JSON_STANDARD.md | AddonPanel に `"adherence"` を追加するか GROUP_LABELS に日本語ラベルを定義するか要判断 |
-| CHECK-G02 | OPEN | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_ORDER 未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | 新規 module では使用しないこと。既存ファイルの migration 要否は別途判断 |
+| CHECK-G01 | OPEN | `"adherence"` group が JSON_STANDARD.md に有効値として定義されているが AddonPanel.tsx GROUP_LABELS にラベル未登録（下記詳細参照） | app/components/AddonPanel.tsx / docs/JSON_STANDARD.md | GROUP_LABELS に日本語ラベルを定義するか要判断 |
+| CHECK-G02 | OPEN | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_LABELS にラベル未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | 新規 module では使用しないこと。既存ファイルの migration 要否は別途判断 |
 | CHECK-TP01 | OPEN | `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` に `thirdPanelSPlacement` キーが存在しない（Section 14 ルール違反） | data/modules/dm_gip_glp1ra_tirzepatide_injection.json | 次回 audit 時に thirdPanelSPlacement 固定値を追加する |
 | CHECK-O01 | **RESOLVED** | `dm_glp1ra_semaglutide_oral`（全28シナリオ）・`dm_glp1ra_injection`（全34シナリオ）の O フィールドが `{{drug_subject}}` ではなく薬効分類名固定（`GLP-1受容体作動薬(内服)`/`(注射)`）になっていた（Section 16 O フィールドルール違反）。旧体系生成時からの既存欠陥で、2026-07 の多剤合成テストで発見 | data/modules/dm_glp1ra_semaglutide_oral.json / data/modules/dm_glp1ra_injection.json | 2026-07 修正済み（状態語は保持したまま `{{drug_subject}}` へ置換）。新規 module では Section 16 を厳守すること |
 
@@ -558,20 +565,18 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 ### CHECK-G01 詳細（adherence group）
 
-**事実確認（Step 1.5 調査済み）:**
+**事実確認（Step 1.5 調査済み。表示順の扱いは DP-10 / §25 適用後の状態に更新）:**
 - `"adherence"` を group として使用しているモジュール: **12件**（全 DM injection / oral GLP-1 / allergy 内服 / 全 derm）
-- AddonPanel.tsx `GROUP_ORDER = ['counseling', 'oral', 'sickday', 'sideEffects']` — `"adherence"` は含まれない
-- `GROUP_LABELS` にも `"adherence"` の日本語エントリなし
-- **UI 表示挙動**: `"adherence"` グループは `unknownGroups` として GROUP_ORDER の4グループより後に配置され、ラベルは `GROUP_LABELS["adherence"] ?? "adherence"` = **英語のまま "adherence"** と表示される
+- `GROUP_LABELS` に `"adherence"` の日本語エントリなし
+- **UI 表示挙動**: 表示順自体は DP-10 / §25 の通り JSON（`addonsRef.P`）内での初出順に従う（固定位置ではない）。ラベルのみ `GROUP_LABELS["adherence"] ?? "adherence"` = **英語のまま "adherence"** と表示される
 - addon ボタン自体は正常に動作する（toggle / SOAP 挿入機能に問題なし）
 
 **JSON_STANDARD.md の記述との矛盾:**
-- JSON_STANDARD.md 行 147: `"counseling" / "sideEffects" / "sickday" / "adherence" / "oral" のいずれか（AddonPanel.tsx GROUP_ORDER 定義）` と記載
-- しかし AddonPanel.tsx GROUP_ORDER には `"adherence"` が存在しない → 記述の括弧内が不正確
+- JSON_STANDARD.md では group 有効値の根拠として AddonPanel.tsx の定義を参照しているが、`"adherence"` に対応する日本語ラベルが `GROUP_LABELS` に存在しない → ラベル定義の不備であり、表示順の問題ではない
 
 **要判断の選択肢（どちらも今回未実施）:**
-- A: AddonPanel.tsx の GROUP_ORDER / GROUP_LABELS に `"adherence"` を追加し、日本語ラベル（例: 「アドヒアランス」）を定義する
-- B: JSON_STANDARD.md の括弧内表現を `"adherence" は GROUP_ORDER 外・末尾表示` と修正し、現状を正式仕様として文書化する
+- A: AddonPanel.tsx の `GROUP_LABELS` に `"adherence"` を追加し、日本語ラベル（例: 「アドヒアランス」）を定義する
+- B: JSON_STANDARD.md の記述を「`"adherence"` はラベル未定義のため英語表示のまま」と修正し、現状を正式仕様として文書化する
 
 ---
 
@@ -584,8 +589,8 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | `administration_guidance` | 3件 | allergy_chemical_mediator_release_inhibitor_eye_drops / allergy_h1_antihistamine_eye_drops / allergy_h1_antihistamine_second_gen_oral |
 | `lifestyle_guidance` | 8件 | allergy_chemical_mediator_release_inhibitor_eye_drops / allergy_h1_antihistamine_eye_drops / allergy_h1_antihistamine_second_gen_oral / allergy_leukotriene / 全 derm_heparinoid 4件 |
 
-- どちらも AddonPanel GROUP_ORDER 外 / GROUP_LABELS 未定義
-- **UI 表示挙動**: `"administration_guidance"` → ラベル **"administration_guidance"**（英語アンダースコア区切り）、`"lifestyle_guidance"` → ラベル **"lifestyle_guidance"** として表示される。いずれも GROUP_ORDER の4グループより後に表示される
+- どちらも AddonPanel GROUP_LABELS 未定義
+- **UI 表示挙動**: `"administration_guidance"` → ラベル **"administration_guidance"**（英語アンダースコア区切り）、`"lifestyle_guidance"` → ラベル **"lifestyle_guidance"** として表示される（ラベルのみ未定義。表示順自体は DP-10 / §25 の通り JSON 内での初出順に従う）
 - addon ボタンは正常動作
 
 **type → group 変換表との関係:**
@@ -763,5 +768,21 @@ HEADER_ONLY → DRAFT → FROZEN_FOR_PN1 → JSON_COMPLETE
 
 - `JSON_COMPLETE` は PN6（Assembly）で `data/modules/{moduleId}.json` への Write が完了した時点、または PN8（Build/Runtime/Release）で RELEASE_OK と判定された時点でユーザーの指示に基づき設定する
 - PN7（Cross Reference Audit）で FAIL が出た場合は `JSON_COMPLETE` へ遷移しない（`FROZEN_FOR_PN1` のまま差し戻し対応を行う）
+
+---
+
+## 25. P_ADDON 記載順 = 表示順ルール（Addon Display Order Rule）
+
+Addon の表示順は、コード側の固定順ではなく bridge / canonical JSON に記載された順序そのものを使用する（設計原則の詳細は `docs/DESIGN_PRINCIPLES.md` DP-10 を参照）。
+
+- `P_ADDON` の記載順は、canonical JSON の `addonsRef.P` 配列順・UI（AddonPanel）表示順として、そのまま扱われる
+- bridge 執筆時は、実際に UI へ表示したい順番で `P_ADDON` を記載すること
+- コード側では順番を補正・推測・優先順位付けしない（GROUP_ORDER のような固定配列は用いない）
+- 順序もデータの一部として扱い、監査対象とする（`scripts/audit-addon-bridge-chain.ts` が bridge の `P_ADDON` 順・canonical JSON の `addonsRef.P` 順・`getVisibleAddonKeys()` の返却順の一致を機械検証する）
+
+§20（addonsRef Source of Truth 原則）との違い:
+- §20 は「addonsRefに含まれる addon の集合は bridge と一致していなければならない」という**内容一致**の原則
+- §25 は「addonsRefに含まれる addon の**並び順**も bridge と一致していなければならない」という原則
+- 両者は独立して適用する。addonsRef を編集する際は、集合・順序の両方が bridge の `P_ADDON` と一致していることを確認する
 
 （bridge作成〜PN1開始手順の全体像は `prompts/vNext/HANDOFF.md` を参照）

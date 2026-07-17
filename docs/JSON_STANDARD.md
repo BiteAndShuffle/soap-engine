@@ -146,7 +146,7 @@ bridge 未記載の preset を推測生成しない。
 | `key` | string | addon マップキーと同値。ModuleValidator の参照先確認対象 |
 | `id` | string | addon マップキーと同値（`key` と同値） |
 | `title` | string | UI 表示名 |
-| `group` | string | `"counseling"` / `"sideEffects"` / `"sickday"` / `"adherence"` / `"oral"` のいずれか（AddonPanel.tsx GROUP_ORDER 定義）。bridge type → group 変換後の値 |
+| `group` | string | `"counseling"` / `"sideEffects"` / `"sickday"` / `"adherence"` / `"oral"` のいずれか（AddonPanel.tsx GROUP_LABELS 定義。表示順は DP-10 / §25 の通り addonsRef.P の配列順に従う）。bridge type → group 変換後の値 |
 | `targetSection` | string | `"P"`（ほぼ全件）。欠落すると addon が P に挿入されない無声の失敗が起きる |
 | `text` | string | 出力テキスト。薬剤名部分は `{{drug_subject}}` を使用可 |
 | `clinicalTags` | array | 値未確定時は `[]`。omit 禁止 |

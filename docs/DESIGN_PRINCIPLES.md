@@ -8,7 +8,7 @@ SOAP Engine の設計根拠・例外許容条件・禁止事項を永続化し�
 設計判断の参照順序:
   このドキュメント → JSON_STANDARD.md → OPEN_DESIGN_QUESTIONS.md → bridge 原稿 → canonical JSON
 
-最終更新: 2026-07-05
+最終更新: 2026-07-18
 
 ---
 
@@ -316,6 +316,39 @@ Tier 分類・残課題（cross-module 欠落・genericKey 命名不統一等）
 
 ---
 
+## DP-10: Addon 表示順原則（Addon Display Order Principle）
+
+**目的**
+Addon の表示順を、コード側の固定順ではなく bridge / canonical JSON に記載された順序そのものへ一本化する。
+
+**適用範囲**
+全 module
+
+**背景**
+従来、UI（`AddonPanel.tsx`）は `GROUP_ORDER` というコード側の固定配列でグループ表示順を決定しており、bridge の `P_ADDON` 記載順・canonical JSON の `addonsRef.P` 配列順とは独立していた。そのため「JSON の `addonsRef.P` を修正しても UI の表示順が変わらない」という、bridge / JSON / UI 三者不一致の不具合が発生した。
+
+**ルール**
+- bridge を唯一の正本とする
+- bridge の `P_ADDON` 記載順を canonical JSON が保持する
+- canonical JSON の `addonsRef.P` 配列順を UI がそのまま保持する
+- コード側で表示順を補正・推測・優先順位付けしない（`GROUP_ORDER` のような固定配列を用いない）
+- グループ見出し（服薬指導／シックデイ／副作用等）自体は維持するが、見出しの表示順は JSON 内で最初に登場したグループの順（Map挿入順）とする
+- 順序もデータの一部とみなし、監査対象とする
+
+**採用理由**
+DP-07（bridge SOT 原則）の「データを正本とする」という思想を、Addon の表示順という運用面まで一貫させるための拡張。コード側の並び替え定義（`GROUP_ORDER`）を撤廃することで、新規診療領域（循環器・呼吸器・皮膚科・耳鼻科・眼科・泌尿器・漢方等）への拡張時にコード変更が不要になり、bridge / JSON の記載だけで表示順を完全に表現できる。
+
+**運用ルール（bridge 執筆時）**
+`P_ADDON` は表示したい順番で記載する。コード側では順番を補正しない（詳細は `prompts/RULES.md` §25）。
+
+**関連フィールド**
+`scenarios[].addonsRef.P` / `app/components/AddonPanel.tsx` / `scripts/audit-addon-bridge-chain.ts`
+
+**関連原則**
+DP-07（bridge SOT 原則）— 同じ「データが正本」という思想の適用範囲を表示順まで拡張したもの
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -336,6 +369,7 @@ Tier 分類・残課題（cross-module 欠落・genericKey 命名不統一等）
 | bridge と JSON の乖離 | DP-07 |
 | moduleVersion | DP-04 |
 | 一般名検索到達性 / brandCatalog alias | DP-09 |
+| Addon 表示順 / P_ADDON 記載順 | DP-10 |
 
 ### 失われると事故要因になる原則
 
@@ -345,3 +379,4 @@ Tier 分類・残課題（cross-module 欠落・genericKey 命名不統一等）
 | DP-05 | formulationSearchTokens 削除 → 剤形分割検索が壊れ誤剤形選択 |
 | DP-07 | JSON 直接編集 → bridge と乖離 → 次回 JSON 化で変更が消える |
 | DP-08 | 推測 preset 追加 → 意図しない ADDON 組み合わせが固定化 |
+| DP-10 | コード側に固定順（GROUP_ORDER 相当）を再導入 → bridge/JSON の記載順が UI に反映されなくなる |

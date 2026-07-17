@@ -102,7 +102,7 @@ Phase 1 の各シナリオに以下のフィールドを追加する。
 }
 ```
 
-**followupRef / addonsRef は Phase 1 の値を採用する。Phase 3B では変更しない。**
+**followupRef / addonsRef は Phase 1 の値を採用する。Phase 3B では配列順を含めて変更しない（addonsRef.P の順序は表示順として扱われる。RULES.md §25）。**
 
 #### thirdPanelSPlacement の付与
 

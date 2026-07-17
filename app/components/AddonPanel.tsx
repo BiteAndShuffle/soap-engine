@@ -4,10 +4,11 @@ import type { AddonsData, AddonItem } from '../../lib/types'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
-// グループ表示順・ラベル定義
+// グループ見出しラベル定義
+//
+// 表示順はコード側で固定・補正しない。scenario.addonsRef.P（JSON配列順）
+// に最初に登場したグループの順序をそのまま使用する（groupMap の Map挿入順）。
 // ─────────────────────────────────────────────────────────────
-
-const GROUP_ORDER: string[] = ['counseling', 'oral', 'sickday', 'sideEffects']
 
 const GROUP_LABELS: Record<string, string> = {
   counseling:  '服薬指導',
@@ -101,10 +102,8 @@ export default function AddonPanel({
     groupMap.get(group)!.push(entry)
   }
 
-  // 表示順: GROUP_ORDER に従い、未定義グループは末尾に追加
-  const knownGroups = GROUP_ORDER.filter(g => groupMap.has(g))
-  const unknownGroups = [...groupMap.keys()].filter(g => !GROUP_ORDER.includes(g))
-  const orderedGroups = [...knownGroups, ...unknownGroups]
+  // 表示順: JSON（addonsRef.P）内で最初に登場したグループ順（Map挿入順）
+  const orderedGroups = [...groupMap.keys()]
 
   return (
     <div className={s.addonPanel}>

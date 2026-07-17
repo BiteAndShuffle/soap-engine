@@ -76,6 +76,7 @@ Phase 3B の scenarios[] をベースとし、各シナリオの空配列 `SStru
 - Phase 4A の対象（treatment_start / treatment_adjustment / treatment_end）は Phase 4A から取得
 - Phase 4B の対象（side_effect / adherence / lifestyle_guidance / sickday / followup）は Phase 4B から取得
 - id キーで突き合わせる
+- `addonsRef` は Phase 3B の値（配列順を含む）をそのまま引き継ぐ。PN6 では並び替えない（addonsRef.P の順序は表示順として扱われる。RULES.md §25）
 
 **xStructured 突き合わせ時の確認手順（シナリオ 20 件超の場合）:**
 1. phase4a_structured.json の scenarios キー一覧を確認し、対象 id リストを把握する

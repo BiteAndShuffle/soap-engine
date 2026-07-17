@@ -541,15 +541,14 @@ FAIL と同様に PN8 進行のブロッカーとして扱い、人間承認を�
 
 以下は機能上の問題はないが、将来対応が望ましい項目です。次モジュール作業のブロッカーではありません。
 
-## AddonPanel.tsx の GROUP_ORDER 未登録グループ
+## AddonPanel.tsx の GROUP_LABELS 未登録グループ
 
-`app/components/AddonPanel.tsx` の `GROUP_ORDER: ['counseling', 'oral', 'sickday', 'sideEffects']` に  
-未登録のグループが存在します。未登録グループは `GROUP_LABELS[group] ?? group` により  
-英語文字列ラベルのまま末尾に表示されます（機能上は動作する）。
+Addon の表示順は DP-10 / RULES.md §25 の通り bridge / JSON の記載順（`addonsRef.P`）をそのまま使用する（固定配列 GROUP_ORDER は廃止済み）。
+一方、`app/components/AddonPanel.tsx` の `GROUP_LABELS` には日本語ラベルが未登録のグループが存在します。未登録グループは `GROUP_LABELS[group] ?? group` により、表示順自体は JSON 記載順どおりだが、ラベルのみ英語文字列のまま表示されます（機能上は動作する）。
 
 | group 値 | 使用件数 | 対応方針 |
 |---|---|---|
-| `lifestyle_guidance` | 8 モジュール・26 件 | GROUP_ORDER / GROUP_LABELS 追加を将来検討（ラベル案: "生活指導"） |
+| `lifestyle_guidance` | 8 モジュール・26 件 | GROUP_LABELS 追加を将来検討（ラベル案: "生活指導"） |
 | `administration_guidance` | 3 モジュール・11 件 | 同上（ラベル案: "使用方法"） |
 | `adherence` | 多数 | 同上（ラベル案: "アドヒアランス"） |
 

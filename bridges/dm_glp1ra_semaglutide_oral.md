@@ -319,8 +319,8 @@ GLP-1受容体作動薬(内服)は、血糖値を改善する薬です。
 副作用が出た場合はご相談ください。
 
 P_ADDON
-- addon_glycemic_guidance_initial
 - addon_ribelsus_admin
+- addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
@@ -394,8 +394,8 @@ GLP-1受容体作動薬(内服)は、血糖値を改善する薬です。
 副作用が出た場合はご相談ください。
 
 P_ADDON
-- addon_glycemic_guidance_initial
 - addon_ribelsus_admin
+- addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance
@@ -424,8 +424,8 @@ GLP-1受容体作動薬(内服)は、血糖値を改善する薬です。
 副作用が出た場合はご相談ください。
 
 P_ADDON
-- addon_glycemic_guidance_initial
 - addon_ribelsus_admin
+- addon_glycemic_guidance_initial
 - addon_se_hypoglycemia_guidance
 - addon_initial_sickday_guidance
 - addon_hyperkalemia_guidance

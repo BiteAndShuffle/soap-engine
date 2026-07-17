@@ -58,7 +58,7 @@ bridge.md の SCENARIOS_START ～ SCENARIOS_END セクション
 
 ### 3. addonsRef の解析
 
-各シナリオの P_ADDON セクションを解析する。
+各シナリオの P_ADDON セクションを解析する。P_ADDON の記載順は表示順として扱われるため、そのままの順序で配列化する（RULES.md §25）。
 ```
 P_ADDON
 - addon_xxx

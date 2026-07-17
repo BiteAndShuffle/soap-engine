@@ -876,8 +876,8 @@
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n服用中は、悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_glycemic_guidance_initial",
           "addon_ribelsus_admin",
+          "addon_glycemic_guidance_initial",
           "addon_se_hypoglycemia_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
@@ -4099,8 +4099,8 @@
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n服用中は、悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_glycemic_guidance_initial",
           "addon_ribelsus_admin",
+          "addon_glycemic_guidance_initial",
           "addon_se_hypoglycemia_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"
@@ -4241,8 +4241,8 @@
       "P": "{{drug_subject}}は、血糖値を改善する薬です。\n服用中は、悪心や食欲不振などの副作用が出ることがあります。\n副作用が出た場合はご相談ください。",
       "addonsRef": {
         "P": [
-          "addon_glycemic_guidance_initial",
           "addon_ribelsus_admin",
+          "addon_glycemic_guidance_initial",
           "addon_se_hypoglycemia_guidance",
           "addon_initial_sickday_guidance",
           "addon_hyperkalemia_guidance"

@@ -471,22 +471,25 @@ phase3b_meta.json に uiVariant 情報が記録されていない場合 → NOT_
 
 ---
 
-### Y. bridge P_ADDON ⇔ addonsRef 完全一致 + AddonPanel 到達確認
+### Y. bridge P_ADDON ⇔ addonsRef 順序を含む完全一致 + AddonPanel 到達確認
 
-← RULES.md §20（`scripts/audit-addon-bridge-chain.ts` と同一ロジック）
+← RULES.md §20 / §25（`scripts/audit-addon-bridge-chain.ts` と同一ロジック）
 
 Aは JSON 内部の参照切れのみを確認する。Y は bridge 本文まで遡って比較する唯一の監査項目であり、A とは独立して必ず実行する。
 
+Addon の表示順は bridge の P_ADDON 記載順をそのまま UI へ反映する設計（DP-10 / RULES.md §25）のため、集合一致だけでなく配列の順序一致も確認する。
+
 ```
 対象: 全 scenarios[]
-1. bridge の P_ADDON 記載一覧と scenarios[].addonsRef.P を突合する
+1. bridge の P_ADDON 記載一覧と scenarios[].addonsRef.P を、配列の順序を含めて突合する
    - bridge にあるが addonsRef に無い → FAIL（欠落: {addon_id} in scenario {scenario_id}）
    - addonsRef にあるが bridge に無い → FAIL（bridge外追加: {addon_id} in scenario {scenario_id}）
    - bridge に P_ADDON が無いシナリオに addonsRef が存在する → FAIL（bridge外追加）
+   - 集合は一致するが並び順が異なる → FAIL（順序不一致: {addon_id} in scenario {scenario_id}）
 2. addonsRef.P の各 id が addons.items に存在すること（A と重複する場合は一本化してよい）
 3. lib/addonFilter.ts の getVisibleAddonKeys() と同じロジックで
-   実際に AddonPanel へ表示されるキーを再現し、bridge 宣言分がすべて含まれることを確認する
-   - 表示されないキーがある → FAIL（AddonPanel 到達不能: {addon_id}）
+   実際に AddonPanel へ表示されるキーとその順序を再現し、bridge 宣言分がすべて同じ順序で含まれることを確認する
+   - 表示されないキーがある、または順序が異なる → FAIL（AddonPanel 到達不能または順序不一致: {addon_id}）
 ```
 
 ---
