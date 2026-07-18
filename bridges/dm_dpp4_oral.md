@@ -739,31 +739,6 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=DPP4阻害薬 副作用なし（低血糖）】
-S
-DPP4阻害薬を服用して症状は落ち着いている。
-ふらつき・冷汗・動悸などの低血糖症状は認めない。
-O
-DPP4阻害薬　処方
-A
-DPP4阻害薬による低血糖は現時点で認められず、治療継続が可能である。
-P
-DPP4阻害薬の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
-単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。
-症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。
-改善しない場合はご相談ください。
-P_ADDON
-- addon_glycemic_guidance_followup
-- addon_hyperkalemia_guidance
-- addon_hypertension_guidance
-- addon_dyslipidemia_guidance
-- addon_hyperuricemia_guidance
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
 【ADDON｜type=lifestyle_guidance｜id=addon_glycemic_guidance_followup｜title=生活指導（血糖指導）】
 A_APPEND
 血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
@@ -851,6 +826,33 @@ DPP4阻害薬による消化器症状は現時点で認められず、治療継�
 P
 DPP4阻害薬の継続中に、お腹の調子が悪くなることがあります。
 お腹の張りが続く場合はご相談ください。
+P_ADDON
+- addon_glycemic_guidance_followup
+- addon_hyperkalemia_guidance
+- addon_hypertension_guidance
+- addon_dyslipidemia_guidance
+- addon_hyperuricemia_guidance
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=DPP4阻害薬 副作用なし（低血糖）】
+S
+DPP4阻害薬を服用して症状は落ち着いている。
+ふらつき・冷汗・動悸などの低血糖症状は認めない。
+O
+DPP4阻害薬　処方
+A
+DPP4阻害薬による低血糖は現時点で認められず、治療継続が可能である。
+P
+DPP4阻害薬の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
+単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。
+症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。
+改善しない場合はご相談ください。
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
