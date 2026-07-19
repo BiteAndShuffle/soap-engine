@@ -1490,156 +1490,6 @@
       "workflowTags": []
     },
     {
-      "id": "se_hypo_none",
-      "globalId": "dm_dpp4_biguanide_combination_oral.se_hypo_none",
-      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（低血糖）",
-      "scenarioType": "side_effect",
-      "scenarioGroup": "hypoglycemia",
-      "scenarioTags": [
-        "side_effect",
-        "hypoglycemia",
-        "absent"
-      ],
-      "situationFilter": [
-        "general",
-        "sickday"
-      ],
-      "sideEffectPresence": "absent_or_not_observed",
-      "sComposition": {
-        "intent": "side_effect_check",
-        "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
-      },
-      "S": "{{drug_subject}}を服用して症状は落ち着いている。\nふらつき・冷汗・動悸などの低血糖症状は認めない。",
-      "O": "{{drug_subject}}　処方",
-      "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
-      "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。\n改善しない場合はご相談ください。",
-      "mergePolicy": {
-        "S": {
-          "domain": "diabetes",
-          "behavior": "replace",
-          "groupKey": "side_effect_monitoring",
-          "mergeLevel": "clinical_domain",
-          "sectionRole": "subjective"
-        },
-        "O": {
-          "behavior": "append",
-          "mergeLevel": "section_line",
-          "sectionRole": "objective"
-        },
-        "A": {
-          "behavior": "append",
-          "mergeLevel": "section_block",
-          "sectionRole": "assessment"
-        },
-        "P": {
-          "behavior": "append",
-          "mergeLevel": "section_block",
-          "closingBehavior": "dedupe_or_last",
-          "sectionRole": "plan"
-        }
-      },
-      "followupRef": "default_followup",
-      "intentTags": [
-        "hypoglycemia_attention"
-      ],
-      "SStructured": [
-        {
-          "id": "s_1",
-          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
-          "role": "side_effect_status",
-          "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "s_2",
-          "text": "ふらつき・冷汗・動悸などの低血糖症状は認めない。",
-          "role": "side_effect_status",
-          "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [
-            "低血糖"
-          ],
-          "notes": null
-        }
-      ],
-      "AStructured": [
-        {
-          "id": "a_1",
-          "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
-          "role": "side_effect_assessment",
-          "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [
-            "低血糖"
-          ],
-          "notes": "observation: high-risk symptom absence; minimal/medium: risk term protected"
-        }
-      ],
-      "PStructured": [
-        {
-          "id": "p_1",
-          "text": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。",
-          "role": "side_effect_guidance",
-          "transform": "fixed",
-          "safety": "high",
-          "lockTerms": [
-            "低血糖"
-          ],
-          "notes": null
-        },
-        {
-          "id": "p_2",
-          "text": "単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。",
-          "role": "side_effect_guidance",
-          "transform": "fixed",
-          "safety": "high",
-          "lockTerms": [
-            "低血糖"
-          ],
-          "notes": null
-        },
-        {
-          "id": "p_3",
-          "text": "症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "high",
-          "lockTerms": [
-            "ブドウ糖",
-            "糖分を含む"
-          ],
-          "notes": null
-        },
-        {
-          "id": "p_4",
-          "text": "改善しない場合はご相談ください。",
-          "role": "side_effect_guidance",
-          "transform": "minimal",
-          "safety": "low",
-          "lockTerms": [
-            "ご相談ください"
-          ],
-          "notes": null
-        }
-      ],
-      "clinicalTags": [],
-      "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_glycemic_guidance_followup",
-          "addon_hyperkalemia_guidance",
-          "addon_hypertension_guidance",
-          "addon_dyslipidemia_guidance",
-          "addon_hyperuricemia_guidance"
-        ]
-      }
-    },
-    {
       "id": "se_diarrhea_abdominal_pain_none",
       "globalId": "dm_dpp4_biguanide_combination_oral.se_diarrhea_abdominal_pain_none",
       "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（下痢・腹痛）",
@@ -2123,6 +1973,156 @@
         {
           "id": "p_2",
           "text": "お腹の張りが続く場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "addonsRef": {
+        "P": [
+          "addon_glycemic_guidance_followup",
+          "addon_hyperkalemia_guidance",
+          "addon_hypertension_guidance",
+          "addon_dyslipidemia_guidance",
+          "addon_hyperuricemia_guidance"
+        ]
+      }
+    },
+    {
+      "id": "se_hypo_none",
+      "globalId": "dm_dpp4_biguanide_combination_oral.se_hypo_none",
+      "title": "DPP-4阻害薬・メトホルミン配合剤 副作用なし（低血糖）",
+      "scenarioType": "side_effect",
+      "scenarioGroup": "hypoglycemia",
+      "scenarioTags": [
+        "side_effect",
+        "hypoglycemia",
+        "absent"
+      ],
+      "situationFilter": [
+        "general",
+        "sickday"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "sComposition": {
+        "intent": "side_effect_check",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}を服用して症状は落ち着いている。\nふらつき・冷汗・動悸などの低血糖症状は認めない。",
+      "O": "{{drug_subject}}　処方",
+      "A": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+      "P": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。\n単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。\n症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。\n改善しない場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "diabetes",
+          "behavior": "replace",
+          "groupKey": "side_effect_monitoring",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "hypoglycemia_attention"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}を服用して症状は落ち着いている。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "s_2",
+          "text": "ふらつき・冷汗・動悸などの低血糖症状は認めない。",
+          "role": "side_effect_status",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}による低血糖は現時点で認められず、治療継続が可能である。",
+          "role": "side_effect_assessment",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": "observation: high-risk symptom absence; minimal/medium: risk term protected"
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。",
+          "role": "side_effect_guidance",
+          "transform": "fixed",
+          "safety": "high",
+          "lockTerms": [
+            "低血糖"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_3",
+          "text": "症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "high",
+          "lockTerms": [
+            "ブドウ糖",
+            "糖分を含む"
+          ],
+          "notes": null
+        },
+        {
+          "id": "p_4",
+          "text": "改善しない場合はご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",

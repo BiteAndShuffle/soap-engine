@@ -244,13 +244,51 @@ function longestMatchingPrefix(title: string, candidates: string[]): string | nu
 }
 
 /**
+ * scenarios[].title 群から共通の先頭プレフィックス（クラス名相当）を推定する。
+ *
+ * bridge で自然文として書かれる title の薬効群名は、display.drugClassLabel 等の
+ * 構造化フィールドと区切り文字（／ vs ・）や語の選び方（略称等）が食い違うことがある
+ * （例: display.drugClassLabel="DPP-4阻害薬／ビグアナイド配合剤" だが
+ *       title="DPP-4阻害薬・メトホルミン配合剤 副作用なし（低血糖）"）。
+ * この場合、構造化フィールドとの完全一致だけではプレフィックスを検出できない。
+ *
+ * title 自身の中で最初の空白より前の部分を集計し、最頻出のものを候補として追加する。
+ * 同一モジュール内の title は同じプレフィックスを共有する設計のため、
+ * この値は常にそのモジュール自身の title 表記と完全一致する（推測ではなくデータ由来）。
+ */
+function deriveTitlePrefixFromScenarios(scenarios: Pick<Scenario, 'title'>[] | undefined): string | null {
+  if (!scenarios) return null
+  const counts = new Map<string, number>()
+  for (const sc of scenarios) {
+    const t = sc.title
+    if (!t) continue
+    const spaceIdx = t.search(/[ 　]/)
+    if (spaceIdx <= 0) continue
+    const prefix = t.slice(0, spaceIdx)
+    counts.set(prefix, (counts.get(prefix) ?? 0) + 1)
+  }
+  let best: string | null = null
+  let bestCount = 0
+  for (const [prefix, count] of counts) {
+    if (count > bestCount) {
+      best = prefix
+      bestCount = count
+    }
+  }
+  return best
+}
+
+/**
  * ModuleData からプレフィックス候補一覧を生成する。
- * 表示系フィールド（drugClassLabel / nodeLabelLong / display.title / drug.genericName）を
+ * 表示系フィールド（drugClassLabel / nodeLabelLong / display.title / drug.genericName）に加え、
+ * scenarios[].title 自身から推定した共通プレフィックス（deriveTitlePrefixFromScenarios）を
  * 重複排除して返す。UI側で1回だけ呼び、結果を displayTitleForCol2 に渡す。
  *
  * brandNames / drugGeneric（個別一般名）は prefix 候補に含めない。
  */
-export function moduleMenuPrefixCandidates(module: Pick<ModuleData, 'drug' | 'display' | 'composition'>): string[] {
+export function moduleMenuPrefixCandidates(
+  module: Pick<ModuleData, 'drug' | 'display' | 'composition' | 'scenarios'>,
+): string[] {
   const seen = new Set<string>()
   const add = (s: string | undefined | null) => { if (s) seen.add(s) }
   add(module.display?.drugClassLabel)
@@ -258,6 +296,7 @@ export function moduleMenuPrefixCandidates(module: Pick<ModuleData, 'drug' | 'di
   add(module.display?.title)
   add(module.drug?.genericName)
   add(module.composition?.nodeLabelLong)
+  add(deriveTitlePrefixFromScenarios(module.scenarios))
   return [...seen]
 }
 
