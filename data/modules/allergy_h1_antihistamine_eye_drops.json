@@ -4126,10 +4126,10 @@
           "administration_instruction"
         ]
       },
-      "addon_eye_drop_interval": {
-        "key": "addon_eye_drop_interval",
-        "id": "addon_eye_drop_interval",
-        "title": "使用方法説明（間隔）",
+      "addon_eye_drop_interval_5min": {
+        "key": "addon_eye_drop_interval_5min",
+        "id": "addon_eye_drop_interval_5min",
+        "title": "使用方法説明（間隔5分）",
         "group": "lifestyle_guidance",
         "targetSection": "P",
         "tone": null,
@@ -4137,7 +4137,23 @@
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
-        "text": "複数の目薬を使用する場合は、5分以上あけて使用してください。\n（懸濁のものがある場合は、懸濁が最後になるようにしてください。）",
+        "text": "複数の目薬を使用する場合は、5分以上あけて使用してください。",
+        "intentTags": [
+          "administration_instruction"
+        ]
+      },
+      "addon_eye_drop_interval_10min": {
+        "key": "addon_eye_drop_interval_10min",
+        "id": "addon_eye_drop_interval_10min",
+        "title": "使用方法説明（間隔10分）",
+        "group": "lifestyle_guidance",
+        "targetSection": "P",
+        "tone": null,
+        "evidenceRefs": [],
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "text": "複数の目薬を使用する場合は、10分以上あけて使用してください。",
         "intentTags": [
           "administration_instruction"
         ]
