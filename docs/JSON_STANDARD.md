@@ -148,7 +148,7 @@ bridge 未記載の preset を推測生成しない。
 | `title` | string | UI 表示名 |
 | `group` | string | `"counseling"` / `"sideEffects"` / `"sickday"` / `"adherence"` / `"oral"` のいずれか（AddonPanel.tsx GROUP_LABELS 定義。表示順は DP-10 / §25 の通り addonsRef.P の配列順に従う）。bridge type → group 変換後の値 |
 | `targetSection` | string | `"P"`（ほぼ全件）。欠落すると addon が P に挿入されない無声の失敗が起きる |
-| `text` | string | 出力テキスト。薬剤名部分は `{{drug_subject}}` を使用可 |
+| `text` | string | 出力テキスト。選択薬剤自身を指す薬剤名部分は必ず `{{drug_subject}}` を使用する（詳細は本節末尾「addon.text 薬剤名ルール」を参照） |
 | `clinicalTags` | array | 値未確定時は `[]`。omit 禁止 |
 | `counselingTags` | array | 値未確定時は `[]`。omit 禁止 |
 | `workflowTags` | array | 値未確定時は `[]`。omit 禁止 |
@@ -174,6 +174,24 @@ bridge 未記載の preset を推測生成しない。
 `genericName` / `drugClass` / `classKey` / bridge header の薬効分類名を O フィールドに固定出力することを禁止する。
 状態語（処方 / 使用中 / 減量 等）はそのまま保持する。
 O フィールドは `resolveDrugSubject()` の対象であり、固定文字列のままだと UI 上で薬剤名が置換されない。
+
+**addon.text 薬剤名ルール（全 addon）**
+
+`addons.items[].text`（`sectionTexts.*` を含む）のうち、**選択薬剤自身を指す**薬剤名部分は、O フィールドと同様に必ず `{{drug_subject}}` を使用する。
+
+```
+正: "{{drug_subject}}の継続中に、強い腹痛や背中に響く痛みが出ることがあります。"
+誤: "DPP-4阻害薬・ビグアナイド配合剤の継続中に、強い腹痛や背中に響く痛みが出ることがあります。"（薬効群・配合剤クラス名固定）
+```
+
+`resolveDrugSubject()` は S/O/A/P 結合後の文字列全体に対して置換を行うため、addon側にトークンが存在すれば正しく置換される。トークンを使わず固定文字列で書くと、ブランドを選択しても薬効群・配合剤クラス名のまま表示され続ける（無声の失敗）。
+
+この規則は**選択薬剤自身を主語・対象として書かれている箇所にのみ**適用する。以下のように選択薬剤以外を指す文脈には適用しない。
+
+```
+適用外: "他の糖尿病薬と併用している場合は、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。"（併用中の他剤を指す）
+適用外: "PF製剤は、防腐剤を含まない目薬です。"（製剤カテゴリの説明。requiredTags で対象ブランドのみ表示される）
+```
 
 **scenarios[] 共通フィールド（全件・omit 禁止）**
 

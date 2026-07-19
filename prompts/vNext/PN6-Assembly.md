@@ -91,13 +91,17 @@ Phase 5 の addons.orderPresets を追加する。
 
 #### addon.text 標準ルール（必須）
 
-`addons.items[].text` は bridge のコンテンツ本文を使用する。title を text に流用してはならない。
+`addons.items[].text` は**当該モジュール自身の bridge**のコンテンツ本文を使用する。title を text に流用してはならない。
 
 - addon の `sectionTexts` に `P_APPEND` が存在する場合 → `text = P_APPEND` 本文
 - `P_APPEND` が存在せず `A_APPEND` のみの場合 → `text = A_APPEND` 本文
 - `P_APPEND` も `A_APPEND` もなく `S_APPEND` のみの場合 → `text = S_APPEND` 本文
 
 bridge を single source of truth とし、title は `title` フィールドにのみ使用する。
+
+**bridgeを読まず、他モジュールの JSON や過去の生成結果を正本として利用してはならない。** 同一 addon id を複数モジュールが使用している場合でも、各モジュールの `text` / `sectionTexts.*` は必ずそのモジュール自身の bridge から個別に抽出する。自身の bridge を確認せず他モジュールの JSON や過去の生成結果を正本として流用すると、当該モジュールの bridge と JSON が乖離する（bridge 側の修正が JSON に反映されない状態を招く）。なお、各モジュールが独立して自身の bridge から抽出した結果、複数モジュールの text が同一の文言になること自体は問題ない（禁止対象は「複製という行為」であり、「結果としての一致」ではない）。
+
+**選択薬剤自身を指す薬剤名部分は `{{drug_subject}}` へ変換する（`docs/JSON_STANDARD.md` addon.text 薬剤名ルール）。** bridge は決め打ち表記が正本のため、scenario の S/O/A/P と同様に、addon 本文内で選択薬剤自身を指す箇所（他剤・製剤カテゴリ等を指す箇所は対象外）は bridge の薬効群・配合剤クラス名固定表記を `{{drug_subject}}` へ変換して JSON へ格納する。
 
 #### addon.group 標準変換表（必須）
 

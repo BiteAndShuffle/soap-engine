@@ -402,17 +402,44 @@ unit / conflictStrategy / withinDomainStrategy の3フィールドを持つこ�
 
 ### U. addon.text 内容確認
 
-← PN6-Assembly.md addon.text 標準ルール
+← PN6-Assembly.md addon.text 標準ルール / docs/JSON_STANDARD.md addon.text 薬剤名ルール
+
+`phase1_text_spine` 等の中間キャッシュとの比較のみで済ませず、**当該モジュール自身の bridge ファイルを直接再読込して**比較すること。キャッシュが古い場合、bridge が既に更新されていても検出できない。
+
+**比較は完全一致ではなく、以下の正規化手順を経た一致で判定する。**
+bridgeは薬剤名を決め打ち表記する正本であり、JSONは選択薬剤自身を指す箇所を `{{drug_subject}}` に変換する仕様であるため、素の完全一致ではこの変換部分が常に不一致になってしまう。許可される変換は下記の1種類のみとする。
+
+```
+bridge本文（正本・決め打ち表記）
+  ↓ 許可されたトークン変換（これ以外の変換は一切許可しない）:
+    選択薬剤自身を指す薬効群・配合剤クラス名の決め打ち表記
+      → {{drug_subject}} に置換
+    （他剤・製剤カテゴリ等、選択薬剤以外を指す箇所は置換しない）
+  ↓
+正規化後の比較対象文字列
+  ↓
+JSON の text / sectionTexts.* と完全一致するか比較
+```
+
+トークン変換以外の差異（言い回しの変更・要約・語順変更・表現の簡略化など）は正規化とみなさない。その場合は bridge と JSON の内容乖離として FAIL とする。
 
 ```
 全 addons.items の各エントリについて:
-  sectionTexts に P_APPEND が存在する addon:
-    text === P_APPEND 本文であること
-  P_APPEND が存在しない addon:
-    text === A_APPEND または S_APPEND 本文であること
+  当該モジュールの bridge から対応する P_APPEND（存在しなければ A_APPEND、それもなければ S_APPEND）を取得する
+  bridge本文に対し、選択薬剤自身を指す薬効群・配合剤クラス名の決め打ち表記を {{drug_subject}} へ置換する
+  置換後の文字列と JSON の text / sectionTexts.* が完全一致するか確認する
+    一致しない場合 → FAIL（addon: {id}）
+      - トークン変換以外の差異がある場合 → 内容乖離
+      - bridge に決め打ち表記が残っているのに JSON が {{drug_subject}} 化されていない場合 → 未変換
+      - JSON に {{drug_subject}} があるのに bridge 側で対応する決め打ち表記が特定できない場合 → 変換対象の誤認の疑い
 
   text が title フィールドの値と一致している場合 → FAIL（title を text に流用している）
-不一致 → FAIL（addon: {id}）
+
+  同一 addon id を複数モジュールが使用している場合:
+    各モジュールの text は必ずそのモジュール自身の bridge から独立に正規化・比較する。
+    「bridge を読まず、他モジュールの JSON や過去の生成結果を正本として利用する」行為を検出対象とする
+    （結果として複数モジュールの text が同一文言になること自体は禁止しない。
+      各モジュールが個別に自身の bridge と正規化後一致していれば PASS）
 ```
 
 ---
