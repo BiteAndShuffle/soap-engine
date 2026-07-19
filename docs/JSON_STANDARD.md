@@ -39,7 +39,7 @@ canonical JSON を監査・修正する前に、以下の順序で差分の性�
 ```
 moduleId → moduleVersion → categoryPath → composition → drug → drugResolution
 → regulatory → topical → template → display → defaults → persona → scenarios
-→ addons → ui → risks → searchConfig → index → tagCatalog → expressModes
+→ addons → ui → risks → searchConfig → tagCatalog → expressModes
 ```
 
 - runtime / validator は top-level key 順序に依存しない（名前アクセスのみ）
@@ -65,7 +65,6 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `ui` | object | `panels` / `panelOrder` / `defaultPanelId` |
 | `risks` | object | `primary` / `secondary` / `conditional` |
 | `searchConfig` | object | `minPrefixLen` / `normalize` / `multiTerm` |
-| `index` | object | — |
 | `tagCatalog` | object | — |
 | `expressModes` | array | 型は配列固定（JS-expressModes 参照）|
 
@@ -225,12 +224,6 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 正: "situationFilter": ["sickday"]
 誤: "situationFilter": ["general", "sickday"]
 ```
-
-**index.normalizedTokens の注射部位副作用語彙ルール**
-
-injection module の `index.searchableText` に `"硬結"` を含める場合、`index.normalizedTokens` に `"こうけつ"` を必ず追加する。
-
-`"硬結"` はひらがな正規化で `"こうけつ"` に変換されないため、明示的に追加しないと部分一致検索が機能しない。
 
 ---
 

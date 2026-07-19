@@ -605,47 +605,6 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 ---
 
-## 19. Semantic Equivalence Rule（意味論的等価性ルール）
-
-### 原則
-
-複数のデータ型が仕様として許容される項目（例: `string` / `string[]`）は、
-**値の意味・内容**を比較対象とする。
-
-**データ型のみを理由に FAIL としてはならない。**
-
-監査処理・検索処理・ランタイム処理はいずれも両形式をサポートし、
-型の違いで動作が変わらないよう実装すること。
-
-### 適用対象
-
-| フィールド | 許容型 | 判定方法 |
-|---|---|---|
-| `index.searchableText` | `string` / `string[]` | string: `"キーワード" in text` / string[]: `any("キーワード" in item for item in text)` |
-
-将来 string / string[] 等の複数表現を許容する項目が追加された場合、
-本セクションの表を更新し、各監査項目に判定方法を明記すること。
-
-### 監査での扱い
-
-- 各監査項目（PN7 等）はデータ型に応じた判定方法を個別に定義する（→ PN7-Q 参照）
-- 「string[] なので FAIL」「string なので FAIL」は禁止
-- 型変換（配列→文字列結合等）によって意味が失われる実装も禁止
-
-### 実装ガイドライン
-
-```typescript
-// searchableText の型安全な検索例
-function containsToken(searchableText: string | string[], token: string): boolean {
-  if (Array.isArray(searchableText)) {
-    return searchableText.some(item => item.includes(token));
-  }
-  return searchableText.includes(token);
-}
-```
-
----
-
 ## 20. addonsRef Source of Truth 原則
 
 `scenarios[].addonsRef` は bridge の `P_ADDON` 記載を正本とする。

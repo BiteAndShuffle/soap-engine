@@ -11,7 +11,7 @@
 
 PN6 は PN5 の成果物を統合するだけであり、標準構造を独自補完しない。
 PN5 で生成漏れがあった場合、PN6 は MUST_STOP して PN5 へ差し戻す。
-**persona / index（searchableText/normalizedTokens/facets/scenarioIds/addonIds/followupProfileIds/groupKeyRegistry）の欠落は PN5 の責務違反として扱う。**
+**persona の欠落は PN5 の責務違反として扱う。**
 composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関与しない。
 
 ---
@@ -34,7 +34,7 @@ composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関�
     {
       "id": "panel_1",
       "title": "基本",
-      "sections": ["display", "categoryPath", "drug", "template", "risks", "searchConfig", "index"]
+      "sections": ["display", "categoryPath", "drug", "template", "risks", "searchConfig"]
     },
     {
       "id": "panel_2",
@@ -110,54 +110,6 @@ dm_insulin_rapid_analog.json の risks 実績値（確認済み）に基づく�
 }
 ```
 
-### index セクション
-
-drug.genericName / brandNames / nameAliases / categoryPath から `searchableText` を構築する。
-`normalizedTokens` はひらがな正規化済みのトークンリスト。
-
-```json
-"index": {
-  "searchableText": [
-    "インスリン レギュラー",
-    "ノボリンR",
-    "ヒューマリンR",
-    "速効型インスリン"
-  ],
-  "normalizedTokens": [
-    "いんすりんれきゅらー",
-    "のぼりんあーる",
-    "ひゅーまりんあーる",
-    "そっこうがたいんすりん"
-  ],
-  "facets": {
-    "route": "injection",
-    "dosageForms": ["injection"],
-    "situation": ["general", "sickday"],
-    "drugClass": ["insulin", "insulin_regular"]
-  },
-  "scenarioIds": ["initial", "restart", "..."],
-  "addonIds": ["addon_glycemic_guidance", "..."],
-  "followupProfileIds": ["default_followup", "end_followup", "se_followup"],
-  "groupKeyRegistry": ["hyperglycemia_management", "..."]
-}
-```
-
-`facets.situation` は phase3b_meta のシナリオ situationFilter の全ユニーク値を集約する。
-
-**index 標準フィールド（全モジュール必須）:**
-
-以下の4フィールドを必ず生成する。欠落は PN7 X 監査で FAIL になる。
-
-| フィールド | 値の出典 |
-|---|---|
-| `scenarioIds` | phase3b_meta の全シナリオ id（順序は scenarios[] と一致） |
-| `addonIds` | phase1_text_spine の addons キー一覧 |
-| `followupProfileIds` | phase1_text_spine の followupProfiles キー一覧 |
-| `groupKeyRegistry` | phase2_drug_header の composition.groupKeyRegistry（確定値） |
-
-**normalizedTokens の注射部位副作用語彙ルール:**
-injection module で `searchableText` に `"硬結"` を含めた場合、`normalizedTokens` に `"こうけつ"` を必ず追加すること。
-
 ### tagCatalog セクション
 
 Phase 3A で確定した intentTags をリストアップする。
@@ -228,9 +180,6 @@ Phase 6 が phase2_drug_header.json の暫定 `[]` に上書きする際の確�
 ui
 risks
 searchConfig
-index          ← searchableText / normalizedTokens / facets /
-                  scenarioIds / addonIds / followupProfileIds / groupKeyRegistry
-                  を必ず含めること（全7フィールド必須）
 tagCatalog
 expressModes
 persona        ← JSON_STANDARD 標準フィールド。必ず生成する（下記参照）
@@ -274,8 +223,6 @@ PN5 完了後、以下を報告する:
 - risks.primary / secondary 件数
 - risks.conditional 件数
 - addons.orderPresets が `{}` であることの確認
-- index.searchableText / normalizedTokens のエントリ数
-- index.scenarioIds / addonIds / followupProfileIds / groupKeyRegistry の件数
 - persona が生成済みであることの確認
 
 次工程: PN6（Assembly）

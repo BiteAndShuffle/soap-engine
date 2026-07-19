@@ -214,7 +214,7 @@ persona
 ```
 scenarios（Phase 3B / 4 が生成）
 addons（Phase 1 + 3B が生成）
-ui / risks / searchConfig / index / tagCatalog / expressModes（Phase 5 が生成）
+ui / risks / searchConfig / tagCatalog / expressModes（Phase 5 が生成）
 ```
 
 ---

@@ -104,7 +104,7 @@ PN2 以降のフェーズは、S / O / A / P / addon text を一切変更して�
 | PN3B | PN3A の決定をシナリオメタデータとして適用する |
 | PN4A | 治療系シナリオの xStructured を生成する |
 | PN4B | 副作用系・adherence 系・sickday / followup の xStructured を生成する |
-| PN5 | ui / risks / searchConfig / index 等の非シナリオ構造を生成する |
+| PN5 | ui / risks / searchConfig 等の非シナリオ構造を生成する |
 | PN6 | PN1〜PN5 を統合して最終 JSON を生成する（Write のみ） |
 | PN7 | 完成 JSON を全 15 項目で監査する（修正しない） |
 | PN8 | registry 登録確認 / tsc / build を実行して release 判定する |
@@ -317,7 +317,7 @@ PN4A と PN4B は並列実行可能です。PN3B 完了後に同時開始でき�
 **入力**: 複数の中間ファイル（PN2 / PN3A / PN3B / PN1）  
 **出力**: `/tmp/soap-build/{moduleId}/phase5_non_scenario.json`
 
-ui / risks / searchConfig / index / tagCatalog / expressModes を生成します。
+ui / risks / searchConfig / tagCatalog / expressModes を生成します。
 
 **インスリン注射系の risks 標準テンプレート**（dm_insulin_rapid_analog.json 実績値）:
 
@@ -333,9 +333,6 @@ ui / risks / searchConfig / index / tagCatalog / expressModes を生成します
   ]
 }
 ```
-
-injection module で `index.searchableText` に `"硬結"` を含む場合は、  
-`index.normalizedTokens` に `"こうけつ"` を必ず追加すること（RULES.md §17 / PN5 注記）。
 
 ---
 
@@ -372,7 +369,7 @@ xStructured 突き合わせ確認: PN4A の id 一覧 + PN4B の id 一覧の和
 **大規模 JSON の Read 手順**:
 1. `wc -l data/modules/{moduleId}.json` で行数確認
 2. 2,000 行超なら `offset=0, limit=2000` → `offset=2000, limit=2000` ... と分割 Read
-3. 末尾（addons / expressModes / searchConfig / index）の確認を省略しない
+3. 末尾（addons / expressModes / searchConfig）の確認を省略しない
 
 15 項目すべて PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
 FAIL がある → 該当 Phase に差し戻し。PN8 は開始しない。

@@ -14,7 +14,6 @@
 → prompts/RULES.md §20 addonsRef Source of Truth 原則
 → prompts/P1.md Rule 4
 → PN6-Assembly.md addon.text 標準ルール / addon.group 標準変換表 / addon.uiVariant 保持ルール
-→ PN5-Non-Scenario.md index 標準フィールド
 
 ## 位置づけ
 完成 JSON の構造整合性を全項目検証する。
@@ -44,7 +43,7 @@ Step 3: 最後の Read が空またはコンテンツなしになったら全範
 ```
 
 **末尾確認を省略しない（禁止）:**
-scenarios[] の末尾 / addons.items / expressModes / searchConfig / index は
+scenarios[] の末尾 / addons.items / expressModes / searchConfig は
 ファイルの後半部分に存在する。末尾側の Read を省略すると監査項目 N / G / E 等が
 未確認になるため、**必ず全範囲を Read してから監査を開始すること**。
 
@@ -279,46 +278,6 @@ addon を追加した場合は必ずいずれかのシナリオの addonsRef.P �
 
 ---
 
-### Q. searchableText / normalizedTokens 整合監査（hardening: 硬結チェック）
-
-← RULES.md §17 / PN5-Non-Scenario.md
-
-**searchableText の型について:**
-
-`index.searchableText` は **string** および **string[]（配列）** の両形式を許容する。
-型の違いのみを理由に FAIL としてはならない。
-
-```
-【searchableText が string の場合】
-  "硬結" in searchableText  で判定する。
-
-【searchableText が string[] の場合】
-  any("硬結" in item for item in searchableText)  で判定する。
-```
-
-**判定フロー:**
-
-```
-1. injection module（composition.nodeKey が "_injection" で終わる）の場合:
-     searchableText（string / string[] を問わず）に
-       "硬結" または "注射部位硬結" のいずれかが含まれること
-     かつ
-     normalizedTokens に "こうけつ" が含まれること
-     いずれか欠落 → FAIL
-
-2. injection module 以外の場合:
-     searchableText（string / string[] を問わず）に "硬結" が含まれる場合のみ判定:
-       normalizedTokens に "こうけつ" が含まれていること
-       欠落 → FAIL
-     "硬結" が含まれない場合 → NOT_CHECKED
-
-共通: 型の違い（string vs string[]）のみを理由に FAIL としてはならない。
-```
-
-備考: "硬結" はひらがな正規化で自動変換されない。injection module では必ず手動追加すること。
-
----
-
 ### R. persona 存在確認
 
 ```
@@ -481,23 +440,6 @@ phase3b_meta.json に uiVariant 情報が記録されていない場合 → NOT_
 
 ---
 
-### X. index 標準フィールド確認
-
-← PN5-Non-Scenario.md index 標準フィールド
-
-```
-以下の4フィールドが index に存在すること（型: 配列）:
-  index.scenarioIds
-  index.addonIds
-  index.followupProfileIds
-  index.groupKeyRegistry
-
-欠落 → FAIL（欠落フィールド名を明記）
-型が配列でない → FAIL
-```
-
----
-
 ### Y. bridge P_ADDON ⇔ addonsRef 順序を含む完全一致 + AddonPanel 到達確認
 
 ← RULES.md §20 / §25（`scripts/audit-addon-bridge-chain.ts` と同一ロジック）
@@ -623,14 +565,12 @@ M. sickday situationFilter:          PASS / FAIL
 N. addon必須フィールド:               PASS / FAIL
 O. scenario omit禁止フィールド:       PASS / FAIL
 P. addon未参照確認:                   PASS / FAIL
-Q. normalizedTokens硬結:              PASS / FAIL / NOT_CHECKED
 R. persona存在:                       PASS / FAIL
 S. composition.sMergePolicy存在:      PASS / FAIL
 T. xStructured構造:                   PASS / FAIL
 U. addon.text内容確認:                PASS / FAIL
 V. addon.group標準変換確認:           PASS / FAIL
 W. uiVariant保持確認:                 PASS / FAIL / NOT_CHECKED
-X. index標準フィールド確認:           PASS / FAIL
 Y. bridge P_ADDON⇔addonsRef一致:      PASS / FAIL
 Z. Addon責務一貫性:                   PASS / CHECK
 AA. alias系フィールド同期:            PASS / FAIL
@@ -669,14 +609,12 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "N_addonRequiredFields": "PASS",
     "O_scenarioRequiredFields": "PASS",
     "P_addonUnreferenced": "PASS",
-    "Q_normalizedTokensKokketsu": "PASS",
     "R_persona": "PASS",
     "S_sMergePolicy": "PASS",
     "T_xStructured": "PASS",
     "U_addonText": "PASS",
     "V_addonGroup": "PASS",
     "W_uiVariant": "NOT_CHECKED",
-    "X_indexStandardFields": "PASS",
     "Y_addonsRefBridgeMatch": "PASS",
     "Z_addonResponsibilityConsistency": "PASS",
     "AA_aliasFieldBridgeParity": "PASS"

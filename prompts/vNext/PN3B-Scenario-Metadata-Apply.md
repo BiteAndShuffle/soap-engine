@@ -171,7 +171,7 @@ addons.items（全 addon、メタデータ完全付与）
 含めない内容:
 ```
 xStructured の具体値（Phase 4 が生成）
-ui / risks / searchConfig / index 等（Phase 5 が生成）
+ui / risks / searchConfig 等（Phase 5 が生成）
 ```
 
 ### 大規模モジュールでの出力注意（シナリオ 20 件超）

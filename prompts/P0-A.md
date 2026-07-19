@@ -86,7 +86,6 @@ Model JSON 基準構造定義
     "$.template",
     "$.risks",
     "$.searchConfig",
-    "$.index",
     "$.display",
     "$.defaults",
     "$.ui",
@@ -382,7 +381,6 @@ existing_reference_json を latest_model_json または target_bridge_source と
 - template
 - risks
 - searchConfig
-- index
 - display
 - defaults
 - ui

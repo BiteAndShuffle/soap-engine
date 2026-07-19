@@ -4484,41 +4484,6 @@
       "match": "prefix"
     }
   },
-  "index": {
-    "searchableText": [
-      "速効型インスリン製剤",
-      "ノボリンR",
-      "ヒューマリンR",
-      "速効型インスリン"
-    ],
-    "normalizedTokens": [
-      "そっこうがたいんすりんせいざい",
-      "のぼりんあーる",
-      "のぼりんr",
-      "のぼりん",
-      "のぼ",
-      "ひゅーまりんあーる",
-      "ひゅーまりんr",
-      "ひゅーまりん",
-      "ひゅーま",
-      "ひゅー",
-      "そっこうがたいんすりん"
-    ],
-    "facets": {
-      "route": "injection",
-      "dosageForms": [
-        "injection"
-      ],
-      "situation": [
-        "general",
-        "sickday"
-      ],
-      "drugClass": [
-        "insulin",
-        "insulin_regular"
-      ]
-    }
-  },
   "tagCatalog": {
     "intentTags": [
       "adherence_support",

@@ -70,7 +70,7 @@ PN3A完了: groupKey {N}件確定。MUST_STOP非該当。PN3Bを開始します�
 PN3B完了: {N}シナリオ / {N}addon。PN4Aを開始します。
 PN4A完了: {N}件xStructured生成。禁止role非該当。PN4Bを開始します。
 PN4B完了: {N}件xStructured生成。禁止role非該当。PN5を開始します。
-PN5完了: risks/searchConfig/expressModes/persona/index生成。PN6を開始します。
+PN5完了: risks/searchConfig/expressModes/persona生成。PN6を開始します。
 PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。addon.text/group標準変換適用済み。PN7を開始します。
 PN7完了: FAIL 0件 / CHECK 0件 / PENDING 0件 / verdict: PASS。PN8を開始します。
 PN8完了: tsc PASS / build PASS。RELEASE_OK。
@@ -113,7 +113,6 @@ PN7完了: FAIL 0件 / CHECK {N}件（{該当項目と内容}）/ PENDING {N}件
 | L | composition.sMergePolicy が phase2_drug_header.json に欠落 | PN5 |
 | M | PN6 が PN5 成果物に存在しない標準構造を独自補完しようとした | PN5 |
 | N | PN6 addon.group が標準変換表に従っていない（lifestyle_guidance 等が未変換） | PN6 |
-| O | PN5 が index.scenarioIds / addonIds / followupProfileIds / groupKeyRegistry を生成していない | PN5 |
 | P | PN7 に CHECK 項目が 1 件でも残る（Z の Addon責務一貫性等） | PN7（ユーザー承認待ち） |
 | Q | PN7 監査中、または data/modules/{moduleId}.json 内に未確定の `"PENDING"` 文字列が残存している | 該当 PENDING が発生した元 Phase |
 

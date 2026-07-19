@@ -117,7 +117,6 @@ P2実行時のbridge要素ごとに以下を定義する。
 - template
 - risks
 - searchConfig
-- index
 - display
 - defaults
 - ui

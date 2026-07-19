@@ -376,45 +376,6 @@
       "match": "prefix"
     }
   },
-  "index": {
-    "searchableText": [
-      "混合型インスリン製剤（速効型＋中間型）",
-      "ノボリン30R",
-      "イノレット30R",
-      "ヒューマリン3/7",
-      "混合型インスリン",
-      "速効型インスリン",
-      "中間型インスリン",
-      "注射部位硬結",
-      "インスリンヒト"
-    ],
-    "normalizedTokens": [
-      "こんごうがたいんすりんせいざい",
-      "のぼりんさんじゅうあーる",
-      "いのれっとさんじゅうあーる",
-      "ひゅーまりんさんしち",
-      "こんごうがたいんすりん",
-      "ちゅうかんがたいんすりん",
-      "そっこうがたいんすりん",
-      "こうけつ",
-      "いんすりんひと"
-    ],
-    "facets": {
-      "route": "injection",
-      "dosageForms": [
-        "injection"
-      ],
-      "situation": [
-        "general",
-        "sickday"
-      ],
-      "drugClass": [
-        "insulin",
-        "insulin_mixed_regular_intermediate",
-        "insulin_human"
-      ]
-    }
-  },
   "tagCatalog": {
     "intentTags": [
       "adherence_support",

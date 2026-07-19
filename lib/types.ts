@@ -645,13 +645,6 @@ export interface ModuleSearchConfig {
   multiTerm?: MultiTermConfig
 }
 
-/** index ブロック */
-export interface ModuleIndex {
-  searchableText?: string[]
-  normalizedTokens?: string[]
-  facets?: Record<string, string[]>
-}
-
 export interface ModuleTemplate {
   templateId?: string
   templateVersion?: string
@@ -776,7 +769,6 @@ export interface ModuleData {
   template?: ModuleTemplate
   risks?: ModuleRisks
   searchConfig?: ModuleSearchConfig
-  index?: ModuleIndex
   /** defaults: followup などのデフォルト値 */
   defaults?: {
     /** 旧スキーマ互換: scenario.followup === "default" 参照先 */

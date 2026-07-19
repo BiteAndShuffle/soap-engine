@@ -70,7 +70,6 @@ CHECK_ITEMS または UNRESOLVED_STRUCTURE へ送る。
 - drug.search
 - drugResolution
 - searchConfig
-- index
 - display
 - defaults（followup本文除く）
 - ui

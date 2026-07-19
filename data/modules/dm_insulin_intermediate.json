@@ -4448,41 +4448,6 @@
       "match": "prefix"
     }
   },
-  "index": {
-    "searchableText": [
-      "中間型インスリン製剤",
-      "ノボリンN",
-      "ヒューマリンN",
-      "中間型インスリン",
-      "NPHインスリン",
-      "インスリン製剤",
-      "糖尿病"
-    ],
-    "normalizedTokens": [
-      "ちゅうかんがたいんすりんせいざい",
-      "のぼりんえぬ",
-      "ひゅーまりんえぬ",
-      "ちゅうかんがたいんすりん",
-      "えぬぴーえいちいんすりん",
-      "いんすりんせいざい",
-      "とうにょうびょう"
-    ],
-    "facets": {
-      "route": "injection",
-      "dosageForms": [
-        "injection"
-      ],
-      "situation": [
-        "general",
-        "sickday"
-      ],
-      "drugClass": [
-        "insulin",
-        "insulin_intermediate",
-        "nph_insulin"
-      ]
-    }
-  },
   "tagCatalog": {
     "intentTags": [
       "adherence_support",

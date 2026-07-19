@@ -11,8 +11,6 @@ PN1〜PN5 の全成果物を統合し、完成 JSON を生成する。
 **PN5 成果物の事前確認（統合開始前に必ず確認）:**
 phase5_non_scenario.json に以下が存在しない場合、即 MUST_STOP → PN5 へ差し戻す:
 - `persona`
-- `index.searchableText` / `index.normalizedTokens` / `index.facets`
-- `index.scenarioIds` / `index.addonIds` / `index.followupProfileIds` / `index.groupKeyRegistry`
 - `ui` / `risks` / `searchConfig` / `tagCatalog` / `expressModes`
 
 **composition.sMergePolicy の確認:**
@@ -131,7 +129,6 @@ Phase 5 の以下をそのまま追加する:
 ui
 risks
 searchConfig
-index          ← phase5 の index を完全マージ（searchableText/normalizedTokens/facets を含む）
 tagCatalog
 expressModes
 persona        ← phase5 の persona を top-level へ配置（defaults の直後）
@@ -168,7 +165,6 @@ addons
 ui
 risks
 searchConfig
-index
 tagCatalog
 expressModes
 ```

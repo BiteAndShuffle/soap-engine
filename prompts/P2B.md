@@ -314,7 +314,6 @@ addons.orderPresets build原則:
 - template
 - risks
 - searchConfig
-- index
 - display
 - defaults
 - ui
@@ -369,8 +368,6 @@ build原則：
 - bridgeに明示された場合のみ canonical JSON へ格納する。
 - bridgeにない search token を推測生成してはならない。
 - 剤形違い検索のための補助tokenとして扱い、brand identity / alias identity とは分離する。
-- index.searchableText / index.normalizedTokens への反映は、P0-B / APP RULE / loader仕様に明示がある場合のみ行う。
-- loader仕様が未確定の場合、index反映はCHECKとする。
 mandatory diff対象：
 - commonSearchTokens
 - formulationSearchTokens
@@ -652,7 +649,6 @@ P3へ渡すもの：
   - drug.search.matchPolicy.allowMultiTokenAndMatch
   - drug.search.matchPolicy.allowFormulationTokenMatch
   - commonSearchTokens / formulationSearchTokens が alias系へ展開されていないこと
-  - index.searchableText / index.normalizedTokens への反映要否
 P3_HANDOFFは
 Structural Validation対象のみを引き継ぐ。
 以下はP3対象ではない。

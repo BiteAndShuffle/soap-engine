@@ -133,8 +133,6 @@ CHECK対象とできるのは、
 - search.exactAliases
 - search.prefixAliases
 - search.nameAliases
-- index.searchableText
-- index.normalizedTokens
 - exactAlias優先
 - prefix検索
 - alias衝突確認
