@@ -170,7 +170,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const brandNames = drug?.brandNames ?? []
 
   // brandCatalog[brand].aliases を正規化してマップ化（matchedBrandName 精度向上用）
-  // brandCatalog[brand].genericName もマップ化（一般名検索時の drugDisplayLabel 解決用）
+  // brandCatalog[brand].displayGenericName もマップ化（一般名検索時の drugDisplayLabel 解決用）
   const brandCatalogAliasMap: Record<string, string[]> = {}
   const brandCatalogGenericMap: Record<string, string> = {}
   const brandCatalogGenericKeyMap: Record<string, string> = {}
@@ -178,9 +178,9 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   for (const [brand, entry] of Object.entries(brandCatalog)) {
     const aliases = (entry as { aliases?: string[]; genericName?: string }).aliases ?? []
     brandCatalogAliasMap[brand] = aliases.map(normalizeText).filter(Boolean)
-    // displayGenericName を優先（Topbar・S先頭文・{{drug_subject}} 解決で統一表示するため）
+    // displayGenericName が表示用一般名のSSOT（genericName＝正式名称へはフォールバックしない）
     const e = entry as { genericKey?: string; displayGenericName?: string; genericName?: string }
-    const resolvedGenericName = e.displayGenericName ?? e.genericName
+    const resolvedGenericName = e.displayGenericName
     if (resolvedGenericName) brandCatalogGenericMap[brand] = resolvedGenericName
     // グルーピング判定専用キー: genericKey が未設定のモジュールは表示文字列に後方互換フォールバックする
     const resolvedGenericKey = e.genericKey ?? resolvedGenericName

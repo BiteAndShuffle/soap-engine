@@ -740,25 +740,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     activeModuleData.display?.nodeLabelShort ??
     activeModuleData.composition?.nodeLabelShort
   // brandCatalog から表示用一般名を取得
-  // displayGenericName（表示優先）→ genericName の順で解決
+  // displayGenericName が表示用一般名のSSOT（genericName＝正式名称へはフォールバックしない）
   const brandCatalogGenericName = resolvedBrand
-    ? (() => {
-        const entry = activeModuleData.drug?.brandCatalog?.[resolvedBrand]
-        return entry?.displayGenericName ?? entry?.genericName
-      })()
+    ? activeModuleData.drug?.brandCatalog?.[resolvedBrand]?.displayGenericName
     : undefined
   const activeDrugLabel = (() => {
     const shortLabel = nodeLabelShort
-    // 先発名｜一般名｜系統 形式: brandName と genericName が揃っている場合
+    // 先発名｜一般名｜系統 形式: brandName と displayGenericName が揃っている場合
     if (resolvedBrand) {
-      // 一般名: brandCatalog.displayGenericName → genericName → activeDrugDisplayName の優先順
+      // 一般名: brandCatalog.displayGenericName → activeDrugDisplayName の優先順
       const genericPart = brandCatalogGenericName ?? activeDrugDisplayName
       if (genericPart && genericPart !== resolvedBrand) {
         return shortLabel
           ? `${resolvedBrand}｜${genericPart}｜${shortLabel}`
           : `${resolvedBrand}｜${genericPart}`
       }
-      // 一般名なし（例: GLP-1 等、brandCatalog.genericName が未設定）
+      // 一般名なし（例: GLP-1 等、brandCatalog.displayGenericName が未設定）
       return shortLabel
         ? `${resolvedBrand}（${shortLabel}）`
         : resolvedBrand
@@ -815,12 +812,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     manualScenarioSelectRef.current = false  // 消費してリセット
     if (selectedScenarioId !== null && primaryScenario) {
       // activeDrugDisplayNameRef: Express GEモード時の GE名（ref 経由で stale closure 防止）
-      // activeBrandName は brandCatalog 解決キー（先発名）として保持
+      // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const primaryDrugName = activeDrugDisplayNameRef.current
-        ?? activeBrandName
-        ?? activeModuleData.drug?.brandNames?.[0]
-        ?? activeModuleData.drug?.genericName
-        ?? ''
+        ?? resolveDrugName(activeModuleData.drug, activeBrandName)
       const { fields: rawFields } = buildNodeFields(primaryScenario, activeModuleData, [], primaryDrugName)
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
       rawPrimaryFieldsRef.current = rawFields
@@ -1442,11 +1436,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       //   new_addition: 「薬を」→「{drug}を」
       //   med_changed:  「薬が変更と」→「{drug}に変更と」（stable/improved/unchanged/not_improved 共通）
       //   continued_do: 薬剤名なし（「引き続き使用して〜」は主語省略が自然）
+      // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const drugName = activeDrugDisplayName
-        ?? activeBrandName
-        ?? activeModuleData.drug?.brandNames?.[0]
-        ?? activeModuleData.drug?.genericName
-        ?? ''
+        ?? resolveDrugName(activeModuleData.drug, activeBrandName)
       // adjustmentExpression: S先頭文生成用（menuGroupLabels はメニュー表示専用・役割分離）
       // display.adjustmentExpression が最優先。省略時は従来の増量/減量テンプレートにフォールバック。
       const adjustmentExpression = activeModuleData.display?.adjustmentExpression

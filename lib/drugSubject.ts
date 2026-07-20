@@ -11,10 +11,10 @@
  *   - drugName が空文字の場合はスロットをそのまま残す（サイレント失敗なし）。
  *
  * 薬剤名解決の優先順:
- *   1. matchedBrandName（サジェストでユーザーが選んだブランド名）
- *   2. drug?.brandNames?.[0]（モジュールのデフォルトブランド名）
- *   3. drug?.genericName（一般名フォールバック）
- *   4. '' → 未解決のまま（{{drug_subject}} を残す）
+ *   1. matchedBrandName（サジェストでユーザーが選んだブランド名 = 商品名）
+ *   2. drug?.brandNames?.[0] に対応する brandCatalog[...].displayGenericName
+ *      （ブランド未確定時。表示用一般名のSSOT。genericName＝正式名称へはフォールバックしない）
+ *   3. '' → 未解決のまま（{{drug_subject}} を残す）
  */
 
 import type { SoapFields, Drug } from './types'
@@ -42,18 +42,24 @@ export function resolveDrugSubject(fields: SoapFields, drugName: string): SoapFi
 /**
  * モジュールの drug 情報と matchedBrandName から薬剤名を解決する。
  *
+ * 通常UI・SOAP生成における薬剤名解決のSSOT。呼び出し元固有のフォールバック
+ * ロジックを個別に書かず、常にこの関数を経由すること。
+ *
  * 優先順:
- *   1. matchedBrandName（サジェスト時のブランド選択）
- *   2. drug?.brandNames?.[0]（モジュールデフォルト）
- *   3. drug?.genericName（一般名フォールバック）
- *   4. ''（解決不能: スロットを残す）
+ *   1. matchedBrandName（サジェスト時のブランド選択 = 商品名）
+ *   2. drug?.brandNames?.[0] に対応する brandCatalog[...].displayGenericName
+ *      （ブランド未確定時。表示用一般名のSSOT）
+ *   3. ''（解決不能: スロットを残す。genericName＝正式名称へは暗黙フォールバックしない）
  */
 export function resolveDrugName(
   drug: Drug | undefined,
   matchedBrandName?: string,
 ): string {
   if (matchedBrandName) return matchedBrandName
-  if (drug?.brandNames?.[0]) return drug.brandNames[0]
-  if (drug?.genericName) return drug.genericName
+  const fallbackBrand = drug?.brandNames?.[0]
+  if (fallbackBrand) {
+    const displayGeneric = drug?.brandCatalog?.[fallbackBrand]?.displayGenericName
+    if (displayGeneric) return displayGeneric
+  }
   return ''
 }

@@ -314,3 +314,33 @@ describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数
     assert.equal(results[1].matchedBrandName, 'シングレア')
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 10. 一般名見出し候補は displayGenericName のみから生成される（塩類名フォールバック廃止）
+// ─────────────────────────────────────────────────────────────
+
+describe('⑩ 一般名見出し候補の displayGenericName 一本化', () => {
+  test('"いめぐりみん" → 一般名見出し候補の表示値が displayGenericName（塩類名なし）', () => {
+    const results = getDrugSuggestions('いめぐりみん', fullIndex, 8)
+    const genericHeader = results.find(r => r.isGenericLabel)
+    assert.ok(genericHeader, '一般名見出し候補が見つからない')
+    assert.equal(genericHeader!.drugDisplayLabel, 'イメグリミン')
+    assert.equal(genericHeader!.uiLabel, 'イメグリミン')
+    assert.ok(
+      !genericHeader!.drugDisplayLabel?.includes('塩酸塩'),
+      '一般名見出し候補の表示値に塩類名が混入してはならない',
+    )
+  })
+
+  test('ブランド候補側（"ツイミーグ（イメグリミン）"）にも塩類名が混入しない', () => {
+    const results = getDrugSuggestions('いめぐりみん', fullIndex, 8)
+    const brandCandidate = results.find(r => r.matchedBrandName === 'ツイミーグ' && !r.isGenericLabel)
+    assert.ok(brandCandidate, 'ブランド候補（ツイミーグ）が見つからない')
+    assert.ok(
+      !brandCandidate!.uiLabel?.includes('塩酸塩'),
+      `ブランド候補の uiLabel に塩類名が混入している: "${brandCandidate!.uiLabel}"`,
+    )
+    // 商品名選択時の {{drug_subject}} 解決値そのものは商品名（ブランド名）
+    assert.equal(brandCandidate!.drugDisplayLabel, 'ツイミーグ')
+  })
+})
