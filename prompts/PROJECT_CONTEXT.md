@@ -1,7 +1,7 @@
 # SOAPエンジン PROJECT_CONTEXT
 
 > **Version:** 2.0
-> **Last Updated:** 2026-07-05
+> **Last Updated:** 2026-07-21
 > **Current Focus:** 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field修正 + 多剤合成テスト正式化）完了。次フェーズ候補は DPP4実装（詳細: `prompts/vNext/HANDOFF.md`）。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
@@ -29,6 +29,7 @@
 
 | ドキュメント | 役割 |
 |---|---|
+| `docs/DEVELOPMENT_STANDARD.md` | **プロジェクト全体構造の索引（最初に読む入口文書）**。Mission / Core Philosophy / Architecture / Development Workflow / 正本関係 / Documentation Map を一枚で把握する |
 | `docs/DESIGN_PRINCIPLES.md` | モジュール設計原則（なぜそうするか）|
 | `docs/JSON_STANDARD.md` | canonical JSON 構造標準（どう書くか）|
 | `docs/BOOTSTRAP_STANDARD.md` | Bootstrap 設計標準（P0-A 工程の設計意図）|
@@ -43,11 +44,13 @@
 
 新規チャット・セッション再起動時の手順：
 
-1. `prompts/PROJECT_CONTEXT.md`（本ファイル）を確認する
-2. **Current Phase** を確認し、今何をしているか・何をまだしないかを把握する
-3. 作業に必要なプロンプトファイル（`prompts/P0-A.md` 等）を確認する
-4. 不足しているファイル・添付があれば **最初に報告する**（推測で進まない）
-5. 作業計画を提示し、**承認を得てから** 修正・保存を開始する
+1. `docs/DEVELOPMENT_STANDARD.md` を読み、プロジェクト全体構造・正本関係・開発工程・
+   文書マップを把握する（このセッションで未読の場合。既読の場合は省略してよい）
+2. `prompts/PROJECT_CONTEXT.md`（本ファイル）を確認する
+3. **Current Phase** を確認し、今何をしているか・何をまだしないかを把握する
+4. 作業に必要なプロンプトファイル（`prompts/P0-A.md` 等）を確認する
+5. 不足しているファイル・添付があれば **最初に報告する**（推測で進まない）
+6. 作業計画を提示し、**承認を得てから** 修正・保存を開始する
 
 ### vNext 体系で作業する場合（旧 P0-A〜P5 とは排他）
 

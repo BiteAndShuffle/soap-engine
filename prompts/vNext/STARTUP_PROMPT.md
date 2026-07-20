@@ -1,7 +1,7 @@
 # SOAP Engine — Claude新規チャット用 引き継ぎプロンプト（vNext正式版）
 
-version: 1.0
-最終更新: 2026-07-08
+version: 1.1
+最終更新: 2026-07-21
 対象: vNext PN1〜PN8ワークフローを使用するすべてのbridge作業
 
 ## Purpose
@@ -24,6 +24,16 @@ vNext PN1〜PN8ワークフローでbridge作業（新規モジュールの追�
 - token efficiency
 
 `{moduleId}` は対象bridgeのmoduleIdに置換してから使用する。
+
+## 事前確認（本テンプレートを使う前に）
+
+このセッションで `docs/DEVELOPMENT_STANDARD.md`（プロジェクト全体構造の索引文書）を
+まだ読んでいない場合は、本テンプレートを使用する前に先に読むことを推奨する。
+`docs/DEVELOPMENT_STANDARD.md` → `prompts/PROJECT_CONTEXT.md` の順で全体像を把握した上で、
+本テンプレート（下記「テンプレート本文」）を使って vNext 個別フェーズの作業へ進む。
+
+本テンプレート自体の「■最初に読み込むファイル（順序厳守）」の内容・順序はこの事前確認によって
+変更されない。
 
 ---
 

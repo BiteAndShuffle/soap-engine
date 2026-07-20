@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-06-20
+最終更新: 2026-07-21
 
 ---
 
@@ -103,6 +103,58 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `matchPolicy.preferExactAlias` | boolean | — |
 | `matchPolicy.allowPrefixMatch` | boolean | — |
 | `matchPolicy.suppressCrossModuleSuggestionsOnExactHit` | boolean | 全 module で `true` |
+
+**matchPolicy 任意フィールド（opt-in・全 module 必須ではない）**
+
+以下 3 フィールドは `DrugSearchMatchPolicy`（`lib/types.ts`）の optional フィールドであり、
+bridge が明示的に opt-in した module のみ有効化する。省略時（未記載）は全モジュールとも
+`false` として扱われ、既存モジュールの検索挙動には一切影響しない。
+
+新規フィールドを追加・変更する場合の手順は `prompts/RULES.md` §26 を参照。
+
+---
+
+**`matchPolicy.preferOwnNameMatchOverGenericMatch`**
+
+| 項目 | 内容 |
+|---|---|
+| 型 | `boolean`（optional） |
+| default 挙動 | 省略時 `false`。direct 候補の並び順・結合順は従来どおり（`[genericMode] → [direct/sibling/genericHeader]`）を維持する |
+| true にした場合の挙動 | direct 候補内で、ブランド自身の正式名・alias 一致（tier1）を、`brandCatalog[brand].displayGenericName`（または `genericName`）経由のみの一致（tier2）より優先して並び替える。さらに、当該クエリで tier1 一致による direct 候補が 1 件でも得られた場合、最終結合順を `[direct/sibling/genericHeader] → [genericMode]` に切り替える（`lib/search.ts` 内部フラグ `promoteDirectOverGenericMode`）。他モジュールの候補が `genericName` 経由の弱い一致（tier2）のみで割り込むことを防ぐための並び替えであり、フラグが立たないモジュールの挙動には影響しない |
+| 適用対象 | 自モジュールのブランド名・alias に直接一致するクエリに対し、他モジュールの成分名経由の弱い一致（例: 配合剤の成分名が偶然別モジュールのブランド名と前方一致するケース）より自モジュールの候補を優先したい module |
+| 他の matchPolicy 項目との関係 | `suppressRedundantGenericHeaderOnDirectMatch` と併用する設計で、現行運用モジュールは両方 `true`。`crossModuleIndicationLabel` とはコード上の分岐が独立しており相互作用しないが、両方を同一モジュールで `true` にする組み合わせは未検証・未使用 |
+| 候補表示・dedup・表示順への影響 | dedup キー（`moduleId:brand`）自体は変更しない。表示順（候補の並び）と、genericMode/direct 系バケツの結合順にのみ影響する |
+| 現在使用しているモジュール | `dm_biguanide_metformin_oral` / `dm_thiazolidinedione_pioglitazone_oral` |
+
+---
+
+**`matchPolicy.suppressRedundantGenericHeaderOnDirectMatch`**
+
+| 項目 | 内容 |
+|---|---|
+| 型 | `boolean`（optional） |
+| default 挙動 | 省略時 `false`。ブランド名検索で direct/sibling 候補提示後、末尾に一般名単独の `genericHeader` 候補（例:「メトホルミン塩酸塩」単独見出し）を通常どおり追加する |
+| true にした場合の挙動 | direct/sibling 候補が既に同一成分のブランドを提示している場合、冗長な一般名単独の `genericHeader` 候補をバケツに追加しない（生成自体を抑制する） |
+| 適用対象 | ブランド名検索でブランド候補が十分に得られるため、同じ成分を示す一般名単独見出しの追加表示が冗長になる module |
+| 他の matchPolicy 項目との関係 | `preferOwnNameMatchOverGenericMatch` と併用する設計（現行運用モジュールは両方 `true`）。`crossModuleIndicationLabel` が `true` のモジュールでは、このフィールドの抑制ロジックは使われず、`trailingGenericIsMultiModule` 分岐（適応ラベル付き見出しを表示する側）に置き換わる。両フィールドを同一モジュールで併用しない設計であり、組み合わせは未検証 |
+| 候補表示・dedup・表示順への影響 | `genericHeader` バケツへの候補追加そのものを行わないため、dedup 判定に到達する前に候補が存在しない状態になる |
+| 現在使用しているモジュール | `dm_biguanide_metformin_oral` / `dm_thiazolidinedione_pioglitazone_oral` |
+
+---
+
+**`matchPolicy.crossModuleIndicationLabel`**
+
+| 項目 | 内容 |
+|---|---|
+| 型 | `boolean`（optional） |
+| default 挙動 | 省略時 `false`。同一ブランド・同一一般名が複数モジュールに存在しても、モジュール横断で 1 件に集約する従来の dedup 挙動（`__generic__:${genericName}` キー、moduleId を含まない）を維持する |
+| true にした場合の挙動 | 同一ブランド／同一一般名が、適応領域の異なる複数モジュールにまたがって存在する場合、モジュール横断で 1 件に集約せず、適応ラベル（例:「糖尿病」「心・腎」「腎」）付きの候補としてモジュールごとに独立表示する。適応ラベルは `categoryPath[0]`（フォールバック）と `brandCatalog[brand].handlingTags`（`heart_failure_supported` / `ckd_supported`）から動的に導出し、新規データフィールドは追加しない |
+| 適用対象 | **同一 `genericKey` が複数モジュールに存在する場合にのみ有効に働く**（`lib/search.ts` の `multiModuleGenericKeys` 判定）。genericKey が単一モジュールにのみ存在するブランド・成分には一切影響しない |
+| 他の matchPolicy 項目との関係 | `suppressRedundantGenericHeaderOnDirectMatch` の抑制ロジックとは排他的に分岐する（後者は「見出しを出さない」、本フィールドは「見出しを適応ラベル付きで出す」）。`preferOwnNameMatchOverGenericMatch` とはコード上独立で相互作用しない。現行運用モジュールは本フィールドのみ `true`、他 2 フィールドは `false` |
+| 候補表示・dedup・表示順への影響 | ブランド名検索では「自ブランド（糖尿病）→ 自ブランド（心・腎／腎）→ 対応する一般名（糖尿病）→ 対応する一般名（心・腎／腎）」の 4 候補、一般名検索では「一般名（糖尿病）→ 一般名（心・腎／腎）→ 対応するブランド（糖尿病）→ 対応するブランド（心・腎／腎）」の 4 候補を返す。各適応ペア内の順序は既存のモジュール登録順（糖尿病 → 心・腎／腎）を維持し、新たな優先順位ロジックは追加しない。dedup キーに `moduleId` を含める（`__generic__:${genericName}:${moduleId}`）ことで、既存のモジュール横断集約（例: `genericKey` 未設定でも `displayGenericName` 一致により 1 件へまとまるインスリン製剤等）の挙動には影響させない |
+| 現在使用しているモジュール | `dm_sglt2_oral` / `cardiorenal_sglt2_oral` |
+
+設計原則としての位置づけは `docs/DESIGN_PRINCIPLES.md` DP-11 を参照。
 
 **brandCatalog エントリのスキーマ**
 

@@ -1,4 +1,4 @@
-SOAPエンジン RULES.md — 横断ルール辞書 v1.1
+SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 
 # 概要・使い方
 
@@ -7,9 +7,9 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.1
 
 - **工程手順・build手順は含みません**（各工程ファイルを参照）
 - **preservation対象の完全リストは P1.md が正本**（Section 4 参照）
-- **bridge→JSON変換規則の正本は P0-B.md**（Section 5 の変換表はP0-Bと一部不整合あり→CHECK-T01）
+- **bridge→JSON変換規則の正本は P0-B.md**（Section 5 の変換表はP0-Bと一致・CHECK-T01は解決済み）
 
-最終更新: 2026-06-29
+最終更新: 2026-07-21
 
 ---
 
@@ -183,7 +183,7 @@ P2B ADDON_BUILD 時に参照する。
 
 **未定義 type が出た場合**: 推測生成せず CHECK として停止し、人間に確認してからマッピングを決定する。
 
-> ⚠️ **CHECK-T01（P0-B不整合）**: P0-B.md の変換表では `side_effect_guidance → group: "counseling"` と記載されているが、P2B.md / 実 canonical JSON の全実績 / 前セッション修正実績は `"sideEffects"` が正しい。RULES.md では P2B.md・実 JSON 実績を正本として `"sideEffects"` を採用する。P0-B.md の該当行は未修正（要更新: Step 6 対象）。
+> ✅ **CHECK-T01（P0-B不整合・RESOLVED）**: 過去（Step 1.5 以前）に P0-B.md の変換表で `side_effect_guidance → group: "counseling"` という誤った記載があり、P2B.md / 実 canonical JSON の全実績 / 前セッション修正実績が示す正しい値 `"sideEffects"` と乖離していた。Step 1.5 で P0-B.md の該当行を `"sideEffects"` へ修正済み（現在の `prompts/P0-B.md` 該当行は本表の値と一致しており、以後この乖離は発生していない）。本節の表は当時から一貫して `"sideEffects"` を正本として記載しており、変更していない。詳細な解決記録は本ファイル末尾の「CHECK 事項」表 CHECK-T01 を参照。
 
 ---
 
@@ -243,7 +243,7 @@ bridge type `side_effect_guidance` の addon は canonical JSON の group を `"
 }
 ```
 
-誤り: `group: "counseling"`（P0-B.md 現行記載値は不正確 → CHECK-T01 参照）
+誤り: `group: "counseling"`（P0-B.md では過去にこの誤記載があったが Step 1.5 で修正済み。現行の P0-B.md 記載値は本ルールと一致している → CHECK-T01 参照）
 
 根拠:
 - P2B.md 変換表（"sideEffects" と明記）
@@ -555,7 +555,7 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 | ID | ステータス | 内容 | 影響ファイル | 推奨対応 |
 |---|---|---|---|---|
-| CHECK-T01 | **RESOLVED** | P0-B.md の変換表に `side_effect_guidance → "counseling"` と記載されていたが `"sideEffects"` が正しい | prompts/P0-B.md | Step 1.5 で修正済み |
+| CHECK-T01 | **RESOLVED** | P0-B.md の変換表に `side_effect_guidance → "counseling"` と記載されていたが `"sideEffects"` が正しい（詳細な経緯は本ファイル §5 の CHECK-T01 注記を参照） | prompts/P0-B.md | Step 1.5 で修正済み。以後 P0-B.md 該当行は `"sideEffects"` のまま維持されている（2026-07-21 現況確認済み） |
 | CHECK-G01 | OPEN | `"adherence"` group が JSON_STANDARD.md に有効値として定義されているが AddonPanel.tsx GROUP_LABELS にラベル未登録（下記詳細参照） | app/components/AddonPanel.tsx / docs/JSON_STANDARD.md | GROUP_LABELS に日本語ラベルを定義するか要判断 |
 | CHECK-G02 | OPEN | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_LABELS にラベル未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | 新規 module では使用しないこと。既存ファイルの migration 要否は別途判断 |
 | CHECK-TP01 | OPEN | `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` に `thirdPanelSPlacement` キーが存在しない（Section 14 ルール違反） | data/modules/dm_gip_glp1ra_tirzepatide_injection.json | 次回 audit 時に thirdPanelSPlacement 固定値を追加する |
@@ -759,3 +759,24 @@ Addon の表示順は、コード側の固定順ではなく bridge / canonical 
 - 両者は独立して適用する。addonsRef を編集する際は、集合・順序の両方が bridge の `P_ADDON` と一致していることを確認する
 
 （bridge作成〜PN1開始手順の全体像は `prompts/vNext/HANDOFF.md` を参照）
+
+---
+
+## 26. matchPolicy 変更時の同時更新ルール（matchPolicy Change Process Rule）
+
+`drug.search.matchPolicy`（`lib/types.ts` の `DrugSearchMatchPolicy`）へ新しいフィールドを追加、または既存フィールドの挙動を変更する場合、以下を**同一作業内**で更新する。型定義のみを先行実装し、他の更新を後回しにしてはならない。
+
+**同一作業内で更新する対象:**
+- `lib/types.ts`（型定義。JSDoc に default 挙動・true 時の挙動を明記する）
+- `docs/JSON_STANDARD.md`（matchPolicy 仕様表。型・default 挙動・true 時の挙動・適用対象・他フィールドとの関係・候補表示/dedup/表示順への影響・使用モジュール一覧を記載する）
+- `docs/DESIGN_PRINCIPLES.md`（新しい設計パターンを伴う変更の場合のみ、新規 DP として追加する。既存 DP の組み合わせで説明できる変更であれば新規 DP は不要）
+- 検索 unit tests（`tests/search.test.ts` 等。新規フィールドの動作確認テストと、無効時に既存モジュールへ影響しないことを確認する回帰テストの両方を追加する）
+- `docs/IMPLEMENTATION_CHECKLIST.md` の Runtime / 実機横断確認チェック項目（新しい検索挙動を実機確認の対象に含める）
+
+**検索ロジック変更時の確認範囲:**
+`lib/search.ts` の候補生成は、クエリがブランド名に直接一致する **direct 系コードパス**（`resolveAllHighPrecisionBrands` / direct・sibling バケツ）と、クエリが一般名に一致する **generic match 系コードパス**（`groups` 構築ロジック / genericMode バケツ）の 2 系統に分かれている。一方の系統のみを確認して変更を確定してはならない。matchPolicy フィールドの追加・変更では、**両方のコードパスで実際に候補が生成されるか（一方の型で検索した結果、対応する他方の型の候補が消えていないか）を確認する**こと。
+
+**採用理由**
+`crossModuleIndicationLabel` の初期実装（2026-07）は、適応ラベル表示という目的に対して direct 系コードパスのみを変更し、generic match 系コードパスの対応する候補生成ロジックを見落とした。この結果、ブランド名検索で一般名候補が、一般名検索でブランド名候補が消える回帰が発生し、ユーザーの実機確認で発見された（validator では検出不能な性質の不具合だった）。同種の見落としを防ぐため、変更範囲の確認手順をルール化する。
+
+（設計原則としての詳細は `docs/DESIGN_PRINCIPLES.md` DP-11 を参照）

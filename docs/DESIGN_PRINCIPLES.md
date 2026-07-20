@@ -8,7 +8,7 @@ SOAP Engine の設計根拠・例外許容条件・禁止事項を永続化し�
 設計判断の参照順序:
   このドキュメント → JSON_STANDARD.md → OPEN_DESIGN_QUESTIONS.md → bridge 原稿 → canonical JSON
 
-最終更新: 2026-07-18
+最終更新: 2026-07-21
 
 ---
 
@@ -349,6 +349,51 @@ DP-07（bridge SOT 原則）— 同じ「データが正本」という思想の
 
 ---
 
+## DP-11: 適応横断検索到達性原則（Cross-Indication Search Reachability Principle）
+
+**目的**
+同一成分・同一ブランドが、適応領域（`categoryPath[0]`）の異なる複数モジュールに重複して存在する場合、検索結果からモジュール横断 dedup で一方を消さず、適応ラベルで区別しながら双方に到達できるようにする。
+
+**適用範囲**
+同一 `genericKey`（RULES.md §21）が複数モジュールにまたがって存在する module 群のうち、`matchPolicy.crossModuleIndicationLabel` を opt-in した module のみ。
+
+**基本ルール**
+- 同一成分でも適応領域が異なる候補は、モジュール横断 dedup の対象外とする（1 件に集約しない）
+- 適応ラベル（例:「糖尿病」「心・腎」「腎」）を候補の `uiLabel` に付与し、ユーザーがモジュールを区別できるようにする
+- 直接一致（クエリと直接一致する型 — ブランド名検索ならブランド、一般名検索なら一般名）を優先して先に表示し、その後に対応する別名候補（ブランド名検索なら一般名、一般名検索ならブランド名）を表示する
+- 対応するブランド名⇔一般名の相互到達性を失わせない。一方の型で検索した結果、他方の型の候補が消えることがあってはならない
+- 各適応ペア内の順序は既存のモジュール登録順（`data/modules/index.ts` の登録順、例: 糖尿病 → 心・腎／腎）を維持し、新たな優先順位ロジックを追加しない
+- `genericKey` が単一モジュールにのみ存在するブランド・成分には一切影響させない（適応ラベル化・dedup 挙動の変更を波及させない）
+- 既に `genericKey` 横断集約が行われている薬剤（例: 同一成分を複数モジュールで共有するインスリン製剤等）の挙動を、本原則の適用によって不用意に変更しない
+
+**例外条件**
+- `matchPolicy.crossModuleIndicationLabel` を opt-in していない module には適用しない
+- 同一 `genericKey` が単一 module にのみ存在する場合は適用しない（適応ラベル化は発生せず、DP-09 の従来挙動のまま）
+
+**プロセス連動ルール**
+新しい `matchPolicy` フィールドを追加した場合は、以下を同一作業内で更新する（型定義のみの先行実装を禁止する）:
+- `lib/types.ts`（型定義）
+- `docs/JSON_STANDARD.md`（matchPolicy 仕様表）
+- `docs/DESIGN_PRINCIPLES.md`（新しい設計パターンを伴う場合、新規 DP として追加）
+- 検索 unit tests（`tests/search.test.ts` 等）・回帰テスト
+- Runtime / 実機横断チェック項目（`docs/IMPLEMENTATION_CHECKLIST.md`）
+
+検索ロジックの変更では、direct match 系のコードパスと generic match 系のコードパスの両方を確認する（詳細な手順は `prompts/RULES.md` §26）。
+
+**採用理由**
+糖尿病領域で SGLT2 阻害薬（`dm_sglt2_oral` = 糖尿病適応 / `cardiorenal_sglt2_oral` = 心不全・慢性腎臓病適応）が同一ブランド・同一一般名を持つケースが発生した。適応ラベル表示のみを狙った初期実装が、ブランド名検索⇔一般名検索の相互到達性を壊す回帰を引き起こしたため、再発防止として原則化する。同種の複数適応薬剤は今後他の薬効クラス（循環器・腎臓連携薬等）でも発生しうる。
+
+**関連フィールド**
+`matchPolicy.crossModuleIndicationLabel` / `brandCatalog[brand].genericKey` / `brandCatalog[brand].handlingTags`（`heart_failure_supported` / `ckd_supported`）/ `categoryPath[0]`
+
+**関連原則**
+DP-09（一般名検索到達性原則）— 「検索到達性を失わせない」という思想を、単一適応内の到達性から複数適応にまたがる到達性へ拡張したもの
+
+**詳細経緯**
+実装の技術的詳細（tier 分類・dedup キー設計）は `lib/search.ts` の `resolveAllHighPrecisionBrands()` / `crossModuleIndicationLabel` 関連分岐のコメントを参照。本原則制定時点で設計保留事項はない。
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -370,6 +415,7 @@ DP-07（bridge SOT 原則）— 同じ「データが正本」という思想の
 | moduleVersion | DP-04 |
 | 一般名検索到達性 / brandCatalog alias | DP-09 |
 | Addon 表示順 / P_ADDON 記載順 | DP-10 |
+| 適応横断検索（crossModuleIndicationLabel） | DP-11 |
 
 ### 失われると事故要因になる原則
 
@@ -380,3 +426,4 @@ DP-07（bridge SOT 原則）— 同じ「データが正本」という思想の
 | DP-07 | JSON 直接編集 → bridge と乖離 → 次回 JSON 化で変更が消える |
 | DP-08 | 推測 preset 追加 → 意図しない ADDON 組み合わせが固定化 |
 | DP-10 | コード側に固定順（GROUP_ORDER 相当）を再導入 → bridge/JSON の記載順が UI に反映されなくなる |
+| DP-11 | crossModuleIndicationLabel 実装時に dedup・優先順位ロジックのみを変更 → ブランド⇔一般名の相互到達性が失われる（2026-07 に実際に発生した回帰） |
