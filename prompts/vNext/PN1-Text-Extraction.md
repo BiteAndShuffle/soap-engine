@@ -135,6 +135,22 @@ bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `
 - CP良好・CP不良・生活指導等のシナリオでは S フィールドの主語省略を許容する
 - 省略を許容するシナリオでは S フィールドに `{{drug_subject}}` を補わない
 
+### 7. 塩類名の表記（S/O/A/P/P_CLOSING）
+
+← docs/JSON_STANDARD.md「SOAP本文の塩類名表記ルール」（正本）
+← `brandCatalog.{brand}.displayGenericName` の責務は prompts/vNext/PN2-Drug-Header.md を正本とする（本節はシナリオ本文の執筆ルールのみを扱う）
+
+患者向けに表示される S/O/A/P/P_CLOSING では、塩類名（〜塩酸塩／〜メシル酸塩／〜マレイン酸塩／〜リン酸塩等）を書かない。有効成分名のみを bridge 本文に記載する。ただし、薬学的説明・成分確認・監査等、正式名称の明示自体が目的の専用文脈はこの限りではない。
+
+```
+正: "イメグリミンは、食後血糖を改善する薬です。"
+誤: "イメグリミン塩酸塩は、食後血糖を改善する薬です。"
+```
+
+`drug.genericName` / `brandCatalog.{brand}.genericName`（正式名称。塩類名を含み得る） / `nameAliases` / `search.nameAliases` 等の内部データには影響しない。`brandCatalog.{brand}.displayGenericName`（表示用一般名。常に塩類名を含まない）は本節の対象外であり、PN2-Drug-Header.md の責務に従う。この規則は bridge の S/O/A/P/P_CLOSING 本文の執筆時のみに適用する。
+
+新規モジュールの bridge 執筆時に適用する。既存モジュールの一括修正は対象外（気づいた時点で個別対応）。
+
 ---
 
 ## 出力
