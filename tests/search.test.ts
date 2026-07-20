@@ -344,3 +344,98 @@ describe('⑩ 一般名見出し候補の displayGenericName 一本化', () => {
     assert.equal(brandCandidate!.drugDisplayLabel, 'ツイミーグ')
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 11. crossModuleIndicationLabel: SGLT2 糖尿病/心腎モジュール横断の適応ラベル表示
+// ─────────────────────────────────────────────────────────────
+
+describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sglt2_oral）', () => {
+  test('ブランド名検索 "ふぉしーが" → 糖尿病・心腎の2件が適応ラベル付きで表示される', () => {
+    const results = getDrugSuggestions('ふぉしーが', fullIndex, 8)
+    assert.equal(results.length, 2, `候補は2件のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
+    assert.equal(results[0].moduleId, 'dm_sglt2_oral')
+    assert.equal(results[0].uiLabel, 'フォシーガ（糖尿病）')
+    assert.equal(results[1].moduleId, 'cardiorenal_sglt2_oral')
+    assert.equal(results[1].uiLabel, 'フォシーガ（心・腎）')
+  })
+
+  test('ブランド名検索 "じゃでぃあんす" → 糖尿病・心腎の2件が適応ラベル付きで表示される', () => {
+    const results = getDrugSuggestions('じゃでぃあんす', fullIndex, 8)
+    assert.equal(results.length, 2)
+    assert.equal(results[0].uiLabel, 'ジャディアンス（糖尿病）')
+    assert.equal(results[1].uiLabel, 'ジャディアンス（心・腎）')
+  })
+
+  test('ブランド名検索 "かなぐる" → 心不全適応なしのため「腎」単独ラベルになる', () => {
+    const results = getDrugSuggestions('かなぐる', fullIndex, 8)
+    assert.equal(results.length, 2)
+    assert.equal(results[0].uiLabel, 'カナグル（糖尿病）')
+    assert.equal(results[1].uiLabel, 'カナグル（腎）')
+    assert.ok(!results[1].uiLabel?.includes('心'), 'カナグルは心不全適応がないため「心」を含んではならない')
+  })
+
+  test('一般名検索 "だぱぐりふろじん" → 糖尿病・心腎の2件が適応ラベル付きで表示される', () => {
+    const results = getDrugSuggestions('だぱぐりふろじん', fullIndex, 8)
+    assert.equal(results.length, 2, `候補は2件のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
+    assert.equal(results[0].moduleId, 'dm_sglt2_oral')
+    assert.equal(results[0].uiLabel, 'ダパグリフロジン（糖尿病）')
+    assert.ok(results[0].isGenericLabel)
+    assert.equal(results[1].moduleId, 'cardiorenal_sglt2_oral')
+    assert.equal(results[1].uiLabel, 'ダパグリフロジン（心・腎）')
+    assert.ok(results[1].isGenericLabel)
+  })
+
+  test('一般名検索 "えんぱぐりふろじん" → 糖尿病・心腎の2件が適応ラベル付きで表示される', () => {
+    const results = getDrugSuggestions('えんぱぐりふろじん', fullIndex, 8)
+    const sglt2Results = results.filter(r => r.moduleId === 'dm_sglt2_oral' || r.moduleId === 'cardiorenal_sglt2_oral')
+    assert.equal(sglt2Results.length, 2)
+    assert.equal(sglt2Results[0].uiLabel, 'エンパグリフロジン（糖尿病）')
+    assert.equal(sglt2Results[1].uiLabel, 'エンパグリフロジン（心・腎）')
+  })
+
+  test('一般名検索 "かなぐりふろじん" → 糖尿病は「糖尿病」、心腎は「腎」単独ラベル', () => {
+    const results = getDrugSuggestions('かなぐりふろじん', fullIndex, 8)
+    const sglt2Results = results.filter(r => r.moduleId === 'dm_sglt2_oral' || r.moduleId === 'cardiorenal_sglt2_oral')
+    assert.equal(sglt2Results.length, 2)
+    assert.equal(sglt2Results[0].uiLabel, 'カナグリフロジン（糖尿病）')
+    assert.equal(sglt2Results[1].uiLabel, 'カナグリフロジン（腎）')
+  })
+
+  test('検索順位: ブランド名・一般名検索とも糖尿病モジュールが心腎モジュールより先に表示される', () => {
+    for (const q of ['ふぉしーが', 'じゃでぃあんす', 'かなぐる', 'だぱぐりふろじん', 'えんぱぐりふろじん', 'かなぐりふろじん']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+        .filter(r => r.moduleId === 'dm_sglt2_oral' || r.moduleId === 'cardiorenal_sglt2_oral')
+      const diabetesIdx = results.findIndex(r => r.moduleId === 'dm_sglt2_oral')
+      const cardiorenalIdx = results.findIndex(r => r.moduleId === 'cardiorenal_sglt2_oral')
+      assert.ok(diabetesIdx >= 0 && cardiorenalIdx >= 0, `query "${q}": 両モジュールの候補が揃っていない`)
+      assert.ok(diabetesIdx < cardiorenalIdx, `query "${q}": 糖尿病モジュールが心腎モジュールより先に表示されるべき`)
+    }
+  })
+
+  test('心腎モジュールを持たないSGLT2ブランド（スーグラ/ルセフィ/デベルザ）は従来どおり一般名表示のまま', () => {
+    for (const [q, expectedGeneric] of [
+      ['すーぐら', 'イプラグリフロジン'],
+      ['るせふぃ', 'ルセオグリフロジン'],
+      ['でべるざ', 'トホグリフロジン'],
+    ] as const) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const brandCandidate = results.find(r => !r.isGenericLabel)
+      assert.ok(brandCandidate, `query "${q}": ブランド候補が見つからない`)
+      assert.equal(brandCandidate!.uiLabel, `${brandCandidate!.drugDisplayLabel}（${expectedGeneric}）`)
+      assert.ok(
+        !brandCandidate!.uiLabel?.includes('糖尿病'),
+        `query "${q}": 心腎モジュールに存在しないブランドは適応ラベル化されてはならない`,
+      )
+    }
+  })
+
+  test('既存の同一genericKeyモジュール横断集約（インスリンリスプロ）は影響を受けない', () => {
+    const results = getDrugSuggestions('いんすりんりすぷろ', fullIndex, 8)
+    const header = results.find(r => r.isGenericLabel)
+    assert.ok(header, '一般名見出し候補が見つからない')
+    assert.equal(header!.uiLabel, 'インスリンリスプロ', '適応ラベルが付与されず従来どおりの表示であるべき')
+    // 従来どおりモジュール横断で1件のみに集約されている（重複していない）
+    const headerCount = results.filter(r => r.isGenericLabel && r.drugDisplayLabel === 'インスリンリスプロ').length
+    assert.equal(headerCount, 1)
+  })
+})

@@ -360,6 +360,18 @@ export interface DrugSearchMatchPolicy {
    * 対象モジュールが明示的に opt-in した場合のみ有効（既定は無効）。
    */
   suppressRedundantGenericHeaderOnDirectMatch?: boolean
+  /**
+   * 同一ブランド／同一一般名が、適応領域（categoryPath[0]）の異なる複数モジュールに
+   * またがって存在する場合、モジュール横断で1件に集約せず、適応ラベル
+   * （例:「糖尿病」「心・腎」「腎」）付きの候補としてモジュールごとに独立して表示する。
+   * 有効時、direct候補のuiLabelは「ブランド名（一般名）」ではなく「ブランド名（適応）」になり、
+   * 一般名見出し候補のuiLabelも「一般名」ではなく「一般名（適応）」になる。
+   * 適応ラベルは categoryPath[0] と brandCatalog[brand].handlingTags
+   * （heart_failure_supported / ckd_supported）から動的に導出し、新規フィールドは追加しない。
+   * 対象モジュールが明示的に opt-in した場合のみ有効（既定は無効）。他モジュールの
+   * 挙動（例: 同一 genericKey を跨ぐインスリン製剤モジュールの集約表示）には影響しない。
+   */
+  crossModuleIndicationLabel?: boolean
 }
 
 export interface DrugSearch {

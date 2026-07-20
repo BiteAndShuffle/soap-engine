@@ -112,6 +112,15 @@ export interface SearchEntry {
   preferOwnNameMatchOverGenericMatch: boolean
   /** drug.search.matchPolicy.suppressRedundantGenericHeaderOnDirectMatch のコピー（既定 false） */
   suppressRedundantGenericHeaderOnDirectMatch: boolean
+  /** drug.search.matchPolicy.crossModuleIndicationLabel のコピー（既定 false） */
+  crossModuleIndicationLabel: boolean
+  /**
+   * ブランド名 → 適応ラベル（例: "糖尿病"/"心・腎"/"腎"）。
+   * crossModuleIndicationLabel が有効なモジュールでのみ使用する。
+   * categoryPath[0] と brandCatalog[brand].handlingTags
+   * （heart_failure_supported / ckd_supported）から動的に導出する。
+   */
+  brandCatalogIndicationLabelMap: Record<string, string>
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -200,6 +209,24 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     drugSearch?.matchPolicy?.preferOwnNameMatchOverGenericMatch ?? false
   const suppressRedundantGenericHeaderOnDirectMatch =
     drugSearch?.matchPolicy?.suppressRedundantGenericHeaderOnDirectMatch ?? false
+  const crossModuleIndicationLabel =
+    drugSearch?.matchPolicy?.crossModuleIndicationLabel ?? false
+
+  // 適応ラベル（crossModuleIndicationLabel opt-in モジュールでのみ使用）:
+  // categoryPath[0] を既定値とし、heart_failure_supported / ckd_supported の
+  // handlingTags が付与されているブランドはそれに応じた短縮ラベルへ差し替える。
+  // 新規データフィールドは追加せず、既存の categoryPath / handlingTags のみから導出する。
+  const brandCatalogIndicationLabelMap: Record<string, string> = {}
+  if (crossModuleIndicationLabel) {
+    const cat0 = moduleData.categoryPath?.[0] ?? ''
+    for (const [brand, entry] of Object.entries(brandCatalog)) {
+      const tags = entry.handlingTags ?? []
+      const hasHeartFailure = tags.includes('heart_failure_supported')
+      const hasCkd = tags.includes('ckd_supported')
+      brandCatalogIndicationLabelMap[brand] =
+        hasHeartFailure && hasCkd ? '心・腎' : hasCkd ? '腎' : hasHeartFailure ? '心' : cat0
+    }
+  }
 
   return moduleData.scenarios.map(scenario => {
     // per-scenario コーパス: title / scenarioGroup / S / O / A / P を個別に正規化する。
@@ -237,6 +264,8 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       formulationTokens,
       preferOwnNameMatchOverGenericMatch,
       suppressRedundantGenericHeaderOnDirectMatch,
+      crossModuleIndicationLabel,
+      brandCatalogIndicationLabelMap,
     }
   })
 }
@@ -636,6 +665,22 @@ export function getDrugSuggestions(
   const PF_TOKENS = new Set(['pf', 'ぴーえふ'])
   const hasPFQuery = tokens.some(t => PF_TOKENS.has(t))
 
+  // crossModuleIndicationLabel が有効なモジュール間で、実際に複数モジュールにまたがって
+  // 存在する genericKey のみを特定する。単一モジュールにしか存在しないブランド
+  // （例: crossModuleIndicationLabel が有効なモジュール内でも、他モジュールに同一成分の
+  // ブランドが存在しない場合）は対象外とし、通常どおり一般名を表示する。
+  const genericKeyModuleIds = new Map<string, Set<string>>()
+  for (const entry of index) {
+    if (!entry.crossModuleIndicationLabel) continue
+    for (const key of Object.values(entry.brandCatalogGenericKeyMap)) {
+      if (!genericKeyModuleIds.has(key)) genericKeyModuleIds.set(key, new Set())
+      genericKeyModuleIds.get(key)!.add(entry.moduleId)
+    }
+  }
+  const multiModuleGenericKeys = new Set(
+    [...genericKeyModuleIds.entries()].filter(([, mods]) => mods.size >= 2).map(([key]) => key),
+  )
+
   // スコアリング（AND 対応）
   const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
   for (let i = 0; i < index.length; i++) {
@@ -767,7 +812,23 @@ export function getDrugSuggestions(
           }
           for (const [key, brandsInGroup] of groups) {
             const genericName = entry.brandCatalogGenericMap[brandsInGroup[0]]
-            if (genericName) {
+            if (genericName && entry.crossModuleIndicationLabel && multiModuleGenericKeys.has(key)) {
+              // crossModuleIndicationLabel が有効なモジュールでも、この genericKey が
+              // 実際に複数モジュールにまたがっている場合のみ、適応領域の異なる
+              // 複数モジュールにまたがる同一一般名を1件に集約せず、モジュールごとに
+              // 適応ラベル付きの一般名見出しのみを独立表示する（ブランド個別候補は出さない）。
+              // dedupKeyOverride に moduleId を含めることで、他モジュールの同名見出しと
+              // 衝突・集約されないようにする。
+              const indicationLabel = entry.brandCatalogIndicationLabelMap[brandsInGroup[0]] ?? ''
+              candidates.push({
+                brand: brandsInGroup[0],
+                displayLabel: genericName,
+                uiLabel: indicationLabel ? `${genericName}（${indicationLabel}）` : genericName,
+                isGenericLabel: true,
+                dedupKeyOverride: `__generic__:${genericName}:${entry.moduleId}`,
+                bucket: 'genericMode',
+              })
+            } else if (genericName) {
               // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
               // このグループ自体が既にブランド候補（brandsInGroup）を持つため、
               // 同じ成分を示す塩名単独見出し（genericHeader相当）は追加しない。
@@ -842,30 +903,45 @@ export function getDrugSuggestions(
               : hpBrands.map(x => x.brand)
           const pushedBrands = new Set<string>()
           let trailingGeneric: string | undefined
+          let trailingGenericIsMultiModule = false
           for (const brand of orderedHpBrands) {
             if (pushedBrands.has(brand)) continue
             pushedBrands.add(brand)
             const genericKey = entry.brandCatalogGenericKeyMap[brand]
             const generic = entry.brandCatalogGenericMap[brand]
             if (genericKey && generic) {
-              candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${generic}）`, bucket: 'direct' })
+              // crossModuleIndicationLabel が有効なモジュールでも、この genericKey が
+              // 実際に複数モジュールにまたがっている場合のみ、括弧内を一般名ではなく
+              // 適応ラベル（例:「糖尿病」「心・腎」「腎」）に差し替える。単一モジュールにしか
+              // 存在しないブランド（例: スーグラ）は対象外とし、通常どおり一般名を表示する。
+              const useIndicationLabel =
+                entry.crossModuleIndicationLabel && multiModuleGenericKeys.has(genericKey)
+              const ownLabel = useIndicationLabel
+                ? entry.brandCatalogIndicationLabelMap[brand] || generic
+                : generic
+              candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${ownLabel}）`, bucket: 'direct' })
               const siblings = entry.brandNames.filter(
                 b => b !== brand && entry.brandCatalogGenericKeyMap[b] === genericKey,
               )
               for (const sib of siblings) {
                 if (pushedBrands.has(sib)) continue
                 pushedBrands.add(sib)
-                candidates.push({ brand: sib, displayLabel: sib, uiLabel: `${sib}（${generic}）`, bucket: 'sibling' })
+                const sibLabel = useIndicationLabel
+                  ? entry.brandCatalogIndicationLabelMap[sib] || generic
+                  : generic
+                candidates.push({ brand: sib, displayLabel: sib, uiLabel: `${sib}（${sibLabel}）`, bucket: 'sibling' })
               }
               trailingGeneric = generic
+              trailingGenericIsMultiModule = useIndicationLabel
             } else {
               candidates.push({ brand, displayLabel: brand, bucket: 'direct' })
             }
           }
-          // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
+          // suppressRedundantGenericHeaderOnDirectMatch が有効な、または
+          // crossModuleIndicationLabel により適応ラベル表示へ切り替わったモジュールでは、
           // direct/sibling 候補が既にブランドを提示しているため、同じ成分を示す
           // 塩名単独の generic header（例:「メトホルミン塩酸塩」）は追加しない。
-          if (trailingGeneric && !entry.suppressRedundantGenericHeaderOnDirectMatch) {
+          if (trailingGeneric && !entry.suppressRedundantGenericHeaderOnDirectMatch && !trailingGenericIsMultiModule) {
             candidates.push({
               brand: orderedHpBrands[0],
               displayLabel: trailingGeneric,

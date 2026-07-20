@@ -155,6 +155,7 @@ drug:
       preferExactAlias: true
       allowPrefixMatch: true
       suppressCrossModuleSuggestionsOnExactHit: true
+      crossModuleIndicationLabel: true
 
   nameAliases:
     - "ふぉしーが"

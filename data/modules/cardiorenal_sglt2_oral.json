@@ -74,7 +74,8 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "crossModuleIndicationLabel": true
       }
     },
     "nameAliases": [
