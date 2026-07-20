@@ -816,7 +816,7 @@ export function getDrugSuggestions(
               // crossModuleIndicationLabel が有効なモジュールでも、この genericKey が
               // 実際に複数モジュールにまたがっている場合のみ、適応領域の異なる
               // 複数モジュールにまたがる同一一般名を1件に集約せず、モジュールごとに
-              // 適応ラベル付きの一般名見出しのみを独立表示する（ブランド個別候補は出さない）。
+              // 適応ラベル付きの一般名見出しを独立表示する。
               // dedupKeyOverride に moduleId を含めることで、他モジュールの同名見出しと
               // 衝突・集約されないようにする。
               const indicationLabel = entry.brandCatalogIndicationLabelMap[brandsInGroup[0]] ?? ''
@@ -828,6 +828,20 @@ export function getDrugSuggestions(
                 dedupKeyOverride: `__generic__:${genericName}:${entry.moduleId}`,
                 bucket: 'genericMode',
               })
+              // 一般名見出しに続けて、対応するブランド候補（適応ラベル付き）も表示する。
+              // genericMode バケツではなく direct バケツへ積むことで、結合順
+              // [genericMode] → [direct/sibling] → [genericHeader] により
+              // 「一般名見出し（糖尿病→心腎）→ ブランド候補（糖尿病→心腎）」の順を保証する。
+              // isDirectBrandMatchPt=false のクエリでは direct バケツは他に使われないため、
+              // 通常のブランド名検索候補と混同・重複することはない。
+              for (const brand of brandsInGroup) {
+                candidates.push({
+                  brand,
+                  displayLabel: brand,
+                  uiLabel: indicationLabel ? `${brand}（${indicationLabel}）` : `${brand}（${genericName}）`,
+                  bucket: 'direct',
+                })
+              }
             } else if (genericName) {
               // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
               // このグループ自体が既にブランド候補（brandsInGroup）を持つため、
@@ -937,11 +951,24 @@ export function getDrugSuggestions(
               candidates.push({ brand, displayLabel: brand, bucket: 'direct' })
             }
           }
-          // suppressRedundantGenericHeaderOnDirectMatch が有効な、または
-          // crossModuleIndicationLabel により適応ラベル表示へ切り替わったモジュールでは、
-          // direct/sibling 候補が既にブランドを提示しているため、同じ成分を示す
-          // 塩名単独の generic header（例:「メトホルミン塩酸塩」）は追加しない。
-          if (trailingGeneric && !entry.suppressRedundantGenericHeaderOnDirectMatch && !trailingGenericIsMultiModule) {
+          if (trailingGeneric && trailingGenericIsMultiModule) {
+            // crossModuleIndicationLabel により適応ラベル表示へ切り替わったモジュールでは、
+            // ブランド候補（direct/sibling）に続けて、対応する一般名見出し（適応ラベル付き）も
+            // 表示する。dedupKeyOverride に moduleId を含めることで、他モジュールの同名見出しと
+            // 衝突・集約されないようにする（ブランド名⇔一般名の相互候補表示を維持するため）。
+            const indicationLabel = entry.brandCatalogIndicationLabelMap[orderedHpBrands[0]] ?? ''
+            candidates.push({
+              brand: orderedHpBrands[0],
+              displayLabel: trailingGeneric,
+              uiLabel: indicationLabel ? `${trailingGeneric}（${indicationLabel}）` : trailingGeneric,
+              isGenericLabel: true,
+              dedupKeyOverride: `__generic__:${trailingGeneric}:${entry.moduleId}`,
+              bucket: 'genericHeader',
+            })
+          } else if (trailingGeneric && !entry.suppressRedundantGenericHeaderOnDirectMatch) {
+            // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
+            // direct/sibling 候補が既にブランドを提示しているため、同じ成分を示す
+            // 塩名単独の generic header（例:「メトホルミン塩酸塩」）は追加しない。
             candidates.push({
               brand: orderedHpBrands[0],
               displayLabel: trailingGeneric,
