@@ -38,7 +38,7 @@ Validator は「機械的に判定できること」のみを保証する。設�
 
 ---
 
-## 3. ModuleValidator の責務（check 1〜31）
+## 3. ModuleValidator の責務（check 1〜35）
 
 `lib/moduleValidator.ts` — 単一モジュールスコープ。
 
@@ -69,6 +69,9 @@ build/runtime を停止させる致命的問題。
 | 24 | `SCENARIO_GLOBALID_DUPLICATE` | Structural | `scenarios[].globalId` のモジュール内一意性 |
 | 25 | `SIDE_EFFECT_PRESENCE_INVALID` | Design Rule | `scenarios[].sideEffectPresence` が有効 7 値（`not_applicable` / `absent_or_not_observed` / `present_mild` / `present_moderate` / `present_change` / `present_dose_decrease` / `present_stop`）以外 |
 | 32 | `SCENARIO_REQUIRED_TAG_UNREACHABLE` | Reference | `scenarios[].scenarioRequiredTags` → `brandCatalog[].handlingTags`（いずれかの brand が保持していること）。`addons.items[].requiredTags` の到達可能性チェック（check 15、WARNING）とは独立。タグ typo によるシナリオのサイレント非表示を防ぐため ERROR |
+| 33 | `DISPLAY_GENERIC_NAME_MISSING` | Structural | `brandCatalog[brand].displayGenericName` の存在。通常UIが参照する表示用一般名のSSOTであり、欠落を許すと `genericName`（塩類名含む正式名称）への暗黙フォールバックが復活しうるため ERROR |
+| 34 | `DISPLAY_GENERIC_NAME_EMPTY` | Structural | `brandCatalog[brand].displayGenericName` が空文字・空白のみでないこと |
+| 35 | `DISPLAY_GENERIC_NAME_SALT_COPY` | Design Rule | `genericName` が塩類名・水和物等の技術的修飾語を含み、かつ `displayGenericName` と完全一致（`genericName` をそのままコピーした旧アンチパターン） |
 
 ### 3-B. WARNING（isWarning: true）
 
@@ -272,6 +275,9 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `STRUCTURED_ROLE_FORBIDDEN` | WARN | Design Rule |
 | `ROLE_MAPPING_NOTE_PRESENT` | WARN | Design Rule |
 | `SCENARIO_REQUIRED_TAG_UNREACHABLE` | ERROR | Reference |
+| `DISPLAY_GENERIC_NAME_MISSING` | ERROR | Structural |
+| `DISPLAY_GENERIC_NAME_EMPTY` | ERROR | Structural |
+| `DISPLAY_GENERIC_NAME_SALT_COPY` | ERROR | Design Rule |
 
 ### CrossModuleValidator（lib/crossModuleValidator.ts）
 

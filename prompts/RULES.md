@@ -618,18 +618,20 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 ---
 
-## 21. genericName / genericKey 分離原則
+## 21. genericName / displayGenericName / genericKey 分離原則
 
-`brandCatalog[brand]` の一般名関連フィールドは、表示用と判定用で役割を分離する。
+`brandCatalog[brand]` の一般名関連フィールドは、正式名称・表示用・判定用で役割を分離する。
 
 | フィールド | 役割 |
 |---|---|
-| `genericName` / `displayGenericName` | 表示専用。人間が読む文字列 |
+| `genericName` | 正式名称。塩類名・水和物等を含み得る。通常UIでは参照しない（専門・監査文脈専用） |
+| `displayGenericName` | 表示専用。通常UI（検索候補・パンくず・SOAP本文・`{{drug_subject}}`）が参照する唯一の一般名。必須。`genericName` への暗黙フォールバック禁止 |
 | `genericKey` | 検索グルーピング判定専用。表示には使わない |
 
 - 「同一成分としてまとめてよいか」の判定は `genericKey` の一致で行い、表示文字列の一致に依存してはならない
-- `genericKey` 省略時は `genericKey ?? displayGenericName ?? genericName` の優先順でフォールバックする
+- `genericKey` 省略時は `genericKey ?? displayGenericName ?? genericName` の優先順でフォールバックする（このフォールバックは検索グルーピング専用であり、表示値の解決には使わない）
 - 配合剤は単剤と同じ `genericKey` を使わず、専用の単一文字列キーを割り当てる（複数成分配列化は未導入 → `docs/OPEN_DESIGN_QUESTIONS.md` 参照）
+- `genericName` と `displayGenericName` の責務・スキーマの詳細は `docs/JSON_STANDARD.md` JS-A-drug を正本とする
 
 （生成規則・命名規則の詳細は `prompts/vNext/PN2-Drug-Header.md` を参照）
 

@@ -526,6 +526,41 @@ Y（addonsRef）と同じ構造の監査を、alias系フィールドに適用�
 
 ---
 
+### AB. brandCatalog displayGenericName 責務確認
+
+← docs/JSON_STANDARD.md JS-A-drug「brandCatalog エントリのスキーマ」（正本。責務の詳細説明はここでは繰り返さない）
+← RULES.md §21
+
+機械的に検証可能な項目は ModuleValidator（`DISPLAY_GENERIC_NAME_MISSING` / `_EMPTY` / `_SALT_COPY`）が
+ビルド時に強制する。本項目はそれに加えて、bridge との突合と、機械検証だけでは判断できない
+「値の質」を人が確認するためのものである。
+
+```
+対象: 全 brandCatalog エントリ
+
+1. bridge⇔JSON 完全一致（機械確認可能）
+   brandCatalog[brand].genericName と .displayGenericName が、当該モジュールの
+   bridge の同ブランド定義値と完全一致すること
+   不一致 → FAIL（brand: {brand_name}, field: genericName|displayGenericName）
+
+2. ModuleValidator 準拠（参照確認）
+   当該モジュールで DISPLAY_GENERIC_NAME_MISSING / _EMPTY / _SALT_COPY が
+   発生していないこと（`npm run build` のバリデーション出力で確認する）
+   発生 → FAIL
+
+3. 値の質（人による判断・機械検証不可）
+   displayGenericName が、機械的な塩類名除去ではなく bridge 執筆時に人間が
+   確定した自然な患者向け表示名になっていること
+   （例: 単純な接尾辞削除では説明できない表記・配合剤の区切り方等、
+   人間の判断が介在したと合理的に読み取れること）
+   機械生成の疑い・不自然な表記 → CHECK
+```
+
+CHECK は FAIL ではない（Z と同様、要確認フラグ）。PN8 進行のブロッカーにはしないが、
+チャット出力では内容を必ず報告する。
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -574,6 +609,7 @@ W. uiVariant保持確認:                 PASS / FAIL / NOT_CHECKED
 Y. bridge P_ADDON⇔addonsRef一致:      PASS / FAIL
 Z. Addon責務一貫性:                   PASS / CHECK
 AA. alias系フィールド同期:            PASS / FAIL
+AB. displayGenericName責務確認:       PASS / FAIL / CHECK
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件 / CHECK: {N} 件
@@ -617,7 +653,8 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "W_uiVariant": "NOT_CHECKED",
     "Y_addonsRefBridgeMatch": "PASS",
     "Z_addonResponsibilityConsistency": "PASS",
-    "AA_aliasFieldBridgeParity": "PASS"
+    "AA_aliasFieldBridgeParity": "PASS",
+    "AB_displayGenericNameResponsibility": "PASS"
   },
   "failCount": 0,
   "checkCount": 0,
@@ -626,9 +663,9 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 ```
 
 `verdict` は `"PASS"` / `"FAIL"` のいずれか。PN8 はこのファイルを読んで判定する。
-`Z_addonResponsibilityConsistency` が `"CHECK"` の場合は `verdict` を FAIL にはしない
-（CHECK は要確認フラグであり、PN8 進行のブロッカーではない）。ただしチャット出力では
-CHECK の内容を必ず報告する。
+`Z_addonResponsibilityConsistency` / `AB_displayGenericNameResponsibility` が `"CHECK"` の場合は
+`verdict` を FAIL にはしない（CHECK は要確認フラグであり、PN8 進行のブロッカーではない）。
+ただしチャット出力では CHECK の内容を必ず報告する。
 
 ---
 

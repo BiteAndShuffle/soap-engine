@@ -178,12 +178,13 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   for (const [brand, entry] of Object.entries(brandCatalog)) {
     const aliases = (entry as { aliases?: string[]; genericName?: string }).aliases ?? []
     brandCatalogAliasMap[brand] = aliases.map(normalizeText).filter(Boolean)
-    // displayGenericName が表示用一般名のSSOT（genericName＝正式名称へはフォールバックしない）
-    const e = entry as { genericKey?: string; displayGenericName?: string; genericName?: string }
-    const resolvedGenericName = e.displayGenericName
+    // displayGenericName は BrandEntry 上で必須（表示用一般名のSSOT。genericName へはフォールバックしない）。
+    // ここでの truthy チェックは型を疑ってのものではなく、ModuleValidator を経由しない
+    // 未知データ（テスト用フィクスチャ等）に対する局所的な防御としてのみ残す。
+    const resolvedGenericName = entry.displayGenericName
     if (resolvedGenericName) brandCatalogGenericMap[brand] = resolvedGenericName
     // グルーピング判定専用キー: genericKey が未設定のモジュールは表示文字列に後方互換フォールバックする
-    const resolvedGenericKey = e.genericKey ?? resolvedGenericName
+    const resolvedGenericKey = entry.genericKey ?? resolvedGenericName
     if (resolvedGenericKey) brandCatalogGenericKeyMap[brand] = resolvedGenericKey
   }
 

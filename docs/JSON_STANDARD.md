@@ -104,16 +104,40 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `matchPolicy.allowPrefixMatch` | boolean | — |
 | `matchPolicy.suppressCrossModuleSuggestionsOnExactHit` | boolean | 全 module で `true` |
 
-**brandCatalog エントリ必須フィールド**
+**brandCatalog エントリのスキーマ**
+
+```ts
+interface BrandEntry {
+  displayName: string          // 商品名
+  genericName: string          // 正式名称（塩類名・水和物等を含み得る）
+  displayGenericName: string   // 表示用一般名（必須・SSOT）
+  genericKey?: string          // 検索グルーピング判定専用キー（表示には使わない）
+  aliases: string[]
+  normalizedAliases: string[]
+  handlingTags?: string[]
+  formulationType?: string
+  storageType?: string
+}
+```
+
+**3フィールドの責務**
+
+| フィールド | 責務 | 参照元 |
+|---|---|---|
+| `displayName` | 商品名 | ブランド確定検索候補・パンくずの商品名部分 |
+| `genericName` | 正式名称。塩類名・水和物等の技術的修飾語を含み得る | 内部識別・将来の専門/監査文脈専用。**通常UI（検索候補・パンくず・SOAP本文）からは参照しない** |
+| `displayGenericName` | 表示用一般名。**必須**。通常UIにおける一般名表示のSSOT | 一般名見出し検索候補・パンくずの一般名部分・SOAP本文の `{{drug_subject}}` |
+
+**制約**
+
+- `genericName` と `displayGenericName` は同一値でもよい（`genericName` がもともと塩類名等を含まない場合）
+- ただし `genericName` に塩類名・水和物等の技術的修飾語が含まれる場合、`displayGenericName` への単純コピーは禁止する。値は bridge で人間が確定する（機械的な塩類名除去による自動生成は行わない）
+- `displayGenericName` の欠落・空文字・上記の旧コピー運用は ModuleValidator の ERROR（`DISPLAY_GENERIC_NAME_MISSING` / `DISPLAY_GENERIC_NAME_EMPTY` / `DISPLAY_GENERIC_NAME_SALT_COPY`）
+- UI側（検索候補生成・パンくず・`{{drug_subject}}` 解決）は `genericName` へのフォールバックを行わない。`resolveDrugName()`（`lib/drugSubject.ts`）が薬剤名解決の唯一の正本
 
 | フィールド | 備考 |
 |---|---|
-| `displayName` | — |
-| `genericName` | — |
-| `displayGenericName` | **全 brand 必須**。参照優先順: `displayGenericName ?? genericName` |
 | `genericKey` | 任意。検索グルーピング判定専用（表示には使わない）。省略時は `genericKey ?? displayGenericName ?? genericName` にフォールバック。→ RULES.md §21 / PN2-Drug-Header.md |
-| `aliases` | — |
-| `normalizedAliases` | — |
 
 ### JS-A-display: display 必須サブフィールド
 
