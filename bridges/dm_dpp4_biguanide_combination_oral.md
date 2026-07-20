@@ -158,7 +158,7 @@ drug:
     メトアナ:
       displayName: "メトアナ"
       genericName: "アナグリプチン/メトホルミン塩酸塩"
-      displayGenericName: "アナグリプチン/メトホルミン塩酸塩"
+      displayGenericName: "アナグリプチン/メトホルミン"
       genericKey: "anagliptin_metformin_combo"
       handlingTags:
         - "renal_dose_adjustment"
@@ -170,7 +170,7 @@ drug:
     エクメット:
       displayName: "エクメット"
       genericName: "ビルダグリプチン/メトホルミン塩酸塩"
-      displayGenericName: "ビルダグリプチン/メトホルミン塩酸塩"
+      displayGenericName: "ビルダグリプチン/メトホルミン"
       genericKey: "vildagliptin_metformin_combo"
       handlingTags:
         - "renal_dose_adjustment"
@@ -182,7 +182,7 @@ drug:
     イニシンク:
       displayName: "イニシンク"
       genericName: "アログリプチン/メトホルミン塩酸塩"
-      displayGenericName: "アログリプチン/メトホルミン塩酸塩"
+      displayGenericName: "アログリプチン/メトホルミン"
       genericKey: "alogliptin_metformin_combo"
       handlingTags:
         - "renal_dose_adjustment"
@@ -195,7 +195,7 @@ drug:
     メホビル:
       displayName: "メホビル"
       genericName: "ビルダグリプチン/メトホルミン塩酸塩"
-      displayGenericName: "ビルダグリプチン/メトホルミン塩酸塩"
+      displayGenericName: "ビルダグリプチン/メトホルミン"
       # ↑ エクメットと同一成分（GE）
       genericKey: "vildagliptin_metformin_combo_generic"
       handlingTags:

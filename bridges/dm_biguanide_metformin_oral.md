@@ -145,7 +145,7 @@ drug:
     メトグルコ:
       displayName: "メトグルコ"
       genericName: "メトホルミン塩酸塩"
-      displayGenericName: "メトホルミン塩酸塩"
+      displayGenericName: "メトホルミン"
       genericKey: "metformin_mt"
       handlingTags:
         - "metformin_high_dose"
@@ -158,7 +158,7 @@ drug:
     メトホルミン:
       displayName: "メトホルミン"
       genericName: "メトホルミン塩酸塩"
-      displayGenericName: "メトホルミン塩酸塩"
+      displayGenericName: "メトホルミン"
       genericKey: "metformin_mt_generic"
       handlingTags:
         - "metformin_high_dose"
@@ -173,7 +173,7 @@ drug:
     グリコラン:
       displayName: "グリコラン"
       genericName: "メトホルミン塩酸塩"
-      displayGenericName: "メトホルミン塩酸塩"
+      displayGenericName: "メトホルミン"
       genericKey: "metformin_legacy"
       handlingTags:
         - "metformin_legacy_low_dose"

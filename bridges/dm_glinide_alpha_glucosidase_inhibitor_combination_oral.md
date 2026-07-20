@@ -131,7 +131,7 @@ drug:
     グルベス:
       displayName: "グルベス"
       genericName: "ミチグリニドカルシウム水和物・ボグリボース"
-      displayGenericName: "ミチグリニドカルシウム水和物・ボグリボース"
+      displayGenericName: "ミチグリニド・ボグリボース"
       genericKey: "mitiglinide_voglibose_combo"
       handlingTags: []
       aliases:

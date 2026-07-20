@@ -126,7 +126,7 @@ drug:
     アクトス:
       displayName: "アクトス"
       genericName: "ピオグリタゾン塩酸塩"
-      displayGenericName: "ピオグリタゾン塩酸塩"
+      displayGenericName: "ピオグリタゾン"
       genericKey: "pioglitazone_actos"
       handlingTags: []
       aliases:
@@ -137,7 +137,7 @@ drug:
     ピオグリタゾン:
       displayName: "ピオグリタゾン"
       genericName: "ピオグリタゾン塩酸塩"
-      displayGenericName: "ピオグリタゾン塩酸塩"
+      displayGenericName: "ピオグリタゾン"
       # ↑ アクトスと同一成分（GE代表名）
       genericKey: "pioglitazone_actos_generic"
       handlingTags: []

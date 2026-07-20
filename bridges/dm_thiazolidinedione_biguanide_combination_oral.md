@@ -131,7 +131,7 @@ drug:
     メタクト:
       displayName: "メタクト"
       genericName: "ピオグリタゾン塩酸塩／メトホルミン塩酸塩"
-      displayGenericName: "ピオグリタゾン塩酸塩／メトホルミン塩酸塩"
+      displayGenericName: "ピオグリタゾン／メトホルミン"
       genericKey: "pioglitazone_metformin_combo"
       handlingTags: []
       aliases:

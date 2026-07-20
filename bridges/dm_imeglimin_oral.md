@@ -112,7 +112,7 @@ drug:
     ツイミーグ:
       displayName: "ツイミーグ"
       genericName: "イメグリミン塩酸塩"
-      displayGenericName: "イメグリミン塩酸塩"
+      displayGenericName: "イメグリミン"
       genericKey: "imeglimin"
       handlingTags: []
       aliases:

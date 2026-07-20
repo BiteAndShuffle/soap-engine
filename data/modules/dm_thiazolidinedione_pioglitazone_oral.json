@@ -97,7 +97,7 @@
       "アクトス": {
         "displayName": "アクトス",
         "genericName": "ピオグリタゾン塩酸塩",
-        "displayGenericName": "ピオグリタゾン塩酸塩",
+        "displayGenericName": "ピオグリタゾン",
         "genericKey": "pioglitazone_actos",
         "handlingTags": [],
         "aliases": [
@@ -110,7 +110,7 @@
       "ピオグリタゾン": {
         "displayName": "ピオグリタゾン",
         "genericName": "ピオグリタゾン塩酸塩",
-        "displayGenericName": "ピオグリタゾン塩酸塩",
+        "displayGenericName": "ピオグリタゾン",
         "genericKey": "pioglitazone_actos_generic",
         "handlingTags": [],
         "aliases": [

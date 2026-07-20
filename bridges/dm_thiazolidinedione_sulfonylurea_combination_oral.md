@@ -128,7 +128,7 @@ drug:
     ソニアス:
       displayName: "ソニアス"
       genericName: "ピオグリタゾン塩酸塩／グリメピリド"
-      displayGenericName: "ピオグリタゾン塩酸塩／グリメピリド"
+      displayGenericName: "ピオグリタゾン／グリメピリド"
       genericKey: "pioglitazone_glimepiride_combo"
       handlingTags: []
       aliases:
