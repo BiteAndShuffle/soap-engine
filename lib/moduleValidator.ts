@@ -101,6 +101,9 @@ export type ModuleValidationErrorCode =
   | 'STRUCTURED_ROLE_FORBIDDEN'     // SStructured/AStructured/PStructured.role が禁止語彙（WARNING）
   | 'ROLE_MAPPING_NOTE_PRESENT'     // SStructured/AStructured/PStructured の notes に ROLE_MAPPING_UNCLEAR が残存（WARNING）
   | 'SCENARIO_REQUIRED_TAG_UNREACHABLE' // scenarios[].scenarioRequiredTags のタグをいずれの brandCatalog も持たない（ERROR）
+  | 'DISPLAY_GENERIC_NAME_MISSING'    // brandCatalog[brand].displayGenericName が未設定（ERROR）
+  | 'DISPLAY_GENERIC_NAME_EMPTY'      // brandCatalog[brand].displayGenericName が空文字（ERROR）
+  | 'DISPLAY_GENERIC_NAME_SALT_COPY'  // genericName が塩類名を含み、displayGenericName と完全一致（旧コピーパターン）（ERROR）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -403,6 +406,52 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
       detail: 'drug.search.primaryDisplayName が存在しません',
       isWarning: false,
     })
+  }
+
+  // 3-dgn) brandCatalog[brand].displayGenericName の必須化・旧コピーパターン検出
+  //
+  // displayGenericName は表示用一般名の SSOT（塩類名を含まない）。
+  // genericName（正式名称・塩類名を含む）へは暗黙にも明示にもフォールバックしない設計のため、
+  // ここで構造的に「存在しないデータを作れない」ことを保証する。
+  //
+  // SALT_TERMS は genericName に含まれうる塩類・結晶水由来の修飾語。
+  // displayGenericName がこれと完全一致する場合は「genericName をそのままコピーした」
+  // 旧アンチパターンとみなし、機械的な名称生成・修正は行わずエラーとして停止する
+  // （値の決定は常に bridge の人間判断に委ねる）。
+  const SALT_TERMS = [
+    '塩酸塩', 'メシル酸塩', 'マレイン酸塩', 'リン酸塩', '硫酸塩',
+    'クエン酸塩', '酒石酸塩', 'フマル酸塩', '臭化水素酸塩', 'コハク酸塩',
+    '酢酸塩', '安息香酸塩', '水和物', 'カルシウム', 'ナトリウム', 'カリウム',
+  ]
+  if (brandCatalog) {
+    for (const [brand, entry] of Object.entries(brandCatalog)) {
+      const displayGenericName = entry.displayGenericName
+      const genericName = entry.genericName
+      if (displayGenericName === undefined) {
+        errors.push({
+          code: 'DISPLAY_GENERIC_NAME_MISSING',
+          detail: `brandCatalog["${brand}"].displayGenericName が存在しません`,
+          isWarning: false,
+        })
+      } else if (typeof displayGenericName === 'string' && displayGenericName.trim() === '') {
+        errors.push({
+          code: 'DISPLAY_GENERIC_NAME_EMPTY',
+          detail: `brandCatalog["${brand}"].displayGenericName が空文字です`,
+          isWarning: false,
+        })
+      } else if (
+        typeof displayGenericName === 'string' &&
+        typeof genericName === 'string' &&
+        displayGenericName === genericName &&
+        SALT_TERMS.some(term => genericName.includes(term))
+      ) {
+        errors.push({
+          code: 'DISPLAY_GENERIC_NAME_SALT_COPY',
+          detail: `brandCatalog["${brand}"]: genericName（"${genericName}"）が塩類名を含むにもかかわらず displayGenericName と完全一致しています（genericName のコピーとみなされます）`,
+          isWarning: false,
+        })
+      }
+    }
   }
 
   // 3a) drug.nameAliases と drug.search.nameAliases の完全一致チェック（P0-A SSOT）

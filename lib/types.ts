@@ -393,20 +393,20 @@ export interface DrugSearch {
 
 /**
  * ブランド名ごとのエントリ。
- * displayName  — 表示用ブランド名（brandCatalog キーと一致）
- * genericName  — 化合物レベルの一般名（drug.genericName はクラス名のため別管理）
- * aliases      — カナ・略称など検索用の別名
- * normalizedAliases — aliases をひらがな正規化したもの（検索インデックス用）
+ * displayName        — 表示用ブランド名（brandCatalog キーと一致・商品名）
+ * genericName        — 正式名称（塩類名等を含む。drug.genericName はクラス名のため別管理）
+ *                       専門・監査文脈専用。通常UI（検索候補・パンくず・SOAP本文）からは参照しない。
+ * displayGenericName — 表示用一般名のSSOT（塩類名を含まない）。検索候補・パンくず・
+ *                       SOAP本文（{{drug_subject}}）が参照する唯一の一般名表示フィールド。
+ *                       必須。genericName への暗黙フォールバックは行わない
+ *                       （ModuleValidator が未設定・空文字・genericName との旧コピーパターンを検出する）。
+ * aliases            — カナ・略称など検索用の別名
+ * normalizedAliases  — aliases をひらがな正規化したもの（検索インデックス用）
  */
 export interface BrandEntry {
   displayName: string
   genericName: string
-  /**
-   * Topbar や検索候補で優先表示する一般名。
-   * genericName より細粒度の表示用名称が必要な場合に設定する。
-   * 省略時は genericName を使用する。
-   */
-  displayGenericName?: string
+  displayGenericName: string
   /**
    * 検索サジェストの「同一成分グルーピング」判定専用キー（表示には使わない）。
    * displayGenericName / genericName とは独立した値空間（例: "insulin_lispro"）。
@@ -521,7 +521,8 @@ export interface ComposeNode {
   matchedBrandName?: string
   /**
    * 解決済み薬剤名（{{drug_subject}} の代入値）。
-   * matchedBrandName → drug.brandNames[0] → drug.genericName の順で解決済み。
+   * matchedBrandName → brandCatalog[drug.brandNames[0]].displayGenericName の順で解決済み
+   * （resolveDrugName() が唯一の正本。drug.genericName へはフォールバックしない）。
    * buildNodeFields / handleAddonToggle から参照される。
    */
   resolvedDrugName?: string
