@@ -14,7 +14,8 @@
 
 .layout {
   display: grid;
-  grid-template-rows: 52px 1fr;
+  grid-template-rows: minmax(52px, auto) 1fr;
+  grid-template-columns: minmax(0, 1fr);
   height: 100dvh;
   overflow: hidden;
   background: #f4f5f7;
@@ -30,9 +31,10 @@
   grid-row: 1;
   background: #1a1a2e;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-  padding: 0 1rem;
+  gap: 0.4rem 1rem;
+  padding: 0.4rem 1rem;
   border-bottom: 1px solid #2d2d4a;
   /* DOM順: dictBtn → topbarTitle → searchArea(margin-left:auto) */
 }
@@ -66,7 +68,11 @@
   font-weight: 600;
   color: #a0a0c8;
   white-space: nowrap;
-  flex-shrink: 0;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   padding: 2px 8px;
   border: 1px solid #3a3a5c;
   border-radius: 6px;
@@ -139,6 +145,7 @@
 
 .searchWrap {
   width: 360px; /* 現状幅維持 */
+  max-width: 100%;
   position: relative;
 }
 
@@ -1545,6 +1552,8 @@
   .soapTextarea { flex: 1; }
   .routeBtn { padding: 0.22rem 0.45rem; font-size: 0.68rem; }
   .dictBtn { display: none; }
+  .topbarTitle { font-size: 0.85rem; }
+  .searchArea { width: 100%; margin-left: 0; flex-shrink: 1; min-width: 0; }
 }
 
 /* ── S欄状態切替トグル ─────────────────────────────────────── */
