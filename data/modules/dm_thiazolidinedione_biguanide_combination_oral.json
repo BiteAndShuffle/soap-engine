@@ -3260,8 +3260,8 @@
       "workflowTags": []
     },
     {
-      "id": "se_moderate_gi_symptoms_consider_dr",
-      "globalId": "dm_thiazolidinedione_biguanide_combination_oral.se_moderate_gi_symptoms_consider_dr",
+      "id": "se_moderate_consider_dr_gi_symptoms",
+      "globalId": "dm_thiazolidinedione_biguanide_combination_oral.se_moderate_consider_dr_gi_symptoms",
       "title": "チアゾリジン系糖尿病薬・メトホルミン配合剤 SE継続（中等度 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",

@@ -890,7 +890,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_gi_symptoms_consider_dr｜title=チアゾリジン系糖尿病薬・メトホルミン配合剤 SE継続（中等度 消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr_gi_symptoms｜title=チアゾリジン系糖尿病薬・メトホルミン配合剤 SE継続（中等度 消化器症状）】
 S
 チアゾリジン系糖尿病薬・メトホルミン配合剤の服用により下痢が強く、辛いことがあるが、日常生活は送れている。
 O
