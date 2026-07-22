@@ -464,16 +464,16 @@ display:
 #   構成成分ごとの読み登録）に従って対応する。今回のブランド構成（10ブランド）
 #   への追加は行わない
 =======SCENARIOS_START=======
-【SCENARIO｜type=treatment_start｜id=initial｜title=DPP4阻害薬 初回】
+【SCENARIO｜type=treatment_start｜id=initial｜title=DPP-4阻害薬 初回】
 S
-DPP4阻害薬は、血糖値が高いため追加となった。
+DPP-4阻害薬は、血糖値が高いため追加となった。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬は、血糖コントロール不十分のため追加となった。
+DPP-4阻害薬は、血糖コントロール不十分のため追加となった。
 インクレチンの働きを高め、血糖値が高い時にインスリン分泌を促進するとともにグルカゴン分泌を抑制することで血糖改善を目的として服用する。
 P
-DPP4阻害薬は、血糖値を改善する薬です。
+DPP-4阻害薬は、血糖値を改善する薬です。
 服用中は、お腹の調子が悪くなることがあります。
 副作用が出た場合はご相談ください。
 P_ADDON
@@ -515,7 +515,7 @@ P_APPEND
 気になることがあればご相談ください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_weekly_dpp4_admin｜title=週1回DPP4阻害薬 服用方法｜requiredTags=[weekly_dpp4]】
+【ADDON｜type=administration_guidance｜id=addon_weekly_dpp4_admin｜title=週1回DPP-4阻害薬 服用方法｜requiredTags=[weekly_dpp4]】
 P_APPEND
 週1回服用する薬のため、決められた曜日に服用してください。
 飲み忘れた場合は、気づいた時点で1回分を服用し、その後は決められた曜日に服用してください。
@@ -548,16 +548,16 @@ P_APPEND
 
 
 
-【SCENARIO｜type=treatment_start｜id=restart｜title=DPP4阻害薬 再開】
+【SCENARIO｜type=treatment_start｜id=restart｜title=DPP-4阻害薬 再開】
 S
-DPP4阻害薬は、血糖値が高いため再開となった。
+DPP-4阻害薬は、血糖値が高いため再開となった。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬は、血糖コントロール不十分のため再開となった。
+DPP-4阻害薬は、血糖コントロール不十分のため再開となった。
 インクレチンの働きを高め、血糖値が高い時にインスリン分泌を促進するとともにグルカゴン分泌を抑制することで血糖改善を目的として服用する。
 P
-DPP4阻害薬は、血糖値を改善する薬です。
+DPP-4阻害薬は、血糖値を改善する薬です。
 服用中は、お腹の調子が悪くなることがあります。
 副作用が出た場合はご相談ください。
 P_ADDON
@@ -575,16 +575,16 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_start｜id=external_start｜title=DPP4阻害薬 他所開始】
+【SCENARIO｜type=treatment_start｜id=external_start｜title=DPP-4阻害薬 他所開始】
 S
-DPP4阻害薬は、他院で開始され継続使用中であった。
+DPP-4阻害薬は、他院で開始され継続使用中であった。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬は、血糖コントロール改善を目的として使用中であった。
+DPP-4阻害薬は、血糖コントロール改善を目的として使用中であった。
 インクレチンの働きを高め、血糖値が高い時にインスリン分泌を促進するとともにグルカゴン分泌を抑制することで血糖改善を目的として服用する。
 P
-DPP4阻害薬は、血糖値を改善する薬です。
+DPP-4阻害薬は、血糖値を改善する薬です。
 服用中は、お腹の調子が悪くなることがあります。
 副作用が出た場合はご相談ください。
 P_ADDON
@@ -602,15 +602,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=DPP4阻害薬 増量（効果実感乏しい）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=DPP-4阻害薬 増量（効果実感乏しい）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
-DPP4阻害薬は、効果の実感が乏しいため増量となった。
+DPP-4阻害薬は、効果の実感が乏しいため増量となった。
 O
-DPP4阻害薬　増量
+DPP-4阻害薬　増量
 A
-DPP4阻害薬は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+DPP-4阻害薬は、効果不十分のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 P
-DPP4阻害薬は、増量によりお腹の調子が悪くなることがあります。
+DPP-4阻害薬は、増量によりお腹の調子が悪くなることがあります。
 消化器症状が強い場合はご相談ください。
 P_ADDON
 - addon_se_hypoglycemia_guidance
@@ -622,15 +622,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=DPP4阻害薬 増量（検査値改善なし）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_no_lab_improvement｜title=DPP-4阻害薬 増量（検査値改善なし）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
-DPP4阻害薬は、検査値が改善しないため増量となった。
+DPP-4阻害薬は、検査値が改善しないため増量となった。
 O
-DPP4阻害薬　増量
+DPP-4阻害薬　増量
 A
-DPP4阻害薬は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+DPP-4阻害薬は、検査値改善が不十分なため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 P
-DPP4阻害薬は、増量によりお腹の調子が悪くなることがあります。
+DPP-4阻害薬は、増量によりお腹の調子が悪くなることがあります。
 消化器症状が強い場合はご相談ください。
 P_ADDON
 - addon_se_hypoglycemia_guidance
@@ -642,15 +642,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=DPP4阻害薬 増量（他剤との調整）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=DPP-4阻害薬 増量（他剤との調整）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
-DPP4阻害薬は、他剤変更に伴う調整により増量となった。
+DPP-4阻害薬は、他剤変更に伴う調整により増量となった。
 O
-DPP4阻害薬　増量
+DPP-4阻害薬　増量
 A
-DPP4阻害薬は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
+DPP-4阻害薬は、他剤変更に伴う調整のため増量となった。増量に伴い副作用が増強する可能性があるため、注意が必要である。
 P
-DPP4阻害薬は、増量によりお腹の調子が悪くなることがあります。
+DPP-4阻害薬は、増量によりお腹の調子が悪くなることがあります。
 消化器症状が強い場合はご相談ください。
 P_ADDON
 - addon_se_hypoglycemia_guidance
@@ -664,15 +664,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_renal_function｜title=DPP4阻害薬 減量（腎機能低下）｜scenarioRequiredTags=[dpp4_renal_dose_adjustment]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_renal_function｜title=DPP-4阻害薬 減量（腎機能低下）｜scenarioRequiredTags=[dpp4_renal_dose_adjustment]】
 S
-DPP4阻害薬は、腎機能を考慮して減量となった。
+DPP-4阻害薬は、腎機能を考慮して減量となった。
 O
-DPP4阻害薬　減量
+DPP-4阻害薬　減量
 A
-DPP4阻害薬は、腎機能低下に伴い用量調整となった。減量後の血糖推移に注意が必要である。
+DPP-4阻害薬は、腎機能低下に伴い用量調整となった。減量後の血糖推移に注意が必要である。
 P
-DPP4阻害薬は、腎機能に応じて用量調整が必要になることがあります。
+DPP-4阻害薬は、腎機能に応じて用量調整が必要になることがあります。
 減量後は血糖値が変動する可能性があります。
 体調変化があればご相談ください。
 P_CLOSING
@@ -685,15 +685,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=DPP4阻害薬 減量（検査値改善）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=DPP-4阻害薬 減量（検査値改善）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
-DPP4阻害薬は、検査値が改善したため減量となった。
+DPP-4阻害薬は、検査値が改善したため減量となった。
 O
-DPP4阻害薬　減量
+DPP-4阻害薬　減量
 A
-DPP4阻害薬は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
+DPP-4阻害薬は、血糖推移を踏まえ減量となった。減量後に血糖が上昇する可能性があるため、注意が必要である。
 P
-DPP4阻害薬は、減量により血糖値が上がることがあります。
+DPP-4阻害薬は、減量により血糖値が上がることがあります。
 体調変化があればご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -703,15 +703,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=DPP4阻害薬 減量（効果実感乏しい）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=DPP-4阻害薬 減量（効果実感乏しい）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
-DPP4阻害薬は、効果の実感が乏しいため減量を希望された。
+DPP-4阻害薬は、効果の実感が乏しいため減量を希望された。
 O
-DPP4阻害薬　減量
+DPP-4阻害薬　減量
 A
-DPP4阻害薬は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
+DPP-4阻害薬は、患者希望を踏まえ減量となった。減量後の血糖推移に注意が必要である。
 P
-DPP4阻害薬は、減量により血糖値が上昇する可能性があります。
+DPP-4阻害薬は、減量により血糖値が上昇する可能性があります。
 体調変化があればご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -721,15 +721,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=DPP4阻害薬 減量（他剤との調整）｜scenarioRequiredTags=[dpp4_standard_titration]】
+【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=DPP-4阻害薬 減量（他剤との調整）｜scenarioRequiredTags=[dpp4_standard_titration]】
 S
-DPP4阻害薬は、他剤変更に伴う調整のため減量となった。
+DPP-4阻害薬は、他剤変更に伴う調整のため減量となった。
 O
-DPP4阻害薬　減量
+DPP-4阻害薬　減量
 A
-DPP4阻害薬は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
+DPP-4阻害薬は、併用薬変更に伴う血糖調整のため減量となった。減量後の血糖推移に注意が必要である。
 P
-DPP4阻害薬は、減量により血糖値が上昇する可能性があります。
+DPP-4阻害薬は、減量により血糖値が上昇する可能性があります。
 体調変化があればご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -790,16 +790,16 @@ P_APPEND
 
 
 
-【SCENARIO｜type=side_effect｜id=se_constipation_none｜title=DPP4阻害薬 副作用なし（便秘）】
+【SCENARIO｜type=side_effect｜id=se_constipation_none｜title=DPP-4阻害薬 副作用なし（便秘）】
 S
-DPP4阻害薬を服用して症状は落ち着いている。
+DPP-4阻害薬を服用して症状は落ち着いている。
 便秘は認めない。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
+DPP-4阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
 P
-DPP4阻害薬の継続中に、お腹の調子が悪くなることがあります。
+DPP-4阻害薬の継続中に、お腹の調子が悪くなることがあります。
 便秘が続く場合はご相談ください。
 P_ADDON
 - addon_glycemic_guidance_followup
@@ -815,16 +815,16 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_abdominal_distension_none｜title=DPP4阻害薬 副作用なし（腹部膨満感）】
+【SCENARIO｜type=side_effect｜id=se_abdominal_distension_none｜title=DPP-4阻害薬 副作用なし（腹部膨満感）】
 S
-DPP4阻害薬を服用して症状は落ち着いている。
+DPP-4阻害薬を服用して症状は落ち着いている。
 お腹が張った感じは認めない。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
+DPP-4阻害薬による消化器症状は現時点で認められず、治療継続が可能である。
 P
-DPP4阻害薬の継続中に、お腹の調子が悪くなることがあります。
+DPP-4阻害薬の継続中に、お腹の調子が悪くなることがあります。
 お腹の張りが続く場合はご相談ください。
 P_ADDON
 - addon_glycemic_guidance_followup
@@ -840,16 +840,16 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=DPP4阻害薬 副作用なし（低血糖）】
+【SCENARIO｜type=side_effect｜id=se_hypo_none｜title=DPP-4阻害薬 副作用なし（低血糖）】
 S
-DPP4阻害薬を服用して症状は落ち着いている。
+DPP-4阻害薬を服用して症状は落ち着いている。
 ふらつき・冷汗・動悸などの低血糖症状は認めない。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による低血糖は現時点で認められず、治療継続が可能である。
+DPP-4阻害薬による低血糖は現時点で認められず、治療継続が可能である。
 P
-DPP4阻害薬の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
+DPP-4阻害薬の継続中に、ふらつき・冷汗・動悸などの低血糖症状が出ることがあります。
 単剤では低血糖は起こりにくい薬ですが、他の糖尿病薬と併用中は低血糖が起こることがあります。
 症状が出た場合は、まずブドウ糖を摂取して対処してください。ブドウ糖がない場合は、糖分を含む飲食物で対応してください。
 改善しない場合はご相談ください。
@@ -867,16 +867,16 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_pancreatitis_none｜title=DPP4阻害薬 副作用なし（膵炎）】
+【SCENARIO｜type=side_effect｜id=se_pancreatitis_none｜title=DPP-4阻害薬 副作用なし（膵炎）】
 S
-DPP4阻害薬を服用して症状は落ち着いている。
+DPP-4阻害薬を服用して症状は落ち着いている。
 強い腹痛や背部痛などの症状は認めない。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による膵炎は現時点で認められず、治療継続が可能である。
+DPP-4阻害薬による膵炎は現時点で認められず、治療継続が可能である。
 P
-DPP4阻害薬の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
+DPP-4阻害薬の継続中に、強い腹痛や背中に響く痛みが出ることがあります。
 こうした症状が続く場合は膵炎の可能性があります。
 強い腹痛や背中に響く痛み、嘔吐などが続く場合は、速やかに医療機関を受診してください。
 P_ADDON
@@ -893,16 +893,16 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_bullous_pemphigoid_none｜title=DPP4阻害薬 副作用なし（類天疱瘡）】
+【SCENARIO｜type=side_effect｜id=se_bullous_pemphigoid_none｜title=DPP-4阻害薬 副作用なし（類天疱瘡）】
 S
-DPP4阻害薬を服用して症状は落ち着いている。
+DPP-4阻害薬を服用して症状は落ち着いている。
 かゆみや湿疹、水ぶくれなどの症状は認めない。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による皮膚症状は現時点で認められず、治療継続が可能である。
+DPP-4阻害薬による皮膚症状は現時点で認められず、治療継続が可能である。
 P
-DPP4阻害薬の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。
+DPP-4阻害薬の継続中に、かゆみを伴う水ぶくれや皮膚のただれなどが現れた場合は、続くのを待たず、お早めにご相談ください。
 P_ADDON
 - addon_glycemic_guidance_followup
 - addon_hyperkalemia_guidance
@@ -917,12 +917,12 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=adherence｜id=cp_good｜title=DPP4阻害薬 CP良好】
+【SCENARIO｜type=adherence｜id=cp_good｜title=DPP-4阻害薬 CP良好】
 S
 薬を服用して症状は落ち着いている。
 飲み忘れなく服用している。
 O
-DPP4阻害薬　服用中
+DPP-4阻害薬　服用中
 A
 コンプライアンスは良好である。治療継続に問題はない。
 P
@@ -942,12 +942,12 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=DPP4阻害薬 CP不良（服薬忘れ）】
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=DPP-4阻害薬 CP不良（服薬忘れ）】
 S
 飲み忘れることがある。
 症状は大きく変わっていない。
 O
-DPP4阻害薬　服用中
+DPP-4阻害薬　服用中
 A
 コンプライアンスは不良で、服薬忘れがみられる。
 P
@@ -1004,12 +1004,12 @@ P_APPEND
 
 
 
-【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=DPP4阻害薬 CP不良（自己判断）】
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=DPP-4阻害薬 CP不良（自己判断）】
 S
 自己判断で服用を調整することがある。
 症状は大きく変わっていない。
 O
-DPP4阻害薬　服用中
+DPP-4阻害薬　服用中
 A
 コンプライアンスは不良で、自己判断による調整がみられる。
 P
@@ -1024,12 +1024,12 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=DPP4阻害薬 CP不良（受診遅延）】
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=DPP-4阻害薬 CP不良（受診遅延）】
 S
 受診が遅れ、服用を調整することがある。
 症状は大きく変わっていない。
 O
-DPP4阻害薬　服用中
+DPP-4阻害薬　服用中
 A
 コンプライアンスは不良で、受診遅延がみられる。
 P
@@ -1044,15 +1044,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_end｜id=end_improved｜title=DPP4阻害薬 終了（改善）】
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=DPP-4阻害薬 終了（改善）】
 S
-DPP4阻害薬は、血糖コントロールが改善したため中止となった。
+DPP-4阻害薬は、血糖コントロールが改善したため中止となった。
 O
-DPP4阻害薬　処方終了
+DPP-4阻害薬　処方終了
 A
-DPP4阻害薬は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
+DPP-4阻害薬は、血糖コントロールの改善により終了となった。終了後に血糖が変動する可能性があるため、注意が必要である。
 P
-DPP4阻害薬終了後、血糖上昇や体調変化がある場合はご相談ください。
+DPP-4阻害薬終了後、血糖上昇や体調変化がある場合はご相談ください。
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
 
@@ -1061,15 +1061,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=DPP4阻害薬 終了（効果不十分）】
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=DPP-4阻害薬 終了（効果不十分）】
 S
-DPP4阻害薬は、効果不十分のため中止となった。
+DPP-4阻害薬は、効果不十分のため中止となった。
 O
-DPP4阻害薬　処方終了
+DPP-4阻害薬　処方終了
 A
-DPP4阻害薬は、効果不十分のため終了となった。血糖管理の再評価が必要である。
+DPP-4阻害薬は、効果不十分のため終了となった。血糖管理の再評価が必要である。
 P
-DPP4阻害薬終了後、血糖が上昇する可能性があります。
+DPP-4阻害薬終了後、血糖が上昇する可能性があります。
 次の治療方針については処方医にご相談ください。
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
@@ -1079,15 +1079,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=DPP4阻害薬 終了（無効）】
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=DPP-4阻害薬 終了（無効）】
 S
-DPP4阻害薬は、効果が認められなかったため中止となった。
+DPP-4阻害薬は、効果が認められなかったため中止となった。
 O
-DPP4阻害薬　処方終了
+DPP-4阻害薬　処方終了
 A
-DPP4阻害薬は、効果が認められなかったため終了となった。治療方針の変更が必要である。
+DPP-4阻害薬は、効果が認められなかったため終了となった。治療方針の変更が必要である。
 P
-DPP4阻害薬終了後、血糖が上昇する可能性があります。
+DPP-4阻害薬終了後、血糖が上昇する可能性があります。
 代替治療については処方医にご相談ください。
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
@@ -1101,13 +1101,13 @@ P_CLOSING
 
 【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=DPP-4阻害薬 SE継続（軽症 消化器症状）】
 S
-DPP4阻害薬の服用により便秘やお腹が張った感じなどがあるが、日常生活は送れている。
+DPP-4阻害薬の服用により便秘やお腹が張った感じなどがあるが、日常生活は送れている。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による消化器症状を軽度認めるが、治療継続が可能である。
+DPP-4阻害薬による消化器症状を軽度認めるが、治療継続が可能である。
 P
-DPP4阻害薬による症状が軽い場合は、水分摂取や食事内容を無理のない範囲で見直すことで改善することがあります。
+DPP-4阻害薬による症状が軽い場合は、水分摂取や食事内容を無理のない範囲で見直すことで改善することがあります。
 便秘やお腹が張った感じなどの症状が強い、または続く場合は、薬の調整が必要になることがありますので、ご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
@@ -1119,13 +1119,13 @@ P_CLOSING
 
 【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=DPP-4阻害薬 SE継続（中等度 消化器症状）】
 S
-DPP4阻害薬の服用により便秘やお腹が張った感じが強く、辛いことがあるが、日常生活は送れている。
+DPP-4阻害薬の服用により便秘やお腹が張った感じが強く、辛いことがあるが、日常生活は送れている。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
-DPP4阻害薬による消化器症状が強く、継続困難の可能性があるため対応を要する。
+DPP-4阻害薬による消化器症状が強く、継続困難の可能性があるため対応を要する。
 P
-DPP4阻害薬による症状が強い場合や続く場合は、薬の調整や変更が必要になることがあります。
+DPP-4阻害薬による症状が強い場合や続く場合は、薬の調整や変更が必要になることがあります。
 自己判断で継続せず、処方医へご相談ください。
 強い腹痛や嘔吐、お腹の張りが強い、便やガスが出ないなどの症状がある場合は、速やかに受診してください。
 P_CLOSING
@@ -1136,15 +1136,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_change_due_to_gi_symptoms｜title=DPP4阻害薬 SE変更（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_change_due_to_gi_symptoms｜title=DPP-4阻害薬 SE変更（消化器症状）】
 S
-DPP4阻害薬の服用により便秘やお腹が張った感じが出現したため、他剤へ変更となった。
+DPP-4阻害薬の服用により便秘やお腹が張った感じが出現したため、他剤へ変更となった。
 O
-DPP4阻害薬　処方変更
+DPP-4阻害薬　処方変更
 A
-DPP4阻害薬の服用による消化器症状を認め、他剤変更後の経過確認を要する。
+DPP-4阻害薬の服用による消化器症状を認め、他剤変更後の経過確認を要する。
 P
-DPP4阻害薬の変更後、血糖上昇や体調変化があればご相談ください。
+DPP-4阻害薬の変更後、血糖上昇や体調変化があればご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1153,15 +1153,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=DPP4阻害薬 SE減量（消化器症状）｜scenarioRequiredTags=[dpp4_dose_decrease_supported]】
+【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_gi_symptoms｜title=DPP-4阻害薬 SE減量（消化器症状）｜scenarioRequiredTags=[dpp4_dose_decrease_supported]】
 S
-DPP4阻害薬の服用により便秘やお腹が張った感じがひどいため、減量となった。
+DPP-4阻害薬の服用により便秘やお腹が張った感じがひどいため、減量となった。
 O
-DPP4阻害薬　減量
+DPP-4阻害薬　減量
 A
-DPP4阻害薬の服用による消化器症状を認め、減量後の経過確認を要する。
+DPP-4阻害薬の服用による消化器症状を認め、減量後の経過確認を要する。
 P
-DPP4阻害薬の減量後も消化器症状が続く場合はご相談ください。
+DPP-4阻害薬の減量後も消化器症状が続く場合はご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1170,15 +1170,15 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_stop_due_to_gi_symptoms｜title=DPP4阻害薬 SE中止（消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_gi_symptoms｜title=DPP-4阻害薬 SE中止（消化器症状）】
 S
-DPP4阻害薬の服用により便秘やお腹が張った感じがひどいため、中止となった。
+DPP-4阻害薬の服用により便秘やお腹が張った感じがひどいため、中止となった。
 O
-DPP4阻害薬　処方中止
+DPP-4阻害薬　処方中止
 A
-DPP4阻害薬の服用による消化器症状を認め、中止後の経過確認を要する。
+DPP-4阻害薬の服用による消化器症状を認め、中止後の経過確認を要する。
 P
-DPP4阻害薬の中止後、血糖上昇や体調変化があればご相談ください。
+DPP-4阻害薬の中止後、血糖上昇や体調変化があればご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1187,11 +1187,11 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=DPP4阻害薬 生活指導（血糖）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperglycemia｜title=DPP-4阻害薬 生活指導（血糖）】
 S
 血糖値がなかなか改善しない。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
 血糖コントロールが不十分であり、食事・運動療法の継続と生活習慣の見直しが必要である。
 P
@@ -1208,11 +1208,11 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=DPP4阻害薬 生活指導（カリウム）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_hyperkalemia｜title=DPP-4阻害薬 生活指導（カリウム）】
 S
 カリウムの値が高いと言われた。
 O
-DPP4阻害薬　処方
+DPP-4阻害薬　処方
 A
 カリウムコントロールが不十分であり、食事内容の見直しが必要である。
 P
@@ -1228,11 +1228,11 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=sickday｜id=sickday｜title=DPP4阻害薬 シックデイ】
+【SCENARIO｜type=sickday｜id=sickday｜title=DPP-4阻害薬 シックデイ】
 S
 発熱・嘔吐・下痢などの体調不良がみられる。
 O
-DPP4阻害薬　服用中
+DPP-4阻害薬　服用中
 A
 食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。
 P

@@ -456,7 +456,7 @@
     {
       "id": "initial",
       "globalId": "dm_dpp4_oral.initial",
-      "title": "DPP4阻害薬 初回",
+      "title": "DPP-4阻害薬 初回",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
@@ -591,7 +591,7 @@
     {
       "id": "restart",
       "globalId": "dm_dpp4_oral.restart",
-      "title": "DPP4阻害薬 再開",
+      "title": "DPP-4阻害薬 再開",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
@@ -726,7 +726,7 @@
     {
       "id": "external_start",
       "globalId": "dm_dpp4_oral.external_start",
-      "title": "DPP4阻害薬 他所開始",
+      "title": "DPP-4阻害薬 他所開始",
       "scenarioType": "treatment_start",
       "scenarioGroup": "start_or_change",
       "scenarioTags": [
@@ -861,7 +861,7 @@
     {
       "id": "dose_increase_low_perceived_effect",
       "globalId": "dm_dpp4_oral.dose_increase_low_perceived_effect",
-      "title": "DPP4阻害薬 増量（効果実感乏しい）",
+      "title": "DPP-4阻害薬 増量（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -978,7 +978,7 @@
     {
       "id": "dose_increase_no_lab_improvement",
       "globalId": "dm_dpp4_oral.dose_increase_no_lab_improvement",
-      "title": "DPP4阻害薬 増量（検査値改善なし）",
+      "title": "DPP-4阻害薬 増量（検査値改善なし）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1095,7 +1095,7 @@
     {
       "id": "dose_increase_due_to_other_med_adjustment",
       "globalId": "dm_dpp4_oral.dose_increase_due_to_other_med_adjustment",
-      "title": "DPP4阻害薬 増量（他剤との調整）",
+      "title": "DPP-4阻害薬 増量（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1208,7 +1208,7 @@
     {
       "id": "dose_decrease_renal_function",
       "globalId": "dm_dpp4_oral.dose_decrease_renal_function",
-      "title": "DPP4阻害薬 減量（腎機能低下）",
+      "title": "DPP-4阻害薬 減量（腎機能低下）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1335,7 +1335,7 @@
     {
       "id": "dose_decrease_improved",
       "globalId": "dm_dpp4_oral.dose_decrease_improved",
-      "title": "DPP4阻害薬 減量（検査値改善）",
+      "title": "DPP-4阻害薬 減量（検査値改善）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1453,7 +1453,7 @@
     {
       "id": "dose_decrease_low_perceived_effect",
       "globalId": "dm_dpp4_oral.dose_decrease_low_perceived_effect",
-      "title": "DPP4阻害薬 減量（効果実感乏しい）",
+      "title": "DPP-4阻害薬 減量（効果実感乏しい）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1570,7 +1570,7 @@
     {
       "id": "dose_decrease_due_to_other_med_adjustment",
       "globalId": "dm_dpp4_oral.dose_decrease_due_to_other_med_adjustment",
-      "title": "DPP4阻害薬 減量（他剤との調整）",
+      "title": "DPP-4阻害薬 減量（他剤との調整）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1683,7 +1683,7 @@
     {
       "id": "se_constipation_none",
       "globalId": "dm_dpp4_oral.se_constipation_none",
-      "title": "DPP4阻害薬 副作用なし（便秘）",
+      "title": "DPP-4阻害薬 副作用なし（便秘）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1804,7 +1804,7 @@
     {
       "id": "se_abdominal_distension_none",
       "globalId": "dm_dpp4_oral.se_abdominal_distension_none",
-      "title": "DPP4阻害薬 副作用なし（腹部膨満感）",
+      "title": "DPP-4阻害薬 副作用なし（腹部膨満感）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -1925,7 +1925,7 @@
     {
       "id": "se_hypo_none",
       "globalId": "dm_dpp4_oral.se_hypo_none",
-      "title": "DPP4阻害薬 副作用なし（低血糖）",
+      "title": "DPP-4阻害薬 副作用なし（低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -2075,7 +2075,7 @@
     {
       "id": "se_pancreatitis_none",
       "globalId": "dm_dpp4_oral.se_pancreatitis_none",
-      "title": "DPP4阻害薬 副作用なし（膵炎）",
+      "title": "DPP-4阻害薬 副作用なし（膵炎）",
       "scenarioType": "side_effect",
       "scenarioGroup": "pancreatitis",
       "scenarioTags": [
@@ -2217,7 +2217,7 @@
     {
       "id": "se_bullous_pemphigoid_none",
       "globalId": "dm_dpp4_oral.se_bullous_pemphigoid_none",
-      "title": "DPP4阻害薬 副作用なし（類天疱瘡）",
+      "title": "DPP-4阻害薬 副作用なし（類天疱瘡）",
       "scenarioType": "side_effect",
       "scenarioGroup": "skin_reaction",
       "scenarioTags": [
@@ -2331,7 +2331,7 @@
     {
       "id": "cp_good",
       "globalId": "dm_dpp4_oral.cp_good",
-      "title": "DPP4阻害薬 CP良好",
+      "title": "DPP-4阻害薬 CP良好",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_good",
       "scenarioTags": [
@@ -2449,7 +2449,7 @@
     {
       "id": "cp_poor_missed_doses",
       "globalId": "dm_dpp4_oral.cp_poor_missed_doses",
-      "title": "DPP4阻害薬 CP不良（服薬忘れ）",
+      "title": "DPP-4阻害薬 CP不良（服薬忘れ）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -2573,7 +2573,7 @@
     {
       "id": "cp_poor_self_adjust",
       "globalId": "dm_dpp4_oral.cp_poor_self_adjust",
-      "title": "DPP4阻害薬 CP不良（自己判断）",
+      "title": "DPP-4阻害薬 CP不良（自己判断）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -2703,7 +2703,7 @@
     {
       "id": "cp_poor_visit_delay",
       "globalId": "dm_dpp4_oral.cp_poor_visit_delay",
-      "title": "DPP4阻害薬 CP不良（受診遅延）",
+      "title": "DPP-4阻害薬 CP不良（受診遅延）",
       "scenarioType": "adherence",
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
@@ -2828,7 +2828,7 @@
     {
       "id": "end_improved",
       "globalId": "dm_dpp4_oral.end_improved",
-      "title": "DPP4阻害薬 終了（改善）",
+      "title": "DPP-4阻害薬 終了（改善）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_improved",
       "scenarioTags": [
@@ -2932,7 +2932,7 @@
     {
       "id": "end_insufficient_effect",
       "globalId": "dm_dpp4_oral.end_insufficient_effect",
-      "title": "DPP4阻害薬 終了（効果不十分）",
+      "title": "DPP-4阻害薬 終了（効果不十分）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_insufficient_effect",
       "scenarioTags": [
@@ -3046,7 +3046,7 @@
     {
       "id": "end_ineffective",
       "globalId": "dm_dpp4_oral.end_ineffective",
-      "title": "DPP4阻害薬 終了（無効）",
+      "title": "DPP-4阻害薬 終了（無効）",
       "scenarioType": "treatment_end",
       "scenarioGroup": "end_ineffective",
       "scenarioTags": [
@@ -3397,7 +3397,7 @@
     {
       "id": "se_change_due_to_gi_symptoms",
       "globalId": "dm_dpp4_oral.se_change_due_to_gi_symptoms",
-      "title": "DPP4阻害薬 SE変更（消化器症状）",
+      "title": "DPP-4阻害薬 SE変更（消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3503,7 +3503,7 @@
     {
       "id": "se_dose_decrease_due_to_gi_symptoms",
       "globalId": "dm_dpp4_oral.se_dose_decrease_due_to_gi_symptoms",
-      "title": "DPP4阻害薬 SE減量（消化器症状）",
+      "title": "DPP-4阻害薬 SE減量（消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3612,7 +3612,7 @@
     {
       "id": "se_stop_due_to_gi_symptoms",
       "globalId": "dm_dpp4_oral.se_stop_due_to_gi_symptoms",
-      "title": "DPP4阻害薬 SE中止（消化器症状）",
+      "title": "DPP-4阻害薬 SE中止（消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3721,7 +3721,7 @@
     {
       "id": "lifestyle_guidance_hyperglycemia",
       "globalId": "dm_dpp4_oral.lifestyle_guidance_hyperglycemia",
-      "title": "DPP4阻害薬 生活指導（血糖）",
+      "title": "DPP-4阻害薬 生活指導（血糖）",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
@@ -3856,7 +3856,7 @@
     {
       "id": "lifestyle_guidance_hyperkalemia",
       "globalId": "dm_dpp4_oral.lifestyle_guidance_hyperkalemia",
-      "title": "DPP4阻害薬 生活指導（カリウム）",
+      "title": "DPP-4阻害薬 生活指導（カリウム）",
       "scenarioType": "lifestyle_guidance",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
@@ -3979,7 +3979,7 @@
     {
       "id": "sickday",
       "globalId": "dm_dpp4_oral.sickday",
-      "title": "DPP4阻害薬 シックデイ",
+      "title": "DPP-4阻害薬 シックデイ",
       "scenarioType": "sickday",
       "scenarioGroup": "sickday",
       "scenarioTags": [
@@ -4202,7 +4202,7 @@
       "addon_weekly_dpp4_admin": {
         "key": "addon_weekly_dpp4_admin",
         "id": "addon_weekly_dpp4_admin",
-        "title": "週1回DPP4阻害薬 服用方法",
+        "title": "週1回DPP-4阻害薬 服用方法",
         "group": "oral",
         "targetSection": "P",
         "text": "週1回服用する薬のため、決められた曜日に服用してください。\n飲み忘れた場合は、気づいた時点で1回分を服用し、その後は決められた曜日に服用してください。\n同じ日に2回分を服用しないでください。",
