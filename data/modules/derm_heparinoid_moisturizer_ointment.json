@@ -2074,7 +2074,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "derm_heparinoid_moisturizer_ointment.se_mild_continue",
-      "title": "ヘパリン類似物質系保湿剤軟膏 SE継続（軽症）",
+      "title": "ヘパリン類似物質系保湿剤軟膏 SE継続（軽症 皮膚の違和感）",
       "scenarioType": "side_effect",
       "scenarioGroup": "side_effect",
       "sideEffectPresence": "present_mild",

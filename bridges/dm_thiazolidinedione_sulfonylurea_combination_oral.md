@@ -831,7 +831,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue_edema｜title=チアゾリジン系糖尿病薬・スルホニルウレア系経口血糖降下剤配合剤 SE継続（軽症・浮腫）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue_edema｜title=チアゾリジン系糖尿病薬・スルホニルウレア系経口血糖降下剤配合剤 SE継続（軽症 浮腫）】
 S
 チアゾリジン系糖尿病薬・スルホニルウレア系経口血糖降下剤配合剤の服用によりむくみや体重増加などがあるが、日常生活は送れている。
 O

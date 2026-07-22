@@ -942,7 +942,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（軽症 消化器症状）】
 S
 GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘などがあるが、日常生活は送れている。
 
@@ -965,7 +965,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・軽症）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=GIP/GLP-1受容体作動薬（注射） SE継続（軽症 注射部位）】
 S
 GIP/GLP-1受容体作動薬（注射）の使用により注射部位に軽い痛みやしこりがあるが、治療は継続できている。
 
@@ -986,7 +986,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（中等度）】
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（中等度 消化器症状）】
 S
 GIP/GLP-1受容体作動薬（注射）の使用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。
 
@@ -1008,7 +1008,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・中等度）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=GIP/GLP-1受容体作動薬（注射） SE継続（中等度 注射部位）】
 S
 GIP/GLP-1受容体作動薬（注射）の使用により注射部位の痛みや腫れが強く、気になることがある。
 

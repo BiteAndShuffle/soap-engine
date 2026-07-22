@@ -2481,7 +2481,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_insulin_glp1_combination.se_mild_continue",
-      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（軽症・低血糖）",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（軽症 低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -2611,7 +2611,7 @@
     {
       "id": "se_injection_site_reaction_mild_continue",
       "globalId": "dm_insulin_glp1_combination.se_injection_site_reaction_mild_continue",
-      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（注射部位・軽症）",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（軽症 注射部位）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -2727,7 +2727,7 @@
     {
       "id": "se_hypoglycemia_moderate_consider_dr",
       "globalId": "dm_insulin_glp1_combination.se_hypoglycemia_moderate_consider_dr",
-      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（中等度・低血糖）",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（中等度 低血糖）",
       "scenarioType": "side_effect",
       "scenarioGroup": "hypoglycemia",
       "scenarioTags": [
@@ -2856,7 +2856,7 @@
     {
       "id": "se_injection_site_reaction_moderate_consider_dr",
       "globalId": "dm_insulin_glp1_combination.se_injection_site_reaction_moderate_consider_dr",
-      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（注射部位・中等度）",
+      "title": "インスリン／GLP-1受容体作動薬配合剤 SE継続（中等度 注射部位）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [

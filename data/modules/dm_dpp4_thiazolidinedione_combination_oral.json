@@ -2897,7 +2897,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_dpp4_thiazolidinedione_combination_oral.se_mild_continue",
-      "title": "DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤 SE継続（軽症・浮腫）",
+      "title": "DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤 SE継続（軽症 浮腫）",
       "scenarioType": "side_effect",
       "scenarioGroup": "edema",
       "scenarioTags": [

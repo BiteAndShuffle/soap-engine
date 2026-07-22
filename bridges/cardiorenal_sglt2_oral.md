@@ -810,7 +810,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=SGLT2阻害薬（心不全・腎疾患） SE継続（軽症・頻尿）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=SGLT2阻害薬（心不全・腎疾患） SE継続（軽症 頻尿）】
 S
 SGLT2阻害薬（心不全・腎疾患）の服用によりトイレが近くなったが、日常生活は送れている。
 O

@@ -2903,7 +2903,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_glp1ra_semaglutide_oral.se_mild_continue",
-      "title": "GLP-1受容体作動薬(内服) SE継続（軽症）",
+      "title": "GLP-1受容体作動薬(内服) SE継続（軽症 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3018,7 +3018,7 @@
     {
       "id": "se_moderate_consider_dr",
       "globalId": "dm_glp1ra_semaglutide_oral.se_moderate_consider_dr",
-      "title": "GLP-1受容体作動薬(内服) SE継続（中等度）",
+      "title": "GLP-1受容体作動薬(内服) SE継続（中等度 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [

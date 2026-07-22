@@ -947,7 +947,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GLP-1受容体作動薬(内服) SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=GLP-1受容体作動薬(内服) SE継続（軽症 消化器症状）】
 S
 GLP-1受容体作動薬(内服)の服用により吐き気・下痢・便秘などがあるが、日常生活は送れている。
 
@@ -967,7 +967,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GLP-1受容体作動薬(内服) SE継続（中等度）】
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=GLP-1受容体作動薬(内服) SE継続（中等度 消化器症状）】
 S
 GLP-1受容体作動薬(内服)の服用により吐き気・下痢・便秘が強く、辛いことがあるが、日常生活は送れている。
 

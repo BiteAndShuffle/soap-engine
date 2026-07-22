@@ -2236,7 +2236,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "cardiorenal_sglt2_oral.se_mild_continue",
-      "title": "SGLT2阻害薬（心不全・腎疾患） SE継続（軽症・頻尿）",
+      "title": "SGLT2阻害薬（心不全・腎疾患） SE継続（軽症 頻尿）",
       "scenarioType": "side_effect",
       "scenarioGroup": "urinary_frequency",
       "scenarioTags": [

@@ -3151,7 +3151,7 @@
     {
       "id": "se_mild_continue_edema",
       "globalId": "dm_thiazolidinedione_biguanide_combination_oral.se_mild_continue_edema",
-      "title": "チアゾリジン系糖尿病薬・メトホルミン配合剤 SE継続（軽症・浮腫）",
+      "title": "チアゾリジン系糖尿病薬・メトホルミン配合剤 SE継続（軽症 浮腫）",
       "scenarioType": "side_effect",
       "scenarioGroup": "edema",
       "scenarioTags": [

@@ -2781,7 +2781,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_thiazolidinedione_pioglitazone_oral.se_mild_continue",
-      "title": "チアゾリジン系糖尿病薬 SE継続（軽症・浮腫）",
+      "title": "チアゾリジン系糖尿病薬 SE継続（軽症 浮腫）",
       "scenarioType": "side_effect",
       "scenarioGroup": "edema",
       "scenarioTags": [

@@ -3250,7 +3250,7 @@
     {
       "id": "se_mild_continue_urinary_frequency",
       "globalId": "dm_dpp4_sglt2_combination_oral.se_mild_continue_urinary_frequency",
-      "title": "DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症・頻尿）",
+      "title": "DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症 頻尿）",
       "scenarioType": "side_effect",
       "scenarioGroup": "urinary_frequency",
       "scenarioTags": [
@@ -3375,7 +3375,7 @@
     {
       "id": "se_mild_continue_gi_symptoms",
       "globalId": "dm_dpp4_sglt2_combination_oral.se_mild_continue_gi_symptoms",
-      "title": "DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症・消化器症状）",
+      "title": "DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3486,7 +3486,7 @@
     {
       "id": "se_moderate_consider_dr",
       "globalId": "dm_dpp4_sglt2_combination_oral.se_moderate_consider_dr",
-      "title": "DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（中等度・消化器症状）",
+      "title": "DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（中等度 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [

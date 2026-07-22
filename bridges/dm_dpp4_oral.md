@@ -1099,7 +1099,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=DPP4阻害薬 SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=DPP-4阻害薬 SE継続（軽症 消化器症状）】
 S
 DPP4阻害薬の服用により便秘やお腹が張った感じなどがあるが、日常生活は送れている。
 O
@@ -1117,7 +1117,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=DPP4阻害薬 SE継続（中等度・消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=DPP-4阻害薬 SE継続（中等度 消化器症状）】
 S
 DPP4阻害薬の服用により便秘やお腹が張った感じが強く、辛いことがあるが、日常生活は送れている。
 O

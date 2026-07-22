@@ -1055,7 +1055,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue_urinary_frequency｜title=DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症・頻尿）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue_urinary_frequency｜title=DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症 頻尿）】
 S
 DPP-4阻害薬・SGLT2阻害薬配合剤の服用によりトイレが近くなったが、日常生活は送れている。
 O
@@ -1075,7 +1075,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue_gi_symptoms｜title=DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症・消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue_gi_symptoms｜title=DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（軽症 消化器症状）】
 S
 DPP-4阻害薬・SGLT2阻害薬配合剤の服用により便秘やお腹が張った感じなどがあるが、日常生活は送れている。
 O
@@ -1093,7 +1093,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（中等度・消化器症状）】
+【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=DPP-4阻害薬・SGLT2阻害薬配合剤 SE継続（中等度 消化器症状）】
 S
 DPP-4阻害薬・SGLT2阻害薬配合剤の服用により便秘やお腹が張った感じが強く、辛いことがあるが、日常生活は送れている。
 O

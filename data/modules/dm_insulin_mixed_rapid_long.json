@@ -3056,7 +3056,7 @@
         }
       ],
       "globalId": "dm_insulin_mixed_rapid_long.se_mild_continue",
-      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（軽症・低血糖）",
+      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（軽症 低血糖）",
       "scenarioTags": [
         "side_effect",
         "hypoglycemia",
@@ -3177,7 +3177,7 @@
         }
       ],
       "globalId": "dm_insulin_mixed_rapid_long.se_injection_site_reaction_mild_continue",
-      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（注射部位・軽症）",
+      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（軽症 注射部位）",
       "scenarioTags": [
         "side_effect",
         "injection_site",
@@ -3310,7 +3310,7 @@
         }
       ],
       "globalId": "dm_insulin_mixed_rapid_long.se_hypoglycemia_moderate_consider_dr",
-      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（中等度・低血糖）",
+      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（中等度 低血糖）",
       "scenarioTags": [
         "side_effect",
         "hypoglycemia",
@@ -3431,7 +3431,7 @@
         }
       ],
       "globalId": "dm_insulin_mixed_rapid_long.se_injection_site_reaction_moderate_consider_dr",
-      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（注射部位・中等度）",
+      "title": "混合型インスリン製剤（超速効型＋持効型） SE継続（中等度 注射部位）",
       "scenarioTags": [
         "side_effect",
         "injection_site",

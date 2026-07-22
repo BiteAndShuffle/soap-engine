@@ -3160,7 +3160,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_dpp4_oral.se_mild_continue",
-      "title": "DPP4阻害薬 SE継続（軽症）",
+      "title": "DPP-4阻害薬 SE継続（軽症 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3271,7 +3271,7 @@
     {
       "id": "se_moderate_consider_dr",
       "globalId": "dm_dpp4_oral.se_moderate_consider_dr",
-      "title": "DPP4阻害薬 SE継続（中等度・消化器症状）",
+      "title": "DPP-4阻害薬 SE継続（中等度 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [

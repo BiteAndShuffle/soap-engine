@@ -846,7 +846,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤 SE継続（軽症・浮腫）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤 SE継続（軽症 浮腫）】
 S
 DPP-4阻害薬・チアゾリジン系糖尿病薬配合剤の服用によりむくみや体重増加などがあるが、日常生活は送れている。
 O

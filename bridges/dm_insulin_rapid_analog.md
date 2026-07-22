@@ -854,7 +854,7 @@ P_CLOSING
 次回、治療経過および体調変化の有無を確認。
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=超速効型インスリン製剤 SE継続（軽症・低血糖）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=超速効型インスリン製剤 SE継続（軽症 低血糖）】
 S
 超速効型インスリン製剤の使用により軽いふらつきや冷汗などがあるが、日常生活は送れている。
 O
@@ -870,7 +870,7 @@ P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=超速効型インスリン製剤 SE継続（注射部位・軽症）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_mild_continue｜title=超速効型インスリン製剤 SE継続（軽症 注射部位）】
 S
 超速効型インスリン製剤の使用により注射部位に軽い痛みやしこりがあるが、治療は継続できている。
 O
@@ -885,7 +885,7 @@ P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-【SCENARIO｜type=side_effect｜id=se_hypoglycemia_moderate_consider_dr｜title=超速効型インスリン製剤 SE継続（中等度・低血糖）】
+【SCENARIO｜type=side_effect｜id=se_hypoglycemia_moderate_consider_dr｜title=超速効型インスリン製剤 SE継続（中等度 低血糖）】
 S
 超速効型インスリン製剤の使用によりふらつき・冷汗などが強く、辛いことがあるが、日常生活は送れている。
 O
@@ -901,7 +901,7 @@ P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
-【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=超速効型インスリン製剤 SE継続（注射部位・中等度）】
+【SCENARIO｜type=side_effect｜id=se_injection_site_reaction_moderate_consider_dr｜title=超速効型インスリン製剤 SE継続（中等度 注射部位）】
 S
 超速効型インスリン製剤の使用により注射部位の痛みや腫れが強く、気になることがある。
 O

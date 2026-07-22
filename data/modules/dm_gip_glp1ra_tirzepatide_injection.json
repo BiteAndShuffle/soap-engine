@@ -3328,7 +3328,7 @@
     {
       "id": "se_mild_continue",
       "globalId": "dm_gip_glp1ra_tirzepatide_injection.se_mild_continue",
-      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（軽症）",
+      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（軽症 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3448,7 +3448,7 @@
     {
       "id": "se_injection_site_reaction_mild_continue",
       "globalId": "dm_gip_glp1ra_tirzepatide_injection.se_injection_site_reaction_mild_continue",
-      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・軽症）",
+      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（軽症 注射部位）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [
@@ -3568,7 +3568,7 @@
     {
       "id": "se_moderate_consider_dr",
       "globalId": "dm_gip_glp1ra_tirzepatide_injection.se_moderate_consider_dr",
-      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（中等度）",
+      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（中等度 消化器症状）",
       "scenarioType": "side_effect",
       "scenarioGroup": "digestive",
       "scenarioTags": [
@@ -3707,7 +3707,7 @@
     {
       "id": "se_injection_site_reaction_moderate_consider_dr",
       "globalId": "dm_gip_glp1ra_tirzepatide_injection.se_injection_site_reaction_moderate_consider_dr",
-      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（注射部位・中等度）",
+      "title": "GIP/GLP-1受容体作動薬（注射） SE継続（中等度 注射部位）",
       "scenarioType": "side_effect",
       "scenarioGroup": "injection_site",
       "scenarioTags": [

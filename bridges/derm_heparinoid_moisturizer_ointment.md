@@ -940,7 +940,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=ヘパリン類似物質系保湿剤軟膏 SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=ヘパリン類似物質系保湿剤軟膏 SE継続（軽症 皮膚の違和感）】
 S
 ヘパリン類似物質系保湿剤軟膏の使用により、少し違和感があるが、使用は継続できている。
 
