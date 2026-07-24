@@ -180,6 +180,9 @@ P2B ADDON_BUILD 時に参照する。
 | glycemic_guidance | "counseling" | "P" |
 | sickday_guidance | "sickday" | "P" |
 | adherence_guidance | "adherence" | "P" |
+| administration_guidance | "counseling" | "P" |
+
+**administration_guidance について（2026-07-24 正式化。CHECK-G02 該当分を解消）**: bridge type `administration_guidance` は意味上の分類として bridge 側にそのまま残し、canonical JSON の group のみ `"counseling"` へ変換する。この変換は既存の5 group値（`counseling` / `sideEffects` / `sickday` / `adherence` / `oral`）の範囲内で完結し、新しい group 値 `"administration_guidance"` を追加するものではない。旧 `allergy_h1_antihistamine_eye_drops.json` 等が group 値へ `"administration_guidance"` を直接（変換なしで）設定していた実績は、本ルール確定前の legacy 実装であり、新規 module では踏襲しない。
 
 **未定義 type が出た場合**: 推測生成せず CHECK として停止し、人間に確認してからマッピングを決定する。
 
@@ -223,7 +226,7 @@ const GROUP_LABELS: Record<string, string> = {
 | administration_guidance | — | — | allergy_eye_drops 系 |
 | lifestyle_guidance | — | — | allergy / derm 系 |
 
-> ⚠️ **CHECK-G02（legacy group）**: `administration_guidance` / `lifestyle_guidance` は複数の実 JSON で group 値として使用されているが、JSON_STANDARD.md にも AddonPanel GROUP_LABELS にもラベル未登録。type→group 変換表では `lifestyle_guidance（bridge type）→ "counseling"（JSON group）` と定義されており、新規 module でこれらの値を group として直接使用しないこと。既存ファイルの migration 要否は別途判断。
+> ⚠️ **CHECK-G02（legacy group・administration_guidance 分は 2026-07-24 RESOLVED）**: `administration_guidance` / `lifestyle_guidance` は複数の実 JSON で group 値として使用されているが、JSON_STANDARD.md にも AddonPanel GROUP_LABELS にもラベル未登録。type→group 変換表では `lifestyle_guidance（bridge type）→ "counseling"（JSON group）` に加え、2026-07-24 に `administration_guidance（bridge type）→ "counseling"（JSON group）` も正式化された（本節 §5 参照）。新規 module でこれらの値を group として直接使用しないこと（`"administration_guidance"` / `"lifestyle_guidance"` という文字列そのものを group に設定してはならない。必ず `"counseling"` へ変換する）。既存ファイル（旧 `allergy_h1_antihistamine_eye_drops.json` 等）の migration 要否は別途判断。
 
 ### 新規 module での使用基準
 
@@ -473,14 +476,19 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | `adherence_status` | adherence 系 / lifestyle_guidance 系 / usage 系の全 S 行（sickday / followup 型を含む） |
 | `treatment_end_reason` | treatment_end 系の S 行 |
 
-**sickday / followup 型の SStructured.role（明示ルール）:**
+**`usage` scenarioType（2026-07-24 正式値化）**: `usage` は `prompts/vNext/PN3A-Scenario-Classification.md` の scenarioType 正式値表に追加された値であり、xStructured 生成責務は `prompts/vNext/PN4B-Structured-GroupB.md` の対象scenarioTypeに帰属する（PN4A の対象ではない）。分類基準の全体表は当該2ファイルを正本とし、本節では SStructured.role のみを扱う（本ファイル冒頭「工程手順は含まない」方針に従う）。
+
+**sickday / followup / usage 型の SStructured.role（明示ルール）:**
 
 | シナリオ型 | S フィールドの性質 | 使用する role |
 |---|---|---|
 | `scenarioType: sickday` | 体調不良・食事摂取不能等の状況報告 | `adherence_status`（usage 系として扱う） |
 | `scenarioType: followup`（injection_technique_check 等） | 注射手技・使用状況の確認 | `adherence_status`（usage 系として扱う） |
+| `scenarioType: usage`（2026-07-24 正式値化。as_needed_refill_needed 等） | 頓用使用状況・残薬状況の報告 | `adherence_status`（usage 系として扱う） |
 
-`sickday_status` / `followup_status` という語彙は存在しない（ERROR）。`adherence_status` を使用すること。
+`sickday_status` / `followup_status` / `as_needed_status` という語彙は存在しない（ERROR）。`adherence_status` を使用すること。
+
+**既存precedentからの未定義role転用禁止**: 一部の既存module（`allergy_h1_antihistamine_second_gen_oral` の `as_needed_refill_*` 等）が本節に定義のないrole（`as_needed_status`）を使用している事例があるが、これは本ルール確定前の legacy 実装であり ERROR 該当である。新規moduleでは、既存JSONに前例があるという理由だけで未定義roleを転用してはならない。本節に定義された確立済み語彙のみを使用すること。
 
 **SStructured.role 禁止語彙（ERROR）:** `drug_status` / `treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation` / `symptom_observation` / `sickday_status` / `followup_status`
 
@@ -557,7 +565,7 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 |---|---|---|---|---|
 | CHECK-T01 | **RESOLVED** | P0-B.md の変換表に `side_effect_guidance → "counseling"` と記載されていたが `"sideEffects"` が正しい（詳細な経緯は本ファイル §5 の CHECK-T01 注記を参照） | prompts/P0-B.md | Step 1.5 で修正済み。以後 P0-B.md 該当行は `"sideEffects"` のまま維持されている（2026-07-21 現況確認済み） |
 | CHECK-G01 | OPEN | `"adherence"` group が JSON_STANDARD.md に有効値として定義されているが AddonPanel.tsx GROUP_LABELS にラベル未登録（下記詳細参照） | app/components/AddonPanel.tsx / docs/JSON_STANDARD.md | GROUP_LABELS に日本語ラベルを定義するか要判断 |
-| CHECK-G02 | OPEN | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_LABELS にラベル未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | 新規 module では使用しないこと。既存ファイルの migration 要否は別途判断 |
+| CHECK-G02 | **administration_guidance分は RESOLVED（2026-07-24）／ lifestyle_guidance分は OPEN** | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_LABELS にラベル未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | administration_guidance: type→group変換表へ `→ "counseling"` を追加し新規moduleでの標準変換を確定済み（§5参照）。lifestyle_guidance分・既存ファイルのmigration要否は別途判断のまま |
 | CHECK-TP01 | OPEN | `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` に `thirdPanelSPlacement` キーが存在しない（Section 14 ルール違反） | data/modules/dm_gip_glp1ra_tirzepatide_injection.json | 次回 audit 時に thirdPanelSPlacement 固定値を追加する |
 | CHECK-O01 | **RESOLVED** | `dm_glp1ra_semaglutide_oral`（全28シナリオ）・`dm_glp1ra_injection`（全34シナリオ）の O フィールドが `{{drug_subject}}` ではなく薬効分類名固定（`GLP-1受容体作動薬(内服)`/`(注射)`）になっていた（Section 16 O フィールドルール違反）。旧体系生成時からの既存欠陥で、2026-07 の多剤合成テストで発見 | data/modules/dm_glp1ra_semaglutide_oral.json / data/modules/dm_glp1ra_injection.json | 2026-07 修正済み（状態語は保持したまま `{{drug_subject}}` へ置換）。新規 module では Section 16 を厳守すること |
 
@@ -601,7 +609,7 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 **新規 module への影響:**
 - bridge type が `lifestyle_guidance` → Section 5 変換表に従い `group: "counseling"` とすること（`group: "lifestyle_guidance"` にしてはならない）
-- bridge type が `administration_guidance` → 変換表に未定義。新規 module での使用は PENDING として人間確認を要する
+- bridge type が `administration_guidance` → **2026-07-24 RESOLVED**: Section 5 変換表に `administration_guidance → "counseling"` を追加し正式化した。bridge type は意味上の分類として保持し、JSON group のみ `"counseling"` へ変換する（`group: "administration_guidance"` という新しい group 値は追加しない）。旧 `allergy_h1_antihistamine_eye_drops.json` 等の legacy 実装（変換なしで直接 `"administration_guidance"` を設定）は本ルール確定前のものであり、新規 module では踏襲しない。
 
 ---
 
@@ -632,6 +640,10 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 - `genericKey` 省略時は `genericKey ?? displayGenericName ?? genericName` の優先順でフォールバックする（このフォールバックは検索グルーピング専用であり、表示値の解決には使わない）
 - 配合剤は単剤と同じ `genericKey` を使わず、専用の単一文字列キーを割り当てる（複数成分配列化は未導入 → `docs/OPEN_DESIGN_QUESTIONS.md` 参照）
 - `genericName` と `displayGenericName` の責務・スキーマの詳細は `docs/JSON_STANDARD.md` JS-A-drug を正本とする
+
+**`brandCatalog[key].displayName` と key の一致原則（2026-07-24 追記）**:
+
+`brandCatalog[key].displayName` は常に `key` 自身と完全一致しなければならない（`lib/types.ts` BrandEntry の JSDoc で定義済みの前提）。検索alias→canonical薬剤名（brandCatalogキー）→SOAP主語という解決経路は、原則としてキー自体を正本として辿るが、Express Mode 等一部のコードパス（`app/components/DashboardClient.tsx` の `resolvedSoapDisplayName` 計算）は `displayName` を直接参照する。両者が乖離すると、検索・`aliasToBrand` は正しいままSOAP主語やExpress Mode表示だけが古い名称に戻る「サイレントな退行」が起こりうる。この不一致は `lib/moduleValidator.ts` の `BRAND_DISPLAY_NAME_MISMATCH`（ERROR、check 13b）が全モジュール共通で検出する。
 
 （生成規則・命名規則の詳細は `prompts/vNext/PN2-Drug-Header.md` を参照）
 
@@ -780,3 +792,52 @@ Addon の表示順は、コード側の固定順ではなく bridge / canonical 
 `crossModuleIndicationLabel` の初期実装（2026-07）は、適応ラベル表示という目的に対して direct 系コードパスのみを変更し、generic match 系コードパスの対応する候補生成ロジックを見落とした。この結果、ブランド名検索で一般名候補が、一般名検索でブランド名候補が消える回帰が発生し、ユーザーの実機確認で発見された（validator では検出不能な性質の不具合だった）。同種の見落としを防ぐため、変更範囲の確認手順をルール化する。
 
 （設計原則としての詳細は `docs/DESIGN_PRINCIPLES.md` DP-11 を参照）
+
+---
+
+## 27. template.reservedHandlingTags 予約タグ原則（Reserved Handling Tag Principle）
+
+`scenarios[].scenarioRequiredTags` / `addons.items[].requiredTags` が参照するタグを、
+現行 `drug.brandCatalog` のどのエントリも保持していない場合、`lib/moduleValidator.ts` は
+デフォルトで ERROR（`SCENARIO_REQUIRED_TAG_UNREACHABLE`）または WARNING
+（`ADDON_REQUIRED_TAG_UNREACHABLE`）として検出する。これはタグの typo・設定漏れによる
+シナリオ／ADDON のサイレントな非表示事故を防ぐための仕組みである。
+
+**例外（2026-07-24 導入）**: `template.reservedHandlingTags`（`string[]`）にタグを明示宣言した
+場合に限り、そのタグを参照する到達不能な scenarioRequiredTags / addon.requiredTags は
+ERROR ではなく WARNING として扱われる。
+
+**判定ルール:**
+```
+requiredTag を持つ brandCatalog エントリが存在しない
+  かつ reservedHandlingTags に宣言されている → WARNING
+  かつ reservedHandlingTags に宣言されていない → ERROR（scenario 側） / WARNING（addon 側、従来仕様）
+```
+
+**reservedHandlingTags の用途（限定的）:**
+- 現行 `brandCatalog` には存在しないが、将来の製品・製品バリエーション追加時に
+  到達可能になる想定で意図的に保持している handlingTags を宣言する
+- 対象シナリオ／ADDON を現行ブランドでは非表示のまま保持する意図を明示する
+
+**禁止事項:**
+- タグの typo・設定漏れを免責する汎用的な逃げ道として使用しない
+- 全モジュール一律で `SCENARIO_REQUIRED_TAG_UNREACHABLE` を WARNING化する目的で使用しない
+  （宣言されていないタグは引き続き ERROR）
+- 現行ブランドへ推測でタグを付与し、到達可能に見せかけて問題を隠さない
+- Bridge Header に根拠なく canonical JSON にのみ宣言しない。bridge が正本であり、
+  bridge の `template.reservedHandlingTags`（または同等の Header 記載）から機械反映すること
+- 対象製品が確定したら、当該タグを `reservedHandlingTags` から外し、
+  対象 `brandCatalog` エントリの `handlingTags` へ正式に付与すること（宣言を放置しない）
+
+**補助チェック（ModuleValidator）:**
+- `RESERVED_TAG_UNUSED`（WARNING）: 宣言されているが、どの scenario/addon の requiredTags にも
+  一度も使用されていない予約タグ
+- `RESERVED_TAG_REACHABLE`（WARNING）: 宣言されているタグが既にいずれかの `brandCatalog[].handlingTags`
+  に存在する（宣言が陳腐化している可能性）
+
+**実例**: `allergy_h1_antihistamine_eye_drops` の `concentration_variant` / `cold_storage` /
+`cold_storage_before_opening`（`bridges/allergy_h1_antihistamine_eye_drops.md` template.handlingTags
+コメント、`docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` も参照）。
+
+（型定義: `lib/types.ts` `ModuleTemplate.reservedHandlingTags` / 検証ロジック: `lib/moduleValidator.ts`
+check 15・32・33・34 / 自己テスト: `tests/moduleValidator.test.ts`）

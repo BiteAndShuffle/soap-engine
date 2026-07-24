@@ -112,6 +112,7 @@ bridge 上の type をそのまま `group` にコピーしない。必ず以下�
 | `adherence_guidance` | `adherence` |
 | `sickday_guidance` | `sickday` |
 | `followup_monitoring` | `followup` |
+| `administration_guidance` | `counseling`（2026-07-24 正式化。RULES.md §5 / PN3A-Scenario-Classification.md と同期。bridge type は意味上の分類として保持し、JSON group のみ counseling へ変換する。新規 group `administration_guidance` は追加しない） |
 
 変換表にない type が出現した場合は MUST_STOP し、ユーザーへ確認する。
 

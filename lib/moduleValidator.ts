@@ -20,6 +20,9 @@
  *   11)  defaults.followup* の責務逸脱チェック（禁止語）（警告）
  *   12)  scenario 競合制御メタデータの型チェック（priority / exclusiveGroup / combinable）（警告）
  *   13)  drug.brandNames と drug.brandCatalog のキーが集合として一致
+ *   13b) brandCatalog[key].displayName が key と完全一致すること（ERROR）。
+ *        検索alias→canonical薬剤名→SOAP主語の解決経路のうち、Express Mode 等一部の
+ *        コードパスが displayName を直接参照するため、key との乖離を検出する
  *   14)  followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
  *   15)  addon.requiredTags のタグをいずれの brandCatalog も持たない（到達可能性、警告）
  *   16)  *Structured text 連結と S/A/P 本文の不一致（警告）
@@ -52,9 +55,18 @@
  *        "ROLE_MAPPING_UNCLEAR" を含む item が存在しないこと（WARNING）
  *   31)  scenarios[].PStructured の role が禁止語彙でないこと（WARNING）
  *   32)  scenarios[].scenarioRequiredTags の各タグがいずれかの brandCatalog[].handlingTags に
- *        存在すること（ERROR）。addons.items[].requiredTags の到達可能性チェック（check 15、
- *        WARNING）とは独立した別チェック。タグの typo によるシナリオのサイレントな非表示を防ぐ
+ *        存在すること。存在しない場合、template.reservedHandlingTags にそのタグが明示的に
+ *        宣言されていれば WARNING（将来のブランド追加まで意図的に非表示にしている予約タグ）、
+ *        宣言されていなければ ERROR（タグの typo によるシナリオのサイレントな非表示を防ぐ）。
+ *        check 15（addon.requiredTags の到達可能性）にも同じ reservedHandlingTags 条件を適用する
  *        （brandCatalog 未定義の場合はスキップ）
+ *   33)  template.reservedHandlingTags の各タグが、いずれかの scenarios[].scenarioRequiredTags /
+ *        addons.items[].requiredTags で実際に使用されていること（WARNING）。
+ *        誤記や設定漏れの免責ではなく「将来ブランド追加まで意図的に非表示」という宣言専用の
+ *        フィールドであるため、一度も参照されない予約タグは余剰として報告する
+ *   34)  template.reservedHandlingTags の各タグが、いずれかの brandCatalog[].handlingTags に
+ *        既に存在していないこと（WARNING）。既にブランドが保持しているタグを予約タグとして
+ *        宣言する必要はなく、宣言が古くなっている可能性を示す
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -79,6 +91,7 @@ export type ModuleValidationErrorCode =
   | 'SCENARIO_EXCLUSIVE_GROUP_INVALID' // scenario.exclusiveGroup が string/null 以外（警告）
   | 'SCENARIO_COMBINABLE_INVALID'     // scenario.combinable が boolean/null 以外（警告）
   | 'BRAND_CATALOG_MISMATCH'          // drug.brandNames と drug.brandCatalog のキーが不一致
+  | 'BRAND_DISPLAY_NAME_MISMATCH'     // brandCatalog[key].displayName が key と不一致（ERROR）
   | 'ADDON_REQUIRED_TAG_UNREACHABLE'  // addon.requiredTags のタグをいずれの brandCatalog も持たない（警告）
   | 'STRUCTURED_TEXT_MISMATCH'        // *Structured text 連結と S/A/P 本文の不一致（警告）
   | 'ORDERPRESETS_MISSING'            // addons.items 存在時に addons.orderPresets が欠落
@@ -100,10 +113,12 @@ export type ModuleValidationErrorCode =
   | 'SCOMPOSITION_INTENT_FORBIDDEN' // sComposition.intent が禁止値（WARNING）
   | 'STRUCTURED_ROLE_FORBIDDEN'     // SStructured/AStructured/PStructured.role が禁止語彙（WARNING）
   | 'ROLE_MAPPING_NOTE_PRESENT'     // SStructured/AStructured/PStructured の notes に ROLE_MAPPING_UNCLEAR が残存（WARNING）
-  | 'SCENARIO_REQUIRED_TAG_UNREACHABLE' // scenarios[].scenarioRequiredTags のタグをいずれの brandCatalog も持たない（ERROR）
+  | 'SCENARIO_REQUIRED_TAG_UNREACHABLE' // scenarios[].scenarioRequiredTags のタグをいずれの brandCatalog も持たない（reservedHandlingTags 宣言時は警告、未宣言時は ERROR）
   | 'DISPLAY_GENERIC_NAME_MISSING'    // brandCatalog[brand].displayGenericName が未設定（ERROR）
   | 'DISPLAY_GENERIC_NAME_EMPTY'      // brandCatalog[brand].displayGenericName が空文字（ERROR）
   | 'DISPLAY_GENERIC_NAME_SALT_COPY'  // genericName が塩類名を含み、displayGenericName と完全一致（旧コピーパターン）（ERROR）
+  | 'RESERVED_TAG_UNUSED'             // template.reservedHandlingTags のタグが scenario/addon の requiredTags で一度も使用されていない（警告）
+  | 'RESERVED_TAG_REACHABLE'          // template.reservedHandlingTags のタグが既にいずれかの brandCatalog[].handlingTags に存在する（警告）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -931,6 +946,26 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     if (brandError) errors.push(brandError)
   }
 
+  // 13b) brandCatalog[key].displayName が key と完全一致すること（ERROR）
+  //      検索alias → canonical薬剤名 → SOAP主語 の解決経路（Drug Subject Resolution）は
+  //      brandCatalog のキー自体を正本とする。displayName はこのキーの写像であるべきだが、
+  //      Express Mode 等の一部コードパス（DashboardClient.tsx の resolvedSoapDisplayName 計算）は
+  //      key ではなく displayName を直接参照するため、両者が乖離すると
+  //      「検索・aliasToBrand は正しいのに表示名だけ古い名称に戻る」というサイレントな退行が起こる。
+  //      通常の brandNames/brandCatalog キー集合一致チェック（check 13）では検出できない。
+  if (brandCatalog) {
+    for (const [key, entry] of Object.entries(brandCatalog)) {
+      const displayName = (entry as Record<string, unknown>).displayName
+      if (typeof displayName === 'string' && displayName !== key) {
+        errors.push({
+          code: 'BRAND_DISPLAY_NAME_MISMATCH',
+          detail: `brandCatalog["${key}"].displayName = "${displayName}" は brandCatalog のキー自体（正本）と一致していません`,
+          isWarning: false,
+        })
+      }
+    }
+  }
+
   // 14) followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
   if (followupProfiles && Array.isArray(scenarios)) {
     for (const sc of scenarios as Scenario[]) {
@@ -944,8 +979,13 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     }
   }
 
-  // 15) addon.requiredTags の到達可能性チェック（警告）
-  //     requiredTags の各タグをいずれの brandCatalog エントリも持たない場合は警告
+  // 15) addon.requiredTags の到達可能性チェック
+  //     requiredTags の各タグをいずれの brandCatalog エントリも持たない場合、
+  //     template.reservedHandlingTags に宣言されていれば警告（意図的な予約タグ）、
+  //     宣言されていなければ ERROR（typo・設定漏れによるサイレントな非表示事故を防ぐ）
+  const reservedHandlingTags = new Set<string>(
+    ((obj?.template as Record<string, unknown> | undefined)?.reservedHandlingTags as string[] | undefined) ?? [],
+  )
   if (addonItems && brandCatalog) {
     const allBrandHandlingTags = new Set<string>(
       Object.values(brandCatalog)
@@ -956,10 +996,13 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
       if (!required || required.length === 0) continue
       for (const tag of required) {
         if (!allBrandHandlingTags.has(tag)) {
+          const reserved = reservedHandlingTags.has(tag)
           errors.push({
             code: 'ADDON_REQUIRED_TAG_UNREACHABLE',
-            detail: `addons.items["${mapKey}"].requiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません`,
-            isWarning: true,
+            detail: reserved
+              ? `addons.items["${mapKey}"].requiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません（template.reservedHandlingTags に宣言済みのため意図的な非表示として扱う）`
+              : `addons.items["${mapKey}"].requiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません`,
+            isWarning: reserved,
           })
         }
       }
@@ -1115,11 +1158,14 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     }
   }
 
-  // 32) scenarios[].scenarioRequiredTags の到達可能性チェック（ERROR）
-  //     addons.items[].requiredTags の到達可能性チェック（check 15、WARNING）とは
-  //     独立した別チェック。scenarioRequiredTags の各タグをいずれの brandCatalog
-  //     エントリも持たない場合、タグの typo によりシナリオがどのブランドでも
-  //     表示されなくなる（サイレントな非表示事故）ため ERROR とする。
+  // 32) scenarios[].scenarioRequiredTags の到達可能性チェック
+  //     addons.items[].requiredTags の到達可能性チェック（check 15）とは
+  //     独立した別チェックだが、reservedHandlingTags による免責条件は共通。
+  //     scenarioRequiredTags の各タグをいずれの brandCatalog エントリも持たない場合、
+  //     template.reservedHandlingTags に宣言されていれば警告（意図的な予約タグ）、
+  //     宣言されていなければ ERROR（タグの typo によりシナリオがどのブランドでも
+  //     表示されなくなるサイレントな非表示事故を防ぐ）。
+  const usedReservedTags = new Set<string>()
   if (Array.isArray(scenarios) && brandCatalog) {
     const allBrandHandlingTagsForScenario = new Set<string>(
       Object.values(brandCatalog)
@@ -1131,12 +1177,57 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
       if (!required || required.length === 0) continue
       for (const tag of required) {
         if (!allBrandHandlingTagsForScenario.has(tag)) {
+          const reserved = reservedHandlingTags.has(tag)
+          if (reserved) usedReservedTags.add(tag)
           errors.push({
             code: 'SCENARIO_REQUIRED_TAG_UNREACHABLE',
-            detail: `scenarios["${scId}"].scenarioRequiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません`,
-            isWarning: false,
+            detail: reserved
+              ? `scenarios["${scId}"].scenarioRequiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません（template.reservedHandlingTags に宣言済みのため意図的な非表示として扱う）`
+              : `scenarios["${scId}"].scenarioRequiredTags に "${tag}" が含まれますが、いずれの brandCatalog エントリも持っていません`,
+            isWarning: reserved,
           })
         }
+      }
+    }
+  }
+
+  // addon 側の reserved タグ使用も集計する（check 33 の「一度も使用されていない」判定に必要）
+  if (addonItems) {
+    for (const item of Object.values(addonItems)) {
+      const required = (item as Record<string, unknown>).requiredTags as string[] | undefined
+      for (const tag of required ?? []) {
+        if (reservedHandlingTags.has(tag)) usedReservedTags.add(tag)
+      }
+    }
+  }
+
+  // 33) reservedHandlingTags の余剰チェック（警告）
+  //     宣言されているが、どの scenario/addon の requiredTags にも使用されていない予約タグ
+  for (const tag of reservedHandlingTags) {
+    if (!usedReservedTags.has(tag)) {
+      errors.push({
+        code: 'RESERVED_TAG_UNUSED',
+        detail: `template.reservedHandlingTags に "${tag}" が宣言されていますが、scenario/addon の requiredTags で一度も使用されていません`,
+        isWarning: true,
+      })
+    }
+  }
+
+  // 34) reservedHandlingTags の陳腐化チェック（警告）
+  //     宣言されているタグが既にいずれかの brandCatalog[].handlingTags に存在する
+  //     （到達可能になっているのに予約タグとして残っている＝宣言が古い可能性）
+  if (brandCatalog) {
+    const allBrandHandlingTagsForReserved = new Set<string>(
+      Object.values(brandCatalog)
+        .flatMap(entry => (entry.handlingTags as string[] | undefined) ?? []),
+    )
+    for (const tag of reservedHandlingTags) {
+      if (allBrandHandlingTagsForReserved.has(tag)) {
+        errors.push({
+          code: 'RESERVED_TAG_REACHABLE',
+          detail: `template.reservedHandlingTags に "${tag}" が宣言されていますが、既にいずれかの brandCatalog エントリが保持しており到達可能です（予約宣言が不要になっている可能性）`,
+          isWarning: true,
+        })
       }
     }
   }

@@ -227,10 +227,15 @@ PN3B が完了した時点で PN4A / PN4B / PN5 の 3 者は同時実行可能�
 bridge に `composition:` / `persona:` / `regulatory:` / `topical:` セクションが存在しない場合は、  
 PN2 に実装されたフォールバックルールを使用する（PN2-Drug-Header.md 参照）。
 
-**composition.classKey の取り扱い**:  
-bridge 未記載の場合は PENDING とし、ユーザーへ確認を仰ぐ。  
-既存モジュールの実績値（`data/modules/index.ts` から特定できる JSON）を参照して候補を提示する。  
-勝手に確定しない。
+**composition.classKey の取り扱い（2026-07-24 更新。PN2-Drug-Header.md の classKey 導出ルールと同期）**:  
+bridge 未記載の場合、`composition.nodeKey`（= `display.nodeKey` フォールバック値）が既知の標準形式
+`<classKey>_<route>` に一致し、かつ route 部分が `drug.route` の値と一致するときに限り、
+`<route>` 部分を機械的に取り除いて classKey を導出してよい。  
+配合剤・`dual_mechanism` 等 nodeKey が単一 classKey + route の1:1構造になっていない module、
+または route 部分が `drug.route` と一致しない場合は、推測で確定せず PENDING とし、ユーザーへ確認を仰ぐ。  
+既存モジュールの実績値（`data/modules/index.ts` から特定できる JSON）は参考情報として提示してよいが、
+そのまま流用して確定してはならない。  
+詳細な導出ルール・一致例・不一致例は `prompts/vNext/PN2-Drug-Header.md`「classKey 導出ルール」を正本とする。
 
 `defaults.followupProfiles` は phase1_text_spine.json の followupProfiles を引き継ぎます。  
 `defaults.followup` は followupProfiles のデフォルトエントリの内容オブジェクトをデリファレンスして設定します  

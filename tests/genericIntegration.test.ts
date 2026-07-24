@@ -27,6 +27,8 @@ import h1EyeData  from '../data/modules/allergy_h1_antihistamine_eye_drops.json'
 
 import { getMenuGroupFromScenario } from '../lib/menuGroups'
 import { isSReplacementEligible }   from '../lib/isSReplacementEligible'
+import { ALL_MODULES } from '../data/modules/index'
+import { buildSearchIndex, getDrugSuggestions } from '../lib/search'
 import type { ModuleData, Scenario, ExpressModeEntry } from '../lib/types'
 
 // ─────────────────────────────────────────────────────────────
@@ -78,13 +80,13 @@ describe('getMenuGroupFromScenario — treatment_adjustment generic classificati
   describe('その他 treatment_adjustment シナリオが「その他」に落ちないこと（既存 H1 点眼）', () => {
     const h1Eye = h1EyeData as unknown as ModuleData
 
-    test('dose_increase_low_perceived_effect → 増量（H1点眼）', () => {
-      const sc = findScenario(h1Eye, 'dose_increase_low_perceived_effect')
+    test('strength_increase_low_perceived_effect → 増量（H1点眼）', () => {
+      const sc = findScenario(h1Eye, 'strength_increase_low_perceived_effect')
       assert.equal(getMenuGroupFromScenario(sc), '増量')
     })
 
-    test('dose_decrease_improved → 減量（H1点眼）', () => {
-      const sc = findScenario(h1Eye, 'dose_decrease_improved')
+    test('strength_decrease_improved → 減量（H1点眼）', () => {
+      const sc = findScenario(h1Eye, 'strength_decrease_improved')
       assert.equal(getMenuGroupFromScenario(sc), '減量')
     })
   })
@@ -333,13 +335,13 @@ describe('getMenuGroupFromScenario — 既存モジュール回帰', () => {
   describe('H1点眼: treatment_adjustment が その他 に落ちないこと', () => {
     const h1Eye = h1EyeData as unknown as ModuleData
 
-    test('dose_decrease_low_perceived_effect → 減量', () => {
-      const sc = findScenario(h1Eye, 'dose_decrease_low_perceived_effect')
+    test('frequency_decrease_low_perceived_effect → 減量', () => {
+      const sc = findScenario(h1Eye, 'frequency_decrease_low_perceived_effect')
       assert.equal(getMenuGroupFromScenario(sc), '減量')
     })
 
-    test('dose_increase_due_to_other_med_adjustment → 増量', () => {
-      const sc = findScenario(h1Eye, 'dose_increase_due_to_other_med_adjustment')
+    test('strength_increase_due_to_other_med_adjustment → 増量', () => {
+      const sc = findScenario(h1Eye, 'strength_increase_due_to_other_med_adjustment')
       assert.equal(getMenuGroupFromScenario(sc), '増量')
     })
   })
@@ -815,31 +817,92 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
       })
     })
 
-    // H1点眼: 先発 / GE で SOAP主語が正しく解決される
-    describe('H1点眼 アレジオン点眼液: SOAP主語が brandCatalog 解決名', () => {
+    // H1点眼: alias/検索トークンから brandCatalog 正式名（"アレジオン点眼液"）への解決を
+    // 本番の検索経路（buildSearchIndex + getDrugSuggestions）で検証する。
+    // Express Mode（buildExpressCandidates、enabled フィルタあり）には依存しない
+    // 別責務のテストとして分離する（詳細は下記 Express Mode 無効状態のテストを参照）。
+    describe('H1点眼 アレジオン点眼液: 検索経路での brandCatalog 正式名解決', () => {
+      const fullIndex = ALL_MODULES.flatMap(m => buildSearchIndex(m))
+      const H1EYE = 'allergy_h1_antihistamine_eye_drops'
+
+      test('alias「アレジオン」(bare) から H1点眼 module が候補に含まれ、正式名 "アレジオン点眼液" へ解決される', () => {
+        const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+        const item = results.find(r => r.moduleId === H1EYE && r.matchedBrandName === 'アレジオン点眼液')
+        assert.ok(item, `H1点眼のアレジオン点眼液が候補に見つからない: ${JSON.stringify(results.map(r => ({m: r.moduleId, b: r.matchedBrandName})))}`)
+      })
+
+      test('"あれじお"（読み prefix）で H1点眼 module が候補になる', () => {
+        const results = getDrugSuggestions('あれじお', fullIndex, 8)
+        assert.ok(
+          results.some(r => r.moduleId === H1EYE),
+          `"あれじお" で H1点眼 が候補に含まれない: ${JSON.stringify(results.map(r => ({m: r.moduleId, b: r.matchedBrandName})))}`,
+        )
+      })
+
+      test('"あれじお てん"（複数トークンAND）で アレジオン点眼液 へ絞り込める', () => {
+        const results = getDrugSuggestions('あれじお てん', fullIndex, 8)
+        assert.ok(results.length > 0, '候補が1件も返らない')
+        assert.ok(
+          results.every(r => r.moduleId === H1EYE),
+          `"あれじお てん" は H1点眼 のみへ絞り込まれるべき: ${JSON.stringify(results.map(r => ({m: r.moduleId, b: r.matchedBrandName})))}`,
+        )
+        assert.ok(
+          results.some(r => r.matchedBrandName === 'アレジオン点眼液'),
+          '絞り込み結果に アレジオン点眼液 が含まれない',
+        )
+      })
+
+      test('SOAP主語（drugDisplayLabel）が "アレジオン点眼液" であり、単なる "アレジオン" にはならない', () => {
+        const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+        const item = results.find(r => r.moduleId === H1EYE && r.matchedBrandName === 'アレジオン点眼液')
+        assert.ok(item, 'H1点眼のアレジオン点眼液候補が見つからない')
+        assert.equal(
+          item!.drugDisplayLabel, 'アレジオン点眼液',
+          `{{drug_subject}} 解決結果が "アレジオン点眼液" であるべき: ${item!.drugDisplayLabel}`,
+        )
+        assert.notEqual(item!.drugDisplayLabel, 'アレジオン', 'SOAP主語が bare 名 "アレジオン" になってはならない')
+      })
+
+      test('LX・ミニ・PF等の製品バリエーション名が独立した検索結果として展開されない', () => {
+        const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+        const labels = results.map(r => r.drugDisplayLabel).concat(results.map(r => r.matchedBrandName ?? ''))
+        for (const variant of ['LX', 'ミニ', 'PF']) {
+          assert.ok(
+            !labels.some(l => l.includes(variant)),
+            `製品バリエーション名 "${variant}" が検索結果に含まれてはならない: ${JSON.stringify(labels)}`,
+          )
+        }
+      })
+
+      test('同一 alias「アレジオン」でも、剤形が異なる H1内服のアレジオン錠とは区別される', () => {
+        const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+        const eyeItem  = results.find(r => r.moduleId === H1EYE)
+        const oralItem = results.find(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+        assert.ok(eyeItem, 'H1点眼候補が見つからない')
+        assert.ok(oralItem, 'H1内服候補が見つからない（将来剤形追加時の区別確認の前提）')
+        assert.notEqual(
+          eyeItem!.matchedBrandName, oralItem!.matchedBrandName,
+          `剤形が異なるにもかかわらず同一ブランド名として解決されている: eye=${eyeItem!.matchedBrandName}, oral=${oralItem!.matchedBrandName}`,
+        )
+      })
+    })
+
+    // H1点眼: Express Mode は PN5 仕様どおり無効状態であることの確認（上記の brandCatalog 解決テストとは別責務）。
+    // enabled: false により候補が空になることは FAIL ではなく仕様どおりの PASS。
+    describe('H1点眼: Express Mode は PN5 仕様どおり全件 enabled: false（候補には出現しない）', () => {
       const h1Eye = h1EyeData as unknown as ModuleData
-      const candidates = buildExpressCandidates(h1Eye)
-      const entry = candidates.find(c => c.defaultBrandName === 'アレジオン点眼液')
 
-      test('アレジオン点眼液エントリが存在する', () => {
-        assert.ok(entry, 'アレジオン点眼液が expressModes 候補に存在しない')
+      test('expressModes 全8件が enabled: false である', () => {
+        assert.equal(h1Eye.expressModes?.length, 8)
+        assert.ok(
+          h1Eye.expressModes?.every(e => e.enabled === false),
+          `H1点眼の expressModes は全件 enabled:false であるべき: ${JSON.stringify(h1Eye.expressModes?.map(e => e.enabled))}`,
+        )
       })
 
-      test('先発モード: resolvedSoapDisplayName が "アレジオン点眼液"', () => {
-        assert.equal(entry?.resolvedSoapDisplayName, 'アレジオン点眼液')
-      })
-
-      test('GEモード: resolvedGenericSoapDisplayName が "エピナスチン点眼液"', () => {
-        // brandCatalog["アレジオン点眼液"].displayGenericName = "エピナスチン点眼液"
-        // genericDisplayName（UI）= "エピナスチン点眼薬" — "薬" vs "液" が SOAP主語に混入しない
-        assert.equal(entry?.resolvedGenericSoapDisplayName, 'エピナスチン点眼液',
-          'GE SOAP主語が "エピナスチン点眼薬"（UI label）になっている。brandCatalog.displayGenericName "エピナスチン点眼液" を使うこと')
-      })
-
-      test('GEモード: UI genericLabel（"点眼薬"）が SOAP主語に混入しない', () => {
-        // genericLabel = "エピナスチン点眼薬" だが SOAP主語は "エピナスチン点眼液"
-        assert.notEqual(entry?.resolvedGenericSoapDisplayName, entry?.genericLabel,
-          'resolvedGenericSoapDisplayName が UI genericLabel と同一（"点眼薬" suffix が SOAP本文に混入）')
+      test('enabled:false のため buildExpressCandidates() の候補は空になる（仕様どおり）', () => {
+        const candidates = buildExpressCandidates(h1Eye)
+        assert.equal(candidates.length, 0, 'enabled:false のエントリは Express Mode 候補に含まれてはならない')
       })
     })
 

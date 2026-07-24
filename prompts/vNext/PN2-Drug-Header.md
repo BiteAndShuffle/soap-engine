@@ -97,10 +97,23 @@ Phase 3A が完成次第、Phase 6 が確定値（groupKeyRegistry: Phase 3A 出
 | `composition.priority` | インスリン注射 → `"chronic"` | 慢性疾患薬は `"chronic"` として確定 |
 | `composition.clinicalDomain` | `composition.domain` と同値 | `"diabetes"` 等 |
 | `composition.sMergeDomain` | `composition.domain` と同値 | `"diabetes"` 等 |
-| `composition.classKey` | bridge 未記載かつ同系統 JSON 参照困難な場合 | **PENDING**（人間確認後に追記） |
+| `composition.classKey` | 下記「classKey 導出ルール」参照 | 標準形式一致時のみ機械導出。それ以外は **PENDING** |
 
 **nodeKey / classKey は bridge.composition から取得する。**
 存在しない場合は上記フォールバック表に従う。
+
+**classKey 導出ルール（2026-07-24 正式化）:**
+
+bridge に `composition.classKey` の記載がない場合、`composition.nodeKey`（= `display.nodeKey` フォールバック値）が
+既知の標準形式 `<classKey>_<route>` に一致するときに限り、`<route>` 部分を機械的に取り除いて `classKey` を導出してよい。
+`route` は `drug.route` の値（`oral` / `injection` / `topical` / `ophthalmic` / `inhalation` 等）と一致していることを確認すること。
+
+- 一致例: `nodeKey: "h1_antihistamine_ophthalmic"` かつ `drug.route: "ophthalmic"` → `classKey: "h1_antihistamine"`（末尾が route と一致する標準形式）
+- 不一致例（機械導出せず PENDING とする）:
+  - 配合剤（例: `nodeKey` が2成分名を連結した形式で、単純な `<classKey>_<route>` に分解できない）
+  - `dual_mechanism` 等、nodeKey が単一 classKey + route の1:1構造になっていない module
+  - nodeKey 末尾が `drug.route` の値と一致しない、またはそもそも route を示す語尾になっていない場合
+- 上記いずれかに該当し標準形式と断定できない場合は、推測で classKey を確定せず `"PENDING"` として人間確認へ回す。同系統 JSON の classKey 命名を参考情報として提示してよいが、それをそのまま流用して確定してはならない。
 
 **composition.sMergePolicy（必須・PN2が常に生成する固定値）:**
 

@@ -669,6 +669,16 @@ export interface ModuleTemplate {
   /** 新スキーマ */
   urgentFlag?: boolean
   urgentCriteria?: EmergencyCriteria
+  /**
+   * 予約handlingTags宣言（2026-07-24 追加）。
+   * 現行 brandCatalog のどのブランドも持たないが、将来の製品・製品バリエーション追加時に
+   * 到達可能になる想定で意図的に保持している handlingTags を宣言する。
+   * ModuleValidator は、宣言済みタグを参照する到達不能な scenarioRequiredTags /
+   * addon.requiredTags を ERROR ではなく WARNING として扱う（lib/moduleValidator.ts 参照）。
+   * タグの typo や設定漏れを免責する汎用的な逃げ道ではない。宣言には bridge Header 側の
+   * 根拠が必要（docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md も参照）。
+   */
+  reservedHandlingTags?: string[]
 }
 
 export interface ModuleData {

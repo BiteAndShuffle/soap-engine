@@ -179,7 +179,7 @@ describe('S合成: H1内服 + H1点眼 (同一domain=allergy, groupKey異なる)
 
   test('S は 2 行になる（groupKey 違いで統合しない）', () => {
     const b1 = makeBlock(h1,  'initial_nasal', 'ビラノア')
-    const b2 = makeBlock(eye, 'initial',       'アレジオン点眼')
+    const b2 = makeBlock(eye, 'initial',       'アレジオン点眼液')
     const result = runMerge(b1, [b2])
     const lines = result.S.split('\n').filter(Boolean)
     assert.equal(lines.length, 2, `S should be 2 lines (different groupKey), got: ${JSON.stringify(lines)}`)
@@ -192,18 +192,18 @@ describe('S合成: H1内服 + H1点眼 (同一domain=allergy, groupKey異なる)
     assert.equal(b2.clinicalDomain, 'allergy')
   })
 
-  test('groupKey が異なること (allergy_symptom_management vs treatment_start)', () => {
+  test('groupKey が異なること (allergy_symptom_management vs ocular_allergy_symptom_management)', () => {
     const b1 = makeBlock(h1,  'initial_nasal', 'A')
     const b2 = makeBlock(eye, 'initial',       'B')
     assert.notEqual(b1.groupKey, b2.groupKey,
       `groupKey should differ: h1=${b1.groupKey}, eye=${b2.groupKey}`)
     assert.equal(b1.groupKey, 'allergy_symptom_management')
-    assert.equal(b2.groupKey, 'treatment_start')
+    assert.equal(b2.groupKey, 'ocular_allergy_symptom_management')
   })
 
   test('S 各行は鼻水と眼のかゆみをそれぞれ含む', () => {
     const b1 = makeBlock(h1,  'initial_nasal', 'ビラノア')
-    const b2 = makeBlock(eye, 'initial',       'アレジオン点眼')
+    const b2 = makeBlock(eye, 'initial',       'アレジオン点眼液')
     const result = runMerge(b1, [b2])
     const lines = result.S.split('\n').filter(Boolean)
     assert.ok(lines.some(l => l.includes('鼻水')),         'S should contain 鼻水')
@@ -212,11 +212,11 @@ describe('S合成: H1内服 + H1点眼 (同一domain=allergy, groupKey異なる)
 
   test('「と」による subject 結合は行われない', () => {
     const b1 = makeBlock(h1,  'initial_nasal', 'ビラノア')
-    const b2 = makeBlock(eye, 'initial',       'アレジオン点眼')
+    const b2 = makeBlock(eye, 'initial',       'アレジオン点眼液')
     const result = runMerge(b1, [b2])
     // 2行に分かれているので、1行に両名前が入ることはない
     const lines = result.S.split('\n').filter(Boolean)
-    const hasBothOnOneLine = lines.some(l => l.includes('ビラノア') && l.includes('アレジオン点眼'))
+    const hasBothOnOneLine = lines.some(l => l.includes('ビラノア') && l.includes('アレジオン点眼液'))
     assert.ok(!hasBothOnOneLine, 'S should not join both drugs on one line')
   })
 })
@@ -387,7 +387,7 @@ describe('P合成: H1内服(end) + H1点眼(end) (bridge修正後: end_followup 
 
   test('修正後: H1内服と H1点眼の end_followup.P が同一であること', () => {
     const b1 = makeBlock(h1,  'end_improved', 'ビラノア')
-    const b2 = makeBlock(eye, 'end_improved', 'アレジオン点眼')
+    const b2 = makeBlock(eye, 'end_improved', 'アレジオン点眼液')
     assert.equal(b1.closingText, END_CLOSING, `H1内服 end closingText`)
     assert.equal(b2.closingText, END_CLOSING, `H1点眼 end closingText`)
     assert.equal(b1.closingText, b2.closingText, 'Both modules should share the same end closing')
@@ -395,7 +395,7 @@ describe('P合成: H1内服(end) + H1点眼(end) (bridge修正後: end_followup 
 
   test('修正後: P には end closing が 1 回だけ現れる（dedup）', () => {
     const b1 = makeBlock(h1,  'end_improved', 'ビラノア')
-    const b2 = makeBlock(eye, 'end_improved', 'アレジオン点眼')
+    const b2 = makeBlock(eye, 'end_improved', 'アレジオン点眼液')
     const result = runMerge(b1, [b2])
     const occurrences = result.P.split(END_CLOSING).length - 1
     assert.equal(occurrences, 1,
@@ -430,7 +430,7 @@ describe('P合成: 意味が異なる followup は別行に残る', () => {
   test('H1内服(default) + H1点眼(se_followup): closing は 2 行に残る', () => {
     // initial_nasal → default_followup / se_mild_continue → se_followup
     const b1 = makeBlock(h1,  'initial_nasal',    'ビラノア')
-    const b2 = makeBlock(eye, 'se_mild_continue', 'アレジオン点眼')
+    const b2 = makeBlock(eye, 'se_ocular_irritation_mild_continue', 'アレジオン点眼液')
     const result = runMerge(b1, [b2])
     assert.ok(result.P.includes(DEFAULT_CLOSING), `P should contain default closing`)
     assert.ok(result.P.includes(SE_CLOSING),       `P should contain se closing`)

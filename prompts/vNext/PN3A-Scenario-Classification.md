@@ -39,6 +39,7 @@
 | lifestyle_guidance | lifestyle_guidance |
 | sickday | sickday |
 | followup | followup |
+| usage | usage（2026-07-24 正式値化。頓用使用等の「使用状況報告」系シナリオ。xStructured生成責務は PN4B。SStructured.role は既存確立語彙 `adherence_status` を使用し、新規role `as_needed_status` 等は使用しない → RULES.md §17 / PN4B-Structured-GroupB.md 参照） |
 
 #### scenarioGroup
 
@@ -145,6 +146,16 @@ bridge type= と具体的な id / title から判断する。
 | シックデイ | sickday |
 | 注射手技 | injection_technique |
 
+**groupKey 設計原則（2026-07-24 追記。`allergy_h1_antihistamine_eye_drops` の groupKey 誤転用事例により明文化）:**
+
+上表は DM/injection 系モジュールの実績値であり、他の薬効クラス・剤形へ機械的に転用するための固定語彙ではない。
+`mergePolicy.S.groupKey` は分類ラベルではなく、**多剤合成時にS欄を意味的に統合してよい単位**を表す（`lib/types.ts` `ScenarioMergePolicyS.groupKey` の定義および `docs/DESIGN_PRINCIPLES.md` DP-02 参照）。
+
+- 同一薬効クラスであっても、投与経路や症状領域が異なり S 文の意味統合が不適切な場合は groupKey を分離すること
+  （例: 同じヒスタミンH1受容体拮抗薬でも、内服は鼻症状・皮膚症状・全身アレルギー症状を、点眼は眼のかゆみ・充血等の眼アレルギー症状を扱うため、`allergy_symptom_management`（内服）と `ocular_allergy_symptom_management`（点眼）を分離する）
+- 既存モジュールの groupKey を「同じ薬効クラスだから」という理由だけで転用しないこと。転用前に、対象シナリオの臨床的な意味内容が既存 groupKey 使用モジュールと実際に同一グループとして統合してよいかを確認すること
+- 判断に迷う場合は、対象2モジュールを同一患者が併用したときに、それぞれの S 文が1つの文へ結合されて医学的に不自然でないかを基準に判断する
+
 #### intentTags
 
 以下から該当するものをすべて選択する（複数可）:
@@ -186,6 +197,7 @@ injection module においてのみ適用する。← RULES.md §14
 | side_effect_guidance | sideEffects |
 | sickday_guidance | sickday |
 | adherence_guidance | adherence |
+| administration_guidance | counseling（2026-07-24 正式値化。bridge type は意味上の分類として `administration_guidance` のまま保持し、canonical JSON の group のみ `counseling` へ変換する。新規 group `administration_guidance` は追加しない → RULES.md §5 / CHECK-G02 参照） |
 
 **注意:** `addon_se_hypoglycemia_guidance` は type= にかかわらず `sideEffects` グループとする（counseling ではない）。
 

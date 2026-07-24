@@ -25,6 +25,7 @@ PN4A と同一のルールを適用する。
 - `lifestyle_guidance`
 - `sickday`
 - `followup`
+- `usage`（2026-07-24 追加。頓用使用等の「使用状況報告」系シナリオ。SStructured.role は既存確立語彙 `adherence_status` を使用する。新規role `as_needed_status` 等は使用しない → 下記「usage 型シナリオの SStructured.role」参照）
 
 ---
 
@@ -41,16 +42,19 @@ PN4A と同一ルールを適用する。以下を参照:
 - `side_effect_status`（副作用の状態）
 - `adherence_status`（アドヒアランスの状態）
 
-**sickday / followup 型シナリオの SStructured.role（明示ルール）:**
+**sickday / followup / usage 型シナリオの SStructured.role（明示ルール）:**
 
 | シナリオ型 | S フィールドの性質 | 使用する role |
 |---|---|---|
 | sickday | 体調不良・食事摂取不能等の状況報告 | `adherence_status`（usage 系として扱う） |
 | followup（injection_technique_check 等） | 注射手技・使用状況の確認 | `adherence_status`（usage 系として扱う） |
 | lifestyle_guidance | 検査値異常・生活状況の報告 | `adherence_status`（lifestyle 系として扱う） |
+| usage（as_needed_refill_needed 等） | 頓用使用状況・残薬状況の報告 | `adherence_status`（usage 系として扱う。`as_needed_status` 等の新規roleは使用しない） |
 
 `adherence_status` は RULES.md §17 で「adherence 系 / lifestyle_guidance 系 / usage 系」を包括する語彙として確定済み。
-sickday / followup 型 S フィールドも usage 系として同語彙を使用する。新規語彙は追加しない。
+sickday / followup / usage 型 S フィールドはすべて usage 系として同語彙を使用する。新規語彙は追加しない。
+一部の既存module（`allergy_h1_antihistamine_second_gen_oral` 等）が `as_needed_status` という未定義roleを使用している事例があるが、
+これは RULES.md §17 未定義語彙であり、新規moduleの正本として模倣しないこと。
 
 **AStructured.role（Group B 追加語彙 — RULES.md §17 準拠）:**
 - `side_effect_assessment`（side_effect 系の A 行）

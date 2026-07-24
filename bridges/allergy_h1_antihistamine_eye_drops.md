@@ -2,6 +2,18 @@
 # SOAP-ENGINE MODULE (bridge原稿 / lightweight)
 # allergy_h1_antihistamine_eye_drops
 # =========================================
+#
+# 本Headerは、既に凍結済みのSCENARIOS_START〜SCENARIOS_END本文に対して
+# 後付けで作成されたものである。SCENARIOS本文は本Header作成時点で一切変更していない。
+#
+# ファイルは allergy_h1_antihistamine_eye_drops.md へリネーム済み。
+# moduleId・ファイル名・templateId（allergy_h1_antihistamine_eye_drops_v1）の
+# 基幹命名は allergy_h1_antihistamine_eye_drops で整合している。
+#
+# ブランドごとの差異（懸濁性・遮光性・持続性製剤の有無等）は、
+# SCENARIOS本文を個別に書き分けるのではなく、brandCatalog.handlingTags と
+# 下記 scenarioRequiredTags / addonRequiredTags（正式な構造データ）のみで制御する。
+#
 moduleId: "allergy_h1_antihistamine_eye_drops"
 categoryPath:
   - "アレルギー"
@@ -11,11 +23,19 @@ categoryPath:
   - "点眼"
 drug:
   genericName: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
+  # 2026-07-24 更新: 剤形・投与経路が異なる薬剤単位を示すため、正式表示名を
+  # 「{ブランド名/一般名}点眼液」へ統一する（例: アレジオン錠と区別するため）。
+  # bare名（例: "アレジオン"）は search.exactAliases 側の入力aliasとしてのみ残す。
+  # 詳細: docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md
   brandNames:
     - "アレジオン点眼液"
+    - "エピナスチン点眼液"
     - "ザジテン点眼液"
+    - "ケトチフェン点眼液"
     - "パタノール点眼液"
+    - "オロパタジン点眼液"
     - "リボスチン点眼液"
+    - "レボカバスチン点眼液"
   drugClass:
     - "H1_ANTIHISTAMINE_EYE_DROPS"
   route: "ophthalmic"
@@ -36,20 +56,24 @@ drug:
   search:
     primaryDisplayName: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
     exactAliases:
-      # ブランド名
       - "アレジオン点眼液"
-      - "ザジテン点眼液"
-      - "パタノール点眼液"
-      - "リボスチン点眼液"
-      # 一般名・成分名
       - "エピナスチン点眼液"
+      - "ザジテン点眼液"
       - "ケトチフェン点眼液"
+      - "パタノール点眼液"
       - "オロパタジン点眼液"
+      - "リボスチン点眼液"
       - "レボカバスチン点眼液"
+      # bare名（剤形suffixなし）も入力aliasとして許容する（正式表示名は上記の点眼液付き）
+      - "アレジオン"
       - "エピナスチン"
+      - "ザジテン"
       - "ケトチフェン"
+      - "パタノール"
       - "オロパタジン"
+      - "リボスチン"
       - "レボカバスチン"
+      - "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
     prefixAliases:
       - "あれじおんてんがん"
       - "あれじおん"
@@ -114,22 +138,19 @@ drug:
     - "りぼすちん"
     - "れぼかばすちんてんがん"
     - "れぼかばすちん"
+  # ─────────────────────────────────────────
+  # brandCatalog: 対象製剤8件すべてを個別エントリとして定義する（代表ブランドへの集約なし）。
+  # ブランド名エントリと一般名エントリは1:1で対をなし、同一実体（同じ点眼液）を指すため
+  # handlingTags は各ペアで同一値にする（検索経路がブランド名/一般名のどちらでも
+  # scenarioRequiredTags / addonRequiredTags の判定結果が一致するようにするため）。
+  # ─────────────────────────────────────────
   brandCatalog:
     アレジオン点眼液:
       displayName: "アレジオン点眼液"
       genericName: "エピナスチン"
       displayGenericName: "エピナスチン点眼液"
-      storageType: "room_temperature"
-      formulationType: "solution"
-      contactLensCaution: true
-      contactLensCautionLevel: "product_specific"
-      bakStatus: "product_specific"
       handlingTags:
-        - "room_temperature_storage"
-        - "solution_eye_drop"
-        - "contact_lens_caution"
-        - "contact_lens_caution_product_specific"
-        - "bak_status_product_specific"
+        - "reduced_frequency_option"
       aliases:
         - "あれじおんてんがん"
         - "あれじおん"
@@ -138,23 +159,25 @@ drug:
       normalizedAliases:
         - "あれじおんてんがん"
         - "あれじおん"
+        - "えぴなすちんてんがん"
+        - "えぴなすちん"
+    エピナスチン点眼液:
+      displayName: "エピナスチン点眼液"
+      genericName: "エピナスチン"
+      displayGenericName: "エピナスチン点眼液"
+      handlingTags:
+        - "reduced_frequency_option"
+      aliases:
+        - "えぴなすちんてんがん"
+        - "えぴなすちん"
+      normalizedAliases:
         - "えぴなすちんてんがん"
         - "えぴなすちん"
     ザジテン点眼液:
       displayName: "ザジテン点眼液"
       genericName: "ケトチフェン"
       displayGenericName: "ケトチフェン点眼液"
-      storageType: "room_temperature"
-      formulationType: "solution"
-      contactLensCaution: true
-      contactLensCautionLevel: "remove_before_use"
-      bakStatus: "contains_bak"
-      handlingTags:
-        - "room_temperature_storage"
-        - "solution_eye_drop"
-        - "contact_lens_caution"
-        - "contact_lens_remove_before_use"
-        - "bak_status_contains_bak"
+      handlingTags: []
       aliases:
         - "ざじてんてんがん"
         - "ざじてん"
@@ -163,23 +186,25 @@ drug:
       normalizedAliases:
         - "ざじてんてんがん"
         - "ざじてん"
+        - "けとちふぇんてんがん"
+        - "けとちふぇん"
+    ケトチフェン点眼液:
+      displayName: "ケトチフェン点眼液"
+      genericName: "ケトチフェン"
+      displayGenericName: "ケトチフェン点眼液"
+      handlingTags: []
+      aliases:
+        - "けとちふぇんてんがん"
+        - "けとちふぇん"
+      normalizedAliases:
         - "けとちふぇんてんがん"
         - "けとちふぇん"
     パタノール点眼液:
       displayName: "パタノール点眼液"
       genericName: "オロパタジン"
       displayGenericName: "オロパタジン点眼液"
-      storageType: "light_protection"
-      formulationType: "solution"
-      contactLensCaution: true
-      contactLensCautionLevel: "remove_before_use"
-      bakStatus: "contains_bak"
       handlingTags:
-        - "light_protection_storage"
-        - "solution_eye_drop"
-        - "contact_lens_caution"
-        - "contact_lens_remove_before_use"
-        - "bak_status_contains_bak"
+        - "light_protection"
       aliases:
         - "ぱたのーるてんがん"
         - "ぱたのーる"
@@ -188,24 +213,26 @@ drug:
       normalizedAliases:
         - "ぱたのーるてんがん"
         - "ぱたのーる"
+        - "おろぱたじんてんがん"
+        - "おろぱたじん"
+    オロパタジン点眼液:
+      displayName: "オロパタジン点眼液"
+      genericName: "オロパタジン"
+      displayGenericName: "オロパタジン点眼液"
+      handlingTags:
+        - "light_protection"
+      aliases:
+        - "おろぱたじんてんがん"
+        - "おろぱたじん"
+      normalizedAliases:
         - "おろぱたじんてんがん"
         - "おろぱたじん"
     リボスチン点眼液:
       displayName: "リボスチン点眼液"
       genericName: "レボカバスチン"
       displayGenericName: "レボカバスチン点眼液"
-      storageType: "room_temperature"
-      formulationType: "suspension"
-      contactLensCaution: true
-      contactLensCautionLevel: "remove_before_use"
-      bakStatus: "contains_bak"
       handlingTags:
-        - "room_temperature_storage"
-        - "suspension_eye_drop"
-        - "shake_before_use"
-        - "contact_lens_caution"
-        - "contact_lens_remove_before_use"
-        - "bak_status_contains_bak"
+        - "suspension"
       aliases:
         - "りぼすちんてんがん"
         - "りぼすちん"
@@ -216,23 +243,35 @@ drug:
         - "りぼすちん"
         - "れぼかばすちんてんがん"
         - "れぼかばすちん"
+    レボカバスチン点眼液:
+      displayName: "レボカバスチン点眼液"
+      genericName: "レボカバスチン"
+      displayGenericName: "レボカバスチン点眼液"
+      handlingTags:
+        - "suspension"
+      aliases:
+        - "れぼかばすちんてんがん"
+        - "れぼかばすちん"
+      normalizedAliases:
+        - "れぼかばすちんてんがん"
+        - "れぼかばすちん"
   aliasToBrand:
     "あれじおんてんがん": "アレジオン点眼液"
     "あれじおん": "アレジオン点眼液"
-    "えぴなすちんてんがん": "アレジオン点眼液"
-    "えぴなすちん": "アレジオン点眼液"
+    "えぴなすちんてんがん": "エピナスチン点眼液"
+    "えぴなすちん": "エピナスチン点眼液"
     "ざじてんてんがん": "ザジテン点眼液"
     "ざじてん": "ザジテン点眼液"
-    "けとちふぇんてんがん": "ザジテン点眼液"
-    "けとちふぇん": "ザジテン点眼液"
+    "けとちふぇんてんがん": "ケトチフェン点眼液"
+    "けとちふぇん": "ケトチフェン点眼液"
     "ぱたのーるてんがん": "パタノール点眼液"
     "ぱたのーる": "パタノール点眼液"
-    "おろぱたじんてんがん": "パタノール点眼液"
-    "おろぱたじん": "パタノール点眼液"
+    "おろぱたじんてんがん": "オロパタジン点眼液"
+    "おろぱたじん": "オロパタジン点眼液"
     "りぼすちんてんがん": "リボスチン点眼液"
     "りぼすちん": "リボスチン点眼液"
-    "れぼかばすちんてんがん": "リボスチン点眼液"
-    "れぼかばすちん": "リボスチン点眼液"
+    "れぼかばすちんてんがん": "レボカバスチン点眼液"
+    "れぼかばすちん": "レボカバスチン点眼液"
 template:
   templateId: "allergy_h1_antihistamine_eye_drops_v1"
   templateVersion: "1.0.0"
@@ -245,25 +284,59 @@ template:
     - "moderate"
     - "severe"
   storageTags:
-    # 点眼薬系モジュールで使用可能な保管関連タグ
     - "room_temperature_storage"
     - "light_protection_storage"
     - "cold_storage"
     - "storage_product_specific"
   formulationTags:
-    # 点眼薬系モジュールで使用可能な剤形・性状関連タグ
     - "solution_eye_drop"
     - "suspension_eye_drop"
   handlingTags:
-    # 点眼薬系モジュールで使用可能な使用・取扱い関連タグ
-    - "shake_before_use"
-    - "contact_lens_caution"
-    - "contact_lens_caution_product_specific"
-    - "contact_lens_remove_before_use"
-    - "bak_status_contains_bak"
-    - "bak_status_bak_free"
-    - "bak_status_product_specific"
-    - "bak_status_unknown"
+    # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの正式な語彙一覧（6種、最小集合）。
+    # 現行8製剤のうち suspension / light_protection / reduced_frequency_option の3種のみ実際に付与済み。
+    # cold_storage / cold_storage_before_opening / concentration_variant は
+    # 対応するSCENARIO/ADDONを非表示に保つために定義するが、現行製剤には付与しない。
+    #
+    # reduced_frequency_option についての運用メモ:
+    #   「高濃度製剤そのもの」を表すタグではない。アレジオン／エピナスチン系に、
+    #   点眼回数を減らすための持続型製剤への切替選択肢が存在することを示す運用タグである。
+    #   LX等の製品バリエーションを独立した検索候補・SOAP主語（{{drug_subject}}）として
+    #   持つことは意図していない。切替時のみ switch_to_high_strength_reduced_frequency
+    #   シナリオを表示し、切替後の継続・副作用・CP・終了等はベース薬剤
+    #   （アレジオン／エピナスチン）の通常シナリオをそのまま使用する。
+    #   製品バリエーションごとにcanonicalデータ（brandCatalogエントリ・SCENARIO・alias等）を
+    #   複製しない設計方針（将来の他点眼薬にも適用予定）。
+    #
+    # concentration_variant についての運用メモ（CHECK・未解決）:
+    #   本来、通常の濃度増減4件（strength_increase/decrease系）と、
+    #   刺激感を理由とする濃度減1件（se_strength_decreased_due_to_irritation）は
+    #   実務上の意味が異なり、区別すべきである。
+    #   ただし ScenarioItem/AddonItem には scenarioRequiredTags / requiredTags 以外の
+    #   表示制御フィールドが存在せず（lib/types.ts確認済み）、
+    #   タグ未定義=常時表示という既存仕様上、この5件を非表示のまま保持するには
+    #   何らかのタグへの参照が必須。新規タグの発明は禁止されているため、
+    #   両者を暫定的に同一タグ（concentration_variant）に留めている。
+    #   se_strength_decreased_due_to_irritation の対象製剤が将来確定した時点で、
+    #   専用のscenarioRequiredTagsエントリを追加し、このタグから分離すること。
+    - "suspension"
+    - "light_protection"
+    - "cold_storage"
+    - "cold_storage_before_opening"
+    - "reduced_frequency_option"
+    - "concentration_variant"
+  reservedHandlingTags:
+    # 2026-07-24 追加。現行8製剤のどのbrandCatalogエントリも持たないが、
+    # 将来の製品・製品バリエーション追加時に到達可能になる想定で意図的に保持しているタグ。
+    # ModuleValidator は、このリストに宣言されたタグを参照する到達不能な
+    # scenarioRequiredTags / addon.requiredTags を ERROR ではなく WARNING として扱う
+    # （lib/moduleValidator.ts check 15/32/33/34）。
+    # reduced_frequency_option / suspension / light_protection は現行ブランドで既に
+    # 到達可能なため、このリストには含めない。
+    # タグの誤記・設定漏れを免責する汎用的な逃げ道ではない。将来対応製品が確定した時点で
+    # 該当タグをこのリストから外し、対象brandCatalogエントリへ正式に付与すること。
+    - "concentration_variant"
+    - "cold_storage"
+    - "cold_storage_before_opening"
 display:
   title: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
   subtitle: "アレルギー性結膜炎・目のかゆみに対する点眼治療"
@@ -271,7 +344,7 @@ display:
   drugGeneric: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
   nodeLabelShort: "H1点眼"
   nodeLabelLong: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
-  nodeKey: "h1_antihistamine_eye_drops"
+  nodeKey: "h1_antihistamine_ophthalmic"
   menuGroupLabels:
     増量: "回数増"
     減量: "回数減"
@@ -314,6 +387,43 @@ scenarioEngine:
     - "S_APPEND(optional)"
     - "A_APPEND(optional)"
     - "P_APPEND(optional)"
+#
+# ─────────────────────────────────────────
+# scenarioRequiredTags / addonRequiredTags:
+# SCENARIOS本文が凍結済みのため、他モジュールのようにSCENARIO/ADDONヘッダー行への
+# インライン記載（｜scenarioRequiredTags=[...]｜）ができない。そのため本Headerに
+# 正式な構造データ（id → tags のマップ）として定義し、canonical JSON生成時に
+# 各scenario/addonのフィールドへ機械的に反映する正本とする。
+# 記載のないscenario/addonは常時表示（タグ条件なし）とする。
+# ─────────────────────────────────────────
+scenarioRequiredTags:
+  lifestyle_guidance_suspension_shake: ["suspension"]
+  lifestyle_guidance_storage_upright_suspension: ["suspension"]
+  lifestyle_guidance_storage_light_protection: ["light_protection"]
+  lifestyle_guidance_storage_cold: ["cold_storage"]
+  lifestyle_guidance_storage_cold_before_opening: ["cold_storage_before_opening"]
+  # アレジオン／エピナスチン系に存在する、点眼回数を減らすための持続型製剤への
+  # 切替選択肢を表すシナリオ（LX等の独立した検索候補・SOAP主語を示すものではない）。
+  # reduced_frequency_optionを持つ製剤（アレジオン/エピナスチン）でのみ表示。
+  # 切替時のみこのシナリオを使用し、切替後の継続・副作用・CP・終了等は
+  # ベース薬剤（アレジオン／エピナスチン）の通常シナリオをそのまま使用する。
+  # scenario id自体は変更しない（参照範囲が広いため別作業）。
+  switch_to_high_strength_reduced_frequency: ["reduced_frequency_option"]
+  # 通常の濃度増減4件。現行8製剤はいずれもconcentration_variantを持たないため非表示。
+  strength_increase_low_perceived_effect: ["concentration_variant"]
+  strength_increase_due_to_other_med_adjustment: ["concentration_variant"]
+  strength_decrease_improved: ["concentration_variant"]
+  strength_decrease_due_to_other_med_adjustment: ["concentration_variant"]
+  # 刺激感等を理由とする濃度減。上記4件とは実務上の意味が異なるが、対象製剤未確定のため
+  # 暫定的に同タグで非表示を維持（詳細はtemplate.handlingTagsのCHECKメモを参照）。
+  se_strength_decreased_due_to_irritation: ["concentration_variant"]
+addonRequiredTags:
+  addon_eye_drop_suspension_shake: ["suspension"]
+  addon_eye_drop_storage_upright_suspension: ["suspension"]
+  addon_eye_drop_storage_light_protection: ["light_protection"]
+  addon_eye_drop_storage_cold: ["cold_storage"]
+  addon_eye_drop_storage_cold_before_opening: ["cold_storage_before_opening"]
+#
 constitution:
   purpose: "このテンプレートは自然言語シナリオ原稿をJSONへ橋渡しするための軽量構造定義である。"
   canonicalSource: "bridge原稿を single source of truth（内容の正本）として扱う。文言・構造の調整は bridge原稿を起点とし、確認後に canonical JSON へ反映する。canonical JSON は bridge原稿を実装へ反映したアウトプットとする。"
@@ -347,6 +457,7 @@ constitution:
     - "ADDONは S_APPEND / A_APPEND / P_APPEND を使用できる"
     - "ADDONには S_APPEND / A_APPEND / P_APPEND のいずれか1つ以上を含める"
     - "S_APPEND付きADDONは、薬剤師が実際に該当内容を確認・説明した場合のみ選択する"
+    - "本モジュールの scenarioRequiredTags / addonRequiredTags は、Header内の同名ブロックを正本としてJSON生成時に適用する。bridge本文（SCENARIOS本文）には直接埋め込まない"
   outputRules:
     - "自然言語監査では、原稿の欠落・誤記・構造揺れ・参照不一致のみを扱う"
     - "JSON監査では、型・キー・参照・後方互換・canonical JSON一致のみを扱う"
@@ -355,91 +466,87 @@ constitution:
 
 
 =======SCENARIOS_START=======
-
-
 【SCENARIO｜type=treatment_start｜id=initial｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 初回】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、{{applicationSite}}眼のかゆみが気になるため追加となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状の改善を目的として追加となった。
-ヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。
-症状の改善と再燃予防を目的として使用する。
-
+ヒスタミンがH1受容体へ作用するのを抑制することで、充血・かゆみなどのアレルギー症状の改善を目的として使用する。
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状を改善する薬です。
 症状の改善のため、継続して使用することが大切です。
-
 P_ADDON
 - addon_eye_drop_tip_contamination
-- addon_eye_drop_storage_light_protection
-- addon_eye_drop_storage_upright_suspension
-- addon_eye_drop_storage_cold
-- addon_eye_drop_contact_lens_remove_before_use
-- addon_eye_drop_contact_lens_product_specific
+- addon_eye_drop_after_opening_expiry
+- addon_eye_drop_interval_5min
+- addon_eye_drop_interval_10min
 - addon_eye_drop_suspension_shake
-
+- addon_eye_drop_storage_upright_suspension
+- addon_eye_drop_storage_light_protection
+- addon_eye_drop_storage_cold
+- addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_contact_lens_remove_before_use
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_tip_contamination｜title=使用方法説明】
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_tip_contamination｜title=点眼方法（容器先端の接触防止）】
 P_APPEND
-目薬の先端が、目や瞼などに触れると汚染されることがあります。
+点眼薬の先端が、目や瞼などに触れると汚染されることがあります。
 先端部分に触れないように使用してください。
 
 
-【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_after_opening_expiry｜title=使用方法説明（開封後1ヶ月まで）】
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_after_opening_expiry｜title=使用期限（開封後1ヶ月）】
 P_APPEND
-開封後の目薬は、衛生面を考慮し、1ヶ月を目安に処分してください。
+開封後の点眼薬は、衛生面を考慮し、1ヶ月を目安に処分してください。
 
 
-【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_5min｜title=使用方法説明（間隔5分）】
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_5min｜title=点眼間隔（5分以上）】
 P_APPEND
-複数の目薬を使用する場合は、5分以上あけて使用してください。
+複数の点眼薬を使用する場合は、5分以上あけて使用してください。
 
 
-【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_10min｜title=使用方法説明（間隔10分）】
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_10min｜title=点眼間隔（10分以上）】
 P_APPEND
-複数の目薬を使用する場合は、10分以上あけて使用してください。
+複数の点眼薬を使用する場合は、10分以上あけて使用してください。
 
 
-【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_suspension_shake｜title=使用方法説明（懸濁性）】
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_suspension_shake｜title=点眼方法（懸濁性・振り混ぜ）】
 P_APPEND
 点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。
 使用する前に、よく振り混ぜてから使用してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_upright_suspension｜title=保管方法説明（懸濁性・先端上向き）】
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_upright_suspension｜title=保管方法（懸濁性・先端上向き）】
 P_APPEND
 保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_light_protection｜title=保管方法説明（遮光性）】
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_light_protection｜title=保管方法（遮光）】
 P_APPEND
 光の影響により、効果が十分に出ない可能性があります。
 使用していない間は、遮光袋に入れて保管してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold｜title=保管方法説明（冷所保管）】
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold｜title=保管方法（冷所保存）】
 P_APPEND
 温度の影響により、効果が十分に出ない可能性があります。
 使用していない間は、冷所で保管してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_eye_drop_contact_lens_remove_before_use｜title=使用方法説明（コンタクトレンズ・外して点眼）】
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold_before_opening｜title=保管方法（未開封時のみ冷所）】
+P_APPEND
+温度の影響により、効果が十分に出ない可能性があります。
+開封するまでは冷所で保管してください。
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_contact_lens_remove_before_use｜title=コンタクトレンズ（外して点眼）】
 P_APPEND
 コンタクトレンズを装用している場合は、点眼前に外してください。
-再装用の可否やタイミングは、薬剤ごとの指示に従ってください。
-
-
-【ADDON｜type=administration_guidance｜id=addon_eye_drop_contact_lens_product_specific｜title=使用方法説明（コンタクトレンズ・薬剤別確認）】
-P_APPEND
-コンタクトレンズ装用中の使用可否は、薬剤ごとに異なる場合があります。
-使用前に、コンタクトレンズに関する指示を確認してください。
 
 
 
@@ -447,28 +554,25 @@ P_APPEND
 【SCENARIO｜type=treatment_start｜id=restart｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 再開】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、{{applicationSite}}眼のかゆみが気になるため再開となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状の改善を目的として再開となった。
-ヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。
-症状の改善と再燃予防を目的として使用する。
-
+ヒスタミンがH1受容体へ作用するのを抑制することで、充血・かゆみなどのアレルギー症状の改善を目的として使用する。
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状を改善する薬です。
 症状の改善のため、継続して使用することが大切です。
-
 P_ADDON
 - addon_eye_drop_tip_contamination
-- addon_eye_drop_storage_light_protection
-- addon_eye_drop_storage_upright_suspension
-- addon_eye_drop_storage_cold
-- addon_eye_drop_contact_lens_remove_before_use
-- addon_eye_drop_contact_lens_product_specific
+- addon_eye_drop_after_opening_expiry
+- addon_eye_drop_interval_5min
+- addon_eye_drop_interval_10min
 - addon_eye_drop_suspension_shake
-
+- addon_eye_drop_storage_upright_suspension
+- addon_eye_drop_storage_light_protection
+- addon_eye_drop_storage_cold
+- addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_contact_lens_remove_before_use
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -478,139 +582,185 @@ P_CLOSING
 【SCENARIO｜type=treatment_start｜id=external_start｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 他所開始】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、{{applicationSite}}眼のかゆみに対して他院で開始され継続使用中であった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状の改善を目的として継続使用中であった。
-ヒスタミンがH1受容体へ作用するのを抑え、充血・かゆみなどのアレルギー症状を改善する。
-症状の改善と再燃予防を目的として使用する。
-
+ヒスタミンがH1受容体へ作用するのを抑制することで、充血・かゆみなどのアレルギー症状の改善を目的として使用する。
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、アレルギー症状を改善する薬です。
 症状の改善のため、継続して使用することが大切です。
-
 P_ADDON
 - addon_eye_drop_tip_contamination
-- addon_eye_drop_storage_light_protection
-- addon_eye_drop_storage_upright_suspension
-- addon_eye_drop_storage_cold
-- addon_eye_drop_contact_lens_remove_before_use
-- addon_eye_drop_contact_lens_product_specific
+- addon_eye_drop_after_opening_expiry
+- addon_eye_drop_interval_5min
+- addon_eye_drop_interval_10min
 - addon_eye_drop_suspension_shake
-
+- addon_eye_drop_storage_upright_suspension
+- addon_eye_drop_storage_light_protection
+- addon_eye_drop_storage_cold
+- addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_contact_lens_remove_before_use
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（効果実感乏しい）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しいため点眼回数が増えた。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数増
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため点眼回数が増えた。
 点眼回数の変更後は、症状や使用感の変化について確認を要する。
-
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、指示された回数で使用してください。
-使用後に気になる症状がある場合はご相談ください。
-
-P_ADDON
-- addon_eye_drop_tip_contamination
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（効果実感乏しい）】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しいため、より効果が高いものへ変更となった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　高濃度製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため、高濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（他剤との調整）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により点眼回数が増えた。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数増
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため点眼回数が増えた。
 点眼回数の変更後は、症状や使用感の変化について確認を要する。
-
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、指示された回数で使用してください。
-使用後に気になる症状がある場合はご相談ください。
-
-P_ADDON
-- addon_eye_drop_tip_contamination
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（他剤との調整）】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により、より効果が高いものへ変更となった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　高濃度製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため、高濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=switch_to_high_strength_reduced_frequency｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（高濃度・持続型製剤へ変更）】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすために変更となった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　持続型製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすため、高濃度・持続型製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため点眼回数が減った。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数減
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状改善を踏まえ点眼回数が減った。
 点眼回数の変更後は、症状や使用感の変化について確認を要する。
-
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、指示された回数で使用してください。
-症状や使用感に変化がある場合はご相談ください。
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（症状改善）】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため、より効果が穏やかなものへ変更となった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　低濃度製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状改善を踏まえ、低濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数減
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。
 点眼回数の変更後は、症状や使用感の変化について確認を要する。
-
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、指示された回数で使用してください。
-症状の変化がある場合はご相談ください。
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=dose_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（他剤との調整）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により点眼回数が減った。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数減
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため点眼回数が減った。
 点眼回数の変更後は、症状や使用感の変化について確認を要する。
-
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、指示された回数で使用してください。
-症状の変化がある場合はご相談ください。
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
 
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（他剤との調整）】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により、より効果が穏やかなものへ変更となった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　低濃度製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため、低濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -621,17 +771,13 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。
 刺激感は認めない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感は現時点で認められず、治療継続が可能である。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に刺激感が出ることがあります。
 症状が続く場合はご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -642,17 +788,13 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。
 異物感は認めない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による異物感は現時点で認められず、治療継続が可能である。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に異物感が出ることがあります。
 症状が続く場合はご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -663,17 +805,13 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。
 掻痒感は認めない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による掻痒感は現時点で認められず、治療継続が可能である。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に掻痒感が出ることがあります。
 症状が続く場合はご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -684,17 +822,13 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。
 充血は認めない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による充血は現時点で認められず、治療継続が可能である。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に充血が出ることがあります。
 症状が続く場合はご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -705,17 +839,13 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を使用して症状は落ち着いている。
 目やには認めない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による目やには現時点で認められず、治療継続が可能である。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の継続中に目やにが出ることがあります。
 症状が続く場合はご相談ください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -726,17 +856,13 @@ P_CLOSING
 S
 薬を使用して症状は落ち着いている。
 使用忘れなく継続できている。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中
-
 A
 コンプライアンスは良好である。治療継続に問題はない。
-
 P
 引き続き用法を守って使用することで、治療効果の維持が期待されます。
 今後も継続して使用できるようにすることが大切です。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -747,61 +873,59 @@ P_CLOSING
 S
 使用を忘れることがある。
 症状は大きく変わっていない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中
-
 A
 コンプライアンスは不良で、使用忘れがみられる。
-
 P
 継続して使用することで、十分な治療効果が期待されます。
 使用忘れが続くと、期待される治療効果が十分に得られない可能性があります。
-
 P_ADDON
-- addon_adherence_reminder_alarm
-- addon_adherence_reminder_app
+- addon_eye_drop_after_opening_expiry
+- addon_adherence_notification_alarm
+- addon_adherence_notification_app
 - addon_adherence_visual_calendar_checklist
 - addon_adherence_visual_note
 - addon_adherence_prep_previous_night
-- addon_adherence_routine_link
-- addon_adherence_support_family_reminder
-
+- addon_adherence_habit_routine_link
+- addon_adherence_family_support_reminder
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_alarm｜title=アラーム｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_app｜title=記録アプリ｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=使用忘れ対策（見える化：カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=カレンダー・チェックリスト｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、カレンダーやチェックリストで確認する方法があります。
+使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=貼り紙｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、点眼する時間を目立つ場所に書いておく方法があります。
+使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=使用忘れ対策（準備：前夜）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=前夜に準備｜uiGroup=事前準備｜uiVariant=rightAccentBlue】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の使用予定を確認しておく習慣も役立ちます。
+使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の薬を目につく場所へ準備しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_routine_link｜title=使用忘れ対策（習慣化：生活習慣と結びつける）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_habit_routine_link｜title=生活習慣と結びつける｜uiGroup=習慣化｜uiVariant=rightAccentBlue】
 P_APPEND
-使用忘れを防ぐ方法の一つとして、毎日の習慣と点眼を結びつけて覚える方法があります。
+使用忘れを防ぐ方法の一つとして、毎日の生活習慣と使用を結びつける方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_family_support_reminder｜title=家族などの声掛け｜uiGroup=家族の支援｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
 
@@ -812,18 +936,16 @@ P_APPEND
 S
 自己判断で使用を調整することがある。
 症状は大きく変わっていない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中
-
 A
 コンプライアンスは不良で、自己判断による調整がみられる。
-
 P
 継続して使用することで、十分な治療効果が期待されます。
 自己判断で中止・調整すると、期待される治療効果が十分に得られない可能性があります。
 体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
-
+P_ADDON
+- addon_eye_drop_after_opening_expiry
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -834,18 +956,16 @@ P_CLOSING
 S
 受診が遅れ、使用を調整することがある。
 症状は大きく変わっていない。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中
-
 A
 コンプライアンスは不良で、受診遅延がみられる。
-
 P
 継続的な使用により、十分な治療効果が期待されます。
 治療が中断すると、期待される治療効果が十分に得られない可能性があります。
 次回受診が難しい場合は、早めに医療機関へご連絡ください。
-
+P_ADDON
+- addon_eye_drop_after_opening_expiry
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -856,20 +976,15 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に使用している。
 使用により残薬が少なくなったため、継続処方となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状出現時に使用されており、残薬状況を踏まえ継続処方となった。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に、指示された用法に従って使用してください。
 使用頻度が増えている場合や、症状が続く場合はご相談ください。
-
 P_ADDON
 - addon_eye_drop_after_opening_expiry
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -880,20 +995,15 @@ P_CLOSING
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に使用している。
 残薬があるため、今回は処方なしとなった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　使用中
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状出現時に使用されており、残薬があるため今回は処方なしとなった。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が出た時に、指示された用法に従って使用してください。
 症状が続く場合や、使用頻度が増える場合はご相談ください。
-
 P_ADDON
 - addon_eye_drop_after_opening_expiry
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -903,17 +1013,15 @@ P_CLOSING
 【SCENARIO｜type=treatment_end｜id=end_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（改善）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため中止となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方終了
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状改善により終了となった。
 終了後に症状が悪化する可能性があるため、注意が必要である。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の終了後、目の症状の変化がある場合はご相談ください。
-
+P_ADDON
+- addon_eye_drop_after_opening_expiry
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
 
@@ -923,17 +1031,15 @@ P_CLOSING
 【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（効果不十分）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため中止となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方終了
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果不十分のため終了となった。
 終了後は、目の症状の変化について確認を要する。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の終了後、目の症状の変化がある場合はご相談ください。
-
+P_ADDON
+- addon_eye_drop_after_opening_expiry
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
 
@@ -943,56 +1049,47 @@ P_CLOSING
 【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 終了（無効）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果が認められなかったため中止となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方終了
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果が認められなかったため終了となった。
 終了後は、目の症状の変化について確認を要する。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の終了後、目の症状の変化がある場合はご相談ください。
-
+P_ADDON
+- addon_eye_drop_after_opening_expiry
 P_CLOSING
 次回、治療経過および体調変化の有無を確認。
 
 
 
 
-【SCENARIO｜type=side_effect｜id=se_mild_continue｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE継続（軽症）】
+【SCENARIO｜type=side_effect｜id=se_ocular_irritation_mild_continue｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE継続（軽症 刺激感）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感があるが、日常生活は送れている。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感の副作用を軽度認めるが、治療継続が可能である。
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感を軽度認めるが、治療継続が可能である。
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感が軽い場合は経過をみて、刺激感が強くなる場合はご相談ください。
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感が軽い場合は、そのまま経過をみてください。
+刺激感が続く場合や強くなる場合は、ご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=side_effect｜id=se_moderate_consider_dr｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE継続（中等度）】
+【SCENARIO｜type=side_effect｜id=se_ocular_irritation_moderate_consider_dr｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE継続（中等度 刺激感）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感が強く、継続困難の可能性があるため対応を要する。
-
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感の副作用が強い場合は、使用回数を減らすことや薬の変更が必要になることがあります。
-処方医へご相談ください。
-
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬による刺激感が続く場合や強くなる場合は、使用回数の調整や薬剤の変更が必要になることがあります。
+症状が続く場合は、処方医へご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1002,35 +1099,43 @@ P_CLOSING
 【SCENARIO｜type=side_effect｜id=se_change_due_to_irritation｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE変更（刺激感）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が出現したため、他剤へ変更となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方変更
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、他剤変更後の経過確認を要する。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の変更後、目の症状の悪化や変化があればご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=side_effect｜id=se_dose_decrease_due_to_irritation｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE減量（刺激感）】
+【SCENARIO｜type=side_effect｜id=se_frequency_reduced_due_to_irritation｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE回数減（刺激感）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強いため、点眼回数が減った。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数減
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、点眼回数変更後の経過確認を要する。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の点眼回数が減った後も刺激感が続く場合はご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
 
+
+
+
+【SCENARIO｜type=side_effect｜id=se_strength_decreased_due_to_irritation｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE濃度減（刺激感）】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強かったため、効果が穏やかなものになった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　低濃度製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、低濃度製剤へ変更となった。
+低濃度製剤へ変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬を低濃度製剤へ変更後も、刺激感が続く場合や、気になる症状、使用感の変化がありましたらご相談ください。
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
@@ -1040,135 +1145,75 @@ P_CLOSING
 【SCENARIO｜type=side_effect｜id=se_stop_due_to_irritation｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 SE中止（刺激感）】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用により刺激感が強いため、中止となった。
-
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　処方中止
-
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の使用による刺激感を認め、中止後の経過確認を要する。
-
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬の中止後、目の症状の悪化や変化があればご相談ください。
-
 P_CLOSING
 次回、治療経過および副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_tip_contamination｜title=使用方法説明（接触使用）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_tip_contamination｜title=点眼方法説明（容器先端の接触）】
 S
-点眼薬の先端を、目や瞼などに触れて使用しています。
-
+点眼薬の先端を、目や瞼などに触れて使用している。
 O
 点眼薬　使用中
-
 A
-点眼薬の使い方の理解が不十分であり、使用方法の指導が必要である。
-
+点眼薬の使い方の理解が不十分であり、点眼方法の指導が必要である。
 P
-点眼薬の先端を、目や瞼などに触れると汚染されてしまいます。
+点眼薬の先端が、目や瞼などに触れると汚染されることがあります。
 先端部分に触れないように使用してください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_interval｜title=使用方法説明（間隔不十分）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_interval｜title=点眼方法説明（間隔不十分）】
 S
-点眼薬と点眼薬の使用間隔は、十分あけないで使用しています。
-
+複数の点眼薬を、十分な間隔をあけずに使用している。
 O
 点眼薬　使用中
-
 A
-点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。
-
+点眼薬の薬剤特性の理解が不十分であり、点眼方法の指導が必要である。
 P
 点眼薬は、目に十分行き渡るまでに時間がかかります。
-点眼後5〜10分程度あけてから、次の目薬を使用してください。
-
+複数の点眼薬を使用する場合は、薬剤ごとに指示された間隔をあけて使用してください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_after_opening_expiry｜title=使用方法説明（開封後一ヶ月以上使用）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_after_opening_expiry｜title=点眼方法説明（開封後1ヶ月以上使用）】
 S
-点眼薬は、開封後一ヶ月以上経過後も使用を続けている。
-
+点眼薬は、開封後1ヶ月以上経過しても使用を続けている。
 O
 点眼薬　使用中
-
 A
-点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。
-
+点眼薬の薬剤特性の理解が不十分であり、点眼方法の指導が必要である。
 P
 点眼薬は、衛生面を考慮し、開封後1ヶ月を目安に使用を終了し、残っていても処分してください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
 
 
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_suspension_shake｜title=使用方法説明（懸濁不十分）】
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_suspension_shake｜title=点眼方法説明（懸濁不十分）】
 S
 点眼薬は、振らないまま使用を続けている。
-
 O
 点眼薬　使用中
-
 A
-点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。
-
+点眼薬の薬剤特性の理解が不十分であり、点眼方法の指導が必要である。
 P
 点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。
 使用する前に、よく振り混ぜてから使用してください。
-
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_light_protection｜title=保管方法説明（遮光不十分）】
-S
-点眼薬は、遮光せずに使用している。
-
-O
-点眼薬　使用中
-
-A
-点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。
-
-P
-点眼薬は、光の影響により、効果が十分に出ない可能性があります。
-使用していない間は、遮光袋に入れて保管してください。
-
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
-【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_cold｜title=保管方法説明（冷所保存不十分）】
-S
-点眼薬は、冷所に保管せず、常温で保管している。
-
-O
-点眼薬　使用中
-
-A
-点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。
-
-P
-点眼薬は、温度の影響により、効果が十分に出ない可能性があります。
-使用していない間は、冷所で保管してください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -1178,18 +1223,61 @@ P_CLOSING
 【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_upright_suspension｜title=保管方法説明（懸濁性・先端上向き）】
 S
 点眼薬は、向きを気にせず保管していた。
-
 O
 点眼薬　使用中
-
 A
-点眼薬の薬剤特性の理解が不十分であり、使用方法の指導が必要である。
-
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
 P
 点眼薬は、先端部分を上にして保管することで、目詰まりを防ぐことができます。
 保管するときは向きに注意してください。
-
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_light_protection｜title=保管方法説明（遮光不十分）】
+S
+点眼薬は、遮光せずに保管している。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、光の影響により、効果が十分に出ない可能性があります。
+使用していない間は、遮光袋に入れて保管してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_cold｜title=保管方法説明（冷所保存不十分）】
+S
+点眼薬は、冷所に保管せず、常温で保管している。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、温度の影響により、効果が十分に出ない可能性があります。
+使用していない間は、冷所で保管してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_cold_before_opening｜title=保管方法説明（未開封時のみ冷所保存不十分）】
+S
+点眼薬は、未開封時に冷所へ保管せず、常温で保管していた。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、温度の影響により、効果が十分に出ない可能性があります。
+開封するまでは冷所で保管してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
 =======SCENARIOS_END=======
