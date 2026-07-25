@@ -8,12 +8,15 @@
  *   npx tsx --test tests/stateTransitions.test.ts
  *
  * 検証項目:
- *   ① 単剤 → 2剤追加: isSingleDrug=false、フラグリセット、S欄クリーン
+ *   ① 単剤 → 2剤追加: isSingleDrug=false、primaryBaseFields 不変
  *   ② 2剤目確定: primaryBaseFields 不変、composeNodes のみ更新
  *   ③ ノード再選択: primaryBaseFields 不変、対象ノードのみ変更
  *   ④ ノード削除: isSingleDrug 復活
- *   ⑤ フラグ制御: 2剤追加でフラグ完全消去
- *   ⑥ Addon分離: primary と node で addon が混ざらない
+ *   ⑤ Addon分離: primary と node で addon が混ざらない
+ *
+ * 注記（P2-F1・2026-07-25）: 旧⑤「フラグ制御」（単剤フラグ: 副作用なし/コンプライアンス良好）は
+ * UI未接続の dead code として削除された（歴史的経緯は
+ * docs/reviews/PHASE2_STAGE1_R1_REVIEW_2026-07-25.md を参照）。関連テストも削除済み。
  */
 
 import { test, describe } from 'node:test'
@@ -38,12 +41,6 @@ const inj  = injData  as unknown as ModuleData
 // ─────────────────────────────────────────────────────────────
 
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
-const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。'] as const
-
-interface SingleDrugFlags {
-  noSideEffect: boolean
-  goodCompliance: boolean
-}
 
 /** DashboardClient の状態スナップショット（テスト対象フィールドのみ） */
 interface DashboardState {
@@ -52,7 +49,6 @@ interface DashboardState {
   primaryAddonIds: Set<string>
   composeNodes: ComposeNode[]
   editingNodeId: string | null
-  singleDrugFlags: SingleDrugFlags
 }
 
 /** 初期状態を生成 */
@@ -63,7 +59,6 @@ function makeInitialState(): DashboardState {
     primaryAddonIds: new Set(),
     composeNodes: [],
     editingNodeId: null,
-    singleDrugFlags: { noSideEffect: false, goodCompliance: false },
   }
 }
 
@@ -190,7 +185,6 @@ function applyAddComposeNode(
     ...state,
     composeNodes: [...state.composeNodes, newNode],
     editingNodeId: nodeId,
-    singleDrugFlags: { noSideEffect: false, goodCompliance: false },  // フラグリセット
   }
 }
 
@@ -242,24 +236,6 @@ function applyRemoveNode(
     ...state,
     composeNodes: nextNodes,
     editingNodeId: nextEditingNodeId,
-  }
-}
-
-// ── handleFlagChange（DashboardClient の handleFlagChange と同一） ──
-
-function applyFlagChange(
-  state: DashboardState,
-  flags: SingleDrugFlags,
-): DashboardState {
-  const baseLines = state.primaryBaseFields.S
-    .split('\n')
-    .filter(l => !(FLAG_LINES as readonly string[]).includes(l.trim()))
-  if (flags.noSideEffect)   baseLines.push('副作用は認めない。')
-  if (flags.goodCompliance) baseLines.push('コンプライアンス良好。')
-  return {
-    ...state,
-    singleDrugFlags: flags,
-    primaryBaseFields: { ...state.primaryBaseFields, S: baseLines.join('\n') },
   }
 }
 
@@ -345,21 +321,6 @@ describe('① 単剤 → 2剤追加', () => {
     assert.equal(state.composeNodes.length, 1, 'composeNodes に1件追加')
   })
 
-  test('2剤追加後 singleDrugFlags がリセットされる', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'initial')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    // フラグを立てておく
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: true })
-    assert.equal(state.singleDrugFlags.noSideEffect, true)
-    assert.equal(state.singleDrugFlags.goodCompliance, true)
-
-    // 2剤追加
-    state = applyAddComposeNode(state, inj)
-    assert.equal(state.singleDrugFlags.noSideEffect, false, 'noSideEffect リセット')
-    assert.equal(state.singleDrugFlags.goodCompliance, false, 'goodCompliance リセット')
-  })
-
   test('2剤追加後 primaryBaseFields は変化しない', () => {
     let state = makeInitialState()
     const sc = getScenario(oral, 'initial')
@@ -368,29 +329,6 @@ describe('① 単剤 → 2剤追加', () => {
 
     state = applyAddComposeNode(state, inj)
     assert.deepEqual(state.primaryBaseFields, primaryBefore, 'primaryBaseFields は変化しない')
-  })
-
-  test('pending ノード確定前は S欄にフラグ行が残らない', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'se_hypo_none')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: false })
-
-    // 2剤追加（pending 状態）→ displayFields は primaryBaseFields そのまま
-    state = applyAddComposeNode(state, inj)
-    const display = computeDisplayFields(
-      state.primaryBaseFields,
-      oral.scenarios.find(s => s.globalId === state.selectedScenarioId),
-      state.composeNodes,
-      oral.defaults,
-    )
-
-    // pending ノード（scenarioId 空）は合成に影響しない
-    // フラグ行は singleDrugFlags リセット後に primaryBaseFields から除去されていない
-    // → applyAddComposeNode はフラグリセットのみ（S行の除去は handleFlagChange の役割）
-    // ここでは S欄の「コンプライアンス良好。」が含まれないことを確認（flagsがリセットされたため）
-    assert.equal(state.singleDrugFlags.noSideEffect, false, 'noSideEffect=false')
-    assert.equal(state.singleDrugFlags.goodCompliance, false, 'goodCompliance=false')
   })
 })
 
@@ -609,67 +547,7 @@ describe('④ ノード削除: isSingleDrug 復活', () => {
   })
 })
 
-describe('⑤ フラグ制御', () => {
-  test('noSideEffect=true で S 末尾に「副作用は認めない。」が追加される', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'se_hypo_none')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: false })
-
-    const lines = state.primaryBaseFields.S.split('\n')
-    assert.ok(lines.includes('副作用は認めない。'), 'フラグ行が追加された')
-  })
-
-  test('goodCompliance=true で S 末尾に「コンプライアンス良好。」が追加される', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'cp_good')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    state = applyFlagChange(state, { noSideEffect: false, goodCompliance: true })
-
-    const lines = state.primaryBaseFields.S.split('\n')
-    assert.ok(lines.includes('コンプライアンス良好。'), 'CP良好フラグ行が追加された')
-  })
-
-  test('フラグ off にすると対応行が S から除去される', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'se_hypo_none')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: true })
-    // 一度 off にする
-    state = applyFlagChange(state, { noSideEffect: false, goodCompliance: false })
-
-    const lines = state.primaryBaseFields.S.split('\n')
-    assert.ok(!lines.includes('副作用は認めない。'), 'noSideEffect off でフラグ行除去')
-    assert.ok(!lines.includes('コンプライアンス良好。'), 'goodCompliance off でフラグ行除去')
-  })
-
-  test('フラグ行が重複して追加されない（同一フラグを2回 on にしても1行）', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'se_hypo_none')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: false })
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: false })
-
-    const lines = state.primaryBaseFields.S.split('\n').filter(l => l === '副作用は認めない。')
-    assert.equal(lines.length, 1, 'フラグ行は1行のみ')
-  })
-
-  test('2剤追加でフラグ singleDrugFlags が完全消去される', () => {
-    let state = makeInitialState()
-    const sc = getScenario(oral, 'se_hypo_none')
-    state = applySelectPrimaryScenario(state, sc.globalId, oral)
-    state = applyFlagChange(state, { noSideEffect: true, goodCompliance: true })
-
-    assert.equal(state.singleDrugFlags.noSideEffect, true)
-    assert.equal(state.singleDrugFlags.goodCompliance, true)
-
-    state = applyAddComposeNode(state, inj)
-    assert.equal(state.singleDrugFlags.noSideEffect, false, '2剤追加で noSideEffect=false')
-    assert.equal(state.singleDrugFlags.goodCompliance, false, '2剤追加で goodCompliance=false')
-  })
-})
-
-describe('⑥ Addon 分離: primary と node で addon が混ざらない', () => {
+describe('⑤ Addon 分離: primary と node で addon が混ざらない', () => {
   test('primary に addon をトグルしても composeNodes は変化しない', () => {
     let state = makeInitialState()
     const oralSc = getScenario(oral, 'initial')

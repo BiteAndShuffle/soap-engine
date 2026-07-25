@@ -14,7 +14,6 @@
  *   - derivePrimaryDisplayFields（H-1 対応で追加したヘルパー）
  *   - handleAddonToggle（primary ブランチの raw/表示 分離ロジック）
  *   - handleSToggle（トグル ON / OFF 両分岐）
- *   - handleFlagChange
  *   - handleAddonToggle（node ブランチ。修正不要だが多剤合成の回帰確認として含める）
  *
  * 検証項目（監査記録 §8.12 必須回帰 1〜5 + 推奨マトリクスの主要組み合わせ）:
@@ -24,6 +23,11 @@
  *   ④ Rapid S先頭文変更 → persona ON/OFF で S先頭文が維持される
  *   ⑤ personaGuard 保護行（closing）が全ペルソナで無変換
  *   ⑥ 多剤合成（node ブランチ）でも ADDON が persona トグルで保持される
+ *
+ * 注記（P2-F1・2026-07-25）: Rapidフラグ（副作用なし/コンプライアンス良好の単剤フラグ）は
+ * UI未接続の dead code として整理・削除された（歴史的経緯は
+ * docs/reviews/PHASE2_STAGE1_R1_REVIEW_2026-07-25.md を参照）。
+ * 旧④のフラグ関連テストは削除済み。S先頭文Rapidの検証のみ残す。
  *
  * 実行:
  *   npx tsx --test tests/personaState.test.ts
@@ -49,13 +53,6 @@ function getScenario(mod: ModuleData, id: string): Scenario {
 // ─────────────────────────────────────────────────────────────
 // DashboardClient.tsx のロジックを純粋関数としてミラー
 // ─────────────────────────────────────────────────────────────
-
-const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。'] as const
-
-interface SingleDrugFlags {
-  noSideEffect: boolean
-  goodCompliance: boolean
-}
 
 /** derivePrimaryDisplayFields（DashboardClient.tsx と同一） */
 function derivePrimaryDisplayFields(
@@ -191,14 +188,6 @@ function applySToggleOnRaw(rawFields: SoapFields, resolvedFirst: string): SoapFi
   return { ...rawFields, S: replaceSFirstSentence(rawFields.S, resolvedFirst) }
 }
 
-/** フラグ行の付け替え（handleSToggle トグルOFF分岐 / handleFlagChange 共通ロジック） */
-function applyFlagLinesToRaw(rawFields: SoapFields, flags: SingleDrugFlags): SoapFields {
-  const rawLines = rawFields.S.split('\n').filter(l => !(FLAG_LINES as readonly string[]).includes(l.trim()))
-  if (flags.noSideEffect)   rawLines.push('副作用は認めない。')
-  if (flags.goodCompliance) rawLines.push('コンプライアンス良好。')
-  return { ...rawFields, S: rawLines.join('\n') }
-}
-
 // ─────────────────────────────────────────────────────────────
 // 固定値
 // ─────────────────────────────────────────────────────────────
@@ -323,25 +312,6 @@ describe('④ Rapid S先頭文変更 → persona ON/OFF で S先頭文が維持�
 
     const offDisplay = derivePrimaryDisplayFields(raw, false, 'concise', guard)
     assert.equal(offDisplay.S, NEW_FIRST, 'persona OFF では S 先頭文が無変換のまま完全一致する')
-  })
-
-  test('フラグ ON → persona ON/OFF でもフラグ行の情報が S に残る（persona OFF は完全一致）', () => {
-    // 注意: 「副作用は認めない。」は concise ペルソナの DENSITY_RULES により
-    // 「副作用は認めず。」へ文体変換される（applyPersona.ts の既存仕様。H-1 の対象外）。
-    // ここで検証すべきは「情報欠損なく残ること」であり「無変換のまま残ること」ではない
-    // （closing 行のような isMedicalRecord 保護対象ではないため）。
-    const scenario = getScenario(oral, 'initial')
-    const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
-
-    const raw = applyFlagLinesToRaw(scenarioRaw, { noSideEffect: true, goodCompliance: false })
-    assert.ok(raw.S.includes('副作用は認めない。'), '前提: raw にフラグ行が含まれる')
-
-    const onDisplay = derivePrimaryDisplayFields(raw, true, 'concise', guard)
-    assert.ok(onDisplay.S.includes('副作用は認め'), 'persona ON でもフラグ行の情報（欠損なし）が残る')
-
-    const offDisplay = derivePrimaryDisplayFields(raw, false, 'concise', guard)
-    assert.ok(offDisplay.S.includes('副作用は認めない。'), 'persona OFF ではフラグ行が無変換のまま完全一致で残る')
   })
 })
 

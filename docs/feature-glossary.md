@@ -11,8 +11,11 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 | 操作 | ハンドラ | 変更対象 |
 |------|----------|----------|
 | S先頭文ボタン（継続投与・新規など） | `handleSToggle` | S欄のみ（A・P は保持） |
-| フラグボタン（副作用なし / CP良好 など） | `handleFlagChange` | S欄のみ（A・P は保持） |
 | ADDONボタン（生活指導などの追加文） | `handleAddonToggle` | 現在の `primaryBaseFields` に ADDON テキストを追加・削除 |
+
+**廃止済み機能**: フラグボタン（副作用なし / CP良好）は UI 未接続の dead code として
+2026-07-25（P2-F1）に整理・削除された。歴史的経緯・発生背景は
+`docs/reviews/PHASE2_STAGE1_R1_REVIEW_2026-07-25.md` の Lessons Learned を参照。
 
 **重要な制約:**
 - Rapid 操作中は `buildNodeFields` を呼ばない。シナリオ再構築は行わない。
@@ -30,7 +33,7 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 - ON 時: `primaryBaseFieldsRef.current` に ADDON テキストを末尾追記
 - OFF 時: 全 ADDON テキストをフィルタで除去し、選択中の ADDON だけ再付加
 
-**禁止事項**: ADDON トグル時に `buildNodeFields` を呼んではならない（S先頭文・フラグ変更が消える）。
+**禁止事項**: ADDON トグル時に `buildNodeFields` を呼んではならない（S先頭文の変更が消える）。
 
 ---
 

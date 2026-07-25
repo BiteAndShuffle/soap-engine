@@ -245,12 +245,6 @@ function DrugInlineSearch({
 // Props
 // ─────────────────────────────────────────────────────────────
 
-/** 単剤フラグ */
-export interface SingleDrugFlags {
-  noSideEffect: boolean
-  goodCompliance: boolean
-}
-
 /** エクスプレス候補アイテム */
 export interface ExpressCandidate {
   moduleId: string
@@ -322,7 +316,7 @@ export interface ExpressCandidate {
 interface ThirdPanelProps {
   selectedGroup: MenuGroup | null
   thirdPanelEnabled: boolean
-  /** 単剤モードかどうか（false の場合フラグ・S先頭文ボタンを非表示） */
+  /** 単剤モードかどうか（false の場合S先頭文ボタンを非表示） */
   isSingleDrug: boolean
   /**
    * 現在選択中の1剤目シナリオ。
@@ -332,9 +326,6 @@ interface ThirdPanelProps {
   currentSRelation: SRelation
   currentSCondition: SCondition
   onSAction: (relation: SRelation, condition: SCondition) => void
-  /** 単剤フラグ（副作用なし / コンプライアンス良好） */
-  singleDrugFlags: SingleDrugFlags
-  onFlagChange: (flags: SingleDrugFlags) => void
   /** 合成薬剤追加検索クエリ */
   composeSearchValue?: string
   onComposeSearchChange?: (v: string) => void
@@ -388,8 +379,6 @@ export default function ThirdPanel({
   currentSRelation,
   currentSCondition,
   onSAction,
-  singleDrugFlags,
-  onFlagChange,
   composeSearchValue = '',
   onComposeSearchChange,
   composeDrugSuggestions = [],

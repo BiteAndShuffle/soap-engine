@@ -16,7 +16,6 @@ import {
   moduleMenuPrefixCandidates,
 } from '../../lib/menuGroups'
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
-import { type SingleDrugFlags } from './ThirdPanel'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
 import { applyPlaceholder as applyPlaceholderFn } from '../../lib/applyPlaceholder'
@@ -204,12 +203,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 現在の編集コンテキストに応じて activeLocalSiteInput を使う（下記参照）。
   const [localSiteInput, setLocalSiteInput] = useState('')
 
-  // ── 単剤フラグ（副作用なし / CP良好）: 単剤時のみ有効 ──────
-  const [singleDrugFlags, setSingleDrugFlags] = useState<SingleDrugFlags>({
-    noSideEffect: false,
-    goodCompliance: false,
-  })
-
   // ── ペルソナ（文体切替）: 表示変換のみ、医療ロジック不変 ──
   // デフォルトは無変換（JSONそのまま）。ペルソナ切替ボタンで有効化できる。
   const [personaEnabled, setPersonaEnabled] = useState(false)
@@ -301,7 +294,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // NLP生成モード専用 ref（将来機能・現在 UI 未接続）。
   // NLP生成モード（handleSwitchToNlp）に入る直前の manual 状態スナップショット。
   // handleSwitchToManual でこれをそのまま復元する（buildNodeFields は呼ばない）。
-  // 通常の Rapid（右パネル S先頭文/フラグ/ADDON ボタン）では一切使用しない。
+  // 通常の Rapid（右パネル S先頭文/ADDON ボタン）では一切使用しない。
   // handleSwitchToNlp は現在どの UI ボタンにも接続されていないため、常に null のまま。
   // null = スナップショットなし（現在 UI 未接続のため常にこの状態）。
   // → docs/feature-glossary.md「NLP生成」の定義を参照
@@ -315,7 +308,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     selectedAddonIds:   Set<string>
     sRelation:          SRelation
     sCondition:         SCondition
-    singleDrugFlags:    SingleDrugFlags
   }
   const manualSnapshotRef = useRef<ManualSnapshot | null>(null)
   // ユーザーが明示的に手動でシナリオを選択したときのみ true になるフラグ。
@@ -324,7 +316,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const manualScenarioSelectRef = useRef(false)
   // handleNlpGenerate / handleSwitchToManual 内で stale closure なしに参照するための ref
   const selectedScenarioIdRef = useRef<string | null>(null)
-  const singleDrugFlagsRef    = useRef<SingleDrugFlags>({ noSideEffect: false, goodCompliance: false })
   // handleFieldChange で editedSOAP の一致判定に使う（stale closure 防止）
   const displayFieldsRef      = useRef<SoapFields>(EMPTY_FIELDS)
   // 編集開始時点の finalFields スナップショット（一度確定したら次の編集開始まで変化しない）
@@ -499,7 +490,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   sRelationRef.current         = sRelation
   sConditionRef.current        = sCondition
   selectedScenarioIdRef.current = selectedScenarioId
-  singleDrugFlagsRef.current   = singleDrugFlags
   // 未編集状態のときだけスナップショットを追従させる。
   // editedSOAP が非null（編集中）のときは固定したまま更新しない。
   // これにより、mergeBlocks/addon の再計算が editSnapshotRef を汚染しない。
@@ -768,7 +758,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // EFFECTS
   // ══════════════════════════════════════════════════════════════
 
-  // S prefix/status・フラグリセット（シナリオ変更時）
+  // S prefix/status リセット（シナリオ変更時）
   // thirdPanelSPlacement.enabled === true のシナリオに切り替わった場合のみ
   // sRelation / sCondition を初期値にリセットする。
   useEffect(() => {
@@ -776,8 +766,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSRelation('continued_do')
       setSCondition('stable')
     }
-    // シナリオが変わったらフラグもリセット（S欄の内容はシナリオ切替で上書きされるため）
-    setSingleDrugFlags({ noSideEffect: false, goodCompliance: false })
   }, [primaryScenario])
 
   // 1剤目シナリオ切替時に primaryBaseFields を初期化（addon なし素の状態）
@@ -1240,7 +1228,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 表示用フィールドを導出する。personaEnabled が false、または guard が
   // 存在しない（シナリオ未確定）場合は raw をそのまま返す。
   //
-  // handleAddonToggle（primary）/ handleSToggle / handleFlagChange が
+  // handleAddonToggle（primary）/ handleSToggle が
   // raw ベースを更新した直後、この関数で表示を再導出することで、
   // 「persona 再計算の基点（raw）」と「表示中の本文」を常に同期させる。
   // reapplyPersonaToAllBlocks はこの関数を使わず現状のまま
@@ -1441,20 +1429,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const isAlreadyActive =
         sRelationRef.current === relation && sConditionRef.current === condition
       if (isAlreadyActive) {
+        // S先頭文の選択状態を解除し、表示を raw から再導出する。
+        // raw 自体は変更しない（H-1 対応: raw ベースが persona 再計算の基点であり、
+        // ここで書き換えると persona トグルで ADDON 分が消失する）。
         setSRelation('continued_do')
         setSCondition('stable')
-        // S をシナリオ素の値に戻す。フラグ行（副作用は認めない。/コンプライアンス良好。）は
-        // 現在値を維持。O・A・P は raw ベース（ADDON 適用済みの場合もそのまま）を維持し、
-        // 表示は persona を再適用して導出する（H-1 対応: raw ベースを更新しないと
-        // persona トグルで ADDON 分が消失する）。
-        const rawFields = rawPrimaryFieldsRef.current
-        const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
-        const rawLines = rawFields.S.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
-        if (singleDrugFlagsRef.current.noSideEffect)   rawLines.push('副作用は認めない。')
-        if (singleDrugFlagsRef.current.goodCompliance) rawLines.push('コンプライアンス良好。')
-        const revertedRaw = { ...rawFields, S: rawLines.join('\n') }
-        rawPrimaryFieldsRef.current = revertedRaw
-        setPrimaryBaseFields(derivePrimaryDisplayFields(revertedRaw))
+        setPrimaryBaseFields(derivePrimaryDisplayFields(rawPrimaryFieldsRef.current))
         setEditedSOAP(null)
         return
       }
@@ -1525,43 +1505,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setEditedSOAP(null)
     })
   }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard, derivePrimaryDisplayFields])
-
-  // ─────────────────────────────────────────────────────────────
-  // handleFlagChange【Rapid 操作】（単剤フラグ: 副作用なし / CP良好）
-  //
-  // Rapid の一部（右パネル フラグボタン）。Express / NLP生成とは無関係。
-  // フラグ行を S 末尾に追加/除去する。A・P は保持。buildNodeFields は呼ばない。
-  // 単剤時のみ呼ばれるため多剤チェックは不要。
-  // フラグ行は buildS が observation として処理し、
-  // OBS_PREFIX 付きの observation バケットには入らないため
-  // 「副作用は認めない。」「コンプライアンス良好。」は other に分類される。
-  // ─────────────────────────────────────────────────────────────
-
-  const handleFlagChange = useCallback((flags: SingleDrugFlags) => {
-    confirmDiscard(() => {
-      setSingleDrugFlags(flags)
-      setEditedSOAP(null)
-      const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
-      // Rapid 原本（NLP専用・現在UI未接続のため通常は null）がある場合は
-      // rapidBaseFieldsRef をベースにする（既存のNLP経路の分岐を変更しない）。
-      const rapidBase = rapidBaseFieldsRef.current
-      if (rapidBase !== null) {
-        const baseLines = rapidBase.S.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
-        if (flags.noSideEffect)    baseLines.push('副作用は認めない。')
-        if (flags.goodCompliance)  baseLines.push('コンプライアンス良好。')
-        setPrimaryBaseFields({ ...rapidBase, S: baseLines.join('\n') })
-        return
-      }
-      // 通常経路: raw ベースを更新し、表示は persona を再適用して導出する（H-1 対応）。
-      const rawFields = rawPrimaryFieldsRef.current
-      const rawLines = rawFields.S.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
-      if (flags.noSideEffect)   rawLines.push('副作用は認めない。')
-      if (flags.goodCompliance) rawLines.push('コンプライアンス良好。')
-      const updatedRaw = { ...rawFields, S: rawLines.join('\n') }
-      rawPrimaryFieldsRef.current = updatedRaw
-      setPrimaryBaseFields(derivePrimaryDisplayFields(updatedRaw))
-    })
-  }, [confirmDiscard, derivePrimaryDisplayFields])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect【Express 操作】
@@ -1740,7 +1683,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         selectedAddonIds:   new Set(selectedAddonIdsRef.current),
         sRelation:          sRelationRef.current,
         sCondition:         sConditionRef.current,
-        singleDrugFlags:    { ...singleDrugFlagsRef.current },
       }
       setUiMode('nlp')
       setSelectedScenarioId(null)
@@ -1776,7 +1718,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setSelectedAddonIds(snap.selectedAddonIds)
       setSRelation(snap.sRelation)
       setSCondition(snap.sCondition)
-      setSingleDrugFlags(snap.singleDrugFlags)
       setSelectedGroup(snap.selectedGroup)
       setEditedSOAP(null)
       restoringFromSnapshotRef.current = true
@@ -1972,8 +1913,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             currentSRelation={sRelation}
             currentSCondition={sCondition}
             onSAction={handleSToggle}
-            singleDrugFlags={singleDrugFlags}
-            onFlagChange={handleFlagChange}
             composeSearchValue={composeSearch}
             onComposeSearchChange={setComposeSearch}
             composeDrugSuggestions={composeDrugSuggestions}
