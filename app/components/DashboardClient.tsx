@@ -1234,12 +1234,34 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [])
 
   // ─────────────────────────────────────────────────────────────
+  // derivePrimaryDisplayFields【H-1 対応】
+  //
+  // rawPrimaryFieldsRef（persona 未適用・ADDON/Rapid 反映済みベース）から
+  // 表示用フィールドを導出する。personaEnabled が false、または guard が
+  // 存在しない（シナリオ未確定）場合は raw をそのまま返す。
+  //
+  // handleAddonToggle（primary）/ handleSToggle / handleFlagChange が
+  // raw ベースを更新した直後、この関数で表示を再導出することで、
+  // 「persona 再計算の基点（raw）」と「表示中の本文」を常に同期させる。
+  // reapplyPersonaToAllBlocks はこの関数を使わず現状のまま
+  // （呼び出し時点で ref が未更新のため、明示的な nextEnabled/nextPersona 引数が必要）。
+  // ─────────────────────────────────────────────────────────────
+
+  const derivePrimaryDisplayFields = useCallback((raw: SoapFields): SoapFields => {
+    const guard = primaryGuardRef.current
+    if (!personaEnabledRef.current || !guard) return raw
+    return applyPersonaToFieldsWithGuard(raw, true, selectedPersonaRef.current, guard)
+  }, [])
+
+  // ─────────────────────────────────────────────────────────────
   // handleAddonToggle【Rapid 操作】
   //
   // Rapid の一部（右パネル ADDON ボタン）。Express / NLP生成とは無関係。
   //
   //   node    → ノードの block を addon 込みで再構築（composeNodes を書き換え）
-  //   primary → primaryBaseFieldsRef.current から全 ADDON を剥がし選択分だけ再付加
+  //   primary → rawPrimaryFieldsRef.current（persona 未適用ベース）から
+  //             全 ADDON を剥がし選択分だけ再付加し、表示は persona を再適用して導出する
+  //             （H-1 対応: raw が更新されないと persona トグルで ADDON が消失するため）
   //             ※ buildNodeFields は呼ばない（S先頭文・フラグ変更を保持するため）
   // ─────────────────────────────────────────────────────────────
 
@@ -1281,6 +1303,14 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     } else {
       // ── primary ブランチ（editedSOAP があれば確認する）────────
       confirmDiscard(() => {
+        // raw ベースは setSelectedAddonIds の外でスナップショットする。
+        // setSelectedAddonIds(prev => {...}) の内側で rawPrimaryFieldsRef を
+        // 読み書きすると、React（StrictMode 下の開発時二重実行）が updater を
+        // 2回呼んだ際に ref への書き込みが1回目の呼び出し間で可視化されてしまい、
+        // 2回目の呼び出しが「1回目の結果を含む raw」から再度 ADDON を付加して
+        // ADDON 文が二重に挿入される。呼び出し前に一度だけ読むことで、
+        // updater が複数回呼ばれても結果が同じになる（冪等）ようにする。
+        const rawBeforeToggle = rawPrimaryFieldsRef.current
         setSelectedAddonIds(prev => {
           const next = new Set(prev)
           next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
@@ -1322,9 +1352,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
               }
             }
 
-            // primaryBaseFieldsRef から全 ADDON テキストを除去してベースを得る
+            // rawPrimaryFieldsRef（persona 未適用ベース）から全 ADDON テキストを除去してベースを得る
             // 行単位比較ではなく substring 除去を使う（複数行テキスト対応）
-            const currentFields = primaryBaseFieldsRef.current
+            // ※ H-1 対応: primaryBaseFieldsRef（表示ベース）ではなく raw を使うことで
+            //   persona 再計算の基点に ADDON 分が確実に含まれるようにする
+            // ※ ref を再読みせず rawBeforeToggle（呼び出し前スナップショット）を使う
+            //   （updater 二重実行時の冪等性のため。上のコメント参照）
+            const currentFields = rawBeforeToggle
             const stripped: SoapFields = { S: '', O: '', A: '', P: '' }
             for (const sec of ['S', 'O', 'A', 'P'] as const) {
               let val = currentFields[sec] ?? ''
@@ -1381,14 +1415,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
                 overlaid[sec] = overlaid[sec] ? `${overlaid[sec]}\n${block}` : block
               }
             }
-            setPrimaryBaseFields(overlaid)
+            // raw ベースを更新し、表示は persona を再適用して導出する（H-1 対応）
+            rawPrimaryFieldsRef.current = overlaid
+            setPrimaryBaseFields(derivePrimaryDisplayFields(overlaid))
           }
           setEditedSOAP(null)
           return next
         })
       })
     }
-  }, [activeModuleData, activeBrandName, activeDrugDisplayName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard])
+  }, [activeModuleData, activeBrandName, activeDrugDisplayName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard, derivePrimaryDisplayFields])
 
   // ─────────────────────────────────────────────────────────────
   // handleSToggle【Rapid 操作】（S先頭文トグル）
@@ -1407,21 +1443,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (isAlreadyActive) {
         setSRelation('continued_do')
         setSCondition('stable')
-        // S をシナリオ素の表示値（rawPrimaryFieldsRef + persona）に戻す。
-        // フラグ行（副作用は認めない。/コンプライアンス良好。）は現在値を維持。
-        // A・P は prev のまま保持（ADDON 適用済みの場合もそのまま）。
-        setPrimaryBaseFields(prev => {
-          const rawFields = rawPrimaryFieldsRef.current
-          const guard = primaryGuardRef.current
-          const baseS = (personaEnabledRef.current && guard)
-            ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard).S
-            : rawFields.S
-          const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
-          const lines = baseS.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
-          if (singleDrugFlagsRef.current.noSideEffect)   lines.push('副作用は認めない。')
-          if (singleDrugFlagsRef.current.goodCompliance) lines.push('コンプライアンス良好。')
-          return { ...prev, S: lines.join('\n') }
-        })
+        // S をシナリオ素の値に戻す。フラグ行（副作用は認めない。/コンプライアンス良好。）は
+        // 現在値を維持。O・A・P は raw ベース（ADDON 適用済みの場合もそのまま）を維持し、
+        // 表示は persona を再適用して導出する（H-1 対応: raw ベースを更新しないと
+        // persona トグルで ADDON 分が消失する）。
+        const rawFields = rawPrimaryFieldsRef.current
+        const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
+        const rawLines = rawFields.S.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
+        if (singleDrugFlagsRef.current.noSideEffect)   rawLines.push('副作用は認めない。')
+        if (singleDrugFlagsRef.current.goodCompliance) rawLines.push('コンプライアンス良好。')
+        const revertedRaw = { ...rawFields, S: rawLines.join('\n') }
+        rawPrimaryFieldsRef.current = revertedRaw
+        setPrimaryBaseFields(derivePrimaryDisplayFields(revertedRaw))
         setEditedSOAP(null)
         return
       }
@@ -1475,15 +1508,23 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         }
         return newFirst  // continued_do: 薬剤名なしが自然
       })()
-      // Rapid 原本がある場合は rapidBaseFieldsRef をベースに S だけ差し替える。
-      // これにより A/P は Rapid 生成時の画面表示値を完全に維持する。
-      // Rapid 原本がない場合は primaryBaseFields（通常シナリオ本文）をベースにする。
-      const base = rapidBaseFieldsRef.current ?? primaryBaseFieldsRef.current
-      const updated = replaceSFirstSentence(base.S, resolvedFirst)
-      setPrimaryBaseFields({ ...base, S: updated })
+      // Rapid 原本（NLP専用・現在UI未接続のため通常は null）がある場合は
+      // rapidBaseFieldsRef をベースに S だけ差し替える（既存のNLP経路の分岐を変更しない）。
+      // 通常経路（rapidBaseFieldsRef が null）は raw ベースを更新し、
+      // 表示は persona を再適用して導出する（H-1 対応）。
+      const rapidBase = rapidBaseFieldsRef.current
+      if (rapidBase !== null) {
+        const updated = replaceSFirstSentence(rapidBase.S, resolvedFirst)
+        setPrimaryBaseFields({ ...rapidBase, S: updated })
+      } else {
+        const rawBase = rawPrimaryFieldsRef.current
+        const updatedRaw = { ...rawBase, S: replaceSFirstSentence(rawBase.S, resolvedFirst) }
+        rawPrimaryFieldsRef.current = updatedRaw
+        setPrimaryBaseFields(derivePrimaryDisplayFields(updatedRaw))
+      }
       setEditedSOAP(null)
     })
-  }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
+  }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard, derivePrimaryDisplayFields])
 
   // ─────────────────────────────────────────────────────────────
   // handleFlagChange【Rapid 操作】（単剤フラグ: 副作用なし / CP良好）
@@ -1500,20 +1541,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     confirmDiscard(() => {
       setSingleDrugFlags(flags)
       setEditedSOAP(null)
-      // Rapid 原本がある場合は rapidBaseFieldsRef をベースにする（A/P を Rapid 本文で維持）。
-      // Rapid 原本がない場合は現在の primaryBaseFields（prev）をベースにする。
-      setPrimaryBaseFields(prev => {
-        const base = rapidBaseFieldsRef.current ?? prev
-        const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
-        const baseLines = base.S
-          .split('\n')
-          .filter(l => !FLAG_LINES.includes(l.trim()))
+      const FLAG_LINES = ['副作用は認めない。', 'コンプライアンス良好。']
+      // Rapid 原本（NLP専用・現在UI未接続のため通常は null）がある場合は
+      // rapidBaseFieldsRef をベースにする（既存のNLP経路の分岐を変更しない）。
+      const rapidBase = rapidBaseFieldsRef.current
+      if (rapidBase !== null) {
+        const baseLines = rapidBase.S.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
         if (flags.noSideEffect)    baseLines.push('副作用は認めない。')
         if (flags.goodCompliance)  baseLines.push('コンプライアンス良好。')
-        return { ...base, S: baseLines.join('\n') }
-      })
+        setPrimaryBaseFields({ ...rapidBase, S: baseLines.join('\n') })
+        return
+      }
+      // 通常経路: raw ベースを更新し、表示は persona を再適用して導出する（H-1 対応）。
+      const rawFields = rawPrimaryFieldsRef.current
+      const rawLines = rawFields.S.split('\n').filter(l => !FLAG_LINES.includes(l.trim()))
+      if (flags.noSideEffect)   rawLines.push('副作用は認めない。')
+      if (flags.goodCompliance) rawLines.push('コンプライアンス良好。')
+      const updatedRaw = { ...rawFields, S: rawLines.join('\n') }
+      rawPrimaryFieldsRef.current = updatedRaw
+      setPrimaryBaseFields(derivePrimaryDisplayFields(updatedRaw))
     })
-  }, [confirmDiscard])
+  }, [confirmDiscard, derivePrimaryDisplayFields])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect【Express 操作】
