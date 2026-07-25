@@ -28,7 +28,7 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { ALL_MODULES } from '../data/modules/index'
-import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../lib/search'
+import { buildSearchIndex, getDrugSuggestions, getSuggestions, normalizeText } from '../lib/search'
 
 const fullIndex = ALL_MODULES.flatMap(m => buildSearchIndex(m))
 
@@ -299,12 +299,16 @@ describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数
     assert.ok(!results.some(r => r.matchedBrandName === 'アレグラ'))
   })
 
-  test('"ひるどいど" → 候補順・件数が変化しない（先発品優先モジュールの代表検索）', () => {
+  test('"ひるどいど" → 件数は変化せず、score同点の3剤形は表示名の自然な順で並ぶ', () => {
+    // ヒルドイドソフト軟膏はnameAliases完全一致(score5)で単独首位。
+    // クリーム/フォーム/ローションはscore4で同点のため、originalIndex（登録順）ではなく
+    // 解決済み表示名の日本語順（クリーム→フォーム→ローション）で並ぶ。
     const results = getDrugSuggestions('ひるどいど', fullIndex, 8)
     assert.equal(results.length, 8)
     assert.equal(results[0].matchedBrandName, 'ヒルドイドソフト軟膏')
     assert.equal(results[1].matchedBrandName, 'ヒルドイドクリーム')
-    assert.equal(results[2].matchedBrandName, 'ヒルドイドローション')
+    assert.equal(results[2].matchedBrandName, 'ヒルドイドフォーム')
+    assert.equal(results[3].matchedBrandName, 'ヒルドイドローション')
   })
 
   test('"もんてるかすと" → 候補順・件数が変化しない', () => {
@@ -463,5 +467,79 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
     assert.equal(results[1].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
     assert.equal(results[2].uiLabel, 'トラニラスト点眼液PF')
     assert.equal(results[3].uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// ⑫ 最終 tie-break: score/priority 同点時は originalIndex ではなく
+//    解決済み表示名の自然な日本語順で並べる
+// ─────────────────────────────────────────────────────────────
+
+describe('⑫ 最終tie-break: 解決済み表示名の自然順（H1: アレジオン/エピナスチン）', () => {
+  test('"アレジオン" → 内服が点眼より上位（brandNames配列順に依存しない）', () => {
+    const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+    const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(oralPos >= 0 && eyePos >= 0, '内服・点眼の両候補が存在するはず（削除されていない）')
+    assert.ok(oralPos < eyePos, `内服(${oralPos})が点眼(${eyePos})より上位であるべき`)
+  })
+
+  test('"あれじお"（部分入力）でも内服が点眼より上位', () => {
+    const results = getDrugSuggestions('あれじお', fullIndex, 8)
+    const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(oralPos >= 0 && eyePos >= 0)
+    assert.ok(oralPos < eyePos)
+  })
+
+  test('"エピナスチン"（一般名）でも内服が点眼より上位', () => {
+    const results = getDrugSuggestions('エピナスチン', fullIndex, 8)
+    const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(oralPos >= 0 && eyePos >= 0)
+    assert.ok(oralPos < eyePos)
+  })
+
+  test('"アレジオン 点眼" → 点眼液のみに絞られる（tie-break変更の影響を受けない）', () => {
+    const results = getDrugSuggestions('アレジオン 点眼', fullIndex, 8)
+    assert.ok(results.every(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops'))
+    assert.ok(results.some(r => r.matchedBrandName === 'アレジオン点眼液'))
+  })
+
+  test('"アレジオン てんがん" → 点眼液のみに絞られる', () => {
+    const results = getDrugSuggestions('アレジオン てんがん', fullIndex, 8)
+    assert.ok(results.every(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops'))
+  })
+
+  test('getSuggestions() と getDrugSuggestions() で "アレジオン" のmodule順序が一致する', () => {
+    const sug = getSuggestions('アレジオン', fullIndex, 10)
+    const dr = getDrugSuggestions('アレジオン', fullIndex, 10)
+    const sugOrder = [...new Set(sug.map(s => s.moduleId))]
+    const drOrder = [...new Set(dr.map(s => s.moduleId))]
+    assert.deepEqual(sugOrder, drOrder, '本番経路(getDrugSuggestions)と非本番経路(getSuggestions)で順序が食い違ってはならない')
+  })
+})
+
+describe('⑬ 最終tie-break: score同点だった35module横断ケースへの影響（許容された仕様変更）', () => {
+  test('"せまぐるちど"（GLP-1 内服/注射）: 候補数は変化せず3件のまま（generic header dedupは今回の対象外）', () => {
+    const results = getDrugSuggestions('せまぐるちど', fullIndex, 8)
+    assert.equal(results.length, 3, 'generic header統合仕様（別問題）により3件のまま変化しないはず')
+    assert.ok(results.some(r => r.moduleId === 'dm_glp1ra_semaglutide_oral'))
+    assert.ok(results.some(r => r.moduleId === 'dm_glp1ra_injection'))
+    const header = results.find(r => r.isGenericLabel)
+    assert.equal(header?.drugDisplayLabel, 'セマグルチド', 'generic headerのdedup key構造は変化しない')
+  })
+
+  test('インスリン系の一般名見出し集約（インスリンリスプロ）は影響を受けない（既存回帰の再確認）', () => {
+    const results = getDrugSuggestions('いんすりんりすぷろ', fullIndex, 8)
+    const headerCount = results.filter(r => r.isGenericLabel && r.drugDisplayLabel === 'インスリンリスプロ').length
+    assert.equal(headerCount, 1, 'dedup key構造は変化しないため従来どおり1件のはず')
+  })
+
+  test('候補が丸ごと消失していない（35module全体の代表クエリでの件数サニティチェック）', () => {
+    for (const q of ['ひるどいど', 'せまぐるちど', 'アレジオン', 'とらにらすと', 'いんすりんりすぷろ']) {
+      const before = getDrugSuggestions(q, fullIndex, 20)
+      assert.ok(before.length > 0, `"${q}": 候補が0件になってはならない`)
+    }
   })
 })

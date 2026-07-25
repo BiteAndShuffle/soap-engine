@@ -335,6 +335,30 @@ function resolveBrandName(entry: SearchEntry, q: string): string | undefined {
   return undefined
 }
 
+/**
+ * score/priority が同点の場合の最終 tie-break にのみ使う、解決済み表示名。
+ * resolveBrandName と同じ「全トークンを順に評価し最初に一致したブランドを採用する」
+ * ロジックを使い、getSuggestions/getDrugSuggestions 双方の候補表示ロジック
+ * （resolvedDisplayLabelSug 等）と同じ優先順位で解決する。
+ * ブランド未解決時は entry.drugDisplayLabel にフォールバックする。
+ * module 固定値（entry.drugDisplayLabel 単体）を tie-break に直接使わないのは、
+ * それが drug.brandNames[0]（クエリと無関係な配列先頭要素）であり、
+ * 配列の宣言順が変わるだけで結果が反転しうるため。
+ */
+function resolveSortLabel(entry: SearchEntry, tokens: string[]): string {
+  let matchedBrandName: string | undefined
+  let matchedByToken: string | undefined
+  for (const t of tokens) {
+    const resolved = resolveBrandName(entry, t)
+    if (resolved !== undefined) { matchedBrandName = resolved; matchedByToken = t; break }
+  }
+  if (!matchedBrandName) return entry.drugDisplayLabel ?? ''
+  const isDirectBrandMatch = matchedByToken !== undefined &&
+    entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
+  if (isDirectBrandMatch) return matchedBrandName
+  return entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName
+}
+
 function scoreEntry(entry: SearchEntry, q: string): number {
   for (const alias of entry.exactAliasTokens) {
     if (alias === q) return 7
@@ -451,15 +475,16 @@ export function getSuggestions(
   if (tokens.length === 0) return []
   const q = tokens[tokens.length - 1]  // ブランド名解決用（末尾トークン or 単一）
 
-  const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
+  const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number; sortLabel: string }> = []
   for (let i = 0; i < index.length; i++) {
     const score = scoreEntryAND(index[i], tokens)
-    if (score > 0) scored.push({ entry: index[i], score, originalIndex: i })
+    if (score > 0) scored.push({ entry: index[i], score, originalIndex: i, sortLabel: resolveSortLabel(index[i], tokens) })
   }
 
   scored.sort((a, b) =>
     b.score - a.score ||
     b.entry.priority - a.entry.priority ||
+    a.sortLabel.localeCompare(b.sortLabel, 'ja') ||
     a.originalIndex - b.originalIndex,
   )
 
@@ -471,7 +496,7 @@ export function getSuggestions(
     if (suppressCandidates.length > 0) {
       suppressModuleIds = new Set(suppressCandidates.map(s => s.entry.moduleId))
       const nonSuppressFiltered = scored.filter(s => !suppressModuleIds!.has(s.entry.moduleId))
-      const suppressRepresentatives: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
+      const suppressRepresentatives: typeof scored = []
       for (const moduleId of suppressModuleIds) {
         const rep = scored.find(s => s.entry.moduleId === moduleId)
         if (rep) suppressRepresentatives.push(rep)
@@ -682,15 +707,16 @@ export function getDrugSuggestions(
   )
 
   // スコアリング（AND 対応）
-  const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number }> = []
+  const scored: Array<{ entry: SearchEntry; score: number; originalIndex: number; sortLabel: string }> = []
   for (let i = 0; i < index.length; i++) {
     const score = scoreEntryAND(index[i], tokens)
-    if (score > 0) scored.push({ entry: index[i], score, originalIndex: i })
+    if (score > 0) scored.push({ entry: index[i], score, originalIndex: i, sortLabel: resolveSortLabel(index[i], tokens) })
   }
 
   scored.sort((a, b) =>
     b.score - a.score ||
     b.entry.priority - a.entry.priority ||
+    a.sortLabel.localeCompare(b.sortLabel, 'ja') ||
     a.originalIndex - b.originalIndex,
   )
 
