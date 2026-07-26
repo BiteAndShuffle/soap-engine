@@ -87,4 +87,81 @@ prompts/RULES.md（P0-B.md 正本指定行） → 処理しない（STOP）
 
 **補足（判断ではなく事実の記録）**: Search Token 生成規則の欠落は、本調査以前から `prompts/RULES.md` §4（P1-W1 で確定済みの版）が「監査未整備」として既に明記している事実と一致する。すなわち今回の未代替判定は新規の発見ではなく、既存の記録と整合する結果である。この欠落を vNext へ補うかどうかは設計判断であり、本調査では判断しない。
 
+---
+
+## 5. Tier1 レビューによる判定更新（2026-07-26）
+
+> 本節は §1〜§4 の記録を**変更せず**追記するものである。§4 に記録された当初の STOP 判定は、
+> 当時の調査結果に基づく正当な判断として原文のまま保持する。
+
+### 5.1 レビュー実施内容
+
+Tier1（Opus）が §4 の STOP 原因である Search Token 行について、一次資料
+（`prompts/P0-B.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN5-Non-Scenario.md` /
+`prompts/RULES.md` / `docs/DESIGN_PRINCIPLES.md` / `docs/JSON_STANDARD.md` /
+`docs/VALIDATOR_STANDARD.md`）を再確認した。§1 の他 27 件は再調査していない。
+
+### 5.2 判定の訂正（FACT）
+
+§1 対応表の Search Token 行は「vNext 対応先: **なし**」「カバレッジ判定: **未代替**」と記録されていたが、
+これは誤りである。
+
+`prompts/vNext/PN2-Drug-Header.md` の「出力」節は、含めるセクションとして
+`drug（genericName / brandNames / drugClass / route / dosageForms / drugSpecificTags / search /
+nameAliases / brandCatalog / aliasToBrand）` を明記している。`commonSearchTokens` /
+`formulationSearchTokens` は `drug.search` 配下のフィールドであり、**構造上 PN2 の出力範囲に含まれる**。
+
+P0-B の Search Token 規則 4 項目を逐条確認した結果は以下のとおり。
+
+| P0-B の記述 | Current Standard 側の所在 | 状態 |
+|---|---|---|
+| 格納先の定義 | `docs/JSON_STANDARD.md` JS-B / `docs/DESIGN_PRINCIPLES.md` DP-05 | カバー済 |
+| bridge 明示分のみ格納 | `prompts/RULES.md` §2 | カバー済 |
+| alias 系フィールドへ展開しない | `prompts/RULES.md` §3 + `lib/moduleValidator.ts` check 3b | カバー済 |
+| 推測生成しない | `prompts/RULES.md` §2 | カバー済 |
+| （工程帰属）PN2 の生成指示 | 存在しない | **欠落** |
+
+したがって正しい分類は「未代替（対応先なし）」ではなく「**一部欠落**（対応先は PN2 に存在するが、
+フィールド単位の生成規則が欠落）」である。
+
+**なお、当初の STOP 判定そのものは正しい。** P1設計書 v2.3 の決定表は「一部欠落」「未代替」の
+いずれもを STOP 条件としており、分類の差は STOP の成否を変えない。§4 の判断は指示どおりの
+正しい停止であった。
+
+### 5.3 解消措置
+
+P1-W15 において、`prompts/vNext/PN2-Drug-Header.md` へ
+「drug.search 検索トークンの生成規則（commonSearchTokens / formulationSearchTokens）」節を追加した。
+これにより P0-B の Search Token 規則 4 項目すべてが Current Standard で説明可能になった。
+
+新規に監査機構は設けていない。`prompts/RULES.md` §4 が SearchToken を「監査未整備」と
+記録している状態は維持され、監査整備は Phase 2 の検討事項として据え置かれる。
+
+### 5.4 更新後の集計と判定
+
+```
+完全代替: 28件（Search Token 行を含む）
+一部欠落:  0件
+未代替:    0件
+```
+
+**更新後の判定: 全件完全代替**
+
+P1設計書 v2.3「W14 処理方法の決定表」の機械的適用結果:
+
+```
+prompts/vNext/PN2-Drug-Header.md
+  → 対象文字列「→ prompts/P0-B.md（必要に応じて参照）」の行を削除
+
+prompts/RULES.md
+  → 対象文字列
+    「- **bridge→JSON変換規則の正本は P0-B.md**（Section 5 の変換表はP0-Bと一致・CHECK-T01は解決済み）」
+    を下記へ置換
+
+  RULES 置換確定文:
+    - **bridge→canonical JSON変換規則は、`prompts/vNext/PN1-Text-Extraction.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN3A-Scenario-Classification.md` / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` / `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md` / `prompts/vNext/PN5-Non-Scenario.md` / 本ファイル §5 に工程別に分担して定義される**
+```
+
+※ 本判定更新は Tier1 の設計レビュー結果であり、決定表の機械的適用による。
+
 ※ 本結論は P1設計書 v2.3「W14 処理方法の決定表」の機械的適用であり、Tier2 による判断を含まない。
