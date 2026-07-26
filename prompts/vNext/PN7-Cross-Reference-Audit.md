@@ -281,9 +281,17 @@ addon を追加した場合は必ずいずれかのシナリオの addonsRef.P �
 ### R. persona 存在確認
 
 ```
-top-level に persona フィールドが存在すること
-persona.defaultStyle / availableStyles / styleProfiles が存在すること
-欠落 → FAIL
+persona は Future Expansion であり、docs/DEVELOPMENT_STANDARD.md §10 の F5
+（Future Expansion を Validator / 監査工程の FAIL 条件にしない）に該当する。
+
+top-level に persona フィールドが存在するかを記録する
+（存在する場合は defaultStyle / availableStyles / styleProfiles の有無も記録する）
+欠落 → FAIL としない（記録のみ）
+
+現状、data/modules/ の一部モジュール（dm_insulin_intermediate / dm_insulin_regular）が
+persona を持たないが、これは FAIL ではない。
+
+参照: docs/DESIGN_PRINCIPLES.md DP-13 / docs/DEVELOPMENT_STANDARD.md §10
 ```
 
 ---
@@ -291,9 +299,15 @@ persona.defaultStyle / availableStyles / styleProfiles が存在すること
 ### S. composition.sMergePolicy 存在確認
 
 ```
-composition.sMergePolicy が存在すること
-unit / conflictStrategy / withinDomainStrategy の3フィールドを持つこと
-欠落 → FAIL
+composition.sMergePolicy は現在 Owner Decision Required であり、
+Future Expansion / Legacy いずれとも確定していない。
+位置づけが確定するまで FAIL 条件としない。
+
+composition.sMergePolicy が存在するかを記録する
+（存在する場合は unit / conflictStrategy / withinDomainStrategy の3フィールドの有無も記録する）
+欠落 → FAIL としない（記録のみ）
+
+参照: docs/DEVELOPMENT_STANDARD.md §10
 ```
 
 ---
