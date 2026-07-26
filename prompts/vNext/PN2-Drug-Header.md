@@ -79,6 +79,29 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 - 配合剤は構成成分ごとに読みを個別登録し、どちらの成分名からでも到達できるようにする
 - alias 追加の要否自体は人間判断（`docs/VALIDATOR_STANDARD.md` §5「exactAliases の網羅性は設計判断」）であり、機械的な網羅性チェックは行わない
 
+### drug.search 検索トークンの生成規則（commonSearchTokens / formulationSearchTokens）
+
+← `docs/DESIGN_PRINCIPLES.md` DP-05（heparinoid 剤形検索分離原則）/ `prompts/RULES.md` §2・§3
+
+`drug.search.commonSearchTokens` / `drug.search.formulationSearchTokens` は、bridge の同名フィールドの記載をそのまま転記して生成する。
+
+| フィールド | 生成元 | 内容 |
+|---|---|---|
+| `drug.search.commonSearchTokens` | bridge の `drug.search.commonSearchTokens:` 記載 | 成分名トークン（剤形横断で共通の読み） |
+| `drug.search.formulationSearchTokens` | bridge の `drug.search.formulationSearchTokens:` 記載 | 剤形識別トークン（軟膏・ローション等の読み） |
+
+**生成ルール:**
+
+- bridge に明示された値のみを、記載順のまま転記する
+- **bridge に記載がないフィールドは omit する**（空配列 `[]` を生成しない。PENDING にもしない）。剤形が 1 種類しかない薬剤では `formulationSearchTokens` は不要であり、欠落は正常な状態である（DP-05）
+- bridge 未明示のトークンを推測生成しない（`prompts/RULES.md` §2 PROHIBITED_UNIVERSAL）
+- **alias 系フィールドへ展開しない。** 具体的には `brandCatalog.{brand}.aliases` / `normalizedAliases` / `aliasToBrand` / `drug.nameAliases` / `drug.search.nameAliases` / `drug.search.exactAliases` / `drug.search.prefixAliases` のいずれにも、これらのトークンを複写・追加してはならない（`prompts/RULES.md` §3 ERROR 条件。`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` が WARNING として検出する）
+- 検索トークンは alias ではない。分割検索（例:「へぱ なんこう」）は bridge 側で大量の alias を列挙するのではなく、本トークンと検索エンジン側の AND prefix match で吸収する設計である（DP-05）
+
+**MUST_STOP 相当:**
+
+- bridge に記載のないトークンを追加する必要があると判断した場合は、生成せず停止して報告する
+
 ### composition セクション生成
 
 bridge の composition フィールドおよび同系統モジュールを参考に生成する。
