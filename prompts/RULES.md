@@ -7,7 +7,7 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 
 - **工程手順・build手順は含みません**（各工程ファイルを参照）
 - **preservation 対象の完全リストは本ファイル §4 が正本**（保持対象と vNext 実効機構の対応表を含む）
-- **bridge→JSON変換規則の正本は P0-B.md**（Section 5 の変換表はP0-Bと一致・CHECK-T01は解決済み）
+- **bridge→canonical JSON変換規則は、`prompts/vNext/PN1-Text-Extraction.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN3A-Scenario-Classification.md` / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` / `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md` / `prompts/vNext/PN5-Non-Scenario.md` / 本ファイル §5 に工程別に分担して定義される**
 
 最終更新: 2026-07-26
 

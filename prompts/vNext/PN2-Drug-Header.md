@@ -3,7 +3,6 @@
 ## 参照
 → prompts/RULES.md §1 STANDARD_REFERENCE_PATHS
 → prompts/RULES.md §8 drug.nameAliases完全一致ルール
-→ prompts/P0-B.md（必要に応じて参照）
 
 ## 位置づけ
 bridge ヘッダーセクション（SCENARIOS_START より前）を JSON 構造に変換する。
