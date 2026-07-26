@@ -2,14 +2,14 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 
 # 概要・使い方
 
-このファイルは P2B / P3 / P4 / P5 から横断参照される共通ルール辞書です。
+このファイルは vNext 工程（PN1〜PN8）から横断参照される共通ルール辞書であり、`prompts/vNext/STARTUP_PROMPT.md` の必読ファイル 3 番目に指定されています。
 各工程を開始する前にコンテキストに含めてください。
 
 - **工程手順・build手順は含みません**（各工程ファイルを参照）
-- **preservation対象の完全リストは P1.md が正本**（Section 4 参照）
+- **preservation 対象の完全リストは本ファイル §4 が正本**（保持対象と vNext 実効機構の対応表を含む）
 - **bridge→JSON変換規則の正本は P0-B.md**（Section 5 の変換表はP0-Bと一致・CHECK-T01は解決済み）
 
-最終更新: 2026-07-21
+最終更新: 2026-07-26
 
 ---
 
@@ -38,10 +38,22 @@ module / 登録確認:
   lib/menuGroups.ts
   lib/personaGuard.ts
   lib/applyPersona.ts
+  lib/drugSubject.ts
+  lib/crossModuleValidator.ts
 
 package / build:
   package.json
   tsconfig.json
+
+bridge 原稿（内容の正本）:
+  bridges/
+
+設計文書 / プロンプト:
+  docs/
+  prompts/
+
+監査スクリプト:
+  scripts/
 ```
 
 注意:
@@ -573,6 +585,16 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 **禁止値（ERROR）:** 整数 `5` 等の数値型 — 旧形式。bridge からの自動生成でも整数を設定してはならない。
 
 > 参照: `docs/JSON_STANDARD.md §JS-A-composition` / `prompts/vNext/PN2-Drug-Header.md フォールバックテーブル`
+
+---
+
+## 19 について（欠番注記）
+
+本ファイルに §19 は存在しません。節番号は再採番せず、欠番を許容します。
+
+新規ルールを追加する際に §19 を再利用してはなりません。本ファイルの各節は `prompts/vNext/` および `docs/` 配下から節番号で参照されており、番号を再利用すると既存の参照が意図しないルールを指す事故につながります。新規ルールは末尾へ追加してください。
+
+（同種の欠番注記の前例: `docs/DESIGN_PRINCIPLES.md`「DP-06 について（欠番注記）」）
 
 ---
 
