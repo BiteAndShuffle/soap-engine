@@ -54,7 +54,9 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 
 ## NLP生成（NLPせいせい）— 現在未使用・将来機能
 
-**定義**: 患者テキストの入力から SOAP を AI 生成する将来機能。**現在 UI には一切表示されない。**
+**定義**: 患者テキストの入力からシナリオを推定する将来機能。**現在 UI には一切表示されない。**
+実体は `lib/scenarioSelector.ts` のキーワード辞書 + 3〜6文字スライディングウィンドウによる
+**決定論的スコアリング**であり、外部 LLM 呼び出しは存在しない。
 
 - `showNlpButton = false` で NLP 切替ボタンは非表示
 - `handleSwitchToNlp` はどの UI コンポーネントにも渡されていない
@@ -68,6 +70,31 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 
 **Rapid との違い**: NLP生成は Rapid（右パネルボタン操作）とは完全に別概念。混同禁止。
 
+**状態**: Future Expansion（再判断時期: Phase 2）。`docs/DESIGN_PRINCIPLES.md` DP-13 /
+`docs/DEVELOPMENT_STANDARD.md` §10 参照。
+
+---
+
+## Persona（ペルソナ）— 3つの独立した概念
+
+**重要**: 「persona」という語は本プロジェクトで3つの異なるものを指しうる。混同禁止。
+
+| 概念 | 実体 | 状態 |
+|---|---|---|
+| ① bridge本文そのものの文体 | PN1 の本文凍結宣言と PN7 item I（本文凍結照合）で保護される | 稼働中 |
+| ② Runtime 文体変換 | `lib/applyPersona.ts` / `lib/personaGuard.ts`。`PERSONA_PROFILES`（polite / gentle / concise の軸重み）による表示直前の変換。**Phase 1 で実稼働中** | 稼働中 |
+| ③ module JSON の `persona` フィールド | top-level `persona.defaultStyle` / `availableStyles` / `styleProfiles`。**Phase 2 で Runtime 接続予定の予約枠。現在どのコードからも読まれていない** | Future Expansion |
+
+②と③は別物である。`lib/applyPersona.ts` は module JSON の `persona` フィールドを一切参照せず、
+自身が定義する `PERSONA_PROFILES` のみを使用する。
+
+**状態（③について）**: Future Expansion（再判断時期: Phase 2）。
+`docs/DESIGN_PRINCIPLES.md` DP-13 / `docs/DEVELOPMENT_STANDARD.md` §10 参照。
+
+**品質条件 Q1（配置の一貫性）未充足の記録**: 現在 `data/modules/` の 35 モジュール中 33 モジュールが
+`persona` フィールドを保持し、2 モジュール（`dm_insulin_intermediate` / `dm_insulin_regular`）は
+未保持である。これは段階的実装の途中段階であり、Phase 2 の設計確定まで均一化は行わない。
+
 ---
 
 ## まとめ対応表
@@ -77,4 +104,6 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 | Rapid | 右パネル（ThirdPanel） | 呼ばない | 稼働中 |
 | ADDON | 右パネル（ThirdPanel） | 呼ばない | 稼働中 |
 | Express | 中央パネル | 呼ぶ（シナリオ確定時） | 稼働中 |
-| NLP生成 | — | 呼ばない（NLP出力を直接セット） | UI未接続 |
+| NLP生成 | — | 呼ばない（NLP出力を直接セット） | Future Expansion |
+| Persona（Runtime変換） | Topbar / lib/applyPersona.ts | 呼ばない（表示直前の変換） | 稼働中 |
+| Persona（module JSON フィールド） | data/modules/*.json top-level | — | Future Expansion |

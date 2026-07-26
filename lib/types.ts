@@ -805,7 +805,12 @@ export interface ModuleData {
       P?: string | null
     }>
   }
-  /** ペルソナ設定（スタイルプロファイル） */
+  /**
+   * ペルソナ設定（スタイルプロファイル）。
+   * Phase 2 で Runtime 接続予定の予約枠（Future Expansion）。現在 Runtime 未読。
+   * `lib/applyPersona.ts` は本フィールドを参照せず、独自の PERSONA_PROFILES を使用する。
+   * 詳細は docs/DESIGN_PRINCIPLES.md DP-13 / docs/DEVELOPMENT_STANDARD.md §10 を参照。
+   */
   persona?: PersonaConfig
   /** タグ語彙レジストリ（intentTags/clinicalTags 等の有効値一覧） */
   tagCatalog?: TagCatalog
