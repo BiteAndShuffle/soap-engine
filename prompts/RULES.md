@@ -148,23 +148,40 @@ AUTORUN モードでは無視して PN8 へ自動継続してはならない。C
 
 ---
 
-## 4. MANDATORY_PRESERVATION_TARGETS（P1 参照定義）
+## 4. MANDATORY_PRESERVATION_TARGETS
 
-P2 での完全保持対象は **P1.md 「MANDATORY_PRESERVATION_TARGETS」節を正本**とする。
-各工程での全件再列挙は不要。本節は参照ポインタのみ。
+bridge → canonical JSON の変換において完全保持しなければならない対象と、vNext 工程における実効的な検証機構の対応表。**本節が正本である。**
 
-| カテゴリ | 代表項目 |
-|---|---|
-| Count | scenario件数 / addon件数 / brandCatalog件数 / alias件数 / followup件数 |
-| Identity | scenario id / scenario title / addon key / addon id / addon title / brand identity |
-| Brand/Alias | brandCatalog / aliases / normalizedAliases / aliasToBrand / search aliases / drug.nameAliases |
-| SearchToken | commonSearchTokens / formulationSearchTokens / matchPolicy 系 |
-| Text | S / O / A / P / P_APPEND / P_CLOSING |
-| Followup | defaults.followup / followupProfiles / followupRef |
-| Reference | P_ADDON / addonsRef / addon 参照先 / followupRef 参照先 |
-| Persona | bridge tone / 説明密度 / 距離感 / counseling weight |
+**本節の読み方**
 
-→ **全件・詳細は P1.md の MANDATORY_PRESERVATION_TARGETS を必ず確認すること**
+- 「保持対象」は、bridge から canonical JSON へ移す際に件数・表記・順序・内容のいずれも変えてはならないフィールド群を指す
+- 「vNext 実効機構」は、その保持が実際に検証される工程・スクリプト・validator を指す
+- **「監査未整備」と記載された系統は、保持義務はあるが自動・半自動の検証機構が存在しない。** 実装者は該当フィールドを扱う際、機械検証に頼らず bridge との一致を自ら確認すること
+
+| カテゴリ | 保持対象 | vNext 実効機構 |
+|---|---|---|
+| **Text** | S / O / A / P / P_APPEND / P_CLOSING | PN1「本文凍結宣言」+ PN7 item I（`phase1_text_spine.json` との文字単位照合） |
+| **Reference（addon）** | P_ADDON 記載 / `addonsRef`（配列順を含む）/ addon 参照先 | PN7 item A（参照整合）・item P（未参照検出）・item Y（bridge P_ADDON ⇔ addonsRef の順序込み完全一致 + AddonPanel 到達確認）/ `scripts/audit-addon-bridge-chain.ts` |
+| **Brand / Alias** | `brandCatalog` / `aliases` / `normalizedAliases` / `aliasToBrand` / `drug.search` 配下の各 alias / `drug.nameAliases` | PN7 item B（nameAliases 完全一致）・item C（aliases ⇔ normalizedAliases 件数一致）・item D（aliasToBrand 網羅）・item AA（bridge ⇔ JSON 同期）/ `scripts/audit-alias-bridge-chain.ts` / `lib/moduleValidator.ts`（`NAME_ALIASES_MISMATCH`） |
+| **Reference（followup）** | `scenarios[].followupRef` の参照先 | `lib/moduleValidator.ts`（`FOLLOWUP_REF_BROKEN` / `FOLLOWUP_REF_MISSING` / `FOLLOWUP_SCOPE_VIOLATION`）。**参照整合のみ。テキスト内容の一致は下記「Followup 内容」を参照** |
+| **Identity** | scenario id / addon key / addon id | PN7 item J（scenario id 重複）・item K（addon id 重複）。**id の一意性のみ。scenario title / addon title / brand identity の bridge 一致を検証する項目は存在しない** |
+| **Count** | scenario 件数 / addon 件数 / brandCatalog 件数 / alias 件数 / followup 件数 | PN1 ハンドオフ報告（scenarios 件数 / addons 件数 / followupRef 内訳）。brandCatalog 件数・alias 件数は PN7 item C / item D が実質的に担保する |
+| **SearchToken** | `drug.search.commonSearchTokens` / `formulationSearchTokens` / `matchPolicy` 系 | **監査未整備**。`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` は alias 系フィールドへの混入検出であり、bridge ⇔ JSON の一致は対象外 |
+| **Followup 内容** | `defaults.followup` / `defaults.followupProfiles` のテキスト | **監査未整備**。PN7 item I の凍結照合対象は S / O / A / P と addon text のみであり、followupProfiles のテキストは含まれない |
+| **Persona（文体）** | bridge の tone / 説明密度 / 距離感 / counseling weight | **監査未整備**。PN7 item R は `persona` フィールドの存在記録のみ（Future Expansion のため FAIL 条件から除外済）。文体は Text カテゴリの一部として PN1 凍結 + PN7 item I により間接的に保護されるが、文体そのものを評価する項目は存在しない |
+
+**監査未整備 3 系統の扱い**
+
+SearchToken / Followup 内容 / Persona（文体）の 3 系統は、保持義務がありながら検証機構を欠く。**この状態を「検証済み」と誤認してはならない。** 監査機構の整備は Phase 2 の検討対象とし、それまでは実装者による確認に依存する。
+
+これらの系統に変更を加える場合、機械検証は通過するため、bridge との一致を人が確認しない限り差異が検出されない。
+
+**関連**
+
+- 非創作・推測生成の禁止 → 本ファイル §2 PROHIBITED_UNIVERSAL
+- ERROR / PENDING / CHECK の分類 → 本ファイル §3
+- alias 系フィールドの同期原則 → 本ファイル §23
+- bridge を内容の正本とする根拠 → `docs/DESIGN_PRINCIPLES.md` DP-07
 
 ---
 

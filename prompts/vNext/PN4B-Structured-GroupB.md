@@ -1,7 +1,7 @@
 # PN4B — xStructured Group B（構造化 副作用・生活指導系）
 
 ## 参照
-→ prompts/P1.md Rule 4 MANDATORY_PRESERVATION_TARGETS（§4）
+→ prompts/RULES.md §4 MANDATORY_PRESERVATION_TARGETS
 → prompts/RULES.md §2 PROHIBITED_UNIVERSAL
 
 ## 位置づけ

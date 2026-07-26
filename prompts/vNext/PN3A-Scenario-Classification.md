@@ -5,7 +5,7 @@
 → prompts/RULES.md §12 treatment_end シナリオグループ
 → prompts/RULES.md §13 sickday situationFilter
 → prompts/RULES.md §14 injection module thirdPanelSPlacement
-→ prompts/P1.md Rule 4 MANDATORY_PRESERVATION_TARGETS
+→ prompts/RULES.md §4 MANDATORY_PRESERVATION_TARGETS
 
 ## 位置づけ
 すべての薬学的・臨床的判断をこの Phase で完結させる。

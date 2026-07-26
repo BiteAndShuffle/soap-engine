@@ -6,7 +6,7 @@
 → prompts/RULES.md §14 injection module thirdPanelSPlacement
 → prompts/RULES.md §15 addon 必須フィールド
 → prompts/RULES.md §16 scenario omit 禁止フィールド
-→ prompts/P1.md Rule 4
+→ prompts/RULES.md §4 MANDATORY_PRESERVATION_TARGETS
 
 ## 位置づけ
 Phase 3A の決定表を Phase 1 の text_spine に適用し、シナリオ・addon のメタデータ構造を完成させる。

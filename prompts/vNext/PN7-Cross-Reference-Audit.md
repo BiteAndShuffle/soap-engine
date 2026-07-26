@@ -12,7 +12,7 @@
 → prompts/RULES.md §15 addon 必須フィールド
 → prompts/RULES.md §16 scenario omit 禁止フィールド
 → prompts/RULES.md §20 addonsRef Source of Truth 原則
-→ prompts/P1.md Rule 4
+→ prompts/RULES.md §4 MANDATORY_PRESERVATION_TARGETS
 → PN6-Assembly.md addon.text 標準ルール / addon.group 標準変換表 / addon.uiVariant 保持ルール
 
 ## 位置づけ

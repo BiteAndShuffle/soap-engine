@@ -2,8 +2,8 @@
 
 ## 参照
 → prompts/RULES.md §1 STANDARD_REFERENCE_PATHS
-→ prompts/P1.md Rule 1 SOURCE_OF_TRUTH_PRINCIPLE
-→ prompts/P1.md Rule 4 MANDATORY_PRESERVATION_TARGETS（§4）
+→ docs/DESIGN_PRINCIPLES.md DP-07（bridge SOT 原則）
+→ prompts/RULES.md §4 MANDATORY_PRESERVATION_TARGETS
 
 ## 位置づけ
 Phase 1 はすべての工程の起点。
