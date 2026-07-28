@@ -568,12 +568,14 @@ AddonPanel の表示ラベル改善（`adherence` を含む）も別タスク。
 
 ## ModuleValidator 既存 WARNING
 
-以下の WARNING は既知。ブロッカーではなく修正見送り中。
+既知の WARNING（意図的に残存させているもの）の台帳は
+**`docs/VALIDATOR_STANDARD.md` Appendix B: KNOWN_INTENTIONAL_WARNINGS が正本**である。
 
-| 警告種別 | 対象モジュール | 内容 |
-|---|---|---|
-| `SEARCH_TOKEN_ALIAS_POLLUTION` | derm_heparinoid×4 / allergy_h1_eye_drops | commonSearchTokens が prefixAliases に混入。search ロジック側 dedupe 対応待ち |
-| `ADDON_REQUIRED_TAG_UNREACHABLE` | allergy_h1_antihistamine_eye_drops | `cold_storage` タグが未接続。製品固有対応待ち |
+`npm run build` で WARNING が出力された場合は、まず Appendix B に登録済みかを確認すること。
+登録済みであれば対応不要。未登録の WARNING が出た場合は、今回の変更が原因である可能性を
+確認した上で報告する。
+
+本ファイルでは台帳を二重管理しない。
 
 ## git ワーキングツリーの残存差分
 

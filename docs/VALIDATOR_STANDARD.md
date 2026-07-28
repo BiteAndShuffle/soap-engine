@@ -38,7 +38,7 @@ Validator は「機械的に判定できること」のみを保証する。設�
 
 ---
 
-## 3. ModuleValidator の責務（check 1〜35）
+## 3. ModuleValidator の責務（check 1〜34。枝番 3a / 3b / 13b を含む全 37 check）
 
 `lib/moduleValidator.ts` — 単一モジュールスコープ。
 
@@ -169,7 +169,7 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 | P2B | JSON 生成 | AI | bridge → JSON 変換。preservation・必須フィールド生成 |
 | P3 | 構造レビュー | AI | 生成 JSON の参照整合・設計ルール適合・drugResolution 正当性 |
 | P4 | Runtime レビュー | AI | 生成 JSON が runtime で正しく動くか。描画・addon フィルタ・persona |
-| ModuleValidator | 単一モジュール機械判定 | コード | Reference + Structural + Design Rule（WARNING）の 31 checks。build 時に必ず通る |
+| ModuleValidator | 単一モジュール機械判定 | コード | Reference + Structural + Design Rule（WARNING）の全 37 check（番号は 1〜34。枝番 3a / 3b / 13b を含む）。build 時に必ず通る |
 | CrossModuleValidator | クロスモジュール機械判定 | コード | moduleId + globalId の横断一意性。build 時に必ず通る |
 | `scripts/audit-addon-bridge-chain.ts` | bridge⇔JSON⇔runtime 横断監査 | コード | bridge の `P_ADDON` 記載まで遡って `addonsRef`（配列の順序を含む）と突合し、`getVisibleAddonKeys()` を実行して AddonPanel に実際に届くか・同じ順序で表示されるかまで確認する（DP-10 / RULES.md §25）。ModuleValidator / P3 は JSON 内部の整合のみを見るため代替できない。既存モジュール改修時は毎回実行する（`docs/IMPLEMENTATION_CHECKLIST.md` 参照） |
 | PN7 check Z（Addon Responsibility Consistency） | 近似シナリオ間の addon 責務一貫性監査 | 現状は AI（PN7 実行時） | 責務が近いシナリオ間で `addonsRef` 構成を比較し、責務では説明できない差分を CHECK として報告する（RULES.md §22）。将来的に `scripts/audit-addon-bridge-chain.ts` 等への自動化を予定するが、現時点ではコード化されていない |
@@ -278,6 +278,9 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `DISPLAY_GENERIC_NAME_MISSING` | ERROR | Structural |
 | `DISPLAY_GENERIC_NAME_EMPTY` | ERROR | Structural |
 | `DISPLAY_GENERIC_NAME_SALT_COPY` | ERROR | Design Rule |
+| `BRAND_DISPLAY_NAME_MISMATCH` | ERROR | Structural |
+| `RESERVED_TAG_UNUSED` | WARN | Design Rule |
+| `RESERVED_TAG_REACHABLE` | WARN | Design Rule |
 
 ### CrossModuleValidator（lib/crossModuleValidator.ts）
 
@@ -303,3 +306,14 @@ Validator が検出するが、意図的に残存させている WARNING の台�
 | **status** | `INTENTIONAL_KEEP` |
 | **理由** | H1点眼を ophthalmic module の base として使用しているため。現在の登録ブランド（アレジオン・ザジテン・パタノール・リボスチン）はいずれも室温保存であり `cold_storage` tag を持たないが、将来の冷所保存点眼薬 module 横展開時の canonical addon structure として保持する。 |
 | **対応方針** | 削除しない。冷所保存点眼薬 module 追加時に `cold_storage` ブランドが登録されることで自然解消する。 |
+
+### KW-002
+
+| 項目 | 内容 |
+|---|---|
+| **errorCode** | `SEARCH_TOKEN_ALIAS_POLLUTION` |
+| **module** | `derm_heparinoid_moisturizer_cream` / `derm_heparinoid_moisturizer_lotion` / `derm_heparinoid_moisturizer_ointment` / `derm_heparinoid_moisturizer_spray` / `allergy_h1_antihistamine_eye_drops` |
+| **対象** | `drug.search.commonSearchTokens` が `prefixAliases` に混入している状態 |
+| **status** | `INTENTIONAL_KEEP` |
+| **理由** | DP-05（heparinoid 剤形検索分離原則）に基づく剤形分割検索の実装過程で生じた既知の重複。検索 runtime 側の dedupe 対応が完了するまでは、トークンを削除すると分割検索（例:「へぱ なんこう」）が機能しなくなる可能性がある。 |
+| **対応方針** | 削除しない。search ロジック側の dedupe 対応時に併せて解消する。新規 module では `prompts/vNext/PN2-Drug-Header.md`「drug.search 検索トークンの生成規則」に従い、alias 系フィールドへ展開しないこと。 |
