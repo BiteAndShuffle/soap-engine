@@ -13,11 +13,13 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 
 ```
 □ npx tsc --noEmit
+□ npm test（0 fail であること。件数は実行時に再測定し、変更前後で減っていないことを確認する）
 □ npm run build
+□ npm run audit（addon chain / alias 同期の 2 監査。個別実行する場合は下記 2 行を参照）
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
-□ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合）
-□ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期）
+□ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合。`npm run audit` に含まれる）
+□ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期。`npm run audit` に含まれる）
 □ 検索・alias・drug構造を変更した場合は `npm run test:multi-drug`（buildNodeFields + mergeBlocksによる複数module合成の回帰テスト）を実施する
 □ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）
 □ 既知の不整合・warning件数を変更前後で比較する（増減していないか）
@@ -94,7 +96,9 @@ PN7（Cross Reference Audit）は JSON 構造の静的整合性を、PN8 は tsc
 
 **横断機能**
 ```
-□ 多剤合成（対象領域で複数モジュール併用が想定される場合。`npm run test:multi-drug` の実施を含む）
+□ 多剤合成（対象領域で複数モジュール併用が想定される場合。`npm run test:multi-drug` の実施を含む。
+  評価の優先順位は `docs/DESIGN_PRINCIPLES.md` DP-12 を参照 — 継続薬＋新規/変更薬の組み合わせを
+  優先し、同一シナリオを複数薬剤へ適用するケースの逐語的重複は主要ユースケースの評価より優先しない）
 □ Rapid Mode の動作
 □ 既存モジュールへの回帰（今回の変更が意図しない他モジュールへ波及していないか）
 ```
