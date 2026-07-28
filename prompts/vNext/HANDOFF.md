@@ -265,11 +265,17 @@ bridge 未記載の場合、`composition.nodeKey`（= `display.nodeKey` フォ�
 
 | type= | group |
 |---|---|
-| lifestyle_guidance | `"lifestyle_guidance"` または `"counseling"`（内容で判断） |
+| lifestyle_guidance | `"counseling"` |
 | sickday_guidance | `"sickday"` |
 | adherence_guidance | `"adherence"` |
 | side_effect_guidance | `"sideEffects"` |
-| administration_guidance | `"administration_guidance"` |
+| administration_guidance | `"counseling"` |
+
+**変換表の正本は `prompts/RULES.md` §5 である。** 新規 module の group には
+`"counseling"` / `"sideEffects"` / `"sickday"` / `"adherence"` / `"oral"` の 5 値のみを使用し、
+`"lifestyle_guidance"` / `"administration_guidance"` という文字列を group 値として
+直接設定してはならない（RULES.md §6）。bridge の `type=` は意味上の分類として
+そのまま保持し、canonical JSON の group のみを変換する。
 
 ---
 
@@ -309,6 +315,7 @@ text フィールドは phase1_text_spine からの **文字単位コピー** �
 | adherence / lifestyle_guidance | `adherence_status` |
 | sickday | `adherence_status`（usage 系として扱う） |
 | followup（injection_technique_check） | `adherence_status`（usage 系として扱う） |
+| usage（as_needed_refill 系等） | `adherence_status`（RULES.md §17 で 2026-07-24 に正式値化） |
 
 **禁止語彙（使うとエラー）**: `sickday_status` / `followup_status` / `sickday_assessment` / `symptom_observation` / `adherence_observation` / `side_effect_observation` / `treatment_adjustment_reason`
 
@@ -554,7 +561,10 @@ Addon の表示順は DP-10 / RULES.md §25 の通り bridge / JSON の記載順
 | `administration_guidance` | 3 モジュール・11 件 | 同上（ラベル案: "使用方法"） |
 | `adherence` | 多数 | 同上（ラベル案: "アドヒアランス"） |
 
-**方針**: JSON 新規作成時はこれらの値を使い続けてよい。表示ラベル改善は別タスク。
+**方針**: 新規 module の group にこれらの値を使用してはならない。`prompts/RULES.md` §5 の変換表に従い
+`"counseling"` 等の正式 group 値へ変換すること（同 §6 で明示的に禁止されている）。本表が示しているのは
+本ルール確定前に生成された既存 module の実態であり、既存 module の migration 要否は別途判断とする。
+AddonPanel の表示ラベル改善（`adherence` を含む）も別タスク。
 
 ## ModuleValidator 既存 WARNING
 
