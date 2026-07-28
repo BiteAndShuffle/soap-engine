@@ -1,6 +1,7 @@
 # vNext 半自動実行モード（AUTORUN）
 
 作成日: 2026-06-27
+最終更新: 2026-07-26
 
 このファイルは PN1〜PN8 個別プロンプトの上位に位置する「実行制御ルール」です。
 各 PN プロンプトの詳細ルールはここに再掲しません。
@@ -118,6 +119,11 @@ PN7完了: FAIL 0件 / CHECK {N}件（{該当項目と内容}）/ PENDING {N}件
 
 **条件 P の詳細:**
 CHECK は ERROR ではなく build 可能な状態だが、AUTORUN は CHECK を FAIL と同様に **PN8 進行のブロッカー**として扱う。
+
+**なぜ AUTORUN でのみ格上げするか**: 通常モードでは各フェーズ完了時に人間が結果を確認するため、CHECK を
+「後続工程で確認する」として通しても、その確認が実際に行われる。一方 AUTORUN は PN3A〜PN8 を自動連続実行
+するため、CHECK を通すと**誰も確認しないまま RELEASE_OK に到達する**。CHECK は「不確定の公告」であり
+（`docs/DESIGN_PRINCIPLES.md` DP-15）、公告を受け取る人間が経路上にいない状態で先へ進めてはならない。
 - CHECK の内容（対象 scenario/addon・具体的な差分）をユーザーへ提示する
 - ユーザーが「CHECK は問題ない」「追加漏れとして扱う」等、明示的に承認した場合のみ PN8 へ進む
 - 承認内容が JSON/bridge の修正を伴う場合（`dm_dpp4_oral` の `se_bullous_pemphigoid_none` 追加漏れ対応が実例）は、
@@ -128,6 +134,11 @@ CHECK は ERROR ではなく build 可能な状態だが、AUTORUN は CHECK を
 `display.subtitle` の PENDING、`composition.classKey` の PENDING、addon group の PENDING（例: `administration_guidance` の変換先未確定）等、
 前工程で発生した PENDING が確定されないまま後工程まで残っている状態を指す。PENDING を検出した場合、
 値を推測で埋めて先へ進めてはならない。
+
+**条件記号の採番について（欠番注記）:**
+MUST_STOP 条件の記号は **A〜N / P / Q** である。**条件 O は欠番**であり、記号は再採番せず欠番を許容する。
+新規条件を追加する場合は、既存記号を再利用せず末尾（R 以降）へ追加すること。
+（同種の欠番注記の前例: `docs/DESIGN_PRINCIPLES.md`「DP-06 について（欠番注記）」/ `prompts/RULES.md`「19 について（欠番注記）」）
 
 **条件 G の詳細:**
 以下のいずれかに該当した場合、即座に MUST_STOP とする。
