@@ -106,7 +106,7 @@ PN2 以降のフェーズは、S / O / A / P / addon text を一切変更して�
 | PN4B | 副作用系・adherence 系・sickday / followup の xStructured を生成する |
 | PN5 | ui / risks / searchConfig 等の非シナリオ構造を生成する |
 | PN6 | PN1〜PN5 を統合して最終 JSON を生成する（Write のみ） |
-| PN7 | 完成 JSON を全 15 項目で監査する（修正しない） |
+| PN7 | 完成 JSON を全 26 項目で監査する（修正しない） |
 | PN8 | registry 登録確認 / tsc / build を実行して release 判定する |
 
 ## 考える工程と写す工程の分離
@@ -376,14 +376,14 @@ xStructured 突き合わせ確認: PN4A の id 一覧 + PN4B の id 一覧の和
 **入力**: `data/modules/{moduleId}.json` + `/tmp/soap-build/{moduleId}/phase1_text_spine.json`  
 **出力**: `/tmp/soap-build/{moduleId}/audit_report.json`
 
-修正は行いません。15 項目を全確認します（A〜O）。
+修正は行いません。26 項目を全確認します（A〜AB。**Q / X は欠番、項目 O は末尾に配置**）。
 
 **大規模 JSON の Read 手順**:
 1. `wc -l data/modules/{moduleId}.json` で行数確認
 2. 2,000 行超なら `offset=0, limit=2000` → `offset=2000, limit=2000` ... と分割 Read
 3. 末尾（addons / expressModes / searchConfig）の確認を省略しない
 
-15 項目すべて PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
+26 項目すべて PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
 FAIL がある → 該当 Phase に差し戻し。PN8 は開始しない。
 
 ---
