@@ -298,6 +298,14 @@ Current Standard と区別できない。
 「Runtime で未使用だから Future Expansion」は成立しない。F1〜F5 のいずれかを欠く資産は
 Future Expansion として扱わない。
 
+#### 現在の Future Expansion 資産
+
+| 資産 | F1 目的・用途 | F3 再判断条件 |
+|---|---|---|
+| `scripts/build-static.js`（`npm run build:static` / `EXPORT_STATIC` 経路） | 静的 export による配布（SaaS 以外の配布形態向け） | 次のいずれかの発生時: ① 静的ビルドを配布方式として正式採用する ② 個人利用向け静的ビルドの公開・配布工程を実装する ③ SaaS 以外の配布形態を正式な運用対象にする ④ Next.js またはデプロイ構成の変更により EXPORT_STATIC 経路の再評価が必要になる |
+
+F2・F4・F5 の確認記録および詳細は `scripts/build-static.js` 冒頭 JSDoc を参照。
+
 ### 10.4 体系移行完了条件（M1〜M8）
 
 | ID | 条件 |

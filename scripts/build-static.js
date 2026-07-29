@@ -2,6 +2,20 @@
 /**
  * build-static.js
  *
+ * 状態: Future Expansion（docs/DEVELOPMENT_STANDARD.md §10.3 F1〜F5 準拠）
+ * - F1 目的・用途: 静的 export による配布（SaaS 以外の配布形態向け）
+ * - F2 現在: Current Standard（`npm run build` = `next build`）には含まれない。
+ *   `npm run build:static` として独立実行するオプション経路
+ * - F3 再判断条件（次のいずれかの発生時。docs/reviews/P1_S2B_FIX_PLAN.md §2.1 D-3）:
+ *     ① 静的ビルドを配布方式として正式採用する
+ *     ② 個人利用向け静的ビルドの公開・配布工程を実装する
+ *     ③ SaaS 以外の配布形態を正式な運用対象にする
+ *     ④ Next.js またはデプロイ構成の変更により EXPORT_STATIC 経路の再評価が必要になる
+ * - F4 現行 Runtime 非必須: `npm run build`（`next build`）はこのスクリプトを経由しない。
+ *   prompts/vNext/PN8-Build-Runtime-Release.md も `npm run build` のみを実行する
+ * - F5 Validator / 監査工程の FAIL 条件ではない: docs/IMPLEMENTATION_CHECKLIST.md の
+ *   標準チェックリストに build:static / EXPORT_STATIC への記載はない
+ *
  * EXPORT_STATIC=1 ビルド用ヘルパー。
  *
  * Next.js 15 はルートセグメント設定（dynamic / revalidate）を
