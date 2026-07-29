@@ -1,6 +1,12 @@
 /**
  * verify_addon_panel.ts
  *
+ * 状態: Experimental（docs/DEVELOPMENT_STANDARD.md §10.1 準拠）
+ * 判定根拠: `package.json` 未登録・コード/データからの被参照 0 件。git 履歴上、
+ * AddonPanel 残留バグ修正（commit d197bfa）の検証用として作成された単発ツールであり、
+ * Future Expansion（将来接続の明示的計画）・Legacy（過去の正式経路）のいずれの根拠も
+ * Repository 内に見つからない（docs/reviews/P1_S2B_FIX_PLAN.md Q-5 準拠）。
+ *
  * AddonPanel 表示対象が scenario.addonsRef のみに基づくことを検証する。
  *
  * 期待値 (oral JSON):

@@ -1,6 +1,12 @@
 /**
  * verify_buildS.ts（修正版）
  *
+ * 状態: Experimental（docs/DEVELOPMENT_STANDARD.md §10.1 準拠）
+ * 判定根拠: `package.json` 未登録・コード/データからの被参照 0 件。git 履歴上、
+ * buildS reason統合ロジック修正（commit 0460d23）の検証用として作成された単発ツールであり、
+ * Future Expansion（将来接続の明示的計画）・Legacy（過去の正式経路）のいずれの根拠も
+ * Repository 内に見つからない（docs/reviews/P1_S2B_FIX_PLAN.md Q-5 準拠）。
+ *
  * buildS の reason統合ルール: mergeBlocks に currentGroupKey/currentClinicalDomain を渡す形で検証。
  */
 
