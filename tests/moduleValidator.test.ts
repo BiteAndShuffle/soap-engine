@@ -224,3 +224,35 @@ describe('brandCatalog[key].displayName が key と一致すること（Drug Sub
     assert.equal(err!.isWarning, false, 'BRAND_DISPLAY_NAME_MISMATCH は isWarning:false（ERROR）のはず')
   })
 })
+
+describe('persona 必須（JSON_STANDARD JS-A / F-4a）', () => {
+  test('persona を削除 → MISSING_PERSONA が検出される', () => {
+    const broken = cloneModule()
+    delete broken.persona
+    const codes = validateModule(broken).errors.map(e => e.code)
+    assert.ok(
+      codes.includes('MISSING_PERSONA'),
+      `MISSING_PERSONA が検出されるべき: ${JSON.stringify(codes)}`,
+    )
+  })
+
+  test('MISSING_PERSONA は警告（isWarning: true）として返る', () => {
+    const broken = cloneModule()
+    delete broken.persona
+    const err = validateModule(broken).errors.find(e => e.code === 'MISSING_PERSONA')
+    assert.ok(err, 'MISSING_PERSONA が返るべき')
+    assert.equal(
+      err!.isWarning,
+      true,
+      'MISSING_PERSONA は isWarning:true（WARN）。既存2モジュールの persona 補完（F-4b）完了後に ERROR へ昇格させる',
+    )
+  })
+
+  test('persona が存在する正常データでは MISSING_PERSONA が出ない', () => {
+    const codes = validateModule(cloneModule()).errors.map(e => e.code)
+    assert.ok(
+      !codes.includes('MISSING_PERSONA'),
+      `persona 存在時に MISSING_PERSONA が出てはならない: ${JSON.stringify(codes)}`,
+    )
+  })
+})

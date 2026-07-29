@@ -78,6 +78,7 @@ import type { ModuleData, Scenario } from './types'
 export type ModuleValidationErrorCode =
   | 'MISSING_MODULE_ID'        // moduleId が存在しない
   | 'MISSING_MODULE_VERSION'   // moduleVersion が存在しない（警告）
+  | 'MISSING_PERSONA'          // persona が存在しない（警告。JSON_STANDARD JS-A 必須）
   | 'MISSING_PRIMARY_DISPLAY_NAME' // drug.search.primaryDisplayName が存在しない
   | 'ADDON_KEY_MISMATCH'       // addons.items のキーと item.key が不一致
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
@@ -407,6 +408,20 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     errors.push({
       code: 'MISSING_MODULE_VERSION',
       detail: 'moduleVersion が存在しません（推奨フィールド）',
+      isWarning: true,
+    })
+  }
+
+  // Required top-level field: persona
+  // docs/JSON_STANDARD.md JS-A（全 module 必須）が persona を必須と宣言している。
+  // ここでは存在のみを確認し、内部構造（軸の値域・profile の妥当性）には立ち入らない
+  // （docs/VALIDATOR_STANDARD.md §1「保証しないこと」— persona 変換品質は P4 / 人間レビュー）。
+  // 既存 2 モジュール（dm_insulin_regular / dm_insulin_intermediate）が未充足のため
+  // 現時点は WARN とする。データ補完の完了後に ERROR へ昇格させる。
+  if (!obj?.persona) {
+    errors.push({
+      code: 'MISSING_PERSONA',
+      detail: 'persona が存在しません（JSON_STANDARD JS-A: 全 module 必須）',
       isWarning: true,
     })
   }

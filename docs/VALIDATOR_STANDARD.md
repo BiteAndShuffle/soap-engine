@@ -240,6 +240,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 |---|---|---|
 | `MISSING_MODULE_ID` | ERROR | Structural |
 | `MISSING_MODULE_VERSION` | WARN | Structural |
+| `MISSING_PERSONA` | WARN | Structural |
 | `MISSING_PRIMARY_DISPLAY_NAME` | ERROR | Structural |
 | `NAME_ALIASES_MISMATCH` | ERROR | Structural |
 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARN | Design Rule |
