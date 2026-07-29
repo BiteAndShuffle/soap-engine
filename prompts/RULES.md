@@ -25,21 +25,8 @@ module / 登録確認:
   data/modules/index.ts
 
 型・validator・runtime関連:
-  lib/types.ts
-  lib/moduleValidator.ts
-  lib/scenarioValidator.ts
-  lib/validationRunner.ts
-  lib/search.ts
-  lib/scenarioSelector.ts
-  lib/buildSoap.ts
-  lib/soapComposer.ts
-  lib/createSoapFromInput.ts
-  lib/addonFilter.ts
-  lib/menuGroups.ts
-  lib/personaGuard.ts
-  lib/applyPersona.ts
-  lib/drugSubject.ts
-  lib/crossModuleValidator.ts
+  lib/
+  app/
 
 package / build:
   package.json
