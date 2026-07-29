@@ -153,6 +153,12 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **commit boundary** | `docs/VALIDATOR_STANDARD.md` 1 ファイルのみ。1 commit |
 | **推奨 commit message** | `docs(validator): add missing errorCode rows to check tables` |
 | **次ユニットへの依存** | なし |
+| **状態** | **BLOCKED（未完了）** |
+| **BLOCK 理由** | Repository 事実の追加判明により BLOCK。詳細は `docs/reviews/P1_S2B_REMEDIATION_VALIDATOR_NUMBERING_DISCOVERY.md` を参照。 |
+| **実施済みの変更** | なし（`docs/VALIDATOR_STANDARD.md` は未変更） |
+| **commit** | なし |
+| **AC-004 の状態** | 未完了 |
+| **後続ユニットへの依存評価** | S2B-R-U1・S2B-R-U4・S2B-R-U5・S2B-R-U6・S2B-R-U7 は `docs/VALIDATOR_STANDARD.md` を対象としないため技術的依存はない。ただし実行可否は未決定（Discovery 文書「Owner Decision Required」参照） |
 
 ---
 
@@ -240,8 +246,8 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 
 | 順 | Unit | 順序決定の根拠 |
 |---|---|---|
-| 1 | **S2B-R-U2** | 共通規則（`prompts/RULES.md` §1）は個別文書より先に確定する。§1 は vNext 4 ファイル・旧体系 4 ファイルから参照される横断規則 |
-| 2 | **S2B-R-U3** | `docs/VALIDATOR_STANDARD.md` の自己不整合（正本文書内の矛盾）を先に解消する。他ユニットと独立 |
+| 1 | **S2B-R-U2** | 共通規則（`prompts/RULES.md` §1）は個別文書より先に確定する。§1 は vNext 4 ファイル・旧体系 4 ファイルから参照される横断規則。**完了（commit `8f860fd`）** |
+| 2 | **S2B-R-U3** | `docs/VALIDATOR_STANDARD.md` の自己不整合（正本文書内の矛盾）を先に解消する。他ユニットと独立。**BLOCKED（詳細は S2B-R-U3 の項目表を参照）** |
 | 3 | **S2B-R-U1** | 正本文書間の不整合（PN6 内部）を解消する。工程契約に関わるため早期に確定させる |
 | 4 | **S2B-R-U4** | **S2B-R-U5 の前提**。D-3 の結論（`next.config.js` の EXPORT_STATIC 分岐が Future Expansion）を確定させてから §3 へ反映する |
 | 5 | **S2B-R-U5** | AC-013 / AC-014 / AC-015 / AC-016 を単一ファイル・単一 commit で処理。**S2B-R-U4 の結論を §3 の `next.config.js` 記述へ反映する** |
@@ -396,3 +402,4 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **実行順序** | S2B-R-U2 → S2B-R-U3 → S2B-R-U1 → S2B-R-U4 → S2B-R-U5 → S2B-R-U6 → S2B-R-U7 |
 | **必須順序制約** | S2B-R-U4 → S2B-R-U5 |
 | **未解決 Open Question** | なし |
+| **進捗** | 完了 1（S2B-R-U2）／BLOCKED 1（S2B-R-U3）／未着手 5（S2B-R-U1・U4・U5・U6・U7） |
