@@ -1,7 +1,7 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.0
-> **Last Updated:** 2026-07-21
+> **Version:** 2.1
+> **Last Updated:** 2026-07-29
 > **Current Focus:** 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field修正 + 多剤合成テスト正式化）完了。次フェーズ候補は DPP4実装（詳細: `prompts/vNext/HANDOFF.md`）。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
@@ -15,7 +15,9 @@
 | 正本ファイル | 役割 |
 |---|---|
 | `prompts/PROJECT_CONTEXT.md` | 本ファイル。全セッション共通の前提 |
-| `prompts/P0-A.md` 〜 `prompts/P5.md` | 工程プロンプト正本 |
+| `prompts/vNext/PN1-Text-Extraction.md` 〜 `PN8-Build-Runtime-Release.md` | 工程プロンプト正本（**新規作業の標準**）|
+| `prompts/P0-A.md` 〜 `prompts/P5.md` | 旧体系の工程プロンプト正本。新規作業では使用しない（§3 参照）|
+| `prompts/RULES.md` | 両体系が共通参照する横断ルール辞書 |
 
 - 会話ログに書かれたルール・設計・値は、ファイルに保存されるまで正本ではない
 - Claudeは会話ログの断片から構造・ルール・値を推測補完してはならない
@@ -48,7 +50,8 @@
    文書マップを把握する（このセッションで未読の場合。既読の場合は省略してよい）
 2. `prompts/PROJECT_CONTEXT.md`（本ファイル）を確認する
 3. **Current Phase** を確認し、今何をしているか・何をまだしないかを把握する
-4. 作業に必要なプロンプトファイル（`prompts/P0-A.md` 等）を確認する
+4. 新規作業は vNext 体系（PN1〜PN8）を標準とし、`prompts/vNext/STARTUP_PROMPT.md` へ進む。
+   旧体系（P0-A〜P5）の参照が必要な場合は §3 を確認する（体系の選択基準は §10）
 5. 不足しているファイル・添付があれば **最初に報告する**（推測で進まない）
 6. 作業計画を提示し、**承認を得てから** 修正・保存を開始する
 
@@ -172,7 +175,7 @@ soap-engine/
   data/modules/index.ts  # モジュール登録
   lib/types.ts           # TypeScript型定義
   lib/moduleValidator.ts # ビルド時バリデーション
-  prompts/               # P0-A〜P5 プロンプト群（本ファイル含む）
+  prompts/               # 工程プロンプト群（vNext PN1〜PN8 / 旧体系 P0-A〜P5・本ファイル含む）
   docs/                  # 設計ドキュメント（設計原則・JSON標準・Bootstrap・保留事項）
 ```
 
@@ -190,7 +193,12 @@ soap-engine/
 
 ---
 
-## 3. 工程概要（P0-A〜P5）
+## 3. 工程概要（旧体系 P0-A〜P5）
+
+**新規作業の標準工程は vNext 体系（PN1〜PN8）である。** 現行工程の全体像は
+`docs/DEVELOPMENT_STANDARD.md` §4、実行手順は `prompts/vNext/HANDOFF.md` を参照する。
+本節は旧体系の工程構成の記録であり、過去の作業記録を読む際の参照用である
+（体系の選択基準は §10）。
 
 | 工程 | 役割 | 備考 |
 |---|---|---|
@@ -402,18 +410,19 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 ## 10. 運用方針
 
 - プロンプト正本は `prompts/` 以下のファイル（→ **Prompt Source of Truth** 参照）
-- 新規チャット時は本ファイルを最初に読む → 必要な P0-A〜P5 のみ追加で読む → bridge原稿を添付
+- **体系の選択**: 新規モジュール追加・新規作業は **vNext 体系（PN1〜PN8）を標準**とする。
+  旧体系（P0-A〜P5）は過去の作業記録を参照する場合にのみ用い、新規作業では使用しない。
+  両体系は排他であり、同一作業内で混在させない
+- 新規チャット時は本ファイルを最初に読む → vNext 作業なら `prompts/vNext/STARTUP_PROMPT.md`
+  へ進む → bridge原稿を添付
 - Claude は添付不足を発見した場合、**「どのファイルが不足しているか」を最初に報告する**
 - 添付依頼時は「何のために必要か」「修正対象か参照対象か」を必ず明示する
 - ファイル参照は可能な限り **リポジトリ相対パス** で明示する
 
-**よく使うパス**
+**よく使うパス（共通）**
 
 ```
 prompts/PROJECT_CONTEXT.md
-prompts/P0-A.md  prompts/P0-B.md  prompts/P0-C.md  prompts/P0-D.md
-prompts/P1.md    prompts/P2A.md   prompts/P2B.md
-prompts/P3.md    prompts/P4.md    prompts/P5.md
 prompts/RULES.md
 
 lib/types.ts           lib/moduleValidator.ts
@@ -429,7 +438,7 @@ docs/VALIDATOR_STANDARD.md  docs/IMPLEMENTATION_CHECKLIST.md
 scripts/audit-addon-bridge-chain.ts   # bridge⇔JSON⇔runtime addonsRef横断監査
 ```
 
-**vNext 体系パス（大規模モジュール JSON 化専用）**
+**vNext 体系パス（新規作業の標準）**
 
 ```
 prompts/vNext/HANDOFF.md                      # vNext 作業の引き継ぎ文書（新規チャット起点）
@@ -444,4 +453,12 @@ prompts/vNext/PN6-Assembly.md                 #
 prompts/vNext/PN7-Cross-Reference-Audit.md    #
 prompts/vNext/PN8-Build-Runtime-Release.md    # （PN1〜PN8 の実行プロンプト正本）
 /tmp/soap-build/{moduleId}/                   # vNext 中間成果物（セッション固定パス）
+```
+
+**旧体系パス（過去の作業記録を参照する場合のみ・新規作業では使用しない）**
+
+```
+prompts/P0-A.md  prompts/P0-B.md  prompts/P0-C.md  prompts/P0-D.md
+prompts/P1.md    prompts/P2A.md   prompts/P2B.md
+prompts/P3.md    prompts/P4.md    prompts/P5.md
 ```
