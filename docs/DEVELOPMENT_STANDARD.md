@@ -69,16 +69,32 @@ bridge 原稿（人間可読の指導文正本）
 canonical JSON（data/modules/{moduleId}.json）
 ```
 
+**ビルド・配信設定（next.config.js）**
+
+Current Standard 経路（`npm run build` = `next build`）に対しては、ビルド時に BUILD_SHA を埋め込み、
+実行時に Cache-Control ヘッダーを付与する。`EXPORT_STATIC` 分岐（静的 export 設定）は
+Future Expansion（§10.3「現在の Future Expansion 資産」）であり、Current Standard の
+ビルド・配信経路には含まれない。
+
 **実行時（アプリ内でのSOAP生成）**
 
 ```
+HTTPリクエスト
+  ↓
+入口層（middleware.ts — Basic認証によるアクセスゲート。/_next/* は素通し）
+  ↓
+app/page.tsx
+  ↓
 canonical JSON
   ↓
 Search（lib/search.ts — ブランド名/一般名検索・候補生成）
   ↓
 Scenario（シナリオ選択・ADDON選択・brand制御・handlingTags制御）
   ↓
-SOAP生成（buildSoap.ts / soapComposer.ts — S/O/A/P組み立て・{{drug_subject}}解決・persona適用・followup付与）
+SOAP生成（経路により異なる）
+  ├─ 手動入力経路: buildSoap.ts（S/O/A/P組み立て）+ applyPersona.ts（persona適用）を
+  │   app/components/DashboardClient.tsx が直接呼び出す
+  └─ NLP経路: lib/createSoapFromInput.ts が lib/soapComposer.ts を呼び出す
   ↓
 Runtime確認（実機での検索・シナリオ・SOAP生成・横断機能の確認 — §5・§8参照）
   ↓
@@ -172,6 +188,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 | `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」（フィールド定義・必須/任意/条件付き必須の分類） |
 | `docs/OPEN_DESIGN_QUESTIONS.md` | まだ決めていないこと（保留事項と判断タイミング） |
 | `docs/VALIDATOR_STANDARD.md` | Validatorが何を保証し、何を保証しないか。errorCode一覧 |
+| `docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` | 検索単位・SOAP主語・製品バリエーション分離原則（DP-14候補）。持続型製剤・BF・容量違い等の派生製剤をどう扱うか |
 | `docs/IMPLEMENTATION_CHECKLIST.md` | 実装後に毎回行う検証チェックリスト・Runtime/実機横断確認 |
 | `docs/TEAM_CHARTER.md` | Human / ChatGPT / Claude の役割分担 |
 | `docs/BOOTSTRAP_STANDARD.md` / `docs/P1_STANDARD.md` 〜 `docs/P5_STANDARD.md` | 旧体系（P0-A〜P5）各工程の設計意図（「なぜこの工程はこう設計されているか」） |
