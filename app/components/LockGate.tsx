@@ -1,5 +1,18 @@
 'use client'
 
+/**
+ * 状態: Legacy（docs/DEVELOPMENT_STANDARD.md §10.1・§10.2 準拠。Owner 承認済み）
+ *
+ * 新規作業では使用しない。更新は原則凍結（誤記修正のみ可）。
+ *
+ * 判定根拠: commit 1517800（"fix: runtime + hydration fixes"）で `middleware.ts`
+ * （HTTP リクエストレベルの Basic 認証ゲート）が新規導入されると同時に、同一 commit で
+ * `app/layout.tsx` から本コンポーネントの import・使用（`<LockGate>{children}</LockGate>`）
+ * が除去された。以降 import 元は 0 件（`app/` / `lib/` を再実測して確認済み）。
+ * アクセス制御という設計意図は `middleware.ts` へ移管済みであり、本ファイルは
+ * 過去の正式経路として存在した旧方式である。ファイル自体は削除せず、履歴・監査目的で保持する。
+ */
+
 import { useState, useEffect } from 'react'
 import s from '../styles/lockgate.module.css'
 

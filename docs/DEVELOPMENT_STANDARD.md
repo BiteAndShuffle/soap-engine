@@ -294,6 +294,14 @@ Current Standard と区別できない。
   「Claude が自主的に降格させてはならない」と定めている。設計資産の状態遷移にも同じ規律を適用する
 - ファイル先頭に状態表示を書くだけでは Legacy 化は完了しない
 
+#### 現在の Legacy 資産
+
+| 資産 | L1 必須参照 | L2 設計意図の移管先 | L7 承認 |
+|---|---|---|---|
+| `app/components/LockGate.tsx` | ゼロ（`app/` / `lib/` から import 元 0 件） | `middleware.ts`（HTTPリクエストレベルの Basic 認証ゲート。commit 1517800 で本ファイルの `app/layout.tsx` からの接続除去と同時に導入） | Owner 承認済み |
+
+L3〜L6 の詳細は `app/components/LockGate.tsx` 冒頭コメントを参照。
+
 ### 10.3 Future Expansion 成立条件
 
 **必須条件（F1〜F5・全充足が成立要件）**
