@@ -1,0 +1,21 @@
+{
+  "_comment": [
+    "F-1 配信量の基準線（baseline）。",
+    "「良い状態だった時点」を固定する目的で保持する。",
+    "Owner が『ここを新しい基準線とする』と判断した時のみ更新する（毎回更新しない）。",
+    "scripts/measure-payload.ts がこのファイルを読み、増加量・増加率を算出する。",
+    "設計根拠: docs/reviews/f1/F1_STAGE123_DESIGN_2026-07-30.md §1"
+  ],
+  "measuredAt": "2026-07-30",
+  "commit": "c2b6b5e",
+  "moduleCount": 35,
+  "allModulesMinifiedBytes": 3584404,
+  "allModulesGzipBytes": 321693,
+  "searchIndexBytes": 3443202,
+  "manifestReferenceBytes": 357402,
+  "manifestReferenceGzipBytes": 24969,
+  "largestModule": {
+    "moduleId": "allergy_h1_antihistamine_eye_drops",
+    "minifiedBytes": 128219
+  }
+}

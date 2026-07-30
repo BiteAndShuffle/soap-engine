@@ -53,6 +53,21 @@ grep "{moduleId}" data/modules/index.ts
 tsc / build が成功しても registry 未登録ではアプリ上にモジュールが表示されない。
 必ず登録確認を tsc より前に実施すること。
 
+### 配信量の観測（F-1・観測項目）
+
+```bash
+npm run measure:payload
+```
+
+- 出力値（モジュール数 / ALL_MODULES gzip / 1モジュールあたり平均 / 最大モジュール）を報告に記録する
+- **WARN が出ても RELEASE_HOLD にはしない。** 本項目は観測項目であり必須ゲートではない
+- WARN のしきい値は**性能限界ではなく**、ロード方式（F-1）の再評価を Owner へ促す警告トリガーである
+- 設計根拠: `docs/reviews/f1/F1_ARCHITECTURE_REVIEW_2026-07-30.md` ／
+  `docs/reviews/f1/F1_STAGE123_DESIGN_2026-07-30.md` §1
+
+`npm run build` の `First Load JS` は JS バンドルのみの数字であり、
+全モジュール JSON（RSC ペイロード）の成長を検知できない。本項目がそれを補う。
+
 ### Runtime 確認
 
 以下を確認する:
