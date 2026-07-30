@@ -31,13 +31,30 @@ const nextConfig = {
     },
   }),
 
-  // Vercel Edge/CDN がレスポンスをキャッシュしないよう強制
+  // Vercel Edge/CDN が HTML / RSC ペイロードをキャッシュしないよう強制する。
+  // ただし /_next/static/** はファイル名にコンテンツハッシュを含み内容が不変のため、
+  // 長期 immutable cache の対象とする（F-1 Stage 2。設計根拠:
+  // docs/reviews/f1/F1_STAGE123_DESIGN_2026-07-30.md §2）。
+  // public/ 配下はコンテンツハッシュを持たないため対象に含めない（D-S2-1）。
   // 静的 export 時は headers() が使えないため無効化する
   ...(!isStaticExport && {
     async headers() {
       return [
+        // ① 静的資産のみ長期キャッシュ（コンテンツハッシュ付き = 内容不変）
         {
-          source: '/(.*)',
+          source: '/_next/static/:path*',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ],
+        },
+        // ② それ以外（HTML / RSC ペイロード / public 配下）は従来どおりキャッシュ禁止。
+        //    Next.js はマッチした全ルールのヘッダを適用するため、negative lookahead で
+        //    ① の対象を除外し、Cache-Control が二重に付与されないようにする。
+        {
+          source: '/((?!_next/static).*)',
           headers: [
             {
               key: 'Cache-Control',
