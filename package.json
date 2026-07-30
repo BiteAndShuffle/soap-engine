@@ -11,7 +11,8 @@
     "test": "npx tsx --test tests/**/*.test.ts",
     "test:multi-drug": "npx tsx scripts/test-multi-drug-synthesis.ts",
     "audit": "npx tsx scripts/audit-addon-bridge-chain.ts && npx tsx scripts/audit-alias-bridge-chain.ts",
-    "measure:payload": "npx tsx scripts/measure-payload.ts"
+    "measure:payload": "npx tsx scripts/measure-payload.ts",
+    "generate:search-manifest": "npx tsx scripts/generate-search-manifest.ts"
   },
   "dependencies": {
     "next": "^15.1.6",
