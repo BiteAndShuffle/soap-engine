@@ -8,14 +8,15 @@
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-import { ALL_MODULES } from '../data/modules/index'
+import { moduleLoader } from '../lib/moduleLoader'
 import DashboardClient from './components/DashboardClient'
 import { reportInvalidScenarios } from '../lib/scenarioValidator'
 import { assertModuleValid } from '../lib/moduleValidator'
 import { assertCrossModuleValid } from '../lib/crossModuleValidator'
 
 const INITIAL_MODULE_ID = 'dm_glp1ra_semaglutide_oral'
-const moduleData = ALL_MODULES.find(m => m.moduleId === INITIAL_MODULE_ID) ?? ALL_MODULES[0]
+const allModules = moduleLoader.getAllModules()
+const moduleData = moduleLoader.getModule(INITIAL_MODULE_ID) ?? allModules[0]
 
 // ビルド識別子
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA ?? 'local'
@@ -47,7 +48,7 @@ if (validationErrors.length > 0) {
 
 // ── ModuleValidator: モジュールレベル整合性チェック ───────────
 // addonsRef 参照切れ / panelOrder 不整合 / key 不一致 等を起動時に検出（致命的エラーはスロー）
-ALL_MODULES.forEach((m, i) => {
+allModules.forEach((m, i) => {
   try {
     assertModuleValid(m)
   } catch (e) {
@@ -59,7 +60,7 @@ ALL_MODULES.forEach((m, i) => {
 // ── CrossModuleValidator: モジュール横断一意性チェック ─────────
 // moduleId 重複 / scenario.globalId クロスモジュール重複を起動時に検出。
 // 致命的エラーがある場合はスローし、build/runtime を停止させる（握り潰しなし）。
-assertCrossModuleValid(ALL_MODULES)
+assertCrossModuleValid(allModules)
 
 // ── ScenarioValidator: 構造的妥当性チェック ───────────────────
 // invalid な scenario（必須キー欠落 / S/O/A/P空 / sideEffectPresence不正 等）をログ出力
@@ -116,7 +117,7 @@ export default function Page() {
 
   return (
     <>
-      <DashboardClient moduleData={moduleData} allModules={ALL_MODULES} />
+      <DashboardClient moduleData={moduleData} allModules={allModules} />
 
       {/* ── ScenarioValidator バッジ（invalid > 0 の場合のみ表示） ── */}
       {invalidScenarios.length > 0 && (
