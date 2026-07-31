@@ -11,8 +11,20 @@
  *        全 21 フィールドで一致すること。および構造化検索語で同一の
  *        サジェスト結果が得られること。
  *
- * T-3（manifest 等価 / stale 検出）・T-5（サイズ回帰）・T-7（件数・ID 整合）は
- * Commit ⑤ で本ファイルへ追加する。
+ *   T-3  manifest 等価 / stale 検出
+ *        ① commit 済み data/search-manifest.json が canonical JSON から
+ *           再生成したものと**バイト一致**すること（手編集・再生成漏れの検出）。
+ *           **sourceHash を比較対象から除外する例外は設けない**（D-S4-9）。
+ *        ② commit 済み manifest から構築した SearchEntry[] が
+ *           canonical JSON 由来（本文除去版）と一致すること。
+ *
+ *   T-5  サイズ回帰
+ *        commit 済み manifest を gzip した実測値が上限内であること。
+ *        総量と 1 モジュールあたり増分を**独立して**検証する。
+ *
+ *   T-7  件数・ID 整合
+ *        moduleCount / scenarioCount / moduleId / globalId の整合。
+ *
  * T-2 / T-6（intentional loss / 本文非混入）は tests/searchBodyExclusion.test.ts が
  * 独立して担う（D-S4-6）。
  *
@@ -27,10 +39,18 @@
 
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
+import zlib from 'node:zlib'
 
 import { ALL_MODULES } from '../data/modules/index'
 import { buildSearchIndex, getDrugSuggestions } from '../lib/search'
-import { generateSearchManifest, buildIndexFromManifest } from '../lib/searchManifest'
+import type { SearchManifest } from '../lib/searchManifest'
+import {
+  generateSearchManifest,
+  serializeSearchManifest,
+  buildIndexFromManifest,
+} from '../lib/searchManifest'
 
 // ─────────────────────────────────────────────────────────────
 // 共有フィクスチャ（searchBodyExclusion.test.ts と同一の構築手順）
@@ -39,6 +59,23 @@ import { generateSearchManifest, buildIndexFromManifest } from '../lib/searchMan
 const canonicalIndex = ALL_MODULES.flatMap(m => buildSearchIndex(m))
 const manifest = generateSearchManifest(ALL_MODULES)
 const manifestIndex = buildIndexFromManifest(manifest)
+
+/** commit 済みの生成物。**再生成せず、ファイルの内容をそのまま読む** */
+const MANIFEST_PATH = path.resolve('./data/search-manifest.json')
+const committedRaw = fs.readFileSync(MANIFEST_PATH, 'utf8')
+const committedManifest = JSON.parse(committedRaw) as SearchManifest
+const committedIndex = buildIndexFromManifest(committedManifest)
+
+/** 配列を集合として比較する（corpusTokens は順序非依存で等価判定する） */
+function setEqual(a: string[] | undefined, b: string[] | undefined): boolean {
+  if (!Array.isArray(a) || !Array.isArray(b)) return JSON.stringify(a) === JSON.stringify(b)
+  if (a.length !== b.length) return false
+  const sa = new Set(a)
+  const sb = new Set(b)
+  if (sa.size !== sb.size) return false
+  for (const v of sa) if (!sb.has(v)) return false
+  return true
+}
 
 /** サジェスト結果を比較可能な文字列へ落とす（moduleId / ブランド / 表示ラベル / 順序） */
 function fingerprint(query: string, index: typeof canonicalIndex): string[] {
@@ -202,5 +239,171 @@ describe('T-1 Owner 指定検索ケース（35 件）', () => {
     const reachable = OWNER_CASES.filter(([c]) => ['先発品名', '読み仮名', '一般名'].includes(c))
     const empty = reachable.filter(([, q]) => getDrugSuggestions(q, manifestIndex, 8).length === 0)
     assert.deepEqual(empty.map(([, q]) => q), [], `到達不能な検索語: ${empty.map(([, q]) => q).join(', ')}`)
+  })
+})
+
+describe('T-3 manifest 等価 / stale 検出', () => {
+  test('commit 済み manifest が canonical JSON からの再生成結果とバイト一致する', () => {
+    // 手編集・再生成漏れ（stale）を検出する。
+    // sourceHash を比較対象から除外する例外は設けない（D-S4-9）。
+    const regenerated = serializeSearchManifest(generateSearchManifest(ALL_MODULES))
+    assert.equal(
+      committedRaw.length,
+      regenerated.length,
+      `data/search-manifest.json のバイト数が再生成結果と不一致` +
+        `（commit 済み ${committedRaw.length} B / 再生成 ${regenerated.length} B）。` +
+        ` npm run generate:search-manifest を実行して再生成すること`,
+    )
+    assert.ok(
+      committedRaw === regenerated,
+      'data/search-manifest.json が stale か手編集されている。' +
+        ' npm run generate:search-manifest を実行して再生成すること',
+    )
+  })
+
+  test('sourceHash が再生成結果と一致する（除外例外を設けない）', () => {
+    assert.equal(
+      committedManifest.sourceHash,
+      generateSearchManifest(ALL_MODULES).sourceHash,
+      'sourceHash が canonical 由来の値と不一致',
+    )
+    assert.match(
+      committedManifest.sourceHash,
+      /^[0-9a-f]{64}$/,
+      'sourceHash が SHA-256 の小文字 hex ではない',
+    )
+  })
+
+  test('sourceHash が決定論的である（同一入力から同一値）', () => {
+    const a = generateSearchManifest(ALL_MODULES).sourceHash
+    const b = generateSearchManifest(ALL_MODULES).sourceHash
+    assert.equal(a, b, 'sourceHash が非決定的')
+  })
+
+  test('commit 済み manifest 由来の SearchEntry[] が canonical 由来と一致する', () => {
+    assert.equal(
+      committedIndex.length,
+      canonicalIndex.length,
+      `SearchEntry 件数が不一致（manifest ${committedIndex.length} / canonical ${canonicalIndex.length}）`,
+    )
+
+    const keys = Object.keys(canonicalIndex[0]) as Array<keyof (typeof canonicalIndex)[0]>
+    const mismatches: string[] = []
+    for (let i = 0; i < canonicalIndex.length; i++) {
+      for (const k of keys) {
+        const a = committedIndex[i][k]
+        const b = canonicalIndex[i][k]
+        // corpusTokens は順序非依存の集合として比較する（設計 §5.3）
+        const equal =
+          k === 'corpusTokens'
+            ? setEqual(a as unknown as string[], b as unknown as string[])
+            : JSON.stringify(a) === JSON.stringify(b)
+        if (!equal) {
+          mismatches.push(`${String(k)} @ ${canonicalIndex[i].templateId}`)
+          break
+        }
+      }
+    }
+    assert.deepEqual(
+      mismatches.slice(0, 10),
+      [],
+      `commit 済み manifest 由来と canonical 由来で不一致（${mismatches.length} 件）`,
+    )
+  })
+
+  test('commit 済み manifest 由来と in-memory manifest 由来が一致する', () => {
+    // ファイル経由（JSON.parse）と生成直後のオブジェクトで差が出ないことを確認する。
+    // 差が出る場合は直列化で情報が落ちている（undefined の混入等）。
+    assert.equal(committedIndex.length, manifestIndex.length)
+    assert.deepEqual(
+      committedIndex.map(e => e.templateId),
+      manifestIndex.map(e => e.templateId),
+    )
+  })
+})
+
+describe('T-5 サイズ回帰', () => {
+  // Owner Decision（2026-07-31）で確定した上限。
+  // baseline ファイルは参照せず、commit 済み manifest の gzip 実測値に対して判定する。
+  const GZIP_TOTAL_LIMIT_BYTES = 500 * 1024 // 500 KB
+  const GZIP_PER_MODULE_LIMIT_BYTES = 1500 // 1,500 B/module
+
+  const gzipBytes = zlib.gzipSync(Buffer.from(committedRaw, 'utf8')).length
+
+  test('manifest gzip 総量が 500 KB 以下である', () => {
+    assert.ok(
+      gzipBytes <= GZIP_TOTAL_LIMIT_BYTES,
+      `manifest gzip 総量が上限超過: ${gzipBytes} B > ${GZIP_TOTAL_LIMIT_BYTES} B`,
+    )
+  })
+
+  test('manifest gzip の 1 モジュールあたり増分が 1,500 B 以下である', () => {
+    const moduleCount = committedManifest.modules.length
+    assert.ok(moduleCount > 0, 'modules が空')
+    const perModule = gzipBytes / moduleCount
+    assert.ok(
+      perModule <= GZIP_PER_MODULE_LIMIT_BYTES,
+      `1 モジュールあたり gzip が上限超過: ${perModule.toFixed(1)} B/module` +
+        ` > ${GZIP_PER_MODULE_LIMIT_BYTES} B/module（total ${gzipBytes} B / ${moduleCount} modules）`,
+    )
+  })
+})
+
+describe('T-7 件数・ID 整合', () => {
+  test('moduleCount が ALL_MODULES.length と一致する', () => {
+    assert.equal(committedManifest.moduleCount, ALL_MODULES.length)
+    assert.equal(committedManifest.modules.length, committedManifest.moduleCount)
+  })
+
+  test('scenarioCount が全モジュールのシナリオ総数と一致する', () => {
+    const total = ALL_MODULES.reduce((a, m) => a + (m.scenarios?.length ?? 0), 0)
+    assert.equal(committedManifest.scenarioCount, total)
+    assert.equal(committedManifest.scenarios.length, committedManifest.scenarioCount)
+  })
+
+  test('modules[].moduleId に重複がなく、ALL_MODULES と過不足なく一致する（順序を含む）', () => {
+    const manifestIds = committedManifest.modules.map(m => m.moduleId)
+    assert.equal(new Set(manifestIds).size, manifestIds.length, 'moduleId が重複している')
+    // D-S4-10: ALL_MODULES 登録順を保持する（moduleId で並べ替えない）
+    assert.deepEqual(
+      manifestIds,
+      ALL_MODULES.map(m => m.moduleId),
+      'manifest の module 順が ALL_MODULES 登録順と一致しない',
+    )
+  })
+
+  test('scenarios[].moduleId がすべて modules[] に存在する', () => {
+    const known = new Set(committedManifest.modules.map(m => m.moduleId))
+    const orphans = [...new Set(
+      committedManifest.scenarios.filter(s => !known.has(s.moduleId)).map(s => s.moduleId),
+    )]
+    assert.deepEqual(orphans, [], `親モジュールが存在しない scenario: ${orphans.join(', ')}`)
+  })
+
+  test('scenarios[].globalId に重複がない', () => {
+    const ids = committedManifest.scenarios.map(s => s.globalId)
+    const seen = new Set<string>()
+    const dups = new Set<string>()
+    for (const id of ids) {
+      if (seen.has(id)) dups.add(id)
+      seen.add(id)
+    }
+    assert.deepEqual([...dups], [], `globalId が重複している: ${[...dups].join(', ')}`)
+  })
+
+  test('scenario の globalId 集合が canonical と一致する（欠落・余剰なし）', () => {
+    const canonical = ALL_MODULES.flatMap(m =>
+      (m.scenarios as unknown as Array<Record<string, any>>).map(s => `${m.moduleId}::${s.globalId}`),
+    )
+    const inManifest = committedManifest.scenarios.map(s => `${s.moduleId}::${s.globalId}`)
+    assert.deepEqual(inManifest, canonical, 'scenario の集合または順序が canonical と一致しない')
+  })
+
+  test('manifestVersion が設定されている', () => {
+    assert.ok(
+      typeof committedManifest.manifestVersion === 'string' &&
+        committedManifest.manifestVersion.length > 0,
+      'manifestVersion が未設定',
+    )
   })
 })

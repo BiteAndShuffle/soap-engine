@@ -19,7 +19,10 @@
  *
  *   T-6  SOAP 本文の非混入保証
  *        検索インデックスおよび manifest に S / O / A / P・xStructured の本文が
- *        一切含まれないことを検証する。Commit ⑤ で manifest 側の検証を追加する。
+ *        一切含まれないことを検証する。
+ *        Commit ⑤ で **commit 済み data/search-manifest.json 側の検証**を追加した。
+ *        manifest は moduleLoader.getSearchIndex() の入力そのものであるため、
+ *        ここでの非混入がそのまま検索インデックスの非混入の前提条件になる。
  *
  * 実行:
  *   npx tsx --test tests/searchBodyExclusion.test.ts
@@ -27,12 +30,21 @@
 
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import { ALL_MODULES } from '../data/modules/index'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../lib/search'
 
 const searchIndex = ALL_MODULES.flatMap(m => buildSearchIndex(m))
 const serializedIndex = JSON.stringify(searchIndex)
+
+/**
+ * commit 済みの Search Manifest（**再生成せずファイルの内容をそのまま読む**）。
+ * moduleLoader.getSearchIndex() の実入力であるため、この生テキストに対して
+ * 本文が 1 文字も含まれないことを検証する。
+ */
+const serializedManifest = fs.readFileSync(path.resolve('./data/search-manifest.json'), 'utf8')
 
 /** 全シナリオの S / O / A / P を正規化して列挙する */
 function collectBodyTokens(minLength = 8): string[] {
@@ -112,6 +124,78 @@ describe('T-6 SOAP 本文の非混入保証（検索インデックス）', () =
       if (title && !e.corpusTokens.includes(title)) missing.push(e.templateId)
     }
     assert.deepEqual(missing.slice(0, 5), [], 'title が corpusTokens から欠落している')
+  })
+})
+
+describe('T-6 SOAP 本文の非混入保証（Search Manifest）', () => {
+  test('S / O / A / P 本文が manifest へ一切混入しない', () => {
+    // 正規化前の生テキストで検査する（manifest は生成時に正規化しないため、
+    // 混入するとすれば canonical の原文そのものの形で現れる）。
+    const raws: string[] = []
+    for (const m of ALL_MODULES) {
+      for (const s of m.scenarios as unknown as Array<Record<string, any>>) {
+        for (const v of [s.S, s.O, s.A, s.P]) {
+          if (typeof v === 'string' && v.trim().length >= 8) raws.push(v.trim())
+        }
+      }
+    }
+    assert.ok(raws.length > 1000, `検査対象の本文が想定より少ない: ${raws.length}`)
+
+    const leaked = raws.filter(t => serializedManifest.includes(t))
+    assert.deepEqual(
+      leaked.slice(0, 5),
+      [],
+      `SOAP 本文が manifest へ混入している（${leaked.length}/${raws.length} 件）`,
+    )
+  })
+
+  test('SStructured / AStructured / PStructured の text が manifest へ混入しない', () => {
+    const texts: string[] = []
+    for (const m of ALL_MODULES) {
+      for (const s of m.scenarios as unknown as Array<Record<string, any>>) {
+        for (const key of ['SStructured', 'AStructured', 'PStructured']) {
+          for (const entry of (s[key] ?? []) as Array<Record<string, any>>) {
+            const t = entry?.text
+            if (typeof t === 'string' && t.trim().length >= 8) texts.push(t.trim())
+          }
+        }
+      }
+    }
+    assert.ok(texts.length > 1000, `検査対象の xStructured text が想定より少ない: ${texts.length}`)
+
+    const leaked = texts.filter(t => serializedManifest.includes(t))
+    assert.deepEqual(
+      leaked.slice(0, 5),
+      [],
+      `xStructured の本文が manifest へ混入している（${leaked.length}/${texts.length} 件）`,
+    )
+  })
+
+  test('本文系・参照系のキーが manifest に存在しない', () => {
+    // schema 逸脱（allowlist 外のフィールドが混入する回帰）を検出する。
+    // キー形（`"S":`）で検査する。文字列値に同じ語が現れても誤検知しない。
+    const forbiddenKeys = [
+      '"S":', '"O":', '"A":', '"P":',
+      '"SStructured":', '"AStructured":', '"PStructured":',
+      '"addonsRef":', '"mergePolicy":', '"sComposition":',
+    ]
+    const found = forbiddenKeys.filter(k => serializedManifest.includes(k))
+    assert.deepEqual(found, [], `manifest に持ち込み禁止のキーが含まれている: ${found.join(', ')}`)
+  })
+
+  test('manifest の scenario は 9 フィールドの allowlist のみで構成される', () => {
+    const manifest = JSON.parse(serializedManifest) as {
+      scenarios: Array<Record<string, unknown>>
+    }
+    const allowed = new Set([
+      'moduleId', 'globalId', 'id', 'title', 'scenarioGroup',
+      'scenarioTags', 'sideEffectPresence', 'intentTags', 'sCompositionIntent',
+    ])
+    const extra = new Set<string>()
+    for (const s of manifest.scenarios) {
+      for (const k of Object.keys(s)) if (!allowed.has(k)) extra.add(k)
+    }
+    assert.deepEqual([...extra], [], `allowlist 外のフィールドが含まれている: ${[...extra].join(', ')}`)
   })
 })
 
