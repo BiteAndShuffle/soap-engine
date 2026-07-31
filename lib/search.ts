@@ -229,17 +229,18 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   }
 
   return moduleData.scenarios.map(scenario => {
-    // per-scenario コーパス: title / scenarioGroup / S / O / A / P を個別に正規化する。
+    // per-scenario コーパス: title / scenarioGroup を個別に正規化する。
     // フィールドをまとめて join してから正規化すると、フィールド境界をまたいだ
-    // ゴースト一致（例: S の末尾 + O の先頭が偶然クエリと一致）が発生するため、
-    // 各フィールドを独立したトークンとして保持する。
+    // ゴースト一致が発生するため、各フィールドを独立したトークンとして保持する。
+    //
+    // SOAP 本文（S / O / A / P）は検索コーパスへ含めない（F-1 Stage 4-a）。
+    // 薬剤検索の対象は構造化メタデータ（brand / generic / alias / 剤形 /
+    // 薬効領域 / 薬効分類）に限定し、SOAP 本文から偶然語句を拾う方式を排除する。
+    // 設計根拠: docs/reviews/f1/F1_SEARCH_MANIFEST_DESIGN_2026-07-30.md §2 / §4
+    // 意図的な喪失範囲は tests/searchBodyExclusion.test.ts が仕様として固定する。
     const perScenarioTokens: string[] = [
       scenario.title,
       scenario.scenarioGroup,
-      scenario.S ?? '',
-      scenario.O ?? '',
-      scenario.A ?? '',
-      scenario.P ?? '',
     ].map(normalizeText).filter(Boolean)
     const corpusTokens: string[] = [...new Set([...perScenarioTokens, ...globalCorpusTokens])]
     const groupLabel = getMenuGroupFromScenario(scenario)
