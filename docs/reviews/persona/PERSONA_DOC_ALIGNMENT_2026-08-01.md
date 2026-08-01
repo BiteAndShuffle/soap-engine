@@ -85,8 +85,31 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 
 | module | 状態 |
 |---|---|
-| `dm_insulin_regular` | 未着手 |
-| `dm_insulin_intermediate` | 未着手 |
+| `dm_insulin_regular` | **完了**（P-4 / commit `54dda6e`） |
+| `dm_insulin_intermediate` | **完了**（P-4 / commit `54dda6e`） |
+
+### 実施結果（2026-08-01 / P-4）
+
+**commit**: `54dda6e` `fix(modules): backfill persona for two modules predating PN5 rule (F-4b)`（canonical JSON 2 件のみ・28 insertions / 0 deletions）
+
+| 観点 | 結果 |
+|---|---|
+| 補完値 | `prompts/vNext/PN5-Non-Scenario.md`「persona セクション（必須）」の fallback 既定値。両 module とも逐語一致 |
+| 変更範囲 | **`persona` 追加のみ。** パース後のキー集合・値を HEAD と比較し、追加キー `persona` のみ・削除 0・値変更 0 を確認。既存行の再フォーマットなし |
+| 配置 | `defaults` 直後（JS-A Pattern A）。top-level key 順序は既存 module と完全一致 |
+| `PP-D-1` | `dm_insulin_mixed_rapid_long` は **未変更**（差分 0 件） |
+
+**完了条件の判定**
+
+| # | 条件 | 結果 |
+|---|---|---|
+| 1 | 対象 2 module に `persona` が存在する | **充足** |
+| 2 | 全 module で `MISSING_PERSONA` が 0 件 | **充足**（2 → **0**） |
+| 3 | Validator warning 総数が 20 → 18 | **充足**（20 → **18**。defect class 6 → **5**。ERROR は **0 を維持**） |
+| 4 | `tsc` / `npm test` / `npm run audit` が baseline を維持 | **充足**（tsc PASS ／ test 2705 pass・0 fail ／ audit 2 系統とも 35 件 PASS ／ `npm run build` 成功） |
+| 5 | 既存 module の PN5 fallback 形と一致（検算） | **充足**（fallback 形 32 → **34**、欠落 **0**、別形状 1 = PP-D-1 のみ） |
+
+**未着手**: P-3a〜P-3d（§2 の ③ / ④ / ⑤ / ⑦ / ⑧ / ⑨ / ⑪）／ `MISSING_PERSONA` の severity 昇格（§4）／ **push**
 
 ### 補完値・根拠
 
@@ -271,7 +294,7 @@ Lifecycle Classification Pending は、
 
 ---
 
-## 7. 作業状態（2026-08-01 時点 / P-2 実施時）
+## 7. 作業状態（2026-08-01 時点 / P-4 実施時）
 
 | 項目 | 状態 |
 |---|---|
@@ -279,13 +302,14 @@ Lifecycle Classification Pending は、
 | 文書分割（Core / Appendix / 実行記録） | **完了**（commit `7fce221`） |
 | **P-0（Owner Decision の記録）** | **完了**（commit `b8511e0`）。本記録の §3 実行順序 / §5 GG-3 / §6.0〜§6.3 が該当 |
 | **P-1（MEMORY 整合 ＝ ⑫）** | **完了**（Repository 外のため commit なし） |
-| **P-2（`docs/feature-glossary.md` 整合 ＝ ⑥）** | **完了**（commit 待ち） |
+| **P-2（`docs/feature-glossary.md` 整合 ＝ ⑥）** | **完了**（commit `10cd103`） |
+| **P-4（F-4b）** | **完了**（commit `54dda6e`）。検証結果は §3「実施結果」 |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
-| §2 の ③ / ④ / ⑤ / ⑦ / ⑧ / ⑨ / ⑪ | 未着手 |
-| F-4b | **開始条件 4 件すべて充足**（⑥ 完了により条件 2 が充足）。次に実施 → §3「実行順序」 |
-| `MISSING_PERSONA` 昇格 | 未着手 |
+| §2 の ③ / ④ / ⑤ / ⑦ / ⑧ / ⑨ / ⑪（＝ P-3a〜P-3d） | **未着手** |
+| F-4b | **完了**（§3「実施結果」）。`MISSING_PERSONA` 0 件 ／ warning 20 → 18 |
+| `MISSING_PERSONA` 昇格 | **未着手**（開始条件 1「§2 の文書改訂完了」が未充足） |
 | GG-1 / GG-3 | Lifecycle Classification Pending へ記録予定（§6.2）。**Lifecycle State は確定しない** |
 | GG-2 / PP-D-1 | 未着手（本作業の対象外） |
-| push | **未実施**（`7fce221` / `b8511e0` ともに remote 未反映） |
+| push | **未実施**（`7fce221` / `b8511e0` / `10cd103` / `54dda6e` はいずれも remote 未反映） |
 
 **本記録の凍結時、§5 の未処理事項は本記録とともに凍結してはならない。** 別管理へ移す必要がある。移動先・管理方法は本記録では決めない。
