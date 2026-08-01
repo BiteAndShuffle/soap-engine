@@ -10,7 +10,50 @@ SOAP Engine — canonical JSON 構造標準
 
 ---
 
-## JS-00: 差分発見時の判断フロー
+## JS-00: Canonical Requirement Class と差分発見時の判断フロー
+
+### Canonical Requirement Class（JS-A〜JS-E）
+
+本書の **JS-A 〜 JS-E は canonical JSON の「Canonical Requirement Class」を定義する。**
+ある field が canonical JSON として必須か、条件付き必須か、差分として許容されるかは、
+**本書のこの分類が正本である。**
+
+| Class | 意味 |
+|---|---|
+| **JS-A** | 全 module 必須 |
+| **JS-B** | 条件付き必須（対象条件を満たす module のみ必須） |
+| **JS-C** | 薬剤固有差分許容 |
+| **JS-D** | 意図的差分許容 |
+| **JS-E** | 保留事項 |
+
+### Canonical Requirement と Lifecycle State は別軸である
+
+**Canonical Requirement（本書）と Lifecycle State（`docs/DEVELOPMENT_STANDARD.md` §10）は
+直交する別軸であり、一方が他方を決定しない。**
+
+| 軸 | 何を表すか | 正本 |
+|---|---|---|
+| **Canonical Requirement** | その field が canonical JSON として必須か（構造としての完成条件） | **本書 JS-A〜JS-E** |
+| **Lifecycle State** | 設計資産が runtime へ接続されている段階 | `docs/DEVELOPMENT_STANDARD.md` §10 |
+
+> **canonical field の必須性を決定するのは Canonical Requirement である。Lifecycle State ではない。**
+> **Lifecycle State は runtime 接続状態のみを表し、canonical 構造の充足要否を左右しない。**
+
+したがって次が成立する。
+
+- **runtime へ未接続であることは、canonical field の欠落を許容する根拠にならない。**
+  JS-A の field が欠落している場合、対応する runtime 機能が未接続であっても、
+  それは canonical 完成条件の未充足である
+- 逆に、Lifecycle State が Current Standard であることは、その field を JS-A へ
+  引き上げる根拠にならない
+- Validator が canonical field の欠落を検出する場合、その根拠は Canonical Requirement であり、
+  Validator が新しい必須規則を追加しているのではない（`docs/VALIDATOR_STANDARD.md` §1）
+
+**本書へ Lifecycle State を再定義しない。** Lifecycle State の定義・成立条件・遷移ゲートは
+`docs/DEVELOPMENT_STANDARD.md` §10 が正本である。同様に、`docs/DEVELOPMENT_STANDARD.md` へ
+Canonical Requirement Class を再定義しない。
+
+### 差分発見時の判断フロー
 
 canonical JSON を監査・修正する前に、以下の順序で差分の性質を判断してください。
 

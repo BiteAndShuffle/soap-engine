@@ -269,12 +269,28 @@ Domain Complete は「個々のモジュールがbuildを通る」ことでは�
 |---|---|---|---|---|---|---|
 | Experimental | 試行中。正本ではない | 使用しない | 更新可 | 参照可（試行中と明示の上で） | 対象外 | 採用→Current Standard / 不採用→Archived |
 | Current Standard | 現行正本。実装・運用の根拠 | 使用する | 更新可 | 参照可 | 対象 | 後継体系が Legacy 完了条件（10.2）を満たす→Legacy |
-| Future Expansion | 実装予定・設計意図あり。意図的に未接続 | 枠の維持のみ | 設計確定時に更新可 | 参照可 | FAIL 条件にしてはならない | Runtime 接続→Current Standard / 破棄決定→Archived |
+| Future Expansion | 実装予定・設計意図あり。意図的に未接続 | 枠の維持のみ | 設計確定時に更新可 | 参照可 | FAIL 条件にしてはならない（適用範囲は下記注記） | Runtime 接続→Current Standard / 破棄決定→Archived |
 | Legacy | 新規作業では使用しない。監査・履歴確認では参照可 | 使用しない | 原則凍結（誤記修正のみ可） | 参照可 | 対象外 | 参照必要性の消滅→Archived |
 | Archived | 履歴保存のみ。正本でも参照標準でもない | 使用しない | 更新しない | 履歴目的のみ | 対象外 | 終端 |
 
 状態は必ずファイル内またはスキーマ定義に明示する。状態が未表示の資産は、次のセッションから
 Current Standard と区別できない。
+
+**「Validator・必須ゲートの対象か」列の適用範囲（明確化）**
+
+本列は、**設計資産が Lifecycle 上どの段階にあるかを理由として Validator / 監査工程を FAIL させて
+よいか**を定める。**canonical field が必須かどうかを定める列ではない。**
+
+- Future Expansion 行の「FAIL 条件にしてはならない」は、**runtime へ未接続であること自体を
+  FAIL の根拠にしてはならない**という意味である
+- **canonical field の必須性は Canonical Requirement（`docs/JSON_STANDARD.md` JS-A〜JS-E）が
+  決定する。** JS-A（全 module 必須）の field が欠落している場合、それは Canonical Requirement の
+  未充足であり、**本列を根拠に FAIL 対象から除外してはならない**
+- Lifecycle State と Canonical Requirement は**直交する別軸**であり、一方が他方を決定しない
+  （`docs/JSON_STANDARD.md` JS-00）
+
+本注記は誤読防止のための適用範囲の明確化であり、本表の運営規則そのものを変更するものではない。
+Canonical Requirement Class を本節へ再定義しない（正本は `docs/JSON_STANDARD.md`）。
 
 ### 10.2 Legacy 完了条件（L1〜L7・全充足が要件）
 
