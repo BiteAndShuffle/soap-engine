@@ -269,6 +269,20 @@
       }
     }
   },
+  "persona": {
+    "defaultStyle": "standard",
+    "availableStyles": [
+      "standard"
+    ],
+    "styleProfiles": {
+      "standard": {
+        "sentenceTone": null,
+        "warningTone": null,
+        "proposalTone": null,
+        "closingTone": null
+      }
+    }
+  },
   "scenarios": [
     {
       "id": "initial",
