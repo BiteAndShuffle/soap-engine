@@ -48,7 +48,7 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | ①'' | `docs/reviews/persona/PERSONA_DOC_ALIGNMENT_2026-08-01.md` | 新規作成（本記録） | **完了** |
 | ② | `docs/DESIGN_PRINCIPLES.md` | DP-16 新設 | **完了** |
 | ③ | `docs/JSON_STANDARD.md` | JS-00 へ Canonical Requirement Class の名称と Lifecycle State との独立性を追加 | **完了**（P-3a） |
-| ④ | `docs/DEVELOPMENT_STANDARD.md` §10 | F5 の明確化改訂 ／ §10.2・§10.3 の正規台帳化 ／ `Persona runtime connection` の登録 | **未完**（P-3a で §10.1「Validator・必須ゲートの対象か」列の適用範囲を明確化。**§10.3 の F5 本文・正規台帳化・登録は P-3b で実施** → §2.1） |
+| ④ | `docs/DEVELOPMENT_STANDARD.md` §10 | F5 の明確化改訂 ／ §10.2・§10.3 の正規台帳化 ／ `Persona runtime connection` の登録 | **完了**（P-3a で §10.1 の列適用範囲を明確化 → commit `1963c72`。P-3b で §10.3 F5 本文の明確化・正規台帳化・登録・§10.5 新設 → commit `92b3a20`。詳細は §2.1） |
 | ⑤ | `docs/DEVELOPMENT_STANDARD.md` §7 | Documentation Map へ Core / Appendix を追加（F-5 の DP 範囲修正を同梱） | 未着手 |
 | ⑥ | `docs/feature-glossary.md` | **主変更**: 概念③の Canonical Requirement / Lifecycle State 2 軸化 ／ 旧 Q1 適用記述と「Phase 2 まで均一化しない」の撤回<br>**付随する事実訂正**: 概念②の現行 `PERSONA_PROFILES` を 4 種へ（`lib/applyPersona.ts` の現行実装事実への追随。**Persona Project の将来人格数・軸・最終仕様を確定する変更ではない**） | **完了**（P-2） |
 | ⑦ | `docs/VALIDATOR_STANDARD.md` §5 | 昇格根拠を Canonical Requirement 由来へ差し替え | 未着手 |
@@ -64,12 +64,25 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 
 §10.1 にあるのは 5 状態テーブルの「Validator・必須ゲートの対象か」列・**Future Expansion 行**の「FAIL 条件にしてはならない」という同等の記述である（`docs/PERSONA_PROJECT_APPENDIX.md` §6.2 も PP-NP-2 の誤解起点として §10.1 のこの記述を挙げている）。
 
-| 節 | 記述 | P-3a での扱い |
+| 節 | 記述 | 状態 |
 |---|---|---|
 | §10.1 Future Expansion 行 ＋ 直後の注記 | 「FAIL 条件にしてはならない」の**適用範囲** | **P-3a で明確化済み**（commit `1963c72`） |
-| §10.3 F5 本文 | 「Validator / 監査工程の FAIL 条件になっていない」 | **未着手。P-3b の対象**（§10.3 は P-3a の範囲外） |
+| §10.3 F5 本文 | 「Validator / 監査工程の FAIL 条件になっていない」 | **P-3b で明確化済み**（commit `92b3a20`） |
 
-**P-3b は §10.3 を担当するため、F5 本文の明確化を同 Unit で扱うこと。** ④「F5 の明確化改訂」は、この 2 節にまたがる。
+④「F5 の明確化改訂」は、この 2 節にまたがった。**両節とも完了済み。**
+
+**P-3b 実施結果（commit `92b3a20` ／ `docs/DEVELOPMENT_STANDARD.md` 1 件・107 insertions / 2 deletions）**
+
+| # | 実施内容 |
+|---|---|
+| 1 | **§10.2 / §10.3 を正規台帳として定義**（「本表に存在しない資産は当該状態ではない」／未確定・確認未完了は §10.5 で公告） |
+| 2 | **`Persona runtime connection` を §10.3 の Future Expansion 資産として登録**（canonical field `module.persona` ではない旨を行内明記） |
+| 3 | **§10.3 F5 の適用範囲を明確化**（canonical field の必須性を免除する条件ではない。F5 の意味は変更していない） |
+| 4 | **§10.5 Lifecycle Classification Pending を新設**（第 6 の Lifecycle State ではない／Future Expansion・Legacy の下位分類ではない／governance 上の状態である） |
+| 5 | **GG-1 / GG-3 を §10.5 へ Pending 登録**（Lifecycle State は確定していない） |
+| 6 | §10.1 に「ファイル内の状態表示と正規台帳の関係」を追加（自己表示単独では確定しない／正規台帳への登録で確定する） |
+
+P-3b では Experimental 資産の台帳不在および旧体系 16 ファイルの状態未表示について、**判断・登録・修正のいずれも行っていない。**
 
 ### 改訂完了条件
 
@@ -318,8 +331,9 @@ Lifecycle Classification Pending は、
 | **P-2（`docs/feature-glossary.md` 整合 ＝ ⑥）** | **完了**（commit `10cd103`） |
 | **P-4（F-4b）** | **完了**（commit `54dda6e`）。検証結果は §3「実施結果」 |
 | **P-3a（2 軸の確立 ＝ ③ ＋ §10.1 明確化）** | **完了**（commit `1963c72`）。`JSON_STANDARD` JS-00 に Canonical Requirement Class と 2 軸の直交性を定義／`DEVELOPMENT_STANDARD` §10.1 に「Validator・必須ゲートの対象か」列の適用範囲注記を追加 |
+| **P-3b（Lifecycle 正規台帳化 ＝ ④）** | **完了**（commit `92b3a20` `docs(standard): define lifecycle ledgers as authoritative and add classification pending`）。実施内容は §2.1「P-3b 実施結果」 |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
-| §2 の ④（残: §10.3 F5 本文 / 正規台帳化 / 登録） / ⑤ / ⑦ / ⑧ / ⑨ / ⑪（＝ P-3b〜P-3d） | **未着手** |
+| §2 の ⑤ / ⑦ / ⑧ / ⑨ / ⑪（＝ P-3c / P-3d） | **未着手** |
 | F-4b | **完了**（§3「実施結果」）。`MISSING_PERSONA` 0 件 ／ warning 20 → 18 |
 | `MISSING_PERSONA` 昇格 | **未着手**（開始条件 1「§2 の文書改訂完了」が未充足） |
 | GG-1 / GG-3 | Lifecycle Classification Pending へ記録予定（§6.2）。**Lifecycle State は確定しない** |
