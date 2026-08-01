@@ -184,15 +184,17 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 |---|---|
 | `prompts/PROJECT_CONTEXT.md` | 新規セッション開始時に最初に読む。現在のフェーズ・進捗・プロジェクト概要 |
 | `prompts/RULES.md` | 横断ルール辞書。禁止事項・ERROR/PENDING/CHECK定義・型変換表・matchPolicy変更ルール等 |
-| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-11） |
-| `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」（フィールド定義・必須/任意/条件付き必須の分類） |
+| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-16。DP-06 / DP-14 は欠番） |
+| `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」。**Canonical Requirement Class（JS-A〜JS-E）の正本**。Lifecycle State との直交性は JS-00 |
 | `docs/OPEN_DESIGN_QUESTIONS.md` | まだ決めていないこと（保留事項と判断タイミング） |
 | `docs/VALIDATOR_STANDARD.md` | Validatorが何を保証し、何を保証しないか。errorCode一覧 |
+| `docs/PERSONA_PROJECT_PRINCIPLE.md`（**Core**） | Persona Project の設計思想・三段階の開発順序・判断規則の正本。`module.persona` の位置づけを判断するとき（**毎回読む**） |
+| `docs/PERSONA_PROJECT_APPENDIX.md`（**Appendix**） | Core の判断を支える実測値・詳細な反証・再測定手順（**判断の根拠を確認したいときのみ**） |
 | `docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` | 検索単位・SOAP主語・製品バリエーション分離原則（DP-14候補）。持続型製剤・BF・容量違い等の派生製剤をどう扱うか |
 | `docs/IMPLEMENTATION_CHECKLIST.md` | 実装後に毎回行う検証チェックリスト・Runtime/実機横断確認 |
 | `docs/TEAM_CHARTER.md` | Human / ChatGPT / Claude の役割分担 |
 | `docs/BOOTSTRAP_STANDARD.md` / `docs/P1_STANDARD.md` 〜 `docs/P5_STANDARD.md` | 旧体系（P0-A〜P5）各工程の設計意図（「なぜこの工程はこう設計されているか」） |
-| `docs/feature-glossary.md` | Rapid / Express / NLP等、UI機能用語の定義 |
+| `docs/feature-glossary.md` | Rapid / Express / NLP等、UI機能用語の定義。**Persona という語が指す 3 概念の区別**もここ |
 | `prompts/vNext/HANDOFF.md` | vNext体系の新規チャット引き継ぎ文書。設計思想・完了済みモジュール一覧・技術的負債 |
 | `prompts/vNext/STARTUP_PROMPT.md` | vNext新規チャット起動プロンプトの正本（コピペ用） |
 | `prompts/vNext/AUTORUN.md` | PN3A〜PN8自動連続実行の制御ルール・MUST_STOP条件 |

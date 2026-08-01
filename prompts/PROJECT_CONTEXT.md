@@ -264,11 +264,25 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 | **ADDON** | S/A/P への追加文操作 | P closing の前に挿入。closing は最後に1回のみ残す |
 | **Express** | 中央パネル高速薬剤選択フロー | |
 | **NLP生成** | 自然言語入力 → シナリオ推定（将来機能） | 現在UI未接続 |
-| **Persona** | 文体変換レイヤー（丁寧/やさしい/簡潔など） | 医療内容を変更しない |
+| **Persona** | **1 つの語で 3 つの別概念を指す**（下記参照） | 混同禁止。正本は `docs/PERSONA_PROJECT_PRINCIPLE.md`（Core） |
 | **Structured** | SStructured/AStructured/PStructured | 全既存モジュールに存在するがruntime未接続 |
 | **bridge原稿** | canonical build の正本となる指導文草稿 | |
 | **Model JSON** | 新規モジュールの構造テンプレート | P0-A の latest_model_json |
 | **canonical JSON** | data/modules/ に格納される完成済みJSON | |
+
+### Persona の 3 概念（最小限の区別）
+
+| 概念 | 実体 |
+|---|---|
+| ① bridge 本文そのものの文体 | PN1 の本文凍結と PN7 item I で保護される |
+| ② Runtime 文体変換 | `lib/applyPersona.ts` / `lib/personaGuard.ts`。稼働中だが**最終仕様ではない** |
+| ③ module JSON の `persona` フィールド | canonical field。Canonical Requirement は JS-A（全 module 必須） |
+
+**②と③は別物である。** 用語定義の詳細は `docs/feature-glossary.md` §Persona を参照する。
+
+> **Persona に関する設計判断・時間軸・判断規則の正本は `docs/PERSONA_PROJECT_PRINCIPLE.md`（Core）である。**
+> 実測値・詳細な反証は `docs/PERSONA_PROJECT_APPENDIX.md`（Appendix）。
+> **本ファイルは Core の内容を複製しない。** persona に関する判断が必要になったら Core を読むこと。
 
 ---
 
