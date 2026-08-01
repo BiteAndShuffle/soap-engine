@@ -50,7 +50,7 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | ③ | `docs/JSON_STANDARD.md` | JS-00 へ Canonical Requirement Class の名称と Lifecycle State との独立性を追加 | 未着手 |
 | ④ | `docs/DEVELOPMENT_STANDARD.md` §10 | F5 の明確化改訂 ／ §10.2・§10.3 の正規台帳化 ／ `Persona runtime connection` の登録 | 未着手 |
 | ⑤ | `docs/DEVELOPMENT_STANDARD.md` §7 | Documentation Map へ Core / Appendix を追加（F-5 の DP 範囲修正を同梱） | 未着手 |
-| ⑥ | `docs/feature-glossary.md` | 概念③の 2 軸表記化 ／ L94-96 の撤回 | 未着手 |
+| ⑥ | `docs/feature-glossary.md` | **主変更**: 概念③の Canonical Requirement / Lifecycle State 2 軸化 ／ 旧 Q1 適用記述と「Phase 2 まで均一化しない」の撤回<br>**付随する事実訂正**: 概念②の現行 `PERSONA_PROFILES` を 4 種へ（`lib/applyPersona.ts` の現行実装事実への追随。**Persona Project の将来人格数・軸・最終仕様を確定する変更ではない**） | **完了**（P-2） |
 | ⑦ | `docs/VALIDATOR_STANDARD.md` §5 | 昇格根拠を Canonical Requirement 由来へ差し替え | 未着手 |
 | ⑧ | `prompts/vNext/PN7-Cross-Reference-Audit.md` item R | 判定根拠を F5 から JS-A へ付け替え | 未着手 |
 | ⑨ | `lib/types.ts` persona JSDoc | 2 軸表記へ改訂（**型定義そのものは変更しない**） | 未着手 |
@@ -77,7 +77,7 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | # | 条件 | 状態 |
 |---|---|---|
 | 1 | Core が正本として配置されている | **充足**（§2 の ①） |
-| 2 | `docs/feature-glossary.md` L94-96（「Phase 2 の設計確定まで均一化は行わない」）が撤回されている | **未充足**（§2 の ⑥） |
+| 2 | `docs/feature-glossary.md` L94-96（「Phase 2 の設計確定まで均一化は行わない」）が撤回されている | **充足**（§2 の ⑥ 完了 / P-2） |
 | 3 | 補完値の出典が `prompts/vNext/PN5-Non-Scenario.md` の fallback 既定値であることを確認した | **充足**（Appendix §5.3） |
 | 4 | 対象 2 module の bridge に persona 構造の記載がないことを再確認した | **充足**（Appendix §4.4） |
 
@@ -271,19 +271,21 @@ Lifecycle Classification Pending は、
 
 ---
 
-## 7. 作業状態（2026-08-01 時点 / P-0 実施時）
+## 7. 作業状態（2026-08-01 時点 / P-2 実施時）
 
 | 項目 | 状態 |
 |---|---|
 | Document Unit 1（Core / DP-16） | **完了**（commit `7fce221`） |
 | 文書分割（Core / Appendix / 実行記録） | **完了**（commit `7fce221`） |
-| **P-0（Owner Decision の記録）** | **本記録の §3 実行順序 / §5 GG-3 / §6.0〜§6.3 が該当** |
+| **P-0（Owner Decision の記録）** | **完了**（commit `b8511e0`）。本記録の §3 実行順序 / §5 GG-3 / §6.0〜§6.3 が該当 |
+| **P-1（MEMORY 整合 ＝ ⑫）** | **完了**（Repository 外のため commit なし） |
+| **P-2（`docs/feature-glossary.md` 整合 ＝ ⑥）** | **完了**（commit 待ち） |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
-| §2 の ③〜⑨ / ⑪ / ⑫ | 未着手 |
-| F-4b | 未着手（⑥ 完了直後に先行実施 → §3「実行順序」） |
+| §2 の ③ / ④ / ⑤ / ⑦ / ⑧ / ⑨ / ⑪ | 未着手 |
+| F-4b | **開始条件 4 件すべて充足**（⑥ 完了により条件 2 が充足）。次に実施 → §3「実行順序」 |
 | `MISSING_PERSONA` 昇格 | 未着手 |
 | GG-1 / GG-3 | Lifecycle Classification Pending へ記録予定（§6.2）。**Lifecycle State は確定しない** |
 | GG-2 / PP-D-1 | 未着手（本作業の対象外） |
-| commit / push | **P-0 時点で未実施** |
+| push | **未実施**（`7fce221` / `b8511e0` ともに remote 未反映） |
 
 **本記録の凍結時、§5 の未処理事項は本記録とともに凍結してはならない。** 別管理へ移す必要がある。移動先・管理方法は本記録では決めない。

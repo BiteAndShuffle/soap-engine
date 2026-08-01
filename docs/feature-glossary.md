@@ -82,18 +82,51 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 | 概念 | 実体 | 状態 |
 |---|---|---|
 | ① bridge本文そのものの文体 | PN1 の本文凍結宣言と PN7 item I（本文凍結照合）で保護される | 稼働中 |
-| ② Runtime 文体変換 | `lib/applyPersona.ts` / `lib/personaGuard.ts`。`PERSONA_PROFILES`（polite / gentle / concise の軸重み）による表示直前の変換。**Phase 1 で実稼働中** | 稼働中 |
-| ③ module JSON の `persona` フィールド | top-level `persona.defaultStyle` / `availableStyles` / `styleProfiles`。**Phase 2 で Runtime 接続予定の予約枠。現在どのコードからも読まれていない** | Future Expansion |
+| ② Runtime 文体変換 | `lib/applyPersona.ts` / `lib/personaGuard.ts`。`PERSONA_PROFILES`（polite / gentle / concise / plain の軸重み）による表示直前の変換。**Phase 1 で実稼働中** | 稼働中 |
+| ③ module JSON の `persona` フィールド | top-level `persona.defaultStyle` / `availableStyles` / `styleProfiles`。**canonical field である。現在どのコードからも読まれていない** | **2 軸で位置づける（下記）** |
 
 ②と③は別物である。`lib/applyPersona.ts` は module JSON の `persona` フィールドを一切参照せず、
 自身が定義する `PERSONA_PROFILES` のみを使用する。
 
-**状態（③について）**: Future Expansion（再判断時期: Phase 2）。
-`docs/DESIGN_PRINCIPLES.md` DP-13 / `docs/DEVELOPMENT_STANDARD.md` §10 参照。
+### 概念③ の位置づけ — Canonical Requirement と Lifecycle State の 2 軸
 
-**品質条件 Q1（配置の一貫性）未充足の記録**: 現在 `data/modules/` の 35 モジュール中 33 モジュールが
-`persona` フィールドを保持し、2 モジュール（`dm_insulin_intermediate` / `dm_insulin_regular`）は
-未保持である。これは段階的実装の途中段階であり、Phase 2 の設計確定まで均一化は行わない。
+`module.persona` は **canonical field** である。次の 2 軸で位置づけられ、**両者は直交する。一方が他方を決定しない。**
+
+| 軸 | 値 | 正本 |
+|---|---|---|
+| **Canonical Requirement** | **全 module 必須** | `docs/JSON_STANDARD.md` **JS-A** |
+| **Lifecycle State** | **Persona runtime connection は未接続。将来接続予定** | `docs/DEVELOPMENT_STANDARD.md` §10 / `docs/DESIGN_PRINCIPLES.md` DP-13 |
+
+Lifecycle 台帳へ登録する対象は、canonical field である `module.persona` ではなく、将来機能の側である
+「**Persona runtime connection**」である。
+
+> **runtime 未接続であることは、canonical field の欠落を許容する根拠にならない。**
+> canonical field の必須性を決めるのは Canonical Requirement（JS-A）であり、Lifecycle State ではない。
+
+現在の `module.persona` は、**将来の Persona 接続点が全 module に存在することを保証する予約枠**であり、
+値は `prompts/vNext/PN5-Non-Scenario.md` の fallback 既定値である。
+**現在の枠形状を、最終的な人格別固定文章の格納構造として確定するものではない**（加算 / 移行 / 置換の
+いずれになるかは第3段階で判断する）。
+
+設計思想・時間軸・判断規則の正本は `docs/PERSONA_PROJECT_PRINCIPLE.md`（Core）である。
+
+### 旧記述の撤回（2026-08-01）
+
+本節にはかつて、**2 module（`dm_insulin_intermediate` / `dm_insulin_regular`）の `persona` 欠落を
+「品質条件 Q1（配置の一貫性）未充足の記録」として扱い、均一化を Phase 2 の設計確定まで行わないとする
+記述**（旧 L94-96）が存在した。**この記述は撤回した。**
+
+**撤回理由は方針の変更ではなく、次の構造上の誤りによる。**
+
+| # | 誤り |
+|---|---|
+| 1 | **canonical field へ Lifecycle の品質条件 Q1 を適用していた。** Q1（`docs/DEVELOPMENT_STANDARD.md` §10.3）は Future Expansion 資産に対する品質条件であり、canonical field は適用対象ではない |
+| 2 | **Lifecycle State と Canonical Requirement を混同していた。** runtime 未接続という Lifecycle 上の事実から、canonical 構造としての充足を先送りしてよいという結論を導いていた |
+| 3 | **現行 JS-A では `persona` は全 module 必須である。** 欠落は canonical 完成条件の未充足であり、均一化を先送りする根拠がない |
+
+欠落している 2 module については、**F-4b で現行 `prompts/vNext/PN5-Non-Scenario.md` の規則を
+遡及適用して補完する予定である。** 両 module の欠落原因は工程逸脱ではなく、PN5 に persona 規則が
+成立する前に生成されたことによる**規則導入境界**である。
 
 ---
 
@@ -106,4 +139,4 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 | Express | 中央パネル | 呼ぶ（シナリオ確定時） | 稼働中 |
 | NLP生成 | — | 呼ばない（NLP出力を直接セット） | Future Expansion |
 | Persona（Runtime変換） | Topbar / lib/applyPersona.ts | 呼ばない（表示直前の変換） | 稼働中 |
-| Persona（module JSON フィールド） | data/modules/*.json top-level | — | Future Expansion |
+| Persona（module JSON フィールド） | data/modules/*.json top-level | — | **Canonical Requirement: JS-A 全 module 必須 ／ Lifecycle: runtime 未接続** |
