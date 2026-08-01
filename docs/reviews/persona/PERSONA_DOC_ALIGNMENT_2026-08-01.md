@@ -56,7 +56,19 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | ⑨ | `lib/types.ts` persona JSDoc | 2 軸表記へ改訂（**型定義そのものは変更しない**） | **完了**（P-3c / commit `99db5a0`） |
 | ⑩ | `prompts/vNext/STARTUP_PROMPT.md` | **OD-R4 により実装方式が置換され、OD-R4 の下位設計工程へ責務移管された**（§6.1） | **責務移管（本記録上は完了扱い）** |
 | ⑪ | `prompts/PROJECT_CONTEXT.md` §5 | 3 概念の最小限の区別と Core へのポインタ | **完了**（P-3d / commit `206e86a`） |
-| ⑫ | MEMORY（Repository 外） | 矛盾記述の訂正とポインタ化 | 未着手 |
+| ⑫ | MEMORY（Repository 外） | 矛盾記述の訂正とポインタ化 | **完了**（P-1）。**Repository 外のため commit hash は存在しない** |
+
+**§2 完了判定（2026-08-01 / P-5）**
+
+**§2 の 12 対象はすべて完了した。**
+
+| 区分 | 対象 | 判定根拠 |
+|---|---|---|
+| commit により完了 | ① / ①' / ①'' / ② / ③ / ④ / ⑤ / ⑥ / ⑦ / ⑧ / ⑨ / ⑪ | 各行の commit hash |
+| **Repository 外で完了** | ⑫ | P-1（MEMORY）。**commit hash は存在しない** |
+| **責務移管により完了扱い** | ⑩ | **OD-R4 への責務移管**（§6.1）。実装方式は OD-R4 下位設計工程が担う |
+
+⑩ の扱いは §6.1 のとおり維持する。**削除も未決への差し戻しも行わない。**
 
 ### 2.1 P-3b への引き継ぎ事項（節番号の所在・2026-08-01 実測）
 
@@ -210,10 +222,12 @@ P-3b では Experimental 資産の台帳不在および旧体系 16 ファイル
 
 | # | 条件 | 状態 |
 |---|---|---|
-| 1 | §2 の文書改訂（正本文書と関連文書の整合）が完了している | **未充足** |
-| 2 | F-4b が完了している | **未充足** |
-| 3 | 全 module で `MISSING_PERSONA` の検出が 0 件である | **未充足** |
+| 1 | §2 の文書改訂（正本文書と関連文書の整合）が完了している | **充足**（P-5 判定 → §2「§2 完了判定」） |
+| 2 | F-4b が完了している | **充足**（P-4 / commit `54dda6e`） |
+| 3 | 全 module で `MISSING_PERSONA` の検出が 0 件である | **充足**（P-5 実測: **Repository に現在登録されている canonical module 全 35 件**に `validateModule` を適用し検出 0 件） |
 | 4 | `tests/moduleValidator.test.ts` の既存テストを期待値更新する方針が確定している（削除・skip しない） | **充足**（OD-P13） |
+
+> **開始条件 4 件すべてが充足した（2026-08-01 / P-5 実測）。** 条件文は変更していない。状態欄のみ実測結果へ追随させた。
 
 ### 手順
 
@@ -242,6 +256,38 @@ P-3b では Experimental 資産の台帳不在および旧体系 16 ファイル
 | **skip / 期待値緩和を禁止** | 予定されていた状態遷移をそのまま反映する方が追跡しやすい |
 | **期待値を更新** | `isWarning: false` を期待する形へ |
 | **コメントを更新** | 旧「F-4b 完了後に ERROR へ昇格予定」→ 新「F-4b 完了後、canonical 完成条件の欠落として ERROR へ昇格済み」 |
+
+### 昇格対象の整理（2026-08-01 / P-5 実測）
+
+> **本節は実測に基づく整理であり、上記の開始条件・手順を変更するものではない。**
+> **severity 昇格そのものは P-5 では実施しない。**
+
+**A. 変更対象ファイル（現時点で 4 件）**
+
+| # | ファイル |
+|---|---|
+| 1 | `lib/moduleValidator.ts` |
+| 2 | `tests/moduleValidator.test.ts` |
+| 3 | `docs/VALIDATOR_STANDARD.md` |
+| 4 | `docs/reviews/persona/PERSONA_DOC_ALIGNMENT_2026-08-01.md`（本記録） |
+
+**B. 変更内容**
+
+| # | 内容 |
+|---|---|
+| 1 | `MISSING_PERSONA` の `isWarning` を `true` から `false` へ変更する |
+| 2 | 現在 WARN としている理由・古い「2 module 未補完」コメントを現況へ追随させる |
+| 3 | 既存テストは**削除・skip・差し替えをせず**、`isWarning: false` の期待値へ更新する（OD-P13） |
+| 4 | `docs/VALIDATOR_STANDARD.md` Appendix の `MISSING_PERSONA` を WARN から ERROR へ更新する |
+| 5 | 同 §5 の「現在 WARN である理由」を昇格後の状態へ更新する |
+| 6 | 壊した fixture で `MISSING_PERSONA` / `isWarning: false` / 対象フィールドが `persona` であることを確認する |
+| 7 | `persona` が存在する fixture では検出されないことを確認する |
+| 8 | 本記録へ severity 昇格の実施結果・検証結果・commit を記録する |
+
+**注意事項**
+
+- `docs/VALIDATOR_STANDARD.md` **§3-A / §3-B の本文チェック表への収載は、check 番号の採番を伴うため自己判断で行わない**（同文書が「番号体系の扱いが確定していない」と明記している）
+- **昇格対象ファイルは現時点で 4 件**である。実測により増減した場合は自己判断で変更せず報告する
 
 > **手順を飛ばさないこと。** 特に手順 1 を飛ばして手順 4 を実行すると、`prompts/vNext/PN7-Cross-Reference-Audit.md` item R および `docs/feature-glossary.md` と実装が矛盾する。
 
@@ -354,7 +400,7 @@ Lifecycle Classification Pending は、
 
 ---
 
-## 7. 作業状態（2026-08-01 時点 / P-4 実施時）
+## 7. 作業状態（2026-08-01 時点 / P-5 実施時）
 
 | 項目 | 状態 |
 |---|---|
@@ -368,11 +414,15 @@ Lifecycle Classification Pending は、
 | **P-3b（Lifecycle 正規台帳化 ＝ ④）** | **完了**（commit `92b3a20` `docs(standard): define lifecycle ledgers as authoritative and add classification pending`）。実施内容は §2.1「P-3b 実施結果」 |
 | **P-3c（参照側の追随 ＝ ⑦ / ⑧ / ⑨）** | **完了**（commit `99db5a0` `docs(audit): rebase persona checks on canonical requirement`）。実施内容は §2.2「P-3c 実施結果」 |
 | **P-3d（到達経路の確保 ＝ ⑤ / ⑪）** | **完了**（commit `206e86a` `docs(context): update documentation map after persona architecture alignment`）。実施内容は §2.3「P-3d 実施結果」 |
+| **P-5（§2 完了判定 ＋ 昇格前の最終依存確認）** | **完了**（commit 待ち）。判定は §2「§2 完了判定」／ §4 開始条件の状態欄 |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
+| **§2 全体（12 対象）** | **完了**（§2「§2 完了判定」） |
 | F-4b | **完了**（§3「実施結果」）。`MISSING_PERSONA` 0 件 ／ warning 20 → 18 |
-| `MISSING_PERSONA` 昇格 | **未着手**（開始条件 1「§2 の文書改訂完了」が未充足） |
-| GG-1 / GG-3 | Lifecycle Classification Pending へ記録予定（§6.2）。**Lifecycle State は確定しない** |
+| **`MISSING_PERSONA` 昇格** | **未着手。開始条件 4 件はすべて充足済み**（§4）。次工程 |
+| GG-1 / GG-3 | **§10.5 Lifecycle Classification Pending へ登録済み**（P-3b / commit `92b3a20`）。**Lifecycle State は確定していない** |
 | GG-2 / PP-D-1 | 未着手（本作業の対象外） |
-| push | **未実施**（`7fce221` / `b8511e0` / `10cd103` / `54dda6e` はいずれも remote 未反映） |
+| push | **未実施**（local は remote に対して **ahead 13**。`7fce221` 以降の全 commit が remote 未反映） |
+
+**次工程は `MISSING_PERSONA` の severity 昇格である。** Repository 全体の別トラック（GG-2 / OD-R2 / OD-R3 / OD-R5 / OD-R7 / OD-R8 / Experimental 台帳・旧体系の状態未表示）は、**本工程の残作業に含めない。**
 
 **本記録の凍結時、§5 の未処理事項は本記録とともに凍結してはならない。** 別管理へ移す必要がある。移動先・管理方法は本記録では決めない。
