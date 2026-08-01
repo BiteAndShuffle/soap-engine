@@ -276,6 +276,16 @@ Domain Complete は「個々のモジュールがbuildを通る」ことでは�
 状態は必ずファイル内またはスキーマ定義に明示する。状態が未表示の資産は、次のセッションから
 Current Standard と区別できない。
 
+**ファイル内の状態表示と正規台帳の関係**
+
+ファイル内の状態表示は必須だが、**それ単独では Lifecycle State を確定しない。**
+**正式な Lifecycle State は、§10.2 / §10.3 の正規台帳へ登録されることによって確定する。**
+
+- 個別ファイルが自己表示している状態と、正規台帳の登録状況が食い違う場合、**正規台帳が優先する**
+- 正規台帳へ未登録の資産は、自己表示にかかわらず当該 Lifecycle State として確定していない。
+  分類または成立条件の確認が未完了である場合は §10.5 で公告する
+- 自己表示は、確定した状態を各ファイルから判別可能にするための表示であり、状態を決定する手段ではない
+
 **「Validator・必須ゲートの対象か」列の適用範囲（明確化）**
 
 本列は、**設計資産が Lifecycle 上どの段階にあるかを理由として Validator / 監査工程を FAIL させて
@@ -312,6 +322,13 @@ Canonical Requirement Class を本節へ再定義しない（正本は `docs/JSO
 
 #### 現在の Legacy 資産
 
+**本表は Legacy 状態に属する資産の正規台帳である。** Legacy と確定した資産は漏れなく本表へ登録する。
+**本表に存在しない資産は Legacy ではない。** Lifecycle State が未確定、または L1〜L7 の確認が
+未完了の資産は本表へ登録せず、§10.5 Lifecycle Classification Pending で公告する。
+
+登録単位は**機能 / 経路 / 実装資産**であり、canonical field 単体は本表の登録対象ではない
+（canonical field の必須性は `docs/JSON_STANDARD.md` JS-A〜JS-E が決定する → §10.1 の注記）。
+
 | 資産 | L1 必須参照 | L2 設計意図の移管先 | L7 承認 |
 |---|---|---|---|
 | `app/components/LockGate.tsx` | ゼロ（`app/` / `lib/` から import 元 0 件） | `middleware.ts`（HTTPリクエストレベルの Basic 認証ゲート。commit 1517800 で本ファイルの `app/layout.tsx` からの接続除去と同時に導入） | Owner 承認済み |
@@ -328,7 +345,23 @@ L3〜L6 の詳細は `app/components/LockGate.tsx` 冒頭コメントを参照�
 | F2 | 現在 Runtime 未接続であることが明記されている |
 | F3 | 実装予定 Phase または再判断時期が明記されている |
 | F4 | 現行 Runtime の必須条件になっていない |
-| F5 | Validator / 監査工程の FAIL 条件になっていない |
+| F5 | Validator / 監査工程の FAIL 条件になっていない（適用範囲は下記注記） |
+
+**F5 の適用範囲（明確化）**
+
+F5 は、**当該資産が Future Expansion であること（＝ runtime へ未接続であること）自体を理由として
+Validator / 監査工程を FAIL させていないこと**を求める条件である。**canonical field の必須性を
+免除する条件ではない。**
+
+- **canonical field の必須性は Canonical Requirement（`docs/JSON_STANDARD.md` JS-A〜JS-E）が
+  決定する。** JS-A（全 module 必須）の field が欠落している場合、それは Canonical Requirement の
+  未充足であり、**F5 を根拠に FAIL 対象から除外してはならない**
+- Lifecycle State と Canonical Requirement は**直交する別軸**である（§10.1 の注記 /
+  `docs/JSON_STANDARD.md` JS-00）
+- 本節の登録単位は**機能 / 経路 / 実装資産**であり、**canonical field 単体は登録対象ではない**。
+  ある canonical field の runtime 接続が将来機能である場合、登録するのは **その接続経路の側**である
+
+本注記は誤読防止のための適用範囲の明確化であり、F5 の意味を変更するものではない。
 
 **品質条件（Q1・未充足でも成立を妨げない）**
 
@@ -341,11 +374,23 @@ Future Expansion として扱わない。
 
 #### 現在の Future Expansion 資産
 
+**本表は Future Expansion 状態に属する資産の正規台帳である。** Future Expansion と確定した資産は
+漏れなく本表へ登録する。**本表に存在しない資産は Future Expansion ではない。**
+Lifecycle State が未確定、または F1〜F5 の確認が未完了の資産は本表へ登録せず、
+§10.5 Lifecycle Classification Pending で公告する。
+
 | 資産 | F1 目的・用途 | F3 再判断条件 |
 |---|---|---|
 | `scripts/build-static.js`（`npm run build:static` / `EXPORT_STATIC` 経路） | 静的 export による配布（SaaS 以外の配布形態向け） | 次のいずれかの発生時: ① 静的ビルドを配布方式として正式採用する ② 個人利用向け静的ビルドの公開・配布工程を実装する ③ SaaS 以外の配布形態を正式な運用対象にする ④ Next.js またはデプロイ構成の変更により EXPORT_STATIC 経路の再評価が必要になる |
+| **`Persona runtime connection`** — 人格別固定文章を runtime で取得・切替・表示する経路。**canonical field `module.persona` そのものではない**（canonical field は登録対象外。上記 F5 注記参照） | Persona Project の最終到達形において、レビュー済みの人格別固定文章をアプリが表示するための runtime 経路。第3段階で設計・実装する（正本: `docs/PERSONA_PROJECT_PRINCIPLE.md`） | Persona Project 第3段階の着手条件が充足した時点（同 §7.1）。第2段階（Static 版の店舗実運用検証）の完了が前提 |
 
-F2・F4・F5 の確認記録および詳細は `scripts/build-static.js` 冒頭 JSDoc を参照。
+F2・F4・F5 の確認記録および詳細は、`scripts/build-static.js` については同ファイル冒頭 JSDoc、
+`Persona runtime connection` については `docs/PERSONA_PROJECT_PRINCIPLE.md` を参照。
+
+> **`Persona runtime connection` の F5 について**: canonical field `module.persona` の欠落を検出する
+> `MISSING_PERSONA`（`lib/moduleValidator.ts`）は、**Canonical Requirement（JS-A）を検査するもので
+> あり、本経路（runtime 接続）を FAIL 条件にしているのではない。** 両者は直交する別軸である
+> （上記 F5 注記 / §10.1 の注記 / `docs/JSON_STANDARD.md` JS-00）。
 
 ### 10.4 体系移行完了条件（M1〜M8）
 
@@ -361,3 +406,63 @@ F2・F4・F5 の確認記録および詳細は `scripts/build-static.js` 冒頭 
 | M8 | 移行完了記録 |
 
 新体系を正本と宣言する（M1）だけでは移行完了とみなさない。M1〜M8 の全充足をもって移行完了とする。
+
+### 10.5 Lifecycle Classification Pending（Lifecycle 分類保留台帳）
+
+**本節は Lifecycle State ではない。** 分類、または正式登録に必要な成立条件の確認が未完了であることを
+管理する **governance 上の状態**である。
+
+| 本節が何でないか |
+|---|
+| **第 6 の Lifecycle State ではない**（Lifecycle State は §10.1 の 5 状態のみである） |
+| **Future Expansion の下位分類ではない** |
+| **Legacy の下位分類ではない** |
+
+#### 位置づけ
+
+§10.2 / §10.3 は、**それぞれの Lifecycle State に属する**資産の**正規台帳**である
+（正規台帳化の対象は Legacy と Future Expansion の 2 状態である。他の状態の台帳化については
+本節では定めない）。一方、次のいずれかに該当する資産は、どの正規台帳へも登録できない。
+
+- Lifecycle State が**未確定**である（どの状態に属するかが決まっていない）
+- 状態の候補はあるが、**正式登録に必要な成立条件の確認が未完了**である
+  （Legacy なら L1〜L7、Future Expansion なら F1〜F5）
+
+これらを未登録のまま放置すると、正規台帳の網羅性が損なわれ、かつ当該資産は
+「状態が未表示であるため次のセッションから Current Standard と区別できない」状態（§10.1）に陥る。
+**本節はこの中間状態を明示的に公告するための台帳である**
+（`docs/DESIGN_PRINCIPLES.md` DP-15 明示的不確定性の原則）。
+
+> **本節への登録は Lifecycle State を決定しない。** 記録するのは「未確定である」という事実のみである。
+
+**canonical field の掲載について**
+
+> **canonical field を本表へ掲載することは、当該 field を Lifecycle 資産として登録することを
+> 意味しない。**
+
+本節は Lifecycle 台帳ではなく、分類・成立条件確認が未完了であることを管理する governance 上の
+保留領域である。Lifecycle 台帳（§10.2 / §10.3）の登録単位は**機能 / 経路 / 実装資産**であり、
+**canonical field 単体は登録対象ではない**。この原則は、canonical field を本節へ掲載することに
+よって変更されない。
+
+掲載の目的は、**当該 field をめぐる位置づけが未確定であるという事実の公告に限られる。**
+canonical field の必須性は Canonical Requirement（`docs/JSON_STANDARD.md` JS-A〜JS-E）が決定し、
+本節はこれに関与しない。
+
+#### 現在の Classification Pending 資産
+
+| ID | 対象 | 保留理由 | 解消条件 |
+|---|---|---|---|
+| **GG-1** | NLP 経路（`lib/scenarioSelector.ts` / `lib/createSoapFromInput.ts` / `lib/soapComposer.ts` / `app/components/NlpInputPanel.tsx` — UI 未接続） | `docs/feature-glossary.md` の NLP生成 節が Future Expansion を自称しているが、F1〜F5 の確認・整理が未完了であり §10.3 へ登録できない | F1〜F5 の充足を確認して §10.3 へ登録する、または別状態を確定する |
+| **GG-3** | `composition.sMergePolicy`（`prompts/vNext/PN7-Cross-Reference-Audit.md` item S） | 同 item S が「Owner Decision Required であり Future Expansion / Legacy いずれとも確定していない」として FAIL 対象外に置いている。位置づけが未確定であり、いずれの正規台帳へも登録できない | Owner が位置づけを決定する（canonical field としての扱いを含む） |
+
+**本表への登録をもって、GG-1 / GG-3 の Lifecycle State を確定したものとして扱ってはならない。**
+
+#### 遷移
+
+```
+Classification Pending → §10.2 Legacy / §10.3 Future Expansion / Archived
+```
+
+遷移には、各状態の成立条件（Legacy: L1〜L7 ／ Future Expansion: F1〜F5）の充足に加え、
+状態遷移に対する **Owner 承認**を要する（§10.2 L7 と同じ規律）。**本台帳に登録したまま放置しない。**
