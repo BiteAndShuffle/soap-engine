@@ -47,8 +47,8 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | ①' | `docs/PERSONA_PROJECT_APPENDIX.md` | 新規作成（Appendix） | **完了** |
 | ①'' | `docs/reviews/persona/PERSONA_DOC_ALIGNMENT_2026-08-01.md` | 新規作成（本記録） | **完了** |
 | ② | `docs/DESIGN_PRINCIPLES.md` | DP-16 新設 | **完了** |
-| ③ | `docs/JSON_STANDARD.md` | JS-00 へ Canonical Requirement Class の名称と Lifecycle State との独立性を追加 | 未着手 |
-| ④ | `docs/DEVELOPMENT_STANDARD.md` §10 | F5 の明確化改訂 ／ §10.2・§10.3 の正規台帳化 ／ `Persona runtime connection` の登録 | 未着手 |
+| ③ | `docs/JSON_STANDARD.md` | JS-00 へ Canonical Requirement Class の名称と Lifecycle State との独立性を追加 | **完了**（P-3a） |
+| ④ | `docs/DEVELOPMENT_STANDARD.md` §10 | F5 の明確化改訂 ／ §10.2・§10.3 の正規台帳化 ／ `Persona runtime connection` の登録 | **未完**（P-3a で §10.1「Validator・必須ゲートの対象か」列の適用範囲を明確化。**§10.3 の F5 本文・正規台帳化・登録は P-3b で実施** → §2.1） |
 | ⑤ | `docs/DEVELOPMENT_STANDARD.md` §7 | Documentation Map へ Core / Appendix を追加（F-5 の DP 範囲修正を同梱） | 未着手 |
 | ⑥ | `docs/feature-glossary.md` | **主変更**: 概念③の Canonical Requirement / Lifecycle State 2 軸化 ／ 旧 Q1 適用記述と「Phase 2 まで均一化しない」の撤回<br>**付随する事実訂正**: 概念②の現行 `PERSONA_PROFILES` を 4 種へ（`lib/applyPersona.ts` の現行実装事実への追随。**Persona Project の将来人格数・軸・最終仕様を確定する変更ではない**） | **完了**（P-2） |
 | ⑦ | `docs/VALIDATOR_STANDARD.md` §5 | 昇格根拠を Canonical Requirement 由来へ差し替え | 未着手 |
@@ -57,6 +57,19 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | ⑩ | `prompts/vNext/STARTUP_PROMPT.md` | **OD-R4 により実装方式が置換され、OD-R4 の下位設計工程へ責務移管された**（§6.1） | **責務移管（本記録上は完了扱い）** |
 | ⑪ | `prompts/PROJECT_CONTEXT.md` §5 | 3 概念の最小限の区別と Core へのポインタ | 未着手 |
 | ⑫ | MEMORY（Repository 外） | 矛盾記述の訂正とポインタ化 | 未着手 |
+
+### 2.1 P-3b への引き継ぎ事項（節番号の所在・2026-08-01 実測）
+
+〔実測〕**`F5` という ID は `docs/DEVELOPMENT_STANDARD.md` §10.3（Future Expansion 成立条件 F1〜F5）に存在し、§10.1 には存在しない。**
+
+§10.1 にあるのは 5 状態テーブルの「Validator・必須ゲートの対象か」列・**Future Expansion 行**の「FAIL 条件にしてはならない」という同等の記述である（`docs/PERSONA_PROJECT_APPENDIX.md` §6.2 も PP-NP-2 の誤解起点として §10.1 のこの記述を挙げている）。
+
+| 節 | 記述 | P-3a での扱い |
+|---|---|---|
+| §10.1 Future Expansion 行 ＋ 直後の注記 | 「FAIL 条件にしてはならない」の**適用範囲** | **P-3a で明確化済み**（commit `1963c72`） |
+| §10.3 F5 本文 | 「Validator / 監査工程の FAIL 条件になっていない」 | **未着手。P-3b の対象**（§10.3 は P-3a の範囲外） |
+
+**P-3b は §10.3 を担当するため、F5 本文の明確化を同 Unit で扱うこと。** ④「F5 の明確化改訂」は、この 2 節にまたがる。
 
 ### 改訂完了条件
 
@@ -304,8 +317,9 @@ Lifecycle Classification Pending は、
 | **P-1（MEMORY 整合 ＝ ⑫）** | **完了**（Repository 外のため commit なし） |
 | **P-2（`docs/feature-glossary.md` 整合 ＝ ⑥）** | **完了**（commit `10cd103`） |
 | **P-4（F-4b）** | **完了**（commit `54dda6e`）。検証結果は §3「実施結果」 |
+| **P-3a（2 軸の確立 ＝ ③ ＋ §10.1 明確化）** | **完了**（commit `1963c72`）。`JSON_STANDARD` JS-00 に Canonical Requirement Class と 2 軸の直交性を定義／`DEVELOPMENT_STANDARD` §10.1 に「Validator・必須ゲートの対象か」列の適用範囲注記を追加 |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
-| §2 の ③ / ④ / ⑤ / ⑦ / ⑧ / ⑨ / ⑪（＝ P-3a〜P-3d） | **未着手** |
+| §2 の ④（残: §10.3 F5 本文 / 正規台帳化 / 登録） / ⑤ / ⑦ / ⑧ / ⑨ / ⑪（＝ P-3b〜P-3d） | **未着手** |
 | F-4b | **完了**（§3「実施結果」）。`MISSING_PERSONA` 0 件 ／ warning 20 → 18 |
 | `MISSING_PERSONA` 昇格 | **未着手**（開始条件 1「§2 の文書改訂完了」が未充足） |
 | GG-1 / GG-3 | Lifecycle Classification Pending へ記録予定（§6.2）。**Lifecycle State は確定しない** |
