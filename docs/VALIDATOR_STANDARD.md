@@ -168,8 +168,19 @@ profile の妥当性）には立ち入らない。persona の変換品質は §1
 P4 / 人間レビューが担う。上記「Validator に入れてよいルール」のうち、必須フィールドの
 存在確認（§1 構造の健全性）に該当する。
 
-導入時点で未充足のモジュールが 2 件存在するため WARN とした。当該データの補完完了後に
-ERROR へ昇格させることを最終到達点とする。
+**Lifecycle State と severity 判定は独立している。** `module.persona` は canonical field
+であり、その必須性は Canonical Requirement（JS-A）が決定する。一方、`Persona runtime
+connection` は Lifecycle State が Future Expansion（未接続）である将来機能であり、
+`docs/DEVELOPMENT_STANDARD.md` §10.3 に登録されている。**両者は直交する別軸であり、
+Lifecycle State が Future Expansion であることは本 check の severity を左右しない**
+（`docs/JSON_STANDARD.md` JS-00 ／ `docs/DEVELOPMENT_STANDARD.md` §10.1・§10.3 の
+「F5 の適用範囲」）。
+
+**現在 WARN である理由**: 本 check は導入時点で未充足のモジュールが存在したため WARN
+として導入された。当該データは F-4b で補完済みであり、全 module で検出 0 件となっている。
+**現在 WARN であるのは、severity 昇格工程が未実施であるという現在状態による。** 昇格の
+開始条件・手順は severity 昇格工程が管理する。ERROR への昇格を最終到達点とする方針は
+維持する。
 
 なお本 check は Appendix の errorCode 一覧にのみ収載しており、§3-A / §3-B の番号付き
 本文チェック表には未収載である。収載には check 番号の採番を要し、番号体系の扱いが

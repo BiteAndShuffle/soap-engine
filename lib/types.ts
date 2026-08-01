@@ -807,9 +807,25 @@ export interface ModuleData {
   }
   /**
    * ペルソナ設定（スタイルプロファイル）。
-   * Phase 2 で Runtime 接続予定の予約枠（Future Expansion）。現在 Runtime 未読。
+   *
+   * 本フィールドは 2 つの直交する軸で位置づけられる。一方が他方を決定しない。
+   *
+   * - Canonical Requirement: **JS-A（全 module 必須）**。canonical field としての必須性は
+   *   docs/JSON_STANDARD.md が決定する。型が optional であることと矛盾しない
+   *   （型は入力途中の状態も表現しうるのに対し、Validator は完成物を検査するため）
+   * - Lifecycle State: 将来機能「**Persona runtime connection**」が **Future Expansion（未接続）**。
+   *   docs/DEVELOPMENT_STANDARD.md §10.3 に登録済み。**canonical field 単体は Lifecycle 台帳の
+   *   登録対象ではない**
+   *
+   * runtime 未接続であることは、本 field の欠落を許容する根拠にならない（docs/JSON_STANDARD.md JS-00）。
+   *
+   * 現在の値は将来の Persona 接続枠を全 module へ通しておくための予約枠であり、
+   * **最終的な人格別固定文章の格納構造を確定するものではない**
+   * （加算 / 移行 / 置換のいずれになるかは Persona Project 第3段階で判断する）。
+   *
    * `lib/applyPersona.ts` は本フィールドを参照せず、独自の PERSONA_PROFILES を使用する。
-   * 詳細は docs/DESIGN_PRINCIPLES.md DP-13 / docs/DEVELOPMENT_STANDARD.md §10 を参照。
+   * 詳細は docs/PERSONA_PROJECT_PRINCIPLE.md / docs/JSON_STANDARD.md JS-00 /
+   * docs/DESIGN_PRINCIPLES.md DP-13 を参照。
    */
   persona?: PersonaConfig
   /** タグ語彙レジストリ（intentTags/clinicalTags 等の有効値一覧） */

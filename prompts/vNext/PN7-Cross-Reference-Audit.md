@@ -281,17 +281,33 @@ addon を追加した場合は必ずいずれかのシナリオの addonsRef.P �
 ### R. persona 存在確認
 
 ```
-persona は Future Expansion であり、docs/DEVELOPMENT_STANDARD.md §10 の F5
-（Future Expansion を Validator / 監査工程の FAIL 条件にしない）に該当する。
+module.persona は canonical field であり、docs/JSON_STANDARD.md JS-A
+（全 module 必須）が必須性を宣言している。判定根拠は Canonical Requirement である。
 
-top-level に persona フィールドが存在するかを記録する
+top-level に persona フィールドが存在するかを確認する
 （存在する場合は defaultStyle / availableStyles / styleProfiles の有無も記録する）
-欠落 → FAIL としない（記録のみ）
+欠落 → Canonical Requirement（JS-A）の未充足として扱う
 
-現状、data/modules/ の一部モジュール（dm_insulin_intermediate / dm_insulin_regular）が
-persona を持たないが、これは FAIL ではない。
+■ module.persona と Persona runtime connection の区別（混同禁止）
 
-参照: docs/DESIGN_PRINCIPLES.md DP-13 / docs/DEVELOPMENT_STANDARD.md §10
+  module.persona              = canonical field。Canonical Requirement は JS-A（全 module 必須）
+  Persona runtime connection  = 将来機能。Lifecycle State は Future Expansion（未接続）
+                                （docs/DEVELOPMENT_STANDARD.md §10.3 に登録済み）
+
+  両者は直交する別軸であり、一方が他方を決定しない
+  （docs/JSON_STANDARD.md JS-00）。
+
+■ 旧記述の撤回（2026-08-01）
+
+  本項目にはかつて「persona は Future Expansion であり §10 の F5 に該当する」
+  「欠落 → FAIL としない（記録のみ）」という記述があったが、撤回した。
+
+  撤回理由は方針変更ではなく、canonical field へ Lifecycle State（および
+  Future Expansion 資産に対する F5）を適用していたという構造上の誤りによる。
+  F5 は canonical field の必須性を免除する条件ではない
+  （docs/DEVELOPMENT_STANDARD.md §10.3「F5 の適用範囲」）。
+
+参照: docs/JSON_STANDARD.md JS-A / JS-00 ／ docs/PERSONA_PROJECT_PRINCIPLE.md
 ```
 
 ---
