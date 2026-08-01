@@ -51,9 +51,9 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | ④ | `docs/DEVELOPMENT_STANDARD.md` §10 | F5 の明確化改訂 ／ §10.2・§10.3 の正規台帳化 ／ `Persona runtime connection` の登録 | **完了**（P-3a で §10.1 の列適用範囲を明確化 → commit `1963c72`。P-3b で §10.3 F5 本文の明確化・正規台帳化・登録・§10.5 新設 → commit `92b3a20`。詳細は §2.1） |
 | ⑤ | `docs/DEVELOPMENT_STANDARD.md` §7 | Documentation Map へ Core / Appendix を追加（F-5 の DP 範囲修正を同梱） | 未着手 |
 | ⑥ | `docs/feature-glossary.md` | **主変更**: 概念③の Canonical Requirement / Lifecycle State 2 軸化 ／ 旧 Q1 適用記述と「Phase 2 まで均一化しない」の撤回<br>**付随する事実訂正**: 概念②の現行 `PERSONA_PROFILES` を 4 種へ（`lib/applyPersona.ts` の現行実装事実への追随。**Persona Project の将来人格数・軸・最終仕様を確定する変更ではない**） | **完了**（P-2） |
-| ⑦ | `docs/VALIDATOR_STANDARD.md` §5 | 昇格根拠を Canonical Requirement 由来へ差し替え | 未着手 |
-| ⑧ | `prompts/vNext/PN7-Cross-Reference-Audit.md` item R | 判定根拠を F5 から JS-A へ付け替え | 未着手 |
-| ⑨ | `lib/types.ts` persona JSDoc | 2 軸表記へ改訂（**型定義そのものは変更しない**） | 未着手 |
+| ⑦ | `docs/VALIDATOR_STANDARD.md` §5 | 昇格根拠を Canonical Requirement 由来へ差し替え | **完了**（P-3c / commit `99db5a0`） |
+| ⑧ | `prompts/vNext/PN7-Cross-Reference-Audit.md` item R | 判定根拠を F5 から JS-A へ付け替え | **完了**（P-3c / commit `99db5a0`） |
+| ⑨ | `lib/types.ts` persona JSDoc | 2 軸表記へ改訂（**型定義そのものは変更しない**） | **完了**（P-3c / commit `99db5a0`） |
 | ⑩ | `prompts/vNext/STARTUP_PROMPT.md` | **OD-R4 により実装方式が置換され、OD-R4 の下位設計工程へ責務移管された**（§6.1） | **責務移管（本記録上は完了扱い）** |
 | ⑪ | `prompts/PROJECT_CONTEXT.md` §5 | 3 概念の最小限の区別と Core へのポインタ | 未着手 |
 | ⑫ | MEMORY（Repository 外） | 矛盾記述の訂正とポインタ化 | 未着手 |
@@ -83,6 +83,17 @@ Core は、関連文書の改訂に先行して作成された。**作成時点�
 | 6 | §10.1 に「ファイル内の状態表示と正規台帳の関係」を追加（自己表示単独では確定しない／正規台帳への登録で確定する） |
 
 P-3b では Experimental 資産の台帳不在および旧体系 16 ファイルの状態未表示について、**判断・登録・修正のいずれも行っていない。**
+
+### 2.2 P-3c 実施結果（commit `99db5a0` ／ 3 ファイル・54 insertions / 11 deletions）
+
+| # | 実施内容 |
+|---|---|
+| 1 | **`PN7` item R の判定根拠を F5 から JS-A（Canonical Requirement）へ変更**。「persona 欠落 → FAIL としない」を撤回し、`module.persona`（canonical field）と `Persona runtime connection`（Future Expansion）の区別を明記 |
+| 2 | **`PN7` item S は不変**（SHA-1 `b9730989…` が変更前後で一致） |
+| 3 | **`docs/VALIDATOR_STANDARD.md` §5 の現在状態を整理**。Lifecycle State と severity 判定が独立していることを明記し、WARN である理由を「既存 2 module が未充足」から「**F-4b で補完済み・検出 0 件であり、severity 昇格工程が未実施であるという現在状態**」へ更新 |
+| 4 | **`MISSING_PERSONA` の WARN → ERROR は未実施**（Appendix は `WARN`、`lib/moduleValidator.ts` は `isWarning: true` のまま） |
+| 5 | **`lib/types.ts` は JSDoc のみ変更**（`persona?: PersonaConfig` の型定義・optional 性・`PersonaConfig` 本体はいずれも不変） |
+| 6 | **`npx tsc --noEmit` PASS** |
 
 ### 改訂完了条件
 
@@ -332,8 +343,9 @@ Lifecycle Classification Pending は、
 | **P-4（F-4b）** | **完了**（commit `54dda6e`）。検証結果は §3「実施結果」 |
 | **P-3a（2 軸の確立 ＝ ③ ＋ §10.1 明確化）** | **完了**（commit `1963c72`）。`JSON_STANDARD` JS-00 に Canonical Requirement Class と 2 軸の直交性を定義／`DEVELOPMENT_STANDARD` §10.1 に「Validator・必須ゲートの対象か」列の適用範囲注記を追加 |
 | **P-3b（Lifecycle 正規台帳化 ＝ ④）** | **完了**（commit `92b3a20` `docs(standard): define lifecycle ledgers as authoritative and add classification pending`）。実施内容は §2.1「P-3b 実施結果」 |
+| **P-3c（参照側の追随 ＝ ⑦ / ⑧ / ⑨）** | **完了**（commit `99db5a0` `docs(audit): rebase persona checks on canonical requirement`）。実施内容は §2.2「P-3c 実施結果」 |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
-| §2 の ⑤ / ⑦ / ⑧ / ⑨ / ⑪（＝ P-3c / P-3d） | **未着手** |
+| §2 の ⑤ / ⑪（＝ P-3d） | **未着手** |
 | F-4b | **完了**（§3「実施結果」）。`MISSING_PERSONA` 0 件 ／ warning 20 → 18 |
 | `MISSING_PERSONA` 昇格 | **未着手**（開始条件 1「§2 の文書改訂完了」が未充足） |
 | GG-1 / GG-3 | Lifecycle Classification Pending へ記録予定（§6.2）。**Lifecycle State は確定しない** |
