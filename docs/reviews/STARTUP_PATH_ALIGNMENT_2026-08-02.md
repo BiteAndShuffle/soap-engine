@@ -112,7 +112,7 @@
 
 ---
 
-## 4. Unit R4-b — Base + Overlay の完成形（未着手）
+## 4. Unit R4-b — Base + Overlay の完成形
 
 `STARTUP_PROMPT` を **一度に** Base + Overlay の完成形へ変更する。
 
@@ -131,12 +131,56 @@
 
 | 文書 | 読む条件 |
 |---|---|
-| `docs/PERSONA_PROJECT_PRINCIPLE.md`（Core） | 通常の Persona 作業で読む |
-| `docs/PERSONA_PROJECT_APPENDIX.md`（Appendix） | 次の**いずれか**に該当するとき追加で読む: ① Core の判断根拠を確認する ② Repository 実測値・詳細反証・再測定手順を確認する ③ Core の結論を再評価する |
+| `docs/PERSONA_PROJECT_PRINCIPLE.md`（Core） | 次のいずれかに該当するとき読む: ① Persona Project に関する判断を行う ② runtime persona に関する判断を行う ③ `module.persona` に関する判断を行う ④ 人格別固定文章、または人格別文体変換に関する判断を行う |
+| `docs/PERSONA_PROJECT_APPENDIX.md`（Appendix） | **Persona Overlay が該当して Core を読む場合に限り**、さらに次の**いずれか**に該当するとき追加で読む: ① Core の判断根拠を確認する ② Repository 実測値・詳細反証・再測定手順を確認する ③ Core の結論を再評価する |
+
+**Appendix は独立した対象概念 Overlay ではない。** 一般的な Repository 実測や再測定だけでは発火せず、**Persona Overlay の該当が必須条件**である。
+
+**Persona Overlay の適用外**: bridge 本文・指導文の通常の文章表現や日本語校正は、Persona Project との関係を判断する作業でない限り対象外とする。**「文体」という語が現れたことだけを理由に発火させない。**
 
 ### 状態
 
-**未着手。**
+**R4-b 完了**（commit `755a4ed` `docs(startup): restructure reading path into base and overlays`）
+
+| 項目 | 状態 |
+|---|---|
+| `STARTUP_PROMPT` の再構成 | **完了**（113 行 → 172 行 ／ +133 / −40） |
+| `DEVELOPMENT_STANDARD` §7 Map の `STARTUP_PROMPT` 行 | **完了**（1 行のみ。「vNext新規チャット起動プロンプトの正本」→「読込経路の正本」） |
+| 検証 | **完了**（下記） |
+| Commit 1 | **完了**（`755a4ed` ／ 2 files changed, 134 insertions(+), 41 deletions(-)） |
+
+### 実施内容
+
+| # | 内容 |
+|---|---|
+| 1 | **Base を 3 文書へ変更**（`DEVELOPMENT_STANDARD` 全文 ／ `PROJECT_CONTEXT` 全文 ／ `RULES` §1〜§3）＋ 読込順序と順序の根拠を明記 |
+| 2 | **`HANDOFF` を工程段階 Overlay「vNext module 生成」へ**（PN1 より前に読む） |
+| 3 | **`VALIDATOR_STANDARD` を対象概念 Overlay「Validator」へ**（4 条件。PN7 / PN8 実行を含める） |
+| 4 | **Persona Overlay を追加**（Core ＋ Persona Appendix） |
+| 5 | **Lifecycle Overlay を追加**（§10 全体を再読） |
+| 6〜8 | **Overlay 運用規則を新設**（判定順序 ／ 複数該当時 ／ 途中判明時の追加読込と再確認 ／ 未該当時の既定動作 S1〜S3） |
+| 9 | 文書スコープを vNext module 生成専用から**全作業の読込経路正本へ一般化**。責務表を新設し「各正本文書の本文を複製しない」を明記 |
+| 10 | module 生成固有記述（対象bridge / 起動完了報告 / 重要事項）を**工程段階 Overlay「vNext module 生成」の起動情報**節へ集約（Base・対象概念 Overlay と別系統であることを明記） |
+
+### 検証結果〔実測・2026-08-02〕
+
+| # | 検証 | 結果 |
+|---|---|---|
+| 1 | Base が 3 文書＋順序で記述 | **PASS** |
+| 2 | `RULES` の読む範囲が §1〜§3 と明記 | **PASS**（§4 以降は随時参照と併記） |
+| 3 | `HANDOFF` が工程段階 Overlay に PN1 より前として記載 | **PASS** |
+| 4 | `VALIDATOR_STANDARD` が対象概念 Overlay に 4 条件付きで記載 | **PASS**（PN7 / PN8 を含む） |
+| 5 | Persona Overlay と Persona Appendix が分離記述 | **PASS**（Appendix は Core 読込が前提） |
+| 6 | Lifecycle Overlay が存在 | **PASS** |
+| 7 | Overlay 運用 4 規則が記載 | **PASS** |
+| 8 | PN1〜PN8 表・AUTORUN の内容が失われていない | **PASS**（PN 開始 8 行 ／ 10 ファイルすべて記載 ／ AUTORUN 2 件 ／ 実行モード 2 文） |
+| 9 | module 生成固有記述が失われていない | **PASS**（対象bridge / 確認項目 7 種 / `PN○開始準備完了` / 重要事項 7 項目） |
+| 10 | 参照先がすべて実在 | **PASS**（`scripts/audit-*.ts` 2 件を含めリンク切れ 0） |
+| 11 | 変更が 2 ファイルに限定 | **PASS** |
+| 12 | **Persona Core への読込保証が成立** | **PASS**（`STARTUP_PROMPT` 内の `PERSONA_PROJECT` 出現が **0 件 → 2 件**） |
+| 13 | 既存差分 4 件に変化なし | **PASS** |
+
+> **OD-P11 の「維持される要件」（Persona Core が必要な作業から再現可能に到達できること）が、読込保証として成立した。**
 
 ---
 
@@ -156,14 +200,14 @@ R4-a / R4-b 完了後、**`STARTUP_PROMPT` を OD-R6（変更契機の標準化�
 
 ---
 
-## 6. R4-b への引き継ぎ事項
+## 6. 引き継ぎ事項
 
-| # | 事項 |
-|---|---|
-| 1 | 〔実測〕`prompts/RULES.md` L5「`STARTUP_PROMPT.md` の**必読ファイル 3 番目**に指定されています」— 新 Base でも 3 番目だが、**読む範囲が §1〜§3 に限定される点が未反映**。追随要否を判断する |
-| 2 | 〔実測〕`docs/PERSONA_PROJECT_APPENDIX.md` L342「起動時必読 **4 文書**は次である」＋ 4 文書の列挙 — Base 3 文書化で古くなる。**Appendix は時点付き実測を持つ文書であり §7.6 の再測定手順の対象**。R4-b または R6 での扱いを判断する |
-| 3 | 〔実測〕`docs/DEVELOPMENT_STANDARD.md` §7 Map の `STARTUP_PROMPT` 行「**vNext新規チャット起動プロンプト**の正本（コピペ用）」— 一本化後は vNext 専用ではない。**R4-a では §7 に触れないため R4-b 以降で追随する** |
-| 4 | `prompts/PROJECT_CONTEXT.md` L34（下記 Deferred Items） |
+| # | 事項 | 状態 |
+|---|---|---|
+| 1 | 〔実測〕`prompts/RULES.md` L5「`STARTUP_PROMPT.md` の**必読ファイル 3 番目**に指定されています」— 新 Base でも 3 番目だが、**読む範囲が §1〜§3 に限定される点が未反映** | **R4-b の対象外と判定。** 記述は真のまま（不完全だが誤りではない）。`RULES` は OD-R6-1 の適用対象「要」であり **R6-b で扱う** |
+| 2 | 〔実測〕`docs/PERSONA_PROJECT_APPENDIX.md` L342「起動時必読 **4 文書**は次である」＋ 4 文書の列挙 | **変更不要と判定。** Appendix の凡例が〔実測〕を「本文書作成時（HEAD `21c9b6d`）に測定した事実」と定義しており、**時点付き実測として正しい**。§7.6 に再測定手順が存在する |
+| 3 | 〔実測〕`docs/DEVELOPMENT_STANDARD.md` §7 Map の `STARTUP_PROMPT` 行「vNext新規チャット起動プロンプトの正本（コピペ用）」 | **R4-b で解消**（commit `755a4ed`。当該 1 行のみを「読込経路の正本」へ更新） |
+| 4 | `prompts/PROJECT_CONTEXT.md` L34（下記 Deferred Items） | **解消済み**（commit `e7c57ec`。下記） |
 
 ### Deferred Items
 
@@ -171,6 +215,19 @@ R4-a / R4-b 完了後、**`STARTUP_PROMPT` を OD-R6（変更契機の標準化�
   - 「最初に読む入口文書」という表現が残っていることを確認。
   - R4-a の変更範囲外のため未変更。
   - R4-b において STARTUP_PROMPT への読込経路一本化完了後に再評価する。
+
+**状態（2026-08-02）: 解消済み**（commit `e7c57ec` `docs(context): remove residual startup order wording`）
+
+R4-b（commit `755a4ed`）で読込経路の一本化が完了し、再評価の前提条件が充足したため補正を実施した。`prompts/PROJECT_CONTEXT.md` の「設計ドキュメント」表内、`docs/DEVELOPMENT_STANDARD.md` の説明セル **1 行のみ**を変更した。
+
+| | 内容 |
+|---|---|
+| 変更前 | 「プロジェクト全体構造の索引（**最初に読む入口文書**）。Mission / Core Philosophy / Architecture / Development Workflow / 正本関係 / Documentation Map を一枚で把握する」 |
+| 変更後 | 「プロジェクト全体構造・正本関係・Documentation Map・運営規則を示す索引文書。Mission / Core Philosophy / Architecture / Development Workflow を一枚で把握する」 |
+
+読込順序の表現を除去し、`DEVELOPMENT_STANDARD.md` 自身の責務のみを記述した。**新しい読込順序や Base の説明を `PROJECT_CONTEXT` 側へ追加していない。** 〔実測〕補正後、`prompts/PROJECT_CONTEXT.md` に「最初に読む」の出現は **0 件**。
+
+**上記 3 バレットは履歴として維持する。**
 
 ---
 
@@ -193,16 +250,19 @@ R4-a / R4-b 完了後、**`STARTUP_PROMPT` を OD-R6（変更契機の標準化�
 |---|---|
 | OD-R4-1 / -1b / -2 / -5 / -6 | **確定**（§1） |
 | OD-R4-3（トリガー記法）/ OD-R4-4（未該当時の既定動作） | **設計案あり・Owner 未確定**（R4-b で確定させる） |
-| **R4-a**（起動経路の正本一本化） | **完了**（commit `0308fb9`） |
-| **R4-b**（Base + Overlay 完成形） | **未着手** |
+| **R4-a**（起動経路の正本一本化） | **完了**（commit `0308fb9` / 記録 `5607fdf`） |
+| **R4-b**（Base + Overlay 完成形） | **完了**（主 commit `755a4ed` ／ 補正 commit `e7c57ec`（Deferred Item の解消）） |
 | **R6-a**（STARTUP_PROMPT への変更契機適用） | **未着手** |
 | push | **未実施** |
 
 ### commit 分割
 
-| # | commit | message | 対象 | 状態 |
-|---|---|---|---|---|
-| **1** | **`0308fb9`** | `docs(context): consolidate startup path authority into STARTUP_PROMPT` | `prompts/PROJECT_CONTEXT.md` ／ `docs/DEVELOPMENT_STANDARD.md` | **完了**（+17 / −26） |
-| **2** | — | `docs(review): record R4-a startup path consolidation` | 本記録 | 実施中 |
+| Unit | # | commit | message | 対象 | 状態 |
+|---|---|---|---|---|---|
+| R4-a | 1 | **`0308fb9`** | `docs(context): consolidate startup path authority into STARTUP_PROMPT` | `prompts/PROJECT_CONTEXT.md` ／ `docs/DEVELOPMENT_STANDARD.md` | **完了**（+17 / −26） |
+| R4-a | 2 | **`5607fdf`** | `docs(review): record R4-a startup path consolidation` | 本記録 | **完了**（+208） |
+| R4-b | 1 | **`755a4ed`** | `docs(startup): restructure reading path into base and overlays` | `prompts/vNext/STARTUP_PROMPT.md` ／ `docs/DEVELOPMENT_STANDARD.md` §7 の 1 行 | **完了**（+134 / −41） |
+| R4-b | 補正 | **`e7c57ec`** | `docs(context): remove residual startup order wording` | `prompts/PROJECT_CONTEXT.md`（設計ドキュメント表の 1 行） | **完了**（+1 / −1。Deferred Item の解消） |
+| R4-b | 2 | — | `docs(review): record R4-b overlay implementation` | 本記録 | 実施中 |
 
 **正本文書の変更と実行記録は別 commit とする。**
