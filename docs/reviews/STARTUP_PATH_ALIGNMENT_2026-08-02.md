@@ -184,19 +184,85 @@
 
 ---
 
-## 5. R6-a — STARTUP_PROMPT への変更契機適用（未着手）
+## 5. R6-a — 変更契機の標準仕様と最初の適用
 
-R4-a / R4-b 完了後、**`STARTUP_PROMPT` を OD-R6（変更契機の標準化）の最初の適用事例とする。**
+R4-a / R4-b 完了後、**変更契機（Change Trigger）の標準仕様を制定し、`STARTUP_PROMPT` をその最初の適用事例とした。**
+
+### 5.1 3 段階構成と責務分離
+
+**本 Unit は「標準仕様」「適用例」「実行記録」を 3 つの commit へ分離した。3 者を混在させない。**
+
+| # | 責務 | commit | message | 対象 | 内容 | 状態 |
+|---|---|---|---|---|---|---|
+| **1** | **標準仕様の制定**<br>（Repository 全体に適用される規則） | **`76a5f40`** | `docs(standard): define change trigger specification` | `docs/DEVELOPMENT_STANDARD.md` | **§11「変更契機（Change Trigger）」を新設** | **完了**（1 file changed, 135 insertions(+)） |
+| **2** | **最初の適用例**<br>（§11 を 1 文書へ適用） | **`8edb3fa`** | `docs(startup): apply change trigger to reading path authority` | `prompts/vNext/STARTUP_PROMPT.md` | **変更契機節の新設** | **完了**（1 file changed, 48 insertions(+)） |
+| **3** | **実行記録**<br>（状態・実施結果・commit 追跡のみ） | **本実行記録を確定する commit** | `docs(review): record R6-a change trigger standard` | 本記録 | **正本文書・標準仕様・適用例を変更せず、状態・実施結果・commit 追跡のみを記録する** | **本 commit で完了** |
+
+> **Commit 3 は自身の hash を本文へ記録しない。** git commit は自分自身の確定 hash を同じ commit の内容へ含められず、hash 反映専用の追加 commit を作れば、その commit 自身の hash が再び記録できず自己言及が連鎖する。**Commit 3 の同定は commit message（`docs(review): record R6-a change trigger standard`）による。**
+
+| commit | 何をしたか | 何をしていないか |
+|---|---|---|
+| **1（標準仕様）** | 変更契機が満たすべき**条件と配置規則**を Repository 全体の運営規則として定めた | 個別文書への適用はしていない。適用対象の選定もしていない |
+| **2（適用例）** | 標準仕様に従い、`STARTUP_PROMPT` の**自身の起点と更新対象**を記述した | 標準仕様の内容を複製していない（§11 を参照するのみ）。Base / Overlay 本文を変更していない |
+| **3（実行記録）** | 状態・実施結果・commit を追跡する | **設計判断を新設しない。正本文書・実装・テストに触れない** |
+
+### 5.2 実施結果 — Owner Decision の反映
+
+| OD | 反映内容 | 所在 |
+|---|---|---|
+| **OD-R6-2** | **変更元にのみ記載**する／**対象文書の冒頭付近に「変更契機」節を置く**。本規則は配置に関する条件であり記法ではない（見出しレベル・表の有無・レイアウト・Markdown 記法は自由） | §11.2「配置規則」 |
+| **OD-R6-3** | **節単位を原則**とする。同期が特定の規則 ID に閉じる場合のみ**規則 ID 単位を例外**として認める（`prompts/RULES.md` §26 が実例） | §11.3 |
+| **OD-R6-4** | **必須 2 要素**（起点／更新対象）＋**任意 4 要素**（対象外／検証／停止条件／採用理由）。**「確認のみ」は不採用**。**「条件付きで更新」は独立分類にせず、更新対象の行内条件へ統合** | §11.4 |
+| **OD-R6-7** | 標準仕様は **`docs/DEVELOPMENT_STANDARD.md` §11**。**固定書式・記入手順・特定文書用テンプレートを持たない**。**`CHANGE_TRIGGER_STANDARD.md` は作成していない** | §11 前文 |
+
+| 節 | 反映内容 |
+|---|---|
+| **§11.6** | **変更契機節がないことだけを理由に「追随不要」と判断しない。** 言えるのは「宣言済みの変更契機が存在しない」という事実のみであり、適用対象外か未適用かは適用対象判定に従う。**判定基準そのものは §11 では定めない**（OD-R6-1 非先取り） |
+| **§11.7** | **必須要素**を変更した場合 → 変更契機節を持つ**全文書**を確認。**任意要素**を変更した場合 → **その任意要素を採用している文書だけ**を確認。**未採用文書へ空欄・形式的記述を追加してはならない** |
+
+### 5.3 実施結果 — `STARTUP_PROMPT` への適用（Commit 2）
 
 | 項目 | 内容 |
 |---|---|
-| 対象 | `prompts/vNext/STARTUP_PROMPT.md` |
-| 起点となる変更 | Overlay の追加・削除 ／ Base 構成の変更 ／ トリガー条件の変更 |
-| **R4 由来の必須項目** | **OD-R2 が確定した時点で `RULES` の読込範囲（§1〜§3）を再判断する**（OD-R4-1b の帰結） |
+| **配置** | 「本ファイルの責務」の直後・「Design Principles」の前・**テンプレート本文（貼り付け範囲）の外** |
+| **必須 2 要素** | 起点（5 項目）／更新対象（3 項目） |
+| **任意 4 要素** | 対象外／検証／停止条件／採用理由 |
+| **`PROJECT_CONTEXT` / `DEVELOPMENT_STANDARD` §0** | **対象外ではなく、行内条件付きの更新対象**。本ファイルの**パス・名称・「読込経路の正本」という責務**を変更した場合のみ追随する。**Base / Overlay の構成やトリガー内容だけの変更では追随しない** |
+| **OD-R2 確定時の再判断** | **停止条件へ統合**（独立要素として第 7 要素を作らない）。「境界が確定し、`RULES` の読込範囲を再判断する段階に到達した → 自己判断で変更せず、Owner 判断を得る」 |
+| **Base / Overlay 本文** | **変更していない** |
 
-### 状態
+### 5.4 検証結果〔実測・2026-08-02〕
 
-**未着手。** OD-R6 の下位設計（適用対象・記法・配置先）は未確定であり、本記録では確定させない。
+| # | 検証 | 結果 |
+|---|---|---|
+| 1 | `DEVELOPMENT_STANDARD` **§0〜§10 は不変** | **PASS**（Commit 1 の削除行 0 件／単一ハンクが §10.5 末尾以降に限定） |
+| 2 | `STARTUP_PROMPT` の**テンプレート本文以下は不変** | **PASS**（Commit 2 の削除行 0 件／ハンクがテンプレート本文見出しより前に限定。■ 要素 8 件・PN 開始行 8 件がすべて保全） |
+| 3 | **「確認のみ」0 件** | **PASS**（`STARTUP_PROMPT` 0 件。`DEVELOPMENT_STANDARD` の 1 件は §11.4 の「用いない」という禁止記述） |
+| 4 | **「条件付きで更新」という独立分類 0 件** | **PASS**（両ファイルとも 0 件。行内条件として記述） |
+| 5 | §11 が**固定テンプレート・記入手順を持たない** | **PASS**（§11 内のコードブロック 0 件。表 5 つはすべて条件表） |
+| 6 | Commit 1 / Commit 2 の**参照先と hash が実在** | **PASS**（`76a5f40` / `8edb3fa` を `git log` で確認。参照先 `§11` / `§7` / `RULES` §26 / `VALIDATOR_STANDARD` §2・§5 も実在） |
+| 7 | **既存差分 4 件は不変** | **PASS** |
+
+### 5.5 R6-a で行わなかったこと
+
+| 事項 | 理由 |
+|---|---|
+| 適用対象の選定・他文書への展開（**OD-R6-1**） | **R6-b の判断**。§11.6 は「適用対象判定に従う」と参照するのみで基準を定めない |
+| enforcement（checklist ／ audit スクリプト ／ CI）（**OD-R6-5**） | **R6-c**。§11 は書くべき条件のみを定め、守らせる仕組みに触れない |
+| DP-11 ⇔ `RULES` §26 の重複解消（**OD-R6-6**） | **R6-b**。両文書とも差分 0 件 |
+| `CHANGE_TRIGGER_STANDARD.md` の作成 | OD-R6-7 により現時点では作成しない。R6-b で共通テンプレートの必要性が実測された場合にのみ再検討 |
+
+### 5.6 R6-b へ残る事項（未着手）
+
+| # | 事項 |
+|---|---|
+| 1 | **OD-R6-1**: 適用対象の選定・展開 |
+| 2 | **OD-R6-6**: DP-11 と `RULES` §26 の重複解消 |
+| 3 | `RULES` §26 の標準仕様への追随判断（現状のままでも規則としては有効） |
+| 4 | 〔実測〕`RULES` L5「必読ファイル 3 番目」の読込範囲追随（→ §6 引き継ぎ #1） |
+| 5 | 他文書への変更契機展開 |
+
+**R6-c（enforcement）にも着手していない。**
 
 ---
 
@@ -252,7 +318,9 @@ R4-b（commit `755a4ed`）で読込経路の一本化が完了し、再評価の
 | OD-R4-3（トリガー記法）/ OD-R4-4（未該当時の既定動作） | **設計案あり・Owner 未確定**（R4-b で確定させる） |
 | **R4-a**（起動経路の正本一本化） | **完了**（commit `0308fb9` / 記録 `5607fdf`） |
 | **R4-b**（Base + Overlay 完成形） | **完了**（主 commit `755a4ed` ／ 補正 commit `e7c57ec`（Deferred Item の解消）） |
-| **R6-a**（STARTUP_PROMPT への変更契機適用） | **未着手** |
+| **R6-a**（変更契機の標準仕様と最初の適用） | **完了**（標準仕様 `76a5f40` ／ 適用例 `8edb3fa` ／ 実行記録は本 commit で完了）。実施内容は §5 |
+| **R6-b**（適用対象の選定・他文書への展開） | **未着手**（§5.6） |
+| **R6-c**（enforcement） | **未着手** |
 | push | **未実施** |
 
 ### commit 分割
@@ -263,6 +331,9 @@ R4-b（commit `755a4ed`）で読込経路の一本化が完了し、再評価の
 | R4-a | 2 | **`5607fdf`** | `docs(review): record R4-a startup path consolidation` | 本記録 | **完了**（+208） |
 | R4-b | 1 | **`755a4ed`** | `docs(startup): restructure reading path into base and overlays` | `prompts/vNext/STARTUP_PROMPT.md` ／ `docs/DEVELOPMENT_STANDARD.md` §7 の 1 行 | **完了**（+134 / −41） |
 | R4-b | 補正 | **`e7c57ec`** | `docs(context): remove residual startup order wording` | `prompts/PROJECT_CONTEXT.md`（設計ドキュメント表の 1 行） | **完了**（+1 / −1。Deferred Item の解消） |
-| R4-b | 2 | — | `docs(review): record R4-b overlay implementation` | 本記録 | 実施中 |
+| R4-b | 2 | **`182e53c`** | `docs(review): record R4-b overlay implementation` | 本記録 | **完了**（+77 / −17） |
+| **R6-a** | **1** | **`76a5f40`** | `docs(standard): define change trigger specification` | `docs/DEVELOPMENT_STANDARD.md` §11 新設 | **完了**（+135） |
+| **R6-a** | **2** | **`8edb3fa`** | `docs(startup): apply change trigger to reading path authority` | `prompts/vNext/STARTUP_PROMPT.md` 変更契機節 | **完了**（+48） |
+| **R6-a** | **3** | **本実行記録を確定する commit** | `docs(review): record R6-a change trigger standard` | 本記録（正本文書・標準仕様・適用例を変更せず、状態・実施結果・commit 追跡のみを記録） | **本 commit で完了** |
 
-**正本文書の変更と実行記録は別 commit とする。**
+**正本文書の変更と実行記録は別 commit とする。** R6-a はさらに**標準仕様（Commit 1）と適用例（Commit 2）を分離**する（§5.1）。
