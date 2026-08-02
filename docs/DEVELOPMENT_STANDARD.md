@@ -193,7 +193,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 | `docs/BOOTSTRAP_STANDARD.md` / `docs/P1_STANDARD.md` 〜 `docs/P5_STANDARD.md` | 旧体系（P0-A〜P5）各工程の設計意図（「なぜこの工程はこう設計されているか」） |
 | `docs/feature-glossary.md` | Rapid / Express / NLP等、UI機能用語の定義。**Persona という語が指す 3 概念の区別**もここ |
 | `prompts/vNext/HANDOFF.md` | vNext体系の新規チャット引き継ぎ文書。設計思想・完了済みモジュール一覧・技術的負債 |
-| `prompts/vNext/STARTUP_PROMPT.md` | vNext新規チャット起動プロンプトの正本（コピペ用） |
+| `prompts/vNext/STARTUP_PROMPT.md` | **読込経路の正本**。全作業共通の Base、工程段階 Overlay、対象概念 Overlay、Overlay の運用規則（コピペ用） |
 | `prompts/vNext/AUTORUN.md` | PN3A〜PN8自動連続実行の制御ルール・MUST_STOP条件 |
 | `prompts/vNext/PN1-Text-Extraction.md` 〜 `PN8-Build-Runtime-Release.md` | 各工程の実行プロンプト正本 |
 | `prompts/P0-A.md` 〜 `prompts/P5.md` | 旧体系の実行プロンプト正本 |

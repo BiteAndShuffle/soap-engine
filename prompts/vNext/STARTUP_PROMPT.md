@@ -1,39 +1,40 @@
-# SOAP Engine — Claude新規チャット用 引き継ぎプロンプト（vNext正式版）
+# SOAP Engine — 読込経路の正本（新規チャット起動プロンプト）
 
-version: 1.1
-最終更新: 2026-07-21
-対象: vNext PN1〜PN8ワークフローを使用するすべてのbridge作業
+version: 2.0
+最終更新: 2026-08-02
+対象: SOAP Engine に対するすべての作業
 
 ## Purpose
 
-このファイルは、SOAPエンジンのvNextワークフローで新規チャットセッションを開始する際に
-そのままコピー＆ペーストして使う起動プロンプトの正本（Single Source of Truth）である。
-スタートアップ手順を複数箇所で重複管理しない。
+このファイルは、**新規チャットセッションで何をどの順に読むかを決める唯一の正本**である。
+
+読込経路を複数箇所で重複管理しない。`prompts/PROJECT_CONTEXT.md` は現在地、
+`docs/DEVELOPMENT_STANDARD.md` §7 Documentation Map は文書地図であり、
+いずれも読込順序の正本ではない。
 
 ## When to use
 
-vNext PN1〜PN8ワークフローでbridge作業（新規モジュールの追加、または既存bridgeの
-続き作業）を新規チャットで開始するとき。
+SOAP Engine に対する作業を新規チャットで開始するとき（作業種別を問わない）。
+
+## 本ファイルの責務
+
+| 本ファイルが持つもの | 本ファイルが持たないもの |
+|---|---|
+| Base の構成と読込順序 | 個別の設計規則（→ 各正本文書） |
+| 工程段階 Overlay | 判断基準の本文（→ 各正本文書） |
+| 対象概念 Overlay | 現在のフェーズ・進捗（→ `prompts/PROJECT_CONTEXT.md`） |
+| Overlay の運用規則 | 文書の索引（→ `docs/DEVELOPMENT_STANDARD.md` §7） |
+| vNext module 生成時に必要な起動情報 | 工程の実行手順（→ 各 PN ファイル） |
+
+**各正本文書の本文を本ファイルへ複製しない。** 本ファイルは「どこを読むか」だけを示す。
 
 ## Design Principles
 
-- bridge = Single Source of Truth
-- preservation first
-- non-creative
-- phase loading（PNファイルは着手するフェーズが決まった時点で該当分のみ読み込む）
-- token efficiency
+- **Base + Overlay**（全作業共通の前提のみを Base に置き、条件付きで必要な正本を Overlay で読む）
+- **phase loading**（該当する分だけを、必要になった時点で読む）
+- **token efficiency**
 
-`{moduleId}` は対象bridgeのmoduleIdに置換してから使用する。
-
-## 事前確認（本テンプレートを使う前に）
-
-このセッションで `docs/DEVELOPMENT_STANDARD.md`（プロジェクト全体構造の索引文書）を
-まだ読んでいない場合は、本テンプレートを使用する前に先に読むことを推奨する。
-`docs/DEVELOPMENT_STANDARD.md` → `prompts/PROJECT_CONTEXT.md` の順で全体像を把握した上で、
-本テンプレート（下記「テンプレート本文」）を使って vNext 個別フェーズの作業へ進む。
-
-本テンプレート自体の「■最初に読み込むファイル（順序厳守）」の内容・順序はこの事前確認によって
-変更されない。
+`{moduleId}` は対象 bridge の moduleId に置換してから使用する。
 
 ---
 
@@ -43,20 +44,29 @@ SOAPエンジン開発を継続します。
 
 まず会話履歴は参照せず、必ずリポジトリ内のファイルを正本として読み込んでください。
 
-■最初に読み込むファイル（順序厳守）
+■ Base（すべての作業で読む。順序厳守）
 
-1. prompts/vNext/HANDOFF.md
-2. prompts/PROJECT_CONTEXT.md
-3. prompts/RULES.md
-4. docs/VALIDATOR_STANDARD.md
+```
+1. docs/DEVELOPMENT_STANDARD.md   — 全文
+2. prompts/PROJECT_CONTEXT.md     — 全文
+3. prompts/RULES.md               — §1〜§3 のみ
+```
 
-■ PNプロンプトの読み込み方針
+`prompts/RULES.md` の §4 以降は横断ルール辞書である。通読せず、必要になった節のみ随時参照する。
 
-PN1〜PN8のプロンプトファイルは一括で読み込まない。
-着手するフェーズが決まった時点で、該当するファイルのみを読み込む。
+順序には意味がある。
 
-| 開始するフェーズ | 読み込むファイル |
+- 1 → 2 : 地図と正本関係を先に把握しないと、`PROJECT_CONTEXT` の記述を正本と誤認する
+- 2 → 3 : `RULES` §3 の ERROR / PENDING / CHECK は、いまどの工程にいるかで適用が変わる
+- 1 → 3 : `RULES` §1 の参照許可パスは Documentation Map と整合する
+
+■ 工程段階 Overlay（着手する段階が決まった時点で、該当分のみ読む）
+
+一括で読み込まない。
+
+| 段階 | 読み込む文書 |
 |---|---|
+| vNext module 生成に着手するとき（`bridges/{moduleId}.md` を起点に canonical JSON を生成・改修する） | prompts/vNext/HANDOFF.md（**PN1 より前に読む**） |
 | PN1開始 | prompts/vNext/PN1-Text-Extraction.md |
 | PN2開始 | prompts/vNext/PN2-Drug-Header.md |
 | PN3開始 | prompts/vNext/PN3A-Scenario-Classification.md → prompts/vNext/PN3B-Scenario-Metadata-Apply.md |
@@ -65,12 +75,95 @@ PN1〜PN8のプロンプトファイルは一括で読み込まない。
 | PN6開始 | prompts/vNext/PN6-Assembly.md |
 | PN7開始 | prompts/vNext/PN7-Cross-Reference-Audit.md |
 | PN8開始 | prompts/vNext/PN8-Build-Runtime-Release.md |
+| AUTORUN モードで進める場合（PN3A を開始する時点） | prompts/vNext/AUTORUN.md |
 
-■ PNフェーズの実行モード（AUTORUN）
+PN1 / PN2 は常にそれぞれ個別に手動実行する（各フェーズ完了後にユーザー報告・承認を待つ）。
+PN3A〜PN8 は AUTORUN モード（自動連続実行）の対象である。
 
-- PN1 / PN2 は常にそれぞれ個別に手動実行する（各フェーズ完了後にユーザー報告・承認を待つ）。
-- PN3A〜PN8 は AUTORUN モード（自動連続実行）の対象である。
-- AUTORUN モードで進める場合は、PN3A を開始する時点で `prompts/vNext/AUTORUN.md` を追加で読み込む。
+■ 対象概念 Overlay（該当する概念に「触れる」とき、該当分をすべて読む）
+
+**「触れる」とは、対象を変更・追加・削除・引用・判断根拠として使用することをいう。**
+読むだけ・パスを列挙するだけは該当しない。
+
+条件は観察可能な行為で書かれている。状態や意図で判定しない。
+
+| 概念 | 読む条件（いずれかに該当） | 読み込む文書 |
+|---|---|---|
+| **Validator** | ・`lib/moduleValidator.ts` / `lib/crossModuleValidator.ts` / `scripts/audit-*.ts` に触れる<br>・errorCode の追加・変更、severity の変更を行う<br>・Validator の warning / error 件数を判断材料にする<br>・PN7 または PN8 を実行する | docs/VALIDATOR_STANDARD.md |
+| **Persona** | ・Persona Project に関する判断を行う<br>・runtime persona に関する判断を行う<br>・`module.persona` に関する判断を行う<br>・人格別固定文章、または人格別文体変換に関する判断を行う | docs/PERSONA_PROJECT_PRINCIPLE.md（Core） |
+| **Persona Appendix** | **Persona Overlay が該当して Core を読む場合に限り、さらに次のいずれかに該当するとき Appendix も追加で読む**<br>・Core の判断根拠を確認する<br>・Repository 実測値・詳細反証・再測定手順を確認する<br>・Core の結論を再評価する | docs/PERSONA_PROJECT_APPENDIX.md（Appendix） |
+| **Lifecycle** | ・ある資産を Legacy / Future Expansion / Experimental / Current Standard / Archived のいずれかとして判断・記録・引用しようとする<br>・`docs/DEVELOPMENT_STANDARD.md` §10.x に触れる | docs/DEVELOPMENT_STANDARD.md §10 全体を再読 |
+
+**Persona Overlay の適用外**: bridge 本文・指導文の通常の文章表現や日本語校正は、
+Persona Project との関係を判断する作業でない限り本 Overlay の対象ではない。
+「文体」という語が現れたことだけを理由に本 Overlay を発火させない。
+
+■ Overlay の運用規則
+
+**判定順序**
+
+```
+Base 3 文書を読む
+  ↓
+① 工程段階 Overlay を判定（着手する段階が決まっているか）
+  ↓
+② 対象概念 Overlay を判定（触れる概念があるか）
+     ※ ① が該当しても ② の判定を省略しない
+  ↓
+③ 該当がゼロなら「Overlay 未該当時の既定動作」へ
+```
+
+**複数該当時**
+
+- 該当したものは**すべて読む**。優先順位はつけない（Overlay は排他ではない）
+- 同じ文書が複数のトリガーから指された場合、読むのは 1 回でよい
+- Overlay 間に読込順序はない
+- Overlay 同士の記述が矛盾した場合、Overlay 間では解決しない。各 Overlay は正本を指すだけであり、
+  正本間の矛盾は Owner 判断とする
+
+**作業途中で該当が判明した場合**
+
+- 着手時点だけでなく、**該当が判明した時点で追加読込する**
+- 既に進めた作業がある場合、**その Overlay を読む前に行った判断を、その Overlay の観点で再確認する**
+- 再確認の結果として判断を変更する場合は、変更した旨と理由を成果物へ明記する
+
+**Overlay 未該当時の既定動作**
+
+```
+Overlay 表に該当なし
+  ↓
+【第1段】docs/DEVELOPMENT_STANDARD.md §7 Documentation Map を対象語で検索する
+  ├─ 関連する正本が見つかった
+  │     → それを読んで続行し、Overlay 追加候補として報告する
+  └─ 見つからない
+        ↓
+【第2段】停止条件 S1〜S3 を判定する
+  ├─ 該当 → 停止して報告する
+  └─ 非該当 → Base のみで続行し、「Overlay 未該当で続行した」旨を成果物へ明記する
+```
+
+| ID | 停止条件 |
+|---|---|
+| S1 | 正本が存在するか否かを判定できない（Map に該当語がなく、存在しないのか到達できないのか不明） |
+| S2 | 既存の Owner Decision を変更・再解釈する必要がある |
+| S3 | 複数の正本が矛盾しており、どちらに従うか決められない |
+
+**停止するのは「判断できない」ときだけであり、「知らない」ときではない。**
+
+■ 起動完了報告（すべての作業）
+
+読み込みが完了したら、作業を開始する前に以下を報告する。
+
+- 読み込んだ Base
+- 該当した Overlay と、読み込んだ文書
+- Overlay 未該当の場合はその旨
+
+---
+
+## 工程段階 Overlay「vNext module 生成」の起動情報
+
+**本節は工程段階 Overlay「vNext module 生成」に属する。** module 生成以外の作業では使用しない。
+Base および対象概念 Overlay の規則とは別系統である。
 
 ■ 対象bridge
 
@@ -81,6 +174,7 @@ bridges/{moduleId}.md
 を読み込んでください。
 
 確認項目
+
 - STATUSが `FROZEN_FOR_PN1` であること
 - moduleId
 - header構造
@@ -89,11 +183,10 @@ bridges/{moduleId}.md
 - STATUS
 - PENDING有無
 
-■ 起動完了報告
+■ 起動完了報告（vNext module 生成）
 
-読み込みが完了したら、作業を開始する前に以下を報告する。
+上記「起動完了報告（すべての作業）」に加えて、以下を報告する。
 
-- 読み込んだファイル一覧
 - 対象bridge
 - STATUS
 - PENDING有無
@@ -101,7 +194,7 @@ bridges/{moduleId}.md
 その上で「PN○開始準備完了」（○は実際に開始するフェーズ番号）まで報告し、
 報告後に該当PNフェーズを開始する。
 
-■重要事項
+■重要事項（vNext module 生成）
 
 - bridgeをSingle Source of Truthとする
 - bridge本文は絶対に修正しない
