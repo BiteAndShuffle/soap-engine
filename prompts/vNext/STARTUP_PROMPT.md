@@ -28,6 +28,54 @@ SOAP Engine に対する作業を新規チャットで開始するとき（作�
 
 **各正本文書の本文を本ファイルへ複製しない。** 本ファイルは「どこを読むか」だけを示す。
 
+## 変更契機
+
+（本節の要素・原則は `docs/DEVELOPMENT_STANDARD.md` §11 が定める）
+
+**起点**: 次のいずれかを行ったとき、本ファイルは古くなる。
+
+- Base の構成または読込順序を変更した
+- 工程段階 Overlay を追加・削除・変更した
+- 対象概念 Overlay を追加・削除・変更した
+- Overlay のトリガー条件を変更した
+- Overlay の運用規則（判定順序／複数該当時／途中判明時／未該当時）を変更した
+
+**更新対象**
+
+- 本ファイルの該当節（Base ／ Overlay 表 ／ Overlay の運用規則）
+- 新しい正本文書を Overlay へ追加した場合のみ、`docs/DEVELOPMENT_STANDARD.md` §7
+  Documentation Map に当該文書が登録済みかを確認し、未登録なら同一作業内で登録する
+- `prompts/PROJECT_CONTEXT.md` および `docs/DEVELOPMENT_STANDARD.md` §0 — 本ファイルの
+  **パス・名称・「読込経路の正本」という責務**を変更した場合のみ、両文書の参照と責務説明を
+  同一作業内で更新する。**Base / Overlay の構成やトリガー内容だけを変更した場合は更新しない**
+
+**対象外**
+
+- 各 Overlay が指す正本文書の本文（本ファイルは経路のみを決め、内容には関与しない）
+- `prompts/vNext/PN1-Text-Extraction.md` 〜 `PN8-Build-Runtime-Release.md` ／
+  `prompts/vNext/AUTORUN.md`（工程の実行手順であり、読込経路の変更では古くならない）
+
+**検証**
+
+- Base / Overlay 表が指すすべてのパスが実在すること
+- 「何を読むか」を定義する記述が本ファイル以外に存在しないこと
+- Overlay 表へ新規追加した正本が Documentation Map に登録されていること
+
+**停止条件**
+
+- Overlay の分割単位（工程段階／対象概念の 2 層）を変更する必要が生じた
+- Base の収録基準を満たさない文書を Base へ入れる必要が生じた
+- `prompts/RULES.md` と `docs/JSON_STANDARD.md` の境界（OD-R2）が確定し、
+  Base における `prompts/RULES.md` の読込範囲（§1〜§3）を再判断する段階に到達した
+  → 自己判断で変更せず、Owner 判断を得る
+
+**採用理由**
+
+読込経路の一本化以前、「何を読むか」が本ファイル・`prompts/PROJECT_CONTEXT.md`・
+`docs/DEVELOPMENT_STANDARD.md` §0 の 3 文書で異なる形に定義されていた。一本化後も、
+Overlay 追加時に Documentation Map への登録漏れが起きると、正本が存在するのに
+到達経路のない状態が再発する。
+
 ## Design Principles
 
 - **Base + Overlay**（全作業共通の前提のみを Base に置き、条件付きで必要な正本を Overlay で読む）
