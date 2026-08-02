@@ -11,18 +11,15 @@ SOAP Engine プロジェクト全体構造の最上位文書。
 
 ## 0. この文書の位置づけ
 
-```
-DEVELOPMENT_STANDARD.md（本文書・最上位索引）
-  ↓
-PROJECT_CONTEXT.md（新規セッションが最初に読む前提・現在フェーズ）
-  ↓
-RULES.md / DESIGN_PRINCIPLES.md / VALIDATOR_STANDARD.md / JSON_STANDARD.md（横断正本群）
-  ↓
-prompts/vNext/HANDOFF.md → PN1〜PN8（実行工程プロンプト）
-```
-
 本文書は「どの文書に何が書いてあるか」「全体がどうつながっているか」を示すための地図であり、
 実行手順・禁止事項・型定義そのものは持ちません。
+
+**新規セッションで何をどの順に読むかは、本文書では定めません。**
+読込経路の正本は `prompts/vNext/STARTUP_PROMPT.md` です。
+
+本文書が提供するのは、どの文書が存在し何を扱うかの索引（§7 Documentation Map）と、
+プロジェクト運営規則（§8 Domain Completion / §9 Future Domain Expansion /
+§10 設計資産ライフサイクル）です。
 
 ---
 
