@@ -236,15 +236,15 @@ describe('persona 必須（JSON_STANDARD JS-A / F-4a）', () => {
     )
   })
 
-  test('MISSING_PERSONA は警告（isWarning: true）として返る', () => {
+  test('MISSING_PERSONA は ERROR（isWarning: false）として返る', () => {
     const broken = cloneModule()
     delete broken.persona
     const err = validateModule(broken).errors.find(e => e.code === 'MISSING_PERSONA')
     assert.ok(err, 'MISSING_PERSONA が返るべき')
     assert.equal(
       err!.isWarning,
-      true,
-      'MISSING_PERSONA は isWarning:true（WARN）。既存2モジュールの persona 補完（F-4b）完了後に ERROR へ昇格させる',
+      false,
+      'MISSING_PERSONA は isWarning:false（ERROR）。F-4b 完了後、canonical 完成条件の欠落として ERROR へ昇格済み',
     )
   })
 

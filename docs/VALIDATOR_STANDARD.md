@@ -176,11 +176,13 @@ Lifecycle State が Future Expansion であることは本 check の severity �
 （`docs/JSON_STANDARD.md` JS-00 ／ `docs/DEVELOPMENT_STANDARD.md` §10.1・§10.3 の
 「F5 の適用範囲」）。
 
-**現在 WARN である理由**: 本 check は導入時点で未充足のモジュールが存在したため WARN
-として導入された。当該データは F-4b で補完済みであり、全 module で検出 0 件となっている。
-**現在 WARN であるのは、severity 昇格工程が未実施であるという現在状態による。** 昇格の
-開始条件・手順は severity 昇格工程が管理する。ERROR への昇格を最終到達点とする方針は
-維持する。
+**severity（2026-08-01 に ERROR へ昇格済み）**: 本 check は導入時点で未充足のモジュールが
+存在したため WARN として導入された。当該データは F-4b で補完され、全 module で検出 0 件と
+なったため、**canonical 完成条件の欠落として ERROR へ昇格した**。
+
+**昇格は build 停止を目的とするものではない。** canonical 完成条件を満たさない状態を warning
+ではなく defect として分類するための変更である。build を停止するか否かは Validator ではなく
+呼び出し側が決定する（§4「品質ゲートの設計方針」）。
 
 なお本 check は Appendix の errorCode 一覧にのみ収載しており、§3-A / §3-B の番号付き
 本文チェック表には未収載である。収載には check 番号の採番を要し、番号体系の扱いが
@@ -270,7 +272,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 |---|---|---|
 | `MISSING_MODULE_ID` | ERROR | Structural |
 | `MISSING_MODULE_VERSION` | WARN | Structural |
-| `MISSING_PERSONA` | WARN | Structural |
+| `MISSING_PERSONA` | ERROR | Structural |
 | `MISSING_PRIMARY_DISPLAY_NAME` | ERROR | Structural |
 | `NAME_ALIASES_MISMATCH` | ERROR | Structural |
 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARN | Design Rule |
