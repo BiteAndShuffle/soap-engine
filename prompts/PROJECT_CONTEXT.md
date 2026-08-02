@@ -31,7 +31,7 @@
 
 | ドキュメント | 役割 |
 |---|---|
-| `docs/DEVELOPMENT_STANDARD.md` | **プロジェクト全体構造の索引（最初に読む入口文書）**。Mission / Core Philosophy / Architecture / Development Workflow / 正本関係 / Documentation Map を一枚で把握する |
+| `docs/DEVELOPMENT_STANDARD.md` | **プロジェクト全体構造・正本関係・Documentation Map・運営規則を示す索引文書**。Mission / Core Philosophy / Architecture / Development Workflow を一枚で把握する |
 | `docs/DESIGN_PRINCIPLES.md` | モジュール設計原則（なぜそうするか）|
 | `docs/JSON_STANDARD.md` | canonical JSON 構造標準（どう書くか）|
 | `docs/BOOTSTRAP_STANDARD.md` | Bootstrap 設計標準（P0-A 工程の設計意図）|
