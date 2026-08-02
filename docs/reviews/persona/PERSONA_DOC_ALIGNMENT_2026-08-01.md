@@ -291,6 +291,52 @@ P-3b では Experimental 資産の台帳不在および旧体系 16 ファイル
 
 > **手順を飛ばさないこと。** 特に手順 1 を飛ばして手順 4 を実行すると、`prompts/vNext/PN7-Cross-Reference-Audit.md` item R および `docs/feature-glossary.md` と実装が矛盾する。
 
+### 実施結果（2026-08-01 / severity 昇格）
+
+**commit**: `52cb89d` `fix(validator): promote MISSING_PERSONA from warning to error`（3 ファイル・17 insertions / 13 deletions）
+
+**手順の実施**
+
+| 手順 | 結果 |
+|---|---|
+| 1 正本文書と関連文書の整合 | **充足**（§2 の 12 対象すべて完了 → §2「§2 完了判定」） |
+| 2 2 module の補完（F-4b） | **充足**（commit `54dda6e`） |
+| 3 `MISSING_PERSONA` = 0 の確認 | **充足**（昇格前 baseline: 0 件） |
+| 4 severity 昇格 | **実施**（下記 A） |
+| 5 壊した fixture で ERROR を確認 | **実施**（下記 B） |
+
+**A. 変更内容（変更対象 3 ファイル ＋ 本記録）**
+
+| ファイル | 変更 |
+|---|---|
+| `lib/moduleValidator.ts` | `isWarning: true` → **`false`** ／ 旧「既存 2 モジュールが未充足のため現時点は WARN」コメントを現況へ追随 ／ 型定義コメントを「警告」→「ERROR」へ |
+| `tests/moduleValidator.test.ts` | **削除・skip・差し替えをせず**（OD-P13）、テスト名・期待値（`true` → `false`）・メッセージのみ更新。persona 関連テストは 3 件のまま |
+| `docs/VALIDATOR_STANDARD.md` | Appendix の `MISSING_PERSONA` を **WARN → ERROR** ／ §5「現在 WARN である理由」を昇格後の状態へ更新（build 停止を目的とするものではない旨を明記） |
+
+**§3-A / §3-B の本文チェック表へは追加・採番していない**（番号体系の扱いが未確定のため。§4「昇格対象の整理」注意事項）。
+
+**B. 検証結果**
+
+| 検証項目（手順 5） | 結果 |
+|---|---|
+| `errorCode` = `MISSING_PERSONA` | ✓ |
+| `isWarning` = `false` | ✓ |
+| 対象フィールドが `persona` | ✓（`detail` に明記） |
+| 欠落していない fixture では検出されない | ✓ |
+
+| 指標 | 昇格前 | 昇格後 |
+|---|---|---|
+| `MISSING_PERSONA` | 0 | **0** |
+| WARNING 総数 | 18 | **18** |
+| ERROR 総数 | 0 | **0** |
+| defect class | 5 | **5** |
+| `npx tsc --noEmit` | PASS | **PASS** |
+| `npm test` | 2705 pass / 0 fail | **2705 pass / 0 fail / 0 skipped** |
+| `npm run audit` | 2 系統 PASS | **2 系統 PASS（35 件）** |
+| `npm run build` | 成功 | **成功**（CrossModuleValidator OK / 35 module） |
+
+**全 module が `persona` を保持しているため、昇格後も ERROR 総数は 0 のままである。** 本昇格は、今後 `persona` を欠く module が現れた場合に defect として分類されることを保証する変更であり、現在の Repository 状態を変えない。
+
 ---
 
 ## 5. 別途対応が必要な governance gap
@@ -414,15 +460,17 @@ Lifecycle Classification Pending は、
 | **P-3b（Lifecycle 正規台帳化 ＝ ④）** | **完了**（commit `92b3a20` `docs(standard): define lifecycle ledgers as authoritative and add classification pending`）。実施内容は §2.1「P-3b 実施結果」 |
 | **P-3c（参照側の追随 ＝ ⑦ / ⑧ / ⑨）** | **完了**（commit `99db5a0` `docs(audit): rebase persona checks on canonical requirement`）。実施内容は §2.2「P-3c 実施結果」 |
 | **P-3d（到達経路の確保 ＝ ⑤ / ⑪）** | **完了**（commit `206e86a` `docs(context): update documentation map after persona architecture alignment`）。実施内容は §2.3「P-3d 実施結果」 |
-| **P-5（§2 完了判定 ＋ 昇格前の最終依存確認）** | **完了**（commit 待ち）。判定は §2「§2 完了判定」／ §4 開始条件の状態欄 |
+| **P-5（§2 完了判定 ＋ 昇格前の最終依存確認）** | **完了**（commit `c0afd0d`）。判定は §2「§2 完了判定」／ §4 開始条件の状態欄 |
 | §2 の ⑩ | **責務移管により完了扱い**（§6.1） |
 | **§2 全体（12 対象）** | **完了**（§2「§2 完了判定」） |
 | F-4b | **完了**（§3「実施結果」）。`MISSING_PERSONA` 0 件 ／ warning 20 → 18 |
-| **`MISSING_PERSONA` 昇格** | **未着手。開始条件 4 件はすべて充足済み**（§4）。次工程 |
+| **`MISSING_PERSONA` 昇格** | **完了**（commit `52cb89d` `fix(validator): promote MISSING_PERSONA from warning to error`）。実施内容と検証結果は §4「実施結果（2026-08-01 / severity 昇格）」 |
 | GG-1 / GG-3 | **§10.5 Lifecycle Classification Pending へ登録済み**（P-3b / commit `92b3a20`）。**Lifecycle State は確定していない** |
 | GG-2 / PP-D-1 | 未着手（本作業の対象外） |
-| push | **未実施**（local は remote に対して **ahead 13**。`7fce221` 以降の全 commit が remote 未反映） |
+| push | **未実施**（Commit 1 `52cb89d` 時点で local は remote に対して **ahead 15**。`7fce221` 以降の全 commit が remote 未反映） |
 
-**次工程は `MISSING_PERSONA` の severity 昇格である。** Repository 全体の別トラック（GG-2 / OD-R2 / OD-R3 / OD-R5 / OD-R7 / OD-R8 / Experimental 台帳・旧体系の状態未表示）は、**本工程の残作業に含めない。**
+**本記録が扱う作業（§2 の文書整合 ／ F-4b ／ `MISSING_PERSONA` の severity 昇格）はすべて完了した。残るのは push のみである。**
+
+Repository 全体の別トラック（GG-2 / OD-R2 / OD-R3 / OD-R5 / OD-R7 / OD-R8 / Experimental 台帳・旧体系の状態未表示）は、**本工程の残作業に含めない。**
 
 **本記録の凍結時、§5 の未処理事項は本記録とともに凍結してはならない。** 別管理へ移す必要がある。移動先・管理方法は本記録では決めない。
