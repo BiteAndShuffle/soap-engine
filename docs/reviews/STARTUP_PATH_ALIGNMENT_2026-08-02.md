@@ -264,6 +264,14 @@ R4-a / R4-b 完了後、**変更契機（Change Trigger）の標準仕様を制�
 
 **R6-c（enforcement）にも着手していない。**
 
+### 5.7 R6-b-3 実施時に検出した Deferred Item
+
+- `docs/VALIDATOR_STANDARD.md` §3
+  - 見出し・本文に「check 1〜34」「全37 check」という件数表現が存在する。
+  - Appendix の errorCode 一覧は実装と双方向照合し、46件で一致している（R6-b-3 検証時に実測）。
+  - check数とerrorCode数が同一概念かは未確認であるため、自己判断で数値を変更しない。
+  - R6-b後続またはR6-cで、checkの定義・算出方法・変更元を実測して扱いを判断する。
+
 ---
 
 ## 6. 引き継ぎ事項
