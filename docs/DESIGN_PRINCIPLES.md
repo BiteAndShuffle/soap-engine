@@ -371,14 +371,7 @@ DP-07（bridge SOT 原則）— 同じ「データが正本」という思想の
 - 同一 `genericKey` が単一 module にのみ存在する場合は適用しない（適応ラベル化は発生せず、DP-09 の従来挙動のまま）
 
 **プロセス連動ルール**
-新しい `matchPolicy` フィールドを追加した場合は、以下を同一作業内で更新する（型定義のみの先行実装を禁止する）:
-- `lib/types.ts`（型定義）
-- `docs/JSON_STANDARD.md`（matchPolicy 仕様表）
-- `docs/DESIGN_PRINCIPLES.md`（新しい設計パターンを伴う場合、新規 DP として追加）
-- 検索 unit tests（`tests/search.test.ts` 等）・回帰テスト
-- Runtime / 実機横断チェック項目（`docs/IMPLEMENTATION_CHECKLIST.md`）
-
-検索ロジックの変更では、direct match 系のコードパスと generic match 系のコードパスの両方を確認する（詳細な手順は `prompts/RULES.md` §26）。
+`matchPolicy` フィールドの追加・挙動変更に伴う**同一作業内の更新対象**、および**検索ロジック変更時の確認範囲**は、`prompts/RULES.md` §26 を正本とする。本節では重複して定義しない。
 
 **採用理由**
 糖尿病領域で SGLT2 阻害薬（`dm_sglt2_oral` = 糖尿病適応 / `cardiorenal_sglt2_oral` = 心不全・慢性腎臓病適応）が同一ブランド・同一一般名を持つケースが発生した。適応ラベル表示のみを狙った初期実装が、ブランド名検索⇔一般名検索の相互到達性を壊す回帰を引き起こしたため、再発防止として原則化する。同種の複数適応薬剤は今後他の薬効クラス（循環器・腎臓連携薬等）でも発生しうる。
