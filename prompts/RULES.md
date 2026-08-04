@@ -802,16 +802,26 @@ Addon の表示順は、コード側の固定順ではなく bridge / canonical 
 
 ## 26. matchPolicy 変更時の同時更新ルール（matchPolicy Change Process Rule）
 
-`drug.search.matchPolicy`（`lib/types.ts` の `DrugSearchMatchPolicy`）へ新しいフィールドを追加、または既存フィールドの挙動を変更する場合、以下を**同一作業内**で更新する。型定義のみを先行実装し、他の更新を後回しにしてはならない。
+（本節の要素・原則は `docs/DEVELOPMENT_STANDARD.md` §11 が定める）
 
-**同一作業内で更新する対象:**
+**起点**: 次のいずれかを行ったとき、本規則が発火する。
+
+- `drug.search.matchPolicy`（`lib/types.ts` の `DrugSearchMatchPolicy`）へ新しいフィールドを追加した
+- `drug.search.matchPolicy` の既存フィールドの挙動を変更した
+
+**更新対象**
+
+以下を**同一作業内**で更新する。型定義のみを先行実装し、他の更新を後回しにしてはならない。
+
 - `lib/types.ts`（型定義。JSDoc に default 挙動・true 時の挙動を明記する）
 - `docs/JSON_STANDARD.md`（matchPolicy 仕様表。型・default 挙動・true 時の挙動・適用対象・他フィールドとの関係・候補表示/dedup/表示順への影響・使用モジュール一覧を記載する）
 - `docs/DESIGN_PRINCIPLES.md`（新しい設計パターンを伴う変更の場合のみ、新規 DP として追加する。既存 DP の組み合わせで説明できる変更であれば新規 DP は不要）
 - 検索 unit tests（`tests/search.test.ts` 等。新規フィールドの動作確認テストと、無効時に既存モジュールへ影響しないことを確認する回帰テストの両方を追加する）
 - `docs/IMPLEMENTATION_CHECKLIST.md` の Runtime / 実機横断確認チェック項目（新しい検索挙動を実機確認の対象に含める）
 
-**検索ロジック変更時の確認範囲:**
+**検証**
+
+検索ロジック変更時の確認範囲は次のとおりである。
 `lib/search.ts` の候補生成は、クエリがブランド名に直接一致する **direct 系コードパス**（`resolveAllHighPrecisionBrands` / direct・sibling バケツ）と、クエリが一般名に一致する **generic match 系コードパス**（`groups` 構築ロジック / genericMode バケツ）の 2 系統に分かれている。一方の系統のみを確認して変更を確定してはならない。matchPolicy フィールドの追加・変更では、**両方のコードパスで実際に候補が生成されるか（一方の型で検索した結果、対応する他方の型の候補が消えていないか）を確認する**こと。
 
 **採用理由**
