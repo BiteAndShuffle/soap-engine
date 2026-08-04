@@ -4,6 +4,54 @@ SOAP Engine における Validator の責務境界・分類基準・運用ルー
 
 ---
 
+## 変更契機
+
+（本節の要素・原則は `docs/DEVELOPMENT_STANDARD.md` §11 が定める）
+
+本節は、実装の状態を写し取る 2 つの台帳 —— **Appendix: errorCode 一覧** と
+**Appendix B: KNOWN_INTENTIONAL_WARNINGS** —— を対象とする。
+
+### Appendix: errorCode 一覧
+
+**起点**: 次のいずれかを行ったとき、本 Appendix は古くなる。
+
+- `lib/moduleValidator.ts` または `lib/crossModuleValidator.ts` へ errorCode を追加した
+- 既存 errorCode を削除した、または errorCode 名を変更した
+- 既存 errorCode の severity（ERROR / WARNING）を変更した
+- 既存 errorCode の分類（Structural / Reference / Design Rule）を変更した
+
+**更新対象**
+
+- 本 Appendix の該当行（errorCode / ERROR・WARN / 分類）。severity を変更した場合は、
+  変更が §5「判定基準」を満たすことを確認した上で更新する
+
+### Appendix B: KNOWN_INTENTIONAL_WARNINGS
+
+**起点**: 次のいずれかを行ったとき、本 Appendix B は古くなる。
+
+- Validator が検出する WARNING を意図的に残存させる判断を行った
+- 登録済みエントリの WARNING が解消した（対象ブランド・module の追加による自然解消を含む）
+- 登録済みエントリの status または対応方針を変更した
+
+**更新対象**
+
+- 本 Appendix B の該当エントリ（新規登録 ／ 解消時の削除 ／ status・対応方針の更新）
+
+### 対象外
+
+- `prompts/vNext/HANDOFF.md` §6「ModuleValidator 既存 WARNING」 —— 同節は
+  **Appendix B を正本と宣言し、台帳を二重管理しない旨を明記している**。よって
+  Appendix B の更新に追随しない（追随させると二重管理が復活する）
+
+### 検証
+
+- 本 Appendix の全 errorCode が `lib/moduleValidator.ts` / `lib/crossModuleValidator.ts`
+  に実在し、かつ両ファイルの全 errorCode が本 Appendix に存在すること（双方向の照合）
+- Appendix B の各エントリが、`npm run build` 実行時に実際に出力される WARNING と
+  対応していること
+
+---
+
 ## 1. Validator の目的
 
 ### 保証すること
