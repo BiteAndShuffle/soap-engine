@@ -180,8 +180,8 @@ soap-engine/
 
 | 原則 | 内容 |
 |---|---|
-| Single Source of Truth | bridge原稿が正本。canonical JSON側の既存値より bridge 一致を優先 |
-| 非創作 | 補完しない・改善しない・自然化しない・医学的推測しない |
+| Single Source of Truth | 正本は `docs/DEVELOPMENT_STANDARD.md` §2 を参照。本文はここでは重複保持しない |
+| 非創作 | 正本は `docs/DEVELOPMENT_STANDARD.md` §2 を参照。本文はここでは重複保持しない |
 | JSON都合禁止 | JSON構造を整えるために本文（S/O/A/P）を変えない |
 | Baseline persona preservation | bridge本文の温度感・距離感・counseling weightを変えない |
 | App側吸収禁止 | preservation violation を P3/P4/P5 で後補正しない。P2へ差し戻す |
