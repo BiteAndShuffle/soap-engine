@@ -241,8 +241,6 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 | search token alias汚染防止 | P0-A / P0-B / P2B / P3 / P4 / P5 | 完了 |
 | `expressModes` 内部schema（13フィールド） | P0-A / P0-B / P2B / P3 / P4 | 完了 |
 
-P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェーズで「P0-A参照」へ整理予定。
-
 ### Phase 2: moduleValidator連携
 
 | 対象 | エラーコード | 分類 | 状態 |
@@ -276,7 +274,7 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 | drug.nameAliases check_name 記録先移動 | prompts/P3.md | 完了 |
 | expressModes field list P0-A参照化 | prompts/P2B.md / P3.md / P4.md | 完了 |
 
-変更しなかったもの（次フェーズ以降）: addons.orderPresets / drug.nameAliases / search token 参照化 / STANDARD_REFERENCE_PATHS共通化 / P0-B+P1統合 / commonSearchTokens / types.ts / schemaGeneration / StructuredEntry / P0-E
+変更しなかったもの（次フェーズ以降）: commonSearchTokens / types.ts
 
 ### genericBrandName参照先確定
 
@@ -303,12 +301,6 @@ P2B/P3/P4/P5 に trailing copy として残存する同等ルールは次フェ�
 | 対象 | 変更ファイル | 状態 |
 |---|---|---|
 | P2B search token handoff内部重複解消 | `prompts/P2B.md` | 完了 |
-
-- 早期 `[P3_HANDOFF]` の search token 検証対象（4フィールド＋alias非展開＋index反映要否）を削除
-- 正本を `■ P3_HANDOFF_RULE`（後段・完全版）に統一
-- search token build rule / validation rule / ERROR条件 / CHECK条件 は変更なし
-
-変更しなかったもの: P3 SEARCH_TOKEN_VALIDATION_RULE（独立セクションとして validation 判断基準を提供・追加参照化は工程固有性が高くリターンが小さいと判断済み）
 
 ### STANDARD_REFERENCE_PATHS 共通化レビュー
 
