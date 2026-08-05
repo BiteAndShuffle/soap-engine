@@ -192,7 +192,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 | `docs/TEAM_CHARTER.md` | Human / ChatGPT / Claude の役割分担 |
 | `docs/BOOTSTRAP_STANDARD.md` / `docs/P1_STANDARD.md` 〜 `docs/P5_STANDARD.md` | 旧体系（P0-A〜P5）各工程の設計意図（「なぜこの工程はこう設計されているか」） |
 | `docs/feature-glossary.md` | Rapid / Express / NLP等、UI機能用語の定義。**Persona という語が指す 3 概念の区別**もここ |
-| `prompts/vNext/HANDOFF.md` | vNext体系の新規チャット引き継ぎ文書。設計思想・完了済みモジュール一覧・技術的負債 |
+| `prompts/vNext/HANDOFF.md` | vNext体系の新規チャット引き継ぎ文書。設計思想・技術的負債 |
 | `prompts/vNext/STARTUP_PROMPT.md` | **読込経路の正本**。全作業共通の Base、工程段階 Overlay、対象概念 Overlay、Overlay の運用規則（コピペ用） |
 | `prompts/vNext/AUTORUN.md` | PN3A〜PN8自動連続実行の制御ルール・MUST_STOP条件 |
 | `prompts/vNext/PN1-Text-Extraction.md` 〜 `PN8-Build-Runtime-Release.md` | 各工程の実行プロンプト正本 |
@@ -202,27 +202,58 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 
 ## 8. Domain Completion Definition
 
-**Domain Complete** とは、ある薬効・診療領域（例: 糖尿病、点眼）に属する全モジュールが、
-以下の工程をすべて通過した状態を指します。
+**本節は Domain Complete の成立条件（Norm）の正本である。** 個別領域が Domain Complete である
+という**判定結果・その時点の証拠・Owner 承認は本節が持たない**。これらは実行記録が記録する。
+
+**Domain Complete** とは、ある薬効・診療領域（例: 糖尿病、点眼）について、以下をすべて
+満たした状態を指します。
+
+**前提: 対象領域の範囲**
+
+対象領域に属するモジュール集合は、canonical JSON の `categoryPath[0]`（適応領域）から導出します。
+`categoryPath[0]` を適応領域として扱うことは `docs/DESIGN_PRINCIPLES.md` DP-11 および
+`lib/types.ts`（`crossModuleIndicationLabel` の定義）に従います。**判定時点のモジュール集合と、
+Owner による例外的な追加・除外は実行記録へ記録します。**
 
 ```
-対象領域の全モジュールについて:
-  bridge STATUS: JSON_COMPLETE
-    ↓
+対象領域の全モジュールについて（モジュール単位の条件）:
   PN7: FAIL 0件（CHECKが残る場合はユーザー承認取得済み）
     ↓
   PN8: RELEASE_OK（tsc PASS / build PASS / registry登録済み）
     ↓
+領域単位の条件:
   Runtime / 実機横断確認: 全必須チェック実施済み
     （検索・シナリオ・SOAP生成・横断機能 — 詳細は `docs/IMPLEMENTATION_CHECKLIST.md`）
+    ↓
+  Owner による完了宣言
     ↓
   Domain Complete
 ```
 
+PN7 / PN8 は単一モジュールを対象とする工程であるため、モジュール単位の条件に属します。
+Runtime / 実機横断確認は領域を通じた挙動を対象とするため、領域単位の条件に属します。
+
 Domain Complete は「個々のモジュールがbuildを通る」ことではなく、「その領域を通じて実機で
-確認された挙動が期待どおりである」ことまでを含みます。糖尿病領域はこの一連の工程を経て
-完了しており（`prompts/vNext/HANDOFF.md` 完了モジュール一覧）、次の点眼領域も同じ基準で
-完了を判定します。
+確認された挙動が期待どおりである」ことまでを含みます。**モジュール単位の条件の充足は必要条件
+であり、十分条件ではありません。**
+
+**Owner による完了宣言を条件に含める理由**: 領域単位の条件は再実行によって過去の実施を復元
+できず、記録と承認以外に証拠を持ちえません。宣言を条件に含めることで、「条件を満たしたと誰が
+判断したか」が Repository から追跡可能になります。
+
+**bridge STATUS の扱い**: bridge の STATUS（`prompts/RULES.md` §24）は個別 bridge の工程到達
+状態を表すものであり、Domain Complete の先行証拠としては用いません。
+
+> **糖尿病領域について（事実の記録）**
+>
+> 糖尿病領域は過去に Domain Complete と判定されており、**本節の改定はこの判定を取り消しません。**
+> 一方、当時の PN7・Runtime / 実機横断確認・Owner 承認の**実施記録は Repository 内に存在しません。**
+>
+> **この記載は、糖尿病領域が未完了であること・過去の完了判定を撤回すること・現在 PENDING で
+> あることのいずれも意味しません。** 証拠記録の要件が成立する以前に行われた作業について、
+> 記録の不在を事実として公告するものです。
+
+次の点眼領域からは、本節の条件と記録方法に従って完了を判定します。
 
 ---
 
