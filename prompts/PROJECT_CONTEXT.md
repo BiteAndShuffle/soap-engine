@@ -141,16 +141,9 @@
 
 **vNext フェーズ（大規模モジュール向け新体系 / 並行進行）**
 
-| 状態 | 内容 |
-|---|---|
-| 完了 | vNext PN1〜PN8 プロンプト体系の設計・整備・運用レビュー（全 10 ファイル）|
-| 完了 | `dm_insulin_rapid_analog.json` の vNext 体系での JSON 化 |
-| 完了 | `dm_insulin_regular.json` の vNext 体系での JSON 化 |
-| 完了 | `dm_insulin_intermediate.json` の vNext 体系での JSON 化 |
-| 完了 | 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field既存不具合修正、2026-07。詳細: DESIGN_PRINCIPLES.md DP-09 / OPEN_DESIGN_QUESTIONS.md Q-S1 / RULES.md CHECK-O01） |
-| 完了 | 多剤合成テストを `npm run test:multi-drug` として正式回帰テスト化（20ケース、2026-07。運用ルール: `prompts/vNext/HANDOFF.md`） |
-
-vNext 作業手順の詳細は `prompts/vNext/HANDOFF.md` を参照。
+vNext体系（PN1〜PN8）の整備状況・登録済みモジュール一覧は `data/modules/index.ts` を、
+多剤合成テストの現在の結果は `npm run test:multi-drug` の実行結果を正本とする。
+vNext作業手順の詳細は `prompts/vNext/HANDOFF.md` を参照。
 
 ---
 
