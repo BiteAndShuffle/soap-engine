@@ -292,7 +292,8 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 
 ## 7. トークン効率方針
 
-優先順位：① 品質維持（preservation・medical correctness）→ ② Claude 読込トークン削減 → ③ 人間工数削減 → ④ 工程数削減
+優先順位の正本は `docs/DEVELOPMENT_STANDARD.md` §2 を参照。
+本文はここでは重複保持しない。
 
 工程数を減らしても読込トークンが増えるなら改善とみなさない。Claude トークン消費が過大な案は不採用候補。
 
