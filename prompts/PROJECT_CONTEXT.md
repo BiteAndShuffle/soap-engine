@@ -230,7 +230,7 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 
 ---
 
-## 8. フェーズ完了記録
+## 8. Decision記録
 
 ### STANDARD_REFERENCE_PATHS 共通化レビュー
 
