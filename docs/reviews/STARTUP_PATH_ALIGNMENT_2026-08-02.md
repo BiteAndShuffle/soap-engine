@@ -274,6 +274,92 @@ R4-a / R4-b 完了後、**変更契機（Change Trigger）の標準仕様を制�
 
 ---
 
+## 5A. R6-b-4 — Domain Completion 証拠構造の反映と HANDOFF 情報構造整理
+
+**本節は Owner Decision を保存しない。** Decision の正本は Norm 側（`docs/DEVELOPMENT_STANDARD.md`
+§8）および Owner の判断そのものであり、本節が記録するのは**それを Repository へどう反映したか**
+という実施結果・状態・検証結果・commit である。
+
+### 5A.1 前提とした Owner Decision
+
+| ID | 内容 |
+|---|---|
+| **Decision A** | Domain Complete の成立には、機械的・人的条件の充足に加えて **Owner による明示的な完了宣言を必須**とする |
+| **Decision B** | 糖尿病領域の過去の Domain Complete 判定は**取り消さない**。当時の PN7・Runtime / 実機横断確認・Owner 承認の**実施記録が Repository 内に存在しない事実は明示する**。これは「未完了」「撤回」「PENDING」のいずれも意味せず、証拠記録要件の成立以前に行われた作業について記録の不在を事実として公告するもの |
+
+Scope は構造整理に限定した（下記 5A.5 の Deferred Item を参照）。
+
+### 5A.2 実施結果
+
+| Sub Unit | 対象 | 実施内容 | 状態 |
+|---|---|---|---|
+| **R6-b-4-1** | `docs/DEVELOPMENT_STANDARD.md` §8 | Norm と個別判定結果の分離 ／ Domain Scope の決定方法（`categoryPath[0]`）明示 ／ PN7・PN8 をモジュール単位条件へ、Runtime / 実機横断確認を領域単位条件へ整理 ／ bridge STATUS を先行証拠から除外 ／ `HANDOFF` 一覧への citation 除去 | **完了** |
+| **R6-b-4-2** | 同 §7 Documentation Map | `HANDOFF` の責務記述から「完了済みモジュール一覧」を除去（1 行） | **完了** |
+| **R6-b-4-3** | `prompts/vNext/HANDOFF.md` §1・§4・§6 | 実装から機械取得できる Fact（一覧・件数・登録状態・検証状態・由来・group 使用件数）を除去し、正本ポインタへ置換 | **完了** |
+| **R6-b-4-4** | 同ファイル冒頭 | 変更契機を適用（§11.2 の配置規則に従い冒頭付近へ配置） | **完了** |
+
+### 5A.3 Decision A / B の反映結果
+
+| Decision | 反映先 | 反映内容 |
+|---|---|---|
+| **A** | `DEVELOPMENT_STANDARD` §8 | 成立条件の系列へ「Owner による完了宣言」を追加した。あわせて、領域単位の条件は再実行によって過去の実施を復元できず記録と承認以外に証拠を持ちえないという理由を併記した |
+| **B** | 同 §8 | 糖尿病領域の判定を**維持**したうえで、PN7・Runtime / 実機横断確認・Owner 承認の実施記録が Repository 内に存在しない事実を記載した。**「未完了」「撤回」「PENDING」のいずれも意味しない旨を同じ箇所に明記**し、証拠記録要件の成立以前の作業についての公告であることを示した |
+
+### 5A.4 検証結果〔実測・2026-08-03〕
+
+| # | 検証 | 結果 |
+|---|---|---|
+| 1 | §8 内の `HANDOFF` citation | **0 件** |
+| 2 | §8 の成立条件から `bridge STATUS: JSON_COMPLETE` が除去 | **0 件** |
+| 3 | §8 に「Owner による完了宣言」が存在 | **PASS** |
+| 4 | §8 に Domain Scope の決定方法（`categoryPath[0]`）が存在 | **PASS** |
+| 5 | Decision B の 3 つの否定が §8 に明記 | **PASS** |
+| 6 | §7 の `HANDOFF` 行から「完了済みモジュール一覧」除去 | **PASS**（変更は 1 行のみ） |
+| 7 | `DEVELOPMENT_STANDARD` の差分が §7 の 1 行と §8 の範囲に限定 | **PASS**（§0〜§6・§9〜§11 差分 0） |
+| 8 | `HANDOFF` 内のモジュール一覧表 | **0 件** |
+| 9 | `HANDOFF` 内の現在値としての件数 | **0 件**（唯一のヒットは変更契機「採用理由」内の drift 記録であり、現在値の複製ではない） |
+| 10 | `HANDOFF` の §2・§3・§5 の差分 | **0 件** |
+| 11 | 「確認のみ」／「条件付きで更新」という独立分類 | **0 件**（§11.4） |
+| 12 | 参照先パスの実在 | **PASS**（`data/modules/index.ts` ／ `VALIDATOR_STANDARD` Appendix B ／ `RULES` §6・§17・§24 ／ `AUTORUN.md` ／ `feature-glossary.md` ／ DP-11 ／ `lib/types.ts`） |
+| 13 | **Domain Scope の再現性** | **PASS**。§8 の決定方法で糖尿病領域が **26 件**として導出される（基準値と一致） |
+| 14 | コード・テスト・module・bridge の差分 | **0 件** |
+| 15 | `npx tsc --noEmit` | **exit 0** |
+| 16 | `npm run audit` | **35 件・両監査とも全モジュール PASS** |
+| 17 | 既存差分 4 件 | **不変** |
+
+〔実測〕除去した Fact のうち `HANDOFF` §6 の group 使用件数は、記載値
+（`lifestyle_guidance` 8 モジュール・26 件 ／ `administration_guidance` 3 モジュール・11 件）に対し
+実測が **5 モジュール・20 件 ／ 1 モジュール・4 件**であり、**除去は構造整理であると同時に
+drift 是正でもあった**。
+
+### 5A.5 R6-b-4 で扱わなかった事項（Deferred Item）
+
+| # | 事項 |
+|---|---|
+| 1 | **`RELEASE_OK_WITH_MONITOR` の最終的な位置付け** —— 旧体系（`docs/P5_STANDARD.md` P5S-04 ／ `prompts/P5.md`）は monitor 定義・rollback 方針の完了を成立要件とする成功判定と規定。vNext `PN8` はトークンのみ継承し要件を継承していない。実使用記録は Repository 内に 0 件。§8 では `RELEASE_OK` のみを扱った |
+| 2 | **モジュール単位条件の正式な概念名** —— 「Module Release」は Repository 内の出現 0 件の語であり、新設すると PN7 / PN8 と責務が重複する。§8 では条件充足の記述にとどめた |
+| 3 | **`NOT_CHECKED` の適用範囲注記** —— `prompts/RULES.md` §3 が名指しする `BUILD_OK` / `STRUCTURE_OK` / `RUNTIME_OK` は旧体系専用（vNext での出現 0 件）であり、当該規則は vNext を対象にしていない。矛盾ではなく適用対象違いだが、Base 文書が旧体系語義の `NOT_CHECKED` 規則を毎回供給する状態が残る |
+| 4 | **`prompts/RULES.md` §6 CHECK-G02 詳細表の件数 drift** —— 同表は `administration_guidance` 3 件・`lifestyle_guidance` 8 件と記載するが、実測は **1 件・5 件**。`RULES.md` は R6-b-4 の対象外のため変更していない |
+| 5 | **`prompts/vNext/HANDOFF.md` L8 の自己申告** —— 「この文書は…これ1本だけを読んで…開発を再開できるよう書かれています」という記述が、読込経路の正本（`prompts/vNext/STARTUP_PROMPT.md`）と整合しない。**Execution Plan の対象節に含まれないため変更していない** |
+| 6 | **`docs/VALIDATOR_STANDARD.md` §3 の check 件数表現**（§5.7 の継続） |
+| 7 | **bridge STATUS の将来設計** —— 独立 Unit（Owner 方向性で確定済み。本 Unit では触れていない） |
+
+### 5A.6 commit
+
+| # | commit | message | 対象 | 状態 |
+|---|---|---|---|---|
+| 1 | **`b0c1a58`** | `docs(standard): restructure domain completion into norm and evidence` | `docs/DEVELOPMENT_STANDARD.md`（§8 ＋ §7 の 1 行） | **完了**（+40 / −9） |
+| 2 | **`b094ef5`** | `docs(handoff): replace tracked inventories with authority pointers` | `prompts/vNext/HANDOFF.md` | **完了**（+70 / −39） |
+| 3 | 本記録を確定する commit | `docs(review): record R6-b-4 domain completion restructure` | 本記録 | **本 commit で完了** |
+
+commit 1 → 2 の順序は固定である。逆順では、`HANDOFF` から一覧が消えた時点で §8 の citation が
+参照切れになる。採用した順序では、commit 1 完了時点で §7 が「`HANDOFF` は完了済みモジュール
+一覧を持たない」と述べる一方 `HANDOFF` にはまだ一覧が残るが、**参照切れも到達不能も発生しない**。
+
+**正本文書の変更と実行記録は別 commit とする。**
+
+---
+
 ## 6. 引き継ぎ事項
 
 | # | 事項 | 状態 |
