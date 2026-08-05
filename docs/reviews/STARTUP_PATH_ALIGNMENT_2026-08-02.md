@@ -360,6 +360,89 @@ commit 1 → 2 の順序は固定である。逆順では、`HANDOFF` から一�
 
 ---
 
+## 5B. R6-b-5 — 読込範囲の追随と用語体系への変更契機適用
+
+### 5B.1 責務
+
+| # | 責務 |
+|---|---|
+| 1 | `prompts/RULES.md` 前文の読込範囲を、`prompts/vNext/STARTUP_PROMPT.md` の Base 定義へ追随させた |
+| 2 | `docs/feature-glossary.md` のうち、**本ファイル自身が正本である用語体系に限定して**変更契機を適用した |
+
+### 5B.2 実施結果
+
+| commit | hash | 対象 | 責務 |
+|---|---|---|---|
+| **1** | **`9e2c1b1`** | `prompts/RULES.md` | 必読順位（3 番目）を維持したまま、**通読範囲が §1〜§3 のみ**であることと、**§4 以降は必要時参照**であることを明示した |
+| **2** | **`42671cc`** | `docs/feature-glossary.md` | Rapid / ADDON / Express / NLP生成 の用語体系、および Persona 3 概念の定義・区分について、**変更元としての変更契機**を追加した |
+| **3** | 本記録を確定する commit | 本記録 | 状態・責務境界・検証結果・commit 追跡を記録する |
+
+> **Commit 3 は自身の確定 hash を本文へ記録しない**（§5.1 と同じ理由）。**同定は commit message（`docs(review): record R6-b-5 change trigger rollout`）による。**
+
+### 5B.3 feature-glossary の責務境界
+
+| 項目 | 内容 |
+|---|---|
+| **変更契機の対象** | 本ファイル自身が正本である**用語体系のみ** |
+| **触れていないもの** | Lifecycle State ／ Future Expansion 表記 ／ Canonical Requirement ／ JS-A ／ DP-13 ／ 実装ハンドラ ／ `buildNodeFields` ／ UI 接続状態 ／ 撤回履歴 |
+| **追随先** | 実測した **5 箇所のみ**（下表） |
+
+| # | 追随先 |
+|---|---|
+| 1 | `docs/PERSONA_PROJECT_PRINCIPLE.md` §3.2.1 |
+| 2 | `docs/PERSONA_PROJECT_PRINCIPLE.md` §8.2 |
+| 3 | `docs/PERSONA_PROJECT_PRINCIPLE.md` §8.4 |
+| 4 | `prompts/PROJECT_CONTEXT.md` §5 |
+| 5 | `docs/DEVELOPMENT_STANDARD.md` §7 Documentation Map |
+
+〔実測〕`prompts/vNext/HANDOFF.md` は**用語体系への依存を持たないため更新対象に含めていない**。同ファイル内の `Rapid` / `Express` / `NLP生成` / `3 概念` / 概念番号の出現は 0 件であり、唯一の参照箇所は feature-glossary を「規則導入境界を記載する文書の例」として挙げているのみである。
+
+### 5B.4 検証結果〔実測・2026-08-03〕
+
+| # | 検証 | 結果 |
+|---|---|---|
+| 1 | Commit 1 の差分が `RULES` 前文 L5 付近のみ | **PASS**（単一 hunk。+2 / −2） |
+| 2 | `RULES` §1 以降の本文に差分 | **0 件**（§1 開始は L16、変更は L5〜6） |
+| 3 | Commit 2 が feature-glossary 冒頭への純粋な追加のみ | **PASS**（単一 hunk。+35 / −0） |
+| 4 | feature-glossary 既存本文の削除・変更 | **0 件** |
+| 5 | 変更契機節が冒頭付近（最初の本文節より前） | **PASS**（`docs/DEVELOPMENT_STANDARD.md` §11.2 規則 2） |
+| 6 | 起点への追随側情報の混入 | **0 件**（Lifecycle ／ Future Expansion ／ Canonical Requirement ／ JS-A ／ DP-13 ／ `buildNodeFields` ／ ハンドラ名 ／ UI 接続状態 ／ 撤回） |
+| 7 | 「確認のみ」「条件付きで更新」の独立分類 | **0 件** |
+| 8 | 追随先 5 箇所の参照先の実在 | **PASS**（それぞれ独立に確認） |
+| 9 | 新しい Owner Decision | **なし** |
+| 10 | コード・テスト・module・bridge の差分 | **0 件** |
+| 11 | 既存差分 4 件 | **不変** |
+| 12 | `npx tsc --noEmit` | **exit 0** |
+| 13 | `npm run audit` | **35 件・両監査とも全モジュール PASS** |
+
+### 5B.5 R6-b-5 で行わなかったこと
+
+| # | 事項 |
+|---|---|
+| 1 | `docs/OPEN_DESIGN_QUESTIONS.md` の判定（変更契機の要否） |
+| 2 | `docs/feature-glossary.md` の NLP Lifecycle State 是正（§10.5 GG-1 に連動） |
+| 3 | Persona 設計本文の変更 |
+| 4 | `prompts/RULES.md` §6 CHECK-G02 の件数 drift 是正 |
+| 5 | `prompts/vNext/HANDOFF.md` L8 の自己申告修正 |
+| 6 | `docs/VALIDATOR_STANDARD.md` §3 の check 件数整理 |
+| 7 | bridge STATUS 設計 |
+| 8 | R6-b-6 |
+| 9 | R6-c |
+
+### 5B.6 状態
+
+| 項目 | 状態 |
+|---|---|
+| Commit 1（`9e2c1b1`） | **完了** |
+| Commit 2（`42671cc`） | **完了** |
+| Commit 3（本記録を確定する commit） | **本 commit で完了** |
+| **R6-b-5** | **完了** |
+| R6-b-6 | **未着手** |
+| R6-c | **未着手** |
+| push | **未実施** |
+
+---
+
 ## 6. 引き継ぎ事項
 
 | # | 事項 | 状態 |
