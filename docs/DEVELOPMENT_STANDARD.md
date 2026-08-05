@@ -31,6 +31,8 @@ SOAP エンジンは、日本の調剤薬局・薬剤師向けの **SOAP 形式�
 アドヒアランス等）に応じた SOAP 指導記録の草稿を生成できることを目指します。複数の薬剤が処方
 されている場合でも、SOAP 記録を破綻なく合成できること（semantic merge）も含みます。
 
+**Vision**
+
 現在は糖尿病領域のモジュール群が稼働中ですが、目標は単発領域の実装ではなく、**内服・外用・
 点眼・点鼻・吸入・注射・漢方など 50〜300+ モジュールの量産に耐える基盤を作ること**です
 （詳細: `prompts/PROJECT_CONTEXT.md` §1）。
@@ -44,8 +46,8 @@ SOAP エンジンは、日本の調剤薬局・薬剤師向けの **SOAP 形式�
 
 | 原則 | 内容（要約） | 正本 |
 |---|---|---|
-| **bridge を医学的正本とする** | bridge 原稿が内容の正本。canonical JSON はその実装物にすぎない | DP-07（`docs/DESIGN_PRINCIPLES.md`）/ PROJECT_CONTEXT.md §2 |
-| **非創作（non-creative）** | 補完しない・改善しない・自然化しない・医学的推測をしない | PROJECT_CONTEXT.md §2 / `prompts/RULES.md` §2 PROHIBITED_UNIVERSAL |
+| **bridge を医学的正本とする** | bridge 原稿が内容の正本。canonical JSON はその実装物にすぎない | DP-07（`docs/DESIGN_PRINCIPLES.md`） |
+| **非創作（non-creative）** | 補完しない・改善しない・自然化しない・医学的推測をしない | `prompts/RULES.md` §2 PROHIBITED_UNIVERSAL |
 | **deterministic（推測生成の禁止）** | わからない値は PENDING とし、推測で埋めない。停止条件を明示する | `prompts/RULES.md` §2〜3 / `prompts/vNext/AUTORUN.md` MUST_STOP 条件 |
 | **責務分離（単一責務）** | 各工程・各フィールドは 1 つのことだけを担当する（PN1〜PN8 のフェーズ分離、剤形分離原則等） | `prompts/vNext/HANDOFF.md` §2「単一責務」/ DP-01・DP-02 |
 | **最小差分での変更** | 本文（S/O/A/P）は凍結対象であり、意図しない範囲まで書き換えない。addon 等の変更範囲は必要最小限に留める | `prompts/vNext/PN1-Text-Extraction.md`「本文凍結宣言」/ `prompts/RULES.md` §22 |
