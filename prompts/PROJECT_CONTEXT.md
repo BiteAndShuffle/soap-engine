@@ -59,62 +59,12 @@
 
 ## Current Phase
 
-**Phase 1: SSOT回復 — 完了**
+**Phase 1〜3: 基盤整備 — 完了**
 
-| 状態 | 内容 |
-|---|---|
-| 完了 | P0-A SSOT回復（addons.orderPresets / drug.nameAliases / search token / expressModes） |
-| 完了 | P0-B 格納ルール対応更新 |
-| 完了 | P2B 整合（SSOTドリフト修正・内部重複解消） |
-| 完了 | P3 整合（SSOTドリフト修正・内部重複解消） |
-| 完了 | P4 整合（SSOTドリフト修正・runtime recheck補完） |
-| 完了 | P5 整合（P2_RETURN search token対称化） |
-| 完了 | PROJECT_CONTEXT.md 整備 |
+現行のValidator仕様・errorCode一覧は
+`docs/VALIDATOR_STANDARD.md` Appendixを参照。
 
-**Phase 2: moduleValidator連携 — 完了**
-
-| 状態 | 内容 |
-|---|---|
-| 完了 | addons.orderPresets 欠落 / 型違反検出（`ORDERPRESETS_MISSING` / `ORDERPRESETS_TYPE_INVALID`） |
-| 完了 | drug.nameAliases と drug.search.nameAliases 完全一致検出（`NAME_ALIASES_MISMATCH`） |
-| 完了 | formulationSearchTokens alias汚染 WARNING（`SEARCH_TOKEN_ALIAS_POLLUTION`） |
-| 完了 | commonSearchTokens alias汚染 WARNING（`SEARCH_TOKEN_ALIAS_POLLUTION` 拡張） |
-| 完了 | expressModes 必須5フィールド検出（`EXPRESS_MODE_MISSING_FIELD`） |
-| 完了 | expressModes 参照切れ検出（`EXPRESS_MODE_REF_BROKEN`） |
-
-**Phase 2: types.ts整備 — 完了**
-
-| 状態 | 内容 |
-|---|---|
-| 完了 | `DrugSearch.commonSearchTokens?: string[]` 追加 |
-| 完了 | `StructuredEntry` interface 追加（id / text / role? / transform? / safety? / lockTerms? / notes?） |
-| 完了 | `Scenario` に `SStructured? / OStructured? / AStructured? / PStructured?: StructuredEntry[]` 追加 |
-| 保留 | `schemaGeneration` 未追加（P0-E保留に連動） |
-
-**Phase 3: trailing copy低リスク整理 — 完了**
-
-| 状態 | 内容 |
-|---|---|
-| 完了 | P3 SEARCH_TOKEN_VALIDATION_RULE 内の drug.nameAliases一致検証重複を削除 |
-| 完了 | drug.nameAliases一致検証の check_name 記録先を BRAND_ALIAS_VALIDATION_RULE 側へ移動 |
-| 完了 | P2B / P3 / P4 の expressModes field list を P0-A参照化（build / validation / runtime 固有ロジックは保持） |
-
-**genericBrandName参照先確定 — 完了**
-
-| 状態 | 内容 |
-|---|---|
-| 完了 | genericBrandName を drug.brandCatalog の key として確定（defaultBrandName と同じ参照制約） |
-| 完了 | P0-A / P0-B / P3 / P4 の CHECK / P0-A未確定 表現を解消 |
-| 完了 | moduleValidator で genericBrandName の brandCatalog 参照切れを EXPRESS_MODE_REF_BROKEN ERROR として検出 |
-
-**Phase 3: trailing copy（中リスク分）— 完了**
-
-| 状態 | 内容 |
-|---|---|
-| 完了 | addons.orderPresets 型・必須性を P0-A ADDON_REQUIRED_RULES 参照化（P2B / P3） |
-| 完了 | drug.nameAliases 完全一致条件を P0-A drug.nameAliases完全一致ルール 参照化（P2B / P3） |
-| 完了 | P2B BRAND_ALIAS_BUILD_RULE 内部重複削除（mandatory diff の === 重複行） |
-| 完了 | P2B search token handoff内部重複解消（早期 [P3_HANDOFF] を P3_HANDOFF_RULE に一本化） |
+schemaGenerationを含む、まだ実施しない事項は§9を参照。
 
 **STANDARD_REFERENCE_PATHS 共通化レビュー — 完了・現時点では実施しない**
 
