@@ -11,6 +11,49 @@ Human / ChatGPT / Claude の役割分担・協業原則は `docs/TEAM_CHARTER.md
 
 ---
 
+## 変更契機
+
+（本節の要素・原則は `docs/DEVELOPMENT_STANDARD.md` §11 が定める）
+
+**起点**: 次のいずれかを行ったとき、本ファイルは古くなる。
+
+- `prompts/vNext/PN1-Text-Extraction.md` 〜 `PN8-Build-Runtime-Release.md` のいずれかで、
+  フェーズの責務・入出力・停止条件を変更した
+- `prompts/vNext/AUTORUN.md` の実行モードまたは MUST_STOP 条件を変更した
+- `prompts/RULES.md` §24（bridge STATUS 遷移・PN1 開始条件）を変更した
+- 本ファイルが技術的負債として記録している事項が解消した、または新たに記録する判断をした
+- 本ファイルが正本として参照しているパス（`data/modules/index.ts` ／ 検証コマンド ／
+  `docs/VALIDATOR_STANDARD.md` Appendix B）を変更・移動した
+
+**更新対象**
+
+- 「3. vNext プロンプト体系」の該当フェーズ記述（フェーズの責務・入出力・停止条件を変更した場合）
+- 「5. 次モジュール作業開始手順」の該当手順（AUTORUN または bridge STATUS を変更した場合）
+- 「6. 技術的負債」の該当項目（**解消した場合は削除する。記録を放置しない**）
+- 参照先パス
+
+**対象外**
+
+- **モジュールの一覧・件数・登録状態・検証状態** — 本ファイルは保持しない。正本は
+  `data/modules/index.ts` および検証コマンドの実行結果であり、実装側の変更に追随しない
+  （**一覧・件数を本ファイルへ再び持ち込まないこと**）
+- `docs/VALIDATOR_STANDARD.md` Appendix B の内容 — 同 Appendix が正本であり、
+  本ファイルは台帳を二重管理しない
+
+**検証**
+
+- 本ファイル内にモジュールの一覧・件数が存在しないこと
+- 参照先パスがすべて実在すること
+
+**採用理由**
+
+〔実測〕本節の制定前、本ファイルは「§1 に全 19 件」「§4 に 3 件＋他 11 件」という
+相互に矛盾する 2 つのモジュール一覧を保持し、いずれも実態（35 件）と乖離していた。
+「6. 技術的負債」の group 使用件数も同様に乖離していた。原因は、実装から機械取得できる値を
+散文が複製したことである。
+
+---
+
 # 1. プロジェクト概要
 
 ## SOAPエンジンとは何か
@@ -30,33 +73,13 @@ Human / ChatGPT / Claude の役割分担・協業原則は `docs/TEAM_CHARTER.md
 
 `data/modules/` に薬剤ごとの JSON モジュールを追加する段階です。
 
-**現時点で登録済みモジュール（全 19件 — tsc / build / ModuleValidator / CrossModuleValidator PASS）:**
+**登録済みモジュールの一覧・件数・登録順は `data/modules/index.ts` を正本とします。**
+本ファイルは一覧・件数を保持しません（`ALL_MODULES` を参照してください）。
 
-| moduleId | bridge | JSON | index.ts |
-|---|---|---|---|
-| dm_glp1ra_semaglutide_oral | ✅ | ✅ | ✅ |
-| dm_glp1ra_injection | ✅ | ✅ | ✅ |
-| dm_gip_glp1ra_tirzepatide_injection | ✅ | ✅ | ✅ |
-| allergy_h1_antihistamine_eye_drops | ✅ | ✅ | ✅ |
-| allergy_h1_antihistamine_second_gen_oral | ✅ | ✅ | ✅ |
-| derm_heparinoid_moisturizer_ointment | ✅ | ✅ | ✅ |
-| derm_heparinoid_moisturizer_cream | ✅ | ✅ | ✅ |
-| derm_heparinoid_moisturizer_lotion | ✅ | ✅ | ✅ |
-| derm_heparinoid_moisturizer_spray | ✅ | ✅ | ✅ |
-| allergy_leukotriene_receptor_antagonist_oral | ✅ | ✅ | ✅ |
-| allergy_chemical_mediator_release_inhibitor_eye_drops | ✅ | ✅ | ✅ |
-| dm_insulin_regular | ✅ | ✅ | ✅ |
-| dm_insulin_rapid_analog | ✅ | ✅ | ✅ |
-| dm_insulin_intermediate | ✅ | ✅ | ✅ |
-| dm_insulin_mixed_regular_intermediate | ✅ | ✅ | ✅ |
-| dm_insulin_long_acting | ✅ | ✅ | ✅ |
-| dm_insulin_mixed_rapid_intermediate | ✅ | ✅ | ✅ |
-| dm_insulin_mixed_rapid_long | ✅ | ✅ | ✅ |
-| dm_insulin_glp1_combination | ✅ | ✅ | ✅ |
+検証状態（tsc / build / ModuleValidator / CrossModuleValidator）は静的な記録ではなく、
+`npx tsc --noEmit` / `npm run build` / `npm run audit` の実行結果を正本とします。
 
-**bridge はあるが JSON / index.ts 未着手のモジュール:** なし（全 19件完了）
-
-**次の作業:** 新規モジュールの bridge 作成 → PN1〜PN8 実行
+次モジュールの着手手順は「5. 次モジュール作業開始手順」を参照してください。
 
 ## なぜ vNext プロンプト体系へ移行したのか
 
@@ -425,15 +448,20 @@ FAIL がある → 該当 Phase に差し戻し。PN8 は開始しない。
 | RULES.md §17 | sickday/followup の adherence_status ルール + 禁止語彙（M-3）+ followup_monitoring スコープ明確化 |
 | docs/JSON_STANDARD.md | addon 必須 12フィールド / treatment_end 個別値 / sickday situationFilter / thirdPanelSPlacement / composition.priority / normalizedTokens 追記 |
 
-## vNext 体系での完了モジュール一覧
+## モジュールの一覧・由来・検証状態について
 
-| moduleId | PN1〜PN8 | tsc/build | ModuleValidator |
-|---|---|---|---|
-| dm_insulin_rapid_analog | ✅ | ✅ | ✅ |
-| dm_insulin_regular | ✅ | ✅ | ✅ |
-| dm_insulin_intermediate | ✅ | ✅ | ✅ |
+**本ファイルはモジュールの一覧・件数を保持しません。**
 
-（上記以外の 11 モジュールは旧体系で生成・既存 — 同様に検証済み）
+| 知りたいこと | 正本 |
+|---|---|
+| 登録済みモジュールの一覧・件数・登録順 | `data/modules/index.ts`（`ALL_MODULES`） |
+| 現在の検証状態 | `npx tsc --noEmit` / `npm run build` / `npm run audit` の実行結果 |
+| どのモジュールがどの体系・どの時期に生成されたか | **git history**（当該 JSON の追加 commit） |
+
+由来（vNext / 旧体系）を単一のラベルとして保持しません。判断に必要となるのは
+「その module が特定の規則の確定より前に作られたか」であり、これは git の日付から
+判定します。個別の規則についての境界は、その規則を定めた文書側に記載します
+（例: `prompts/RULES.md` §6 / §17、`docs/feature-glossary.md`）。
 
 ## 旧 followupProfiles バグの修正
 
@@ -555,11 +583,14 @@ FAIL と同様に PN8 進行のブロッカーとして扱い、人間承認を�
 Addon の表示順は DP-10 / RULES.md §25 の通り bridge / JSON の記載順（`addonsRef.P`）をそのまま使用する（固定配列 GROUP_ORDER は廃止済み）。
 一方、`app/components/AddonPanel.tsx` の `GROUP_LABELS` には日本語ラベルが未登録のグループが存在します。未登録グループは `GROUP_LABELS[group] ?? group` により、表示順自体は JSON 記載順どおりだが、ラベルのみ英語文字列のまま表示されます（機能上は動作する）。
 
-| group 値 | 使用件数 | 対応方針 |
-|---|---|---|
-| `lifestyle_guidance` | 8 モジュール・26 件 | GROUP_LABELS 追加を将来検討（ラベル案: "生活指導"） |
-| `administration_guidance` | 3 モジュール・11 件 | 同上（ラベル案: "使用方法"） |
-| `adherence` | 多数 | 同上（ラベル案: "アドヒアランス"） |
+| group 値 | 対応方針 |
+|---|---|
+| `lifestyle_guidance` | GROUP_LABELS 追加を将来検討（ラベル案: "生活指導"） |
+| `administration_guidance` | 同上（ラベル案: "使用方法"） |
+| `adherence` | 同上（ラベル案: "アドヒアランス"） |
+
+使用モジュール数・件数は保持しません（`data/modules/*.json` の `addons.items[].group` を
+走査して取得します）。
 
 **方針**: 新規 module の group にこれらの値を使用してはならない。`prompts/RULES.md` §5 の変換表に従い
 `"counseling"` 等の正式 group 値へ変換すること（同 §6 で明示的に禁止されている）。本表が示しているのは
