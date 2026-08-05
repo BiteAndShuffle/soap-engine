@@ -4,6 +4,41 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 
 ---
 
+## 変更契機
+
+（本節の要素・原則は `docs/DEVELOPMENT_STANDARD.md` §11 が定める）
+
+本節が対象とするのは、**本ファイル自身が正本である用語体系**である。
+
+**起点**: 次のいずれかを行ったとき、本ファイルの用語体系に依存する記述が古くなる。
+
+- Rapid / ADDON / Express / NLP生成 のいずれかの**定義**を変更した
+- これらの用語間の**区別、または混同禁止規則**を変更した
+- これらの用語を**追加・削除・改名**した
+- Persona が指す **3 概念の定義・区分・番号・名称**を変更した
+- Persona の**概念間の混同禁止規則**を変更した
+
+**更新対象**
+
+| # | 追随先 | 依存している内容 |
+|---|---|---|
+| 1 | `docs/PERSONA_PROJECT_PRINCIPLE.md` **§3.2.1** | 概念①「bridge 本文そのものの文体」を base persona と対応づけ、概念②・概念③と区別している |
+| 2 | `docs/PERSONA_PROJECT_PRINCIPLE.md` **§8.2** | 「persona という語の 3 概念の定義」の正本として本ファイルを指している |
+| 3 | `docs/PERSONA_PROJECT_PRINCIPLE.md` **§8.4** | 3 概念の混同防止と、概念③の担当範囲を記述している |
+| 4 | `prompts/PROJECT_CONTEXT.md` **§5** | UI / 機能用語の一覧と、Persona 3 概念の区分を同じ形で保持している |
+| 5 | `docs/DEVELOPMENT_STANDARD.md` **§7 Documentation Map** | 本ファイルの責務を「UI 機能用語の定義」「3 概念の区別」として記述している |
+
+**検証**
+
+- 変更後の用語体系と上記 5 箇所が、**用語名・概念数・概念番号・概念区分**について一致していること
+- 上記 5 箇所の参照先がすべて実在すること
+
+**採用理由**
+
+本ファイルは `docs/DEVELOPMENT_STANDARD.md` §7 Documentation Map へ UI・機能用語の定義元として登録されている。`docs/PERSONA_PROJECT_PRINCIPLE.md` は Persona の 3 概念について本ファイルを正本と明示しており、`prompts/PROJECT_CONTEXT.md` §5 は同じ用語体系と 3 概念を参照・複写している。依存側には**概念番号を直接引用している箇所**があるため、用語体系を変更した場合は追随が必要になる。
+
+---
+
 ## Rapid（ラピッド）— 右パネル簡易操作
 
 **定義**: 右パネル（ThirdPanel）に配置された、1剤目 SOAP を即座に微調整するボタン群。
