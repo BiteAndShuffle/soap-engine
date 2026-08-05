@@ -95,7 +95,7 @@ SOAPエンジン開発を継続します。
 ■ Base（すべての作業で読む。順序厳守）
 
 ```
-1. docs/DEVELOPMENT_STANDARD.md   — 全文
+1. docs/DEVELOPMENT_STANDARD.md   — 全文（§10.2〜§10.5 を除く）
 2. prompts/PROJECT_CONTEXT.md     — 全文
 3. prompts/RULES.md               — §1〜§3 のみ
 ```
@@ -140,7 +140,7 @@ PN3A〜PN8 は AUTORUN モード（自動連続実行）の対象である。
 | **Validator** | ・`lib/moduleValidator.ts` / `lib/crossModuleValidator.ts` / `scripts/audit-*.ts` に触れる<br>・errorCode の追加・変更、severity の変更を行う<br>・Validator の warning / error 件数を判断材料にする<br>・PN7 または PN8 を実行する | docs/VALIDATOR_STANDARD.md |
 | **Persona** | ・Persona Project に関する判断を行う<br>・runtime persona に関する判断を行う<br>・`module.persona` に関する判断を行う<br>・人格別固定文章、または人格別文体変換に関する判断を行う | docs/PERSONA_PROJECT_PRINCIPLE.md（Core） |
 | **Persona Appendix** | **Persona Overlay が該当して Core を読む場合に限り、さらに次のいずれかに該当するとき Appendix も追加で読む**<br>・Core の判断根拠を確認する<br>・Repository 実測値・詳細反証・再測定手順を確認する<br>・Core の結論を再評価する | docs/PERSONA_PROJECT_APPENDIX.md（Appendix） |
-| **Lifecycle** | ・ある資産を Legacy / Future Expansion / Experimental / Current Standard / Archived のいずれかとして判断・記録・引用しようとする<br>・`docs/DEVELOPMENT_STANDARD.md` §10.x に触れる | docs/DEVELOPMENT_STANDARD.md §10 全体を再読 |
+| **Lifecycle** | ・ある資産を Legacy / Future Expansion / Experimental / Current Standard / Archived のいずれかとして判断・記録・引用しようとする<br>・`docs/DEVELOPMENT_STANDARD.md` §10.x に触れる | docs/DEVELOPMENT_STANDARD.md §10.2〜§10.5 |
 
 **Persona Overlay の適用外**: bridge 本文・指導文の通常の文章表現や日本語校正は、
 Persona Project との関係を判断する作業でない限り本 Overlay の対象ではない。
