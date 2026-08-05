@@ -87,5 +87,64 @@
 
 | Decision | 状態 |
 |---|---|
-| **Decision 2**（Identity の集約と判断優先順位の移設） | **確定済み・未実装** |
-| **Decision 3**（Fact / Decision / History の分類と権威関係） | **確定済み・未実装** |
+| **Decision 2**（Identity の集約と判断優先順位の移設） | **実装済み**（詳細は §4 参照） |
+| **Decision 3**（Fact / Decision / History の分類と権威関係） | **実装済み**（詳細は §4 参照） |
+
+---
+
+## 4. Decision 2・Decision 3 実装記録
+
+### 4.0 本節の性格
+
+本節は Owner Decision を保存しない。Decision の正本は §1・§2、および Owner の判断そのものであり、本節が記録するのはそれを Repository へどう実装したかという**実施結果・状態・検証結果・commit 追跡**である。
+
+本節が用いる Unit 名（Unit A／Unit B／Unit C／D-1〜D-4D）は Owner が付与した作業単位のラベルであり、Repository から機械的に導出される分類ではない。commit hash・commit message・実装内容は Repository 実測に基づく。
+
+失効: 記録した作業が完了した時点で、本節は履歴となる。本節の失効は §1・§2 の有効性に影響しない。
+
+### 4.1 実装結果
+
+| Unit（Owner指定） | commit | commit message | 実装内容 |
+|---|---|---|---|
+| **Unit C** | `207132a` | `docs(principles): define fact-decision-history classification (DP-17)` | `docs/DESIGN_PRINCIPLES.md` へ DP-17 を新設。`docs/DEVELOPMENT_STANDARD.md` は参照行 1 箇所を更新 |
+| **Unit A** | `632d72d` | `docs(standard): consolidate identity into mission and core philosophy` | `docs/DEVELOPMENT_STANDARD.md` §1・§2 へ Identity 関連記述を集約 |
+| **Unit A** | `b0b9acc` | `docs(context): point confirmed identity principles to development standard` | `prompts/PROJECT_CONTEXT.md` 側の Identity 関連重複記述を正本ポインタへ置換 |
+| **Unit B** | `64454ab` | `docs(standard): relocate judgement priority into core philosophy` | 判断優先順位を `docs/DEVELOPMENT_STANDARD.md` §2 へ移設 |
+| **Unit B** | `9c7acd7` | `docs(context): point token-efficiency priority to core philosophy` | `prompts/PROJECT_CONTEXT.md` §7 の判断優先順位記述を正本ポインタへ置換 |
+| **D-1** | `744b2ad` | `docs(context): replace vNext phase facts with current navigation` | Current Phase 内の vNext 完了実績 Fact 表を現状ナビゲーションへ置換 |
+| **D-2** | `44ca902` | `docs(context): replace phase 1-3 facts with validator and backlog pointers` | Current Phase 内の Phase 1-3 Fact 表を validator／backlog ポインタへ置換 |
+| **D-3** | `36ba74d` | `docs(context): consolidate deferred integration reviews into backlog pointer` | Current Phase 内の STANDARD_REFERENCE_PATHS／P0-B・P1 レビュー重複を backlog ポインタへ統合 |
+| **D-4A** | （commit なし） | — | 実測・分類のみ。Repository 変更を伴わない |
+| **D-4B** | `2aa26ae` | `docs(context): remove obsolete and redundant notes from phase completion record` | §8 内の陳腐化・冗長な付記を除去 |
+| **D-4C** | （commit なし） | — | 削除可能性の証明のみ。Repository 変更を伴わない |
+| **D-4D** | `b57076d` | `docs(context): remove phase completion fact records` | §8 内の 7 つの Fact セクション本体を削除 |
+
+Decision 帰属（内容照合）: Unit C・D-1・D-2・D-3・D-4B・D-4D は Decision 3。Unit A・Unit B は Decision 2。
+
+### 4.2 検証結果
+
+| # | 検証 | 結果 |
+|---|---|---|
+| 1 | Unit A・Unit B（Decision 2）と Unit C・D-1〜D-4D（Decision 3）の `prompts/PROJECT_CONTEXT.md` 同時並行編集 | **0件**（時系列で分離） |
+| 2 | Unit C の実施順序（§2.3 該当項目） | **PASS**（本系列内で最初の commit） |
+| 3 | Unit C の配置先（§2.3 該当項目） | **PASS**（`docs/DESIGN_PRINCIPLES.md` の新規 DP として新設） |
+| 4 | Unit C による `docs/DEVELOPMENT_STANDARD.md` への追加範囲（§2.3 該当項目） | **PASS**（参照行 1 箇所の更新のみ） |
+| 5 | push 状態〔実測・本節作成時点〕 | 未実施（ahead 11 / behind 0） |
+
+### 4.3 未実装・対象外・発見事項
+
+| # | 内容 |
+|---|---|
+| 1 | §1.3 の該当項目に対する遵守確認記録が Repository 内に見当たらない。`632d72d` は `prompts/PROJECT_CONTEXT.md` §2 の 5 行中 2 行をポインタ化している |
+| 2 | Current Phase の参照ポインタ（STANDARD_REFERENCE_PATHS／P0-B・P1 関連）が §9 のみを指しており、判断理由の所在（§8）まで到達しない |
+| 3 | §2.3 の該当項目（重複範囲）は、本 Unit 群の実施過程で実測した結果、解消済みであることを確認した（Current Phase 側は D-1〜D-3、§8 側は D-4B・D-4D が対応） |
+| 4 | `prompts/PROJECT_CONTEXT.md` §8 の見出しは `704b92d`（`docs(context): rename phase completion record to decision record`）により更新済み。Unit 1（別トピック）に属し、Decision 2・Decision 3 本体の実装 commit ではない |
+
+### 4.4 状態
+
+| 項目 | 状態 |
+|---|---|
+| **Decision 2**（Unit A・Unit B） | **実装済み** |
+| **Decision 3**（Unit C・D-1〜D-4D） | **実装済み** |
+| Unit 1（§8 見出しの「Decision記録」への同期・`704b92d`） | **完了**（別トピック。本節の対象外） |
+| push | **未実施** |
