@@ -115,6 +115,10 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **commit boundary** | `prompts/vNext/PN6-Assembly.md` 1 ファイルのみ。1 commit |
 | **推奨 commit message** | `docs(vnext): unify persona generation responsibility in PN6` |
 | **次ユニットへの依存** | なし |
+| **状態** | **完了** |
+| **実施済みの変更** | PN6 Step 1「基盤フィールドの確定（Phase 2 から）」の採用フィールド一覧から `persona` を除外 |
+| **commit** | `911615f` |
+| **AC-003 の状態** | 解消 |
 
 ---
 
@@ -178,6 +182,10 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **commit boundary（Q-2 により確定）** | **`scripts/build-static.js` + `docs/DEVELOPMENT_STANDARD.md` を同一 commit に含める。** 実装ロジックの変更ではなく、同一のライフサイクル判断を 2 か所へ反映する変更であり、片方だけでは Future Expansion の状態定義が不完全になるため、同一 commit が原子的である。1 commit |
 | **推奨 commit message** | `docs(lifecycle): mark EXPORT_STATIC path as future expansion` |
 | **次ユニットへの依存** | **S2B-R-U5 が本ユニットの結論（`next.config.js` の EXPORT_STATIC 分岐の位置づけ）を §3 記述へ反映するため、S2B-R-U5 より前に完了していること** |
+| **状態** | **完了** |
+| **実施済みの変更** | `scripts/build-static.js` 冒頭 JSDoc へ F1〜F5 の状態表示を追加。同一 commit で `docs/DEVELOPMENT_STANDARD.md` §10.3「現在の Future Expansion 資産」表へ当該資産を登録 |
+| **commit** | `cba95ac` |
+| **AC-010 の状態** | 解消 |
 
 ---
 
@@ -197,6 +205,10 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **commit boundary** | `docs/DEVELOPMENT_STANDARD.md` 1 ファイルのみ。1 commit |
 | **推奨 commit message** | `docs(standard): extend architecture scope to entry and delivery layers` |
 | **次ユニットへの依存** | **S2B-R-U4 の完了が前提** |
+| **状態** | **完了** |
+| **実施済みの変更** | §3 実行時ブロックへ入口層（`middleware.ts` → `app/page.tsx`）を追加、§3 ビルド時ブロックへ `next.config.js`（U4 の結論を反映）を追加、SOAP生成行を手動入力経路／NLP経路の別が分かる粒度へ修正、§7 Documentation Map へ `docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` の行を追加 |
+| **commit** | `cd38d68` |
+| **AC-013 / AC-014 / AC-015 / AC-016 の状態** | 解消 |
 
 ---
 
@@ -217,6 +229,10 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **commit boundary** | `scripts/` 配下 2 ファイルのみ。1 commit |
 | **推奨 commit message** | `chore(scripts): declare lifecycle state for unregistered verify scripts` |
 | **次ユニットへの依存** | なし |
+| **状態** | **完了** |
+| **実施済みの変更** | `scripts/verify_addon_panel.ts` ／ `scripts/verify_buildS.ts` 冒頭 JSDoc へ Experimental 状態表示（Q-5 準拠の判定根拠を含む）を追加 |
+| **commit** | `6f13efa` |
+| **AC-008 / AC-009 の状態** | 解消 |
 
 ---
 
@@ -237,6 +253,11 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **commit boundary** | `app/components/LockGate.tsx` 1 ファイルのみ。1 commit |
 | **推奨 commit message** | `chore(app): declare lifecycle state for unconnected LockGate` |
 | **次ユニットへの依存** | なし |
+| **状態** | **完了（当初計画との差異あり）** |
+| **実施済みの変更** | `app/components/LockGate.tsx` 冒頭へ Legacy 状態表示（判定根拠・Owner 承認済みの記載を含む）を追加。同一 commit で `docs/DEVELOPMENT_STANDARD.md` §10.2「現在の Legacy 資産」表へ当該資産を L1（必須参照ゼロ）・L2（`middleware.ts` への設計意図移管）・L7（Owner 承認済み）とともに登録 |
+| **commit** | `e564804` |
+| **AC-012 の状態** | 解消（§10.1 に基づく状態表示が付与されている） |
+| **当初計画との差異（実測）** | 当初計画の1ファイル境界（`app/components/LockGate.tsx` のみ）を超え、`docs/DEVELOPMENT_STANDARD.md` §10.2 Lifecycle 正規台帳への登録も同一 commit で実施された。commit message も推奨文言（`chore(app): declare lifecycle state for unconnected LockGate`）と一致しない（実際: `chore(app): mark LockGate as legacy (superseded by middleware)`） |
 
 ---
 
@@ -248,11 +269,11 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 |---|---|---|
 | 1 | **S2B-R-U2** | 共通規則（`prompts/RULES.md` §1）は個別文書より先に確定する。§1 は vNext 4 ファイル・旧体系 4 ファイルから参照される横断規則。**完了（commit `8f860fd`）** |
 | 2 | **S2B-R-U3** | `docs/VALIDATOR_STANDARD.md` の自己不整合（正本文書内の矛盾）を先に解消する。他ユニットと独立。**BLOCKED（詳細は S2B-R-U3 の項目表を参照）** |
-| 3 | **S2B-R-U1** | 正本文書間の不整合（PN6 内部）を解消する。工程契約に関わるため早期に確定させる |
-| 4 | **S2B-R-U4** | **S2B-R-U5 の前提**。D-3 の結論（`next.config.js` の EXPORT_STATIC 分岐が Future Expansion）を確定させてから §3 へ反映する |
-| 5 | **S2B-R-U5** | AC-013 / AC-014 / AC-015 / AC-016 を単一ファイル・単一 commit で処理。**S2B-R-U4 の結論を §3 の `next.config.js` 記述へ反映する** |
-| 6 | **S2B-R-U6** | コード（`.ts` コメント）変更。文書ユニット完了後にまとめる |
-| 7 | **S2B-R-U7** | `app/` 配下のため `npm run build` を要する唯一のユニット。最後に単独実行して検証範囲を明確にする |
+| 3 | **S2B-R-U1** | 正本文書間の不整合（PN6 内部）を解消する。工程契約に関わるため早期に確定させる。**完了（commit `911615f`）** |
+| 4 | **S2B-R-U4** | **S2B-R-U5 の前提**。D-3 の結論（`next.config.js` の EXPORT_STATIC 分岐が Future Expansion）を確定させてから §3 へ反映する。**完了（commit `cba95ac`）** |
+| 5 | **S2B-R-U5** | AC-013 / AC-014 / AC-015 / AC-016 を単一ファイル・単一 commit で処理。**S2B-R-U4 の結論を §3 の `next.config.js` 記述へ反映する**。**完了（commit `cd38d68`）** |
+| 6 | **S2B-R-U6** | コード（`.ts` コメント）変更。文書ユニット完了後にまとめる。**完了（commit `6f13efa`）** |
+| 7 | **S2B-R-U7** | `app/` 配下のため `npm run build` を要する唯一のユニット。最後に単独実行して検証範囲を明確にする。**完了（当初計画との差異あり。commit `e564804`）** |
 
 **順序制約（必須）**:
 
@@ -402,4 +423,4 @@ Stage 2-B（判定 PASS WITH FINDINGS、commit `9b92399`）が確定させた Di
 | **実行順序** | S2B-R-U2 → S2B-R-U3 → S2B-R-U1 → S2B-R-U4 → S2B-R-U5 → S2B-R-U6 → S2B-R-U7 |
 | **必須順序制約** | S2B-R-U4 → S2B-R-U5 |
 | **未解決 Open Question** | なし |
-| **進捗** | 完了 1（S2B-R-U2）／BLOCKED 1（S2B-R-U3）／未着手 5（S2B-R-U1・U4・U5・U6・U7） |
+| **進捗** | 完了 6（S2B-R-U1・S2B-R-U2・S2B-R-U4・S2B-R-U5・S2B-R-U6・S2B-R-U7）／BLOCKED 1（S2B-R-U3）／未着手 0 |
