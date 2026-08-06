@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
 > **Version:** 2.1
-> **Last Updated:** 2026-07-29
-> **Current Focus:** 糖尿病領域 alias/search 品質改善（Q-S1 Tier1-3 + O field修正 + 多剤合成テスト正式化）完了。次フェーズ候補は DPP4実装（詳細: `prompts/vNext/HANDOFF.md`）。
+> **Last Updated:** 2026-08-06
+> **Current Focus:** 次の着手対象は未確定。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -73,7 +73,6 @@ schemaGenerationを含む、まだ実施しない事項は§9を参照。
 **次フェーズ候補**（優先順位未確定）
 
 - P0-E 保留継続
-- DPP4実装（別薬効領域への展開。着手前に本ファイル・HANDOFF.md・DESIGN_PRINCIPLES.md DP-09 を確認すること）
 
 **次フェーズでまだ実施しないこと** → セクション9参照
 
