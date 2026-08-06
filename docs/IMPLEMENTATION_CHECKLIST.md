@@ -15,11 +15,12 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ npx tsc --noEmit
 □ npm test（0 fail であること。件数は実行時に再測定し、変更前後で減っていないことを確認する）
 □ npm run build
-□ npm run audit（addon chain / alias 同期の 2 監査。個別実行する場合は下記 2 行を参照）
+□ npm run audit（addon chain / alias 同期 / 一般名読み到達性の 3 監査。個別実行する場合は下記 3 行を参照）
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
 □ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合。`npm run audit` に含まれる）
 □ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期。`npm run audit` に含まれる）
+□ scripts/audit-generic-name-reachability.ts（displayGenericName の読み到達性。`npm run audit` に含まれる）
 □ 検索・alias・drug構造を変更した場合は `npm run test:multi-drug`（buildNodeFields + mergeBlocksによる複数module合成の回帰テスト）を実施する
 □ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）
 □ 既知の不整合・warning件数を変更前後で比較する（増減していないか）

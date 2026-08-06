@@ -254,6 +254,7 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 | `scripts/audit-addon-bridge-chain.ts` | bridge⇔JSON⇔runtime 横断監査 | コード | bridge の `P_ADDON` 記載まで遡って `addonsRef`（配列の順序を含む）と突合し、`getVisibleAddonKeys()` を実行して AddonPanel に実際に届くか・同じ順序で表示されるかまで確認する（DP-10 / RULES.md §25）。ModuleValidator / P3 は JSON 内部の整合のみを見るため代替できない。既存モジュール改修時は毎回実行する（`docs/IMPLEMENTATION_CHECKLIST.md` 参照） |
 | PN7 check Z（Addon Responsibility Consistency） | 近似シナリオ間の addon 責務一貫性監査 | 現状は AI（PN7 実行時） | 責務が近いシナリオ間で `addonsRef` 構成を比較し、責務では説明できない差分を CHECK として報告する（RULES.md §22）。将来的に `scripts/audit-addon-bridge-chain.ts` 等への自動化を予定するが、現時点ではコード化されていない |
 | `scripts/audit-alias-bridge-chain.ts` | alias系フィールドの bridge⇔JSON 同期監査 | コード | `brandCatalog[].aliases`/`normalizedAliases`・`aliasToBrand`・`nameAliases`・`search.nameAliases`・`search.exactAliases` がbridgeとJSONで一致しているかを確認する（RULES.md §23）。`scripts/audit-addon-bridge-chain.ts` とはモジュール一覧取得・出力形式（`scripts/auditShared.ts`）のみ共有し、パース対象は別（フレームワーク化は将来課題） |
+| `scripts/audit-generic-name-reachability.ts` | 一般名読み到達性監査（JSON 内部完結） | コード | `brandCatalog[brand].displayGenericName` の各構成成分の読みが、module 単位・brand 単位いずれかの alias 群に最低1件存在するかを確認する（Q-S1 Tier2/3 再発防止、`docs/OPEN_DESIGN_QUESTIONS.md` Q-S1・`docs/DESIGN_PRINCIPLES.md` DP-09）。「読みが1件もないか」の存在確認のみで、どの読みを登録すべきかという網羅性判断は含まない（人間レビューの担当）。bridge は読まず canonical JSON のみを対象とする独立スクリプトであり、`lib/moduleValidator.ts` への組込みは行っていない（未判断）。`GENERIC_NAME_UNREACHABLE` は現状 CHECK（exit 0 維持）で運用する |
 
 ### 具体的な責務分担例
 
@@ -286,7 +287,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 |---|---|---|
 | `SCENARIO_ID_MISSING` | `scenario.id` が未定義 | 中（scenarioValidator でカバー済みか確認要） |
 | `ADDON_P_APPEND_MISSING` | addon に `P_APPEND` が存在しない | 中（P3 が現在 ERROR とする） |
-| `GENERIC_NAME_UNREACHABLE` | `brandCatalog[brand].displayGenericName` の正規化形が、module 単位・brand 単位いずれの alias にも存在しない brand の存在確認（Q-S1 Tier2/3 再発防止。「読みが1件もないか」の存在確認のみで内容判断は含まない） | 中（`docs/OPEN_DESIGN_QUESTIONS.md` Q-S1 参照。未実装） |
+| `GENERIC_NAME_UNREACHABLE` | `brandCatalog[brand].displayGenericName` の正規化形が、module 単位・brand 単位いずれの alias にも存在しない brand の存在確認（Q-S1 Tier2/3 再発防止。「読みが1件もないか」の存在確認のみで内容判断は含まない） | **独立audit（`scripts/audit-generic-name-reachability.ts`、本節 §6 参照）としては実装済み・`npm run audit` に登録済み**。**`lib/moduleValidator.ts` の check としての組込みは未判断・未実施のまま**（`docs/OPEN_DESIGN_QUESTIONS.md` Q-S1 参照） |
 
 ### Reference（単一モジュール内）
 
