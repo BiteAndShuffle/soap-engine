@@ -5,7 +5,7 @@
 対象ブランチ: `feat/nlp-input-panel-and-new-schema`  
 リポジトリ: `/Users/AdNauseumTendrils/Desktop/soap-engine`
 
-この文書は、新しい Claude チャットセッションがこれ1本だけを読んで、迷わず開発を再開できるよう書かれています。
+この文書は `prompts/vNext/STARTUP_PROMPT.md` が定める工程段階 Overlay の 1 つです。vNext module 生成（`bridges/{moduleId}.md` を起点に canonical JSON を生成・改修する作業）に着手するとき、PN1 より前に読みます。読込経路の正本は `prompts/vNext/STARTUP_PROMPT.md` です。
 
 Human / ChatGPT / Claude の役割分担・協業原則は `docs/TEAM_CHARTER.md` を参照してください。
 
