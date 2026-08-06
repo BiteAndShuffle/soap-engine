@@ -186,7 +186,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 
 | 文書 | 読むべき場面 |
 |---|---|
-| `prompts/PROJECT_CONTEXT.md` | 新規セッション開始時に最初に読む。現在のフェーズ・進捗・プロジェクト概要 |
+| `prompts/PROJECT_CONTEXT.md` | 現在のフェーズ・進捗・プロジェクト概要を確認するとき |
 | `prompts/RULES.md` | 横断ルール辞書。禁止事項・ERROR/PENDING/CHECK定義・型変換表・matchPolicy変更ルール等 |
 | `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-17。DP-06 / DP-14 は欠番） |
 | `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」。**Canonical Requirement Class（JS-A〜JS-E）の正本**。Lifecycle State との直交性は JS-00 |
