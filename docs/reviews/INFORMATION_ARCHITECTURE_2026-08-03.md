@@ -147,4 +147,4 @@ Decision 帰属（内容照合）: Unit C・D-1・D-2・D-3・D-4B・D-4D は De
 | **Decision 2**（Unit A・Unit B） | **実装済み** |
 | **Decision 3**（Unit C・D-1〜D-4D） | **実装済み** |
 | Unit 1（§8 見出しの「Decision記録」への同期・`704b92d`） | **完了**（別トピック。本節の対象外） |
-| push | **未実施** |
+| push | 〔実測・2026-08-06〕Decision 2・Decision 3 の全 commit が `origin/feat/nlp-input-panel-and-new-schema` へ到達済み（ahead 0 / behind 0） |
