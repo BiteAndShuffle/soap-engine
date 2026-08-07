@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "fae63c75d116a267d1ed39de14319078d191e8e668059314db8732d8713db1c1",
+  "sourceHash": "21948c4fb8c78f1088a4d5d4055e4c76ea9035f21a5375aa3a1fa3e9efde4e9a",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -3369,7 +3369,8 @@
       "brandCatalog": {
         "ソニアス": {
           "aliases": [
-            "そにあす"
+            "そにあす",
+            "ぐりめぴりど"
           ],
           "displayName": "ソニアス",
           "displayGenericName": "ピオグリタゾン／グリメピリド",

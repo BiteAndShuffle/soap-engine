@@ -100,15 +100,18 @@
         "genericKey": "pioglitazone_glimepiride_combo",
         "handlingTags": [],
         "aliases": [
-          "そにあす"
+          "そにあす",
+          "ぐりめぴりど"
         ],
         "normalizedAliases": [
-          "そにあす"
+          "そにあす",
+          "ぐりめぴりど"
         ]
       }
     },
     "aliasToBrand": {
-      "そにあす": "ソニアス"
+      "そにあす": "ソニアス",
+      "ぐりめぴりど": "ソニアス"
     }
   },
   "drugResolution": {

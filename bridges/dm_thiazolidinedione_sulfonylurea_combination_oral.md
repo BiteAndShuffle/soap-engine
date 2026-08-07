@@ -84,9 +84,15 @@ drug:
   #     に確立済みの読みを流用
   #   - ぐりめぴりど（グリメピリド）は dm_sulfonylurea_oral.drug.search.nameAliases
   #     から同様に流用
-  #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases にのみ追加し、
-  #     brandCatalog[brand].aliases への複製は行わない（単一ブランドのため
-  #     aliasToBrand の曖昧化リスクはないが、既存配合剤3件と同型の判断で統一する）
+  #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #     第1成分（ぴおぐりたぞん / ぴおぐりたぞんえんさんえん）は displayGenericName
+  #     "ピオグリタゾン／グリメピリド" の前方一致で resolveAllHighPrecisionBrands()
+  #     から解決できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #   - 第2成分（ぐりめぴりど）は displayGenericName の前方一致にならないため、
+  #     DP-09（一般名検索到達性原則・配合剤条項）に従い brandCatalog[brand].aliases /
+  #     normalizedAliases / drug.aliasToBrand へ個別登録する（ソリクア/ゾルトファイ/
+  #     ライゾデグの既存実績と同型。旧記載「複製は行わない」は当該実績を誤って
+  #     参照していたため U-D-S3-1 で訂正した）
   search:
     primaryDisplayName: "チアゾリジン系糖尿病薬／スルホニルウレア系経口血糖降下剤配合剤"
 
@@ -133,16 +139,21 @@ drug:
       handlingTags: []
       aliases:
         - "そにあす"
+        - "ぐりめぴりど"
       normalizedAliases:
         - "そにあす"
+        - "ぐりめぴりど"
 
   aliasToBrand:
     "そにあす": "ソニアス"
-  # aliasToBrand は brandCatalog[brand].normalizedAliases（ブランド名読みのみ）を
-  # 過不足なく網羅する（RULES.md §10）。1件・1件で一致。
-  # 成分名読み（ぴおぐりたぞん／ぴおぐりたぞんえんさんえん／ぐりめぴりど）は
-  # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
-  # aliasToBrand の対象外（既存配合剤3件と同型の扱い）。
+    "ぐりめぴりど": "ソニアス"
+  # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
+  # （RULES.md §10）。2件・2件で一致。
+  # 第2成分読み「ぐりめぴりど」は brandCatalog.ソニアス.aliases に登録したため
+  # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソリクア/ゾルトファイ/
+  # ライゾデグの既存実績と同型）。第1成分読み（ぴおぐりたぞん／
+  # ぴおぐりたぞんえんさんえん）は module 単位 nameAliases 側のみに存在し
+  # brandCatalog.aliases には複製していないため、引き続き aliasToBrand の対象外。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags
