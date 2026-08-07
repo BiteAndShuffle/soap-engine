@@ -193,8 +193,13 @@ display:
 #    "{成分A}_{成分B}_combo" 命名規則に統一して確定
 # 6. 成分名読みの流用範囲（ぴおぐりたぞん／ぴおぐりたぞんえんさんえん／
 #    ぐりめぴりど）→ 既存TZD/SUモジュールに確立済みの読みのみを流用して確定
-# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読みのみ、成分名読みは
-#    module単位nameAliasesのみ）→ 既存配合剤3件と同型の理由で確定
+# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読み＋第2成分読み
+#    「ぐりめぴりど」。第1成分読みは module単位nameAliasesのみ）→ DP-09（一般名検索
+#    到達性原則・配合剤条項）に従い確定。第1成分は displayGenericName の前方一致で
+#    解決できるため複製不要、第2成分は前方一致にならないため brandCatalog.aliases /
+#    normalizedAliases / aliasToBrand へ個別登録する（ソリクア/ゾルトファイ/ライゾデグ
+#    の既存実績と同型）。旧記載「ブランド名読みのみ／既存配合剤3件と同型」は当該実績を
+#    誤って参照していたため U-D-S3-1 で訂正した
 # 8. drugResolution.brandToTags → 既存配合剤3件と同型の
 #    2件構成（["thiazolidinedione_sulfonylurea_combination", {genericKey}]）で確定
 # 9. composition.classKey（"thiazolidinedione_sulfonylurea_combination"）/ nodeKey
