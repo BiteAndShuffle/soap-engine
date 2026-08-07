@@ -82,9 +82,17 @@ drug:
   #   - めとほるみん（メトホルミン）/ めとほるみんえんさんえん
   #     （メトホルミン塩酸塩）は dm_biguanide_metformin_oral.drug.search.nameAliases
   #     から同様に流用
-  #   - 上記4件はいずれも module 単位の prefixAliases/nameAliases にのみ追加し、
-  #     brandCatalog[brand].aliases への複製は行わない（単一ブランドのため
-  #     aliasToBrand の曖昧化リスクはないが、既存配合剤2件と同型の判断で統一する）
+  #   - 上記4件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #     第1成分（ぴおぐりたぞん）は displayGenericName "ピオグリタゾン／メトホルミン"
+  #     の前方一致で resolveAllHighPrecisionBrands() から解決できるため、
+  #     brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #   - 第2成分（めとほるみん）は displayGenericName の前方一致にならないため、
+  #     DP-09（一般名検索到達性原則・配合剤条項）に従い brandCatalog[brand].aliases /
+  #     normalizedAliases / drug.aliasToBrand へ個別登録する（ソニアス＝U-D-S3-1 /
+  #     グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。
+  #     なお塩形読み（ぴおぐりたぞんえんさんえん／めとほるみんえんさんえん）は
+  #     displayGenericName の構成成分ではないため brandCatalog[brand].aliases へは
+  #     複製せず、module 単位のみに留める。
   search:
     primaryDisplayName: "チアゾリジン系糖尿病薬／ビグアナイド配合剤"
 
@@ -136,16 +144,22 @@ drug:
       handlingTags: []
       aliases:
         - "めたくと"
+        - "めとほるみん"
       normalizedAliases:
         - "めたくと"
+        - "めとほるみん"
 
   aliasToBrand:
     "めたくと": "メタクト"
-  # aliasToBrand は brandCatalog[brand].normalizedAliases（ブランド名読みのみ）を
-  # 過不足なく網羅する（RULES.md §10）。1件・1件で一致。
-  # 成分名読み（ぴおぐりたぞん／ぴおぐりたぞんえんさんえん／めとほるみん／めとほるみんえんさんえん）は
-  # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
-  # aliasToBrand の対象外（既存配合剤2件と同型の扱い）。
+    "めとほるみん": "メタクト"
+  # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
+  # （RULES.md §10）。2件・2件で一致。
+  # 第2成分読み「めとほるみん」は brandCatalog.メタクト.aliases に登録したため
+  # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソニアス＝U-D-S3-1 /
+  # グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。第1成分読み
+  # （ぴおぐりたぞん）および塩形読み（ぴおぐりたぞんえんさんえん／
+  # めとほるみんえんさんえん）は module 単位 nameAliases 側のみに存在し
+  # brandCatalog.aliases には複製していないため、引き続き aliasToBrand の対象外。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags
@@ -186,8 +200,14 @@ display:
 # 6. 成分名読みの流用範囲（ぴおぐりたぞん／ぴおぐりたぞんえんさんえん／
 #    めとほるみん／めとほるみんえんさんえん）→
 #    既存TZD/ビグアナイドモジュールに確立済みの読みのみを流用して確定
-# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読みのみ、成分名読みは
-#    module単位nameAliasesのみ）→ 既存配合剤2件と同型の理由で確定
+# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読み＋第2成分読み
+#    「めとほるみん」。第1成分読み「ぴおぐりたぞん」および塩形読み
+#    「ぴおぐりたぞんえんさんえん」「めとほるみんえんさんえん」は module単位nameAliases
+#    のみ）→ DP-09（一般名検索到達性原則・配合剤条項）に従い確定。第1成分は
+#    displayGenericName の前方一致で解決できるため複製不要、第2成分は前方一致に
+#    ならないため brandCatalog.aliases / normalizedAliases / aliasToBrand へ個別
+#    登録する（ソニアス＝U-D-S3-1 / グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の
+#    既存実績と同型）
 # 8. drugResolution.brandToTags → 既存配合剤2件と同型の
 #    2件構成（["thiazolidinedione_biguanide_combination", {genericKey}]）で確定
 # 9. composition.classKey（"thiazolidinedione_biguanide_combination"）/ nodeKey

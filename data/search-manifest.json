@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "dbeb1ef30d599ee20eaab15fb30920e9ea9697203196f7c2c0258b42d7a8b83a",
+  "sourceHash": "3c1f060034d005c3633571220cacfed181efdd9e23eb6c12fb24bd77696da662",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -3226,7 +3226,8 @@
       "brandCatalog": {
         "メタクト": {
           "aliases": [
-            "めたくと"
+            "めたくと",
+            "めとほるみん"
           ],
           "displayName": "メタクト",
           "displayGenericName": "ピオグリタゾン／メトホルミン",

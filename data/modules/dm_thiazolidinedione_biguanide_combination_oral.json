@@ -103,15 +103,18 @@
         "genericKey": "pioglitazone_metformin_combo",
         "handlingTags": [],
         "aliases": [
-          "めたくと"
+          "めたくと",
+          "めとほるみん"
         ],
         "normalizedAliases": [
-          "めたくと"
+          "めたくと",
+          "めとほるみん"
         ]
       }
     },
     "aliasToBrand": {
-      "めたくと": "メタクト"
+      "めたくと": "メタクト",
+      "めとほるみん": "メタクト"
     }
   },
   "drugResolution": {
