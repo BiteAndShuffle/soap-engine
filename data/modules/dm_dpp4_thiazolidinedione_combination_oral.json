@@ -100,15 +100,18 @@
         "genericKey": "alogliptin_pioglitazone_combo",
         "handlingTags": [],
         "aliases": [
-          "りおべる"
+          "りおべる",
+          "ぴおぐりたぞん"
         ],
         "normalizedAliases": [
-          "りおべる"
+          "りおべる",
+          "ぴおぐりたぞん"
         ]
       }
     },
     "aliasToBrand": {
-      "りおべる": "リオベル"
+      "りおべる": "リオベル",
+      "ぴおぐりたぞん": "リオベル"
     }
   },
   "drugResolution": {
