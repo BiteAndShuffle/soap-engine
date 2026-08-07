@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "21948c4fb8c78f1088a4d5d4055e4c76ea9035f21a5375aa3a1fa3e9efde4e9a",
+  "sourceHash": "9ad44dd542831531a6ea0d6f9ce539722a0d98d3b1c5f8566265e8ac74be4e93",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -3612,7 +3612,8 @@
       "brandCatalog": {
         "グルベス": {
           "aliases": [
-            "ぐるべす"
+            "ぐるべす",
+            "ぼぐりぼーす"
           ],
           "displayName": "グルベス",
           "displayGenericName": "ミチグリニド・ボグリボース",

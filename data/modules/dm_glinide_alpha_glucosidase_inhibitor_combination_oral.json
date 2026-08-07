@@ -100,15 +100,18 @@
         "genericKey": "mitiglinide_voglibose_combo",
         "handlingTags": [],
         "aliases": [
-          "ぐるべす"
+          "ぐるべす",
+          "ぼぐりぼーす"
         ],
         "normalizedAliases": [
-          "ぐるべす"
+          "ぐるべす",
+          "ぼぐりぼーす"
         ]
       }
     },
     "aliasToBrand": {
-      "ぐるべす": "グルベス"
+      "ぐるべす": "グルベス",
+      "ぼぐりぼーす": "グルベス"
     }
   },
   "drugResolution": {

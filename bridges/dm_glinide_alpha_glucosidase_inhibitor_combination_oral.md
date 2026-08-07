@@ -86,9 +86,14 @@ drug:
   #     パターンと同型）
   #   - ぼぐりぼーす（ボグリボース）は dm_alpha_glucosidase_inhibitor_oral.drug.search.nameAliases
   #     から同様に流用
-  #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases にのみ追加し、
-  #     brandCatalog[brand].aliases への複製は行わない（単一ブランドのため
-  #     aliasToBrand の曖昧化リスクはないが、既存配合剤4件と同型の判断で統一する）
+  #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #     第1成分（みちぐりにど / みちぐりにどかるしうむすいわぶつ）は displayGenericName
+  #     "ミチグリニド・ボグリボース" の前方一致で resolveAllHighPrecisionBrands()
+  #     から解決できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #   - 第2成分（ぼぐりぼーす）は displayGenericName の前方一致にならないため、
+  #     DP-09（一般名検索到達性原則・配合剤条項）に従い brandCatalog[brand].aliases /
+  #     normalizedAliases / drug.aliasToBrand へ個別登録する（ソニアスの既存実績
+  #     ＝dm_thiazolidinedione_sulfonylurea_combination_oral・U-D-S3-1と同型）
   search:
     primaryDisplayName: "グリニド系経口血糖降下剤／α-グルコシダーゼ阻害薬配合剤"
 
@@ -136,16 +141,21 @@ drug:
       handlingTags: []
       aliases:
         - "ぐるべす"
+        - "ぼぐりぼーす"
       normalizedAliases:
         - "ぐるべす"
+        - "ぼぐりぼーす"
 
   aliasToBrand:
     "ぐるべす": "グルベス"
-  # aliasToBrand は brandCatalog[brand].normalizedAliases（ブランド名読みのみ）を
-  # 過不足なく網羅する（RULES.md §10）。1件・1件で一致。
-  # 成分名読み（みちぐりにど／みちぐりにどかるしうむすいわぶつ／ぼぐりぼーす）は
+    "ぼぐりぼーす": "グルベス"
+  # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
+  # （RULES.md §10）。2件・2件で一致。
+  # 第2成分読み「ぼぐりぼーす」は brandCatalog.グルベス.aliases に登録したため
+  # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソニアスの既存実績
+  # ＝U-D-S3-1と同型）。第1成分読み（みちぐりにど／みちぐりにどかるしうむすいわぶつ）は
   # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
-  # aliasToBrand の対象外（既存配合剤4件と同型の扱い）。
+  # 引き続き aliasToBrand の対象外。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags
@@ -187,8 +197,12 @@ display:
 #    確立済みの読みのみを流用して確定。「みちぐりにどかるしうむすいわぶつ」（塩表記）は
 #    既存モジュールに確立済みの読みが存在しないため、kataToHira機械的変換のみで新規追加
 #    （dm_thiazolidinedione_pioglitazone_oral の塩非表記/塩表記2形式併記と同型の判断）
-# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読みのみ、成分名読みは
-#    module単位nameAliasesのみ）→ 既存配合剤4件と同型の理由で確定
+# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読み＋第2成分読み
+#    「ぼぐりぼーす」。第1成分読みは module単位nameAliasesのみ）→ DP-09（一般名検索
+#    到達性原則・配合剤条項）に従い確定。第1成分は displayGenericName の前方一致で
+#    解決できるため複製不要、第2成分は前方一致にならないため brandCatalog.aliases /
+#    normalizedAliases / aliasToBrand へ個別登録する（ソニアスの既存実績＝U-D-S3-1と
+#    同型）
 # 8. drugResolution.brandToTags → 既存配合剤4件と同型の
 #    2件構成（["glinide_alpha_glucosidase_inhibitor_combination", {genericKey}]）で確定
 # 9. composition.classKey（"glinide_alpha_glucosidase_inhibitor_combination"）/ nodeKey
