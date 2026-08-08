@@ -22,6 +22,7 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期。`npm run audit` に含まれる）
 □ scripts/audit-generic-name-reachability.ts（displayGenericName の読み到達性。`npm run audit` に含まれる）
 □ 検索・alias・drug構造を変更した場合は `npm run test:multi-drug`（buildNodeFields + mergeBlocksによる複数module合成の回帰テスト）を実施する
+□ canonical JSON のうち search-manifest の生成対象フィールド（`lib/searchManifest.ts`）を変更した場合は `npm run generate:search-manifest` を実行し、`data/search-manifest.json` を再生成する（手編集禁止。再生成漏れは `npm test` の `tests/searchManifestParity.test.ts` が検出する）
 □ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）
 □ 既知の不整合・warning件数を変更前後で比較する（増減していないか）
 □ 実機確認（変更内容に応じて: 検索候補の表示順序 / AddonPanel表示 / SOAP生成結果 等。変更範囲が
