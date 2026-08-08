@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "ad5c9c2aaa9da9c32cab7b89a72b34e3b6737307d1e9c874c8430c35e68b2c95",
+  "sourceHash": "8457dfe08567642237a0f9e05f6f455f2b0d5b8d029aa7737a0b9e1a6d914148",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -1191,6 +1191,7 @@
       "search": {
         "exactAliases": [
           "ヒルドイドフォーム",
+          "ヘパリン類似物質フォーム",
           "ヘパリン類似物質外用スプレー",
           "ヘパリン類似物質スプレー"
         ],

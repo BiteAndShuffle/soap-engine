@@ -36,6 +36,7 @@ drug:
     primaryDisplayName: "ヘパリン類似物質系保湿剤フォーム・スプレー"
     exactAliases:
       - "ヒルドイドフォーム"
+      - "ヘパリン類似物質フォーム"
       - "ヘパリン類似物質外用スプレー"
       - "ヘパリン類似物質スプレー"
     prefixAliases:
