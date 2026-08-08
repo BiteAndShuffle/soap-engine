@@ -103,10 +103,12 @@
         "genericKey": "teneligliptin_canagliflozin_combo",
         "handlingTags": [],
         "aliases": [
-          "かなりあ"
+          "かなりあ",
+          "かなぐりふろじん"
         ],
         "normalizedAliases": [
-          "かなりあ"
+          "かなりあ",
+          "かなぐりふろじん"
         ]
       },
       "スージャヌ": {
@@ -116,10 +118,12 @@
         "genericKey": "sitagliptin_ipragliflozin_combo",
         "handlingTags": [],
         "aliases": [
-          "すーじゃぬ"
+          "すーじゃぬ",
+          "いぷらぐりふろじん"
         ],
         "normalizedAliases": [
-          "すーじゃぬ"
+          "すーじゃぬ",
+          "いぷらぐりふろじん"
         ]
       },
       "トラディアンス": {
@@ -131,17 +135,22 @@
           "dose_adjustment_supported"
         ],
         "aliases": [
-          "とらでぃあんす"
+          "とらでぃあんす",
+          "えんぱぐりふろじん"
         ],
         "normalizedAliases": [
-          "とらでぃあんす"
+          "とらでぃあんす",
+          "えんぱぐりふろじん"
         ]
       }
     },
     "aliasToBrand": {
       "かなりあ": "カナリア",
       "すーじゃぬ": "スージャヌ",
-      "とらでぃあんす": "トラディアンス"
+      "とらでぃあんす": "トラディアンス",
+      "かなぐりふろじん": "カナリア",
+      "いぷらぐりふろじん": "スージャヌ",
+      "えんぱぐりふろじん": "トラディアンス"
     }
   },
   "drugResolution": {

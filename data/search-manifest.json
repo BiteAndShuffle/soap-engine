@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "3c1f060034d005c3633571220cacfed181efdd9e23eb6c12fb24bd77696da662",
+  "sourceHash": "81bda1afb3dc1c41146c9ce9fa3ae49136bebce6ab46a43febedc80e9e1b6380",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -3939,7 +3939,8 @@
       "brandCatalog": {
         "カナリア": {
           "aliases": [
-            "かなりあ"
+            "かなりあ",
+            "かなぐりふろじん"
           ],
           "displayName": "カナリア",
           "displayGenericName": "テネリグリプチン/カナグリフロジン",
@@ -3948,7 +3949,8 @@
         },
         "スージャヌ": {
           "aliases": [
-            "すーじゃぬ"
+            "すーじゃぬ",
+            "いぷらぐりふろじん"
           ],
           "displayName": "スージャヌ",
           "displayGenericName": "シタグリプチン/イプラグリフロジン",
@@ -3957,7 +3959,8 @@
         },
         "トラディアンス": {
           "aliases": [
-            "とらでぃあんす"
+            "とらでぃあんす",
+            "えんぱぐりふろじん"
           ],
           "displayName": "トラディアンス",
           "displayGenericName": "リナグリプチン/エンパグリフロジン",

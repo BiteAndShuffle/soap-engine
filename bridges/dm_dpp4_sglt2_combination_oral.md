@@ -49,7 +49,9 @@
 #     genericKey命名（"{DPP4成分}_{相手成分}_combo"）・drugResolution.brandToTags
 #     2件構成の直接参考）
 #   - bridges/dm_glinide_alpha_glucosidase_inhibitor_combination_oral.md（既存配合剤実績。
-#     単一ブランド配合剤のhandlingTags空配列運用・成分名読みのmodule単位限定方針の参考）
+#     単一ブランド配合剤のhandlingTags空配列運用の参考。同bridgeの成分名読み
+#     module単位限定方針は U-D-S3-2 で DP-09 配合剤条項に基づき訂正済みのため、
+#     現行方針の参考としては引用しない）
 #   - docs/DESIGN_PRINCIPLES.md DP-02（classKey設計方針。配合剤専用分離）
 #   - docs/DESIGN_PRINCIPLES.md DP-09（一般名検索到達性原則）
 #   - prompts/RULES.md §8（drug.nameAliases と drug.search.nameAliases 完全一致）
@@ -110,11 +112,18 @@ drug:
   #   - かなぐりふろじん（カナグリフロジン）／いぷらぐりふろじん（イプラグリフロジン）／
   #     えんぱぐりふろじん（エンパグリフロジン）は bridges/dm_sglt2_oral.md の
   #     drug.search.nameAliases に確立済みの読みを流用
-  #   - 上記6件はいずれも module 単位の prefixAliases/nameAliases にのみ追加し、
-  #     brandCatalog[brand].aliases への複製は行わない（各ブランドの成分ペアは
-  #     互いに重複しないが、既存配合剤4件と同型の判断で module 単位限定を統一する。
-  #     dm_glinide_alpha_glucosidase_inhibitor_combination_oral.md「確定済み事項」7 と
-  #     同型の理由）
+  #   - 上記6件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #     第1成分（てねりぐりぷちん／したぐりぷちん／りなぐりぷちん）は各brandの
+  #     displayGenericName の前方一致で resolveAllHighPrecisionBrands() から解決
+  #     できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #   - 第2成分（かなぐりふろじん／いぷらぐりふろじん／えんぱぐりふろじん）は
+  #     displayGenericName の前方一致にならないため、DP-09（一般名検索到達性原則・
+  #     配合剤条項）に従い各brandの brandCatalog[brand].aliases / normalizedAliases /
+  #     drug.aliasToBrand へ個別登録する（ソニアス＝U-D-S3-1 / グルベス＝U-D-S3-2 /
+  #     リオベル＝U-D-S3-3 / メタクト＝U-D-S3-4 の既存実績と同型）。
+  #     3brandの第2成分はカナグリフロジン／イプラグリフロジン／エンパグリフロジン
+  #     と相互に異なり、aliasToBrand の一意解決先はいずれも衝突しない（U-D-S3-5
+  #     で実測確認済み）
   search:
     primaryDisplayName: "DPP-4阻害薬／SGLT2阻害薬配合剤"
 
@@ -196,8 +205,10 @@ drug:
       # 増量規格が存在しないため、増量・減量シナリオ（減量含む）を表示しない。
       aliases:
         - "かなりあ"
+        - "かなぐりふろじん"
       normalizedAliases:
         - "かなりあ"
+        - "かなぐりふろじん"
 
     スージャヌ:
       displayName: "スージャヌ"
@@ -208,8 +219,10 @@ drug:
       # 増量規格が存在しないため、増量・減量シナリオ（減量含む）を表示しない。
       aliases:
         - "すーじゃぬ"
+        - "いぷらぐりふろじん"
       normalizedAliases:
         - "すーじゃぬ"
+        - "いぷらぐりふろじん"
 
     トラディアンス:
       displayName: "トラディアンス"
@@ -222,18 +235,27 @@ drug:
       # シナリオのみ表示する。AP/BPはbrandCatalog上で分離しない（1ブランド運用）。
       aliases:
         - "とらでぃあんす"
+        - "えんぱぐりふろじん"
       normalizedAliases:
         - "とらでぃあんす"
+        - "えんぱぐりふろじん"
 
   aliasToBrand:
     "かなりあ": "カナリア"
     "すーじゃぬ": "スージャヌ"
     "とらでぃあんす": "トラディアンス"
-  # aliasToBrand は brandCatalog[brand].normalizedAliases（ブランド名読みのみ）を
-  # 過不足なく網羅する（RULES.md §10）。3件・3件で一致。
-  # 成分名読み（てねりぐりぷちん 等6件）は module 単位 nameAliases 側のみに存在し
-  # brandCatalog.aliases には複製していないため、aliasToBrand の対象外
-  # （既存配合剤4件と同型の扱い）。
+    "かなぐりふろじん": "カナリア"
+    "いぷらぐりふろじん": "スージャヌ"
+    "えんぱぐりふろじん": "トラディアンス"
+  # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
+  # （RULES.md §10）。6件・6件で一致。
+  # 第2成分読み（かなぐりふろじん／いぷらぐりふろじん／えんぱぐりふろじん）は
+  # 各brandの brandCatalog.aliases に登録したため aliasToBrand にも追加した
+  # （DP-09 配合剤条項。ソニアス＝U-D-S3-1 / グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 /
+  # メタクト＝U-D-S3-4 の既存実績と同型）。3brandの第2成分は相互に異なるため
+  # aliasToBrand の一意解決先は衝突しない。第1成分読み（てねりぐりぷちん等3件）は
+  # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していない
+  # ため、引き続き aliasToBrand の対象外。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags
@@ -295,8 +317,14 @@ display:
 # 6. 成分名読みの流用範囲（てねりぐりぷちん／かなぐりふろじん／したぐりぷちん／
 #    いぷらぐりふろじん／りなぐりぷちん／えんぱぐりふろじん）→ bridges/dm_dpp4_oral.md /
 #    bridges/dm_sglt2_oral.md に確立済みの読みをそのまま流用して確定（新規推測なし）
-# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読みのみ、成分名読みは
-#    module単位nameAliasesのみ）→ 既存配合剤4件と同型の理由で確定
+# 7. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読み＋各brandの
+#    第2成分読み。第1成分読み（てねりぐりぷちん等3件）は module単位nameAliasesのみ）
+#    → DP-09（一般名検索到達性原則・配合剤条項）に従い確定。第1成分は
+#    displayGenericName の前方一致で解決できるため複製不要、第2成分は前方一致に
+#    ならないため brandCatalog.aliases / normalizedAliases / aliasToBrand へ個別
+#    登録する（ソニアス＝U-D-S3-1 / グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 /
+#    メタクト＝U-D-S3-4 の既存実績と同型）。3brandの第2成分は相互に異なるため
+#    aliasToBrand の一意解決先は衝突しない
 # 8. drugResolution.brandToTags → 既存配合剤4件と同型の2件構成
 #    （["dpp4_sglt2_combination", {genericKey}]）で確定。DPP4単剤/SGLT2単剤側の
 #    module tag は流用しない。
