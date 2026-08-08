@@ -543,3 +543,65 @@ describe('⑬ 最終tie-break: score同点だった35module横断ケースへの
     }
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 14. genericMode の表示枠制御（枠逼迫時のみ brand 行を見出しより優先）
+// ─────────────────────────────────────────────────────────────
+//
+// 成分名を共有する配合剤が複数 group へ展開されるクエリでは、一般名見出しと
+// brand 行がそれぞれ 1 枠ずつ消費するため、見出しが枠の半分を占めて brand 行が
+// 表示枠外へ押し出されることがある。ユーザーが候補として選択できるのは brand 行
+// のみ（見出し選択では brand が確定しない）ため、枠が不足する場面に限り brand 行
+// を優先する。枠に余裕がある場合は従来の宣言順（見出し→brand 行）を維持する。
+
+describe('⑭ genericMode 表示枠制御', () => {
+  test('N-1: 枠に余裕がある場合は従来どおり一般名見出しが先頭に来る', () => {
+    for (const q of ['とらにらすと', 'いんすりんりすぷろ']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      assert.ok(results.length > 0, `"${q}": 候補が0件になってはならない`)
+      assert.equal(
+        results[0].isGenericLabel, true,
+        `"${q}": 枠に余裕がある場合は一般名見出しが先頭のまま維持されるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`,
+      )
+    }
+  })
+
+  test('N-3: 表示枠制御が働いても limit 契約を超えない', () => {
+    for (const q of ['い', 'いんすりん', 'り', 'で', 'ぐり', 'あす']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      assert.ok(results.length <= 8, `"${q}": limit を超えてはならない（${results.length}件）`)
+    }
+  })
+
+  test('N-4: 適応ラベル付き一般名見出しは後回し対象に含めない', () => {
+    // crossModuleIndicationLabel が有効な genericKey（SGLT2）では、
+    // 見出しが適応ラベル付き（「エンパグリフロジン（糖尿病）」等）で表示される。
+    for (const q of ['えんぱぐりふろじん', 'かなぐりふろじん', 'だぱぐりふろじん']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const indicationHeaders = results.filter(
+        r => r.isGenericLabel && r.uiLabel !== undefined && r.uiLabel !== r.drugDisplayLabel,
+      )
+      assert.ok(
+        indicationHeaders.length > 0,
+        `"${q}": 適応ラベル付き見出しが表示されるべき: ${JSON.stringify(results.map(r => r.uiLabel ?? r.drugDisplayLabel))}`,
+      )
+    }
+  })
+
+  test('N-2: 枠逼迫時は brand 行が見出しより優先される（見出しは候補集合から失われない）', () => {
+    // "い" は候補が多く genericMode が残り枠を超えるため、後回し制御が働く。
+    const limited = getDrugSuggestions('い', fullIndex, 8)
+    assert.ok(limited.length <= 8)
+    const brandRows = limited.filter(r => !r.isGenericLabel)
+    assert.ok(
+      brandRows.length > 0,
+      `枠逼迫時は brand 行が表示されるべき: ${JSON.stringify(limited.map(r => r.drugDisplayLabel))}`,
+    )
+    // limit を広げれば見出しも従来どおり得られる（候補生成側では失われていない）
+    const unlimited = getDrugSuggestions('い', fullIndex, 1000)
+    assert.ok(
+      unlimited.some(r => r.isGenericLabel),
+      '候補生成レベルでは一般名見出しが保持されているべき',
+    )
+  })
+})

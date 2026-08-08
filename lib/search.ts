@@ -1121,9 +1121,57 @@ export function getDrugSuggestions(
   }
   const sortedDirect = [...familyGroups.values()].flat()
 
+  /**
+   * 適応ラベル付きの一般名見出しか判定する。
+   * crossModuleIndicationLabel 経路の見出しは dedupKeyOverride に moduleId を含めて
+   * `__generic__:{genericName}:{moduleId}` の3セグメント形式になる（通常の見出しは
+   * `__generic__:{genericName}` の2セグメント）。適応ラベル付き見出しは
+   * 「同一一般名が複数モジュールにまたがる」ことを示す固有の情報を持つため、
+   * 下記の枠逼迫時の後回し対象から除外する。
+   */
+  const isIndicationLabeledHeader = (c: BucketedCandidate): boolean =>
+    c.isGenericLabel === true &&
+    typeof c.dedupKeyOverride === 'string' &&
+    c.dedupKeyOverride.split(':').length >= 3
+
   const runGenericModeStep = () => {
-    // genericMode（一般名検索の見出し→ブランド群）は従来どおり limit を直接消費する
+    // genericMode（一般名検索の見出し→ブランド群）は limit を直接消費する。
+    //
+    // ただし候補が残り枠を超える場合に限り、通常の一般名見出しを brand 行より
+    // 後回しにする。見出しと brand 行が 1 枠ずつ消費するため、成分名を共有する
+    // 配合剤が複数 group へ展開されるクエリ（例:「メトホルミン」）では、見出しが
+    // 枠の半分を占めて brand 行が表示枠外へ押し出されるためである。ユーザーが
+    // 候補として選択できるのは brand 行のみ（見出し選択では brand が確定しない）
+    // なので、枠が不足する場面では brand 行を優先する。
+    //
+    // 枠に余裕がある場合は従来どおり宣言順（見出し→brand 行）をそのまま維持する。
+    // 適応ラベル付き見出し（crossModuleIndicationLabel 経路）は後回し対象に含めない。
+    // 後回しにした見出しは、brand 行を詰めたあとに残枠があれば宣言順で追加する
+    // （genericHeader 予約枠と同じく、枠を無駄にしない）。
+    const available = Math.max(limit - results.length, 0)
+    const distinctKeys = new Set(
+      bucketed.genericMode.map(c => c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`),
+    )
+    const needsDeferral = distinctKeys.size > available
+
+    if (!needsDeferral) {
+      for (const c of bucketed.genericMode) {
+        if (results.length >= limit) break
+        pushCandidate(c)
+      }
+      return
+    }
+
+    const deferredHeaders: BucketedCandidate[] = []
     for (const c of bucketed.genericMode) {
+      if (c.isGenericLabel === true && !isIndicationLabeledHeader(c)) {
+        deferredHeaders.push(c)
+        continue
+      }
+      if (results.length >= limit) break
+      pushCandidate(c)
+    }
+    for (const c of deferredHeaders) {
       if (results.length >= limit) break
       pushCandidate(c)
     }
