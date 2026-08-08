@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "81bda1afb3dc1c41146c9ce9fa3ae49136bebce6ab46a43febedc80e9e1b6380",
+  "sourceHash": "ad5c9c2aaa9da9c32cab7b89a72b34e3b6737307d1e9c874c8430c35e68b2c95",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -2998,7 +2998,8 @@
       "brandCatalog": {
         "メトアナ": {
           "aliases": [
-            "めとあな"
+            "めとあな",
+            "めとほるみん"
           ],
           "displayName": "メトアナ",
           "displayGenericName": "アナグリプチン/メトホルミン",
@@ -3009,7 +3010,8 @@
         },
         "エクメット": {
           "aliases": [
-            "えくめっと"
+            "えくめっと",
+            "めとほるみん"
           ],
           "displayName": "エクメット",
           "displayGenericName": "ビルダグリプチン/メトホルミン",
@@ -3020,7 +3022,8 @@
         },
         "イニシンク": {
           "aliases": [
-            "いにしんく"
+            "いにしんく",
+            "めとほるみん"
           ],
           "displayName": "イニシンク",
           "displayGenericName": "アログリプチン/メトホルミン",
@@ -3031,7 +3034,8 @@
         },
         "メホビル": {
           "aliases": [
-            "めほびる"
+            "めほびる",
+            "めとほるみん"
           ],
           "displayName": "メホビル",
           "displayGenericName": "ビルダグリプチン/メトホルミン",

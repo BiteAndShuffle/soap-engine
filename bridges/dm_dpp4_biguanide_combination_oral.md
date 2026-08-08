@@ -87,13 +87,25 @@ drug:
   #     存在する場合はそれを流用する」に従う。新規推測ではない）
   #   - めとほるみん / めとほるみんえんさんえん（メトホルミン／メトホルミン塩酸塩）は
   #     dm_biguanide_metformin_oral.drug.search.nameAliases から同様に流用
-  #   - 上記5件はいずれも module 単位の prefixAliases/nameAliases にのみ追加し、
-  #     brandCatalog[brand].aliases への複製・aliasToBrand への追加は行わない。
-  #     理由: びるだぐりぷちん はエクメット/メホビルの2ブランドに、
-  #     めとほるみん は全4ブランドに共通する成分読みであり、単一ブランドへの
-  #     解決先を機械的に一意に決められない（dm_dpp4_oral の
-  #     ジャヌビア／グラクティブ共有シタグリプチン読み「したぐりぷちん」を
-  #     module単位のみに留めた判断と同型）
+  #   - 上記5件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #     第1成分（あなぐりぷちん／びるだぐりぷちん／あろぐりぷちん）は各brandの
+  #     displayGenericName の前方一致で resolveAllHighPrecisionBrands() から解決
+  #     できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #     びるだぐりぷちん はエクメット/メホビルの2ブランドに共通するが、両brandの
+  #     displayGenericName が完全に同一（"ビルダグリプチン/メトホルミン"）のため
+  #     前方一致がそれぞれ独立に成立し、aliasToBrand の一意化を要しない。
+  #   - 第2成分（めとほるみん）は displayGenericName の前方一致にならないため、
+  #     DP-09（一般名検索到達性原則・配合剤条項）に従い4brandすべての
+  #     brandCatalog[brand].aliases / normalizedAliases / drug.aliasToBrand へ
+  #     個別登録する（ソニアス＝U-D-S3-1 / グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 /
+  #     メタクト＝U-D-S3-4 / カナリア等＝U-D-S3-5 の既存実績と同型）。
+  #     aliasToBrand の代表値は、Repository 既存の共有alias事例18件から実測された
+  #     規則（一般名ブランドが候補内に存在すればそれ、存在しなければ brandNames順の
+  #     先頭）に従い「メトアナ」とする。旧記載「単一ブランドへの解決先を機械的に
+  #     一意に決められない（dm_dpp4_oral のしたぐりぷちんと同型）」は、当該既存事例
+  #     18件（例: allergy_leukotriene の「もんてるかすと」→モンテルカスト、
+  #     dm_insulin_rapid_analog の「あすぱると」→ノボラピッド 等）と矛盾するため
+  #     U-D-S3-6 で訂正した
   search:
     primaryDisplayName: "DPP-4阻害薬／ビグアナイド配合剤"
 
@@ -164,8 +176,10 @@ drug:
         - "renal_dose_adjustment"
       aliases:
         - "めとあな"
+        - "めとほるみん"
       normalizedAliases:
         - "めとあな"
+        - "めとほるみん"
 
     エクメット:
       displayName: "エクメット"
@@ -176,8 +190,10 @@ drug:
         - "renal_dose_adjustment"
       aliases:
         - "えくめっと"
+        - "めとほるみん"
       normalizedAliases:
         - "えくめっと"
+        - "めとほるみん"
 
     イニシンク:
       displayName: "イニシンク"
@@ -188,8 +204,10 @@ drug:
         - "renal_dose_adjustment"
       aliases:
         - "いにしんく"
+        - "めとほるみん"
       normalizedAliases:
         - "いにしんく"
+        - "めとほるみん"
 
     # ───────── GEブランド ─────────
     メホビル:
@@ -203,19 +221,28 @@ drug:
         - "generic_equivalent"
       aliases:
         - "めほびる"
+        - "めとほるみん"
       normalizedAliases:
         - "めほびる"
+        - "めとほるみん"
 
   aliasToBrand:
     "めとあな": "メトアナ"
     "えくめっと": "エクメット"
     "いにしんく": "イニシンク"
     "めほびる": "メホビル"
-  # aliasToBrand は brandCatalog[brand].normalizedAliases（ブランド名読みのみ）を
-  # 過不足なく網羅する（RULES.md §10）。4件・4件で一致。
-  # 成分名読み（あなぐりぷちん 等5件）は module 単位 nameAliases 側のみに存在し
-  # brandCatalog.aliases には複製していないため、aliasToBrand の対象外
-  # （dm_dpp4_oral のジャヌビア／グラクティブ・したぐりぷちん と同型の扱い）。
+    "めとほるみん": "メトアナ"
+  # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
+  # （RULES.md §10）。5件・5件で一致。
+  # 第2成分読み「めとほるみん」は4brandすべての brandCatalog.aliases に登録した
+  # ため aliasToBrand にも追加した（DP-09 配合剤条項。ソニアス＝U-D-S3-1 /
+  # グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 / メタクト＝U-D-S3-4 / カナリア等＝
+  # U-D-S3-5 の既存実績と同型）。代表値「メトアナ」は Repository 既存の共有alias
+  # 事例18件から実測された規則（一般名ブランドが候補内に存在すればそれ、
+  # 存在しなければ brandNames順の先頭）に従う。本module は一般名ブランドを
+  # 持たないため brandNames順先頭のメトアナとした。第1成分読み（あなぐりぷちん等
+  # 3件）は module 単位 nameAliases 側のみに存在し brandCatalog.aliases には
+  # 複製していないため、引き続き aliasToBrand の対象外。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags
@@ -325,10 +352,18 @@ display:
 #    新規スキーマフィールドは追加せず、既存パターンを踏襲）
 # 5. genericKey 命名（"{DPP4成分}_{ビグアナイド成分}_combo" + GEは"_generic"付与）→
 #    RULES.md §21 の配合剤専用キー例示（"insulin_degludec_aspart_combo"）に準拠して確定
-# 6. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読みのみ、成分名読みは
-#    module単位nameAliasesのみ）→ dm_dpp4_oral のジャヌビア／グラクティブ
-#    （共有シタグリプチン読み「したぐりぷちん」を module単位のみに留めた判断）と
-#    同型の理由（複数ブランド共有の成分読みは一意のaliasToBrand解決先を持てない）で確定
+# 6. brandCatalog.aliases / aliasToBrand の対象範囲（ブランド名読み＋4brand共通の
+#    第2成分読み「めとほるみん」。第1成分読み3件は module単位nameAliasesのみ）→
+#    DP-09（一般名検索到達性原則・配合剤条項）に従い確定。第1成分は各brandの
+#    displayGenericName の前方一致で解決できるため複製不要（びるだぐりぷちんは
+#    エクメット/メホビルのdisplayGenericNameが同一のため両brand独立に前方一致
+#    成立）、第2成分は前方一致にならないため4brandすべての brandCatalog.aliases /
+#    normalizedAliases / aliasToBrand へ個別登録する（ソニアス＝U-D-S3-1 /
+#    グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 / メタクト＝U-D-S3-4 / カナリア等＝
+#    U-D-S3-5 の既存実績と同型）。aliasToBrandの代表値「メトアナ」はRepository
+#    既存の共有alias事例18件から実測された規則（一般名ブランド不在→brandNames順
+#    先頭）に従う。旧記載「複数ブランド共有の成分読みは一意のaliasToBrand解決先を
+#    持てない」は当該既存事例18件と矛盾するため U-D-S3-6 で訂正した
 # 7. drugResolution.brandToTags → dm_dpp4_oral / dm_biguanide_metformin_oral と同型の
 #    2件構成（["dpp4_biguanide_combination", {genericKey}]）で確定
 # 8. composition.classKey（"dpp4_biguanide_combination"）/ nodeKey
