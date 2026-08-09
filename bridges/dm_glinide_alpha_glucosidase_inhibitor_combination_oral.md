@@ -87,13 +87,16 @@ drug:
   #   - ぼぐりぼーす（ボグリボース）は dm_alpha_glucosidase_inhibitor_oral.drug.search.nameAliases
   #     から同様に流用
   #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases に追加する。
-  #     第1成分（みちぐりにど / みちぐりにどかるしうむすいわぶつ）は displayGenericName
-  #     "ミチグリニド・ボグリボース" の前方一致で resolveAllHighPrecisionBrands()
-  #     から解決できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #     第1成分（みちぐりにど）は displayGenericName "ミチグリニド・ボグリボース"
+  #     の前方一致で resolveAllHighPrecisionBrands() から解決できるため、
+  #     brandCatalog[brand].aliases への複製は不要（DP-09）。
   #   - 第2成分（ぼぐりぼーす）は displayGenericName の前方一致にならないため、
   #     DP-09（一般名検索到達性原則・配合剤条項）に従い brandCatalog[brand].aliases /
   #     normalizedAliases / drug.aliasToBrand へ個別登録する（ソニアスの既存実績
   #     ＝dm_thiazolidinedione_sulfonylurea_combination_oral・U-D-S3-1と同型）
+  #   - 第1成分の塩形読み「みちぐりにどかるしうむすいわぶつ」はブロッキング要因が
+  #     ないため Class S として brandCatalog[brand].aliases / normalizedAliases /
+  #     drug.aliasToBrand へも個別登録する（メタクト／ソニアスの同型登録と揃える）。
   search:
     primaryDisplayName: "グリニド系経口血糖降下剤／α-グルコシダーゼ阻害薬配合剤"
 
@@ -142,18 +145,23 @@ drug:
       aliases:
         - "ぐるべす"
         - "ぼぐりぼーす"
+        - "みちぐりにどかるしうむすいわぶつ"
       normalizedAliases:
         - "ぐるべす"
         - "ぼぐりぼーす"
+        - "みちぐりにどかるしうむすいわぶつ"
 
   aliasToBrand:
     "ぐるべす": "グルベス"
     "ぼぐりぼーす": "グルベス"
+    "みちぐりにどかるしうむすいわぶつ": "グルベス"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。2件・2件で一致。
+  # （RULES.md §10）。3件・3件で一致。
   # 第2成分読み「ぼぐりぼーす」は brandCatalog.グルベス.aliases に登録したため
   # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソニアスの既存実績
-  # ＝U-D-S3-1と同型）。第1成分読み（みちぐりにど／みちぐりにどかるしうむすいわぶつ）は
+  # ＝U-D-S3-1と同型）。第1成分の塩形読み「みちぐりにどかるしうむすいわぶつ」も
+  # 同様に brandCatalog.グルベス.aliases へ登録し aliasToBrand にも追加した
+  # （Class S。メタクト／ソニアスの同型登録と揃える）。第1成分読み（みちぐりにど）は
   # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
   # 引き続き aliasToBrand の対象外。
 

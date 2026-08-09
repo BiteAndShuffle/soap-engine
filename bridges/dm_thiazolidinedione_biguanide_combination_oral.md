@@ -90,9 +90,13 @@ drug:
   #     DP-09（一般名検索到達性原則・配合剤条項）に従い brandCatalog[brand].aliases /
   #     normalizedAliases / drug.aliasToBrand へ個別登録する（ソニアス＝U-D-S3-1 /
   #     グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。
-  #     なお塩形読み（ぴおぐりたぞんえんさんえん／めとほるみんえんさんえん）は
-  #     displayGenericName の構成成分ではないため brandCatalog[brand].aliases へは
-  #     複製せず、module 単位のみに留める。
+  #     なお塩形読み「めとほるみんえんさんえん」は既存の Suite⑦ 到達性テストと
+  #     衝突するため brandCatalog[brand].aliases へは複製せず、module 単位のみに
+  #     留める（Deferred Finding「89cf33f own-name priority と DP-09
+  #     cross-module reachability の衝突」）。塩形読み「ぴおぐりたぞんえんさんえん」は
+  #     ブロッキング要因がないため brandCatalog[brand].aliases /
+  #     normalizedAliases / drug.aliasToBrand へ個別登録する
+  #     （ソニアス／グルベスの Class S 実績と同型）。
   search:
     primaryDisplayName: "チアゾリジン系糖尿病薬／ビグアナイド配合剤"
 
@@ -145,21 +149,27 @@ drug:
       aliases:
         - "めたくと"
         - "めとほるみん"
+        - "ぴおぐりたぞんえんさんえん"
       normalizedAliases:
         - "めたくと"
         - "めとほるみん"
+        - "ぴおぐりたぞんえんさんえん"
 
   aliasToBrand:
     "めたくと": "メタクト"
     "めとほるみん": "メタクト"
+    "ぴおぐりたぞんえんさんえん": "メタクト"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。2件・2件で一致。
+  # （RULES.md §10）。3件・3件で一致。
   # 第2成分読み「めとほるみん」は brandCatalog.メタクト.aliases に登録したため
   # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソニアス＝U-D-S3-1 /
-  # グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。第1成分読み
-  # （ぴおぐりたぞん）および塩形読み（ぴおぐりたぞんえんさんえん／
-  # めとほるみんえんさんえん）は module 単位 nameAliases 側のみに存在し
-  # brandCatalog.aliases には複製していないため、引き続き aliasToBrand の対象外。
+  # グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。塩形読み
+  # 「ぴおぐりたぞんえんさんえん」も同様に brandCatalog.メタクト.aliases へ登録し
+  # aliasToBrand にも追加した（Class S。ソニアス／グルベスの同型登録と揃える）。
+  # 第1成分読み（ぴおぐりたぞん）および塩形読み「めとほるみんえんさんえん」は
+  # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していない
+  # ため、引き続き aliasToBrand の対象外（後者は Deferred Finding「89cf33f
+  # own-name priority と DP-09 cross-module reachability の衝突」に該当）。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags

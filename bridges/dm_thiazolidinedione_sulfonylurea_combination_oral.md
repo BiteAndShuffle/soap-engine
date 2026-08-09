@@ -85,14 +85,17 @@ drug:
   #   - ぐりめぴりど（グリメピリド）は dm_sulfonylurea_oral.drug.search.nameAliases
   #     から同様に流用
   #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases に追加する。
-  #     第1成分（ぴおぐりたぞん / ぴおぐりたぞんえんさんえん）は displayGenericName
-  #     "ピオグリタゾン／グリメピリド" の前方一致で resolveAllHighPrecisionBrands()
-  #     から解決できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
+  #     第1成分（ぴおぐりたぞん）は displayGenericName "ピオグリタゾン／グリメピリド"
+  #     の前方一致で resolveAllHighPrecisionBrands() から解決できるため、
+  #     brandCatalog[brand].aliases への複製は不要（DP-09）。
   #   - 第2成分（ぐりめぴりど）は displayGenericName の前方一致にならないため、
   #     DP-09（一般名検索到達性原則・配合剤条項）に従い brandCatalog[brand].aliases /
   #     normalizedAliases / drug.aliasToBrand へ個別登録する（ソリクア/ゾルトファイ/
   #     ライゾデグの既存実績と同型。旧記載「複製は行わない」は当該実績を誤って
   #     参照していたため U-D-S3-1 で訂正した）
+  #   - 第1成分の塩形読み「ぴおぐりたぞんえんさんえん」はブロッキング要因がないため
+  #     Class S として brandCatalog[brand].aliases / normalizedAliases /
+  #     drug.aliasToBrand へも個別登録する（メタクト／グルベスの同型登録と揃える）。
   search:
     primaryDisplayName: "チアゾリジン系糖尿病薬／スルホニルウレア系経口血糖降下剤配合剤"
 
@@ -140,20 +143,25 @@ drug:
       aliases:
         - "そにあす"
         - "ぐりめぴりど"
+        - "ぴおぐりたぞんえんさんえん"
       normalizedAliases:
         - "そにあす"
         - "ぐりめぴりど"
+        - "ぴおぐりたぞんえんさんえん"
 
   aliasToBrand:
     "そにあす": "ソニアス"
     "ぐりめぴりど": "ソニアス"
+    "ぴおぐりたぞんえんさんえん": "ソニアス"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。2件・2件で一致。
+  # （RULES.md §10）。3件・3件で一致。
   # 第2成分読み「ぐりめぴりど」は brandCatalog.ソニアス.aliases に登録したため
   # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソリクア/ゾルトファイ/
-  # ライゾデグの既存実績と同型）。第1成分読み（ぴおぐりたぞん／
-  # ぴおぐりたぞんえんさんえん）は module 単位 nameAliases 側のみに存在し
-  # brandCatalog.aliases には複製していないため、引き続き aliasToBrand の対象外。
+  # ライゾデグの既存実績と同型）。第1成分の塩形読み「ぴおぐりたぞんえんさんえん」も
+  # 同様に brandCatalog.ソニアス.aliases へ登録し aliasToBrand にも追加した
+  # （Class S。メタクト／グルベスの同型登録と揃える）。第1成分読み（ぴおぐりたぞん）は
+  # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
+  # 引き続き aliasToBrand の対象外。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags

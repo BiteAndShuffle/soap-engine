@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "8d28ec9431e3ef47479d7cf6f7caaab33637017e7ef6b485b2cc1fabeb09e736",
+  "sourceHash": "c5d46d0ace5177a90942b2d1ecb150730af56640e2ae56dadcfcbd32814104c1",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -3237,7 +3237,8 @@
         "メタクト": {
           "aliases": [
             "めたくと",
-            "めとほるみん"
+            "めとほるみん",
+            "ぴおぐりたぞんえんさんえん"
           ],
           "displayName": "メタクト",
           "displayGenericName": "ピオグリタゾン／メトホルミン",
@@ -3382,7 +3383,8 @@
         "ソニアス": {
           "aliases": [
             "そにあす",
-            "ぐりめぴりど"
+            "ぐりめぴりど",
+            "ぴおぐりたぞんえんさんえん"
           ],
           "displayName": "ソニアス",
           "displayGenericName": "ピオグリタゾン／グリメピリド",
@@ -3625,7 +3627,8 @@
         "グルベス": {
           "aliases": [
             "ぐるべす",
-            "ぼぐりぼーす"
+            "ぼぐりぼーす",
+            "みちぐりにどかるしうむすいわぶつ"
           ],
           "displayName": "グルベス",
           "displayGenericName": "ミチグリニド・ボグリボース",
