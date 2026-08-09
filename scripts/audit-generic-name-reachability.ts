@@ -174,7 +174,6 @@ for (const moduleId of moduleIds) {
 // ─────────────────────────────────────────────────────────────
 
 function severity(code: string): 'FAIL' | 'CHECK' {
-  if (code === 'GENERIC_NAME_UNREACHABLE') return 'CHECK'
   return 'FAIL'
 }
 
