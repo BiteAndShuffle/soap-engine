@@ -22,6 +22,8 @@ SOAP Engine — 設計保留事項
 | Q-F4 | `composition.canonicalSource` の必須化範囲 | 🟡 中 | 多剤合成機能が安定した時 |
 | Q-G1 | 配合剤の `genericKey` 複数成分対応（`genericKeys: string[]`） | 🟢 低 | 単剤↔配合剤のクロス成分検索が要件化した時 |
 | Q-S1 | 一般名検索が module 単位 `exactAlias` 命中時に `brandNames[0]` へ縮退する検索ロジック | 🟡 中 | brandCatalog.aliases への一般名フルストリング拡張、または `lib/search.ts` 横断修正の要否を判断する時 |
+| Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | 🟡 中 | lowConfidence bucket の3種分離、または class-level query 専用表現の要否を判断する時 |
+| Q-UX1 | short-prefix 検索時の limit 内候補配分・ranking（F-S3-1） | 🟢 低 | 表示枠拡張または bucket 別最低保証の要否を判断する時 |
 
 優先度の凡例:
 - 🔴 要判断: 新規 module 追加前に確定が必要
@@ -236,6 +238,89 @@ Tier2 が `dm_glp1ra_injection` の5ブランド全件・配合剤3件（ソリ�
 
 **現時点の扱い**
 2026-07、`lib/search.ts` の `resolveAllHighPrecisionBrands()` に `brandCatalogGenericMap` 参照を追加し、Tier1・Tier3 は解決済み（実測確認済み）。同日、`dm_glp1ra_injection` / `dm_insulin_glp1_combination` / `dm_insulin_mixed_rapid_long` へ一般名読みエイリアスを追加し、これらモジュールにおける Tier2 も解消済み（実測確認済み）。`derm_heparinoid_moisturizer_spray` の Tier2 相当（ヒルドイドフォーム）は、当時対象外のまま残存していたが、`drug.search.exactAliases` への bridge 起点の追記により解消済みである（`npm run audit` 実測: `GENERIC_NAME_UNREACHABLE` CHECK 0 / FAIL 0）。一般名読み到達性を機械的に監査する仕組み（残課題3）は `scripts/audit-generic-name-reachability.ts` として実装済みであり、今後の module 追加・変更時の検出責務を引き続き持つ。同 audit の `GENERIC_NAME_UNREACHABLE` severity は CHECK から FAIL へ昇格済みである。`lib/moduleValidator.ts` への組込み判断、および build / CI gate への配線判断は未了のままである。本 Q-S1 は残課題1・残課題2 とあわせて未解決のまま残る。
+
+---
+
+## Q-S2: module到達後のbrand-level resolution / fallback safety
+
+**論点**
+module 単位の alias（`drug.search.nameAliases` 等）でクエリが module へ到達しても、`brandCatalog[brand].aliases` で候補 brand を一意に解決できない場合、`getDrugSuggestions()` は `matchedBrandName === undefined` のまま `lowConfidence` bucket へ候補を落とす。この状態で UI が `entry.drugDisplayLabel ?? brandNames[0]`（module 内で最初に宣言された brand）へ静かに確定すると、クエリが実際には指定していない brand・成分が確定表示される。
+
+Q-S1（DP-09）は「module への到達性」を扱うのに対し、本論点は「到達した**後**の brand 帰属解決の安全性」を扱う。責務が異なるため独立した Question として扱う。
+
+**現状（構造上の事実）**
+`lowConfidence` bucket には、性質の異なる少なくとも3種の候補が区別されずに混在する。
+
+| 種別 | 内容 |
+|---|---|
+| ① 本当に弱い corpus match | 明確な alias 一致がなく、周辺文言の緩い一致のみで拾われた候補 |
+| ② module alias は強く一致するが brand 解決だけ失敗 | module 単位 alias には完全一致するが、`brandCatalog[brand].aliases` のいずれにも一致しない |
+| ③ class-level query | クエリが特定 brand も特定成分も指定せず、module／薬効クラス全体を指している（例: 薬効分類名そのものでの検索） |
+
+**具体的なDeferredケース**
+以下は「module 単位では alias 到達済みだが brand 単位では未解決」という状態を、安全性を実測確認できなかったため意図的に補完しなかったケースである。個別の再現手順・実測件数は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照。
+
+| ケース | 対象 | Deferredの理由（衝突する既存仕様） |
+|---|---|---|
+| D-1 | `dm_dpp4_biguanide_combination_oral`（メトホルミン塩酸塩の salt-name reading） | 単剤メトホルミンを1位に維持する ranking 仕様と衝突する |
+| D-2 | `dm_thiazolidinedione_pioglitazone_oral` 系（ピオグリタゾンの salt-name reading） | ピオグリタゾン単剤を1位に維持する ranking 仕様と衝突する |
+| D-3 | `dm_thiazolidinedione_biguanide_combination_oral`（メトホルミン塩酸塩の salt-name reading） | D-1 と同一の ranking 仕様と衝突する |
+| D-4 | `dm_thiazolidinedione_sulfonylurea_combination_oral` 系（イメグリミン塩酸塩の salt-name reading） | brand 帰属自体は一意だが、追加すると別 module の選択可能 brand 行が表示枠（limit=8）から脱落する（Q-UX1 と同種の副作用が発生する） |
+
+**なぜ機械的な一括解決を採用しないか（不採用とした方針）**
+「module 単位 alias があるのに brand 単位で解決できないものを一律 FAIL にする」監査を検討したが、不採用とした。理由は、brand-level unresolved が **DP-18 が定める意図的な設計**（salt-name full reading を generic-labeled brand 自身にのみ登録し、family 内の他 brand へ機械的に複製しない）によって生じているケースが存在するためである。同じ salt-name reading でも、家族内のどの brand へ複製してよいかは cross-module tie-break の挙動に依存して結果が変わるため、alias family 単位の静的ルールだけでは安全性を判定できない。
+
+**選択肢**
+
+**選択肢A: 個別ケースごとに実測確認しながらcontainmentする（現状の運用）**
+- メリット: 安全性を都度実測できる。誤った containment のリスクが低い
+- デメリット: module 数が増えるほど確認コストが線形に増える。抜け漏れが発生しやすい
+
+**選択肢B: lowConfidence bucketを3種に分離し、UIが種別ごとに異なる提示をする**
+- メリット: ③class-level query は「複数候補から選ばせる」UI、②module一致だが未解決は「候補を明示提示」等、種別に応じた安全な提示ができる
+- デメリット: `lib/search.ts` の bucket 構成・`DrugSuggestionItem` 型・UI 側の分岐が増える
+
+**選択肢C: class-level query専用の新しい候補表現を設計する**
+- メリット: 特定 brand・特定成分を指定しないクエリを、無理に brand へ確定させずに扱える
+- デメリット: 新しい UI・データ構造の設計が必要。範囲が③単独にとどまらず Q-S2 全体の設計に波及しうる
+
+**推奨判断タイミング**
+lowConfidence bucket の実際の到達件数・誤解決の実害が、Runtime確認（`docs/IMPLEMENTATION_CHECKLIST.md`）で問題として顕在化した時点、または新しい薬効領域追加時に同種のケースが継続して発生すると判明した時点。
+
+**現時点の扱い**
+選択肢Aで運用。D-1〜D-4は個別に安全性を実測確認した上でDeferredとしている。lowConfidenceの3種分離（選択肢B）・class-level query専用表現（選択肢C）はいずれも未着手。
+
+---
+
+## Q-UX1: short-prefix時のlimit内候補配分・ranking
+
+**論点**
+`getDrugSuggestions()` の候補数上限（`limit=8`）に対し、short-prefix クエリでは direct／sibling bucket が上位を占有し、genericMode 側の他 module 候補が表示枠から脱落する場合がある（F-S3-1）。
+
+Q-S1・Q-S2 が「クエリに対して意味的に正しい module／brand へ到達・確定できるか」（correctness／semantic resolution）を保証対象とするのに対し、本論点は「複数の正しい候補が存在する状況で、限られた表示枠内にどう優先順位をつけて見せるか」（ranking／presentation／UX）を保証対象とする。DP-09 の一般名検索到達性原則には違反しない（到達性そのものは損なわれていない）。両者は責務が異なるため統合しない。
+
+**現状**
+実測件数・具体的な脱落 prefix の一覧は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照（時点付きのため本節では保持しない）。完全な一般名検索では脱落が発生しないことは確認済みで、事象は short-prefix 検索に限定される。
+
+**選択肢**
+
+**選択肢A: limitを引き上げる**
+- メリット: 実装が単純
+- デメリット: UI上の候補リストが長くなり、視認性が下がる
+
+**選択肢B: bucket別の最低保証件数を設ける**
+- メリット: genericMode側の候補が完全に消えることを防げる
+- デメリット: bucket構成・スコアリングロジックの変更が必要
+
+**選択肢C: 現状維持（ranking/UX品質issueとして記録のみ）**
+- メリット: 変更不要
+- デメリット: 短いprefix検索での体験は改善されないまま残る
+
+**推奨判断タイミング**
+Runtime確認・実機横断確認（`docs/IMPLEMENTATION_CHECKLIST.md`）でこの脱落がユーザー体験上の実害として確認された時点。
+
+**現時点の扱い**
+選択肢C（現状維持）。DP-09違反ではなくranking/UX品質issueとして記録し、Deferredのまま維持する。
 
 ---
 

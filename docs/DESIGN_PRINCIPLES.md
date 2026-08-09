@@ -600,6 +600,42 @@ MEMORY は Repository の正本ではなく、補助情報として扱う。MEMO
 
 ---
 
+## DP-18: alias複製境界とown-name優先原則（Alias Duplication Boundary and Own-Name Priority Principle）
+
+**目的**
+一般名のフルストリング読み（salt-name reading）を含む alias について、どの brand へ登録してよいか、どの範囲まで家族内で複製してよいかの境界を定める。同一 family 内で own-name（自分自身の名称）にクエリが一致する候補を、他 brand 経由の一致より優先して表示する。
+
+**適用範囲**
+同一 module 内に複数 brand を持ち、そのうち特定 brand が一般名そのものを peer brand として `brandCatalog` に登録している場合（例: メトホルミン塩酸塩単剤と、同薬効クラス系列に属する配合剤）。
+
+**方針**
+- `drug.search.matchPolicy.preferOwnNameMatchOverGenericMatch`: module の direct 候補内で、自身の名称／alias に一致した brand を、`brandCatalog[].genericName` 経由でのみ一致した brand より優先して並べる
+- `drug.search.matchPolicy.suppressRedundantGenericHeaderOnDirectMatch`: 同一成分の direct／genericMode 候補が既に存在する場合、独立した salt-name header 候補を出さない
+- salt-name full reading（例: 一般名の塩類名まで含めた読み）は、**generic-labeled brand（一般名をそのまま brand 名として持つエントリ）自身の `brandCatalog[brand].aliases` にのみ登録する**。同一 family 内の他 brand（配合剤等）へ機械的に複製しない
+
+**不採用とした方針**
+salt-name full reading を family 内の全 brand の `aliases` へ複製する方式は、複製そのものが「どの brand が正しい帰属先か」という意味を薄め、複数配合剤が同一 salt-name reading に反応してしまう曖昧さを生むため採用しない。
+
+**採用理由**
+`drug.search.exactAliases`（module 単位）が peer brand としての一般名を持つ設計では、salt-name reading をそのまま `brandNames` 宣言順にランキングさせると、無関係な配合剤や医学的に非対称な候補が先頭に来る回帰が生じた。own-name 一致を優先し、salt-name の複製範囲を単一 brand に限定することで、この回帰を再発させずに検索到達性を確保する。
+
+**DP-09との責務境界**
+- DP-09: 一般名検索によって **module へ到達できるか**（reachability）を扱う
+- DP-18: module へ到達した**後**に、**どの brand へ帰属させるか**（own-name priority）と、**alias をどこまで複製してよいか**（複製境界）を扱う
+
+両者は同じ検索パイプラインの隣接する段階を扱うが、責務は異なり、一方が他方を代替しない。
+
+**関連フィールド**
+`drug.search.matchPolicy.preferOwnNameMatchOverGenericMatch` / `drug.search.matchPolicy.suppressRedundantGenericHeaderOnDirectMatch` / `brandCatalog[brand].aliases`
+
+**関連原則**
+DP-09（一般名検索到達性原則）— 上記「DP-09との責務境界」参照
+
+**詳細経緯**
+cross-module tie-break の具体的挙動（`resolveSortLabel()` の実装詳細等、実装から機械的に確認できる事実）は本原則へ複製しない。個別 module の適用状況・残存する未解決ケースは `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -620,6 +656,7 @@ MEMORY は Repository の正本ではなく、補助情報として扱う。MEMO
 | bridge と JSON の乖離 | DP-07 |
 | moduleVersion | DP-04 |
 | 一般名検索到達性 / brandCatalog alias | DP-09 |
+| brand 帰属解決 / alias 複製境界 | DP-18 |
 | Addon 表示順 / P_ADDON 記載順 | DP-10 |
 | 適応横断検索（crossModuleIndicationLabel） | DP-11 |
 | 多剤合成のRuntime評価優先順位 | DP-12 |
@@ -640,3 +677,4 @@ MEMORY は Repository の正本ではなく、補助情報として扱う。MEMO
 | DP-13 | 意図的な未接続が記録されないまま放置 → Runtime 未接続資産が設計負債と誤認され削除・改変される、または監査のたびに同じ調査コストが発生する |
 | DP-15 | 不確定を推測で埋める運用へ回帰 → 誤った値が「検証済み」として基盤に固定され、実機確認や最終監査まで発覚しない |
 | DP-16 | 実物評価前に最終仕様を確定 → 評価によって初めて分かる基準ではなく、設計時に想像した基準が仕様として恒久化する。保留中の構造整備を怠ると、方式確定後に型・canonical・Validator・UI の全面改修が発生する |
+| DP-18 | own-name priority を外す・salt-name reading を family 内へ複製 → 無関係な配合剤や非対称な候補が誤って先頭表示される回帰の再発 |

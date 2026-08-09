@@ -654,6 +654,22 @@ vNext には対応する明示的なチェック項目がない。
 **今後の運用**  
 新しい薬効領域（DPP4 等）のモジュールを追加したら、既存の 20 ケース（`scripts/test-multi-drug-synthesis.ts` の `TEST_CASES` 配列）に、その領域を含む組み合わせケースを追加していくこと。既存モジュールとの多剤併用（例: DPP4 + 既存インスリン/GLP-1）を必ず1ケース以上含める。ケースを削除する場合は「なぜ不要になったか」を PR やコミットメッセージに残すこと（DP-00 準拠）。
 
+## DashboardClient の resolveDrugName() SSOTバイパス
+
+`lib/drugSubject.ts` の `resolveDrugName()` は、薬剤名解決の唯一の正本として設計されている。関数の docstring に「通常UI・SOAP生成における薬剤名解決のSSOT。呼び出し元固有のフォールバックロジックを個別に書かず、常にこの関数を経由すること」と明記されており、`docs/JSON_STANDARD.md`（231行、`resolveDrugName()` 節）も「UI側は `genericName` へのフォールバックを行わない。`resolveDrugName()` が薬剤名解決の唯一の正本」と同旨を記載している。
+
+`app/components/DashboardClient.tsx` の一部箇所は、この SSOT を経由せず独自の fallback ロジックで brand 名を直接確定させている（検索語: `resolvedBrand`。`activeBrandName ?? activeModuleData.drug?.brandNames?.[0]` という形で `resolveDrugName()` を介さずに直接 fallback している箇所が存在する）。
+
+**扱い**: 既存の確定済みルール（`resolveDrugName()` をSSOTとして常に経由する）への未追随であり、新しい設計判断が必要な Question ではなく、**技術的負債**として扱う。
+
+**現時点で確定していること**
+- `resolveDrugName()` がSSOTである
+- `DashboardClient.tsx` の一部fallbackがこのSSOTを迂回している
+
+**今回決めていないこと**: 具体的な修正方法・変更箇所・移行順序・修正時の blast radius。これらは Repository 実測に基づき実装時に別 Unit として設計する。
+
+関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
+
 ---
 
 # 7. 絶対に守るルール

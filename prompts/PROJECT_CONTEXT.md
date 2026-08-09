@@ -1,8 +1,8 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.1
-> **Last Updated:** 2026-08-06
-> **Current Focus:** 次の着手対象は未確定。
+> **Version:** 2.2
+> **Last Updated:** 2026-08-09
+> **Current Focus:** 次の着手対象は未確定。brand-level resolution safety（→ docs/OPEN_DESIGN_QUESTIONS.md Q-S2）・検索候補の表示枠配分（→ 同 Q-UX1）が候補として記録されている。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
