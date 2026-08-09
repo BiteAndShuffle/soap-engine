@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "8457dfe08567642237a0f9e05f6f455f2b0d5b8d029aa7737a0b9e1a6d914148",
+  "sourceHash": "8d28ec9431e3ef47479d7cf6f7caaab33637017e7ef6b485b2cc1fabeb09e736",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -879,7 +879,9 @@
             "ひるど",
             "ひるどいなんこう",
             "ひるどなんこう",
-            "ひるなんこう"
+            "ひるなんこう",
+            "へぱなんこう",
+            "へぱりんなんこう"
           ],
           "displayName": "ヒルドイドソフト軟膏",
           "displayGenericName": "ヘパリン類似物質油性クリーム",
@@ -1234,7 +1236,10 @@
         "ヒルドイドフォーム": {
           "aliases": [
             "ひるどいどふぉーむ",
-            "ひるふぉーむ"
+            "ひるふぉーむ",
+            "へぱふぉーむ",
+            "へぱりんふぉーむ",
+            "へぱりんるいじぶっしつふぉーむ"
           ],
           "displayName": "ヒルドイドフォーム",
           "displayGenericName": "ヘパリン類似物質フォーム",
