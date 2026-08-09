@@ -22,7 +22,7 @@ SOAP Engine — 設計保留事項
 | Q-F4 | `composition.canonicalSource` の必須化範囲 | 🟡 中 | 多剤合成機能が安定した時 |
 | Q-G1 | 配合剤の `genericKey` 複数成分対応（`genericKeys: string[]`） | 🟢 低 | 単剤↔配合剤のクロス成分検索が要件化した時 |
 | Q-S1 | 一般名検索が module 単位 `exactAlias` 命中時に `brandNames[0]` へ縮退する検索ロジック | 🟡 中 | brandCatalog.aliases への一般名フルストリング拡張、または `lib/search.ts` 横断修正の要否を判断する時 |
-| Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | 🟡 中 | lowConfidence bucket の3種分離、または class-level query 専用表現の要否を判断する時 |
+| Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | 🟡 中 | **設計方針確定済み。U-1〜U-8 で実装中**（実装完了時に本項目を移管・削除する） |
 | Q-UX1 | short-prefix 検索時の limit 内候補配分・ranking（F-S3-1） | 🟢 低 | 表示枠拡張または bucket 別最低保証の要否を判断する時 |
 
 優先度の凡例:
@@ -287,8 +287,42 @@ Q-S1（DP-09）は「module への到達性」を扱うのに対し、本論点�
 **推奨判断タイミング**
 lowConfidence bucket の実際の到達件数・誤解決の実害が、Runtime確認（`docs/IMPLEMENTATION_CHECKLIST.md`）で問題として顕在化した時点、または新しい薬効領域追加時に同種のケースが継続して発生すると判明した時点。
 
-**現時点の扱い**
-選択肢Aで運用。D-1〜D-4は個別に安全性を実測確認した上でDeferredとしている。lowConfidenceの3種分離（選択肢B）・class-level query専用表現（選択肢C）はいずれも未着手。
+**現時点の扱い（設計方針確定・実装中）**
+
+Architecture Review により設計方針が確定し、実装工程 U-1〜U-8 に着手している。選択肢は「A で運用継続」ではなく、**選択肢 B を中心に据える**方針で確定した。
+
+**確定した Owner Decision**
+
+| # | 決定 |
+|---|---|
+| 1 | **discriminated resolution state を採用する。** `matchedBrandName?: string` の undefined のみへ意味論を持たせる案は不採用。型定義は `lib/brandResolution.ts` |
+| 2 | **「検索候補として選択可能」と「SOAP 生成可能な確定状態」を分離する。** `denotation: 'module'` / `subject: null` の状態から SOAP 生成・brand 依存 ADDON 解決を行ってはならない |
+| 3 | class-level query は domain schema 上 module-level unresolved を正式状態として保持する。初期 UI では既存 generic group へ展開可能な場合は generic 候補へ展開し、複数 generic group がある場合のみ追加選択を要求する。**専用の新規「未確定候補 UI」は現時点では新設しない**（generic group で表現できない実例が出た場合に再検討する） |
+| 4 | `derm_heparinoid_moisturizer_ointment` の generic group 内 handlingTags 不均質は、Q-S2 本体とは分離した Finding として **U-8 で再評価する**。現時点では genericKey 変更等を行わない |
+| 5 | `resolveDrugName()`（`lib/drugSubject.ts`）は resolution state → SOAP subject の唯一の SSOT として維持・刷新する。`denotation: 'module'` では subject を生成しない |
+| 6 | **Q-UX1 は引き続き Deferred。** Q-S2 実装中に ranking / bucket 結合順 / limit=8 の配分は変更しない |
+| 7 | D-1〜D-3 は個別 alias containment を行わず、Q-S2 根本設計の完了後に再評価する |
+
+**schema 上の確定事項**
+
+`denotation: 'generic'` は **authoritative な単一 brandKey を持たない**。generic resolution は複数 brand を代表しうるため、単一 brandKey を型契約へ持たせると `brandNames[0]` fallback と同型の「意味論を持たない代表 brand 選択」を再導入することになる。`genericKey` が保持するのは canonical JSON の `brandCatalog[].genericKey` そのものではなく、`genericKey ?? displayGenericName ?? genericName`（§21）による解決済みグルーピングキーである。詳細は `lib/brandResolution.ts` の JSDoc を正本とする。
+
+**実装工程**
+
+```
+U-1 resolution schema（型契約の確立。runtime 未接続）
+U-2 lib/search.ts が resolution を付与する
+U-3 resolveDrugName() を resolution state → SOAP 主語へ刷新する
+U-4 DashboardClient の独自 fallback を本契約へ統一する
+U-5 SOAP / brand 依存処理の resolution gate
+U-7 invariant tests / audit
+U-6 class-level query の generic group 展開
+U-8 個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
+```
+
+**新規 module 開発へ戻ってよい最低到達点**: U-1〜U-5 および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
+
+調査経緯・時点付き実測（D-1〜D-4 の再現結果、コード位置、commit 根拠）は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照する。
 
 ---
 
