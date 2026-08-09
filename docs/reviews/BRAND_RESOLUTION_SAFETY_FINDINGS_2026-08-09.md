@@ -169,3 +169,47 @@ DP-00ルール5（検証手段の永続化）に従い、以下の手順で再�
 - 新規audit/validatorの設計・実装
 - `docs/reviews/`のDocumentation Map登録（GG-2の解消）
 - git commit / git push
+
+---
+
+## 9. 訂正追記（2026-08-09・Architecture Review 実施後）
+
+> 本節は、§1〜§8 の記録後に実施した Architecture Review（対象 commit `a263c69`）における
+> Repository 実測により判明した**事実誤りの訂正**である。
+>
+> **§1〜§8 の本文は変更していない。** 当時の記録は historical record としてそのまま保持し、
+> 後続の実測で判明した誤りのみを本節で訂正する
+> （`docs/reviews/PHASE2_STAGE1_VERIFICATION_2026-07-25.md` §8 と同じ追記方式）。
+
+### 9.1 §4.1 の module 帰属の訂正
+
+§4.1 の表は「REPORTED（未再検証）」として会話引き継ぎを転記したものであり、**D-2 / D-4 の module 帰属に誤りがあった。** 実測（全 canonical JSON の `brandCatalog` キー走査）による正しい帰属は次のとおりである。
+
+| ケース | brand | §4.1 の記載（誤） | 実測による正 |
+|---|---|---|---|
+| D-2 | リオベル | `dm_thiazolidinedione_pioglitazone_oral` 系 | **`dm_dpp4_thiazolidinedione_combination_oral`** |
+| D-4 | ツイミーグ | `dm_thiazolidinedione_sulfonylurea_combination_oral` 系 | **`dm_imeglimin_oral`** |
+
+参考（誤記された module の実際の内容）: `dm_thiazolidinedione_pioglitazone_oral` は ピオグリタゾン / アクトス、
+`dm_thiazolidinedione_sulfonylurea_combination_oral` は ソニアス を保持する。
+
+D-1（メトアナ = `dm_dpp4_biguanide_combination_oral`）・D-3（メタクト = `dm_thiazolidinedione_biguanide_combination_oral`）の帰属は**正しかった**。
+
+### 9.2 D-1〜D-4 の検証状態の更新
+
+§4 は D-1〜D-4 を「REPORTED（未再検証）」と分類していたが、**Architecture Review において in-memory シミュレーション（実ファイル非変更）により再実測済みである。**
+
+| ケース | 再実測で確認された内容 |
+|---|---|
+| D-1 / D-3 | brand-level alias を追加すると `results[0]` が配合剤へ変わり、`tests/search.test.ts`「⑦ メトホルミン系」の assertion を破壊する |
+| D-2 | 同様に「⑧ ピオグリタゾン系」を破壊する |
+| D-4 | query `い` で `dm_insulin_glp1_combination` のソリクアが `limit=8` から押し出される |
+
+あわせて、各 module の brand 構成（D-1 = 4 brand / 4 generic group、D-2・D-3・D-4 = いずれも single-brand）が実測され、**D-2 / D-3 は module 到達から brand を構造的に導出可能**、**D-1 は真の多値曖昧**、**D-4 は Q-UX1 側の問題**として再分類された。
+
+### 9.3 詳細な設計根拠の所在
+
+上記の再実測を踏まえた設計判断（root cause の同定、two-axis model、discriminated union の採用理由、責務分離、class-level query contract、invariant / audit 設計、実装工程 U-1〜U-8）は、
+**`docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md`** を参照すること。
+
+本記録（調査記録）は「何を観測したか」、同記録（architecture record）は「なぜその設計に決めたか」を担当する。

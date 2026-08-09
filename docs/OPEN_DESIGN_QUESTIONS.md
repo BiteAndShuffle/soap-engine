@@ -322,7 +322,7 @@ U-8 個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
 
 **新規 module 開発へ戻ってよい最低到達点**: U-1〜U-5 および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
 
-調査経緯・時点付き実測（D-1〜D-4 の再現結果、コード位置、commit 根拠）は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照する。
+調査経緯・時点付き実測（D-1〜D-4 の再現結果、コード位置、commit 根拠）は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照する。上記 Decision に至った設計根拠（root cause の同定、two-axis model、discriminated union の採用理由、責務分離、invariant / audit 設計）は `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` を参照する。
 
 ---
 
