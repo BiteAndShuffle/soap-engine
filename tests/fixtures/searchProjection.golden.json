@@ -1,0 +1,1421 @@
+{
+  "めとほる": [
+    {
+      "moduleId": "dm_biguanide_metformin_oral",
+      "matchedBrandName": "メトホルミン",
+      "drugDisplayLabel": "メトホルミン",
+      "uiLabel": "メトホルミン（メトホルミン）",
+      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_biguanide_metformin_oral",
+      "matchedBrandName": "メトグルコ",
+      "drugDisplayLabel": "メトグルコ",
+      "uiLabel": "メトグルコ（メトホルミン）",
+      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_biguanide_metformin_oral",
+      "matchedBrandName": "グリコラン",
+      "drugDisplayLabel": "グリコラン",
+      "uiLabel": "グリコラン（メトホルミン）",
+      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "メトアナ",
+      "drugDisplayLabel": "メトアナ",
+      "uiLabel": "メトアナ（アナグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "エクメット",
+      "drugDisplayLabel": "エクメット",
+      "uiLabel": "エクメット（ビルダグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "イニシンク",
+      "drugDisplayLabel": "イニシンク",
+      "uiLabel": "イニシンク（アログリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "メホビル",
+      "drugDisplayLabel": "メホビル",
+      "uiLabel": "メホビル（ビルダグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "めとほるみんえんさんえん": [
+    {
+      "moduleId": "dm_biguanide_metformin_oral",
+      "matchedBrandName": "メトホルミン",
+      "drugDisplayLabel": "メトホルミン",
+      "uiLabel": "メトホルミン（メトホルミン）",
+      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": null,
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "メトアナ",
+      "uiLabel": null,
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "ぴおぐり": [
+    {
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "matchedBrandName": "ピオグリタゾン",
+      "drugDisplayLabel": "ピオグリタゾン",
+      "uiLabel": "ピオグリタゾン（ピオグリタゾン）",
+      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "matchedBrandName": "アクトス",
+      "drugDisplayLabel": "アクトス",
+      "uiLabel": "アクトス（ピオグリタゾン）",
+      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "アログリプチン／ピオグリタゾン",
+      "uiLabel": "アログリプチン／ピオグリタゾン",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "リオベル",
+      "uiLabel": "リオベル（アログリプチン／ピオグリタゾン）",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "matchedBrandName": "ソニアス",
+      "drugDisplayLabel": "ピオグリタゾン／グリメピリド",
+      "uiLabel": "ピオグリタゾン／グリメピリド",
+      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "matchedBrandName": "ソニアス",
+      "drugDisplayLabel": "ソニアス",
+      "uiLabel": "ソニアス（ピオグリタゾン／グリメピリド）",
+      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
+      "uiLabel": "ピオグリタゾン／メトホルミン",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "ぴおぐりたぞんえんさんえん": [
+    {
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "matchedBrandName": "ピオグリタゾン",
+      "drugDisplayLabel": "ピオグリタゾン",
+      "uiLabel": "ピオグリタゾン（ピオグリタゾン）",
+      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "matchedBrandName": "ソニアス",
+      "drugDisplayLabel": "ピオグリタゾン／グリメピリド",
+      "uiLabel": "ピオグリタゾン／グリメピリド",
+      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "matchedBrandName": "ソニアス",
+      "drugDisplayLabel": "ソニアス",
+      "uiLabel": "ソニアス（ピオグリタゾン／グリメピリド）",
+      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
+      "uiLabel": "ピオグリタゾン／メトホルミン",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "リオベル",
+      "uiLabel": null,
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "いめぐりみんえんさんえん": [
+    {
+      "moduleId": "dm_imeglimin_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "ツイミーグ",
+      "uiLabel": null,
+      "representativeTemplateId": "dm_imeglimin_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "めたくと": [
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
+      "uiLabel": "ピオグリタゾン／メトホルミン",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "りおべる": [
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "リオベル",
+      "uiLabel": "リオベル（アログリプチン／ピオグリタゾン）",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "アログリプチン／ピオグリタゾン",
+      "uiLabel": "アログリプチン／ピオグリタゾン",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ついみーぐ": [
+    {
+      "moduleId": "dm_imeglimin_oral",
+      "matchedBrandName": "ツイミーグ",
+      "drugDisplayLabel": "ツイミーグ",
+      "uiLabel": "ツイミーグ（イメグリミン）",
+      "representativeTemplateId": "dm_imeglimin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_imeglimin_oral",
+      "matchedBrandName": "ツイミーグ",
+      "drugDisplayLabel": "イメグリミン",
+      "uiLabel": "イメグリミン",
+      "representativeTemplateId": "dm_imeglimin_oral.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ろいことりえん": [
+    {
+      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "オノン",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_leukotriene_receptor_antagonist_oral.initial_nasal",
+      "isGenericLabel": null
+    }
+  ],
+  "ろいことりえん受容体拮抗薬": [
+    {
+      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "オノン",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_leukotriene_receptor_antagonist_oral.initial_nasal",
+      "isGenericLabel": null
+    }
+  ],
+  "ろいことりえんじゅようたいきっこうやく": [
+    {
+      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "オノン",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_leukotriene_receptor_antagonist_oral.initial_nasal",
+      "isGenericLabel": null
+    }
+  ],
+  "いんすりんあすぱると": [
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ノボラピッド30ミックス",
+      "drugDisplayLabel": "インスリンアスパルト",
+      "uiLabel": "インスリンアスパルト",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ノボラピッド30ミックス",
+      "drugDisplayLabel": "ノボラピッド30ミックス",
+      "uiLabel": "ノボラピッド30ミックス（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ノボラピッド50ミックス",
+      "drugDisplayLabel": "ノボラピッド50ミックス",
+      "uiLabel": "ノボラピッド50ミックス（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ノボラピッド70ミックス",
+      "drugDisplayLabel": "ノボラピッド70ミックス",
+      "uiLabel": "ノボラピッド70ミックス（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ノボラピッド",
+      "drugDisplayLabel": "ノボラピッド",
+      "uiLabel": "ノボラピッド（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "フィアスプ",
+      "drugDisplayLabel": "フィアスプ",
+      "uiLabel": "フィアスプ（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "matchedBrandName": "ライゾデグ",
+      "drugDisplayLabel": "インスリンデグルデク/インスリンアスパルト",
+      "uiLabel": "インスリンデグルデク/インスリンアスパルト",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_long.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "matchedBrandName": "ライゾデグ",
+      "drugDisplayLabel": "ライゾデグ",
+      "uiLabel": "ライゾデグ（インスリンデグルデク/インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_long.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "いんすりんりすぷろ": [
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "インスリンリスプロ",
+      "uiLabel": "インスリンリスプロ",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "ヒューマログ25ミックス",
+      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ50ミックス",
+      "drugDisplayLabel": "ヒューマログ50ミックス",
+      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
+      "drugDisplayLabel": "ヒューマログ",
+      "uiLabel": "ヒューマログ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ルムジェブ",
+      "drugDisplayLabel": "ルムジェブ",
+      "uiLabel": "ルムジェブ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "へぱりんるいじぶっしつ": [
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヘパリン類似物質クリーム",
+      "drugDisplayLabel": "ヘパリン類似物質クリーム",
+      "uiLabel": "ヘパリン類似物質クリーム（ヘパリン類似物質クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヒルドイドフォーム",
+      "uiLabel": "ヒルドイドフォーム（ヘパリン類似物質フォーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヘパリン類似物質外用スプレー",
+      "drugDisplayLabel": "ヘパリン類似物質外用スプレー",
+      "uiLabel": "ヘパリン類似物質外用スプレー（ヘパリン類似物質外用スプレー）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_lotion",
+      "matchedBrandName": "ヘパリン類似物質ローション",
+      "drugDisplayLabel": "ヘパリン類似物質ローション",
+      "uiLabel": "ヘパリン類似物質ローション（ヘパリン類似物質ローション）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_lotion.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヘパリン類似物質油性クリーム",
+      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
+      "uiLabel": "ヘパリン類似物質油性クリーム（ヘパリン類似物質油性クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヘパリン類似物質クリーム",
+      "drugDisplayLabel": "ヘパリン類似物質クリーム",
+      "uiLabel": "ヘパリン類似物質クリーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヘパリン類似物質フォーム",
+      "uiLabel": "ヘパリン類似物質フォーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヘパリン類似物質外用スプレー",
+      "drugDisplayLabel": "ヘパリン類似物質外用スプレー",
+      "uiLabel": "ヘパリン類似物質外用スプレー",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": true
+    }
+  ],
+  "せまぐるちど": [
+    {
+      "moduleId": "dm_glp1ra_semaglutide_oral",
+      "matchedBrandName": "リベルサス",
+      "drugDisplayLabel": "セマグルチド",
+      "uiLabel": "セマグルチド",
+      "representativeTemplateId": "dm_glp1ra_semaglutide_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_glp1ra_semaglutide_oral",
+      "matchedBrandName": "リベルサス",
+      "drugDisplayLabel": "リベルサス",
+      "uiLabel": "リベルサス（セマグルチド）",
+      "representativeTemplateId": "dm_glp1ra_semaglutide_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_glp1ra_injection",
+      "matchedBrandName": "オゼンピック",
+      "drugDisplayLabel": "オゼンピック",
+      "uiLabel": "オゼンピック（セマグルチド）",
+      "representativeTemplateId": "dm_glp1ra_injection.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "いんすりんひと": [
+    {
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "matchedBrandName": "ノボリン30R",
+      "drugDisplayLabel": "インスリンヒト",
+      "uiLabel": "インスリンヒト",
+      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "matchedBrandName": "ノボリン30R",
+      "drugDisplayLabel": "ノボリン30R",
+      "uiLabel": "ノボリン30R（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "matchedBrandName": "イノレット30R",
+      "drugDisplayLabel": "イノレット30R",
+      "uiLabel": "イノレット30R（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "matchedBrandName": "ヒューマリン3/7",
+      "drugDisplayLabel": "ヒューマリン3/7",
+      "uiLabel": "ヒューマリン3/7（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_regular",
+      "matchedBrandName": "ノボリンR",
+      "drugDisplayLabel": "ノボリンR",
+      "uiLabel": "ノボリンR（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_regular.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_regular",
+      "matchedBrandName": "ヒューマリンR",
+      "drugDisplayLabel": "ヒューマリンR",
+      "uiLabel": "ヒューマリンR（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_regular.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "りべるさす": [
+    {
+      "moduleId": "dm_glp1ra_semaglutide_oral",
+      "matchedBrandName": "リベルサス",
+      "drugDisplayLabel": "リベルサス",
+      "uiLabel": "リベルサス（セマグルチド）",
+      "representativeTemplateId": "dm_glp1ra_semaglutide_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_glp1ra_semaglutide_oral",
+      "matchedBrandName": "リベルサス",
+      "drugDisplayLabel": "セマグルチド",
+      "uiLabel": "セマグルチド",
+      "representativeTemplateId": "dm_glp1ra_semaglutide_oral.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "おぜんぴっく": [
+    {
+      "moduleId": "dm_glp1ra_injection",
+      "matchedBrandName": "オゼンピック",
+      "drugDisplayLabel": "オゼンピック",
+      "uiLabel": "オゼンピック（セマグルチド）",
+      "representativeTemplateId": "dm_glp1ra_injection.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_glp1ra_injection",
+      "matchedBrandName": "オゼンピック",
+      "drugDisplayLabel": "セマグルチド",
+      "uiLabel": "セマグルチド",
+      "representativeTemplateId": "dm_glp1ra_injection.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ひゅーまろぐ": [
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
+      "drugDisplayLabel": "ヒューマログ",
+      "uiLabel": "ヒューマログ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "ヒューマログ25ミックス",
+      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ルムジェブ",
+      "drugDisplayLabel": "ルムジェブ",
+      "uiLabel": "ルムジェブ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ50ミックス",
+      "drugDisplayLabel": "ヒューマログ50ミックス",
+      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
+      "drugDisplayLabel": "インスリンリスプロ",
+      "uiLabel": "インスリンリスプロ",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ひるどいど": [
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヒルドイドソフト軟膏",
+      "drugDisplayLabel": "ヒルドイドソフト軟膏",
+      "uiLabel": "ヒルドイドソフト軟膏（ヘパリン類似物質油性クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヒルドイドクリーム",
+      "drugDisplayLabel": "ヒルドイドクリーム",
+      "uiLabel": "ヒルドイドクリーム（ヘパリン類似物質クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヒルドイドフォーム",
+      "uiLabel": "ヒルドイドフォーム（ヘパリン類似物質フォーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_lotion",
+      "matchedBrandName": "ヒルドイドローション",
+      "drugDisplayLabel": "ヒルドイドローション",
+      "uiLabel": "ヒルドイドローション（ヘパリン類似物質ローション）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_lotion.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヘパリン類似物質油性クリーム",
+      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
+      "uiLabel": "ヘパリン類似物質油性クリーム（ヘパリン類似物質油性クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヒルドイドソフト軟膏",
+      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
+      "uiLabel": "ヘパリン類似物質油性クリーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヒルドイドクリーム",
+      "drugDisplayLabel": "ヘパリン類似物質クリーム",
+      "uiLabel": "ヘパリン類似物質クリーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヘパリン類似物質フォーム",
+      "uiLabel": "ヘパリン類似物質フォーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": true
+    }
+  ],
+  "あれじおん": [
+    {
+      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+      "matchedBrandName": "アレジオン",
+      "drugDisplayLabel": "アレジオン",
+      "uiLabel": "アレジオン（エピナスチン）",
+      "representativeTemplateId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "matchedBrandName": "アレジオン点眼液",
+      "drugDisplayLabel": "アレジオン点眼液",
+      "uiLabel": "アレジオン点眼液（エピナスチン点眼液）",
+      "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "matchedBrandName": "エピナスチン点眼液",
+      "drugDisplayLabel": "エピナスチン点眼液",
+      "uiLabel": "エピナスチン点眼液（エピナスチン点眼液）",
+      "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+      "matchedBrandName": "アレジオン",
+      "drugDisplayLabel": "エピナスチン",
+      "uiLabel": "エピナスチン",
+      "representativeTemplateId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "matchedBrandName": "アレジオン点眼液",
+      "drugDisplayLabel": "エピナスチン点眼液",
+      "uiLabel": "エピナスチン点眼液",
+      "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "らんたす": [
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "ランタス",
+      "drugDisplayLabel": "ランタス",
+      "uiLabel": "ランタス（インスリングラルギン）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "ランタスXR",
+      "drugDisplayLabel": "ランタスXR",
+      "uiLabel": "ランタスXR（インスリングラルギン）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "ランタス",
+      "drugDisplayLabel": "インスリングラルギン",
+      "uiLabel": "インスリングラルギン",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "えんぱぐりふろじん": [
+    {
+      "moduleId": "dm_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "エンパグリフロジン",
+      "uiLabel": "エンパグリフロジン（糖尿病）",
+      "representativeTemplateId": "dm_sglt2_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "cardiorenal_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "エンパグリフロジン",
+      "uiLabel": "エンパグリフロジン（心・腎）",
+      "representativeTemplateId": "cardiorenal_sglt2_oral.initial_heart_failure",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "matchedBrandName": "トラディアンス",
+      "drugDisplayLabel": "リナグリプチン/エンパグリフロジン",
+      "uiLabel": "リナグリプチン/エンパグリフロジン",
+      "representativeTemplateId": "dm_dpp4_sglt2_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "matchedBrandName": "トラディアンス",
+      "drugDisplayLabel": "トラディアンス",
+      "uiLabel": "トラディアンス（リナグリプチン/エンパグリフロジン）",
+      "representativeTemplateId": "dm_dpp4_sglt2_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "ジャディアンス",
+      "uiLabel": "ジャディアンス（糖尿病）",
+      "representativeTemplateId": "dm_sglt2_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "cardiorenal_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "ジャディアンス",
+      "uiLabel": "ジャディアンス（心・腎）",
+      "representativeTemplateId": "cardiorenal_sglt2_oral.initial_heart_failure",
+      "isGenericLabel": null
+    }
+  ],
+  "じゃでぃあんす": [
+    {
+      "moduleId": "dm_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "ジャディアンス",
+      "uiLabel": "ジャディアンス（糖尿病）",
+      "representativeTemplateId": "dm_sglt2_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "cardiorenal_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "ジャディアンス",
+      "uiLabel": "ジャディアンス（心・腎）",
+      "representativeTemplateId": "cardiorenal_sglt2_oral.initial_heart_failure",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "エンパグリフロジン",
+      "uiLabel": "エンパグリフロジン（糖尿病）",
+      "representativeTemplateId": "dm_sglt2_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "cardiorenal_sglt2_oral",
+      "matchedBrandName": "ジャディアンス",
+      "drugDisplayLabel": "エンパグリフロジン",
+      "uiLabel": "エンパグリフロジン（心・腎）",
+      "representativeTemplateId": "cardiorenal_sglt2_oral.initial_heart_failure",
+      "isGenericLabel": true
+    }
+  ],
+  "あれるぎー": [
+    {
+      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "アレグラ",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "アレジオン点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "オノン",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_leukotriene_receptor_antagonist_oral.initial_nasal",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "ゼペリン点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "てんがん": [
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "アレジオン点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "ゼペリン点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "とうにょうびょう": [],
+  "ひふか": [],
+  "い": [
+    {
+      "moduleId": "dm_insulin_intermediate",
+      "matchedBrandName": "ノボリンN",
+      "drugDisplayLabel": "ノボリンN",
+      "uiLabel": "ノボリンN（イソフェンインスリン）",
+      "representativeTemplateId": "dm_insulin_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_intermediate",
+      "matchedBrandName": "ヒューマリンN",
+      "drugDisplayLabel": "ヒューマリンN",
+      "uiLabel": "ヒューマリンN（イソフェンインスリン）",
+      "representativeTemplateId": "dm_insulin_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "ランタス",
+      "drugDisplayLabel": "ランタス",
+      "uiLabel": "ランタス（インスリングラルギン）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "ランタスXR",
+      "drugDisplayLabel": "ランタスXR",
+      "uiLabel": "ランタスXR（インスリングラルギン）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "トレシーバ",
+      "drugDisplayLabel": "トレシーバ",
+      "uiLabel": "トレシーバ（インスリンデグルデク）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "アウィクリ",
+      "drugDisplayLabel": "アウィクリ",
+      "uiLabel": "アウィクリ（インスリンイコデク）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "レベミル",
+      "drugDisplayLabel": "レベミル",
+      "uiLabel": "レベミル（インスリンデテミル）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_glp1_combination",
+      "matchedBrandName": "ソリクア",
+      "drugDisplayLabel": "ソリクア",
+      "uiLabel": "ソリクア（インスリングラルギン/リキシセナチド）",
+      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "め": [
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "メトアナ",
+      "drugDisplayLabel": "メトアナ",
+      "uiLabel": "メトアナ（アナグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_biguanide_metformin_oral",
+      "matchedBrandName": "メトグルコ",
+      "drugDisplayLabel": "メトグルコ",
+      "uiLabel": "メトグルコ（メトホルミン）",
+      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_biguanide_metformin_oral",
+      "matchedBrandName": "メトホルミン",
+      "drugDisplayLabel": "メトホルミン",
+      "uiLabel": "メトホルミン（メトホルミン）",
+      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "エクメット",
+      "drugDisplayLabel": "エクメット",
+      "uiLabel": "エクメット（ビルダグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "イニシンク",
+      "drugDisplayLabel": "イニシンク",
+      "uiLabel": "イニシンク（アログリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
+      "uiLabel": "ピオグリタゾン／メトホルミン",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "メトアナ",
+      "drugDisplayLabel": "ビルダグリプチン/メトホルミン",
+      "uiLabel": "ビルダグリプチン/メトホルミン",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ぴ": [
+    {
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "matchedBrandName": "ピオグリタゾン",
+      "drugDisplayLabel": "ピオグリタゾン",
+      "uiLabel": "ピオグリタゾン（ピオグリタゾン）",
+      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "matchedBrandName": "アクトス",
+      "drugDisplayLabel": "アクトス",
+      "uiLabel": "アクトス（ピオグリタゾン）",
+      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "アログリプチン／ピオグリタゾン",
+      "uiLabel": "アログリプチン／ピオグリタゾン",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "リオベル",
+      "uiLabel": "リオベル（アログリプチン／ピオグリタゾン）",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "matchedBrandName": "ソニアス",
+      "drugDisplayLabel": "ピオグリタゾン／グリメピリド",
+      "uiLabel": "ピオグリタゾン／グリメピリド",
+      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "matchedBrandName": "ソニアス",
+      "drugDisplayLabel": "ソニアス",
+      "uiLabel": "ソニアス（ピオグリタゾン／グリメピリド）",
+      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
+      "uiLabel": "ピオグリタゾン／メトホルミン",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "へ": [
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヒルドイドクリーム",
+      "drugDisplayLabel": "ヒルドイドクリーム",
+      "uiLabel": "ヒルドイドクリーム（ヘパリン類似物質クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_lotion",
+      "matchedBrandName": "ヒルドイドローション",
+      "drugDisplayLabel": "ヒルドイドローション",
+      "uiLabel": "ヒルドイドローション（ヘパリン類似物質ローション）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_lotion.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヒルドイドフォーム",
+      "uiLabel": "ヒルドイドフォーム（ヘパリン類似物質フォーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヒルドイドソフト軟膏",
+      "drugDisplayLabel": "ヒルドイドソフト軟膏",
+      "uiLabel": "ヒルドイドソフト軟膏（ヘパリン類似物質油性クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヘパリン類似物質外用スプレー",
+      "drugDisplayLabel": "ヘパリン類似物質外用スプレー",
+      "uiLabel": "ヘパリン類似物質外用スプレー（ヘパリン類似物質外用スプレー）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヒルドイドクリーム",
+      "drugDisplayLabel": "ヘパリン類似物質クリーム",
+      "uiLabel": "ヘパリン類似物質クリーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_lotion",
+      "matchedBrandName": "ヒルドイドローション",
+      "drugDisplayLabel": "ヘパリン類似物質ローション",
+      "uiLabel": "ヘパリン類似物質ローション",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_lotion.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヘパリン類似物質外用スプレー",
+      "uiLabel": "ヘパリン類似物質外用スプレー",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": true
+    }
+  ],
+  "り": [
+    {
+      "moduleId": "dm_insulin_glp1_combination",
+      "matchedBrandName": "ソリクア",
+      "drugDisplayLabel": "ソリクア",
+      "uiLabel": "ソリクア（インスリングラルギン/リキシセナチド）",
+      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_glp1_combination",
+      "matchedBrandName": "ゾルトファイ",
+      "drugDisplayLabel": "ゾルトファイ",
+      "uiLabel": "ゾルトファイ（インスリンデグルデク/リラグルチド）",
+      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
+      "drugDisplayLabel": "ヒューマログ",
+      "uiLabel": "ヒューマログ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ルムジェブ",
+      "drugDisplayLabel": "ルムジェブ",
+      "uiLabel": "ルムジェブ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "ヒューマログ25ミックス",
+      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ50ミックス",
+      "drugDisplayLabel": "ヒューマログ50ミックス",
+      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "matchedBrandName": "トラディアンス",
+      "drugDisplayLabel": "トラディアンス",
+      "uiLabel": "トラディアンス（リナグリプチン/エンパグリフロジン）",
+      "representativeTemplateId": "dm_dpp4_sglt2_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_oral",
+      "matchedBrandName": "トラゼンタ",
+      "drugDisplayLabel": "トラゼンタ",
+      "uiLabel": "トラゼンタ（リナグリプチン）",
+      "representativeTemplateId": "dm_dpp4_oral.initial",
+      "isGenericLabel": null
+    }
+  ],
+  "あ": [
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "アウィクリ",
+      "drugDisplayLabel": "アウィクリ",
+      "uiLabel": "アウィクリ（インスリンイコデク）",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "matchedBrandName": "アクトス",
+      "drugDisplayLabel": "アクトス",
+      "uiLabel": "アクトス（ピオグリタゾン）",
+      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ノボラピッド",
+      "drugDisplayLabel": "ノボラピッド",
+      "uiLabel": "ノボラピッド（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "アピドラ",
+      "drugDisplayLabel": "アピドラ",
+      "uiLabel": "アピドラ（インスリングルリジン）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_sulfonylurea_oral",
+      "matchedBrandName": "アマリール",
+      "drugDisplayLabel": "アマリール",
+      "uiLabel": "アマリール（グリメピリド）",
+      "representativeTemplateId": "dm_sulfonylurea_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_long_acting",
+      "matchedBrandName": "アウィクリ",
+      "drugDisplayLabel": "インスリンイコデク",
+      "uiLabel": "インスリンイコデク",
+      "representativeTemplateId": "dm_insulin_long_acting.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ノボラピッド",
+      "drugDisplayLabel": "インスリングルリジン",
+      "uiLabel": "インスリングルリジン",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_sulfonylurea_oral",
+      "matchedBrandName": "アマリール",
+      "drugDisplayLabel": "グリメピリド",
+      "uiLabel": "グリメピリド",
+      "representativeTemplateId": "dm_sulfonylurea_oral.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ひ": [
+    {
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "matchedBrandName": "ノボリン30R",
+      "drugDisplayLabel": "ノボリン30R",
+      "uiLabel": "ノボリン30R（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_regular",
+      "matchedBrandName": "ノボリンR",
+      "drugDisplayLabel": "ノボリンR",
+      "uiLabel": "ノボリンR（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_regular.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_intermediate",
+      "matchedBrandName": "ヒューマリンN",
+      "drugDisplayLabel": "ヒューマリンN",
+      "uiLabel": "ヒューマリンN（イソフェンインスリン）",
+      "representativeTemplateId": "dm_insulin_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
+      "drugDisplayLabel": "ヒューマログ",
+      "uiLabel": "ヒューマログ（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "ヒューマログ25ミックス",
+      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "matchedBrandName": "ノボリン30R",
+      "drugDisplayLabel": "インスリンヒト",
+      "uiLabel": "インスリンヒト",
+      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_intermediate",
+      "matchedBrandName": "ヒューマリンN",
+      "drugDisplayLabel": "イソフェンインスリン",
+      "uiLabel": "イソフェンインスリン",
+      "representativeTemplateId": "dm_insulin_intermediate.initial",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
+      "drugDisplayLabel": "インスリンリスプロ",
+      "uiLabel": "インスリンリスプロ",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": true
+    }
+  ],
+  "ひるどいど くりーむ": [
+    {
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヒルドイドクリーム",
+      "drugDisplayLabel": "ヒルドイドクリーム",
+      "uiLabel": null,
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヒルドイドソフト軟膏",
+      "drugDisplayLabel": "ヒルドイドソフト軟膏",
+      "uiLabel": "ヒルドイドソフト軟膏（ヘパリン類似物質油性クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヘパリン類似物質油性クリーム",
+      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
+      "uiLabel": "ヘパリン類似物質油性クリーム（ヘパリン類似物質油性クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヒルドイドソフト軟膏",
+      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
+      "uiLabel": "ヘパリン類似物質油性クリーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": true
+    }
+  ],
+  "へぱ なんこう": [
+    {
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "matchedBrandName": "ヒルドイドソフト軟膏",
+      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
+      "uiLabel": null,
+      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
+      "isGenericLabel": null
+    }
+  ],
+  "りべるさす ないふく": [],
+  "とらにらすと pf": [
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "matchedBrandName": "トラメラス点眼液PF",
+      "drugDisplayLabel": "トラニラスト点眼液PF",
+      "uiLabel": null,
+      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
+      "isGenericLabel": null
+    }
+  ]
+}

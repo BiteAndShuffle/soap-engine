@@ -14,6 +14,7 @@
  */
 
 import type { Scenario, ModuleData } from './types'
+import type { BrandResolution, MatchStrength } from './brandResolution'
 import { getMenuGroupFromScenario } from './menuGroups'
 
 // ─────────────────────────────────────────────────────────────
@@ -586,6 +587,110 @@ export interface DrugSuggestionItem {
    * （一般名単独の見出し候補など、drugDisplayLabel と matchedBrandName が意図的に異なる場合）。
    */
   isGenericLabel?: boolean
+  /**
+   * この候補が「何を指しているか」を表す domain state（`lib/brandResolution.ts`）。
+   *
+   * **既存フィールドの意味論を置き換えるものではなく、新しい semantic metadata として付与する。**
+   * `matchedBrandName` / `drugDisplayLabel` / `uiLabel` / `isGenericLabel` の値は
+   * 本フィールドの導入によって一切変化しない。
+   *
+   * **ranking / bucket / dedup / limit の入力に使用してはならない**
+   * （`docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` §9.2）。
+   *
+   * 注意: `denotation: 'generic'` / `'module'` の候補では、`resolution.subject` が
+   * `drugDisplayLabel` と一致しないことがある。これは意図された設計であり、
+   * `drugDisplayLabel` が `brandNames[0]` へ縮退している既存の欠陥を
+   * `resolution` 側が正しく表現しているためである。この差が実際の挙動へ現れるのは
+   * consumer が `resolution` を参照し始める U-4 / U-5 以降である。
+   */
+  resolution: BrandResolution
+  /**
+   * クエリ先頭トークンの一致の強さ（`lib/brandResolution.ts`）。
+   * `resolution` と直交する軸であり、同様に ranking の入力に使用してはならない。
+   */
+  matchStrength: MatchStrength
+}
+
+/**
+ * module の brand 構成（既存 SearchEntry フィールドのみから導出する）。
+ * brand が一切解決できなかった候補の denotation 判定に用いる。
+ */
+function resolveModuleShape(entry: SearchEntry): {
+  brandCount: number
+  groups: Map<string, string[]>
+} {
+  const groups = new Map<string, string[]>()
+  for (const b of entry.brandNames) {
+    const key = entry.brandCatalogGenericKeyMap[b]
+    if (key === undefined) continue
+    const list = groups.get(key)
+    if (list) list.push(b)
+    else groups.set(key, [b])
+  }
+  return { brandCount: entry.brandNames.length, groups }
+}
+
+/**
+ * brand が解決できなかった候補（lowConfidence 経路）の resolution を、
+ * module の静的構造から決定論的に導出する。
+ *
+ * - brand が 1 件      → module 同定は brand 同定を含意する（推測ではなく論理的導出）
+ * - generic group 1 件 → 一般名主語として確定できる
+ * - それ以外           → 未確定（subject を生成しない）
+ */
+function deriveUnresolvedResolution(entry: SearchEntry): BrandResolution {
+  const { brandCount, groups } = resolveModuleShape(entry)
+  if (brandCount === 1) {
+    const only = entry.brandNames[0]
+    return { denotation: 'brand', brandKey: only, subject: only }
+  }
+  if (groups.size === 1) {
+    const [genericKey, brandKeys] = [...groups.entries()][0]
+    const subject = entry.brandCatalogGenericMap[brandKeys[0]]
+    if (subject) return { denotation: 'generic', genericKey, brandKeys, subject }
+  }
+  return { denotation: 'module', brandKey: null, subject: null }
+}
+
+/**
+ * 一般名グループを指す候補（generic header）の resolution を組み立てる。
+ *
+ * **grouping key は呼び出し元が保持している値をそのまま受け取る。**
+ * `brandCatalogGenericKeyMap` から再導出しないため、「key を解決できない」という
+ * 状態が構造的に発生しない（silent fallback を持ち込まないための設計）。
+ *
+ * **authoritative な単一 brandKey は持たせない。** group 内の代表 brand から
+ * handlingTags 等を取得することは禁止であり、その方法は U-8 で判断する。
+ */
+function makeGenericResolution(
+  entry: SearchEntry,
+  genericKey: string,
+  subject: string,
+): BrandResolution {
+  const brandKeys = entry.brandNames.filter(b => entry.brandCatalogGenericKeyMap[b] === genericKey)
+  return { denotation: 'generic', genericKey, brandKeys, subject }
+}
+
+/**
+ * 単一 brand を指す候補の resolution。
+ * `subject` には候補の表示ラベルを用いる（現行の SOAP 主語解決結果と一致させるため）。
+ */
+function makeBrandResolution(brandKey: string, subject: string): BrandResolution {
+  return { denotation: 'brand', brandKey, subject }
+}
+
+/**
+ * クエリ先頭トークンの一致の強さを、既存 scoreEntry の戻り値から決定論的に導出する。
+ *
+ * **scoreEntry 自体は変更しない**（純粋関数の再呼び出しのみ）。閾値は 4 とする:
+ *   7 exactAlias / 6 primaryDisplayName / 5 aliasExact / 4 aliasPrefix → strong
+ *   2 labelPrefix・aliasIncludes / 1 labelIncludes・corpusIncludes     → weak
+ *
+ * score 2 は「構造化フィールドの部分一致」と「シナリオタイトルの前方一致」の双方から
+ * 到達し score だけでは分離できないため、保守的に weak 側へ寄せる（Owner Decision U2-1）。
+ */
+function deriveMatchStrength(entry: SearchEntry, primaryToken: string): MatchStrength {
+  return scoreEntry(entry, primaryToken) >= 4 ? 'strong' : 'weak'
 }
 
 /**
@@ -750,6 +855,13 @@ export function getDrugSuggestions(
      * ファミリーグルーピング後の並び替え（第2トークン以降による優先順位付け）に使う。
      */
     tokenMatchScore: number
+    /**
+     * 生成地点で確定した domain state。**バケツ振り分け・並び替え・dedup には使用しない**
+     * （semantic metadata として最終結果へ透過的に転送するのみ）。
+     */
+    resolution: BrandResolution
+    /** 同上。ranking へは使用しない。 */
+    matchStrength: MatchStrength
   }
   const bucketed: Record<Bucket, BucketedCandidate[]> = {
     genericMode: [],
@@ -775,6 +887,13 @@ export function getDrugSuggestions(
       /** dedup キーの上書き（一般名見出し候補が特定ブランドのキーと衝突しないようにする） */
       dedupKeyOverride?: string
       bucket: Bucket
+      /**
+       * この候補が何を指しているかの domain state。**必須**とすることで、
+       * 生成地点ごとに（その地点が保持している完全な情報から）明示的に決定させ、
+       * 「解決できなかったときにもっともらしい既存値へ静かに落ちる」経路を
+       * 型レベルで排除する。
+       */
+      resolution: BrandResolution
     }> = []
 
     // Step 1: 複数トークンの場合、全トークン連結を先に試す。
@@ -792,11 +911,13 @@ export function getDrugSuggestions(
       const isDirectBrandMatch = entry.brandNames.some(b =>
         normalizeText(b) === concatToken || normalizeText(b).startsWith(concatToken!)
       )
+      const concatLabel = isDirectBrandMatch ? concatBrand :
+        (entry.brandCatalogGenericMap[concatBrand] ?? concatBrand)
       candidates.push({
         brand: concatBrand,
-        displayLabel: isDirectBrandMatch ? concatBrand :
-          (entry.brandCatalogGenericMap[concatBrand] ?? concatBrand),
+        displayLabel: concatLabel,
         bucket: 'direct',
+        resolution: makeBrandResolution(concatBrand, concatLabel),
       })
     } else {
       // Step 2: primaryToken に対して priority 1-4 で一致する全ブランドを展開。
@@ -854,6 +975,9 @@ export function getDrugSuggestions(
                 isGenericLabel: true,
                 dedupKeyOverride: `__generic__:${genericName}:${entry.moduleId}`,
                 bucket: 'genericMode',
+                // グルーピングキーは呼び出し元が保持している `key` をそのまま渡す
+                // （再導出しないため「解決できない」状態が構造的に発生しない）
+                resolution: makeGenericResolution(entry, key, genericName),
               })
               // 一般名見出しに続けて、対応するブランド候補（適応ラベル付き）も表示する。
               // genericMode バケツではなく direct バケツへ積むことで、結合順
@@ -867,6 +991,7 @@ export function getDrugSuggestions(
                   displayLabel: brand,
                   uiLabel: indicationLabel ? `${brand}（${indicationLabel}）` : `${brand}（${genericName}）`,
                   bucket: 'direct',
+                  resolution: makeBrandResolution(brand, brand),
                 })
               }
             } else if (genericName) {
@@ -885,6 +1010,7 @@ export function getDrugSuggestions(
                   // 同じ「インスリンアスパルト」を指す場合、見出しは1回のみ表示する）
                   dedupKeyOverride: `__generic__:${genericName}`,
                   bucket: 'genericMode',
+                  resolution: makeGenericResolution(entry, key, genericName),
                 })
               }
               for (const brand of brandsInGroup) {
@@ -893,19 +1019,29 @@ export function getDrugSuggestions(
                   displayLabel: brand,
                   uiLabel: `${brand}（${genericName}）`,
                   bucket: 'genericMode',
+                  resolution: makeBrandResolution(brand, brand),
                 })
               }
             } else {
               for (const brand of brandsInGroup) {
-                candidates.push({ brand, displayLabel: brand, bucket: 'genericMode' })
+                candidates.push({
+                  brand,
+                  displayLabel: brand,
+                  bucket: 'genericMode',
+                  resolution: makeBrandResolution(brand, brand),
+                })
               }
             }
           }
           for (const brand of ungrouped) {
+            const ungroupedLabel = entry.brandCatalogGenericMap[brand] ?? brand
             candidates.push({
               brand,
-              displayLabel: entry.brandCatalogGenericMap[brand] ?? brand,
+              displayLabel: ungroupedLabel,
               bucket: 'genericMode',
+              // グルーピングキーが解決できない brand（現行データでは 0 件）。
+              // brand 自体は確定しているため brand denotation として扱う。
+              resolution: makeBrandResolution(brand, ungroupedLabel),
             })
           }
         } else {
@@ -944,6 +1080,9 @@ export function getDrugSuggestions(
               : hpBrands.map(x => x.brand)
           const pushedBrands = new Set<string>()
           let trailingGeneric: string | undefined
+          // trailingGeneric と同時にのみ代入されるため、trailingGeneric が truthy な
+          // 分岐では必ず解決済みの grouping key が入っている（再導出を不要にするための捕捉）。
+          let trailingGenericKey: string | undefined
           let trailingGenericIsMultiModule = false
           for (const brand of orderedHpBrands) {
             if (pushedBrands.has(brand)) continue
@@ -960,7 +1099,10 @@ export function getDrugSuggestions(
               const ownLabel = useIndicationLabel
                 ? entry.brandCatalogIndicationLabelMap[brand] || generic
                 : generic
-              candidates.push({ brand, displayLabel: brand, uiLabel: `${brand}（${ownLabel}）`, bucket: 'direct' })
+              candidates.push({
+                brand, displayLabel: brand, uiLabel: `${brand}（${ownLabel}）`, bucket: 'direct',
+                resolution: makeBrandResolution(brand, brand),
+              })
               const siblings = entry.brandNames.filter(
                 b => b !== brand && entry.brandCatalogGenericKeyMap[b] === genericKey,
               )
@@ -970,15 +1112,24 @@ export function getDrugSuggestions(
                 const sibLabel = useIndicationLabel
                   ? entry.brandCatalogIndicationLabelMap[sib] || generic
                   : generic
-                candidates.push({ brand: sib, displayLabel: sib, uiLabel: `${sib}（${sibLabel}）`, bucket: 'sibling' })
+                candidates.push({
+                  brand: sib, displayLabel: sib, uiLabel: `${sib}（${sibLabel}）`, bucket: 'sibling',
+                  resolution: makeBrandResolution(sib, sib),
+                })
               }
               trailingGeneric = generic
+              trailingGenericKey = genericKey
               trailingGenericIsMultiModule = useIndicationLabel
             } else {
-              candidates.push({ brand, displayLabel: brand, bucket: 'direct' })
+              candidates.push({
+                brand, displayLabel: brand, bucket: 'direct',
+                resolution: makeBrandResolution(brand, brand),
+              })
             }
           }
-          if (trailingGeneric && trailingGenericIsMultiModule) {
+          // trailingGenericKey は trailingGeneric と同一箇所でのみ代入されるため、
+          // この追加条件は論理的に等価であり分岐の成立条件を変えない（型の絞り込み目的）。
+          if (trailingGeneric && trailingGenericKey && trailingGenericIsMultiModule) {
             // crossModuleIndicationLabel により適応ラベル表示へ切り替わったモジュールでは、
             // ブランド候補（direct/sibling）に続けて、対応する一般名見出し（適応ラベル付き）も
             // 表示する。dedupKeyOverride に moduleId を含めることで、他モジュールの同名見出しと
@@ -991,8 +1142,9 @@ export function getDrugSuggestions(
               isGenericLabel: true,
               dedupKeyOverride: `__generic__:${trailingGeneric}:${entry.moduleId}`,
               bucket: 'genericHeader',
+              resolution: makeGenericResolution(entry, trailingGenericKey, trailingGeneric),
             })
-          } else if (trailingGeneric && !entry.suppressRedundantGenericHeaderOnDirectMatch) {
+          } else if (trailingGeneric && trailingGenericKey && !entry.suppressRedundantGenericHeaderOnDirectMatch) {
             // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
             // direct/sibling 候補が既にブランドを提示しているため、同じ成分を示す
             // 塩名単独の generic header（例:「メトホルミン塩酸塩」）は追加しない。
@@ -1005,6 +1157,7 @@ export function getDrugSuggestions(
               // moduleId を含めず表示文字列のみで dedup する
               dedupKeyOverride: `__generic__:${trailingGeneric}`,
               bucket: 'genericHeader',
+              resolution: makeGenericResolution(entry, trailingGenericKey, trailingGeneric),
             })
           }
         }
@@ -1026,16 +1179,21 @@ export function getDrugSuggestions(
             brand: undefined,
             displayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
             bucket: 'lowConfidence',
+            // brand が一切解決できていない唯一の経路。module の静的構造から
+            // brand / generic / module のいずれかを決定論的に導出する。
+            resolution: deriveUnresolvedResolution(entry),
           })
         } else {
           const isDirectBrandMatch = matchedByToken !== undefined &&
             entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
+          const fallbackLabel = isDirectBrandMatch
+            ? matchedBrandName
+            : (entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName)
           candidates.push({
             brand: matchedBrandName,
-            displayLabel: isDirectBrandMatch
-              ? matchedBrandName
-              : (entry.brandCatalogGenericMap[matchedBrandName] ?? matchedBrandName),
+            displayLabel: fallbackLabel,
             bucket: isDirectBrandMatch ? 'direct' : 'genericMode',
+            resolution: makeBrandResolution(matchedBrandName, fallbackLabel),
           })
         }
       }
@@ -1046,8 +1204,12 @@ export function getDrugSuggestions(
       ? candidates.filter(c => c.brand !== undefined && isPFBrand(entry, c.brand))
       : candidates
 
+    // matchStrength は候補ではなく entry（＝どの module へどう一致したか）に依存するため、
+    // モジュールごとに 1 回だけ算出する。scoreEntry は純粋関数であり再呼び出しは副作用を持たない。
+    const entryMatchStrength = deriveMatchStrength(entry, tokens[0])
+
     // バケツへ振り分ける（モジュール横断の結合は最後にまとめて行う）
-    for (const { brand, displayLabel, uiLabel, isGenericLabel, dedupKeyOverride, bucket } of activeCandidates) {
+    for (const { brand, displayLabel, uiLabel, isGenericLabel, dedupKeyOverride, bucket, resolution } of activeCandidates) {
       bucketed[bucket].push({
         moduleId: entry.moduleId,
         templateId: entry.templateId,
@@ -1057,6 +1219,8 @@ export function getDrugSuggestions(
         tokenMatchScore: brand !== undefined ? countMatchedTokens(entry, brand, tokens) : 0,
         isGenericLabel,
         dedupKeyOverride,
+        resolution,
+        matchStrength: entryMatchStrength,
       })
       if (bucket === 'direct' && entry.preferOwnNameMatchOverGenericMatch) {
         promoteDirectOverGenericMode = true
@@ -1086,6 +1250,8 @@ export function getDrugSuggestions(
       representativeTemplateId: c.templateId,
       uiLabel: c.uiLabel,
       isGenericLabel: c.isGenericLabel,
+      resolution: c.resolution,
+      matchStrength: c.matchStrength,
     })
     return true
   }
