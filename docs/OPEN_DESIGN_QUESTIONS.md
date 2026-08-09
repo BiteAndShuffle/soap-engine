@@ -312,7 +312,7 @@ Architecture Review により設計方針が確定し、実装工程 U-1〜U-8 �
 ```
 U-1 resolution schema（型契約の確立。runtime 未接続）
 U-2 lib/search.ts が resolution を付与する
-U-3 resolveDrugName() を resolution state → SOAP 主語へ刷新する
+U-3 BrandResolution → subject resolver 実装済み。production consumer 移行は U-4
 U-4 DashboardClient の独自 fallback を本契約へ統一する
 U-5 SOAP / brand 依存処理の resolution gate
 U-7 invariant tests / audit

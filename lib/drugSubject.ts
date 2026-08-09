@@ -18,6 +18,7 @@
  */
 
 import type { SoapFields, Drug } from './types'
+import type { BrandResolution } from './brandResolution'
 
 export const DRUG_SUBJECT_SLOT = '{{drug_subject}}'
 
@@ -62,4 +63,25 @@ export function resolveDrugName(
     if (displayGeneric) return displayGeneric
   }
   return ''
+}
+
+/**
+ * BrandResolution（`lib/brandResolution.ts`）から SOAP {{drug_subject}} を確定する。
+ *
+ * **移行状態（2026-08-09 時点）**: 本関数は Q-S2 の新しい正式契約として実装されたが、
+ * production consumer の移行は未着手である（Unit U-4 の責務）。`app/components/DashboardClient.tsx`
+ * は本関数を呼ばず、引き続き `resolveDrugName()`（legacy resolver）を経由している。
+ * 本関数が production 上の唯一の SSOT となるのは、U-4 で consumer が移行した時点である。
+ * 詳細は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
+ *
+ * 実装原則:
+ * - `resolution.subject` をそのまま返す（`brand` / `generic` → string、`module` → null）
+ * - `genericKey` / `brandKeys` から subject を再導出しない
+ * - canonical JSON を再探索しない
+ * - `uiLabel` / `drugDisplayLabel` / `brandNames[0]` のいずれも参照しない
+ * - throw しない。`null` は「未確定」という正常な domain state であり、例外ではない
+ *   （`denotation: 'module'` の候補へ推測で subject を与えてはならない。DP-15）
+ */
+export function resolveSubjectFromResolution(resolution: BrandResolution): string | null {
+  return resolution.subject
 }

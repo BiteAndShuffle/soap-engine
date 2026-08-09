@@ -668,6 +668,8 @@ vNext には対応する明示的なチェック項目がない。
 
 **今回決めていないこと**: 具体的な修正方法・変更箇所・移行順序・修正時の blast radius。これらは Repository 実測に基づき実装時に別 Unit として設計する。
 
+**進捗（Q-S2 U-3・2026-08-09）**: 安全な resolver 契約（`resolveSubjectFromResolution()`、`lib/drugSubject.ts`）は実装済み。ただし `DashboardClient.tsx` 等の consumer は引き続き legacy 経路（`resolveDrugName()`）を使用中であり、本 SSOT バイパスは**未解決のまま**である。consumer 移行は Q-S2 U-4 で行う。
+
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
 
 ---

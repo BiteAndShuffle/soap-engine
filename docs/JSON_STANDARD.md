@@ -229,6 +229,7 @@ interface BrandEntry {
 - ただし `genericName` に塩類名・水和物等の技術的修飾語が含まれる場合、`displayGenericName` への単純コピーは禁止する。値は bridge で人間が確定する（機械的な塩類名除去による自動生成は行わない）
 - `displayGenericName` の欠落・空文字・上記の旧コピー運用は ModuleValidator の ERROR（`DISPLAY_GENERIC_NAME_MISSING` / `DISPLAY_GENERIC_NAME_EMPTY` / `DISPLAY_GENERIC_NAME_SALT_COPY`）
 - UI側（検索候補生成・パンくず・`{{drug_subject}}` 解決）は `genericName` へのフォールバックを行わない。`resolveDrugName()`（`lib/drugSubject.ts`）が薬剤名解決の唯一の正本
+- **移行状態（2026-08-09時点）**: `lib/drugSubject.ts` には `BrandResolution`（`lib/brandResolution.ts`）を入力とする新しい契約 `resolveSubjectFromResolution()` が追加されている（Q-S2 U-3）。ただし現時点で production consumer（`app/components/DashboardClient.tsx` 等）はまだ `resolveDrugName()`（legacy）を経由しており、移行は未着手（Q-S2 U-4）。**本節が「唯一の正本」と記載する `resolveDrugName()` は、この移行が完了するまでは引き続き production 上の実際の解決経路である。** 詳細は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照
 
 | フィールド | 備考 |
 |---|---|
