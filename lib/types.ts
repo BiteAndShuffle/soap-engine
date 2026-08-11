@@ -1,3 +1,5 @@
+import type { BrandResolution } from './brandResolution'
+
 // ─────────────────────────────────────────────────────────────
 // 基本型
 // ─────────────────────────────────────────────────────────────
@@ -538,6 +540,18 @@ export interface ComposeNode {
    * buildNodeFields / handleAddonToggle から参照される。
    */
   resolvedDrugName?: string
+  /**
+   * このノードが指す薬剤の domain state（`lib/brandResolution.ts`）。
+   *
+   * **U-4a では保持のみを行い、production の判断入力には使用しない。**
+   * consumer 移行は U-4b、`denotation: 'module'` に対する安全 gate は U-5 の責務である
+   * （`docs/OPEN_DESIGN_QUESTIONS.md` Q-S2）。
+   *
+   * optional である理由: Express 経路（`handleExpressAdd`）は `DrugSuggestionItem` を
+   * 経由しないため resolution を持たない。`undefined` は「legacy / 非検索経路由来」を意味し、
+   * 異常ではない。
+   */
+  resolution?: BrandResolution
   /**
    * このノードに紐づく localSiteInput（部位入力値）。
    * display.localInput.insertMode === 'placeholder' のモジュールで使用する。

@@ -668,7 +668,13 @@ vNext には対応する明示的なチェック項目がない。
 
 **今回決めていないこと**: 具体的な修正方法・変更箇所・移行順序・修正時の blast radius。これらは Repository 実測に基づき実装時に別 Unit として設計する。
 
-**進捗（Q-S2 U-3・2026-08-09）**: 安全な resolver 契約（`resolveSubjectFromResolution()`、`lib/drugSubject.ts`）は実装済み。ただし `DashboardClient.tsx` 等の consumer は引き続き legacy 経路（`resolveDrugName()`）を使用中であり、本 SSOT バイパスは**未解決のまま**である。consumer 移行は Q-S2 U-4 で行う。
+**進捗（Q-S2 U-3・2026-08-09）**: 安全な resolver 契約（`resolveSubjectFromResolution()`、`lib/drugSubject.ts`）は実装済み。ただし `DashboardClient.tsx` 等の consumer は引き続き legacy 経路（`resolveDrugName()`）を使用中であり、本 SSOT バイパスは**未解決のまま**である。
+
+**進捗（Q-S2 U-4a・2026-08-12）**: `BrandResolution` を production state（`activeResolution` / `ComposeNode.resolution`）へ保持する plumbing のみを実施した。**consumer 移行は行っていないため、本 SSOT バイパスは引き続き未解決である。** U-4a は runtime behavior を一切変更しない Unit であり、consumer 移行は **U-4b**、`denotation: 'module'` に対する安全 gate は **U-5** が担当する（工程順は U-4a → U-5 → U-4b）。
+
+**バイパス箇所の補足（U-4a 実測で追記）**: 本節が例示していた `resolvedBrand` 系（brandKey 用途）に加え、`handleAddonToggle` の Rapid ADDON 経路が `activeDrugDisplayNameRef.current ?? activeBrandName ?? ''` という形で `resolveDrugName()` を**完全に迂回**して brandKey を SOAP 主語に流用している（検索語: `rapidDrugName`）。本箇所も U-4b の移行対象である。
+
+**別 Finding（今回変更しない）**: `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]`（brandKey）および `displayName ?? resolvedBrandKey ?? ''`（主語を brandKey から導出）も legacy fallback である。ただし Express は `DrugSuggestionItem` を経由せず、有効な express entry 全件が canonical JSON 側で `defaultBrandName` を明示宣言しているため、検索由来の brand 未確定とは性質が異なる。Q-S2 の U-4a / U-5 / U-4b 系列からは分離し、cleanup 候補として保持する。
 
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
 

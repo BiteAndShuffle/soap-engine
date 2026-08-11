@@ -310,17 +310,41 @@ Architecture Review により設計方針が確定し、実装工程 U-1〜U-8 �
 **実装工程**
 
 ```
-U-1 resolution schema（型契約の確立。runtime 未接続）
-U-2 lib/search.ts が resolution を付与する
-U-3 BrandResolution → subject resolver 実装済み。production consumer 移行は U-4
-U-4 DashboardClient の独自 fallback を本契約へ統一する
-U-5 SOAP / brand 依存処理の resolution gate
-U-7 invariant tests / audit
-U-6 class-level query の generic group 展開
-U-8 個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
+U-1  resolution schema（型契約の確立。runtime 未接続）           ← 完了
+U-2  lib/search.ts が resolution を付与する                      ← 完了
+U-3  BrandResolution → subject resolver の実装                   ← 完了（consumer 0 件）
+U-4a resolution を production state へ保持する（plumbing only）   ← 完了
+U-5  SOAP 生成 / brand 依存処理の resolution gate
+U-4b legacy consumer を BrandResolution 契約へ移行する
+U-7  invariant tests / audit
+U-6  class-level query の generic group 展開
+U-8  個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
 ```
 
-**新規 module 開発へ戻ってよい最低到達点**: U-1〜U-5 および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
+**U-4 を U-4a / U-4b へ分割し、U-5 を両者の間へ置く（Owner Decision・2026-08-12）**
+
+当初の工程は「U-4（consumer 移行）→ U-5（gate）」だったが、Repository 実測により、この順序では
+`denotation: 'module'`（`subject === null`）の候補について **U-4 完了時点で `{{drug_subject}}` が
+未解決のまま SOAP 本文へ露出する**中間状態が生じることが判明した（`resolveDrugSubject()` は
+空文字の場合にスロットを残す仕様であるため）。
+
+そこで工程を次のとおり分割した。
+
+| Unit | 責務 | runtime behavior |
+|---|---|---|
+| **U-4a** | `BrandResolution` を production state（`activeResolution` / `ComposeNode.resolution`）へ保持する | **変更しない**（plumbing only。resolution を判断入力として読まない） |
+| **U-5** | `denotation: 'module'` で SOAP 生成を開始させない／authoritative な brandKey が無い状態で brand 固有解決を行わせない | 変更する（候補・可視性のみ） |
+| **U-4b** | subject consumer を `resolveSubjectFromResolution()` へ移行する | 変更する（SOAP 本文のみ） |
+
+この順序の利点は、①U-5 適用時点で placeholder 露出を発生させずに臨床的安全性が確保されること、
+②regression の症状が Unit と 1 対 1 に対応すること（可視性 = U-5 / 本文 = U-4b）、
+③U-4b を revert しても U-5 の gate が残り安全側に倒れること、である。
+根拠となる実測は `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` §13 を参照。
+
+**U-4a が行わないこと**: consumer 移行・安全 gate・`resolveDrugName()` の変更・
+`lib/brandResolution.ts` の変更・Express 経路の変更。
+
+**新規 module 開発へ戻ってよい最低到達点**: U-1〜U-3・U-4a・U-5・U-4b および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
 
 調査経緯・時点付き実測（D-1〜D-4 の再現結果、コード位置、commit 根拠）は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照する。上記 Decision に至った設計根拠（root cause の同定、two-axis model、discriminated union の採用理由、責務分離、invariant / audit 設計）は `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` を参照する。
 

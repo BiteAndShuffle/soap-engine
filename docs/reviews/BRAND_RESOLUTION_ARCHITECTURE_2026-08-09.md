@@ -366,3 +366,76 @@ U-6 / U-8 は上記条件を満たしていれば新規 module 開発と並行�
 - `docs/reviews/` の Documentation Map 登録（GG-2。別 Unit として維持）
 - `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` §1〜§8 の書き換え（§9 の訂正追記のみ行った）
 - Q-UX1 の実装・ranking の変更
+
+---
+
+## 13. 後続 Decision 追記（2026-08-12）— 実装工程の分割
+
+> 本節は §11 の実装工程に対する**後続の Owner Decision** の記録である。
+> **§1〜§12 の本文は変更していない。** 当時の判断は historical record としてそのまま保持し、
+> 後続の実測で判明した事項に基づく変更のみを本節へ追記する
+> （`docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` §9 と同じ追記方式）。
+>
+> **工程の正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 である。** 本節と Q-S2 が食い違う場合は Q-S2 を優先する。
+
+### 13.1 分割の理由（RUNTIME-VERIFIED）
+
+§11 の工程は「U-4（consumer 移行）→ U-5（gate）」の順だったが、Repository 実測により
+**U-4 を単独で完了させると中間状態が安全でない**ことが判明した。
+
+`lib/drugSubject.ts` の `resolveDrugSubject()` は `drugName` が空文字のときスロットを残す仕様である。
+したがって U-4 で subject 源を `resolution.subject` へ切り替えると、`denotation: 'module'`
+（`subject === null`）の候補では **`{{drug_subject}}` というテンプレート記号が SOAP 本文へそのまま出力される**。
+U-5 の gate が入るまでこの状態が続く。
+
+実測（全 module の alias / brand / displayGenericName から生成した 588 クエリ・1572 候補行）:
+
+| 指標 | 実測値 |
+|---|---|
+| `denotation` 分布 | brand 893 / generic 621 / **module 58** |
+| `denotation: 'module'` へ到達する module | **20**（`花粉症` `保湿` `SGLT2阻害薬` `DPP-4阻害薬` 等、実運用で自然に打たれるクエリで到達） |
+| legacy subject と `resolution.subject` の乖離 | 83 行 / 26 パターン（うち 20 パターンが `module`、6 パターンが `generic`） |
+
+### 13.2 確定した工程（ARCHITECTURE DECISION）
+
+```
+U-4a  plumbing（resolution を production state へ保持。挙動不変）
+  ↓
+U-5   safety gate（生成阻止・brand 固有解決の遮断）
+  ↓
+U-4b  consumer migration（subject を新契約へ移行）
+```
+
+§11.1 が定めた「型で未確定を表現することと、未確定時に生成を止めることは別責務である」という
+分割原則は維持されている。本 Decision はその原則を**より忠実に**適用し、
+「保持」「阻止」「移行」の 3 責務をそれぞれ独立した rollback boundary へ分離したものである。
+
+採用理由:
+
+1. **U-5 適用時点で臨床的安全性が確保される。** placeholder 露出を発生させずに、
+   誤った brand 名が記録される経路を先に閉じられる
+2. **regression の症状が Unit と 1 対 1 に対応する。** 「候補が出ない」= U-5、
+   「主語が変わった」= U-4b と切り分けられる（結合すると切り分け不能になる）
+3. **U-4b を revert しても U-5 の gate が残る。** 安全側へ倒れる
+
+### 13.3 U-5 設計へ引き継ぐ実測（U-5 着手時に再確認すること）
+
+| 項目 | 実測 |
+|---|---|
+| SOAP 生成の入口 | 検索由来は `handleSelectScenario` の 1 本のみ（`TemplateListPanel` 経由）。Rapid（S 先頭文 / ADDON）は `currentScenarioId !== null` の下流に完全に含まれるため独立した gate を要さない |
+| gate 後の UI | `availableGroups` が空 / `groupScenarios` が空 / `showSoapEditor` が false の各パスはいずれも**既存の描画経路**であり、新規 UI 概念を要さない。compose 側は既存の pending 状態が吸収する |
+| `getVisibleAddonKeys` の `undefined` 挙動 | `brandHandlingTags === undefined` は**フィルタを丸ごとスキップする**（後方互換仕様）。`undefined` を渡すと brand 依存 ADDON が全表示され U-5 の目的と逆行する。**空配列 `[]` を渡すこと**で 3 consumer（ADDON / availableGroups / groupScenarios）すべてが正しい意味論になる |
+| tag 依存の範囲 | `requiredTags` を持つ ADDON は 514 件中 **11 件**、`scenarioRequiredTags` を持つ scenario は 1060 件中 **41 件**。gate に使われている tag は **18 種** |
+| generic group の均質性 | 全 **96** generic group 中、`handlingTags` が不均質なのは `derm_heparinoid_moisturizer_ointment` の **1 件のみ**。その差分 tag（`ointment` / `oily_cream` 等）は **gate に 1 つも使われていない**（§6.2 が指摘したリスクは実在するが、現時点では潜在的であり ADDON 選択結果には現れていない）。データ修正は §10.3 のとおり U-8 のまま |
+
+`denotation: 'generic'` における handlingTags の取得方法（U-1 JSDoc が「U-5 / U-8 の対象」として
+保留した論点）は **U-5 で確定させる必要がある**。代表 brand の選択が禁止である点は §6.2 のとおり変更しない。
+
+### 13.4 U-4a の完了記録（FACT）
+
+| 項目 | 内容 |
+|---|---|
+| 変更 | `lib/types.ts`（`ComposeNode.resolution?` 追加）/ `app/components/DashboardClient.tsx`（state・ref・保持 2 箇所）/ `tests/brandResolutionPlumbing.test.ts`（新規） |
+| runtime behavior | **変更なし**（tsc 0 / test 2735→2750（新規 15 件のみ増）/ audit 3 系統 PASS / multi-drug 20 PASS / build 成功・bundle size 同一 / 警告 18 件で同数） |
+| golden projection | `tests/searchResolution.test.ts` T-U2-1 が無変更で PASS（ranking / 候補集合の不変を確認） |
+| 非使用の担保 | `tests/brandResolutionPlumbing.test.ts` T-U4a-5 が、resolution を含むコード行を**ホワイトリスト 5 行で完全固定**している。U-4b / U-5 で consumer を追加すると必ず FAIL するため、意図しない consumer 混入を検出できる |

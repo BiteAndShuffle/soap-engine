@@ -4,6 +4,7 @@ import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
 import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
+import type { BrandResolution } from '../../lib/brandResolution'
 import { buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
 import { resolveDrugSubject, resolveDrugName } from '../../lib/drugSubject'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../../lib/search'
@@ -176,6 +177,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
    * Express GEモード選択時のみ GE名が入る（activeBrandName は先発名のまま）。
    */
   const [activeDrugDisplayName, setActiveDrugDisplayName] = useState<string | undefined>(undefined)
+  /**
+   * 1剤目が指す薬剤の domain state（`lib/brandResolution.ts`）。
+   *
+   * **U-4a では保持のみを行い、production の判断入力には使用しない。**
+   * 薬剤名解決・handlingTags・scenario 表示・SOAP 生成のいずれも、引き続き
+   * activeBrandName / activeDrugDisplayName（legacy 経路）が駆動する。
+   * consumer 移行は U-4b、`denotation: 'module'` の安全 gate は U-5 の責務である
+   * （`docs/OPEN_DESIGN_QUESTIONS.md` Q-S2）。
+   *
+   * undefined = 検索サジェスト以外の経路（初期ロード・Express）で薬剤が確定した状態。
+   */
+  const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)
   const [drugSelected, setDrugSelected] = useState(false)
 
   // ── 検索テキスト ─────────────────────────────────────────
@@ -288,6 +301,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 1剤目 SOAP 再構築時に {{drug_subject}} で使う表示名（GE名 / 先発名）。
   // useEffect([selectedScenarioId]) の deps に含めず ref で参照することで stale closure を防ぐ。
   const activeDrugDisplayNameRef = useRef<string | undefined>(undefined)
+  // 1剤目の BrandResolution を callback / useEffect から stale closure なしに読むための ref。
+  // U-4a では保持のみ（読み出し側は U-4b / U-5 で追加する）。
+  const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)
   // handleSToggle 内で現在の sRelation/sCondition を stale closure なしに読むための ref。
   const sRelationRef  = useRef<SRelation>('continued_do')
   const sConditionRef = useRef<SCondition>('stable')
@@ -486,6 +502,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   selectedPersonaRef.current   = selectedPersona
   uiModeRef.current                = uiMode
   activeDrugDisplayNameRef.current = activeDrugDisplayName
+  activeResolutionRef.current      = activeResolution
   displayFieldsRef.current     = displayFields
   sRelationRef.current         = sRelation
   sConditionRef.current        = sCondition
@@ -1020,6 +1037,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             ? item.drugDisplayLabel
             : undefined
       setActiveDrugDisplayName(displayNameForSubject)
+      // U-4a: BrandResolution を production state へ保持する（plumbing のみ）。
+      // 上の displayNameForSubject / activeBrandName の算出には一切影響させない。
+      setActiveResolution(item.resolution)
       setDrugSelected(true)
       setSelectedScenarioId(null)
       setPrimaryBaseFields(EMPTY_FIELDS)
@@ -1069,6 +1089,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         drugLabel: resolveNodeLabel(mod),
         matchedBrandName: item.matchedBrandName,
         resolvedDrugName: nodeDrugName,
+        // U-4a: BrandResolution を node へ保持する（plumbing のみ）。
+        // 上の nodeDrugName / matchedBrandName の算出には一切影響させない。
+        resolution: item.resolution,
         selectedAddonIds: [],
         baseLabel: '',
         baseDomain: resolveDomain(mod),
