@@ -17,6 +17,11 @@ import {
   moduleMenuPrefixCandidates,
 } from '../../lib/menuGroups'
 import { getVisibleAddonKeys } from '../../lib/addonFilter'
+import {
+  resolveBrandHandlingTags,
+  resolveDataAccessBrandKey,
+  isSubjectUnresolved as isSubjectUnresolvedFor,
+} from '../../lib/brandTags'
 import { createSoapFromInput } from '../../lib/createSoapFromInput'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../../lib/applyPersona'
 import { applyPlaceholder as applyPlaceholderFn } from '../../lib/applyPlaceholder'
@@ -379,6 +384,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     return allModules.find(m => m.moduleId === activeNode.moduleId) ?? activeModuleData
   }, [activeNode, activeModuleData, allModules])
 
+  // ── activeContextResolution: activeContext の BrandResolution ─
+  // targetModule と同じ activeContext パターン（ノード編集中はそのノード、
+  // それ以外は1剤目）。undefined = 検索サジェスト以外の経路（初期ロード・Express）。
+  const activeContextResolution = useMemo<BrandResolution | undefined>(
+    () => (activeNode !== null ? activeNode.resolution : activeResolution),
+    [activeNode, activeResolution],
+  )
+
+  // ── U-5 安全 gate: 指示対象が未確定（denotation='module'）か ──
+  // denotation のみを見る。subject は読まない（subject の算出方法は U-4b の責務であり、
+  // 「生成させてよいか」の判定とは独立した関心事である）。
+  // undefined（Express / 初期ロード）・'brand'・'generic' はいずれも false であり、
+  // 従来どおり SOAP 生成へ進める。
+  const subjectUnresolved = isSubjectUnresolvedFor(activeContextResolution)
+
   // ── finalFields: ユーザー手入力中は editedSOAP、未編集時は displayFields ──
   // editedSOAP が null のとき = 未編集（scenario生成値をそのまま表示）。
   // editedSOAP が非null のとき = ユーザーが手入力中（編集値を表示）。
@@ -520,19 +540,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [activeNode, targetModule, primaryScenario])
 
   // 選択中ブランドの handlingTags を取得してaddonフィルタに渡す。
-  // ノード編集中は activeNode.matchedBrandName を優先する（Express追加ブランドを反映）。
-  // brandCatalog がないモジュール（GLP-1等）は undefined → フィルタスキップ（後方互換）。
+  // brandCatalog を持たないモジュールは undefined → フィルタスキップ（後方互換）。
+  //
+  // U-5: 導出は resolution 由来へ移した（lib/brandTags.ts が正本）。
+  //   'brand'   → authoritative な brandKey の handlingTags
+  //   'generic' → brandKeys 全件の交差集合（代表 brand を選ばない）
+  //   'module'  → [] （brand 固有値を解決しない）
+  //   undefined → legacy キー（Express / 初期ロード。従来の挙動を維持）
+  // 未確定を undefined で表現しないこと。getVisibleAddonKeys は undefined を
+  // 「フィルタ非適用」として扱うため、意味が逆転する（lib/addonFilter.ts 参照）。
   const addonBrandHandlingTags = useMemo<string[] | undefined>(() => {
     const brandCatalog = targetModule.drug?.brandCatalog
     if (!brandCatalog) return undefined
-    // ノード編集中: そのノードの matchedBrandName を優先
-    // 1剤目操作中: activeBrandName（主薬剤の選択ブランド）を使用
-    const resolvedBrand = activeNode !== null
+    // legacy キー（resolution を持たない経路でのみ使用する）
+    // ノード編集中: そのノードの matchedBrandName / 1剤目操作中: activeBrandName
+    const legacyBrandKey = activeNode !== null
       ? (activeNode.matchedBrandName ?? targetModule.drug?.brandNames?.[0])
       : (activeBrandName ?? activeModuleData.drug?.brandNames?.[0])
-    if (!resolvedBrand) return undefined
-    return brandCatalog[resolvedBrand]?.handlingTags
-  }, [targetModule, activeNode, activeBrandName, activeModuleData])
+    return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)
+  }, [targetModule, activeNode, activeBrandName, activeModuleData, activeContextResolution])
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),
@@ -566,6 +592,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [allGroups, addonBrandHandlingTags])
   const groupScenarios = useMemo(() => {
     if (!selectedGroup) return []
+    // U-5 安全 gate（二重防御）: 指示対象が未確定のときは scenario を提示しない。
+    // availableGroups 側でもグループを出さないため通常ここへは到達しないが、
+    // selectedGroup が先に確定していた状態から薬剤を切り替えた場合に備える。
+    if (subjectUnresolved) return []
     const raw = allGroups.find(g => g.group === selectedGroup)?.scenarios ?? []
     const byGroup = raw.filter(sc => getMenuGroupFromScenario(sc) === selectedGroup)
     // scenarioRequiredTags フィルタ: addonBrandHandlingTags と同じ AND 条件
@@ -576,7 +606,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       return req.every(tag => addonBrandHandlingTags.includes(tag))
     })
     return selectedGroup === '副作用あり' ? sortSideEffectScenarios(brandFiltered) : brandFiltered
-  }, [allGroups, selectedGroup, addonBrandHandlingTags])
+  }, [allGroups, selectedGroup, addonBrandHandlingTags, subjectUnresolved])
 
   // ── アクティブExpressキーセット ─────────────────────────────
   // 追加済みノードの "moduleId__brandName__scenarioId" をキーとして保持。
@@ -732,11 +762,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── トップバー表示用ラベル ───────────────────────────────────
   const badge = activeModuleData.categoryPath?.[1]
+  // resolvedBrand: 表示ラベル（activeDrugLabel）専用。U-5 では変更しない。
+  // 表示は uiLabel 責務であり、brand 固有データアクセスとは別軸で扱う
+  // （docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md §6.1）。
   const resolvedBrand = activeBrandName ?? activeModuleData.drug?.brandNames?.[0]
+  // tagBrandKey: brand 固有データアクセス（brandToTags）専用の安全なキー。
+  // authoritative な brandKey が無い場合（generic / module）は null になり、
+  // brandNames[0] へフォールバックしない（U-5）。表示には使用しない。
+  const tagBrandKey = resolveDataAccessBrandKey(activeResolution, activeBrandName ?? activeModuleData.drug?.brandNames?.[0])
   const drugResolution = activeModuleData.drugResolution
   const resolvedGenericName = (() => {
-    if (resolvedBrand && drugResolution) {
-      for (const tag of drugResolution.brandToTags[resolvedBrand] ?? []) {
+    if (tagBrandKey && drugResolution) {
+      for (const tag of drugResolution.brandToTags[tagBrandKey] ?? []) {
         if (TAG_TO_GENERIC_NAME[tag]) return TAG_TO_GENERIC_NAME[tag]
       }
     }
@@ -1590,6 +1627,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setActiveDrugDisplayName(
           resolvedDisplayName !== resolvedBrandKey ? resolvedDisplayName : undefined,
         )
+        // Express は DrugSuggestionItem を経由しないため BrandResolution を持たない。
+        // primary context が Express へ切り替わる時点で、直前の検索由来 resolution を
+        // 必ず破棄する（残すと U-5 gate が前の context の denotation で誤発火する）。
+        // undefined は「legacy / 非検索経路」を表す既存契約であり、新しい resolution を
+        // 生成する処理ではない（lib/brandTags.ts）。
+        setActiveResolution(undefined)
         setDrugSelected(true)
         setComposeNodes([])
         setEditingNodeId(null)
@@ -1882,7 +1925,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
       <div className={s.body}>
         <Sidebar
-          availableGroups={drugSelected ? availableGroups : new Set()}
+          availableGroups={drugSelected && !subjectUnresolved ? availableGroups : new Set()}
           selectedGroup={selectedGroup}
           onSelectGroup={handleSelectGroup}
           selectedNodeId={editingNodeId}
@@ -1985,12 +2028,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           ) : (
             <div className={s.editorGuide}>
               <div className={s.editorGuideInner}>
-                <p className={s.editorGuideTitle}>SOAPノートの作成</p>
-                <ol className={s.editorGuideSteps}>
-                  <li>トップバーの検索窓で薬剤を選択</li>
-                  <li>左のカテゴリメニューでグループを選択</li>
-                  <li>中央のテンプレート一覧からシナリオを選択</li>
-                </ol>
+                {/* U-5: 指示対象が未確定のとき、グループが出ない理由を既存ガイド枠内で案内する（U-6 までの最小案内。新規UIは作らない） */}
+                {drugSelected && subjectUnresolved ? (
+                  <>
+                    <p className={s.editorGuideTitle}>成分が特定できていません</p>
+                    <ol className={s.editorGuideSteps}>
+                      <li>この検索語では成分を1つに絞り込めませんでした</li>
+                      <li>トップバーの検索窓で商品名または成分名を入力してください</li>
+                    </ol>
+                  </>
+                ) : (
+                  <>
+                    <p className={s.editorGuideTitle}>SOAPノートの作成</p>
+                    <ol className={s.editorGuideSteps}>
+                      <li>トップバーの検索窓で薬剤を選択</li>
+                      <li>左のカテゴリメニューでグループを選択</li>
+                      <li>中央のテンプレート一覧からシナリオを選択</li>
+                    </ol>
+                  </>
+                )}
               </div>
             </div>
           )}

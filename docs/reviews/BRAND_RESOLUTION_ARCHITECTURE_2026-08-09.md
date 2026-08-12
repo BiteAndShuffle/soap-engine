@@ -439,3 +439,41 @@ U-4b  consumer migration（subject を新契約へ移行）
 | runtime behavior | **変更なし**（tsc 0 / test 2735→2750（新規 15 件のみ増）/ audit 3 系統 PASS / multi-drug 20 PASS / build 成功・bundle size 同一 / 警告 18 件で同数） |
 | golden projection | `tests/searchResolution.test.ts` T-U2-1 が無変更で PASS（ranking / 候補集合の不変を確認） |
 | 非使用の担保 | `tests/brandResolutionPlumbing.test.ts` T-U4a-5 が、resolution を含むコード行を**ホワイトリスト 5 行で完全固定**している。U-4b / U-5 で consumer を追加すると必ず FAIL するため、意図しない consumer 混入を検出できる |
+
+### 13.5 U-5 の完了記録（FACT・2026-08-12）
+
+**確定した generic handlingTags 導出規則**: `brandKeys` 全件の `handlingTags` の**交差集合**
+（Owner Decision。正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2、実装は `lib/brandTags.ts`）。
+§6.2 が「取得方法は U-1 では定めない」として保留した論点は、これにより解消した
+（`derm_heparinoid_moisturizer_ointment` のデータ不均質そのものの評価は §10.3 のとおり U-8 のまま）。
+
+| 項目 | 内容 |
+|---|---|
+| gate 判定 | `resolution.denotation === 'module'` のみ。**`subject` を読まない**（subject 算出は U-4b の責務であり、gate とは独立） |
+| SOAP 生成 gate | `availableGroups` と `groupScenarios` の 2 点。検索由来の生成入口は `handleSelectScenario` 1 本のみであり（NLP 経路は UI 未接続、Express は分離）、Rapid は `currentScenarioId !== null` の下流に含まれるため独立した gate を要さない |
+| brand 固有解決 gate | `addonBrandHandlingTags`（`lib/brandTags.ts` へ委譲）と `brandToTags`（`tagBrandKey` へ分離）。表示用 `resolvedBrand` は変更していない |
+| 未確定の表現 | **空配列 `[]`**。`undefined` は「フィルタ非適用」の既存後方互換状態であり、未確定の表現に流用しない（`lib/addonFilter.ts` JSDoc に明記） |
+| UX | 既存 `editorGuide` の条件分岐のみ。新規パネル・モーダルは作らない（U-6 までの最小案内） |
+| 挙動不変の実測 | `denotation='brand'` 893 行で `handlingTags` の生値差分 **0**。generic は 91 の一意な `(moduleId, genericKey)` すべてで ADDON 可視数・scenario 可視数の差分 **0**（production 実装 `resolveBrandHandlingTags()` で再検証） |
+| 順序非依存 | 複数 brand を持つ全 generic group で、逆順・ソート順いずれも同値（`intersectHandlingTags` は `brandKeys` への添字アクセスを持たない） |
+| 検証 | tsc 0 / test 2750→2789（新規 39 件のみ増）/ audit 3 系統 PASS / multi-drug 20 PASS / build 成功 / 警告 18 件で同数 / golden projection 無変更 PASS |
+
+**lifecycle completeness（U-5 で確立した不変条件）**
+
+`activeResolution` は U-4a では write-only であったため stale でも無害だったが、U-5 で
+production の判断入力になったことで、**primary context を切り替える遷移がすべて
+`activeResolution` を更新しなければならない**という不変条件が新たに成立した。
+
+実測により、`handleExpressAdd` の primary 分岐が `activeModuleData` / `activeBrandName` /
+`activeDrugDisplayName` は更新する一方で `activeResolution` を更新していないことが判明した。
+これを放置すると「検索で候補を選び、シナリオを選ぶ前に Express を押す」という通常操作で
+前の context の `denotation` により gate が誤発火する（実測で確認）。
+
+> **Owner Decision（U5-Lifecycle-1）**: Express primary 分岐で `setActiveResolution(undefined)`
+> を実行する。`undefined` は「`BrandResolution` を持たない legacy / 非検索経路」を表す既存契約であり、
+> Express 用に resolution を新規構築するものではない。Express は引き続き legacy path とする。
+
+再発防止として `tests/brandResolutionGate.test.ts` の T-U5-9 / T-U5-10 が、
+**primary context を切り替える各 transition のソース領域**に 4 つの state setter が
+揃っていることを検証する（用途差による false positive を避けるため、単純な呼び出し回数の
+一致では判定しない）。

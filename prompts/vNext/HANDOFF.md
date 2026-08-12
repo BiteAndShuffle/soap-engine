@@ -674,6 +674,8 @@ vNext には対応する明示的なチェック項目がない。
 
 **バイパス箇所の補足（U-4a 実測で追記）**: 本節が例示していた `resolvedBrand` 系（brandKey 用途）に加え、`handleAddonToggle` の Rapid ADDON 経路が `activeDrugDisplayNameRef.current ?? activeBrandName ?? ''` という形で `resolveDrugName()` を**完全に迂回**して brandKey を SOAP 主語に流用している（検索語: `rapidDrugName`）。本箇所も U-4b の移行対象である。
 
+**進捗（Q-S2 U-5・2026-08-12）**: `denotation: 'module'`（指示対象が未確定）の状態から SOAP 生成・brand 固有解決へ進ませない安全 gate を導入した。あわせて `denotation: 'generic'` における brand 固有 `handlingTags` の取得を「`brandKeys` 全件の交差集合」へ改め、代表 brand fallback を production から除去した（`lib/brandTags.ts`）。**subject の算出方法は変更していないため、本 SSOT バイパスは引き続き未解決である**（U-4b の責務）。ただし `denotation: 'module'` は SOAP 生成へ到達不能になったため、U-4b が扱う subject 乖離は brand / generic の 6 パターンのみに縮小した。
+
 **別 Finding（今回変更しない）**: `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]`（brandKey）および `displayName ?? resolvedBrandKey ?? ''`（主語を brandKey から導出）も legacy fallback である。ただし Express は `DrugSuggestionItem` を経由せず、有効な express entry 全件が canonical JSON 側で `defaultBrandName` を明示宣言しているため、検索由来の brand 未確定とは性質が異なる。Q-S2 の U-4a / U-5 / U-4b 系列からは分離し、cleanup 候補として保持する。
 
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。

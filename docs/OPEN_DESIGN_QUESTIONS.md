@@ -314,7 +314,7 @@ U-1  resolution schema（型契約の確立。runtime 未接続）           ←
 U-2  lib/search.ts が resolution を付与する                      ← 完了
 U-3  BrandResolution → subject resolver の実装                   ← 完了（consumer 0 件）
 U-4a resolution を production state へ保持する（plumbing only）   ← 完了
-U-5  SOAP 生成 / brand 依存処理の resolution gate
+U-5  SOAP 生成 / brand 依存処理の resolution gate                ← 完了
 U-4b legacy consumer を BrandResolution 契約へ移行する
 U-7  invariant tests / audit
 U-6  class-level query の generic group 展開
@@ -343,6 +343,35 @@ U-8  個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
 
 **U-4a が行わないこと**: consumer 移行・安全 gate・`resolveDrugName()` の変更・
 `lib/brandResolution.ts` の変更・Express 経路の変更。
+
+**`denotation: 'generic'` の handlingTags 導出規則（Owner Decision・2026-08-12・確定）**
+
+U-1 の型契約が「`brandKeys` から特定の 1 件を選んで brand 固有の値を取得してはならない。
+取得方法は U-1 では定めない（U-5 / U-8 の対象）」として保留していた論点を、U-5 で次のとおり確定した。
+
+> **`denotation: 'generic'` の `handlingTags` は、`brandKeys` に属する全 brand の
+> `handlingTags` の交差集合とする。** 実装は `lib/brandTags.ts` の
+> `intersectHandlingTags()` を正本とする。
+
+採用理由:
+
+- 特定の代表 brand を選ばない（`brandKeys` への添字アクセスを実装から排除している）
+- brand の配列順に依存しない（集合演算のみで構成）
+- generic group 全体について常に真であるタグのみを使用するため、患者が実際に受け取った
+  brand が group 内のどれであっても提示内容が妥当である
+- DP-15（明示的不確定性）および `lib/brandResolution.ts` の generic member 契約と整合する
+- Repository 実測で、91 の一意な `(moduleId, genericKey)` すべてについて既存の可視性
+  （ADDON 可視数・scenario 可視数）との差分が 0
+- group 内にタグの差異があり、かつそれが将来 gate 対象になった場合は自動的に安全側へ倒れる
+
+**未確定を `undefined` で表現してはならない。** `getVisibleAddonKeys()` は
+`brandHandlingTags === undefined` のとき brand フィルタをスキップする後方互換仕様であり、
+未確定を `undefined` で表すと brand 依存 ADDON が逆に全表示される。未確定は空配列 `[]` で表す
+（`lib/addonFilter.ts` の JSDoc を参照）。
+
+**U-5 が行わないこと**: subject 算出方法の変更・`resolveDrugName()` の consumer 移行・
+Topbar 表示ラベルの変更（表示は `uiLabel` 責務として分離し、データアクセス用の
+`tagBrandKey` のみを安全化した）・Express 経路の変更・候補集合 / ranking の変更。
 
 **新規 module 開発へ戻ってよい最低到達点**: U-1〜U-3・U-4a・U-5・U-4b および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
 

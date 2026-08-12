@@ -6,7 +6,8 @@
  *   T-U4a-2  handleComposeDrugSelect が item.resolution を ComposeNode.resolution へ保持する
  *   T-U4a-3  resolution 未設定の ComposeNode が型・値の双方で成立する（Express / legacy 後方互換）
  *   T-U4a-4  node の再構築（spread）が resolution の有無をそのまま維持する
- *   T-U4a-5  U-4a で追加した resolution が production の判断入力として読まれていない
+ *   T-U4a-5  resolution の consumer が保持経路と U-5 gate 経路に限定されている
+ *            （**U-5 で意図的に更新。詳細は当該 describe の JSDoc を参照**）
  *   T-U4a-6  Express 経路が resolution に触れていない
  *
  * 正本:
@@ -52,6 +53,7 @@ function codeLines(text: string): string[] {
       if (t.startsWith('//')) return false
       if (t.startsWith('*')) return false
       if (t.startsWith('/*')) return false
+      if (t.startsWith('{/*')) return false   // JSX コメント（1行形式）
       return true
     })
 }
@@ -177,33 +179,68 @@ describe('T-U4a-4 node 再構築（spread）が resolution をそのまま維持
   })
 })
 
-describe('T-U4a-5 U-4a の resolution が production の判断入力として読まれていない', () => {
+describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に限定されている', () => {
   /**
-   * 許可される出現はこの 5 行のみ。
-   *   1. state 宣言 / 2. ref 宣言 / 3. ref 同期 / 4. primary への代入 / 5. node への代入
-   * いずれも「保持」であり、denotation 判定・subject 算出・brandKey 算出・
-   * scenario filtering・ADDON filtering・SOAP 生成のいずれの入力にもなっていない。
+   * **U-5 での意図的更新（2026-08-12）**
+   *
+   * U-4a 時点では「resolution を読む production コードが 0 件」を固定していた。
+   * U-5 は resolution を安全 gate の入力として使う Unit であるため、本リストは
+   * **設計時に意図した拡張点**として更新する（U-4a の設計メモに明記済み）。
+   *
+   * 更新後の意味は「resolution の使用が **保持（U-4a）と gate（U-5）に限定**されており、
+   * subject 算出（U-4b）へは波及していない」ことの固定である。
+   *
+   * 判定は **case-insensitive**（`/resolution/i`）で行う。`setActiveResolution(undefined)` の
+   * ように小文字の `resolution` を含まない行を取りこぼさないためである。
    */
   const ALLOWED = [
+    // ── 型 import ──
+    "import type { BrandResolution } from '../../lib/brandResolution'",
+    // ── U-4a: 保持 ──
     'const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)',
     'const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)',
+    // ── U-5: activeContext の resolution 導出と gate 判定 ──
+    'const activeContextResolution = useMemo<BrandResolution | undefined>(',
+    '() => (activeNode !== null ? activeNode.resolution : activeResolution),',
+    '[activeNode, activeResolution],',
+    'const subjectUnresolved = isSubjectUnresolvedFor(activeContextResolution)',
+    // ── U-4a: ref 同期 ──
     'activeResolutionRef.current = activeResolution',
+    // ── U-5: handlingTags 導出（lib/brandTags.ts へ委譲） ──
+    'return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)',
+    '}, [targetModule, activeNode, activeBrandName, activeModuleData, activeContextResolution])',
+    // ── U-5: SOAP 生成 gate（scenario 提示の遮断） ──
+    'if (subjectUnresolved) return []',
+    '}, [allGroups, selectedGroup, addonBrandHandlingTags, subjectUnresolved])',
+    // ── U-5: brand 固有データアクセス（表示用 resolvedBrand とは分離） ──
+    'const tagBrandKey = resolveDataAccessBrandKey(activeResolution, activeBrandName ?? activeModuleData.drug?.brandNames?.[0])',
+    'const drugResolution = activeModuleData.drugResolution',
+    'if (tagBrandKey && drugResolution) {',
+    'for (const tag of drugResolution.brandToTags[tagBrandKey] ?? []) {',
+    // ── U-4a: 保持（primary / node） ──
     'setActiveResolution(item.resolution)',
     'resolution: item.resolution,',
+    // ── U-5: lifecycle reset（Express primary 遷移で stale resolution を破棄） ──
+    'setActiveResolution(undefined)',
+    // ── U-5: gate の描画反映 ──
+    'availableGroups={drugSelected && !subjectUnresolved ? availableGroups : new Set()}',
+    '{drugSelected && subjectUnresolved ? (',
   ]
 
-  test('resolution / activeResolution を含むコード行が許可リストと完全一致する', () => {
+  test('resolution 関連のコード行が許可リストと完全一致する', () => {
     const hits = codeLines(src)
       .map(norm)
-      .filter(l => /\bresolution\b/.test(l) || /activeResolution/.test(l))
+      .filter(l => /resolution/i.test(l) || /subjectUnresolved|tagBrandKey/.test(l))
     assert.deepEqual(
       hits,
       ALLOWED,
-      'U-4a のホワイトリスト外で resolution が使用されている（U-4b / U-5 の consumer 追加はここで検出される）',
+      'ホワイトリスト外で resolution が使用されている（U-4b の consumer 追加はここで検出される）',
     )
   })
 
-  test('activeResolutionRef.current が読み出されていない（保持のみ）', () => {
+  test('activeResolutionRef.current が読み出されていない（U-4b 未実施のガード）', () => {
+    // U-5 の gate は render scope の state を読むため ref を必要としない。
+    // ref の読み出しが現れるのは callback から subject を解決する U-4b の時点である。
     const reads = codeLines(src)
       .map(norm)
       .filter(l => l.includes('activeResolutionRef.current') && !l.startsWith('activeResolutionRef.current ='))
@@ -211,11 +248,19 @@ describe('T-U4a-5 U-4a の resolution が production の判断入力として読
   })
 
   test('denotation / brandKey / resolveSubjectFromResolution がコードに出現しない', () => {
+    // U-5 でも維持される。denotation 分岐は lib/brandTags.ts に閉じており、
+    // DashboardClient は述語関数（isSubjectUnresolvedFor / resolveDataAccessBrandKey）
+    // のみを呼ぶ。resolveSubjectFromResolution の 0 件は U-4b 未実施のガードである。
     const lines = codeLines(src).map(norm)
     for (const token of ['denotation', 'brandKey', 'resolveSubjectFromResolution']) {
       const hits = lines.filter(l => l.includes(token))
-      assert.deepEqual(hits, [], `${token} が U-4a の時点でコードに出現している: ${hits.join(' / ')}`)
+      assert.deepEqual(hits, [], `${token} が DashboardClient のコードに出現している: ${hits.join(' / ')}`)
     }
+  })
+
+  test('resolution.subject が gate 条件として読まれていない', () => {
+    const hits = codeLines(src).map(norm).filter(l => /resolution\??\.subject/.test(l))
+    assert.deepEqual(hits, [], `gate が subject を読んでいる: ${hits.join(' / ')}`)
   })
 
   test('legacy subject resolver が引き続き production consumer を持つ（U-4b 未実施の確認）', () => {

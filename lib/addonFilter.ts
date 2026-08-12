@@ -16,6 +16,21 @@
  *   requiredTags が未定義または空配列のアドオンは常に表示する。
  *   brandHandlingTags が undefined の場合はフィルタをスキップする（後方互換）。
  *
+ * ── undefined と [] の意味差（重要）──────────────────────────
+ *
+ *   undefined : ブランドフィルタを適用しない既存の後方互換状態。
+ *               requiredTags を持つアドオンも含めて全件が表示される。
+ *   []        : authoritative な brand 固有 handlingTags が存在しない状態
+ *               （BrandResolution の denotation='generic' / 'module'）。
+ *               requiredTags を持つアドオンは条件を満たせず非表示になるが、
+ *               requiredTags を持たないアドオンはそのまま残る。
+ *
+ *   **未確定（brand が確定していない状態）を undefined で表現してはならない。**
+ *   undefined はフィルタ自体を無効化するため、意味が正反対になる（brand 依存
+ *   アドオンがかえって全表示される）。未確定は必ず [] で表現すること。
+ *   導出は `lib/brandTags.ts` の resolveBrandHandlingTags() を正本とする
+ *   （`docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 / U-5）。
+ *
  * 廃止:
  *   GROUP_RULES（scenarioType/scenarioGroup ベースの自動選択）は廃止。
  *   addonsRef のないシナリオにアドオンを自動表示しない。
