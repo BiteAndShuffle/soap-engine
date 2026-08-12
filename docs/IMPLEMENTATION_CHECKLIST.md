@@ -15,12 +15,13 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ npx tsc --noEmit
 □ npm test（0 fail であること。件数は実行時に再測定し、変更前後で減っていないことを確認する）
 □ npm run build
-□ npm run audit（addon chain / alias 同期 / 一般名読み到達性の 3 監査。個別実行する場合は下記 3 行を参照）
+□ npm run audit（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety の 4 監査。個別実行する場合は下記 4 行を参照）
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
 □ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合。`npm run audit` に含まれる）
 □ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期。`npm run audit` に含まれる）
 □ scripts/audit-generic-name-reachability.ts（displayGenericName の読み到達性。`npm run audit` に含まれる）
+□ scripts/audit-brand-resolution-safety.ts（BrandResolution の brand/generic 解決安全性。`npm run audit` に含まれる）
 □ 検索・alias・drug構造を変更した場合は `npm run test:multi-drug`（buildNodeFields + mergeBlocksによる複数module合成の回帰テスト）を実施する
 □ canonical JSON のうち search-manifest の生成対象フィールド（`lib/searchManifest.ts`）を変更した場合は `npm run generate:search-manifest` を実行し、`data/search-manifest.json` を再生成する（手編集禁止。再生成漏れは `npm test` の `tests/searchManifestParity.test.ts` が検出する）
 □ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）
@@ -30,6 +31,37 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
   領域完了時・検索ロジックや matchPolicy 変更時は下記「Runtime / 実機横断確認」を実施する）
 □ push後、Vercel Preview のデプロイ成功を確認（GitHub Commit Status API）
 ```
+
+## 新規 canonical module を追加した場合の検証工程
+
+新規モジュールを 1 件追加したときは、次の順序で機械的に検証できる。
+
+```
+canonical JSON を data/modules/ へ追加
+  ↓
+data/modules/index.ts へ登録（登録漏れは npm test の tests/moduleRegistry.test.ts が検出）
+  ↓
+npm run audit
+  ├ ADDON bridge→JSON→UI chain
+  ├ Alias fields bridge⇔JSON
+  ├ Generic name reachability          （Q-S1: module への到達性）
+  └ Brand resolution safety            （Q-S2: brand/generic 解決の安全性）
+        FAIL  → exit 1。module 追加不可。JSON を修正して再実行する
+        CHECK → exit 0 だが人間レビューが必要（generic 選択時に gate 対象 ADDON / scenario が減る）
+  ↓
+npm test（golden projection・BrandResolution 系テストが回帰を検出）
+  ↓
+npm run build / ModuleValidator / CrossModuleValidator
+  ↓
+Runtime / 実機横断確認（下記）
+```
+
+`npm run audit` の Brand resolution safety が確認するのは、
+`brandNames` / `brandCatalog` の構造整合・generic grouping の成立性・generic subject の決定性・
+single-brand module の解決安全性・generic `handlingTags` 交差集合による gate タグ脱落の 5 点である。
+各 code の意味と FAIL / CHECK の区別は `docs/VALIDATOR_STANDARD.md` §2-B を参照する。
+
+---
 
 ## 補足
 

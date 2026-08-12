@@ -84,6 +84,64 @@ Validator は「機械的に判定できること」のみを保証する。設�
 
 **原則**: Validator は Reference / Structural の2分類のみ ERROR にできる。Design Rule の ERROR 化は禁止（後述）。
 
+### 2-A. audit スクリプトの責務境界（Q-S1 / Q-S2 / Q-UX1）
+
+`npm run audit` が実行する 4 スクリプトは、それぞれ別の Question に対応する。混同しないこと。
+
+| スクリプト | 担当 | 保証すること |
+|---|---|---|
+| `scripts/audit-addon-bridge-chain.ts` | — | bridge → JSON → AddonPanel の ADDON 表示一貫性 |
+| `scripts/audit-alias-bridge-chain.ts` | — | alias 系フィールドの bridge ⇔ JSON 同期 |
+| `scripts/audit-generic-name-reachability.ts` | **Q-S1** | module への**到達性**（DP-09。`GENERIC_NAME_UNREACHABLE`） |
+| `scripts/audit-brand-resolution-safety.ts` | **Q-S2** | 到達した**後**の brand resolution semantics / safety |
+
+**Q-UX1（ranking / presentation / limit=8 / bucket 結合順）はいずれの audit の責務でもない。**
+
+### 2-B. `audit-brand-resolution-safety.ts`（Q-S2）
+
+`lib/brandResolution.ts` の domain contract が canonical JSON の静的構造から安全に成立することを検証する。
+**全検査が module-local static** であり、cross-module ranking simulation を行わない
+（denotation は brand 件数・generic group 件数・`displayGenericName`・`handlingTags` から決定論的に導出できるため）。
+
+| code | 分類 | 対応 invariant | 内容 |
+|---|---|---|---|
+| `BRAND_CATALOG_BRANDNAMES_MISMATCH` | **FAIL** | INV-1 前提 | `drug.brandCatalog` キー集合と `drug.brandNames` 集合の不一致 |
+| `GENERIC_GROUPING_KEY_UNRESOLVABLE` | **FAIL** | INV-4b | `genericKey ?? displayGenericName ?? genericName` で grouping key を解決できない brand |
+| `GENERIC_SUBJECT_AMBIGUOUS` | **FAIL** | INV-4a | 同一 generic group 内で `displayGenericName` が不一致（generic の subject が brand 宣言順に依存する） |
+| `SINGLE_BRAND_RESOLUTION_UNSAFE` | **FAIL** | INV-6 | brand 1 件の module が構造的に未確定状態（`denotation: 'module'`）を生みうる |
+| `GENERIC_GATE_TAG_DROPPED` | **CHECK** | INV-4c | `handlingTags` の交差集合により、現に ADDON / scenario の gate に使われているタグが脱落する |
+
+**FAIL は exit 1（`npm run audit` を失敗させる）。CHECK は出力するが exit 0 を維持する**（既存 audit と同じ規約）。
+
+**INV-4 / INV-6 の再定義（Owner Decision・2026-08-13）**
+
+- **INV-4**: 旧定義「generic group 内 `handlingTags` の均質性を CHECK」は、U-5 で確定した
+  **交差集合設計**（generic の `handlingTags` は `brandKeys` 全件の交差集合）により役割を終えた。
+  不均質そのものは欠陥ではないため FAIL / CHECK のいずれにもしない。代わりに INV-4a / 4b / 4c を検証する
+- **INV-6**: 旧定義「single-brand module では常に `denotation: 'brand'`」は採らない。
+  一般名検索による generic 候補の生成は正当であり FAIL ではない。
+  検証するのは「**未確定状態（`denotation: 'module'`）へ落ちないこと**」である
+
+**検査しないもの（意図的）**
+
+- `denotation: 'module'` ⇒ `brandKey === null && subject === null`（INV-2）
+  → TypeScript の discriminated union がリテラル型で完全保証するため**重複実装しない**
+- `subject === null` から SOAP 主語を生成しないこと（INV-3）
+  → U-5 gate の実装であり canonical JSON の静的性質ではない。`tests/brandResolutionGate.test.ts` /
+  `tests/brandResolutionSubjectMigration.test.ts` が担当する
+- **module-level alias が brand-level alias に存在しないこと（INV-5）**
+  → **DP-18 が定める意図的な非複製であり、これを FAIL にしてはならない。**
+  「module 単位 alias があるのに brand 単位で解決できないものを一律 FAIL」とする案は不採用済み（Q-S2）
+
+**`GENERIC_GATE_TAG_DROPPED` の gate 対象タグ導出**: `addons.items[].requiredTags`（`lib/addonFilter.ts`）と
+`scenarios[].scenarioRequiredTags`（`DashboardClient.tsx`）から**機械的に導出**する。手書きの固定リストは持たない。
+`lib/search.ts` の適応ラベル（`heart_failure_supported` / `ckd_supported`）は表示ラベルの分岐であって
+可視性の gate ではないため含めない。`template.reservedHandlingTags` は validator 向けの宣言であり runtime gate ではない。
+
+**`lib/moduleValidator.ts` の `BRAND_CATALOG_MISMATCH` との重複について**: 同 validator も同じ集合一致を
+ERROR として検査するが、起動時実行は `app/page.tsx` で try/catch されており**エラーでも起動を止めない（fail-open）**。
+本 audit は `npm run audit` の exit code へ反映させることで enforcement を与える目的で、意図的に重複させている。
+
 ---
 
 ## 3. ModuleValidator の責務（check 1〜34。枝番 3a / 3b / 13b を含む全 37 check）

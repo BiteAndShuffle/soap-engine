@@ -316,7 +316,7 @@ U-3  BrandResolution → subject resolver の実装                   ← 完了
 U-4a resolution を production state へ保持する（plumbing only）   ← 完了
 U-5  SOAP 生成 / brand 依存処理の resolution gate                ← 完了
 U-4b legacy consumer を BrandResolution 契約へ移行する           ← 完了
-U-7  invariant tests / audit
+U-7  invariant tests / audit                                     ← 完了
 U-6  class-level query の generic group 展開
 U-8  個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
 ```
@@ -391,6 +391,29 @@ ADDON 再生成）は単一の write-site 値を読むため無変更である�
 **U-4b が行わないこと**: Express 経路の変更・`ComposeNode.resolvedDrugName` の削除・
 Rapid の式形統一（F-RAPID-1。cleanup Finding として保持）・test harness の移行・
 U-5 gate / `lib/brandResolution.ts` / `lib/search.ts` / `lib/brandTags.ts` / Topbar 表示の変更。
+
+**U-7: invariant / audit（Owner Decision・2026-08-13・確定）**
+
+新規 module を追加した際に BrandResolution safety を機械的に検証できるよう、
+`scripts/audit-brand-resolution-safety.ts` を新設し `npm run audit` へ統合した。
+検査内容・code 一覧・FAIL / CHECK の意味・責務境界は **`docs/VALIDATOR_STANDARD.md` §2-A / §2-B を正本**とする。
+
+**INV-4 / INV-6 の再定義**（Architecture Review §10.1 の原定義を現実装に合わせて更新）
+
+| INV | 再定義後 | 分類 |
+|---|---|---|
+| INV-4a | generic group 内で `displayGenericName` が一意 | FAIL |
+| INV-4b | 全 brand で generic grouping key（`genericKey ?? displayGenericName ?? genericName`）が解決可能 | FAIL |
+| INV-4c | `handlingTags` 交差集合により、現に gate へ使われているタグが脱落する group | CHECK |
+| INV-6 | single-brand module が**未確定状態（`denotation: 'module'`）へ落ちない**（「常に `brand`」ではない。generic 候補の生成は正当） | FAIL |
+
+旧 INV-4「generic group 内 handlingTags 均質性を CHECK」は、U-5 の交差集合 Decision により役割を終えた。
+不均質そのものは欠陥ではないため FAIL / CHECK のいずれにもしない。
+
+**U-7 が行わないこと**: INV-2（型で完全保証）と INV-3（U-5 / U-4b の test が担当）の audit への重複実装・
+module-level alias の brand-level 非複製を FAIL にすること（INV-5 / DP-18）・cross-module ranking simulation・
+Q-UX1 事項・canonical JSON / bridge の修正・production runtime code の変更・
+S4-C（CI / git hook / build gate）の整備。
 
 **新規 module 開発へ戻ってよい最低到達点**: U-1〜U-3・U-4a・U-5・U-4b および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
 

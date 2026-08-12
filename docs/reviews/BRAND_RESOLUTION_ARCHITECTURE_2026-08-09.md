@@ -529,3 +529,48 @@ production の判断入力になったことで、**primary context を切り替
 blocker としない根拠: いずれも実機確認済みの cream / `dm_insulin_regular` と**同一のコード経路**（同じ write site・同じ `resolveSubjectFromResolution`）であり、
 かつ `tests/brandResolutionSubjectMigration.test.ts` T-U4b-12 が **全 1572 候補行を fixture と完全一致で照合**しているため、
 値の正しさは機械的に担保されている（Owner 承認済み）。
+
+### 13.8 U-7 の完了記録（FACT・2026-08-13）— INV の再定義と audit 新設
+
+§10.1 で定義した INV-1〜INV-6 を U-1〜U-5 / U-4b 完了後の実装へ再照合し、
+`scripts/audit-brand-resolution-safety.ts` を新設して `npm run audit` へ統合した。
+**検査内容・code・FAIL / CHECK の意味の正本は `docs/VALIDATOR_STANDARD.md` §2-B**であり、本節へ複製しない。
+
+**再照合の実測結果**
+
+| INV | 実測 | 結論 |
+|---|---|---|
+| INV-1 | brand 候補 893 行で違反 0。静的にも `brandCatalog` キー集合 = `brandNames` 集合が 35/35 一致 | audit で FAIL 検査（前提の担保） |
+| INV-2 | 58 行で違反 0。かつ union member が `brandKey: null` / `subject: null` を**リテラル型で宣言** | **型で完全保証**。audit へ重複実装しない |
+| INV-3 | U-5 gate で実現。Runtime Preview PASS（§13.7） | test が担当。canonical static audit の対象外 |
+| INV-4 | **原定義の前提が失効**（下記） | 4a / 4b / 4c へ再定義 |
+| INV-5 | 該当 audit は存在しない（DP-18 遵守） | 維持。一律 FAIL 案は復活させない |
+| INV-6 | **原定義は 9/9 で「違反」**（下記） | 再定義 |
+
+**INV-4 の前提失効（RUNTIME-VERIFIED）**
+
+U-5 の交差集合 Decision（§13.5）により、generic の `handlingTags` は group 全体で真のタグのみとなった。
+したがって**均質性はもはや安全性の前提ではない**。実測:
+
+- 不均質 group は **1 件**（`derm_heparinoid_moisturizer_ointment`）のみで、その差分タグは gate 対象に **0 件**
+- 交差集合が空になる group は 9 件あるが、**すべて全 brand が `handlingTags` 未宣言**であり情報損失はない
+- group 内 `displayGenericName` 不一致: **0 件** / grouping key 解決不能 brand: **0 件**
+
+→ 均質性 CHECK を廃し、INV-4a（subject 一意性・FAIL）/ INV-4b（grouping key 解決・FAIL）/
+INV-4c（gate 対象タグの脱落・CHECK）へ再定義した。
+
+**INV-6 の再定義（RUNTIME-VERIFIED）**
+
+原定義「brand 1 件の module では module 到達クエリが必ず `denotation: 'brand'` を返す」は、
+single-brand module 9 件すべてで `generic` も観測されるため**そのまま audit 化すると 9 件の false FAIL を生む**。
+観測された `generic` は generic-header 経路（一般名検索の正当な結果）であり、
+いずれも `brandKeys.length === 1` / `subject` = 一般名で安全である。
+
+一方、安全性上意味を持つ性質「**single-brand module に `denotation: 'module'` が発生しない**」は
+**9/9 で成立**していた（0 件）。INV-6 はこの性質へ再定義した。
+
+**module-local static audit で十分であることの再確認**
+
+runtime で観測された denotation は、canonical JSON の静的構造のみで **35 / 35 の module について説明可能**
+（説明外 0）。§10.2 の結論は U-2〜U-4b 後も成立しており、**cross-module runtime simulation は
+Q-S2 correctness の必須検証に含めない**（Q-UX1 との責務分離を維持）。
