@@ -574,3 +574,94 @@ single-brand module 9 件すべてで `generic` も観測されるため**その
 runtime で観測された denotation は、canonical JSON の静的構造のみで **35 / 35 の module について説明可能**
 （説明外 0）。§10.2 の結論は U-2〜U-4b 後も成立しており、**cross-module runtime simulation は
 Q-S2 correctness の必須検証に含めない**（Q-UX1 との責務分離を維持）。
+
+### 13.9 U-8 の完了記録（FACT・2026-08-13）— Deferred 再評価と Q-S2 CLOSED 判定
+
+> 本節は U-1〜U-7 完了後に実施した **read-only の Deferred 再評価**の記録である。
+> canonical JSON / bridge / production runtime code は一切変更していない。
+> **正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2「U-8」節**であり、本節は実測の根拠を保存する。
+
+**対象 commit**: `9afe714`（U-7 完了時点）
+
+#### 13.9.1 D-1〜D-4 の再評価（RUNTIME-VERIFIED）
+
+| ケース | module（実測訂正後） | 構造 | 現在の denotation / subject | U-5 gate | 分類 |
+|---|---|---|---|---|---|
+| D-1 メトアナ | `dm_dpp4_biguanide_combination_oral` | 4 brand / 4 group | `module` / `null` | **発動**（生成不可） | **TRANSFERRED_TO_U6** |
+| D-2 リオベル | `dm_dpp4_thiazolidinedione_combination_oral` | 1 brand / 1 group | `brand` / `"リオベル"` | 通過 | **RESOLVED** |
+| D-3 メタクト | `dm_thiazolidinedione_biguanide_combination_oral` | 1 brand / 1 group | `brand` / `"メタクト"` | 通過 | **RESOLVED** |
+| D-4 ツイミーグ | `dm_imeglimin_oral` | 1 brand / 1 group | `brand` / `"ツイミーグ"` | 通過 | **RESOLVED** ＋ Q-UX1 移管 |
+
+**個別 alias containment は 4 件とも不要**であった。§8.2 の予測どおり brand は module の静的構造から
+導出され、Deferred 理由であった ranking 衝突を発生させずに解決した。ranking の実測:
+
+- `めとほるみんえんさんえん` → 1. メトホルミン[brand] / 2. メタクト[brand] / 3. メトアナ[module]（**Suite ⑦ 維持**）
+- `ぴおぐりたぞんえんさんえん` → 1. ピオグリタゾン[brand] … 6. リオベル[brand]（**Suite ⑧ 維持**）
+
+D-1 は候補として 3 位に表示されるため **DP-09 の到達性は維持**されており、選択後は gate により
+`成分が特定できていません` で停止する。誤った `brandNames[0]`（メトアナ）への確定は構造的に不可能になった。
+
+D-4 の残余は prefix `い` の表示枠問題である。実測では `limit=8` をインスリン系 7 件 + ソリクア 1 件が占有し、
+**ツイミーグは alias を追加していない現在も脱落している**。これは candidate visibility / ranking の問題であり
+**Q-UX1** へ移管する（BrandResolution correctness とは独立）。
+
+#### 13.9.2 heparinoid handlingTags の再評価（RUNTIME-VERIFIED）
+
+§6.2 が指摘した `derm_heparinoid_moisturizer_ointment` の不均質について、**データ修正は不要**と判定した。
+
+```
+交差集合 : apply_thin_layer / avoid_mucosa / external_use /
+           room_temperature_storage / topical_application / wash_hands_before_use
+脱落タグ : ointment / ointment_application / oily_cream / cream_application（剤形固有）
+この module の gate 対象タグ（requiredTags ∪ scenarioRequiredTags）: 0 件
+脱落タグのうち gate 対象: 0 件
+```
+
+判断根拠は「audit が CHECK 0 だから」ではなく意味論による:
+
+1. 交差集合に残る 6 タグは**両剤形に等しく妥当な外用薬指導**であり、脱落した 4 タグは剤形を区別するもの
+2. §6.2 の懸念（油性クリーム患者へ軟膏用 ADDON が提示される）は、**代表 brand 方式なら起きたが
+   交差集合方式では構造的に起こらない**。generic 選択時は「どちらの剤形でも真である指導」のみが提示される
+3. 剤形固有の指導が必要な場合、brand を直接選択すれば `denotation: 'brand'` として取得できる
+   （Runtime Preview で `ヒルドイド軟膏` 検索の brand 固有経路を確認済み）
+4. `genericKey` を分割する修正は、むしろ一般名検索の到達性（DP-09）を損なう方向の変更である
+
+→ §10.3 / Owner Decision #4 が U-8 へ送った本件は、**データ修正なしで閉じる**。
+
+#### 13.9.3 最終分類と Q-S2 CLOSED 判定
+
+| 分類 | 件数 |
+|---|---|
+| RESOLVED | 4（D-2 / D-3 / D-4 correctness / heparinoid） |
+| TRANSFERRED_TO_U6 | 2（D-1 の操作性 / U-6 本体） |
+| TRANSFERRED_TO_Q_UX1 | 3（D-4 表示枠 / F-S3-1 / U-6 の limit 干渉） |
+| CLEANUP_FINDING | 4（F-RAPID-1 / F-EXP-1 / AddonPanel / untracked 参照文書） |
+| **REMAINING_QS2** | **0** |
+
+**Q-S2 は CLOSED。** §11.2 の到達条件（U-1〜U-5・U-4b・U-7 完了 / 既存テスト・Suite ⑦⑧・multi-drug 維持 /
+新規 audit の機能）をすべて満たし、加えて Runtime Preview が REGRESSION 0 で PASS した（§13.7）。
+
+**U-6 は correctness blocker ではない。** `denotation: 'module'` へ到達する module は **20 件**で、
+いずれも brand 複数・generic group 複数である（group 1 件なら `deriveUnresolvedResolution` が
+`generic` を返すため定義上ゼロ）。これらは U-5 gate により誤った主語生成が阻止されており、
+U-6 は行き止まりを解消する **UX 改善**として Q-S2 とは独立に扱う。
+
+#### 13.9.4 将来 module に対する再発防止
+
+| 旧 Deferred の再発 | 検出機構 |
+|---|---|
+| single-brand module が未確定へ落ちる | **U-7 audit `SINGLE_BRAND_RESOLUTION_UNSAFE`（FAIL）** |
+| generic subject が brand 宣言順に依存する | **U-7 audit `GENERIC_SUBJECT_AMBIGUOUS`（FAIL）** |
+| generic group が形成できない | **U-7 audit `GENERIC_GROUPING_KEY_UNRESOLVABLE`（FAIL）** |
+| `brandKey ∈ brandNames` の前提崩れ | **U-7 audit `BRAND_CATALOG_BRANDNAMES_MISMATCH`（FAIL）** |
+| generic 選択時に gate 対象タグが脱落 | **U-7 audit `GENERIC_GATE_TAG_DROPPED`（CHECK）** |
+| 未確定候補から SOAP 主語が生成される | **U-5 gate** ＋ `tests/brandResolutionGate.test.ts` / `tests/brandResolutionSubjectMigration.test.ts` |
+| `denotation: 'module'` が brandKey / subject を持つ | **TypeScript discriminated union（型で完全保証）** |
+| 検索由来 subject が文字列推論へ戻る | `tests/brandResolutionPlumbing.test.ts` T-U4a-5 / T-U4b-7〜9 |
+
+**唯一の再発防止ギャップ**: `lib/moduleValidator.ts` の `validateExpressModes` は
+`expressModes[].defaultBrandName` を必須フィールドとしていない（存在時のみ型・参照を検証）。
+現データは 43/43 が宣言済みで `handleExpressAdd` の `brandName ?? brandNames[0]` は到達不能だが、
+将来の新規 module が省略すると Q-S2 が排除した `brandNames[0]` anti-pattern が Express 経由で再入しうる。
+**Q-S2 の closure blocker とはせず、cleanup / validator hardening の別 Unit 候補として
+`prompts/vNext/HANDOFF.md` §6 へ記録する**（Owner Decision OD-U8-1(c)）。本 Unit ではコードを変更しない。

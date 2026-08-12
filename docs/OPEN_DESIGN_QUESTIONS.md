@@ -22,7 +22,7 @@ SOAP Engine — 設計保留事項
 | Q-F4 | `composition.canonicalSource` の必須化範囲 | 🟡 中 | 多剤合成機能が安定した時 |
 | Q-G1 | 配合剤の `genericKey` 複数成分対応（`genericKeys: string[]`） | 🟢 低 | 単剤↔配合剤のクロス成分検索が要件化した時 |
 | Q-S1 | 一般名検索が module 単位 `exactAlias` 命中時に `brandNames[0]` へ縮退する検索ロジック | 🟡 中 | brandCatalog.aliases への一般名フルストリング拡張、または `lib/search.ts` 横断修正の要否を判断する時 |
-| Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | 🟡 中 | **設計方針確定済み。U-1〜U-8 で実装中**（実装完了時に本項目を移管・削除する） |
+| Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | **✅ CLOSED**（2026-08-13） | **完了**。U-1〜U-7 + Runtime Preview + U-8 再評価により correctness / safety を達成。**削除せず historical record として保持する**（設計判断と closure 根拠を将来再構成できるようにするため） |
 | Q-UX1 | short-prefix 検索時の limit 内候補配分・ranking（F-S3-1） | 🟢 低 | 表示枠拡張または bucket 別最低保証の要否を判断する時 |
 
 優先度の凡例:
@@ -243,6 +243,21 @@ Tier2 が `dm_glp1ra_injection` の5ブランド全件・配合剤3件（ソリ�
 
 ## Q-S2: module到達後のbrand-level resolution / fallback safety
 
+> ## ✅ CLOSED（2026-08-13）
+>
+> **`REMAINING_QS2 = 0`。** BrandResolution の correctness / safety は
+> U-1〜U-7 + Runtime Preview 検証 + U-8 Deferred 再評価をもって完了した。
+>
+> **本項目は削除せず historical record として保持する**（Owner Decision OD-U8-2）。
+> BrandResolution の設計判断・closure 根拠・U-1〜U-8 の履歴への入口を残すためである。
+> 以下の本文は **closure 時点までの経緯**であり、確定した設計・工程・最終分類は
+> 「実装工程」節以降を参照する。closure の詳細な実測は
+> `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` §13.9 を参照する。
+>
+> **closure 後に残った作業は Q-S2 の blocker ではない**:
+> U-6（検索 UX 改善）→ 本 Question とは別工程 ／ Q-UX1（ranking / limit）→ 独立 Question ／
+> cleanup Finding（F-RAPID-1 / F-EXP-1 / AddonPanel）→ `prompts/vNext/HANDOFF.md` §6
+
 **論点**
 module 単位の alias（`drug.search.nameAliases` 等）でクエリが module へ到達しても、`brandCatalog[brand].aliases` で候補 brand を一意に解決できない場合、`getDrugSuggestions()` は `matchedBrandName === undefined` のまま `lowConfidence` bucket へ候補を落とす。この状態で UI が `entry.drugDisplayLabel ?? brandNames[0]`（module 内で最初に宣言された brand）へ静かに確定すると、クエリが実際には指定していない brand・成分が確定表示される。
 
@@ -260,12 +275,22 @@ Q-S1（DP-09）は「module への到達性」を扱うのに対し、本論点�
 **具体的なDeferredケース**
 以下は「module 単位では alias 到達済みだが brand 単位では未解決」という状態を、安全性を実測確認できなかったため意図的に補完しなかったケースである。個別の再現手順・実測件数は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照。
 
-| ケース | 対象 | Deferredの理由（衝突する既存仕様） |
-|---|---|---|
-| D-1 | `dm_dpp4_biguanide_combination_oral`（メトホルミン塩酸塩の salt-name reading） | 単剤メトホルミンを1位に維持する ranking 仕様と衝突する |
-| D-2 | `dm_thiazolidinedione_pioglitazone_oral` 系（ピオグリタゾンの salt-name reading） | ピオグリタゾン単剤を1位に維持する ranking 仕様と衝突する |
-| D-3 | `dm_thiazolidinedione_biguanide_combination_oral`（メトホルミン塩酸塩の salt-name reading） | D-1 と同一の ranking 仕様と衝突する |
-| D-4 | `dm_thiazolidinedione_sulfonylurea_combination_oral` 系（イメグリミン塩酸塩の salt-name reading） | brand 帰属自体は一意だが、追加すると別 module の選択可能 brand 行が表示枠（limit=8）から脱落する（Q-UX1 と同種の副作用が発生する） |
+| ケース | 対象（module 帰属は U-8 で実測訂正済み） | Deferredの理由（衝突する既存仕様） | **U-8 最終分類** |
+|---|---|---|---|
+| D-1 | メトアナ = `dm_dpp4_biguanide_combination_oral`（4 brand / 4 generic group。メトホルミン塩酸塩の salt-name reading） | 単剤メトホルミンを1位に維持する ranking 仕様と衝突する | **TRANSFERRED_TO_U6**（correctness は U-5 gate で安全化済み。alias 追加は行わない） |
+| D-2 | リオベル = **`dm_dpp4_thiazolidinedione_combination_oral`**（1 brand。ピオグリタゾンの salt-name reading） | ピオグリタゾン単剤を1位に維持する ranking 仕様と衝突する | **RESOLVED**（single-brand から構造的に `denotation: 'brand'` を導出。containment 不要） |
+| D-3 | メタクト = `dm_thiazolidinedione_biguanide_combination_oral`（1 brand。メトホルミン塩酸塩の salt-name reading） | D-1 と同一の ranking 仕様と衝突する | **RESOLVED**（同上） |
+| D-4 | ツイミーグ = **`dm_imeglimin_oral`**（1 brand。イメグリミン塩酸塩の salt-name reading） | brand 帰属自体は一意だが、追加すると別 module の選択可能 brand 行が表示枠（limit=8）から脱落する（Q-UX1 と同種の副作用が発生する） | **RESOLVED**（correctness）＋ **TRANSFERRED_TO_Q_UX1**（prefix `い` での表示枠脱落） |
+
+> **module 帰属の訂正（U-8 実測）**: 上表の D-2 / D-4 は、調査段階の記録（会話引き継ぎ）に
+> 由来する誤った module 帰属を長く保持していた。正しくは D-2 = `dm_dpp4_thiazolidinedione_combination_oral`、
+> D-4 = `dm_imeglimin_oral` である。訂正の初出は
+> `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` §9.1 および
+> `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` §8.1 であり、
+> closure の一環として本表へ同期した（historical record 側は書き換えていない）。
+>
+> **個別 alias containment は 4 件とも不要**である。brand は module の静的構造から導出されるため、
+> Deferred 理由であった ranking 衝突を発生させずに解決した（Suite ⑦ / ⑧ とも維持を実測）。
 
 **なぜ機械的な一括解決を採用しないか（不採用とした方針）**
 「module 単位 alias があるのに brand 単位で解決できないものを一律 FAIL にする」監査を検討したが、不採用とした。理由は、brand-level unresolved が **DP-18 が定める意図的な設計**（salt-name full reading を generic-labeled brand 自身にのみ登録し、family 内の他 brand へ機械的に複製しない）によって生じているケースが存在するためである。同じ salt-name reading でも、家族内のどの brand へ複製してよいかは cross-module tie-break の挙動に依存して結果が変わるため、alias family 単位の静的ルールだけでは安全性を判定できない。
@@ -418,6 +443,64 @@ S4-C（CI / git hook / build gate）の整備。
 **新規 module 開発へ戻ってよい最低到達点**: U-1〜U-3・U-4a・U-5・U-4b および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
 
 調査経緯・時点付き実測（D-1〜D-4 の再現結果、コード位置、commit 根拠）は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照する。上記 Decision に至った設計根拠（root cause の同定、two-axis model、discriminated union の採用理由、責務分離、invariant / audit 設計）は `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` を参照する。
+
+---
+
+### U-8: Deferred 再評価と Q-S2 の CLOSED 判定（Owner Decision・2026-08-13・確定）
+
+**`REMAINING_QS2 = 0`。Q-S2 を CLOSED とする。**
+
+**closure 条件の充足**（Architecture Review §11.2「新規 module 開発へ戻ってよい最低到達点」に照らして）
+
+| 条件 | 実測 |
+|---|---|
+| U-1〜U-3 / U-4a / U-5 / U-4b / U-7 完了 | ✅ `a263c69` / `edcdec0` / `79db20a` / `d74409b` / `8e52c3f` / `2106b4d` / `9afe714` |
+| 既存テスト維持 | ✅ 2820 pass / 0 fail |
+| Suite ⑦ / ⑧ 維持 | ✅ D-1・D-3 でメトホルミン単剤 1 位、D-2 でピオグリタゾン単剤 1 位を実測 |
+| multi-drug 維持 | ✅ 20 PASS / 0 FAIL |
+| 新規 audit が機能 | ✅ `npm run audit` 4 系統・35 module PASS。self-test で 4 FAIL / 1 CHECK の発火を確認 |
+| Runtime 検証 | ✅ REGRESSION 0（`6df37cc`。詳細は Architecture record §13.7） |
+
+**Deferred の最終分類**
+
+| 分類 | 件数 | 内訳 |
+|---|---|---|
+| **RESOLVED** | 4 | D-2 / D-3 / D-4（correctness）/ heparinoid handlingTags |
+| **TRANSFERRED_TO_U6** | 2 | D-1 の操作性 / U-6 本体（`denotation: 'module'` へ到達する 20 module の unresolved 停止） |
+| **TRANSFERRED_TO_Q_UX1** | 3 | D-4 の prefix `い` 表示枠脱落 / F-S3-1 / U-6 実施時の `limit=8` 干渉 |
+| **CLEANUP_FINDING** | 4 | F-RAPID-1 / F-EXP-1 / AddonPanel raw placeholder / untracked 参照文書 |
+| **REMAINING_QS2** | **0** | — |
+
+**heparinoid handlingTags の最終判断（Owner Decision #4 の結論）**
+
+`derm_heparinoid_moisturizer_ointment` の generic group 内不均質について、**データ修正は不要**と確定した。
+脱落する 4 タグ（`ointment` / `ointment_application` / `oily_cream` / `cream_application`）は剤形固有であり、
+交差集合に残る 6 タグは両剤形に等しく妥当な外用薬指導である。当該 module には
+`requiredTags` / `scenarioRequiredTags` が **1 件も存在しない**ため runtime 上の作用もない。
+剤形固有の指導が必要な場合は brand を直接選択すれば `denotation: 'brand'` として取得できる。
+`genericKey` を分割する修正はむしろ一般名検索の到達性（DP-09）を損なうため行わない。
+将来これらのタグが gate に使われた場合は U-7 の `GENERIC_GATE_TAG_DROPPED`（CHECK）が自動検出する。
+
+**U-6 の位置づけ**
+
+U-6（class-level query の generic group 展開）は **Q-S2 correctness 完了の必須条件ではない**。
+`denotation: 'module'` へ到達する 20 module（いずれも brand 複数・generic group 複数）では
+U-5 gate により誤った主語生成が構造的に阻止されており、correctness は達成済みである。
+U-6 は「候補は選べるが SOAP を作れない」行き止まりを解消する**検索 UX 改善**として、
+Q-S2 とは独立に実施を判断する。
+
+**cleanup Finding は Q-S2 の blocker ではない**
+
+F-RAPID-1（Rapid の式形。挙動差 0 件を実測）/ F-EXP-1（Express の `brandNames[0]` fallback。
+現データ 43/43 で到達不能）/ AddonPanel の raw placeholder ラベル / untracked 参照文書 は、
+いずれも BrandResolution の correctness / safety に影響しない。記録は `prompts/vNext/HANDOFF.md` §6 に置く。
+特に **F-EXP-1 の validator gap**（`expressModes[].defaultBrandName` が `moduleValidator` の
+必須フィールドでないため、将来の新規 module で fallback が再到達しうる）は、
+**別 Unit（cleanup / validator hardening）として切り出す**（Owner Decision OD-U8-1）。
+本 closure にコード変更は含めない。
+
+**本項目の保持方針**: Q-S2 は削除せず **CLOSED として索引・本文を保持する**（Owner Decision OD-U8-2）。
+索引欄の旧記載「実装完了時に本項目を移管・削除する」はこの方針へ更新済みである。
 
 ---
 

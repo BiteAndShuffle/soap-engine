@@ -686,6 +686,16 @@ vNext には対応する明示的なチェック項目がない。
 
 **別 Finding（今回変更しない）**: `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]`（brandKey）および `displayName ?? resolvedBrandKey ?? ''`（主語を brandKey から導出）も legacy fallback である。ただし Express は `DrugSuggestionItem` を経由せず、有効な express entry 全件が canonical JSON 側で `defaultBrandName` を明示宣言しているため、検索由来の brand 未確定とは性質が異なる。Q-S2 の U-4a / U-5 / U-4b 系列からは分離し、cleanup 候補として保持する。
 
+**Q-S2 CLOSED（U-8・2026-08-13）**: BrandResolution 系列（U-1〜U-7 + Runtime Preview 検証 + U-8 Deferred 再評価）は完了し、**`REMAINING_QS2 = 0`** で Q-S2 は CLOSED となった。本節が記録していた **F-3（`resolveDrugName()` SSOT バイパス）は解消済み**である。Deferred の最終分類・closure 条件・再発防止機構は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2「U-8」節（正本）および `docs/reviews/BRAND_RESOLUTION_ARCHITECTURE_2026-08-09.md` §13.9 を参照。
+
+**Q-S2 の blocker ではない残作業**（いずれも別工程として扱う）:
+
+- **U-6**（class-level query の generic group 展開）— correctness 完了の必須条件ではない。`denotation: 'module'` へ到達する 20 module で「候補は選べるが SOAP を作れない」行き止まりを解消する**検索 UX 改善**
+- **Q-UX1**（ranking / `limit=8` / candidate visibility）— 独立した Question。D-4 の prefix `い` 表示枠脱落・F-S3-1 を含む
+- **cleanup Finding** — 下記 F-RAPID-1 / F-EXP-1 / AddonPanel。いずれも BrandResolution の correctness / safety に影響しない
+
+**F-EXP-1 の validator gap（別 Unit 候補・Owner Decision OD-U8-1(c)）**: `lib/moduleValidator.ts` の `validateExpressModes` は `expressModes[].defaultBrandName` を**必須フィールドとしていない**（存在時のみ型・参照を検証）。現データは有効な express entry 43/43 が宣言済みで `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]` は**到達不能**だが、将来の新規 module が省略すると Q-S2 が排除した `brandNames[0]` anti-pattern が Express 経由で再入しうる。**Q-S2 の closure blocker とはせず、cleanup / validator hardening の独立 Unit として後日設計する。**
+
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
 
 ---
