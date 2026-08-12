@@ -676,6 +676,12 @@ vNext には対応する明示的なチェック項目がない。
 
 **進捗（Q-S2 U-5・2026-08-12）**: `denotation: 'module'`（指示対象が未確定）の状態から SOAP 生成・brand 固有解決へ進ませない安全 gate を導入した。あわせて `denotation: 'generic'` における brand 固有 `handlingTags` の取得を「`brandKeys` 全件の交差集合」へ改め、代表 brand fallback を production から除去した（`lib/brandTags.ts`）。**subject の算出方法は変更していないため、本 SSOT バイパスは引き続き未解決である**（U-4b の責務）。ただし `denotation: 'module'` は SOAP 生成へ到達不能になったため、U-4b が扱う subject 乖離は brand / generic の 6 パターンのみに縮小した。
 
+**解消（Q-S2 U-4b・2026-08-12）**: 検索由来候補の SOAP 主語は `BrandResolution` → `resolveSubjectFromResolution()` へ移行し、`drugDisplayLabel !== matchedBrandName` による主語推論は production から除去された。**本節が記録していた SSOT バイパス（検索由来経路）は解消済みである。** 意味論的変更は generic 6 module のみ（代表 brand 名 → 一般名）。
+
+ただし **`resolveDrugName()` は削除も deprecated 化もしていない**（Owner Decision S-1-A）。`BrandResolution` を持たない Express・legacy 非検索経路・test harness の resolver として引き続き使用する。production 呼出しは 3 件残り、すべて `?? resolveDrugName(...)` の形＝ resolution 由来 subject が無いときにのみ到達する分岐である。**「Repository 全体で削除済み」ではない。**
+
+**F-RAPID-1 の現状（U-4b 後）**: `rapidDrugName` の式形（`activeDrugDisplayNameRef.current ?? activeBrandName ?? ''`）は U-4b でも変更していない。ただし write-site 移行により `activeDrugDisplayName` が `resolution.subject` を保持するようになったため、**通常 SOAP / Rapid / S先頭文 / ADDON 再生成は同一の subject source を読む**。実測で挙動差は 0 件。式形の統一は cleanup Finding として保持する。
+
 **別 Finding（今回変更しない）**: `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]`（brandKey）および `displayName ?? resolvedBrandKey ?? ''`（主語を brandKey から導出）も legacy fallback である。ただし Express は `DrugSuggestionItem` を経由せず、有効な express entry 全件が canonical JSON 側で `defaultBrandName` を明示宣言しているため、検索由来の brand 未確定とは性質が異なる。Q-S2 の U-4a / U-5 / U-4b 系列からは分離し、cleanup 候補として保持する。
 
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。

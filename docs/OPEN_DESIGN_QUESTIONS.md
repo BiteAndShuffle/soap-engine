@@ -315,7 +315,7 @@ U-2  lib/search.ts が resolution を付与する                      ← 完�
 U-3  BrandResolution → subject resolver の実装                   ← 完了（consumer 0 件）
 U-4a resolution を production state へ保持する（plumbing only）   ← 完了
 U-5  SOAP 生成 / brand 依存処理の resolution gate                ← 完了
-U-4b legacy consumer を BrandResolution 契約へ移行する
+U-4b legacy consumer を BrandResolution 契約へ移行する           ← 完了
 U-7  invariant tests / audit
 U-6  class-level query の generic group 展開
 U-8  個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
@@ -372,6 +372,25 @@ U-1 の型契約が「`brandKeys` から特定の 1 件を選んで brand 固有
 **U-5 が行わないこと**: subject 算出方法の変更・`resolveDrugName()` の consumer 移行・
 Topbar 表示ラベルの変更（表示は `uiLabel` 責務として分離し、データアクセス用の
 `tagBrandKey` のみを安全化した）・Express 経路の変更・候補集合 / ranking の変更。
+
+**U-4b: SOAP subject source の移行（Owner Decision・2026-08-12・確定）**
+
+検索由来候補の SOAP 主語を、表示文字列と brand 名の比較（`drugDisplayLabel !== matchedBrandName`）
+による推論から `BrandResolution.subject` へ切り替えた。実装は primary / compose の
+**write site 2 箇所のみ**であり、consumer（primary 再構築 / node 再構築 / Rapid / S先頭文 /
+ADDON 再生成）は単一の write-site 値を読むため無変更である。
+
+| 項目 | 内容 |
+|---|---|
+| 正式な解決経路 | 検索由来 = `resolveSubjectFromResolution()` / Express・legacy 非検索経路 = `resolveDrugName()` |
+| `resolveDrugName()` | **削除も deprecated 化もしない**（Owner Decision S-1-A）。production 呼出しは 4 → 3 件へ減り、すべて `?? resolveDrugName(...)` の形＝ resolution 由来 subject が無い経路の分岐に限定される |
+| `subject === null` の扱い | 別値で埋めない。`denotation: 'module'` のみが該当し、U-5 gate により SOAP 生成へ到達しない。state 上は「主語の上書きなし」を `undefined`、node では「主語なし」を空文字で記録する（Owner Decision S-2-A） |
+| expected semantic delta | production 到達可能な変更は **generic の 6 パターン / 25 行 / 6 module のみ**。brand は 0 差分、module は gate 済みで SOAP に現れない。`tests/fixtures/subjectMigration.expected.json` に凍結 |
+| 変更対象 module | `dm_insulin_regular` / `dm_insulin_mixed_regular_intermediate` / `dm_insulin_intermediate` / `derm_heparinoid_moisturizer_{ointment,cream,lotion}` |
+
+**U-4b が行わないこと**: Express 経路の変更・`ComposeNode.resolvedDrugName` の削除・
+Rapid の式形統一（F-RAPID-1。cleanup Finding として保持）・test harness の移行・
+U-5 gate / `lib/brandResolution.ts` / `lib/search.ts` / `lib/brandTags.ts` / Topbar 表示の変更。
 
 **新規 module 開発へ戻ってよい最低到達点**: U-1〜U-3・U-4a・U-5・U-4b および U-7 が完了し、既存テスト・Suite⑦/⑧・multi-drug が維持され、新規 audit が機能した時点。
 

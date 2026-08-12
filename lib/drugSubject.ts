@@ -43,8 +43,14 @@ export function resolveDrugSubject(fields: SoapFields, drugName: string): SoapFi
 /**
  * モジュールの drug 情報と matchedBrandName から薬剤名を解決する。
  *
- * 通常UI・SOAP生成における薬剤名解決のSSOT。呼び出し元固有のフォールバック
- * ロジックを個別に書かず、常にこの関数を経由すること。
+ * **適用範囲（Q-S2 U-4b・2026-08-12 で明確化）**: `BrandResolution` を持たない経路
+ * ——Express（`handleExpressAdd`）・legacy 非検索経路・test harness——における
+ * 薬剤名解決の正本。呼び出し元固有のフォールバックロジックを個別に書かず、
+ * 常にこの関数を経由すること。
+ *
+ * **検索由来の候補（`DrugSuggestionItem`）には使用しない。** そちらは
+ * `resolveSubjectFromResolution()` が正本である（本ファイル下部）。
+ * 本関数は削除も deprecated 化もされていない。両者は入力の異なる別経路である。
  *
  * 優先順:
  *   1. matchedBrandName（サジェスト時のブランド選択 = 商品名）
@@ -68,10 +74,13 @@ export function resolveDrugName(
 /**
  * BrandResolution（`lib/brandResolution.ts`）から SOAP {{drug_subject}} を確定する。
  *
- * **移行状態（2026-08-09 時点）**: 本関数は Q-S2 の新しい正式契約として実装されたが、
- * production consumer の移行は未着手である（Unit U-4 の責務）。`app/components/DashboardClient.tsx`
- * は本関数を呼ばず、引き続き `resolveDrugName()`（legacy resolver）を経由している。
- * 本関数が production 上の唯一の SSOT となるのは、U-4 で consumer が移行した時点である。
+ * **検索由来候補の SOAP 主語はこの関数が正本である（Q-S2 U-4b・2026-08-12）。**
+ * `app/components/DashboardClient.tsx` の primary / compose の write site が本関数を経由し、
+ * 表示文字列や brand 名の比較から主語を逆算する経路は production から除去された。
+ *
+ * `BrandResolution` を持たない経路（Express・legacy 非検索経路・test harness）は
+ * 引き続き `resolveDrugName()` を使用する。両者は入力が異なる別経路であり、
+ * `resolveDrugName()` は削除も deprecated 化もされていない。
  * 詳細は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
  *
  * 実装原則:

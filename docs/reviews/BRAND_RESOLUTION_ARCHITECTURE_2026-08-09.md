@@ -477,3 +477,18 @@ production の判断入力になったことで、**primary context を切り替
 **primary context を切り替える各 transition のソース領域**に 4 つの state setter が
 揃っていることを検証する（用途差による false positive を避けるため、単純な呼び出し回数の
 一致では判定しない）。
+
+### 13.6 U-4b の完了記録（FACT・2026-08-12）
+
+§2.2 が root cause の症状として指摘した「候補の意味論をその表示文字列から逆算する推論」
+（`item.drugDisplayLabel !== item.matchedBrandName`）を、検索由来 production path から除去した。
+
+| 項目 | 内容 |
+|---|---|
+| 実装形 | **write site 2 箇所のみ**（`handleSelectDrugSuggestion` / `handleComposeDrugSelect`）。consumer（primary 再構築 / node 再構築 / Rapid / S先頭文 / ADDON 再生成）は単一の write-site 値を読むため無変更。これにより §9 の「同じ薬剤で subject source が異なる」状態が構造的に発生しない |
+| 解決経路 | 検索由来 = `resolveSubjectFromResolution()` / Express・legacy 非検索経路 = `resolveDrugName()`（Owner Decision S-1-A。削除も deprecated 化もしない） |
+| `resolveDrugName()` 呼出し | 4 → **3 件**。すべて `?? resolveDrugName(...)` の形であり、resolution 由来 subject が無い経路の分岐に限定される |
+| `subject === null` | 別値で埋めない。`denotation: 'module'` のみが該当し U-5 gate により到達しない（Owner Decision S-2-A） |
+| expected semantic delta | production 到達可能な変更は **generic 6 パターン / 25 行 / 6 module のみ**。brand 0 差分。module 58 行は gate 済みで SOAP に現れない。`tests/fixtures/subjectMigration.expected.json` に実装前に凍結し、T-U4b-12 が全 1572 行の一致を検証 |
+| 根本原因の確認 | 6 パターンすべてで `brandCatalog[brandNames[0]].displayGenericName` が `resolution.subject` と一致する。すなわち legacy の `resolveDrugName(drug, undefined)` は**正しい値を返していた**が、`displayNameForSubject` が `drugDisplayLabel`（= `brandNames[0]` = 商品名）で先回りして上書きしていた。U-4b の意味論的変更は **F-3 バイパスの除去と等価**である |
+| 検証 | tsc 0 / test 2789→2820（新規 31 件のみ増）/ audit 3 系統 PASS / multi-drug 20 PASS / build 成功 / 警告 18 件で同数 / golden projection 無変更 PASS |

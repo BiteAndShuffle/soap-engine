@@ -196,6 +196,8 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
   const ALLOWED = [
     // ── 型 import ──
     "import type { BrandResolution } from '../../lib/brandResolution'",
+    // ── U-4b: subject resolver の import ──
+    "import { resolveDrugSubject, resolveDrugName, resolveSubjectFromResolution } from '../../lib/drugSubject'",
     // ── U-4a: 保持 ──
     'const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)',
     'const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)',
@@ -217,8 +219,11 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     'const drugResolution = activeModuleData.drugResolution',
     'if (tagBrandKey && drugResolution) {',
     'for (const tag of drugResolution.brandToTags[tagBrandKey] ?? []) {',
+    // ── U-4b: subject を BrandResolution から解決（primary / compose の write site） ──
+    'const subject = resolveSubjectFromResolution(item.resolution)',
     // ── U-4a: 保持（primary / node） ──
     'setActiveResolution(item.resolution)',
+    "const nodeDrugName = resolveSubjectFromResolution(item.resolution) ?? ''",
     'resolution: item.resolution,',
     // ── U-5: lifecycle reset（Express primary 遷移で stale resolution を破棄） ──
     'setActiveResolution(undefined)',
@@ -247,12 +252,17 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     assert.deepEqual(reads, [], `activeResolutionRef.current が読み出されている: ${reads.join(' / ')}`)
   })
 
-  test('denotation / brandKey / resolveSubjectFromResolution がコードに出現しない', () => {
-    // U-5 でも維持される。denotation 分岐は lib/brandTags.ts に閉じており、
-    // DashboardClient は述語関数（isSubjectUnresolvedFor / resolveDataAccessBrandKey）
-    // のみを呼ぶ。resolveSubjectFromResolution の 0 件は U-4b 未実施のガードである。
+  test('denotation / brandKey がコードに出現しない（分岐は lib へ閉じている）', () => {
+    // U-5 / U-4b を通じて維持される。denotation 分岐は lib/brandTags.ts と
+    // lib/drugSubject.ts に閉じており、DashboardClient は述語関数・resolver
+    // （isSubjectUnresolvedFor / resolveDataAccessBrandKey / resolveSubjectFromResolution）
+    // のみを呼ぶ。
+    //
+    // **U-4b での意図的更新**: resolveSubjectFromResolution は U-4b で production の
+    // subject resolver になったため、本リストから外した（0 件ガードは U-4b 未実施の
+    // 検出用だった）。denotation / brandKey は引き続き 0 件である。
     const lines = codeLines(src).map(norm)
-    for (const token of ['denotation', 'brandKey', 'resolveSubjectFromResolution']) {
+    for (const token of ['denotation', 'brandKey']) {
       const hits = lines.filter(l => l.includes(token))
       assert.deepEqual(hits, [], `${token} が DashboardClient のコードに出現している: ${hits.join(' / ')}`)
     }
@@ -263,11 +273,22 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     assert.deepEqual(hits, [], `gate が subject を読んでいる: ${hits.join(' / ')}`)
   })
 
-  test('legacy subject resolver が引き続き production consumer を持つ（U-4b 未実施の確認）', () => {
-    // U-4a は consumer migration を行わない。resolveDrugName の呼び出しが残っていることを
-    // 積極的に固定し、「U-4a のつもりで U-4b を混ぜてしまう」ことを検出する。
+  test('legacy resolver は Express / legacy 非検索経路の分岐に限定されている（U-4b・Owner Decision S-1）', () => {
+    // **U-4b での意図的更新**: U-4a/U-5 では「4 件のまま」を U-4b 未実施のガードとして
+    // 固定していた。U-4b で検索由来 compose の 1 件が resolution 由来へ移行し 3 件になる。
+    //
+    // Owner Decision S-1-A により production 0 件化は U-4b の目標ではない。
+    // 代わりに「残る呼び出しがすべて `?? resolveDrugName(...)` の形、すなわち
+    // resolution 由来 subject が存在しないとき（Express / legacy 非検索経路）にのみ
+    // 到達する分岐であること」を固定する。
     const calls = codeLines(src).map(norm).filter(l => /resolveDrugName\(/.test(l))
-    assert.equal(calls.length, 4, `resolveDrugName の呼び出し数が U-4a 前提（4件）と異なる: ${calls.length}`)
+    assert.equal(calls.length, 3, `resolveDrugName の呼び出し数が U-4b 前提（3件）と異なる: ${calls.length}`)
+    const primarySource = calls.filter(l => !l.includes('?? resolveDrugName('))
+    assert.deepEqual(
+      primarySource,
+      [],
+      `resolveDrugName が fallback 分岐ではなく主 source として使われている: ${primarySource.join(' / ')}`,
+    )
   })
 })
 

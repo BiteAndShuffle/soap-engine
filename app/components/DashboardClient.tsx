@@ -6,7 +6,7 @@ import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
 import type { BrandResolution } from '../../lib/brandResolution'
 import { buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
-import { resolveDrugSubject, resolveDrugName } from '../../lib/drugSubject'
+import { resolveDrugSubject, resolveDrugName, resolveSubjectFromResolution } from '../../lib/drugSubject'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../../lib/search'
 import type { DrugSuggestionItem } from '../../lib/search'
 import {
@@ -1063,19 +1063,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
       setActiveModuleData(mod)
       setActiveBrandName(item.matchedBrandName)
-      // displayName が指定されている場合（Express GEモード等）はその名前を {{drug_subject}} に使う。
-      // 一般名検索時は drugDisplayLabel（一般名）が matchedBrandName（先発名）と異なるため、
-      // drugDisplayLabel を activeDrugDisplayName に設定して SOAP 主語・O欄に反映する。
-      // いずれも一致する場合（ブランド名検索）は undefined（activeBrandName にフォールバック）。
-      const displayNameForSubject =
-        item.displayName !== undefined && item.displayName !== item.matchedBrandName
-          ? item.displayName
-          : item.drugDisplayLabel !== undefined && item.drugDisplayLabel !== item.matchedBrandName
-            ? item.drugDisplayLabel
-            : undefined
-      setActiveDrugDisplayName(displayNameForSubject)
-      // U-4a: BrandResolution を production state へ保持する（plumbing のみ）。
-      // 上の displayNameForSubject / activeBrandName の算出には一切影響させない。
+      // U-4b: SOAP {{drug_subject}} は BrandResolution から解決する。
+      // 旧実装は drugDisplayLabel と matchedBrandName の文字列比較から意味論を逆算していたが、
+      // これは brandNames[0]（JSON の配列宣言順）を主語へ流す経路になっていた（F-3）。
+      //
+      // subject === null は denotation='module'（指示対象が未確定）のみ。この状態は U-5 gate に
+      // より SOAP 生成へ到達しないため、代替値を生成しない。undefined は「主語の上書きなし」を
+      // 意味する既存の state 表現であり、activeBrandName / drugDisplayLabel / brandNames[0] 等で
+      // 埋めてはならない（DP-15）。
+      const subject = resolveSubjectFromResolution(item.resolution)
+      setActiveDrugDisplayName(subject ?? undefined)
       setActiveResolution(item.resolution)
       setDrugSelected(true)
       setSelectedScenarioId(null)
@@ -1103,16 +1100,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     confirmDiscard(() => {
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
       const nodeId = `node-${Date.now()}-${Math.random().toString(36).slice(2)}`
-      // {{drug_subject}} に使う表示名を解決する。
-      // handleSelectDrugSuggestion と同じロジック:
-      //   一般名検索時 = item.drugDisplayLabel（一般名）が matchedBrandName（先発名）と異なる → 一般名を使用
-      //   先発名検索時 = matchedBrandName をそのまま使用（drugDisplayLabel と一致する）
-      // これにより、一般名で検索して合成しても {{drug_subject}} に正しい名前が入る。
-      const nodeDrugName = (() => {
-        if (item.displayName !== undefined && item.displayName !== item.matchedBrandName) return item.displayName
-        if (item.drugDisplayLabel !== undefined && item.drugDisplayLabel !== item.matchedBrandName) return item.drugDisplayLabel
-        return resolveDrugName(mod.drug, item.matchedBrandName)
-      })()
+      // U-4b: {{drug_subject}} は BrandResolution から解決する（primary と同一の契約）。
+      // subject === null は denotation='module' のみで、U-5 gate により scenario 確定へ
+      // 到達しないため node は pending のまま残る。代替値を生成しない（DP-15）。
+      // resolvedDrugName は Express node（BrandResolution を持たない）でも使われる既存 field
+      // であるため型は string を維持し、未確定は空文字（＝主語なし）として記録する。
+      const nodeDrugName = resolveSubjectFromResolution(item.resolution) ?? ''
       const newNode: ComposeNode = {
         id: nodeId,
         moduleId: mod.moduleId,
