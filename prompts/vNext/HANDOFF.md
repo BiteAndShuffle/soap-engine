@@ -682,6 +682,8 @@ vNext には対応する明示的なチェック項目がない。
 
 **F-RAPID-1 の現状（U-4b 後）**: `rapidDrugName` の式形（`activeDrugDisplayNameRef.current ?? activeBrandName ?? ''`）は U-4b でも変更していない。ただし write-site 移行により `activeDrugDisplayName` が `resolution.subject` を保持するようになったため、**通常 SOAP / Rapid / S先頭文 / ADDON 再生成は同一の subject source を読む**。実測で挙動差は 0 件。式形の統一は cleanup Finding として保持する。
 
+**別 Finding（Q-S2 とは無関係・cleanup 候補・2026-08-13 記録）**: `app/components/AddonPanel.tsx` はボタンラベルに `item.title ?? item.text` を描画する。`addons.items[].text` に `{{drug_subject}}` を含む addon（例: `dm_insulin_regular` の `addon_initial_sickday_guidance`）では、**ADDON パネルのラベル上に raw placeholder がそのまま見える**。ADDON を ON にして **SOAP 本文へ挿入される際は正しく薬剤名へ置換される**ことを Runtime Preview で確認済みであり、**clinical content の correctness ではなく UI ラベル表示のみの問題**である。`AddonPanel.tsx` は Q-S2 の全 commit（U-1〜U-4b）で未変更であり、**U-4b 起因ではない**。本 Unit では修正しない。
+
 **別 Finding（今回変更しない）**: `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]`（brandKey）および `displayName ?? resolvedBrandKey ?? ''`（主語を brandKey から導出）も legacy fallback である。ただし Express は `DrugSuggestionItem` を経由せず、有効な express entry 全件が canonical JSON 側で `defaultBrandName` を明示宣言しているため、検索由来の brand 未確定とは性質が異なる。Q-S2 の U-4a / U-5 / U-4b 系列からは分離し、cleanup 候補として保持する。
 
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。

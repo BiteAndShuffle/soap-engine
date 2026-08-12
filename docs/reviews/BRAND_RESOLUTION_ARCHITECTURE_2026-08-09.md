@@ -492,3 +492,40 @@ production の判断入力になったことで、**primary context を切り替
 | expected semantic delta | production 到達可能な変更は **generic 6 パターン / 25 行 / 6 module のみ**。brand 0 差分。module 58 行は gate 済みで SOAP に現れない。`tests/fixtures/subjectMigration.expected.json` に実装前に凍結し、T-U4b-12 が全 1572 行の一致を検証 |
 | 根本原因の確認 | 6 パターンすべてで `brandCatalog[brandNames[0]].displayGenericName` が `resolution.subject` と一致する。すなわち legacy の `resolveDrugName(drug, undefined)` は**正しい値を返していた**が、`displayNameForSubject` が `drugDisplayLabel`（= `brandNames[0]` = 商品名）で先回りして上書きしていた。U-4b の意味論的変更は **F-3 バイパスの除去と等価**である |
 | 検証 | tsc 0 / test 2789→2820（新規 31 件のみ増）/ audit 3 系統 PASS / multi-drug 20 PASS / build 成功 / 警告 18 件で同数 / golden projection 無変更 PASS |
+
+### 13.7 Runtime Preview 検証記録（RUNTIME-VERIFIED・2026-08-13）
+
+> Q-S2 / BrandResolution 基盤が、静的検証（tsc / test / audit）だけでなく
+> **実際にアプリを操作した挙動としても確認済み**であることを記録する。
+> `docs/IMPLEMENTATION_CHECKLIST.md`「Runtime / 実機横断確認」に相当する工程である。
+
+**実施条件**
+
+| 項目 | 値 |
+|---|---|
+| 対象 commit | **`2106b4d`**（U-4b 完了時点。画面右下の `BUILD:` 表示で照合） |
+| 実施環境 | `npm run dev`（localhost:3000）。production deploy は行っていない |
+| localhost 検証が成立した理由 | 認証は `middleware.ts` の Basic 認証であり、`BASIC_AUTH_USER` / `BASIC_AUTH_PASS` **未設定時は fail-open**（`NextResponse.next()`）。`.env.local` に両変数は未定義。`app/components/LockGate.tsx` は §10.2 Legacy 台帳登録済みで `app/` / `lib/` からの import 0 件のため作用しない（`docs/reviews/CTO_DUE_DILIGENCE_PHASE1_2026-07-25.md` §303 の記述と一致） |
+
+**検証結果**
+
+| 区分 | 実施ケース | 判定 |
+|---|---|---|
+| brand | `リベルサス` / `ジャヌビア` | **PASS**（subject・scenario 一覧・ADDON・Topbar とも変化なし） |
+| generic | `ヒトインスリン`→`dm_insulin_regular`＝`インスリンヒト` / `中間型インスリン製剤`→`dm_insulin_intermediate`＝`イソフェンインスリン` / `ヒルドイド軟膏`＝`ヘパリン類似物質油性クリーム` / `保湿`→cream＝`ヘパリン類似物質クリーム` | **EXPECTED DELTA**（§13.6 の 6 パターンのうち 4 を実機確認） |
+| generic（不変ケース） | `シタグリプチン`→`dm_dpp4_oral`＝`シタグリプチン` | **PASS** |
+| module unresolved | `SGLT2阻害薬` / `花粉症` / `ろいことりえん` | **PASS**。グループ 10 件すべて `aria-disabled="true"` かつ `onClick` が no-op、`textarea` 0 個（SOAP 生成不可）、`{{drug_subject}}` の本文露出なし、`brandNames[0]` への silent fallback なし、`editorGuide` に「成分が特定できていません」を表示 |
+| compose | generic + generic（ヘパリン軟膏 + ヒトインスリン）／ module unresolved を compose 追加 | **PASS**。node ごとに subject が独立、cross-node leakage なし、module unresolved node は pending 維持で primary SOAP を破壊しない |
+| Rapid / S先頭文 | generic 候補で ADDON 再生成・S 先頭文トグル | **PASS**。いずれも通常 SOAP と同一 subject（`インスリンヒト` / `イソフェンインスリン`） |
+| generic handlingTags | `シタグリプチン` で `dpp4_standard_titration` gated の増量シナリオ 3 件が表示 | **PASS**（§13.5 の交差集合が代表 brand 方式と同結果） |
+| Express | GE モード＝`ヘパリン類似物質油性クリーム` / 先発モード＝`ヒルドイドソフト軟膏` | **PASS**（U-4b 前から挙動不変） |
+| Topbar | 全ケース | **PASS**（`ノボリンR｜インスリンヒト｜速効INS` 等、U-4b 前と同一） |
+
+**REGRESSION: 0 件。Runtime Preview 総合判定: PASS。**
+
+**未実機確認（blocker としない）**
+
+`保湿`→lotion と `ヒトインスリン`→`dm_insulin_mixed_regular_intermediate` の 2 パターンは実機未確認である。
+blocker としない根拠: いずれも実機確認済みの cream / `dm_insulin_regular` と**同一のコード経路**（同じ write site・同じ `resolveSubjectFromResolution`）であり、
+かつ `tests/brandResolutionSubjectMigration.test.ts` T-U4b-12 が **全 1572 候補行を fixture と完全一致で照合**しているため、
+値の正しさは機械的に担保されている（Owner 承認済み）。
