@@ -12,6 +12,10 @@ version: 2.0
 `docs/DEVELOPMENT_STANDARD.md` §7 Documentation Map は文書地図であり、
 いずれも読込順序の正本ではない。
 
+**入口ファイル（`CLAUDE.md` / `README.md`）は本ファイルを指す 1 行の pointer のみを持つ。**
+Repository を初めて開く AI・開発者がこのファイルへ到達するための経路であり、
+Base / Overlay の内容を複製しない。したがって「何を読むか」の定義は本ファイルにのみ存在する。
+
 ## When to use
 
 SOAP Engine に対する作業を新規チャットで開始するとき（作業種別を問わない）。

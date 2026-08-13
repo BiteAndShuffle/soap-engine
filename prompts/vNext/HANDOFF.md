@@ -1,7 +1,7 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-07-05（Q-S1/O field修正・多剤合成テスト正式化を反映）  
+最終更新: 2026-08-13（Phase 1 監査由来 Finding の移設・再開 Trigger の明示を反映）  
 対象ブランチ: `feat/nlp-input-panel-and-new-schema`  
 リポジトリ: `/Users/AdNauseumTendrils/Desktop/soap-engine`
 
@@ -690,8 +690,9 @@ vNext には対応する明示的なチェック項目がない。
 
 **Q-S2 の blocker ではない残作業**（いずれも別工程として扱う）:
 
-- **U-6**（class-level query の generic group 展開）— correctness 完了の必須条件ではない。`denotation: 'module'` へ到達する 20 module で「候補は選べるが SOAP を作れない」行き止まりを解消する**検索 UX 改善**
-- **Q-UX1**（ranking / `limit=8` / candidate visibility）— 独立した Question。D-4 の prefix `い` 表示枠脱落・F-S3-1 を含む
+- **U-6**（class-level query の generic group 展開）— correctness 完了の必須条件ではない。`denotation: 'module'` へ到達する 20 module で「候補は選べるが SOAP を作れない」行き止まりを解消する**検索 UX 改善**。
+  **再開 Trigger**: `docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1 の方針（選択肢 A/B/C）が Owner により決定された時点。U-6 は候補**集合**を変える唯一の Unit であり `limit=8` の配分と干渉するため、Q-UX1 の方針決定前に着手しない（依存は一方向。Q-UX1 は U-6 なしで単独実施できる）
+- **Q-UX1**（ranking / `limit=8` / candidate visibility）— 独立した Question。D-4 の prefix `い` 表示枠脱落・F-S3-1 を含む。**再開 Trigger** は同 Q-UX1「推奨判断タイミング」（実機で表示枠脱落が実害として確認された時点）
 - **cleanup Finding** — 下記 F-RAPID-1 / AddonPanel。いずれも BrandResolution の correctness / safety に影響しない（F-EXP-1 は U-EXP1 で解消済み。下記参照）
 
 **F-EXP-1 は解消済み（U-EXP1・2026-08-13）**: ACTIVE な Express エントリ（`enabled === true && disabled !== true`）に対し `defaultBrandName` / `defaultScenarioId` / `sortOrder` を必須とする契約を、`docs/JSON_STANDARD.md` JS-expressModes（正本）・`lib/moduleValidator.ts`（詳細診断）・`scripts/audit-brand-resolution-safety.ts`（exit code による enforcement）の 3 層で機械化した。canonical JSON・bridge・runtime はいずれも変更していない。`handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]` は runtime に残置しており（削除すると `{{drug_subject}}` が未解決のまま SOAP 本文へ露出するため）、到達不能な safety net として扱う。
@@ -710,6 +711,66 @@ vNext には対応する明示的なチェック項目がない。
 **`expressModes[].genericDisplayName` の必須性は未確定（Finding・U-EXP1 で判断保留）**: `docs/JSON_STANDARD.md` JS-expressModes は本フィールドを `enabled: true` のエントリに設定するものとして記載する一方、`lib/types.ts` / `ThirdPanel.tsx` の JSDoc は「省略時は `label` をそのまま使用する」と optional を明示しており、両者が食い違う。実測では `enabled: true` の 59 件すべてが宣言済み（`enabled: false` の 86 件は 0 件）で、runtime の参照箇所はすべて `?? label` の fallback を持ち、SOAP 主語へは到達しない（表示ラベル専用）。**述語も fallback の安全性も上記 3 フィールドと異なるため、U-EXP1 の invariant には含めていない。** 必須化するか optional と確定するかは Owner Decision を要する。
 
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
+
+## Phase 1 監査（2026-07-25）由来の未解消 Finding
+
+`docs/reviews/CTO_DUE_DILIGENCE_PHASE1_2026-07-25.md` §6 の所見のうち、**未解消のまま量産フェーズへ
+持ち越すもの**を本節へ移した（初出の根拠・再現手順は同記録が正本。同記録は historical evidence 層に
+あり読込経路から到達しないため、現在の状態と再開 Trigger は本節が持つ）。
+
+**M-1: bridge STATUS 状態機械が実データで維持されていない**
+
+`prompts/RULES.md` §24 は `HEADER_ONLY → DRAFT → FROZEN_FOR_PN1 → JSON_COMPLETE` を定めるが、
+canonical JSON 化・registry 登録が済んだ bridge の大半が `JSON_COMPLETE` へ遷移していない。
+STATUS 記載自体がない bridge（§24 制定前に作られたもの）もある。**canonical / runtime / correctness の
+いずれにも影響しない**が、`prompts/RULES.md` §24 の「PN1 開始条件」判定に使う値であるため、
+量産中は module 追加のたびに乖離が 1 件ずつ増える。現在の分布は
+`grep -H "STATUS: " bridges/*.md` の実行結果を正本とする（本節は件数を保持しない）。
+
+> **再開 Trigger**: 次のいずれか。① 次の薬効領域が Domain Complete（`docs/DEVELOPMENT_STANDARD.md` §8）
+> に到達する時点 ② STATUS 値を根拠に PN1 の開始可否を判断する場面が実際に発生した時点
+> ③ Owner が bridge STATUS の一括是正を指示した時点（**STATUS 行の変更には Owner の明示指示が必要**。
+> RULES §24「Claude が自主的に降格させてはならない」「変更してよいのは Owner が明示的に状態遷移を
+> 指示した場合のみ」）。監査を機械化する場合は `scripts/audit-bridge-status.ts` 相当を
+> `npm run audit` へ追加する案が同監査記録 §11.1 T-4 に記録されている
+
+**M-4: `as unknown as ModuleData` による型境界の迂回**
+
+`data/modules/index.ts` は各 JSON を `as unknown as ModuleData` でキャストしており、**module 1 件につき
+1 箇所ずつ増える**。`tsc` は JSON の構造を検査しない。当初監査は「量産再開前」の対応を推奨していた。
+
+ただし当時と異なり、構造整合は現在**機械的に担保されている**: `lib/moduleValidator.ts`（37 check）/
+`lib/crossModuleValidator.ts` / `npm run audit` 4 系統 / `tests/moduleRegistry.test.ts`（登録漏れ検出）/
+`tests/moduleValidator.test.ts`（全 module ERROR 0 の invariant）。**型が担保するはずだった範囲は
+これらが代替しているため、キャスト自体は現時点で欠陥として顕在化していない。**
+
+> **再開 Trigger**: 次のいずれか。① **validator / audit / test のいずれでも検出できない構造欠陥が
+> 1 件でも実測された時点**（＝機械担保に穴があると判明した時点） ② canonical JSON のスキーマを
+> 外部（他ツール・API・SaaS）へ公開する必要が生じた時点（Phase 3〜4） ③ Owner が
+> スキーマ進化戦略（JSON Schema / zod 導入）に着手すると判断した時点。
+> **「キャストが 35 件ある」こと自体は再開理由にならない**（件数は module 数の従属変数であり、
+> 欠陥の指標ではない）
+
+**その他の Phase 1 所見の所在**: H-1 / H-2（persona バグとテスト）は解消済み（`37a9262` /
+`tests/personaState.test.ts`）。H-4（正本の陳腐化）は変更契機・Lifecycle・読込経路の制度化により解消。
+H-3（CI / ブランチ戦略・本文書での通称 S4-C）は **`docs/OPEN_DESIGN_QUESTIONS.md` Q-E の E-3
+（main の位置づけ）が回答されるまで着手条件が揃わない**。M-2（認証境界）は Phase 3〜4、
+M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当へ後退、M-5（DashboardClient の状態集中）は
+保守者が増える時点（Phase 3）。E-1〜E-7 の現在状態は `docs/OPEN_DESIGN_QUESTIONS.md` Q-E が正本。
+
+## 任意 cleanup（correctness blocker ではない）
+
+次は **BrandResolution / canonical / runtime の correctness・safety のいずれにも影響しない**。
+精密な再開 Trigger を定義せず、**任意の cleanup** として扱う。関連箇所へ触れる作業が発生した際に
+ついでに処理してよく、単独で工程化する必要はない。
+
+| Finding | 内容 |
+|---|---|
+| F-RAPID-1 | `rapidDrugName` の式形が未統一（挙動差 0 件を実測済み） |
+| AddonPanel raw placeholder | ADDON ボタンのラベルに `{{drug_subject}}` が見える（SOAP 本文では正しく置換される。UI ラベルのみ） |
+| F-EXP-2 | legacy 単数 `expressMode`（使用 0 件・runtime 分岐残存・validator 検査 0）。**ただし将来 module が採用すると anti-pattern が再入するため、廃止判断のみ別 Unit として保持する** |
+| `genericDisplayName` の必須性 | `JSON_STANDARD` と `lib/types.ts` の記述が不一致。Owner Decision を要する |
+| L-1 AddonPanel GROUP_LABELS | 未登録グループのラベルが英語のまま表示される（本節冒頭の項を参照） |
 
 ---
 

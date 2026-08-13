@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-07-26
+最終更新: 2026-08-13
 
 ---
 
@@ -24,6 +24,7 @@ SOAP Engine — 設計保留事項
 | Q-S1 | 一般名検索が module 単位 `exactAlias` 命中時に `brandNames[0]` へ縮退する検索ロジック | 🟡 中 | brandCatalog.aliases への一般名フルストリング拡張、または `lib/search.ts` 横断修正の要否を判断する時 |
 | Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | **✅ CLOSED**（2026-08-13） | **完了**。U-1〜U-7 + Runtime Preview + U-8 再評価により correctness / safety を達成。**削除せず historical record として保持する**（設計判断と closure 根拠を将来再構成できるようにするため） |
 | Q-UX1 | short-prefix 検索時の limit 内候補配分・ranking（F-S3-1） | 🟢 低 | 表示枠拡張または bucket 別最低保証の要否を判断する時 |
+| Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
 優先度の凡例:
 - 🔴 要判断: 新規 module 追加前に確定が必要
@@ -342,8 +343,8 @@ U-4a resolution を production state へ保持する（plumbing only）   ← �
 U-5  SOAP 生成 / brand 依存処理の resolution gate                ← 完了
 U-4b legacy consumer を BrandResolution 契約へ移行する           ← 完了
 U-7  invariant tests / audit                                     ← 完了
-U-6  class-level query の generic group 展開
-U-8  個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質）
+U-6  class-level query の generic group 展開                      ← 未実施（Q-S2 の blocker ではない）
+U-8  個別 Finding 再評価（D-1〜D-3 / heparinoid handlingTags 不均質） ← 完了
 ```
 
 **U-4 を U-4a / U-4b へ分割し、U-5 を両者の間へ置く（Owner Decision・2026-08-12）**
@@ -533,6 +534,40 @@ Runtime確認・実機横断確認（`docs/IMPLEMENTATION_CHECKLIST.md`）でこ
 
 **現時点の扱い**
 選択肢C（現状維持）。DP-09違反ではなくranking/UX品質issueとして記録し、Deferredのまま維持する。
+
+---
+
+## Q-E: Phase 1 監査由来の未回答事項（E-1〜E-7）
+
+**論点**
+`docs/reviews/CTO_DUE_DILIGENCE_PHASE1_2026-07-25.md` §9 が「Phase 2 前に必要」として列挙した
+7 件の UNKNOWN である。いずれも**環境・運用・体制に関する Owner 回答**を要し、コードやデータからは
+判定できない。同記録は historical evidence 層にあり読込経路から到達しないため、**現在の状態を
+追跡する正本を本節へ移した**（初出の観測内容は同記録 §9 が正本）。
+
+**本節の性格**
+
+- 本節は **状態の追跡のみ**を行う。**回答そのものを本節で創作しない**
+- historical review にしか存在しない検討内容を、Owner の確認なしに current decision へ昇格させない
+- 回答が得られた項目は、その内容を適切な living SSOT（設計原則・標準・Roadmap 等）へ記載し、
+  本表の状態を ANSWERED に更新して pointer を張る
+
+**現在の状態**
+
+| ID | 内容 | 状態 | Trigger（いつ回答が必要になるか） |
+|---|---|---|---|
+| **E-1** | Vercel 環境変数の設定状況（`BASIC_AUTH_USER` / `BASIC_AUTH_PASS`）と本番 / Preview URL の公開範囲。実効的な認証境界が不明 | **OPEN** | Phase 3（第三者提供）着手時。または本番 URL を Owner 以外へ共有する時点。**現状の実装は `middleware.ts` が両変数未設定時に fail-open**（コードで確認可能な事実。方針の是非は未回答） |
+| **E-2** | 利用実態（利用者数・端末・ブラウザ、電子薬歴側へのコピー運用） | **OPEN** | Phase 2 の実運用開始時。運用要件の確定に必要 |
+| **E-3** | `main` ブランチの位置づけと Vercel が追跡するデプロイブランチ | **OPEN** | **CI 導入（S4-C）の前提。** CI を設計する時点で回答が必要 |
+| **E-4** | NLP 生成の将来方針（外部 LLM API 前提か、ローカル完結か） | **OPEN** | NLP 経路の Lifecycle を確定する時点（`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-1 の解消条件と連動）、または Phase 4（SaaS）設計着手時。**外部 LLM を選ぶ場合、患者テキストが初めて信頼境界を越える**（同記録がセキュリティ上の最大の分岐点と位置づけた項目） |
+| **E-5** | 旧体系（`prompts/P0-A.md`〜`P5.md` / `docs/BOOTSTRAP_STANDARD.md` / `docs/P*_STANDARD.md`）の保守方針（凍結アーカイブ化の可否） | **OPEN** | 旧体系資産の Lifecycle を確定する時点（§10.2 Legacy の L1〜L7 判定）。**運用上の扱いは `prompts/PROJECT_CONTEXT.md` §10 が「新規作業では使用しない」と既に定めている**が、Lifecycle State としては未分類 |
+| **E-6** | bridge 原稿の知財・医学的責任の整理（執筆者・監修体制・改訂責任） | **OPEN** | **Phase 3（Productization）の完了条件。** 第三者提供を意思決定した時点で回答が必要 |
+| **E-7** | 長期構想機能（粉砕可否・腎機能等）の優先順位と次の着手領域 | **OPEN** | 次の薬効領域を決定する時点（MODULE EXPANSION = GO 判定後）。**領域の既定方針は `docs/DEVELOPMENT_STANDARD.md` §8 が「次の点眼領域から」と記載**しているが、着手対象としては未確定 |
+
+**ANSWERED は現時点で 0 件である。** 7 件すべてが Owner 回答待ちであり、Repository 内に回答の記録は存在しない。
+
+**Phase との対応**: E-3 は Phase 2 の CI 整備、E-1 / E-6 は Phase 3、E-4 は Phase 4 に対応する
+（`docs/DEVELOPMENT_STANDARD.md` §12）。E-2 / E-5 / E-7 は Phase 2 で必要になる。
 
 ---
 

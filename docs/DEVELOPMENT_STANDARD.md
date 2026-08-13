@@ -5,7 +5,7 @@ SOAP Engine プロジェクト全体構造の最上位文書。
 **この文書の性格**
 本文書は、既存の正本文書を横断・要約する索引であると同時に、プロジェクト運営規則（工程完了条件・設計資産ライフサイクル等）を定義する文書です。「プロジェクト全体を一枚で理解できる入口」として機能します。個別の判断基準・型定義・工程実行手順の正本は、各節が参照する既存文書側にあります。本文書の記述と参照先文書の記述が食い違う場合、個別の判断基準については常に参照先（既存の正本文書）が優先します。
 
-最終更新: 2026-07-26
+最終更新: 2026-08-13
 
 ---
 
@@ -19,7 +19,7 @@ SOAP Engine プロジェクト全体構造の最上位文書。
 
 本文書が提供するのは、どの文書が存在し何を扱うかの索引（§7 Documentation Map）と、
 プロジェクト運営規則（§8 Domain Completion / §9 Future Domain Expansion /
-§10 設計資産ライフサイクル）です。
+§10 設計資産ライフサイクル / §12 Product Phase Roadmap）です。
 
 ---
 
@@ -36,6 +36,8 @@ SOAP エンジンは、日本の調剤薬局・薬剤師向けの **SOAP 形式�
 現在は糖尿病領域のモジュール群が稼働中ですが、目標は単発領域の実装ではなく、**内服・外用・
 点眼・点鼻・吸入・注射・漢方など 50〜300+ モジュールの量産に耐える基盤を作ること**です
 （詳細: `prompts/PROJECT_CONTEXT.md` §1）。
+
+**この Vision へ至る段階と、いま何段目にいるかは §12 Product Phase Roadmap が定めます。**
 
 ---
 
@@ -188,7 +190,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 |---|---|
 | `prompts/PROJECT_CONTEXT.md` | 現在のフェーズ・進捗・プロジェクト概要を確認するとき |
 | `prompts/RULES.md` | 横断ルール辞書。禁止事項・ERROR/PENDING/CHECK定義・型変換表・matchPolicy変更ルール等 |
-| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-17。DP-06 / DP-14 は欠番） |
+| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-18。DP-06 / DP-14 は欠番） |
 | `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」。**Canonical Requirement Class（JS-A〜JS-E）の正本**。Lifecycle State との直交性は JS-00 |
 | `docs/OPEN_DESIGN_QUESTIONS.md` | まだ決めていないこと（保留事項と判断タイミング） |
 | `docs/VALIDATOR_STANDARD.md` | Validatorが何を保証し、何を保証しないか。errorCode一覧 |
@@ -204,6 +206,43 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 | `prompts/vNext/AUTORUN.md` | PN3A〜PN8自動連続実行の制御ルール・MUST_STOP条件 |
 | `prompts/vNext/PN1-Text-Extraction.md` 〜 `PN8-Build-Runtime-Release.md` | 各工程の実行プロンプト正本 |
 | `prompts/P0-A.md` 〜 `prompts/P5.md` | 旧体系の実行プロンプト正本 |
+| `CLAUDE.md` / `README.md` | Repository の入口。**STARTUP_PROMPT を指すだけの経路案内**であり、設計・ルール・現在地は持たない |
+| **`docs/reviews/`（Historical Evidence / Review Layer）** | **過去の調査・設計判断の根拠・検証記録を確認するとき。**〔下記 7.1〕 |
+
+### 7.1 Historical Evidence / Review Layer（`docs/reviews/`）
+
+**この層は正本ではない。** Current State / Norm / Requirement を決定する authority は、上表の
+living SSOT（`docs/` 直下の各標準文書・`prompts/` 配下の各正本）にのみ存在する。
+
+| この層が保持するもの | この層が保持しないもの |
+|---|---|
+| **historical evidence** — ある時点で何を観測したかの事実固定（実測値・commit・再現手順） | 現在の仕様・現在の値・現在地 |
+| **decision rationale** — 確定済み Owner Decision に至った検討経緯と不採用案の理由 | 新しい設計判断（各記録が §0 で自ら禁止している） |
+| **verification record** — 実機検証・監査の実施記録 | 正本の代替。記録の失効は正本の有効性に影響しない |
+
+**読み方の規律**
+
+- 記録の内容と現在の実装が食い違う場合、**常に living SSOT と実装が優先する**。記録側は
+  「その時点ではそうだった」という事実として読む（記録を根拠に現在の仕様を主張しない）
+- 各記録は冒頭 §0 に自身の性格（対象 commit・正本ではない旨・失効条件）を宣言している。
+  **まず §0 を読むこと**
+- **historical review の本文を後から書き換えない。** 誤りが判明した場合は、当該記録へ
+  訂正追記節を設けるか、living SSOT 側を更新して pointer を張る
+- この層の記録は原則として `npm run audit` / `npm test` の対象ではない（実装ではないため）
+
+**主な記録の所在**
+
+| ディレクトリ / 記録 | 内容 |
+|---|---|
+| `docs/reviews/CTO_DUE_DILIGENCE_PHASE1_2026-07-25.md` | 2026-07-25 時点の全体技術監査。所見 H/M/L 群・未回答事項 E-1〜E-7 の初出（**E 群の現在の状態は `docs/OPEN_DESIGN_QUESTIONS.md` Q-E が正本**） |
+| `docs/reviews/f1/` | F-1（module 配信・ロード構造）の設計・実装・検証。**配布形態別アーキテクチャと SaaS 設計の検討経緯**を含む |
+| `docs/reviews/BRAND_RESOLUTION_*` | Q-S2（brand resolution safety）の調査記録と設計根拠 |
+| `docs/reviews/persona/` | Persona 文書整合の実行記録 |
+| `docs/reviews/P1_S2B_*` / `P1_S2_CHECK1_*` / `P1_W2_*` | Lifecycle・工程整備の設計と実行記録 |
+| `docs/reviews/STARTUP_PATH_ALIGNMENT_*` / `INFORMATION_ARCHITECTURE_*` | 読込経路・情報アーキテクチャの Owner Decision（OD-R 群 / Decision 1〜3）の実行記録 |
+| `docs/reviews/PHASE2_STAGE1_*` | Phase 2 Stage 1 の実機検証記録と CTO レビュー |
+
+一覧・件数は保持しない（`ls docs/reviews/` を正本とする）。
 
 ---
 
@@ -662,3 +701,74 @@ Classification Pending → §10.2 Legacy / §10.3 Future Expansion / Archived
 `docs/DESIGN_PRINCIPLES.md` DP-11 の 2 箇所のみであり、内容は同一で二重管理されていた。
 一方、索引・台帳・実測値の drift は複数箇所で観測されており、drift の発生箇所と変更契機が
 未定義の箇所が一致していた。
+
+---
+
+## 12. Product Phase Roadmap
+
+**本節は「プロダクトがどの段階を通って Vision（§1）へ至るか」と「いま何段目にいるか」の正本である。**
+
+現在地（Current Focus）の記述は `prompts/PROJECT_CONTEXT.md` が持つ。本節は Phase の**定義・完了条件・
+遷移 Trigger（Norm）**のみを持ち、現在地・進捗率・残課題の一覧は保持しない。
+
+### 変更契機
+
+| 区分 | 内容 |
+|---|---|
+| 起点 | ① Phase の追加・削除・統合・名称変更を行った<br>② いずれかの Phase の目的・完了条件・遷移 Trigger を変更した<br>③ Phase 遷移が実際に発生した（Owner が次 Phase への移行を宣言した）<br>④ 本節が pointer として指す正本のパス・節番号を変更・移動した |
+| 更新対象 | ①②の場合 — 当該 Phase 行、および §12.3 の責務分離表との整合<br>③の場合 — **本節は現在地を持たないため更新しない。** `prompts/PROJECT_CONTEXT.md` の Current Focus を更新する<br>④の場合 — pointer 先 |
+| 対象外 | 個別 Finding・Deferred 項目の内容（正本は §12.4 の pointer 先）。**本節へ backlog を複製しない** |
+| 検証 | 本節に件数・進捗・個別 Finding の一覧が存在しないこと。pointer 先がすべて実在すること |
+
+### 12.1 Phase 定義
+
+| Phase | 名称 | 目的 |
+|---|---|---|
+| **Phase 0** | Foundation / Architecture Baseline | bridge→JSON→runtime の 3 層 SSOT、検証体系、文書アーキテクチャを成立させる |
+| **Phase 1** | **Static / Local First** | **開発者本人が実務で使用できる静的版を成立させる** |
+| **Phase 2** | Module Expansion / Real-world Operation | canonical module を増やし、実際の薬局業務で継続使用する |
+| **Phase 3** | Productization | 第三者へ提供できる製品として整える |
+| **Phase 4** | SaaS | 外部ユーザー・複数店舗・ネットワーク利用を前提とする |
+| **Phase 5** | Scale | module 数・ユーザー数・店舗数等が大きく増えた状態 |
+
+### 12.2 完了条件と遷移 Trigger
+
+| Phase | 主な完了条件 | 次 Phase へ進む Trigger |
+|---|---|---|
+| **0** | 3 層 SSOT が成立し、`npx tsc --noEmit` / `npm test` / `npm run audit` / `npm run build` が再現可能な検証体系として機能する。読込経路の正本と Documentation Map が存在し、Repository 単独で現在地を復元できる | 上記が成立し、Repository のみを入力とする新規セッションが現在地・次工程・Deferred を復元できることを確認した時点 |
+| **1** | 静的版が実際にビルドでき、開発者本人の実務環境で SOAP 生成・検索・多剤合成が動作する。配布・起動手順が Repository から再現できる | **Owner が「静的版で実務を開始できる」と判断した時点。** あわせて `EXPORT_STATIC` 経路の Lifecycle を §10.3 F3 条件に照らして再判定する |
+| **2** | 対象領域が Domain Complete（§8）に到達し、実務で継続使用されている。module 追加が検証体系の中で完結する | Owner が第三者提供を意思決定した時点 |
+| **3** | 認証境界が実効化され、コンテンツの責任体制（執筆・監修・改訂）が定義されている。Owner 以外が保守・利用できる状態 | Owner が外部ユーザー提供（SaaS）を意思決定した時点 |
+| **4** | 複数ユーザー・複数店舗での利用が成立し、entitlement / 課金 / 配信境界が動作する | 利用規模が単一構成で扱えなくなった時点 |
+| **5** | — | — |
+
+**Phase の遷移は自動ではない。** 前 Phase の完了条件を満たしたことを Owner が確認して初めて次へ進む。
+**Phase は排他ではない。** 後続 Phase の設計検討を先行させてよいが、実装の優先順位は現在 Phase が持つ。
+
+### 12.3 Persona Project の段階定義との責務分離
+
+`docs/PERSONA_PROJECT_PRINCIPLE.md` §3 は Persona Project 固有の三段階（第1段階〜第3段階）を定める。
+**これは Product Phase Roadmap とは別軸であり、混同してはならない。**
+
+| 軸 | 正本 | 扱う対象 |
+|---|---|---|
+| **Product Phase**（Phase 0〜5） | **本節** | プロダクト全体がどの事業・運用段階にあるか |
+| **Persona Project 段階**（第1〜第3段階） | `docs/PERSONA_PROJECT_PRINCIPLE.md` §3 | Persona Project という 1 機能プロジェクトの内部工程 |
+
+**Persona Project の段階順序を、プロダクト全体の唯一の作業順序として扱ってはならない。**
+同 §3.1 の「第1段階（base 指導文の一周完成）→ 第2段階（Static 版の店舗実運用検証）」という直列順序は
+Persona Project 内部の依存関係であり、Product Phase の順序を定めるものではない。
+Persona Project 各段階の着手条件は同 §7.1 が正本である。
+
+### 12.4 Phase をまたぐ課題の所在（pointer のみ）
+
+**本節は課題を列挙しない。** 各 Phase で扱う課題の正本は次のとおり。
+
+| 種別 | 正本 |
+|---|---|
+| 設計保留事項（Q-xx）・Phase 1 監査由来の未回答事項（Q-E） | `docs/OPEN_DESIGN_QUESTIONS.md` |
+| 技術的負債・Finding・その再開 Trigger | `prompts/vNext/HANDOFF.md` §6 |
+| Lifecycle 未確定資産 | 本文書 §10.5 |
+| Future Expansion 資産とその再判断条件 | 本文書 §10.3 |
+| 領域完了（Domain Complete）の成立条件 | 本文書 §8 |
+| 配布形態別アーキテクチャ・SaaS 設計の検討経緯 | `docs/reviews/f1/`（**historical evidence**。§7 参照） |

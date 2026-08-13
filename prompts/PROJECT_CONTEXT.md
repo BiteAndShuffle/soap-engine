@@ -1,8 +1,9 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.2
-> **Last Updated:** 2026-08-09
-> **Current Focus:** 次の着手対象は未確定。brand-level resolution safety（→ docs/OPEN_DESIGN_QUESTIONS.md Q-S2）・検索候補の表示枠配分（→ 同 Q-UX1）が候補として記録されている。
+> **Version:** 2.3
+> **Last Updated:** 2026-08-13
+> **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
+> **Current Focus:** 静的版を開発者本人が実務で使用できる状態にすること。直前の作業は Cold-Start BCP の整備。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -59,28 +60,48 @@
 
 ## Current Phase
 
-**Phase 1〜3: 基盤整備 — 完了**
+**Phase 1 — Static / Local First**
 
-現行のValidator仕様・errorCode一覧は
-`docs/VALIDATOR_STANDARD.md` Appendixを参照。
+Phase の定義・完了条件・遷移 Trigger の正本は `docs/DEVELOPMENT_STANDARD.md` §12 Product Phase Roadmap。
+本節は「いまどこにいるか」だけを持ち、Phase の定義を複製しない。
 
-schemaGenerationを含む、まだ実施しない事項は§9を参照。
+**現在の目標**
 
-**STANDARD_REFERENCE_PATHS共通化・P0-B/P1統合 — いずれも現時点では実施しない**
+開発者本人が実務で使用できる静的版を成立させること。Phase 0（基盤）の成果物
+（bridge→JSON→runtime の 3 層 SSOT・4 系統 audit・検証体系・文書アーキテクチャ）は整備済みであり、
+現在はその上で Phase 1 の成立確認を進める段階にある。
 
-現在の判断と再検討条件は §9 を参照。
+**現在の作業順序（Current Roadmap）**
 
-**次フェーズ候補**（優先順位未確定）
+```
+① Cold-Start BCP の closure（Repository 単独で現在地・次工程・Deferred を復元できる状態）
+     ↓
+② Static / Local First の成立確認（静的版が実際にビルド・動作すること）
+     ↓
+③ Module Expansion を主工程へ（canonical module の追加を継続工程として再開）
+     ↓
+④ 実運用とデータ拡充
+```
 
-- P0-E 保留継続
+**この順序について**: `docs/PERSONA_PROJECT_PRINCIPLE.md` §3 の三段階（第1段階 base 指導文の一周完成 →
+第2段階 Static 版の店舗実運用検証）は **Persona Project 固有の内部工程**であり、プロダクト全体の
+唯一の作業順序ではない（`docs/DEVELOPMENT_STANDARD.md` §12.3 が責務分離を定める）。
+上記 ①〜④ が現在の全体順序である。
 
-**次フェーズでまだ実施しないこと** → セクション9参照
+**現時点で着手しないこと**
 
-**vNext フェーズ（大規模モジュール向け新体系 / 並行進行）**
+| 対象 | 理由 |
+|---|---|
+| 新規 canonical module の作成 | ① が完了し MODULE EXPANSION = GO と判定されるまで着手しない。着手対象の薬効領域も未決定 |
+| U-6 / Q-UX1（検索 UX） | correctness blocker ではない。再開 Trigger は `prompts/vNext/HANDOFF.md` §6 / `docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1 |
+| `EXPORT_STATIC` の Lifecycle 昇格 | 静的ビルドの実測確認前に変更しない。判定は §12.2 Phase 1 の Trigger に従う |
+| SaaS 向け実装（entitlement / 配信境界 / 認証の全面置換） | Phase 3〜4。設計の検討経緯は `docs/reviews/f1/`（historical evidence） |
 
-vNext体系（PN1〜PN8）の整備状況・登録済みモジュール一覧は `data/modules/index.ts` を、
-多剤合成テストの現在の結果は `npm run test:multi-drug` の実行結果を正本とする。
-vNext作業手順の詳細は `prompts/vNext/HANDOFF.md` を参照。
+**検証状態・件数は本ファイルが保持しない。** 登録済みモジュールは `data/modules/index.ts`、
+検証結果は `npx tsc --noEmit` / `npm test` / `npm run audit` / `npm run build` /
+`npm run test:multi-drug` の実行結果を正本とする。vNext 作業手順は `prompts/vNext/HANDOFF.md`。
+
+まだ実施しない設計事項（schemaGeneration・P0-B/P1 統合・STANDARD_REFERENCE_PATHS 共通化等）は §9 を参照。
 
 ---
 
