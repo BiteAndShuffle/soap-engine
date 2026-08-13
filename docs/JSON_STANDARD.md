@@ -463,7 +463,7 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 |---|---|---|
 | `addons.orderPresets` が `{}` | allergy 2系 / derm 3系 | bridge 未明示のため空。DP-08 最小構成原則 |
 | `composition.defaultSMergeLevel` 等の欠落 | allergy_eye_drops / derm 3系 | 多剤合成対象外。DP-03 条件付き必須原則 |
-| `expressModes[*].enabled: false` + `disabled: true` | derm 3系・GLP-1系 | 準備中プレースホルダー。将来の有効化時に更新 |
+| `expressModes[*].enabled: true` + `disabled: true` | derm 3系 | 準備中プレースホルダー。将来の有効化時に `disabled` を外す（JS-expressModes 参照）|
 | `moduleVersion` 値が module ごとに異なる | 全 module | string 型で存在すればよい。runtime 未参照。validator は存在確認のみ。値の形式は不問 |
 
 ---
@@ -487,7 +487,20 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 
 - 型: **配列（array）固定**。オブジェクト・null 禁止
 - `sortOrder`: 全エントリに必須
-- `enabled: false` + `disabled: true`: 準備中プレースホルダーとして許容
+- `enabled: true` + `disabled: true`: 準備中プレースホルダーとして許容
+
+**エントリの 3 状態（runtime 実装と対応する定義）**
+
+`enabled` と `disabled` は別フラグであり、組み合わせで 3 状態を表す。
+
+| 状態 | 条件 | runtime の扱い |
+|---|---|---|
+| **ACTIVE** | `enabled === true && disabled !== true` | Express 候補として表示され、クリックで `handleExpressAdd()` へ到達する |
+| **placeholder** | `enabled === true && disabled === true` | グレーアウト表示。`onClick` を持たず brand / scenario の解決へ到達しない |
+| 非表示 | `enabled === false` | `expressCandidates` の生成時に除外され、候補に載らない |
+
+**`enabled: false` を placeholder の表現として使用してはならない。** `enabled: false` の
+エントリは候補生成時点で除外されるため、グレーアウト表示そのものが行われない。
 
 **全エントリ必須フィールド**
 
@@ -500,13 +513,27 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 | `label` | string | — |
 | `sortOrder` | number | — |
 
-**enabled: true のエントリに必要なフィールド**
+**ACTIVE エントリに必要なフィールド**
+
+対象は **ACTIVE**（`enabled === true && disabled !== true`）のみ。placeholder は省略してよい。
 
 | フィールド | 型 | 備考 |
 |---|---|---|
-| `defaultScenarioId` | string | — |
-| `defaultBrandName` | string | — |
-| `genericDisplayName` | string | — |
+| `defaultScenarioId` | string | 欠落すると `handleExpressAdd()` が scenario を解決できず、押しても何も起きないボタンになる |
+| `defaultBrandName` | string | 欠落すると `brandName ?? drug.brandNames[0]` へフォールバックし、クエリと無関係な brand が SOAP 主語・`handlingTags` 解決に使われる |
+| `sortOrder` | number | 全エントリ必須（上表）と重複。ACTIVE では表示順の決定に必ず用いられる |
+
+上記 3 フィールドは `lib/moduleValidator.ts`（check 17・`EXPRESS_MODE_MISSING_FIELD`）が
+フィールド単位で診断し、`scripts/audit-brand-resolution-safety.ts`
+（`EXPRESS_ACTIVE_ENTRY_INCOMPLETE`）が `npm run audit` の exit code で enforcement を与える。
+
+**`genericDisplayName`（機械検証の対象外）**
+
+`enabled: true` のエントリ（ACTIVE / placeholder の双方）に設定する。GE モードのボタン表示名で
+あり、SOAP 本文には使用しない。`lib/types.ts` は「省略時は `label` をそのまま使用する」と
+定義しており、上記 3 フィールドとは述語も fallback の安全性も異なるため、
+**同一 invariant として機械検証していない**（必須とするか optional とするかは未確定。
+`prompts/vNext/HANDOFF.md` §6 の Finding を参照）。
 
 **剤形横断ナビゲーション用（derm 3系のみ）**
 

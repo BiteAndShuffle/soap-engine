@@ -110,6 +110,7 @@ Validator は「機械的に判定できること」のみを保証する。設�
 | `GENERIC_SUBJECT_AMBIGUOUS` | **FAIL** | INV-4a | 同一 generic group 内で `displayGenericName` が不一致（generic の subject が brand 宣言順に依存する） |
 | `SINGLE_BRAND_RESOLUTION_UNSAFE` | **FAIL** | INV-6 | brand 1 件の module が構造的に未確定状態（`denotation: 'module'`）を生みうる |
 | `GENERIC_GATE_TAG_DROPPED` | **CHECK** | INV-4c | `handlingTags` の交差集合により、現に ADDON / scenario の gate に使われているタグが脱落する |
+| `EXPRESS_ACTIVE_ENTRY_INCOMPLETE` | **FAIL** | — | ACTIVE な Express エントリ（`enabled === true && disabled !== true`）に `defaultBrandName` / `defaultScenarioId` / `sortOrder` のいずれかが欠落する（欠落フィールド名は detail に持つ） |
 
 **FAIL は exit 1（`npm run audit` を失敗させる）。CHECK は出力するが exit 0 を維持する**（既存 audit と同じ規約）。
 
@@ -142,6 +143,25 @@ Validator は「機械的に判定できること」のみを保証する。設�
 ERROR として検査するが、起動時実行は `app/page.tsx` で try/catch されており**エラーでも起動を止めない（fail-open）**。
 本 audit は `npm run audit` の exit code へ反映させることで enforcement を与える目的で、意図的に重複させている。
 
+**`EXPRESS_ACTIVE_ENTRY_INCOMPLETE` の重複について**: 同一 invariant を
+`lib/moduleValidator.ts`（check 17・`EXPRESS_MODE_MISSING_FIELD`）も検査する。上と同じ理由による
+意図的な重複であり、役割は次のとおり分離する。
+
+| 検証器 | 役割 |
+|---|---|
+| `lib/moduleValidator.ts` | canonical module 単体の契約違反を**フィールド単位で詳細に診断**する |
+| 本 audit | `npm run audit` の exit code による **enforcement** を与える |
+
+**ModuleValidator 単独を enforcement とみなしてはならない。** 起動時実行は fail-open であり、
+全 module に対する ERROR 0 件を検証するのは `tests/moduleValidator.test.ts`
+（「全 module の Validator baseline」）と本 audit である。
+
+Express を Q-S2 の audit に含める理由: Express は `DrugSuggestionItem` を経由せず `BrandResolution` を
+持たない legacy 経路であり、`handleExpressAdd()` の `brandName ?? drug.brandNames[0]` は
+Q-S2 が検索経路から排除したものと同型の「意味論を持たない代表 brand の暗黙採用」である。
+canonical JSON の `defaultBrandName` 宣言だけがこの経路の意味論を担保している。
+**判定は module-local static** であり、cross-module simulation を行わない点は他の code と同じ。
+
 ---
 
 ## 3. ModuleValidator の責務（check 1〜34。枝番 3a / 3b / 13b を含む全 37 check）
@@ -164,7 +184,7 @@ build/runtime を停止させる致命的問題。
 | 7b | `ORDERPRESETS_TYPE_INVALID` | Structural | `addons.orderPresets` が object 型であること |
 | 7c | `ADDON_REF_BROKEN` | Reference | `addons.orderPresets[*]` → `addons.items` |
 | 13 | `BRAND_CATALOG_MISMATCH` | Reference | `drug.brandNames` と `drug.brandCatalog` キー集合の双方向一致 |
-| 17a | `EXPRESS_MODE_MISSING_FIELD` | Structural | `expressModes[]` の必須5フィールド存在 |
+| 17a | `EXPRESS_MODE_MISSING_FIELD` | Structural | `expressModes[]` の必須5フィールド存在（全エントリ）。加えて **ACTIVE エントリ**（`enabled === true && disabled !== true`）では `defaultBrandName` / `defaultScenarioId` / `sortOrder` を必須とする（`docs/JSON_STANDARD.md` JS-expressModes。placeholder は対象外）|
 | 17b | `EXPRESS_MODE_REF_BROKEN` | Reference | `expressModes` 内の `defaultBrandName`/`scenarioCandidates`/`defaultScenarioId` → `brandCatalog`/`scenarios[].id` |
 | 18 | `MERGE_POLICY_GROUPKEY_INVALID` | Reference | `mergePolicy.S.groupKey` → `composition.groupKeyRegistry` |
 | 19 | `LOCALINPUT_SCENARIOID_BROKEN` | Reference | `display.localInput.applyScenarioIds[]` → `scenarios[].id` |

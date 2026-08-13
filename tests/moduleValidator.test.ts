@@ -256,3 +256,145 @@ describe('persona 必須（JSON_STANDARD JS-A / F-4a）', () => {
     )
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// Express ACTIVE entry structural contract（U-EXP1）
+//
+// ACTIVE = enabled === true && disabled !== true。runtime で実際にクリック可能になり
+// handleExpressAdd() へ到達する状態を指す（docs/JSON_STANDARD.md JS-expressModes）。
+//
+// base に derm_heparinoid_moisturizer_cream を使う理由: ACTIVE 1 件と
+// placeholder（disabled: true）4 件の両方を持つ唯一の形であり、
+// 「ACTIVE では ERROR」「placeholder では PASS」を同一データで対比できる。
+// ─────────────────────────────────────────────────────────────
+
+const creamModule = ALL_MODULES.find(m => m.moduleId === 'derm_heparinoid_moisturizer_cream')!
+
+function cloneCream(): any {
+  return JSON.parse(JSON.stringify(creamModule))
+}
+
+/** ACTIVE な唯一のエントリ（ヒルドイドクリーム） */
+function activeEntryOf(mod: any): any {
+  const entry = mod.expressModes.find((e: any) => e.enabled === true && e.disabled !== true)
+  assert.ok(entry, 'テスト前提: cream に ACTIVE な expressModes エントリが存在すること')
+  return entry
+}
+
+/** placeholder エントリ（disabled: true） */
+function placeholderEntryOf(mod: any): any {
+  const entry = mod.expressModes.find((e: any) => e.disabled === true)
+  assert.ok(entry, 'テスト前提: cream に placeholder エントリが存在すること')
+  return entry
+}
+
+function expressMissingDetails(mod: unknown): string[] {
+  return validateModule(mod).errors
+    .filter(e => e.code === 'EXPRESS_MODE_MISSING_FIELD')
+    .map(e => e.detail)
+}
+
+describe('Express ACTIVE entry の条件付き必須フィールド（U-EXP1・自己テスト）', () => {
+  test('正常データ: EXPRESS_MODE_* エラーが出ない（前提の健全性確認）', () => {
+    const codes = errorCodesOf(cloneCream())
+    assert.ok(
+      !codes.some(c => c.startsWith('EXPRESS_MODE')),
+      `正常データで EXPRESS_MODE_* エラーが出てはならない: ${JSON.stringify(codes)}`,
+    )
+  })
+
+  for (const field of ['defaultBrandName', 'defaultScenarioId', 'sortOrder'] as const) {
+    test(`ACTIVE entry から ${field} を削除 → EXPRESS_MODE_MISSING_FIELD`, () => {
+      const broken = cloneCream()
+      delete activeEntryOf(broken)[field]
+      const details = expressMissingDetails(broken)
+      assert.ok(
+        details.some(d => d.includes(field)),
+        `${field} の欠落が EXPRESS_MODE_MISSING_FIELD として報告されるべき: ${JSON.stringify(details)}`,
+      )
+    })
+
+    test(`placeholder（disabled: true）から ${field} を削除 → ERROR にしない`, () => {
+      const broken = cloneCream()
+      delete placeholderEntryOf(broken)[field]
+      const details = expressMissingDetails(broken)
+      assert.deepEqual(
+        details.filter(d => d.includes(field)),
+        [],
+        `placeholder では ${field} の省略を許容する（既存 16 entry が該当。migration を発生させない）`,
+      )
+    })
+  }
+
+  test('ACTIVE entry の 3 フィールドを同時に削除 → field ごとに 3 件報告される', () => {
+    const broken = cloneCream()
+    const entry = activeEntryOf(broken)
+    delete entry.defaultBrandName
+    delete entry.defaultScenarioId
+    delete entry.sortOrder
+    const details = expressMissingDetails(broken)
+    for (const field of ['defaultBrandName', 'defaultScenarioId', 'sortOrder']) {
+      assert.ok(
+        details.some(d => d.includes(field)),
+        `${field} が個別に診断されるべき（ModuleValidator の責務は詳細診断）: ${JSON.stringify(details)}`,
+      )
+    }
+  })
+
+  test('enabled: false のエントリには ACTIVE 必須契約を適用しない', () => {
+    const broken = cloneCream()
+    const entry = activeEntryOf(broken)
+    entry.enabled = false
+    delete entry.defaultBrandName
+    delete entry.defaultScenarioId
+    delete entry.sortOrder
+    const details = expressMissingDetails(broken)
+    assert.deepEqual(
+      details,
+      [],
+      `enabled: false は expressCandidates の continue で候補に載らないため対象外: ${JSON.stringify(details)}`,
+    )
+  })
+
+  test('defaultBrandName が brandCatalog に存在しない → 既存 EXPRESS_MODE_REF_BROKEN を維持', () => {
+    const broken = cloneCream()
+    activeEntryOf(broken).defaultBrandName = '存在しないブランド'
+    const codes = errorCodesOf(broken)
+    assert.ok(
+      codes.includes('EXPRESS_MODE_REF_BROKEN'),
+      `参照切れは EXPRESS_MODE_REF_BROKEN が担当し続ける: ${JSON.stringify(codes)}`,
+    )
+  })
+
+  test('defaultScenarioId が scenarios[].id に存在しない → 既存 EXPRESS_MODE_REF_BROKEN を維持', () => {
+    const broken = cloneCream()
+    activeEntryOf(broken).defaultScenarioId = 'no_such_scenario'
+    const codes = errorCodesOf(broken)
+    assert.ok(
+      codes.includes('EXPRESS_MODE_REF_BROKEN'),
+      `参照切れは EXPRESS_MODE_REF_BROKEN が担当し続ける: ${JSON.stringify(codes)}`,
+    )
+  })
+})
+
+describe('全 module の Validator baseline（U-EXP1 で退行させない）', () => {
+  test('35 module すべてで ERROR 0 件（新規 ERROR を持ち込んでいない）', () => {
+    const errors = ALL_MODULES.flatMap(m =>
+      validateModule(m).errors
+        .filter(e => !e.isWarning)
+        .map(e => `${m.moduleId}: ${e.code} ${e.detail}`),
+    )
+    assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
+  })
+
+  test('WARNING の総数が baseline（18 件）から変化していない', () => {
+    const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
+    const byCode: Record<string, number> = {}
+    for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
+    assert.equal(
+      warnings.length,
+      18,
+      `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
+    )
+  })
+})

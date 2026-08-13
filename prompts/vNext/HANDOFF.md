@@ -692,9 +692,22 @@ vNext には対応する明示的なチェック項目がない。
 
 - **U-6**（class-level query の generic group 展開）— correctness 完了の必須条件ではない。`denotation: 'module'` へ到達する 20 module で「候補は選べるが SOAP を作れない」行き止まりを解消する**検索 UX 改善**
 - **Q-UX1**（ranking / `limit=8` / candidate visibility）— 独立した Question。D-4 の prefix `い` 表示枠脱落・F-S3-1 を含む
-- **cleanup Finding** — 下記 F-RAPID-1 / F-EXP-1 / AddonPanel。いずれも BrandResolution の correctness / safety に影響しない
+- **cleanup Finding** — 下記 F-RAPID-1 / AddonPanel。いずれも BrandResolution の correctness / safety に影響しない（F-EXP-1 は U-EXP1 で解消済み。下記参照）
 
-**F-EXP-1 の validator gap（別 Unit 候補・Owner Decision OD-U8-1(c)）**: `lib/moduleValidator.ts` の `validateExpressModes` は `expressModes[].defaultBrandName` を**必須フィールドとしていない**（存在時のみ型・参照を検証）。現データは有効な express entry 43/43 が宣言済みで `handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]` は**到達不能**だが、将来の新規 module が省略すると Q-S2 が排除した `brandNames[0]` anti-pattern が Express 経由で再入しうる。**Q-S2 の closure blocker とはせず、cleanup / validator hardening の独立 Unit として後日設計する。**
+**F-EXP-1 は解消済み（U-EXP1・2026-08-13）**: ACTIVE な Express エントリ（`enabled === true && disabled !== true`）に対し `defaultBrandName` / `defaultScenarioId` / `sortOrder` を必須とする契約を、`docs/JSON_STANDARD.md` JS-expressModes（正本）・`lib/moduleValidator.ts`（詳細診断）・`scripts/audit-brand-resolution-safety.ts`（exit code による enforcement）の 3 層で機械化した。canonical JSON・bridge・runtime はいずれも変更していない。`handleExpressAdd` の `brandName ?? mod.drug?.brandNames?.[0]` は runtime に残置しており（削除すると `{{drug_subject}}` が未解決のまま SOAP 本文へ露出するため）、到達不能な safety net として扱う。
+
+**F-EXP-2: legacy 単数 `expressMode` 構造（未対応・別 Unit）**: `lib/types.ts` の `ModuleData.expressMode?`（単数）は `expressModes[]`（配列）とは別系統の Express 入口である。
+
+| 観測（U-EXP1 実測） | 内容 |
+|---|---|
+| canonical JSON での使用 | **0 件** |
+| runtime 分岐 | **残存**（`app/components/DashboardClient.tsx` の `expressCandidates`。`expressModes` が無い module でのみ発火） |
+| validator 検査 | **0 件**（check 17 は `expressModes` が配列のときのみ実行される） |
+| JSDoc | `defaultBrandName` 省略時の `drug.brandNames[0]` フォールバックを**後方互換仕様として明示的に認めている** |
+
+すなわち U-EXP1 が閉じた anti-pattern の再入経路が単数形側に残っている。使用 0 件のため現時点の実害はないが、新規 module が単数形を採用すると validator を素通りする。**廃止（型・runtime 分岐の削除）／ validator 追加 ／ 現状維持 のいずれを採るかは別 Unit の判断とする**（Owner Decision OD-D・2026-08-13。U-EXP1 へは統合しない）。
+
+**`expressModes[].genericDisplayName` の必須性は未確定（Finding・U-EXP1 で判断保留）**: `docs/JSON_STANDARD.md` JS-expressModes は本フィールドを `enabled: true` のエントリに設定するものとして記載する一方、`lib/types.ts` / `ThirdPanel.tsx` の JSDoc は「省略時は `label` をそのまま使用する」と optional を明示しており、両者が食い違う。実測では `enabled: true` の 59 件すべてが宣言済み（`enabled: false` の 86 件は 0 件）で、runtime の参照箇所はすべて `?? label` の fallback を持ち、SOAP 主語へは到達しない（表示ラベル専用）。**述語も fallback の安全性も上記 3 フィールドと異なるため、U-EXP1 の invariant には含めていない。** 必須化するか optional と確定するかは Owner Decision を要する。
 
 関連する brand 解決の安全性論点全体は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
 

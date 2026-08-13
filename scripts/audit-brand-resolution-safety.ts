@@ -46,6 +46,19 @@
  *   **エラーでも起動を止めない（fail-open）**ため、実質的な enforcement が存在しないことによる。
  *   本 audit は `npm run audit` の exit code へ反映させることで、新規 module 追加時に
  *   BrandResolution の前提が機械的に守られる状態を作る。
+ *
+ *   `EXPRESS_ACTIVE_ENTRY_INCOMPLETE` も同じ理由で `lib/moduleValidator.ts` の
+ *   `EXPRESS_MODE_MISSING_FIELD`（ACTIVE 条件付き必須）と意図的に重複させている。
+ *   役割分担は「moduleValidator = canonical module 単体の詳細診断」／
+ *   「本 audit = `npm run audit` の exit code による enforcement」であり、
+ *   **moduleValidator 単独を enforcement とみなさない**。
+ *
+ *   Express を本 audit の対象に含める理由: Express は `DrugSuggestionItem` を経由せず
+ *   `BrandResolution` を持たない legacy 経路であり、`handleExpressAdd()` の
+ *   `brandName ?? mod.drug?.brandNames?.[0]` は Q-S2 が検索経路から排除したものと
+ *   同型の「意味論を持たない代表 brand の暗黙採用」である。canonical JSON 側の
+ *   `defaultBrandName` 宣言だけがこの経路の意味論を担保しているため、その存在保証は
+ *   brand resolution safety の一部として扱う。
  */
 
 import fs from 'fs'
@@ -138,6 +151,45 @@ function unionTags(brands: string[], brandCatalog: Record<string, BrandEntryLike
   return union
 }
 
+/**
+ * ACTIVE Express entry = `enabled === true && disabled !== true`
+ * （`docs/JSON_STANDARD.md` JS-expressModes / `lib/moduleValidator.ts` の同名判定と同一）。
+ *
+ *   - `enabled: false` → `expressCandidates` の `continue` で候補に載らない
+ *   - `disabled: true` → グレーアウト placeholder。`onClick` を持たず brand 解決へ到達しない
+ *
+ * ACTIVE entry だけが `handleExpressAdd()` へ到達するため、ACTIVE entry だけが
+ * 下記フィールドを必要とする。
+ */
+interface ExpressEntryLike {
+  enabled?: unknown
+  disabled?: unknown
+  label?: unknown
+  defaultBrandName?: unknown
+  defaultScenarioId?: unknown
+  sortOrder?: unknown
+}
+
+function isActiveExpressEntry(entry: ExpressEntryLike): boolean {
+  return entry.enabled === true && entry.disabled !== true
+}
+
+/**
+ * ACTIVE entry で欠落している必須フィールド名を返す。
+ *
+ * `defaultBrandName`  : 欠落すると `brandName ?? brandNames[0]` fallback へ到達し、
+ *                       クエリと無関係な brand が SOAP 主語・handlingTags 解決に使われる
+ * `defaultScenarioId` : 欠落すると `handleExpressAdd()` が scenario を解決できず早期 return する
+ * `sortOrder`         : JS-expressModes が全エントリ必須と定める表示順の決定値
+ */
+function missingActiveExpressFields(entry: ExpressEntryLike): string[] {
+  const missing: string[] = []
+  if (entry.defaultBrandName === undefined || entry.defaultBrandName === null) missing.push('defaultBrandName')
+  if (entry.defaultScenarioId === undefined || entry.defaultScenarioId === null) missing.push('defaultScenarioId')
+  if (entry.sortOrder === undefined || entry.sortOrder === null) missing.push('sortOrder')
+  return missing
+}
+
 // ─────────────────────────────────────────────────────────────
 // 監査本体
 // ─────────────────────────────────────────────────────────────
@@ -153,6 +205,22 @@ for (const moduleId of moduleIds) {
   const brandCatalog = (drug?.brandCatalog ?? {}) as Record<string, BrandEntryLike>
   const brandNames = (drug?.brandNames ?? []) as string[]
   const catalogKeys = Object.keys(brandCatalog)
+
+  // ── Express ACTIVE entry の structural contract ────────────────
+  // brandCatalog の有無に依存しない存在確認のため、下の early continue より前に置く。
+  const expressEntries = (json.expressModes ?? []) as ExpressEntryLike[]
+  for (let i = 0; i < expressEntries.length; i++) {
+    const entry = expressEntries[i]
+    if (!isActiveExpressEntry(entry)) continue
+    const missing = missingActiveExpressFields(entry)
+    if (missing.length === 0) continue
+    issues.push({
+      moduleId,
+      target: typeof entry.label === 'string' ? entry.label : `expressModes[${i}]`,
+      code: 'EXPRESS_ACTIVE_ENTRY_INCOMPLETE',
+      detail: `ACTIVE な Express エントリ（enabled: true / disabled でない）に必須フィールドがありません: ${missing.join(', ')}。defaultBrandName を欠くと handleExpressAdd() が drug.brandNames[0] へフォールバックし、クエリと無関係な brand が SOAP 主語および handlingTags 解決に使われます`,
+    })
+  }
 
   // brandCatalog を持たない module は BrandResolution の brand/generic 判定対象外。
   // （後方互換。実測では全 35 module が brandCatalog を持つ）
@@ -259,6 +327,7 @@ for (const moduleId of moduleIds) {
 function severity(code: string): 'FAIL' | 'CHECK' {
   // INV-4c のみ CHECK。generic handlingTags は交差集合により安全化済みであり、
   // gate 対象タグの脱落は「欠陥」ではなく「人間の判断が要る事象」として扱う。
+  // EXPRESS_ACTIVE_ENTRY_INCOMPLETE は FAIL（fallback へ到達しうる構造そのものを塞ぐため）。
   if (code === 'GENERIC_GATE_TAG_DROPPED') return 'CHECK'
   return 'FAIL'
 }

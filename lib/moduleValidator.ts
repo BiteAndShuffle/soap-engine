@@ -26,7 +26,10 @@
  *   14)  followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
  *   15)  addon.requiredTags のタグをいずれの brandCatalog も持たない（到達可能性、警告）
  *   16)  *Structured text 連結と S/A/P 本文の不一致（警告）
- *   17)  expressModes[] の必須フィールド・参照整合チェック（P0-A SSOT）
+ *   17)  expressModes[] の必須フィールド・参照整合チェック（P0-A SSOT）。
+ *        ACTIVE エントリ（enabled === true && disabled !== true）では
+ *        defaultBrandName / defaultScenarioId / sortOrder を追加で必須とする
+ *        （docs/JSON_STANDARD.md JS-expressModes。placeholder は対象外）
  *   18)  scenarios[].mergePolicy.S.groupKey が composition.groupKeyRegistry に存在すること
  *        （groupKeyRegistry が未定義または空の場合はスキップ）
  *   19)  display.localInput.enabled === true の場合、display.localInput.applyScenarioIds[]
@@ -280,6 +283,24 @@ function validateBrandConsistency(
 // expressModes バリデーション（P0-A SSOT）
 // ─────────────────────────────────────────────────────────────
 
+/**
+ * ACTIVE Express entry の判定（`docs/JSON_STANDARD.md` JS-expressModes）。
+ *
+ * ACTIVE = `enabled === true && disabled !== true`。runtime で実際にクリック可能な
+ * 候補になり、`handleExpressAdd()` が brandCatalog 解決キーを要求する状態を指す。
+ *
+ *   - `enabled: false`      → `expressCandidates` の `continue` で候補に載らない
+ *   - `disabled: true`      → グレーアウト placeholder。`onClick` を持たず解決へ到達しない
+ *
+ * `activeRequiredFields` を必須化する目的は、`handleExpressAdd()` の
+ * `brandName ?? mod.drug?.brandNames?.[0]` fallback（意味論を持たない代表 brand の
+ * 暗黙採用。Q-S2 が検索経路から排除した anti-pattern）へ新規 module が
+ * 到達できないようにすることである。runtime は変更していない。
+ */
+function isActiveExpressEntry(entry: Record<string, unknown>): boolean {
+  return entry.enabled === true && entry.disabled !== true
+}
+
 function validateExpressModes(
   entries: unknown[],
   brandCatalogKeys: Set<string>,
@@ -287,6 +308,8 @@ function validateExpressModes(
 ): ModuleValidationError[] {
   const errs: ModuleValidationError[] = []
   const requiredFields = ['enabled', 'expressCategory', 'expressGroup', 'expressSubGroup', 'label'] as const
+  // ACTIVE entry でのみ必須。placeholder（disabled: true）は省略してよい（lib/types.ts の JSDoc と一致）
+  const activeRequiredFields = ['defaultBrandName', 'defaultScenarioId', 'sortOrder'] as const
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i] as Record<string, unknown>
@@ -303,7 +326,22 @@ function validateExpressModes(
       }
     }
 
-    // 有効エントリ（enabled !== false かつ disabled !== true）の参照整合
+    // ACTIVE entry の条件付き必須フィールド（欠落は field ごとに報告する）
+    if (isActiveExpressEntry(entry)) {
+      for (const field of activeRequiredFields) {
+        if (entry[field] === undefined || entry[field] === null) {
+          errs.push({
+            code: 'EXPRESS_MODE_MISSING_FIELD',
+            detail: `expressModes${entryLabel} の必須フィールド "${field}" が存在しません（enabled: true かつ disabled でない ACTIVE エントリでは必須）`,
+            isWarning: false,
+          })
+        }
+      }
+    }
+
+    // 有効エントリの参照整合
+    // 判定は上記 ACTIVE より意図的に広い（`enabled !== false`）。`enabled` 欠落時も
+    // 参照整合だけは検査したいためであり、この差は縮めない（縮めると検査が弱くなる）。
     if (entry.enabled !== false && entry.disabled !== true) {
       const defaultBrandName = entry.defaultBrandName
       if (defaultBrandName !== undefined) {
