@@ -758,6 +758,34 @@ H-3（CI / ブランチ戦略・本文書での通称 S4-C）は **`docs/OPEN_DE
 M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当へ後退、M-5（DashboardClient の状態集中）は
 保守者が増える時点（Phase 3）。E-1〜E-7 の現在状態は `docs/OPEN_DESIGN_QUESTIONS.md` Q-E が正本。
 
+## STRUCTURED_ROLE_FORBIDDEN validator の coverage gap（blocklist 方式の限界）
+
+**FACT**:
+- `lib/moduleValidator.ts` の `STRUCTURED_ROLE_FORBIDDEN` check（`FORBIDDEN_S_STRUCTURED_ROLES` 等）は禁止語彙の**ブロックリスト方式**である。`prompts/RULES.md` §17 の確立語彙に存在しない role でも、このブロックリストに明示されていなければ validator は検出しない場合がある。
+- 実測例:
+  - `symptom_observation`（`dm_insulin_rapid_analog`）— ブロックリスト登録済みのため検出され、**deterministic migration 済み**（2026-08-16、`adherence_status` へ）
+  - `acute_condition_status`（`dm_gip_glp1ra_tirzepatide_injection` / `dm_glp1ra_injection` / `dm_glp1ra_semaglutide_oral`）— ブロックリスト**未登録**のため build では検出されず、横断調査で判明。**deterministic migration 済み**（2026-08-16、`adherence_status` へ）
+  - `as_needed_status`（`allergy_h1_antihistamine_second_gen_oral`）— `prompts/RULES.md` §17 が「本ルール確定前の legacy 実装であり ERROR 該当」と明記しているにもかかわらず、ブロックリスト未登録のため build 上は無検出のまま**現時点では未解消**
+- 2026-08-16 の全35 module 横断スキャンで、RULES.md §17 の確立語彙・禁止語彙のいずれにも属さない `SStructured.role` が複数種・80箇所超（5 module 以上）存在することを確認した。**これらを一括して defect と分類してはいない。** `symptom_absence_check` / `symptom_presence_check` 等は `2becf03`（2026-04-19）で著者が `acute_condition_status` から意図的に移行させた先であり、legacy defect ではなく現行の未文書化語彙である可能性がある。個別の classification が必要であり、今回は実施していない。
+
+**impact**:
+- `SStructured` は現在 runtime 未接続（`prompts/PROJECT_CONTEXT.md` §5）であり、現行 SOAP 生成 correctness への直接影響は確認されていない。
+- ただし「validator / audit / test のいずれでも検出できない構造差異が存在する」という機械担保上の gap であり、将来 `SStructured` / Persona Structured metadata の runtime 接続を行う場合には correctness risk になりうる。
+
+**current status**:
+
+| 対象 | 状態 |
+|---|---|
+| `symptom_observation` | 解消済み |
+| `acute_condition_status`（3 module） | 解消済み |
+| `as_needed_status` | 未解消 |
+| その他80箇所超の未分類 `SStructured.role` | 未監査・未分類 |
+| validator の allow-list 化 ／ blocklist 拡張 ／ 語彙体系整理の方針 | **未決定** |
+
+> **再開 Trigger**: 次のいずれか。① 未分類 `SStructured.role`（80箇所超）を対象とする横断監査 Unit に着手する時点 ② `SStructured` / Persona Structured metadata を runtime 接続する時点 ③ Owner が Structured role validator の allow-list 化・blocklist 再設計・語彙体系整理を指示した時点。
+>
+> **M-4 との関係**: `acute_condition_status` は validator / audit / test のいずれでも検出されなかった事例であり、M-4 の再開 Trigger「① validator / audit / test のいずれでも検出できない構造欠陥が1件でも実測された時点」（本文書 L747 参照）の**文言と表面上一致する**。ただし `STRUCTURED_ROLE_FORBIDDEN` は `docs/VALIDATOR_STANDARD.md` 上 **Design Rule** 分類であり、M-4 が問題とする `as unknown as ModuleData` による構造保証（Structural / Reference カテゴリ）とは対象範囲が異なる可能性がある。**本事例を M-4 Trigger①の充足として扱うべきかは、M-4 本文だけからは確定できず、Owner 判断を要する。** 本 Finding は M-4 とは異なる機構（個別 validator check のブロックリスト設計）に起因するため、**M-4 へ統合せず独立した Finding として記録する。M-4 自体は Deferred のままであり、この cross-reference によって M-4 の即時 investigation / resolution が要求されるものではない。**
+
 ## 任意 cleanup（correctness blocker ではない）
 
 次は **BrandResolution / canonical / runtime の correctness・safety のいずれにも影響しない**。
