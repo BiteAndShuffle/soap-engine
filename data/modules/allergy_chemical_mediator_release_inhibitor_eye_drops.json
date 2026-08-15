@@ -1893,7 +1893,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_good",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP良好",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "continue",
@@ -2002,7 +2002,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_missed_doses",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（使用忘れ）",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "continue",
@@ -2117,7 +2117,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_self_adjust",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（自己判断）",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "continue",
@@ -2231,7 +2231,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_visit_delay",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（受診遅延）",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "intent": "continue",

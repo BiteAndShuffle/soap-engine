@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "c5d46d0ace5177a90942b2d1ecb150730af56640e2ae56dadcfcbd32814104c1",
+  "sourceHash": "739402c318283684346c0d5e4ed72beff4bdf4bc1f907a9bfd69911d9feb30d6",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -7321,7 +7321,7 @@
       "globalId": "derm_heparinoid_moisturizer_ointment.cp_good",
       "id": "cp_good",
       "title": "ヘパリン類似物質系保湿剤軟膏 CP良好",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
         "good"
@@ -7337,7 +7337,7 @@
       "globalId": "derm_heparinoid_moisturizer_ointment.cp_poor_missed_doses",
       "id": "cp_poor_missed_doses",
       "title": "ヘパリン類似物質系保湿剤軟膏 CP不良（使用忘れ）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -7354,7 +7354,7 @@
       "globalId": "derm_heparinoid_moisturizer_ointment.cp_poor_self_adjust",
       "id": "cp_poor_self_adjust",
       "title": "ヘパリン類似物質系保湿剤軟膏 CP不良（自己判断）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -7371,7 +7371,7 @@
       "globalId": "derm_heparinoid_moisturizer_ointment.cp_poor_visit_delay",
       "id": "cp_poor_visit_delay",
       "title": "ヘパリン類似物質系保湿剤軟膏 CP不良（受診遅延）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -7850,7 +7850,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_good",
       "id": "cp_good",
       "title": "ヘパリン類似物質系保湿剤クリーム CP良好",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
         "good"
@@ -7866,7 +7866,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_poor_missed_doses",
       "id": "cp_poor_missed_doses",
       "title": "ヘパリン類似物質系保湿剤クリーム CP不良（使用忘れ）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -7883,7 +7883,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_poor_self_adjust",
       "id": "cp_poor_self_adjust",
       "title": "ヘパリン類似物質系保湿剤クリーム CP不良（自己判断）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -7900,7 +7900,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_poor_visit_delay",
       "id": "cp_poor_visit_delay",
       "title": "ヘパリン類似物質系保湿剤クリーム CP不良（受診遅延）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -8379,7 +8379,7 @@
       "globalId": "derm_heparinoid_moisturizer_lotion.cp_good",
       "id": "cp_good",
       "title": "ヘパリン類似物質系保湿剤ローション CP良好",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
         "good"
@@ -8395,7 +8395,7 @@
       "globalId": "derm_heparinoid_moisturizer_lotion.cp_poor_missed_doses",
       "id": "cp_poor_missed_doses",
       "title": "ヘパリン類似物質系保湿剤ローション CP不良（使用忘れ）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -8412,7 +8412,7 @@
       "globalId": "derm_heparinoid_moisturizer_lotion.cp_poor_self_adjust",
       "id": "cp_poor_self_adjust",
       "title": "ヘパリン類似物質系保湿剤ローション CP不良（自己判断）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -8429,7 +8429,7 @@
       "globalId": "derm_heparinoid_moisturizer_lotion.cp_poor_visit_delay",
       "id": "cp_poor_visit_delay",
       "title": "ヘパリン類似物質系保湿剤ローション CP不良（受診遅延）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -8908,7 +8908,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.cp_good",
       "id": "cp_good",
       "title": "ヘパリン類似物質系保湿剤スプレー CP良好",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
         "good"
@@ -8924,7 +8924,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.cp_poor_missed_doses",
       "id": "cp_poor_missed_doses",
       "title": "ヘパリン類似物質系保湿剤スプレー CP不良（使用忘れ）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -8941,7 +8941,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.cp_poor_self_adjust",
       "id": "cp_poor_self_adjust",
       "title": "ヘパリン類似物質系保湿剤スプレー CP不良（自己判断）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -8958,7 +8958,7 @@
       "globalId": "derm_heparinoid_moisturizer_spray.cp_poor_visit_delay",
       "id": "cp_poor_visit_delay",
       "title": "ヘパリン類似物質系保湿剤スプレー CP不良（受診遅延）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -9827,7 +9827,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_good",
       "id": "cp_good",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP良好",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
         "good"
@@ -9843,7 +9843,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_missed_doses",
       "id": "cp_poor_missed_doses",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（使用忘れ）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -9860,7 +9860,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_self_adjust",
       "id": "cp_poor_self_adjust",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（自己判断）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",
@@ -9877,7 +9877,7 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.cp_poor_visit_delay",
       "id": "cp_poor_visit_delay",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 CP不良（受診遅延）",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
         "poor",

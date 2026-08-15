@@ -1440,7 +1440,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_good",
       "title": "ヘパリン類似物質系保湿剤クリーム CP良好",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_good",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [],
@@ -1501,7 +1501,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_poor_missed_doses",
       "title": "ヘパリン類似物質系保湿剤クリーム CP不良（使用忘れ）",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [],
@@ -1574,7 +1574,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_poor_self_adjust",
       "title": "ヘパリン類似物質系保湿剤クリーム CP不良（自己判断）",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [],
@@ -1636,7 +1636,7 @@
       "globalId": "derm_heparinoid_moisturizer_cream.cp_poor_visit_delay",
       "title": "ヘパリン類似物質系保湿剤クリーム CP不良（受診遅延）",
       "scenarioType": "adherence",
-      "scenarioGroup": "adherence",
+      "scenarioGroup": "adherence_poor",
       "sideEffectPresence": "not_applicable",
       "sComposition": {
         "symptomCodes": [],
