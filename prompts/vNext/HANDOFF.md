@@ -790,6 +790,9 @@ M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当�
 | その他80箇所超の未分類 `SStructured.role` | 未監査・未分類 |
 | `administration_assessment` / `dose_adjustment_assessment`（AStructured）／ `urgent_consult_advice`（PStructured） | 未監査・未分類（defect / 未文書化語彙のいずれとも確定していない） |
 | validator の allow-list 化 ／ blocklist 拡張 ／ Structured role 語彙体系整理の方針 | **未決定** |
+| **新規の非確立 role が silent に追加される検出 gap** | **解消済み**（2026-08-16・U-SR1）。`tests/structuredRoleVocabulary.test.ts` が `lib/structuredRoleVocabulary.ts`（RULES §17 の機械可読 mirror）と `tests/fixtures/structuredRolePreRuleBaseline.ts`（**pre-rule baseline: 27 key / 104 occurrence**）を突き合わせ、baseline 外の非確立 role・既知 key の件数増減・両者の相殺をいずれも検出する。`lib/moduleValidator.ts` の blocklist 方式自体は未変更 |
+
+**既存 104 occurrence の classification / migration は引き続き Deferred である**（U-SR1 は検出のみを機械化し、canonical JSON を 1 件も変更していない）。
 
 > **再開 Trigger**（S / A / P 共通。本 scope 拡張により新しい Trigger は追加しない）: 次のいずれか。① 未分類の Structured role（`SStructured` 80箇所超 ／ 上記 `AStructured` / `PStructured` 分を含む）を対象とする横断監査 Unit に着手する時点 ② Structured metadata / Persona Structured metadata を runtime 接続する時点 ③ Owner が Structured role validator の allow-list 化・blocklist 再設計・語彙体系整理を指示した時点。
 >

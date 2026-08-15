@@ -555,6 +555,30 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 2. 代替不能の場合のみ新規語彙を使用してよい
 3. 必ずユーザーに事前確認する
 
+### Structured role 確立語彙の変更契機
+
+（本節の要素・原則は `docs/DEVELOPMENT_STANDARD.md` §11 が定める）
+
+**本節が Structured role 確立語彙の正本である。** 機械可読な mirror は
+`lib/structuredRoleVocabulary.ts`（現在 S 6 / A 4 / P 11 の計 21 値）であり、
+`tests/structuredRoleVocabulary.test.ts` が本節との一致と canonical JSON の使用実態を検証する。
+
+**起点**: 上記の SStructured / AStructured / PStructured の**確立語彙を追加・削除・名称変更したとき**、
+以下が古くなる。
+
+**更新対象**（同一作業内で語彙の一致を確認する）
+
+- `lib/structuredRoleVocabulary.ts`（機械可読 mirror）
+- `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md`（生成側の role 選択肢）
+- `prompts/vNext/PN7-Cross-Reference-Audit.md` check T（監査側の許可語彙）
+
+**対象外**
+
+- 禁止語彙（blocklist）の変更 — `lib/moduleValidator.ts` の `FORBIDDEN_*_STRUCTURED_ROLES` が担う別系統であり、
+  確立語彙の変更契機とは分離する
+- `tests/fixtures/structuredRolePreRuleBaseline.ts`（本節確立以前から存在する occurrence の観測 baseline。
+  語彙の改訂ではなく、当該 occurrence の migration または正式昇格が発生したときにのみ更新する）
+
 ---
 
 ## 18. composition.priority 型ルール
