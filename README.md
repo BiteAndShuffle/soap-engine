@@ -65,3 +65,10 @@ npm run dev
 npm run build
 npm start
 ```
+
+## Static / Local First Deployment（インストール不要のローカル利用）
+
+管理者権限や追加ソフトウェアのインストールができない環境（会社管理PC等）でローカル利用する手順は
+**[docs/STATIC_DEPLOYMENT.md](docs/STATIC_DEPLOYMENT.md)** を参照してください。
+
+`npm run build:static` で生成した `out/` フォルダをコピーし、`index.html` をブラウザで直接開くだけで動作します。

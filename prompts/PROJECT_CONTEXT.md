@@ -1,9 +1,9 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.3
-> **Last Updated:** 2026-08-13
+> **Version:** 2.4
+> **Last Updated:** 2026-08-15
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
-> **Current Focus:** 静的版を開発者本人が実務で使用できる状態にすること。直前の作業は Cold-Start BCP の整備。
+> **Current Focus:** local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -68,16 +68,24 @@ Phase の定義・完了条件・遷移 Trigger の正本は `docs/DEVELOPMENT_S
 **現在の目標**
 
 開発者本人が実務で使用できる静的版を成立させること。Phase 0（基盤）の成果物
-（bridge→JSON→runtime の 3 層 SSOT・4 系統 audit・検証体系・文書アーキテクチャ）は整備済みであり、
-現在はその上で Phase 1 の成立確認を進める段階にある。
+（bridge→JSON→runtime の 3 層 SSOT・4 系統 audit・検証体系・文書アーキテクチャ）は整備済み。
+
+**Phase 1 の実測結果（2026-08-15）**: local/static deployment の技術成立性・end-to-end 業務利用経路
+（Mac での build → Windows company PC → `file://` 起動 → SOAP 生成 → Clipboard → 実際の電子薬歴への
+貼り付け）が実機で成立した。build・配布・起動手順は `docs/STATIC_DEPLOYMENT.md`（living SSOT）へ
+正本化済み。検証記録は `docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`。
+
+一方、個別の動作確認（Rapid/ADDON・reload・console error・外部通信 0 の実機確認）は一部
+NOT YET VERIFIED のまま残っている（`prompts/vNext/HANDOFF.md` §6）。**Phase 1 → Phase 2 の
+遷移は Owner の明示確認前であり、本ファイルでは未確定のまま扱う。**
 
 **現在の作業順序（Current Roadmap）**
 
 ```
 ① Cold-Start BCP の closure（Repository 単独で現在地・次工程・Deferred を復元できる状態）
-     ↓
+     ↓ 完了
 ② Static / Local First の成立確認（静的版が実際にビルド・動作すること）
-     ↓
+     ↓ 技術成立性・end-to-end 業務利用経路は実証済み。Phase 遷移の Owner 確認待ち
 ③ Module Expansion を主工程へ（canonical module の追加を継続工程として再開）
      ↓
 ④ 実運用とデータ拡充
@@ -94,7 +102,7 @@ Phase の定義・完了条件・遷移 Trigger の正本は `docs/DEVELOPMENT_S
 |---|---|
 | 新規 canonical module の作成 | ① が完了し MODULE EXPANSION = GO と判定されるまで着手しない。着手対象の薬効領域も未決定 |
 | U-6 / Q-UX1（検索 UX） | correctness blocker ではない。再開 Trigger は `prompts/vNext/HANDOFF.md` §6 / `docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1 |
-| `EXPORT_STATIC` の Lifecycle 昇格 | 静的ビルドの実測確認前に変更しない。判定は §12.2 Phase 1 の Trigger に従う |
+| `EXPORT_STATIC` の Lifecycle 昇格 | 実測（`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`）は完了したが、昇格判断自体は意図的に別 Unit として保留中（Owner Decision）。判定材料は揃った状態で待機 |
 | SaaS 向け実装（entitlement / 配信境界 / 認証の全面置換） | Phase 3〜4。設計の検討経緯は `docs/reviews/f1/`（historical evidence） |
 
 **検証状態・件数は本ファイルが保持しない。** 登録済みモジュールは `data/modules/index.ts`、

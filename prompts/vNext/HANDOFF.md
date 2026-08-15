@@ -772,6 +772,26 @@ M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当�
 | `genericDisplayName` の必須性 | `JSON_STANDARD` と `lib/types.ts` の記述が不一致。Owner Decision を要する |
 | L-1 AddonPanel GROUP_LABELS | 未登録グループのラベルが英語のまま表示される（本節冒頭の項を参照） |
 
+## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
+
+`docs/STATIC_DEPLOYMENT.md`（living SSOT）・`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`
+（検証記録）が示すとおり、Windows company PC・production `out/`・real `file://` 環境で
+local/static deployment の技術成立性・end-to-end 業務利用経路（電子薬歴貼り付けまで）は実証済みである。
+
+一方、次の項目は Owner 実測が存在しないため **NOT YET VERIFIED** のまま保持する。**推測で PASS へ変更しない。**
+
+| ID | 内容 | 現状 |
+|---|---|---|
+| FAC-10 | Rapid / ADDON 操作が file:// 環境で動作するか | NOT YET VERIFIED |
+| FAC-13 | reload 後も正常に再表示されるか | NOT YET VERIFIED |
+| FAC-14 | console fatal error が 0 件か | NOT YET VERIFIED |
+| FAC-15 | Windows 実機の file:// 上で外部ネットワーク通信が 0 件か（コード上は外部通信処理自体が存在しないことを別途確認済み） | NOT YET VERIFIED |
+
+**再開 Trigger**: 次回 Owner が同一の Windows company PC（または同等の制約環境）で SOAP Engine の
+`file://` artifact に触れる機会があった時点。correctness / safety blocker ではないため、
+単独でこの確認のためだけに Unit を立てる必要はない。確認できた項目は
+`docs/STATIC_DEPLOYMENT.md` §6 の該当行と本節を同一作業内で更新し、本節から除去する。
+
 ---
 
 # 7. 絶対に守るルール
