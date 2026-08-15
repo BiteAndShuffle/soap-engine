@@ -4008,7 +4008,7 @@
         {
           "id": "s_1",
           "text": "発熱・嘔吐・下痢などの体調不良がみられる。",
-          "role": "symptom_observation",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],

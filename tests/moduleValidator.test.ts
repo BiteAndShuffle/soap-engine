@@ -387,13 +387,13 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
   })
 
-  test('WARNING の総数が baseline（18 件）から変化していない', () => {
+  test('WARNING の総数が baseline（17 件）から変化していない', () => {
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      18,
+      17,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })
