@@ -477,3 +477,14 @@ Validator が検出するが、意図的に残存させている WARNING の台�
 | **status** | `INTENTIONAL_KEEP` |
 | **理由** | DP-05（heparinoid 剤形検索分離原則）に基づく剤形分割検索の実装過程で生じた既知の重複。検索 runtime 側の dedupe 対応が完了するまでは、トークンを削除すると分割検索（例:「へぱ なんこう」）が機能しなくなる可能性がある。 |
 | **対応方針** | 削除しない。search ロジック側の dedupe 対応時に併せて解消する。新規 module では `prompts/vNext/PN2-Drug-Header.md`「drug.search 検索トークンの生成規則」に従い、alias 系フィールドへ展開しないこと。 |
+
+### KW-003
+
+| 項目 | 内容 |
+|---|---|
+| **errorCode** | `ADDON_SCOPE_VIOLATION`（WARN／Design Rule） |
+| **module** | `dm_dpp4_oral` / `dm_dpp4_biguanide_combination_oral` / `dm_dpp4_thiazolidinedione_combination_oral` / `dm_dpp4_sglt2_combination_oral`（4 module。同一 addon の横展開であり個別の設計判断ではない） |
+| **対象** | `addons.items["addon_se_pancreatitis_guidance"].text`（`group: "sideEffects"`）が禁止語 `受診してください` を含む状態。`ADDON_SCOPE_EXEMPT_GROUPS`（現状 `sickday` のみ）の対象外グループであるため検出される |
+| **status** | `INTENTIONAL_KEEP` |
+| **理由** | DPP-4 阻害薬クラス共通の既知副作用（膵炎）について、強い腹痛・背部放散痛・嘔吐等の危険徴候が続く場合の受診勧奨を行う安全性コンテンツである。bridge 原稿（`bridges/dm_dpp4_biguanide_combination_oral.md` 設計メモ）に「addon_se_pancreatitis_guidance（DPP4由来）」と明記されたクラス共通 addon であり、4 module すべてで文言は薬効クラス名部分を除き実質同一。bridge ⇔ canonical のテキスト一致を確認済み（preservation 違反なし）。`prompts/RULES.md` §17 PStructured.role 正規語彙 `urgent_consult_guidance`（緊急受診・医師相談の指示）、および §22 addon 設計原則「ベースPの指示より重い状態への対応（例: 受診が必要になる具体的な症状）」が、この種の受診勧奨を addon の正当な設計パターンとして既に定めている。Owner Decision OD-W1（2026-08-16）により意図的保持を確定した |
+| **対応方針** | bridge 本文・canonical JSON・addon の group/scope・validator rule のいずれも変更しない。`ADDON_SCOPE_EXEMPT_GROUPS` は本件を理由に拡張しない。`sideEffects` group 全体、または「重篤副作用に対する受診勧奨」全般を自動 exemption にすることも行わない（Owner Decision OD-W3・2026-08-16）。将来、他薬効領域で同型の intentional WARNING が繰り返し発生した場合、個別 Appendix B 登録を継続するか validator / exemption 設計を一般化するかは別 Unit として再評価する。 |
