@@ -1,7 +1,7 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.4
-> **Last Updated:** 2026-08-15
+> **Version:** 2.5
+> **Last Updated:** 2026-08-16
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
 > **Current Focus:** local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
 
@@ -83,13 +83,20 @@ NOT YET VERIFIED のまま残っている（`prompts/vNext/HANDOFF.md` §6）。
 
 ```
 ① Cold-Start BCP の closure（Repository 単独で現在地・次工程・Deferred を復元できる状態）
-     ↓ 完了
+     ↓ CLOSED（2026-08-16・Owner Decision）
 ② Static / Local First の成立確認（静的版が実際にビルド・動作すること）
      ↓ 技術成立性・end-to-end 業務利用経路は実証済み。Phase 遷移の Owner 確認待ち
 ③ Module Expansion を主工程へ（canonical module の追加を継続工程として再開）
      ↓
 ④ 実運用とデータ拡充
 ```
+
+**① Cold-Start BCP closure について（2026-08-16）**
+
+- **完了条件の正本は `docs/DEVELOPMENT_STANDARD.md` §12.2 Phase 0 の完了条件・遷移 Trigger**（「Repository のみを入力とする新規セッションが現在地・次工程・Deferred を復元できること」）である。本ファイルは条件を複製しない。
+- 2026-08-16 の Cold-Start 検証（Repository のみを入力）により、Current Phase / Current Focus / Current Roadmap・next step / Deferred / restart trigger / 既知 Finding / Owner Decision 要事項を復元できることを確認した。同検証で判明した Structured role validator の coverage gap は技術修正を closure 条件とせず、`prompts/vNext/HANDOFF.md` §6 へ Finding として永続化した（DP-00）。
+- 上記に基づき、Owner Decision により **Cold-Start BCP を CLOSED とした**。
+- **CLOSED は Module Expansion の開始許可ではない。** MODULE EXPANSION = GO は別の Owner Decision であり未判定である（下表参照）。
 
 **この順序について**: `docs/PERSONA_PROJECT_PRINCIPLE.md` §3 の三段階（第1段階 base 指導文の一周完成 →
 第2段階 Static 版の店舗実運用検証）は **Persona Project 固有の内部工程**であり、プロダクト全体の
@@ -100,7 +107,7 @@ NOT YET VERIFIED のまま残っている（`prompts/vNext/HANDOFF.md` §6）。
 
 | 対象 | 理由 |
 |---|---|
-| 新規 canonical module の作成 | ① が完了し MODULE EXPANSION = GO と判定されるまで着手しない。着手対象の薬効領域も未決定 |
+| 新規 canonical module の作成 | ① は CLOSED（2026-08-16）。残るゲートは **MODULE EXPANSION = GO 判定（別 Owner Decision・未判定）**であり、これが下りるまで着手しない。着手対象の薬効領域も未決定 |
 | U-6 / Q-UX1（検索 UX） | correctness blocker ではない。再開 Trigger は `prompts/vNext/HANDOFF.md` §6 / `docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1 |
 | `EXPORT_STATIC` の Lifecycle 昇格 | 実測（`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`）は完了したが、昇格判断自体は意図的に別 Unit として保留中（Owner Decision）。判定材料は揃った状態で待機 |
 | SaaS 向け実装（entitlement / 配信境界 / 認証の全面置換） | Phase 3〜4。設計の検討経緯は `docs/reviews/f1/`（historical evidence） |
