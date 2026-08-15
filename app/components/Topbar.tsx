@@ -122,7 +122,13 @@ export default function Topbar({
         title="ペルソナ（文体切替）"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/persona-icon.webp" alt="ペルソナ" className={s.personaIcon} />
+        {/* file:// deployment（EXPORT_STATIC=1）では絶対パスが解決できないため相対パスにする。
+            通常ビルドでは NEXT_PUBLIC_EXPORT_STATIC が空文字のため従来どおり絶対パス。 */}
+        <img
+          src={process.env.NEXT_PUBLIC_EXPORT_STATIC === '1' ? './persona-icon.webp' : '/persona-icon.webp'}
+          alt="ペルソナ"
+          className={s.personaIcon}
+        />
       </button>
 
       <div className={s.searchArea}>

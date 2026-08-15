@@ -21,11 +21,18 @@ const nextConfig = {
   // ビルド時に BUILD_SHA を埋め込む（サーバーコンポーネントから process.env で参照可能）
   env: {
     NEXT_PUBLIC_BUILD_SHA: BUILD_SHA,
+    // file:// deployment 判定用（EXPORT_STATIC=1 のときのみ '1'）。
+    // Topbar.tsx が persona-icon.webp の参照を絶対/相対で切り替えるために使用する。
+    NEXT_PUBLIC_EXPORT_STATIC: isStaticExport ? '1' : '',
   },
 
   // 静的 export 設定（EXPORT_STATIC=1 のときのみ有効）
   ...(isStaticExport && {
     output: 'export',
+    // file:// で index.html を直接開けるよう、_next/static 等の参照を
+    // サイトルート相対（/...）ではなく HTML からの相対パス（./...）にする。
+    // 通常ビルド（isStaticExport=false）では従来どおり未設定（絶対パス）のまま。
+    assetPrefix: '.',
     images: {
       unoptimized: true,
     },
