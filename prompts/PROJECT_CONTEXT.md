@@ -1,6 +1,6 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.5
+> **Version:** 2.6
 > **Last Updated:** 2026-08-16
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
 > **Current Focus:** local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
@@ -87,7 +87,7 @@ NOT YET VERIFIED のまま残っている（`prompts/vNext/HANDOFF.md` §6）。
 ② Static / Local First の成立確認（静的版が実際にビルド・動作すること）
      ↓ 技術成立性・end-to-end 業務利用経路は実証済み。Phase 遷移の Owner 確認待ち
 ③ Module Expansion を主工程へ（canonical module の追加を継続工程として再開）
-     ↓
+     ↓ GO（2026-08-16・Owner Decision）— 開始前 remediation は 0 件
 ④ 実運用とデータ拡充
 ```
 
@@ -96,7 +96,34 @@ NOT YET VERIFIED のまま残っている（`prompts/vNext/HANDOFF.md` §6）。
 - **完了条件の正本は `docs/DEVELOPMENT_STANDARD.md` §12.2 Phase 0 の完了条件・遷移 Trigger**（「Repository のみを入力とする新規セッションが現在地・次工程・Deferred を復元できること」）である。本ファイルは条件を複製しない。
 - 2026-08-16 の Cold-Start 検証（Repository のみを入力）により、Current Phase / Current Focus / Current Roadmap・next step / Deferred / restart trigger / 既知 Finding / Owner Decision 要事項を復元できることを確認した。同検証で判明した Structured role validator の coverage gap は技術修正を closure 条件とせず、`prompts/vNext/HANDOFF.md` §6 へ Finding として永続化した（DP-00）。
 - 上記に基づき、Owner Decision により **Cold-Start BCP を CLOSED とした**。
-- **CLOSED は Module Expansion の開始許可ではない。** MODULE EXPANSION = GO は別の Owner Decision であり未判定である（下表参照）。
+- **CLOSED は Module Expansion の開始許可ではない。** MODULE EXPANSION = GO は別の Owner Decision であり、2026-08-16 に別途下された（下記「③ Module Expansion = GO について」）。
+
+**③ Module Expansion = GO について（2026-08-16・Owner Decision）**
+
+Gate Review（2026-08-16）の結果 —— **G1 blocker 0 件 ／ 開始前 remediation 0 件 ／ ERROR 0 ／ WARNING 17（既知 baseline）／ Structured role pre-rule baseline 21 key / 90 occurrence / 5 module ／ canonical generation pipeline の量産前 blocker 0** —— に基づき、Owner Decision により **MODULE EXPANSION = GO** とした。開始条件であった F-25（PN4B と RULES §17 の drift）は解消済み、F-05（行文脈 drift 46 occurrence）は Deferred として `prompts/vNext/HANDOFF.md` §6 へ永続化済みである。
+
+**この GO が意味すること・意味しないこと**
+
+| # | 内容 |
+|---|---|
+| 1 | Module Expansion **開始前に解消すべき blocker は 0 件**である |
+| 2 | **未解決 Finding をすべて解消したという意味ではない。** Deferred と判定された既存 debt は Deferred のまま維持する |
+| 3 | Persona / Structured metadata の runtime 接続前に解消すべき事項を、Module Expansion の開始条件へ**昇格させない** |
+| 4 | Module Expansion 中は既存の generation / audit / validation pipeline（PN1〜PN8・AUTORUN・validator・4 系統 audit・tests）を**変更せず維持する** |
+| 5 | 下記 guardrail を各 module / 新領域追加時に守る |
+| 6 | **Phase 1 → Phase 2 の遷移を意味しない。** Phase は Phase 1 のままであり、遷移 Trigger は `docs/DEVELOPMENT_STANDARD.md` §12.2 が定める別の Owner 判断である |
+| 7 | Persona runtime connection・M-4・その他 Deferred Finding を開始する判断**ではない** |
+
+**Module Expansion 中の guardrail**（いずれも既存規則。ここでは pointer のみを置き、規則本文を複製しない）
+
+| # | guardrail | 正本 |
+|---|---|---|
+| 1 | 各 module 完了時に `npm test` を実行し、Structured role の pre-rule baseline に**新規の非確立 role が増えていない**ことを確認する | `tests/structuredRoleVocabulary.test.ts` / `tests/fixtures/structuredRolePreRuleBaseline.ts` |
+| 2 | `addon.group` が標準変換表に従っていることを確認する | `prompts/vNext/AUTORUN.md` MUST_STOP 条件 N ／ `prompts/vNext/PN7-Cross-Reference-Audit.md` check V ／ `prompts/RULES.md` §5・§6 |
+| 3 | 新規 bridge の STATUS lifecycle を維持する | `prompts/RULES.md` §24 ／ `prompts/vNext/HANDOFF.md` §6（M-1） |
+| 4 | 新しい薬効領域を追加した場合は multi-drug synthesis の組み合わせケースを追加して検証する | `prompts/vNext/HANDOFF.md` §6（`npm run test:multi-drug`） |
+
+**着手対象の薬効領域は本 Decision に含まれない。** 次にどの薬効領域へ着手するかは `docs/OPEN_DESIGN_QUESTIONS.md` E-7（**OPEN**）が追跡する別の Owner Decision であり、**GO が下りたことを理由に領域を自動選択してはならない**（`docs/DEVELOPMENT_STANDARD.md` §8 は Domain Complete の成立条件の正本であって、着手領域を決定する authority ではない）。
 
 **この順序について**: `docs/PERSONA_PROJECT_PRINCIPLE.md` §3 の三段階（第1段階 base 指導文の一周完成 →
 第2段階 Static 版の店舗実運用検証）は **Persona Project 固有の内部工程**であり、プロダクト全体の
@@ -105,9 +132,10 @@ NOT YET VERIFIED のまま残っている（`prompts/vNext/HANDOFF.md` §6）。
 
 **現時点で着手しないこと**
 
+（**新規 canonical module の作成は 2026-08-16 の MODULE EXPANSION = GO により本表から除外された**。上記「③ Module Expansion = GO について」を参照。着手対象の薬効領域は依然未決定であり `docs/OPEN_DESIGN_QUESTIONS.md` E-7 が正本。）
+
 | 対象 | 理由 |
 |---|---|
-| 新規 canonical module の作成 | ① は CLOSED（2026-08-16）。残るゲートは **MODULE EXPANSION = GO 判定（別 Owner Decision・未判定）**であり、これが下りるまで着手しない。着手対象の薬効領域も未決定 |
 | U-6 / Q-UX1（検索 UX） | correctness blocker ではない。再開 Trigger は `prompts/vNext/HANDOFF.md` §6 / `docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1 |
 | `EXPORT_STATIC` の Lifecycle 昇格 | 実測（`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`）は完了したが、昇格判断自体は意図的に別 Unit として保留中（Owner Decision）。判定材料は揃った状態で待機 |
 | SaaS 向け実装（entitlement / 配信境界 / 認証の全面置換） | Phase 3〜4。設計の検討経緯は `docs/reviews/f1/`（historical evidence） |
