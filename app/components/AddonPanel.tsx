@@ -1,6 +1,7 @@
 'use client'
 
 import type { AddonsData, AddonItem } from '../../lib/types'
+import { buildSubClusters } from '../../lib/addonSubGroups'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
@@ -18,39 +19,21 @@ const GROUP_LABELS: Record<string, string> = {
 }
 
 // ─────────────────────────────────────────────────────────────
-// サブグループ — addon id からラベルを導出（JSON 非依存）
+// サブグループ枠の CSS クラス割当
+//
+// クラスタ分割ロジック（uiGroup 優先 / getSubGroupLabel へ fallback）は
+// lib/addonSubGroups.ts が持つ。本ファイルは描画のみを担当する。
+//
+// Record にすることで variant 追加時の分岐漏れを型で検出する。
 // ─────────────────────────────────────────────────────────────
 
-function getSubGroupLabel(id: string): string | null {
-  if (/_reminder_|_notification_/.test(id)) return '通知'
-  if (/_prep_|_routine_|_fixed_|_schedule_/.test(id)) return '準備'
-  if (/_visual_/.test(id)) return '見える化'
-  if (/_support_/.test(id)) return '支援'
-  return null
-}
-
-type SubCluster = {
-  uiVariant: AddonItem['uiVariant']
-  label: string | null
-  entries: [string, AddonItem][]
-}
-
-// 連続する同 uiVariant をひとつのクラスタにまとめる
-function buildSubClusters(entries: [string, AddonItem][]): SubCluster[] {
-  const clusters: SubCluster[] = []
-  for (const [key, item] of entries) {
-    const last = clusters[clusters.length - 1]
-    if (last && last.uiVariant === item.uiVariant) {
-      last.entries.push([key, item])
-    } else {
-      clusters.push({
-        uiVariant: item.uiVariant,
-        label: getSubGroupLabel(item.id ?? key),
-        entries: [[key, item]],
-      })
-    }
-  }
-  return clusters
+const VARIANT_CLASS: Record<
+  NonNullable<AddonItem['uiVariant']>,
+  { group: string; label: string }
+> = {
+  rightAccentBlue: { group: s.addonSubGroupBlue, label: s.addonSubGroupLabelBlue },
+  rightAccentLavender: { group: s.addonSubGroupLavender, label: s.addonSubGroupLabelLavender },
+  rightAccentAmber: { group: s.addonSubGroupAmber, label: s.addonSubGroupLabelAmber },
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -120,15 +103,9 @@ export default function AddonPanel({
             {clusters.map((cluster, ci) => {
               if (cluster.uiVariant) {
                 // uiVariant あり → 枠付きサブグループとして表示
-                const isBlue = cluster.uiVariant === 'rightAccentBlue'
-                const groupCls = [
-                  s.addonSubGroup,
-                  isBlue ? s.addonSubGroupBlue : s.addonSubGroupLavender,
-                ].join(' ')
-                const labelCls = [
-                  s.addonSubGroupLabel,
-                  isBlue ? s.addonSubGroupLabelBlue : s.addonSubGroupLabelLavender,
-                ].join(' ')
+                const variant = VARIANT_CLASS[cluster.uiVariant]
+                const groupCls = [s.addonSubGroup, variant.group].join(' ')
+                const labelCls = [s.addonSubGroupLabel, variant.label].join(' ')
                 return (
                   <div key={ci} className={groupCls}>
                     {cluster.label && (

@@ -293,12 +293,26 @@ export interface AddonItem {
    */
   requiredTags?: string[]
   /**
-   * ボタンの視覚的バリアント。右アクセントライン色で分類を表現。
-   * "rightAccentBlue":     青ライン（通知系・準備系 — 行動変容施策）。
-   * "rightAccentLavender": ラベンダーライン（見える化系・支援系 — 補助的施策）。
+   * ボタンの視覚的バリアント。サブグループ枠の色で分類を表現。
+   * "rightAccentBlue":     青枠（通知系・準備系 — 行動変容施策）。
+   * "rightAccentLavender": ラベンダー枠（見える化系・支援系 — 補助的施策）。
+   * "rightAccentAmber":    アンバー枠（薬剤固有介入 — その薬剤・薬効群・製品だから
+   *                        必要になる個別介入。共通支援 ADDON と区別して視認させる）。
    * 未定義: 通常スタイル。選択中は uiVariant によらず常に active スタイルが適用される。
    */
-  uiVariant?: 'rightAccentBlue' | 'rightAccentLavender'
+  uiVariant?: 'rightAccentBlue' | 'rightAccentLavender' | 'rightAccentAmber'
+  /**
+   * サブグループの意味ラベル（例: "通知" / "視覚化" / "事前準備" / "習慣化" /
+   * "家族の支援" / "薬剤固有介入"）。AddonPanel のサブグループ見出しに使用する。
+   *
+   * optional。**未定義の module は AddonPanel が addon id から導出する既存の
+   * fallback（getSubGroupLabel）へ委ねる**ため、全 module へ一斉付与する必要はない
+   * （段階移行可能）。定義されている場合は uiGroup が fallback より優先される。
+   *
+   * uiVariant が枠の色を決めるのに対し、uiGroup は枠の意味と見出し文言を決める。
+   * 両者は独立であり、同じ uiVariant でも uiGroup が異なれば別サブグループになる。
+   */
+  uiGroup?: string
 }
 
 /**

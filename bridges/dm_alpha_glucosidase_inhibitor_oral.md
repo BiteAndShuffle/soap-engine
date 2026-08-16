@@ -269,7 +269,7 @@ P_CLOSING
 
 
 
-【ADDON｜type=adherence_guidance｜id=addon_alpha_gi_before_meal_guidance｜title=α-グルコシダーゼ阻害薬 服用タイミング】
+【ADDON｜type=adherence_guidance｜id=addon_alpha_gi_before_meal_guidance｜title=αグルコシダーゼ服用タイミング｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
 P_APPEND
 食事の直前に服用する薬です。
 食事を摂らない時は服用を控え、対応に迷う場合は処方医へご相談ください。
@@ -666,48 +666,48 @@ P
 服薬忘れが続くと、期待される治療効果が十分に得られない可能性があります。
 P_ADDON
 - addon_alpha_gi_before_meal_guidance
-- addon_adherence_reminder_alarm
-- addon_adherence_reminder_app
+- addon_adherence_notification_alarm
+- addon_adherence_notification_app
 - addon_adherence_visual_calendar_checklist
 - addon_adherence_visual_note
 - addon_adherence_prep_previous_night
 - addon_adherence_prep_before_meal
-- addon_adherence_support_family_reminder
+- addon_adherence_family_support_reminder
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=服薬忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_alarm｜title=アラーム｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=服薬忘れ対策（通知：服薬アプリ）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_app｜title=服薬アプリ｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=お薬カレンダー・チェックリスト｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=服薬忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=貼り紙｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=服薬忘れ対策（準備：前夜）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=前夜に準備｜uiGroup=事前準備｜uiVariant=rightAccentBlue】
 P_APPEND
-飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。
+飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=服薬忘れ対策（準備：食前）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_before_meal｜title=食前に準備｜uiGroup=事前準備｜uiVariant=rightAccentBlue】
 P_APPEND
-飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。
+飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく方法があります。
 
 
-【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=服薬忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_family_support_reminder｜title=家族などの声掛け｜uiGroup=家族の支援｜uiVariant=rightAccentLavender】
 P_APPEND
 飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。
 

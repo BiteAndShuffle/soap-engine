@@ -35,6 +35,8 @@
 
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
 
 import { ALL_MODULES } from '../data/modules/index'
 
@@ -120,5 +122,100 @@ describe('adherence scenarioGroup 契約（全モジュール invariant）', () 
       SCENARIO_GROUP_CONTRACT.cp_good,
       '前提の健全性: 実データ側は契約値を満たしていなければならない',
     )
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 薬剤固有 ADDON の canonical 契約
+//
+// 共通 adherence テンプレートから外れる「薬剤固有介入」は現在 3 module のみ
+// （第2段階の全数調査で確定）。この 3 件は Amber accent と専用 uiGroup で
+// 共通支援 ADDON と区別され、P_ADDON の先頭に置かれる。
+//
+// bridge が内容の正本であるため（DP-07）、canonical だけが変わって bridge と
+// 乖離することがないよう、bridge の ADDON ヘッダーとも突き合わせる。
+// なお id / 順序 / 本文の bridge⇔canonical 一致は
+// scripts/audit-addon-bridge-chain.ts が担当し、本テストは
+// 同 audit の検査対象外である title / uiGroup / uiVariant を固定する。
+// ─────────────────────────────────────────────────────────────
+
+/** 薬剤固有 ADDON の期待値（moduleId → 契約） */
+const DRUG_SPECIFIC_ADDON: Record<string, { key: string; title: string }> = {
+  dm_glinide_oral: {
+    key: 'addon_glinide_before_meal_guidance',
+    title: 'グリニド服用タイミング',
+  },
+  dm_alpha_glucosidase_inhibitor_oral: {
+    key: 'addon_alpha_gi_before_meal_guidance',
+    title: 'αグルコシダーゼ服用タイミング',
+  },
+  dm_glinide_alpha_glucosidase_inhibitor_combination_oral: {
+    key: 'addon_glinide_alpha_gi_before_meal_guidance',
+    title: 'グルベス服用タイミング',
+  },
+}
+
+const SPECIFIC_UI_GROUP = '薬剤固有介入'
+const SPECIFIC_UI_VARIANT = 'rightAccentAmber'
+
+/** bridge の 【ADDON｜…｜id=<key>｜…】 ヘッダー属性を取り出す */
+function bridgeAddonHeader(moduleId: string, key: string): Record<string, string> | null {
+  const txt = fs.readFileSync(path.resolve('./bridges', `${moduleId}.md`), 'utf-8')
+  for (const raw of txt.split('\n')) {
+    const m = raw.trim().match(/^【ADDON｜(.+?)】$/)
+    if (!m) continue
+    const attrs: Record<string, string> = {}
+    for (const kv of m[1].split('｜')) {
+      const i = kv.indexOf('=')
+      if (i > 0) attrs[kv.slice(0, i)] = kv.slice(i + 1)
+    }
+    if (attrs.id === key) return attrs
+  }
+  return null
+}
+
+describe('薬剤固有 ADDON の canonical 契約（Amber / 薬剤固有介入）', () => {
+  for (const [moduleId, expected] of Object.entries(DRUG_SPECIFIC_ADDON)) {
+    test(`${moduleId}: id / title / uiGroup / uiVariant / P_ADDON 先頭`, () => {
+      const mod = ALL_MODULES.find(m => m.moduleId === moduleId)
+      assert.ok(mod, `${moduleId} が registry に存在しない`)
+
+      const item = mod!.addons?.items?.[expected.key]
+      assert.ok(item, `${moduleId}: ${expected.key} が addons.items に存在しない`)
+      assert.equal(item!.key, expected.key, 'key がマップキーと一致すること')
+      assert.equal(item!.id, expected.key, 'id がマップキーと一致すること')
+      assert.equal(item!.title, expected.title)
+      assert.equal(item!.uiGroup, SPECIFIC_UI_GROUP)
+      assert.equal(item!.uiVariant, SPECIFIC_UI_VARIANT)
+
+      const sc = mod!.scenarios.find(s => s.id === 'cp_poor_missed_doses')
+      assert.ok(sc, `${moduleId}: cp_poor_missed_doses が存在しない`)
+      assert.equal(
+        sc!.addonsRef?.P?.[0],
+        expected.key,
+        '薬剤固有 ADDON は P_ADDON の先頭に置く（共通 ADDON 群へ埋もれさせない）',
+      )
+    })
+
+    test(`${moduleId}: bridge の ADDON ヘッダーと canonical が一致する`, () => {
+      const h = bridgeAddonHeader(moduleId, expected.key)
+      assert.ok(h, `${moduleId}: bridge に ${expected.key} の ADDON ヘッダーが無い`)
+      assert.equal(h!.title, expected.title, 'title が bridge と一致すること')
+      assert.equal(h!.uiGroup, SPECIFIC_UI_GROUP, 'uiGroup が bridge と一致すること')
+      assert.equal(h!.uiVariant, SPECIFIC_UI_VARIANT, 'uiVariant が bridge と一致すること')
+    })
+  }
+
+  test('Amber は薬剤固有 ADDON 3 件以外へ展開されていない', () => {
+    const unexpected: string[] = []
+    const allowed = new Set(Object.values(DRUG_SPECIFIC_ADDON).map(v => v.key))
+    for (const mod of ALL_MODULES) {
+      for (const [key, item] of Object.entries(mod.addons?.items ?? {})) {
+        if (item.uiVariant === SPECIFIC_UI_VARIANT && !allowed.has(key)) {
+          unexpected.push(`${mod.moduleId}.${key}`)
+        }
+      }
+    }
+    assert.deepEqual(unexpected, [], `Amber の適用対象は現在 3 件のみ:\n  ${unexpected.join('\n  ')}`)
   })
 })

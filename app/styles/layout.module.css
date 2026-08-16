@@ -606,6 +606,11 @@
 .addonSubGroupLavender {
   border: 1.5px solid #c7b8ea;
 }
+/* Amber枠 — 薬剤固有介入。CP不良チップのOrange(#ffc985/#9a3d00)とは別系統として、 */
+/* サイドバーで使用中のアンバー #c07020 を基点に導出した。                            */
+.addonSubGroupAmber {
+  border: 1.5px solid #d9a24a;
+}
 .addonSubGroupLabel {
   font-size: 0.60rem;
   font-weight: 700;
@@ -617,6 +622,9 @@
 }
 .addonSubGroupLabelLavender {
   color: #9b82c8;
+}
+.addonSubGroupLabelAmber {
+  color: #c07020;
 }
 .addonBtnActive {
   background: #1a5cbf;

@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-07-21
+最終更新: 2026-08-17
 
 ---
 
@@ -465,6 +465,41 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 | `composition.defaultSMergeLevel` 等の欠落 | allergy_eye_drops / derm 3系 | 多剤合成対象外。DP-03 条件付き必須原則 |
 | `expressModes[*].enabled: true` + `disabled: true` | derm 3系 | 準備中プレースホルダー。将来の有効化時に `disabled` を外す（JS-expressModes 参照）|
 | `moduleVersion` 値が module ごとに異なる | 全 module | string 型で存在すればよい。runtime 未参照。validator は存在確認のみ。値の形式は不問 |
+| `addons.items[].uiVariant` の有無・値 | 全 module | ADDON の視覚的 accent を指定する optional UI metadata。臨床内容ではない。未指定でも runtime は通常ボタンとして描画する（JS-D-addonUi 参照）|
+| `addons.items[].uiGroup` の有無・値 | 全 module | ADDON の意味上の UI サブグループ名を指定する optional UI metadata。未指定でも runtime は addon id 由来の fallback で動作する（JS-D-addonUi 参照）|
+
+### JS-D-addonUi: addon の UI metadata（uiVariant / uiGroup）
+
+`addons.items[].uiVariant` と `addons.items[].uiGroup` は、**ADDON 本文や臨床的意味そのものではなく、
+AddonPanel の表示を補助するメタデータ**である。いずれも optional であり、未指定でも runtime は
+既存の fallback により動作する。したがって JS-A（全 module 必須）ではなく、module / addon ごとの
+差を意図的差分として許容する。
+
+**uiVariant — 視覚的 accent**
+
+| 値 | 意味 |
+|---|---|
+| `rightAccentBlue` | 通知系・準備系（行動変容施策）|
+| `rightAccentLavender` | 見える化系・支援系（補助的施策）|
+| `rightAccentAmber` | **薬剤固有介入** — その薬剤・薬効群・製品だから必要になる個別介入。共通支援 ADDON と区別して視認させる |
+
+未指定の ADDON は枠なしの通常ボタンとして描画される。
+
+**uiGroup — 意味上のサブグループ名**
+
+サブグループ見出しの文言を決める。runtime は `uiGroup` が存在する場合それを優先し、未指定の場合は
+addon id から導出する既存 fallback（`lib/addonSubGroups.ts` の `getSubGroupLabel()`）を使用する。
+このため **全 module へ一斉付与する必要はなく、段階的に導入できる**。
+
+現在使用されている値: `通知` / `視覚化` / `事前準備` / `習慣化` / `家族の支援` / `薬剤固有介入`
+
+> **この値一覧は閉じた enum ではない。** validator による値域固定の要否は未決定であり、本書は値域を規定しない。
+
+**両者の関係**
+
+`uiVariant` が枠の色を、`uiGroup` が枠の意味と見出し文言を決める。両者は独立であり、
+**同じ uiVariant でも uiGroup が異なれば別のサブグループ**として描画される
+（`lib/addonSubGroups.ts` の `buildSubClusters()` がクラスタ境界を両者の組で判定する）。
 
 ---
 
