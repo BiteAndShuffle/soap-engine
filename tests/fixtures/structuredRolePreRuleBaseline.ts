@@ -7,7 +7,9 @@
  * `SStructured` / `AStructured` / `PStructured` の role occurrence を、
  * **2026-08-16 時点の canonical JSON から実測した観測値**として固定したもの。
  *
- * 現在値: 27 key / 104 occurrence（35 module 中 6 module）。
+ * 現在値: 21 key / 90 occurrence（35 module 中 5 module）。
+ * （初回凍結時は 27 key / 104 occurrence。U-SR3-A・2026-08-16 で deterministic に移行先が
+ *   確定した 6 key / 14 occurrence を migration し、本表から除去した。）
  *
  * ── 本 fixture が表さないもの（重要）────────────────────────────────
  *
@@ -59,10 +61,7 @@ export interface PreRuleRoleBaselineRow {
 
 /** `(moduleId, type, role)` → 期待 occurrence 数。moduleId → type → role の昇順で固定する。 */
 export const PRE_RULE_STRUCTURED_ROLE_BASELINE: readonly PreRuleRoleBaselineRow[] = [
-  { moduleId: 'allergy_h1_antihistamine_second_gen_oral', type: 'S', role: 'as_needed_status', count: 4 },
-  { moduleId: 'allergy_h1_antihistamine_second_gen_oral', type: 'S', role: 'lifestyle_issue', count: 2 },
   { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'A', role: 'administration_assessment', count: 1 },
-  { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'A', role: 'sickday_assessment', count: 1 },
   { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'S', role: 'adherence_problem', count: 4 },
   { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'S', role: 'administration_problem', count: 1 },
   { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'S', role: 'lifestyle_problem', count: 2 },
@@ -70,7 +69,6 @@ export const PRE_RULE_STRUCTURED_ROLE_BASELINE: readonly PreRuleRoleBaselineRow[
   { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'S', role: 'symptom_presence_check', count: 9 },
   { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', type: 'S', role: 'visit_status', count: 2 },
   { moduleId: 'dm_glp1ra_injection', type: 'A', role: 'administration_assessment', count: 1 },
-  { moduleId: 'dm_glp1ra_injection', type: 'A', role: 'sickday_assessment', count: 1 },
   { moduleId: 'dm_glp1ra_injection', type: 'S', role: 'adherence_problem', count: 4 },
   { moduleId: 'dm_glp1ra_injection', type: 'S', role: 'administration_problem', count: 1 },
   { moduleId: 'dm_glp1ra_injection', type: 'S', role: 'lifestyle_problem', count: 2 },
@@ -84,8 +82,6 @@ export const PRE_RULE_STRUCTURED_ROLE_BASELINE: readonly PreRuleRoleBaselineRow[
   { moduleId: 'dm_glp1ra_semaglutide_oral', type: 'S', role: 'visit_status', count: 2 },
   { moduleId: 'dm_insulin_intermediate', type: 'A', role: 'dose_adjustment_assessment', count: 6 },
   { moduleId: 'dm_insulin_rapid_analog', type: 'P', role: 'urgent_consult_advice', count: 3 },
-  { moduleId: 'dm_insulin_rapid_analog', type: 'S', role: 'patient_report', count: 3 },
-  { moduleId: 'dm_insulin_rapid_analog', type: 'S', role: 'treatment_continuation_status', count: 3 },
 ]
 
 /** baseline row の比較キー。 */

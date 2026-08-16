@@ -3108,7 +3108,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、症状が出た時に使用している。",
-          "role": "as_needed_status",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3117,7 +3117,7 @@
         {
           "id": "s_2",
           "text": "使用により残薬が少なくなったため、継続処方となった。",
-          "role": "as_needed_status",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3244,7 +3244,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、症状が出た時に使用している。",
-          "role": "as_needed_status",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3253,7 +3253,7 @@
         {
           "id": "s_2",
           "text": "残薬があるため、今回は処方なしとなった。",
-          "role": "as_needed_status",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4200,7 +4200,7 @@
         {
           "id": "s_1",
           "text": "ビラスチンは空腹時に飲めていません。",
-          "role": "lifestyle_issue",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4308,7 +4308,7 @@
         {
           "id": "s_1",
           "text": "よくフルーツジュースを飲みます。",
-          "role": "lifestyle_issue",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],

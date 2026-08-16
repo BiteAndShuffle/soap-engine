@@ -785,14 +785,15 @@ M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当�
 |---|---|
 | `symptom_observation`（SStructured） | 解消済み |
 | `acute_condition_status`（SStructured・3 module） | 解消済み |
-| `as_needed_status`（SStructured） | 未解消（既知） |
-| `sickday_assessment`（AStructured・2 module） | 未解消（既知） |
-| その他80箇所超の未分類 `SStructured.role` | 未監査・未分類 |
+| `as_needed_status`（SStructured） | **解消済み**（2026-08-16・U-SR3-A。`adherence_status` へ migration） |
+| `sickday_assessment`（AStructured・2 module） | **解消済み**（同上。`treatment_assessment` へ migration） |
+| `lifestyle_issue` / `patient_report` / `treatment_continuation_status`（SStructured） | **解消済み**（同上。§17 行文脈規定に従い `adherence_status` / `treatment_start_reason` / `side_effect_status` へ migration） |
+| その他の未分類 `SStructured.role`（`symptom_absence_check` / `symptom_presence_check` / `adherence_problem` / `visit_status` / `lifestyle_problem` / `administration_problem`） | 未監査・未分類 |
 | `administration_assessment` / `dose_adjustment_assessment`（AStructured）／ `urgent_consult_advice`（PStructured） | 未監査・未分類（defect / 未文書化語彙のいずれとも確定していない） |
 | validator の allow-list 化 ／ blocklist 拡張 ／ Structured role 語彙体系整理の方針 | **未決定** |
 | **新規の非確立 role が silent に追加される検出 gap** | **解消済み**（2026-08-16・U-SR1）。`tests/structuredRoleVocabulary.test.ts` が `lib/structuredRoleVocabulary.ts`（RULES §17 の機械可読 mirror）と `tests/fixtures/structuredRolePreRuleBaseline.ts`（**pre-rule baseline: 27 key / 104 occurrence**）を突き合わせ、baseline 外の非確立 role・既知 key の件数増減・両者の相殺をいずれも検出する。`lib/moduleValidator.ts` の blocklist 方式自体は未変更 |
 
-**既存 104 occurrence の classification / migration は引き続き Deferred である**（U-SR1 は検出のみを機械化し、canonical JSON を 1 件も変更していない）。
+**pre-rule baseline の現在値は 21 key / 90 occurrence（5 module）である**（U-SR1 の初回凍結時は 27 key / 104 occurrence / 6 module）。U-SR3-A（2026-08-16）で、**RULES §17 から移行先が deterministic に確定する 6 key / 14 occurrence のみ**を migration した（`as_needed_status` 4 → `adherence_status` ／ `sickday_assessment` 2 → `treatment_assessment` ／ `lifestyle_issue` 2・`patient_report` 3 → `adherence_status` ／ `treatment_continuation_status` 3 → `treatment_start_reason` 1・`side_effect_status` 2）。**残る 90 occurrence の classification / migration は引き続き Deferred である。** `urgent_consult_advice`（3・PStructured）は §17 に明文の禁止・置換規定がなく、`urgent_consult_guidance` への置換が Repository authority だけでは deterministic と確定しないため **OWNER DECISION REQUIRED として今回の対象から除外した**（本節の未分類欄に残置）。
 
 **PN4A authority drift（`dose_adjustment_assessment`）は解消済み（2026-08-16・Owner Decision OD-DA1〜4）**: `prompts/vNext/PN4A-Structured-GroupA.md` が AStructured の生成候補として列挙していた `dose_adjustment_assessment` を削除し、`prompts/RULES.md` §17 ／ `prompts/vNext/PN7-Cross-Reference-Audit.md` check T ／ `lib/structuredRoleVocabulary.ts` の 4 値へ整合させた（**§17 が Structured role vocabulary の authority である**）。`dm_insulin_intermediate` の canonical 6 occurrence は**未変更**であり、pre-rule baseline 内の既知 occurrence として本 Finding の Deferred 対象に留まる。**本判断は Structured role / Persona の将来拡張余地を削除するものではない**（「role という拡張可能な器」と「`dose_adjustment_assessment` という個別語彙」は別事項であり、器は維持される）。将来 runtime 接続等で細粒度 role が必要と判明した場合は、§17「Structured role 確立語彙の変更契機」に従う正規の vocabulary change process で追加する。
 

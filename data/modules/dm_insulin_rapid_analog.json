@@ -810,7 +810,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}は、他院で開始され継続使用中であった。",
-          "role": "treatment_continuation_status",
+          "role": "treatment_start_reason",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1648,7 +1648,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。",
-          "role": "treatment_continuation_status",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -1794,7 +1794,7 @@
         {
           "id": "s_1",
           "text": "{{drug_subject}}を使用して症状は落ち着いている。",
-          "role": "treatment_continuation_status",
+          "role": "side_effect_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3744,7 +3744,7 @@
         {
           "id": "s_1",
           "text": "血糖値がなかなか改善しない。",
-          "role": "patient_report",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -3876,7 +3876,7 @@
         {
           "id": "s_1",
           "text": "カリウムの値が高いと言われた。",
-          "role": "patient_report",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],
@@ -4149,7 +4149,7 @@
         {
           "id": "s_1",
           "text": "注射手技に不安がみられる。",
-          "role": "patient_report",
+          "role": "adherence_status",
           "transform": "moderate",
           "safety": "low",
           "lockTerms": [],

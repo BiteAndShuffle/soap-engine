@@ -4710,7 +4710,7 @@
         {
           "id": "a_1",
           "text": "食事摂取低下および消化器症状により脱水リスクが上昇している。併用薬によっては低血糖リスクもあり、シックデイ時の対応に注意が必要である。",
-          "role": "sickday_assessment",
+          "role": "treatment_assessment",
           "transform": "fixed",
           "safety": "critical",
           "lockTerms": [
