@@ -39,8 +39,19 @@ PN4A と同一ルールを適用する。以下を参照:
 ### このグループに特有の role 選択肢
 
 **SStructured.role（追加）:**
-- `side_effect_status`（副作用の状態）
+- `side_effect_status`（副作用の状態 — `sideEffectPresence = absent_or_not_observed` の S 行）
+- `side_effect_presence`（副作用の発現 — `sideEffectPresence = present_*` の S 行）
 - `adherence_status`（アドヒアランスの状態）
+
+**side_effect 型シナリオの SStructured.role（混同禁止 — RULES.md §17「side_effect 系 S 行の区別」準拠）:**
+
+| sideEffectPresence | S フィールドの性質 | 使用する role |
+|---|---|---|
+| `absent_or_not_observed` | 副作用なし確認（`se_*_none` 系） | `side_effect_status` |
+| `present_mild` / `present_moderate` / `present_dose_decrease` / `present_change` / `present_stop` | 副作用ありの発現状況 | `side_effect_presence` |
+
+判定は scenario の `sideEffectPresence` の値のみで行い、**当該シナリオの全 S 行に同一の role を適用する**（RULES.md §17）。
+副作用ありのシナリオに `side_effect_status` を使用してはならない。新規語彙は追加しない。
 
 **sickday / followup / usage 型シナリオの SStructured.role（明示ルール）:**
 
