@@ -53,8 +53,9 @@ PN4A と同一ルールを適用する。以下を参照:
 
 `adherence_status` は RULES.md §17 で「adherence 系 / lifestyle_guidance 系 / usage 系」を包括する語彙として確定済み。
 sickday / followup / usage 型 S フィールドはすべて usage 系として同語彙を使用する。新規語彙は追加しない。
-一部の既存module（`allergy_h1_antihistamine_second_gen_oral` 等）が `as_needed_status` という未定義roleを使用している事例があるが、
-これは RULES.md §17 未定義語彙であり、新規moduleの正本として模倣しないこと。
+過去に一部の既存module（`allergy_h1_antihistamine_second_gen_oral` 等）が `as_needed_status` という未定義roleを使用していた事例があったが、
+これは RULES.md §17 未定義語彙であり、2026-08-16 に `adherence_status` へ migration 済みである（commit `b613722`）。
+未定義roleは新規moduleの正本として模倣しないこと。
 
 **AStructured.role（Group B 追加語彙 — RULES.md §17 準拠）:**
 - `side_effect_assessment`（side_effect 系の A 行）

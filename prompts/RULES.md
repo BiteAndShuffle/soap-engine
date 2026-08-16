@@ -504,7 +504,7 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 `sickday_status` / `followup_status` / `as_needed_status` という語彙は存在しない（ERROR）。`adherence_status` を使用すること。
 
-**既存precedentからの未定義role転用禁止**: 一部の既存module（`allergy_h1_antihistamine_second_gen_oral` の `as_needed_refill_*` 等）が本節に定義のないrole（`as_needed_status`）を使用している事例があるが、これは本ルール確定前の legacy 実装であり ERROR 該当である。新規moduleでは、既存JSONに前例があるという理由だけで未定義roleを転用してはならない。本節に定義された確立済み語彙のみを使用すること。
+**既存precedentからの未定義role転用禁止**: 過去に一部の既存module（`allergy_h1_antihistamine_second_gen_oral` の `as_needed_refill_*` 等）が本節に定義のないrole（`as_needed_status`）を使用していた事例があった。これは本ルール確定前の legacy 実装であり ERROR 該当であるため、**2026-08-16 に `adherence_status` へ migration 済みである**（commit `b613722`）。新規moduleでは、既存JSONに前例があるという理由だけで未定義roleを転用してはならない。本節に定義された確立済み語彙のみを使用すること。
 
 **SStructured.role 禁止語彙（ERROR）:** `drug_status` / `treatment_adjustment_reason` / `adherence_observation` / `side_effect_observation` / `symptom_observation` / `sickday_status` / `followup_status`
 

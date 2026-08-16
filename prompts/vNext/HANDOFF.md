@@ -765,10 +765,10 @@ M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当�
 - 実測例（SStructured）:
   - `symptom_observation`（`dm_insulin_rapid_analog`）— ブロックリスト登録済みのため検出され、**deterministic migration 済み**（2026-08-16、`adherence_status` へ）
   - `acute_condition_status`（`dm_gip_glp1ra_tirzepatide_injection` / `dm_glp1ra_injection` / `dm_glp1ra_semaglutide_oral`）— ブロックリスト**未登録**のため build では検出されず、横断調査で判明。**deterministic migration 済み**（2026-08-16、`adherence_status` へ）
-  - `as_needed_status`（`allergy_h1_antihistamine_second_gen_oral`）— `prompts/RULES.md` §17 が「本ルール確定前の legacy 実装であり ERROR 該当」と明記しているにもかかわらず、ブロックリスト未登録のため build 上は無検出のまま**現時点では未解消**
+  - `as_needed_status`（`allergy_h1_antihistamine_second_gen_oral`）— `prompts/RULES.md` §17 が「本ルール確定前の legacy 実装であり ERROR 該当」と明記しているにもかかわらず、ブロックリスト未登録のため build 上は無検出だった。**deterministic migration 済み**（2026-08-16・U-SR3-A / `b613722`、`adherence_status` へ）。**occurrence は解消したが、`as_needed_status` がブロックリスト未登録であるという coverage gap 自体は未解消である。**
 - 2026-08-16 の全35 module 横断スキャンで、RULES.md §17 の確立語彙・禁止語彙のいずれにも属さない `SStructured.role` が複数種・80箇所超（5 module 以上）存在することを確認した。**これらを一括して defect と分類してはいない。** `symptom_absence_check` / `symptom_presence_check` 等は `2becf03`（2026-04-19）で著者が `acute_condition_status` から意図的に移行させた先であり、legacy defect ではなく現行の未文書化語彙である可能性がある。個別の classification が必要であり、今回は実施していない。
 - 実測例（AStructured・2026-08-16 の Cold-Start 調査で判明）:
-  - `sickday_assessment`（`dm_gip_glp1ra_tirzepatide_injection` / `dm_glp1ra_injection` の `sickday` シナリオ・計 2 件）— `prompts/RULES.md` §17 が **AStructured.role の禁止語彙（ERROR）**として明示列挙しているが、`FORBIDDEN_A_STRUCTURED_ROLES`（`drug_mechanism` / `lifestyle_assessment` の 2 値のみ）に**未登録**のため、validator / audit / test / build のいずれでも検出されない。**現時点では未解消**
+  - `sickday_assessment`（`dm_gip_glp1ra_tirzepatide_injection` / `dm_glp1ra_injection` の `sickday` シナリオ・計 2 件）— `prompts/RULES.md` §17 が **AStructured.role の禁止語彙（ERROR）**として明示列挙しているが、`FORBIDDEN_A_STRUCTURED_ROLES`（`drug_mechanism` / `lifestyle_assessment` の 2 値のみ）に**未登録**のため、validator / audit / test / build のいずれでも検出されなかった。**deterministic migration 済み**（2026-08-16・U-SR3-A / `b613722`、`treatment_assessment` へ）。**occurrence は解消したが、`sickday_assessment` がブロックリスト未登録であるという coverage gap 自体は未解消である。**
   - `administration_assessment`（2 件）/ `dose_adjustment_assessment`（6 件）— RULES.md §17 の AStructured 確立語彙・禁止語彙のいずれにも属さない
 - 実測例（PStructured・同上）:
   - `urgent_consult_advice`（3 件）— RULES.md §17 の PStructured 確立語彙・禁止語彙のいずれにも属さない
