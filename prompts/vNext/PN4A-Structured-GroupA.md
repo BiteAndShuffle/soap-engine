@@ -66,8 +66,7 @@ Phase 1 で凍結した S / A / P テキストを文単位に分解し、SStruct
 > `drug_status` は未定義語彙。treatment_start 系 → `treatment_start_reason`、dose_change 系 → `dose_adjustment_reason`、end 系 → `treatment_end_reason` を使うこと。
 
 **AStructured.role（確立済み語彙のみ使用）:**
-- `treatment_assessment`（汎用: treatment_start / adjustment / lifestyle 等の A 行）
-- `dose_adjustment_assessment`（用量変更評価 — treatment_assessment との混用不可ではないが、明示したい場合に使用）
+- `treatment_assessment`（汎用: treatment_start / adjustment / lifestyle 等の A 行。**用量変更の A 行もこれを使用する**）
 - `treatment_end_assessment`（treatment_end 系 — treatment_assessment との混用不可）
 
 **AStructured.role 禁止語彙（ERROR）:**
