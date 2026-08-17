@@ -344,7 +344,7 @@ P_APPEND
 低血糖症状が出た場合は、速やかにブドウ糖や糖分を摂取してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_ribelsus_admin｜title=リベルサス(セマグルチド)服用方法】
+【ADDON｜type=administration_guidance｜id=addon_ribelsus_admin｜title=リベルサス服用方法｜requiredTags=[ribelsus]｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
 P_APPEND
 湿気に弱いため、PTPシートはミシン目以外で切り離さないでください。
 起床後すぐ、最初の1錠としてコップ半分（120mL以下）の水で服用してください。

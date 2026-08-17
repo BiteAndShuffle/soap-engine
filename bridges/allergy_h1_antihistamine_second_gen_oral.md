@@ -473,13 +473,13 @@ P_APPEND
 自動車の運転など危険を伴う作業には注意してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_bilastine_admin｜title=ビラノア（ビラスチン）説明】
+【ADDON｜type=administration_guidance｜id=addon_bilastine_admin｜title=ビラノア服用タイミング｜requiredTags=[bilastine]｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
 P_APPEND
 食事の影響により、効果が減弱する可能性があります。
 1日1回空腹時（食事のおよそ1時間前または食後2時間以上あと）に服用してください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_fexofenadine_admin｜title=アレグラ（フェキソフェナジン）説明】
+【ADDON｜type=administration_guidance｜id=addon_fexofenadine_admin｜title=アレグラ服用時の注意｜requiredTags=[fexofenadine]｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
 P_APPEND
 フルーツジュースの影響により、効果が減弱する可能性があります。
 グレープフルーツ、リンゴ、オレンジなどのジュースは避け、水で服用してください。

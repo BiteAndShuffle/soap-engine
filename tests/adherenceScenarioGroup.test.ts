@@ -39,6 +39,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import { ALL_MODULES } from '../data/modules/index'
+import type { Scenario } from '../lib/types'
 
 /** adherence 系シナリオ id → 規定の scenarioGroup（宣言元: PN3A-Scenario-Classification.md） */
 const SCENARIO_GROUP_CONTRACT: Record<string, string> = {
@@ -206,9 +207,12 @@ describe('薬剤固有 ADDON の canonical 契約（Amber / 薬剤固有介入�
     })
   }
 
-  test('Amber は薬剤固有 ADDON 3 件以外へ展開されていない', () => {
+  test('Amber は薬剤固有 ADDON 契約の対象以外へ展開されていない', () => {
     const unexpected: string[] = []
-    const allowed = new Set(Object.values(DRUG_SPECIFIC_ADDON).map(v => v.key))
+    const allowed = new Set([
+      ...Object.values(DRUG_SPECIFIC_ADDON).map(v => v.key),
+      ...ADMIN_SPECIFIC_ENTRIES.map(e => e.addon.key),
+    ])
     for (const mod of ALL_MODULES) {
       for (const [key, item] of Object.entries(mod.addons?.items ?? {})) {
         if (item.uiVariant === SPECIFIC_UI_VARIANT && !allowed.has(key)) {
@@ -216,8 +220,136 @@ describe('薬剤固有 ADDON の canonical 契約（Amber / 薬剤固有介入�
         }
       }
     }
-    assert.deepEqual(unexpected, [], `Amber の適用対象は現在 3 件のみ:\n  ${unexpected.join('\n  ')}`)
+    assert.deepEqual(unexpected, [], `Amber の適用対象は本契約に列挙した ${allowed.size} 件のみ:\n  ${unexpected.join('\n  ')}`)
   })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 薬剤固有 ADDON の canonical 契約（Amber / administration_guidance 系）
+//
+// 第3段階の全数調査（2026-08-18, Opus read-only 調査 → Owner確定）で追加された
+// 4 ADDON。上の「adherence_guidance 系」（グリニド3件・cp_poor_missed_doses 先頭）
+// とは前提が異なるため、意図的に別契約として分離する:
+//
+//   - type は administration_guidance（adherence_guidance ではない）
+//   - requiredTags による条件表示 ADDON であり、対象ブランド以外では非表示になる
+//   - 参照 scenario は cp_poor_missed_doses ではなく initial 系のみ
+//   - 「Amber = P_ADDON 先頭」という一般化はここでは要求しない
+//     （Amber化と scenario 参照の変更は別判断であり、今回は参照位置を一切変えていない）
+//
+// 本契約が固定するのは、Owner確定の id/title/uiGroup/uiVariant/requiredTags と、
+// 既存の scenario 参照位置が Amber化前後で変わっていないことのみである。
+// ─────────────────────────────────────────────────────────────
+
+type AdminSpecificAddon = {
+  key: string
+  title: string
+  requiredTags: string[]
+  /** 既存の参照 scenario と P_ADDON 内インデックス（Amber化で変更していないことの固定） */
+  scenarioPositions: Array<{ scenarioId: string; index: number }>
+}
+
+const H1_SECOND_GEN_SCENARIOS = [
+  'initial_nasal',
+  'initial_pruritus',
+  'dose_increase_low_perceived_effect',
+  'dose_increase_due_to_other_med_adjustment',
+  'restart_nasal',
+  'restart_pruritus',
+  'external_start_nasal',
+  'external_start_pruritus',
+]
+
+const ADMIN_SPECIFIC_ENTRIES: Array<{ moduleId: string; addon: AdminSpecificAddon }> = [
+  {
+    moduleId: 'dm_dpp4_oral',
+    addon: {
+      key: 'addon_weekly_dpp4_admin',
+      title: '週1回DPP-4阻害薬 服用方法',
+      requiredTags: ['weekly_dpp4'],
+      scenarioPositions: [
+        { scenarioId: 'initial', index: 3 },
+        { scenarioId: 'restart', index: 3 },
+        { scenarioId: 'external_start', index: 3 },
+      ],
+    },
+  },
+  {
+    moduleId: 'dm_glp1ra_semaglutide_oral',
+    addon: {
+      key: 'addon_ribelsus_admin',
+      title: 'リベルサス服用方法',
+      requiredTags: ['ribelsus'],
+      scenarioPositions: [
+        { scenarioId: 'initial', index: 0 },
+        { scenarioId: 'restart', index: 0 },
+        { scenarioId: 'external_start', index: 0 },
+      ],
+    },
+  },
+  {
+    moduleId: 'allergy_h1_antihistamine_second_gen_oral',
+    addon: {
+      key: 'addon_bilastine_admin',
+      title: 'ビラノア服用タイミング',
+      requiredTags: ['bilastine'],
+      scenarioPositions: H1_SECOND_GEN_SCENARIOS.map(scenarioId => ({ scenarioId, index: 1 })),
+    },
+  },
+  {
+    moduleId: 'allergy_h1_antihistamine_second_gen_oral',
+    addon: {
+      key: 'addon_fexofenadine_admin',
+      title: 'アレグラ服用時の注意',
+      requiredTags: ['fexofenadine'],
+      scenarioPositions: H1_SECOND_GEN_SCENARIOS.map(scenarioId => ({ scenarioId, index: 2 })),
+    },
+  },
+]
+
+describe('薬剤固有 ADDON の canonical 契約（Amber / administration_guidance 系）', () => {
+  for (const { moduleId, addon } of ADMIN_SPECIFIC_ENTRIES) {
+    test(`${moduleId}.${addon.key}: id / title / uiGroup / uiVariant / requiredTags`, () => {
+      const mod = ALL_MODULES.find(m => m.moduleId === moduleId)
+      assert.ok(mod, `${moduleId} が registry に存在しない`)
+
+      const item = mod!.addons?.items?.[addon.key]
+      assert.ok(item, `${moduleId}: ${addon.key} が addons.items に存在しない`)
+      assert.equal(item!.key, addon.key, 'key がマップキーと一致すること')
+      assert.equal(item!.id, addon.key, 'id がマップキーと一致すること')
+      assert.equal(item!.title, addon.title)
+      assert.equal(item!.uiGroup, SPECIFIC_UI_GROUP)
+      assert.equal(item!.uiVariant, SPECIFIC_UI_VARIANT)
+      assert.deepEqual(item!.requiredTags, addon.requiredTags, 'requiredTags が維持されていること')
+    })
+
+    test(`${moduleId}.${addon.key}: 既存 scenario 参照位置が変更されていない`, () => {
+      const mod = ALL_MODULES.find(m => m.moduleId === moduleId)
+      assert.ok(mod, `${moduleId} が registry に存在しない`)
+      for (const { scenarioId, index } of addon.scenarioPositions) {
+        const sc: Scenario | undefined = mod!.scenarios.find(s => s.id === scenarioId)
+        assert.ok(sc, `${moduleId}: scenario ${scenarioId} が存在しない`)
+        assert.equal(
+          sc!.addonsRef?.P?.[index],
+          addon.key,
+          `${moduleId}/${scenarioId}: ${addon.key} の P_ADDON 位置(${index}) が Amber化前から変更されている`,
+        )
+      }
+    })
+
+    test(`${moduleId}.${addon.key}: bridge の ADDON ヘッダーと canonical が一致する`, () => {
+      const h = bridgeAddonHeader(moduleId, addon.key)
+      assert.ok(h, `${moduleId}: bridge に ${addon.key} の ADDON ヘッダーが無い`)
+      assert.equal(h!.title, addon.title, 'title が bridge と一致すること')
+      assert.equal(h!.uiGroup, SPECIFIC_UI_GROUP, 'uiGroup が bridge と一致すること')
+      assert.equal(h!.uiVariant, SPECIFIC_UI_VARIANT, 'uiVariant が bridge と一致すること')
+      assert.equal(
+        h!.requiredTags,
+        `[${addon.requiredTags.join(', ')}]`,
+        'requiredTags が bridge と一致すること',
+      )
+    })
+  }
 })
 
 // ─────────────────────────────────────────────────────────────

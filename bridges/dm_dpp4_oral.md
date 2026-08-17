@@ -515,7 +515,7 @@ P_APPEND
 気になることがあればご相談ください。
 
 
-【ADDON｜type=administration_guidance｜id=addon_weekly_dpp4_admin｜title=週1回DPP-4阻害薬 服用方法｜requiredTags=[weekly_dpp4]】
+【ADDON｜type=administration_guidance｜id=addon_weekly_dpp4_admin｜title=週1回DPP-4阻害薬 服用方法｜requiredTags=[weekly_dpp4]｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
 P_APPEND
 週1回服用する薬のため、決められた曜日に服用してください。
 飲み忘れた場合は、気づいた時点で1回分を服用し、その後は決められた曜日に服用してください。

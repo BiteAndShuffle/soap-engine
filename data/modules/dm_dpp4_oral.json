@@ -4209,7 +4209,8 @@
         "sectionTexts": {
           "P": "週1回服用する薬のため、決められた曜日に服用してください。\n飲み忘れた場合は、気づいた時点で1回分を服用し、その後は決められた曜日に服用してください。\n同じ日に2回分を服用しないでください。"
         },
-        "uiVariant": null,
+        "uiVariant": "rightAccentAmber",
+        "uiGroup": "薬剤固有介入",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],

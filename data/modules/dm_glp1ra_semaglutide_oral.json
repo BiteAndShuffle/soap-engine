@@ -360,7 +360,7 @@
       "addon_ribelsus_admin": {
         "key": "addon_ribelsus_admin",
         "id": "addon_ribelsus_admin",
-        "title": "リベルサス(セマグルチド)服用方法",
+        "title": "リベルサス服用方法",
         "group": "oral",
         "targetSection": "P",
         "text": "湿気に弱いため、PTPシートはミシン目以外で切り離さないでください。\n起床後すぐ、最初の1錠としてコップ半分（120mL以下）の水で服用してください。\n服用後30分は、飲食や他の薬の服用を避けてください。\n30分以上空けてから朝食をとってください。",
@@ -374,7 +374,9 @@
         "workflowTags": [],
         "requiredTags": [
           "ribelsus"
-        ]
+        ],
+        "uiVariant": "rightAccentAmber",
+        "uiGroup": "薬剤固有介入"
       },
       "addon_se_hypoglycemia_guidance": {
         "key": "addon_se_hypoglycemia_guidance",
