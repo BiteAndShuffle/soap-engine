@@ -219,3 +219,178 @@ describe('薬剤固有 ADDON の canonical 契約（Amber / 薬剤固有介入�
     assert.deepEqual(unexpected, [], `Amber の適用対象は現在 3 件のみ:\n  ${unexpected.join('\n  ')}`)
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// route別 adherence 標準ADDON の canonical 契約
+//
+// 対象は「薬剤固有例外を除いた 30 module」（内服16・注射10・外用4）。
+// この 30 module は cp_poor_missed_doses の adherence ADDON 構成を
+// route内で完全に共通化する標準化作業（一括 bridge 修正 → canonical 反映）を
+// 経ており、その結果を機械的に固定する。新しい仕様の宣言ではない。
+//
+// 除外 5 module（グリニド系3・H1点眼・旧chemical mediator点眼）はこの契約に含めない:
+//   - グリニド系3 module は薬剤固有 ADDON を持つ別契約として本ファイル冒頭の
+//     「薬剤固有 ADDON の canonical 契約」で既に保護されている
+//   - H1点眼は比較基準として使用したのみで bridge/canonical とも今回変更していない
+//   - 旧chemical mediator点眼は将来 H1 bridge ベースで再構築予定のため対象外
+//
+// ── 何を固定しないか ────────────────────────────────────────────
+//
+// P_APPEND全文・S/O/A/P/P_CLOSING全文の bridge⇔canonical 一致は
+// scripts/audit-addon-bridge-chain.ts が既に担保しており、本テストでは重複固定しない。
+// 本テストが埋める空白は「30 module が route別標準構造を維持していること」の
+// 回帰保護であり、addonsRef.P の件数・ID・順序と、各ADDONの id/title/uiGroup/uiVariant
+// のみを対象とする。
+//
+// orderPresets（例: cp_poor_missed_doses_default）の参照整合性は
+// lib/moduleValidator.ts check 7c（ORDERPRESETS の addons.items 参照切れ検査、ERROR）と
+// tests/moduleValidator.test.ts の全module baselineで既に機械的に保護されているため、
+// 本テストでは扱わない。
+// ─────────────────────────────────────────────────────────────
+
+type RouteAddonDef = { title: string; uiGroup: string; uiVariant: string }
+
+/** route別 adherence ADDON 標準（30 module の canonical 実測値をそのまま転記） */
+const ROUTE_STANDARD: Record<string, { order: string[]; defs: Record<string, RouteAddonDef> }> = {
+  oral: {
+    order: [
+      'addon_adherence_notification_alarm',
+      'addon_adherence_notification_app',
+      'addon_adherence_visual_calendar_checklist',
+      'addon_adherence_visual_note',
+      'addon_adherence_prep_previous_night',
+      'addon_adherence_prep_before_meal',
+      'addon_adherence_family_support_reminder',
+    ],
+    defs: {
+      addon_adherence_notification_alarm: { title: 'アラーム', uiGroup: '通知', uiVariant: 'rightAccentBlue' },
+      addon_adherence_notification_app: { title: '服薬アプリ', uiGroup: '通知', uiVariant: 'rightAccentBlue' },
+      addon_adherence_visual_calendar_checklist: { title: 'お薬カレンダー・チェックリスト', uiGroup: '視覚化', uiVariant: 'rightAccentLavender' },
+      addon_adherence_visual_note: { title: '貼り紙', uiGroup: '視覚化', uiVariant: 'rightAccentLavender' },
+      addon_adherence_prep_previous_night: { title: '前夜に準備', uiGroup: '事前準備', uiVariant: 'rightAccentBlue' },
+      addon_adherence_prep_before_meal: { title: '食前に準備', uiGroup: '事前準備', uiVariant: 'rightAccentBlue' },
+      addon_adherence_family_support_reminder: { title: '家族などの声掛け', uiGroup: '家族の支援', uiVariant: 'rightAccentLavender' },
+    },
+  },
+  injection: {
+    order: [
+      'addon_adherence_notification_alarm',
+      'addon_adherence_notification_app',
+      'addon_adherence_visual_calendar_checklist',
+      'addon_adherence_visual_note',
+      'addon_adherence_schedule_confirmation',
+      'addon_adherence_family_support_reminder',
+    ],
+    defs: {
+      addon_adherence_notification_alarm: { title: 'アラーム', uiGroup: '通知', uiVariant: 'rightAccentBlue' },
+      addon_adherence_notification_app: { title: '記録アプリ', uiGroup: '通知', uiVariant: 'rightAccentBlue' },
+      addon_adherence_visual_calendar_checklist: { title: 'カレンダー・チェックリスト', uiGroup: '視覚化', uiVariant: 'rightAccentLavender' },
+      addon_adherence_visual_note: { title: '貼り紙', uiGroup: '視覚化', uiVariant: 'rightAccentLavender' },
+      addon_adherence_schedule_confirmation: { title: '使用予定を確認', uiGroup: '事前準備', uiVariant: 'rightAccentBlue' },
+      addon_adherence_family_support_reminder: { title: '家族などの声掛け', uiGroup: '家族の支援', uiVariant: 'rightAccentLavender' },
+    },
+  },
+  topical: {
+    order: [
+      'addon_adherence_notification_alarm',
+      'addon_adherence_notification_app',
+      'addon_adherence_visual_checklist',
+      'addon_adherence_visual_note',
+      'addon_adherence_schedule_confirmation',
+      'addon_adherence_routine_link',
+      'addon_adherence_family_support_reminder',
+    ],
+    defs: {
+      addon_adherence_notification_alarm: { title: 'アラーム', uiGroup: '通知', uiVariant: 'rightAccentBlue' },
+      addon_adherence_notification_app: { title: '記録アプリ', uiGroup: '通知', uiVariant: 'rightAccentBlue' },
+      addon_adherence_visual_checklist: { title: 'チェックリスト', uiGroup: '視覚化', uiVariant: 'rightAccentLavender' },
+      addon_adherence_visual_note: { title: '貼り紙', uiGroup: '視覚化', uiVariant: 'rightAccentLavender' },
+      addon_adherence_schedule_confirmation: { title: '使用予定を確認', uiGroup: '事前準備', uiVariant: 'rightAccentBlue' },
+      addon_adherence_routine_link: { title: '生活習慣と結びつける', uiGroup: '習慣化', uiVariant: 'rightAccentBlue' },
+      addon_adherence_family_support_reminder: { title: '家族などの声掛け', uiGroup: '家族の支援', uiVariant: 'rightAccentLavender' },
+    },
+  },
+}
+
+/** route別標準の対象外（薬剤固有例外・比較基準・再構築予定） */
+const ROUTE_STANDARD_EXCLUDED = new Set([
+  'dm_glinide_oral',
+  'dm_alpha_glucosidase_inhibitor_oral',
+  'dm_glinide_alpha_glucosidase_inhibitor_combination_oral',
+  'allergy_h1_antihistamine_eye_drops',
+  'allergy_chemical_mediator_release_inhibitor_eye_drops',
+])
+
+/** 廃止済みの旧ID。route別標準対象 module に残っていてはならない */
+const LEGACY_ADHERENCE_IDS = [
+  'addon_adherence_reminder_alarm',
+  'addon_adherence_reminder_app',
+  'addon_adherence_support_family_reminder',
+]
+
+function routeStandardTargets(route: string): typeof ALL_MODULES[number][] {
+  return ALL_MODULES.filter(m => m.drug?.route === route && !ROUTE_STANDARD_EXCLUDED.has(m.moduleId))
+}
+
+describe('route別 adherence 標準ADDON の canonical 契約（30 module invariant）', () => {
+  test('対象module数が想定どおりである（テストの空振り防止）', () => {
+    const counts = {
+      oral: routeStandardTargets('oral').length,
+      injection: routeStandardTargets('injection').length,
+      topical: routeStandardTargets('topical').length,
+    }
+    assert.deepEqual(counts, { oral: 16, injection: 10, topical: 4 }, `route別対象数が想定と不一致: ${JSON.stringify(counts)}`)
+  })
+
+  test('除外5 moduleがこの契約の対象に含まれていない', () => {
+    const allTargets = [...routeStandardTargets('oral'), ...routeStandardTargets('injection'), ...routeStandardTargets('topical')].map(m => m.moduleId)
+    const leaked = [...ROUTE_STANDARD_EXCLUDED].filter(id => allTargets.includes(id))
+    assert.deepEqual(leaked, [], `除外対象が誤って含まれている: ${leaked.join(', ')}`)
+  })
+
+  for (const route of ['oral', 'injection', 'topical'] as const) {
+    const standard = ROUTE_STANDARD[route]
+
+    describe(`route=${route}`, () => {
+      for (const mod of routeStandardTargets(route)) {
+        test(`${mod.moduleId}: cp_poor_missed_doses.addonsRef.P が route標準と完全一致（件数・ID・順序）`, () => {
+          const sc = mod.scenarios.find(s => s.id === 'cp_poor_missed_doses')
+          assert.ok(sc, `${mod.moduleId}: cp_poor_missed_doses が存在しない`)
+          assert.deepEqual(
+            sc!.addonsRef?.P,
+            standard.order,
+            `${mod.moduleId}: addonsRef.P が route標準と不一致`,
+          )
+        })
+
+        test(`${mod.moduleId}: 標準ADDON全件が実在し id/title/uiGroup/uiVariant が route標準と一致`, () => {
+          const items = mod.addons?.items ?? {}
+          const mismatches: string[] = []
+          for (const [id, expected] of Object.entries(standard.defs)) {
+            const item = items[id]
+            if (!item) { mismatches.push(`${id}: addons.items に不在`); continue }
+            if (item.id !== id) mismatches.push(`${id}: item.id 不一致 (${item.id})`)
+            if (item.title !== expected.title) mismatches.push(`${id}: title 不一致 (${item.title})`)
+            if (item.uiGroup !== expected.uiGroup) mismatches.push(`${id}: uiGroup 不一致 (${item.uiGroup})`)
+            if (item.uiVariant !== expected.uiVariant) mismatches.push(`${id}: uiVariant 不一致 (${item.uiVariant})`)
+          }
+          assert.deepEqual(mismatches, [], `${mod.moduleId}:\n  ${mismatches.join('\n  ')}`)
+        })
+
+        test(`${mod.moduleId}: 旧ID（reminder_alarm / reminder_app / support_family_reminder）が残存しない`, () => {
+          const items = mod.addons?.items ?? {}
+          const residual = LEGACY_ADHERENCE_IDS.filter(id => id in items)
+          assert.deepEqual(residual, [], `${mod.moduleId}: 旧IDが残存: ${residual.join(', ')}`)
+        })
+      }
+    })
+  }
+
+  test('検出ロジックの健全性: 規定外の addonsRef.P は不一致として検出される', () => {
+    // 実データではなく意図的に壊した値で、検査が実際に差分を捕まえることを確認する
+    const sample = routeStandardTargets('oral')[0]
+    const sc = sample.scenarios.find(s => s.id === 'cp_poor_missed_doses')!
+    const broken = [...sc.addonsRef!.P!].reverse()
+    assert.notDeepEqual(broken, ROUTE_STANDARD.oral.order, '順序を破壊した配列は標準と不一致として検出されなければならない')
+  })
+})

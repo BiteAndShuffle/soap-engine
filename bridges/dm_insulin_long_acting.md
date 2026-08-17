@@ -762,30 +762,30 @@ P
 継続して使用することで、十分な治療効果が期待されます。
 使用忘れが続くと、期待される治療効果が十分に得られない可能性があります。
 P_ADDON
-- addon_adherence_reminder_alarm
-- addon_adherence_reminder_app
+- addon_adherence_notification_alarm
+- addon_adherence_notification_app
 - addon_adherence_visual_calendar_checklist
 - addon_adherence_visual_note
 - addon_adherence_schedule_confirmation
-- addon_adherence_support_family_reminder
+- addon_adherence_family_support_reminder
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_alarm｜title=使用忘れ対策（通知：アラーム）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_alarm｜title=アラーム｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_reminder_app｜title=使用忘れ対策（通知：記録アプリ）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_app｜title=記録アプリ｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=使用忘れ対策（見える化：カレンダー・チェックリスト）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=カレンダー・チェックリスト｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=使用忘れ対策（見える化：貼り紙）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=貼り紙｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用忘れ対策（予定確認）｜uiVariant=rightAccentBlue】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_schedule_confirmation｜title=使用予定を確認｜uiGroup=事前準備｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用するタイミングを事前に確認しておく方法があります。
-【ADDON｜type=adherence_guidance｜id=addon_adherence_support_family_reminder｜title=使用忘れ対策（支援：家族などの声掛け）｜uiVariant=rightAccentLavender】
+【ADDON｜type=adherence_guidance｜id=addon_adherence_family_support_reminder｜title=家族などの声掛け｜uiGroup=家族の支援｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
 【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=持効型インスリン製剤 CP不良（自己判断）】

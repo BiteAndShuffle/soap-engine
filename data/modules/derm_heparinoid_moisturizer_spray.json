@@ -1548,13 +1548,13 @@
       "P": "継続して使用することで、十分な治療効果が期待されます。\n使用忘れが続くと、期待される治療効果が十分に得られない可能性があります。",
       "addonsRef": {
         "P": [
-          "addon_adherence_reminder_alarm",
-          "addon_adherence_reminder_app",
+          "addon_adherence_notification_alarm",
+          "addon_adherence_notification_app",
           "addon_adherence_visual_checklist",
           "addon_adherence_visual_note",
           "addon_adherence_schedule_confirmation",
           "addon_adherence_routine_link",
-          "addon_adherence_support_family_reminder"
+          "addon_adherence_family_support_reminder"
         ]
       },
       "followupRef": "default_followup",
@@ -2437,10 +2437,10 @@
           "administration_instruction"
         ]
       },
-      "addon_adherence_reminder_alarm": {
-        "key": "addon_adherence_reminder_alarm",
-        "id": "addon_adherence_reminder_alarm",
-        "title": "使用忘れ対策（通知：アラーム）",
+      "addon_adherence_notification_alarm": {
+        "key": "addon_adherence_notification_alarm",
+        "id": "addon_adherence_notification_alarm",
+        "title": "アラーム",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2452,12 +2452,13 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "通知"
       },
-      "addon_adherence_reminder_app": {
-        "key": "addon_adherence_reminder_app",
-        "id": "addon_adherence_reminder_app",
-        "title": "使用忘れ対策（通知：記録アプリ）",
+      "addon_adherence_notification_app": {
+        "key": "addon_adherence_notification_app",
+        "id": "addon_adherence_notification_app",
+        "title": "記録アプリ",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2469,12 +2470,13 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "通知"
       },
       "addon_adherence_visual_checklist": {
         "key": "addon_adherence_visual_checklist",
         "id": "addon_adherence_visual_checklist",
-        "title": "使用忘れ対策（見える化：チェックリスト）",
+        "title": "チェックリスト",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2486,12 +2488,13 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentLavender"
+        "uiVariant": "rightAccentLavender",
+        "uiGroup": "視覚化"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
         "id": "addon_adherence_visual_note",
-        "title": "使用忘れ対策（見える化：貼り紙）",
+        "title": "貼り紙",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2503,12 +2506,13 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentLavender"
+        "uiVariant": "rightAccentLavender",
+        "uiGroup": "視覚化"
       },
       "addon_adherence_schedule_confirmation": {
         "key": "addon_adherence_schedule_confirmation",
         "id": "addon_adherence_schedule_confirmation",
-        "title": "使用忘れ対策（予定確認）",
+        "title": "使用予定を確認",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2520,12 +2524,13 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "事前準備"
       },
       "addon_adherence_routine_link": {
         "key": "addon_adherence_routine_link",
         "id": "addon_adherence_routine_link",
-        "title": "使用忘れ対策（習慣化：生活習慣と結びつける）",
+        "title": "生活習慣と結びつける",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2537,12 +2542,13 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "習慣化"
       },
-      "addon_adherence_support_family_reminder": {
-        "key": "addon_adherence_support_family_reminder",
-        "id": "addon_adherence_support_family_reminder",
-        "title": "使用忘れ対策（支援：家族などの声掛け）",
+      "addon_adherence_family_support_reminder": {
+        "key": "addon_adherence_family_support_reminder",
+        "id": "addon_adherence_family_support_reminder",
+        "title": "家族などの声掛け",
         "group": "adherence",
         "targetSection": "P",
         "tone": null,
@@ -2554,7 +2560,8 @@
         "intentTags": [
           "adherence_support"
         ],
-        "uiVariant": "rightAccentLavender"
+        "uiVariant": "rightAccentLavender",
+        "uiGroup": "家族の支援"
       }
     },
     "orderPresets": {}

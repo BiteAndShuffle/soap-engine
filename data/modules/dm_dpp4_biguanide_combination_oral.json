@@ -2642,13 +2642,13 @@
       "workflowTags": [],
       "addonsRef": {
         "P": [
-          "addon_adherence_reminder_alarm",
-          "addon_adherence_reminder_app",
+          "addon_adherence_notification_alarm",
+          "addon_adherence_notification_app",
           "addon_adherence_visual_calendar_checklist",
           "addon_adherence_visual_note",
           "addon_adherence_prep_previous_night",
           "addon_adherence_prep_before_meal",
-          "addon_adherence_support_family_reminder"
+          "addon_adherence_family_support_reminder"
         ]
       }
     },
@@ -4376,10 +4376,10 @@
         "intentTags": [],
         "tone": "standard"
       },
-      "addon_adherence_reminder_alarm": {
-        "key": "addon_adherence_reminder_alarm",
-        "id": "addon_adherence_reminder_alarm",
-        "title": "服薬忘れ対策（通知：アラーム）",
+      "addon_adherence_notification_alarm": {
+        "key": "addon_adherence_notification_alarm",
+        "id": "addon_adherence_notification_alarm",
+        "title": "アラーム",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、アラームを服薬時間に合わせて設定しておく方法があります。",
@@ -4392,12 +4392,13 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "通知"
       },
-      "addon_adherence_reminder_app": {
-        "key": "addon_adherence_reminder_app",
-        "id": "addon_adherence_reminder_app",
-        "title": "服薬忘れ対策（通知：服薬アプリ）",
+      "addon_adherence_notification_app": {
+        "key": "addon_adherence_notification_app",
+        "id": "addon_adherence_notification_app",
+        "title": "服薬アプリ",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、服薬を記録できるアプリを活用する方法があります。",
@@ -4410,12 +4411,13 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "通知"
       },
       "addon_adherence_visual_calendar_checklist": {
         "key": "addon_adherence_visual_calendar_checklist",
         "id": "addon_adherence_visual_calendar_checklist",
-        "title": "服薬忘れ対策（見える化：お薬カレンダー・チェックリスト）",
+        "title": "お薬カレンダー・チェックリスト",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、お薬カレンダーや服用チェックリストで確認する方法があります。",
@@ -4428,12 +4430,13 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentLavender"
+        "uiVariant": "rightAccentLavender",
+        "uiGroup": "視覚化"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
         "id": "addon_adherence_visual_note",
-        "title": "服薬忘れ対策（見える化：貼り紙）",
+        "title": "貼り紙",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、薬を飲む時間を目立つ場所に書いておく方法があります。",
@@ -4446,17 +4449,18 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentLavender"
+        "uiVariant": "rightAccentLavender",
+        "uiGroup": "視覚化"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
         "id": "addon_adherence_prep_previous_night",
-        "title": "服薬忘れ対策（準備：前夜）",
+        "title": "前夜に準備",
         "group": "adherence",
         "targetSection": "P",
-        "text": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "text": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく方法があります。",
         "sectionTexts": {
-          "P": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく習慣も役立ちます。"
+          "P": "飲み忘れを防ぐ方法の一つとして、前夜のうちに翌朝の薬を目につく場所へ準備しておく方法があります。"
         },
         "clinicalTags": [],
         "counselingTags": [],
@@ -4464,17 +4468,18 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "事前準備"
       },
       "addon_adherence_prep_before_meal": {
         "key": "addon_adherence_prep_before_meal",
         "id": "addon_adherence_prep_before_meal",
-        "title": "服薬忘れ対策（準備：食前）",
+        "title": "食前に準備",
         "group": "adherence",
         "targetSection": "P",
-        "text": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。",
+        "text": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく方法があります。",
         "sectionTexts": {
-          "P": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく習慣も役立ちます。"
+          "P": "飲み忘れを防ぐ方法の一つとして、食事の前に薬を目につく場所へ準備しておく方法があります。"
         },
         "clinicalTags": [],
         "counselingTags": [],
@@ -4482,12 +4487,13 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentBlue"
+        "uiVariant": "rightAccentBlue",
+        "uiGroup": "事前準備"
       },
-      "addon_adherence_support_family_reminder": {
-        "key": "addon_adherence_support_family_reminder",
-        "id": "addon_adherence_support_family_reminder",
-        "title": "服薬忘れ対策（支援：家族などの声掛け）",
+      "addon_adherence_family_support_reminder": {
+        "key": "addon_adherence_family_support_reminder",
+        "id": "addon_adherence_family_support_reminder",
+        "title": "家族などの声掛け",
         "group": "adherence",
         "targetSection": "P",
         "text": "飲み忘れを防ぐ方法の一つとして、家族や身近な方に服薬したか声をかけてもらう方法があります。",
@@ -4500,7 +4506,8 @@
         "evidenceRefs": [],
         "intentTags": [],
         "tone": "standard",
-        "uiVariant": "rightAccentLavender"
+        "uiVariant": "rightAccentLavender",
+        "uiGroup": "家族の支援"
       }
     },
     "orderPresets": {}
