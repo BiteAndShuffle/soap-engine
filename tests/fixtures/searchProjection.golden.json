@@ -727,14 +727,6 @@
       "uiLabel": "エピナスチン",
       "representativeTemplateId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
       "isGenericLabel": true
-    },
-    {
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "matchedBrandName": "アレジオン点眼液",
-      "drugDisplayLabel": "エピナスチン点眼液",
-      "uiLabel": "エピナスチン点眼液",
-      "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
-      "isGenericLabel": true
     }
   ],
   "らんたす": [

@@ -168,7 +168,8 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "suppressRedundantGenericHeaderOnDirectMatch": true
       }
     },
     "brandCatalog": {

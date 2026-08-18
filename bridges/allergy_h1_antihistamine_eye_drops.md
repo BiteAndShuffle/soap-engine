@@ -124,6 +124,10 @@ drug:
       preferExactAlias: true
       allowPrefixMatch: true
       suppressCrossModuleSuggestionsOnExactHit: true
+      # direct候補内に同一成分のブランド候補（ブランド名エントリ／一般名エントリの
+      # ペア）が既に存在する場合、冗長な一般名単独の generic header 候補を
+      # 追加しない（dm_biguanide_metformin_oral 等と同一の既存flag・既存意味論）。
+      suppressRedundantGenericHeaderOnDirectMatch: true
   nameAliases:
     - "あれじおんてんがん"
     - "あれじおん"

@@ -334,8 +334,8 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
   })
 
   test('サマリが一致する（brand 0 / generic 6 パターン / module は gate 済み）', () => {
-    assert.equal(fixture.summary.rows, 1572)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 893, generic: 621, module: 58 })
+    assert.equal(fixture.summary.rows, 1540)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 893, generic: 589, module: 58 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 58)

@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "60b6f06eaf86333ea368cb0baa407bb5470aed41923be56bc190bea19b92ea35",
+  "sourceHash": "b9ba97102c88eab5e84eed43284f7cc782ae2e1329e1f9ae266d5648eabc8d66",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -387,7 +387,8 @@
         "matchPolicy": {
           "preferExactAlias": true,
           "allowPrefixMatch": true,
-          "suppressCrossModuleSuggestionsOnExactHit": true
+          "suppressCrossModuleSuggestionsOnExactHit": true,
+          "suppressRedundantGenericHeaderOnDirectMatch": true
         },
         "primaryDisplayName": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
       },

@@ -3,10 +3,10 @@
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 575,
-    "rows": 1572,
+    "rows": 1540,
     "byDenotation": {
       "brand": 893,
-      "generic": 621,
+      "generic": 589,
       "module": 58
     },
     "changedRows": 83,
@@ -744,22 +744,6 @@
       "changed": false
     },
     {
-      "query": "あれじおん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "あれじおんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "あれじおんてんがん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -1384,22 +1368,6 @@
       "changed": false
     },
     {
-      "query": "えぴなすちん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "えぴなすちんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "えぴなすちんてんがん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -1595,22 +1563,6 @@
       "query": "おろぱたじん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
-      "query": "おろぱたじん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
-      "query": "おろぱたじんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "オロパタジン点眼液",
       "resolutionSubject": "オロパタジン点眼液",
       "changed": false
@@ -2072,22 +2024,6 @@
       "changed": false
     },
     {
-      "query": "けとちふぇん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
-      "query": "けとちふぇんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
       "query": "けとちふぇんてんがん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -2147,22 +2083,6 @@
       "query": "ざじてん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ざじてん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ざじてんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "ケトチフェン点眼液",
       "resolutionSubject": "ケトチフェン点眼液",
       "changed": false
@@ -4091,22 +4011,6 @@
       "query": "ぱたのーる",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ぱたのーる",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ぱたのーるてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "オロパタジン点眼液",
       "resolutionSubject": "オロパタジン点眼液",
       "changed": false
@@ -7008,22 +6912,6 @@
       "changed": false
     },
     {
-      "query": "りぼすちん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "りぼすちんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "りぼすちんてんがん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -7275,22 +7163,6 @@
       "query": "れぼかばすちん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "れぼかばすちん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "れぼかばすちんてんがん",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "レボカバスチン点眼液",
       "resolutionSubject": "レボカバスチン点眼液",
       "changed": false
@@ -7640,14 +7512,6 @@
       "changed": false
     },
     {
-      "query": "アレジオン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "アレジオン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -7659,14 +7523,6 @@
       "query": "アレジオン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "アレジオン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "エピナスチン点眼液",
       "resolutionSubject": "エピナスチン点眼液",
       "changed": false
@@ -8392,14 +8248,6 @@
       "changed": false
     },
     {
-      "query": "エピナスチン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "エピナスチン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -8411,14 +8259,6 @@
       "query": "エピナスチン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "エピナスチン点眼液",
-      "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "エピナスチン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "エピナスチン点眼液",
       "resolutionSubject": "エピナスチン点眼液",
       "changed": false
@@ -8576,14 +8416,6 @@
       "changed": false
     },
     {
-      "query": "オロパタジン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
       "query": "オロパタジン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -8595,14 +8427,6 @@
       "query": "オロパタジン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
-      "query": "オロパタジン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "オロパタジン点眼液",
       "resolutionSubject": "オロパタジン点眼液",
       "changed": false
@@ -9032,14 +8856,6 @@
       "changed": false
     },
     {
-      "query": "ケトチフェン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
       "query": "ケトチフェン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -9051,14 +8867,6 @@
       "query": "ケトチフェン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ケトチフェン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "ケトチフェン点眼液",
       "resolutionSubject": "ケトチフェン点眼液",
       "changed": false
@@ -9128,14 +8936,6 @@
       "changed": false
     },
     {
-      "query": "ザジテン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
       "query": "ザジテン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -9147,14 +8947,6 @@
       "query": "ザジテン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "ケトチフェン点眼液",
-      "resolutionSubject": "ケトチフェン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ザジテン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "ケトチフェン点眼液",
       "resolutionSubject": "ケトチフェン点眼液",
       "changed": false
@@ -10536,14 +10328,6 @@
       "changed": false
     },
     {
-      "query": "パタノール",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
       "query": "パタノール点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -10555,14 +10339,6 @@
       "query": "パタノール点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "オロパタジン点眼液",
-      "resolutionSubject": "オロパタジン点眼液",
-      "changed": false
-    },
-    {
-      "query": "パタノール点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "オロパタジン点眼液",
       "resolutionSubject": "オロパタジン点眼液",
       "changed": false
@@ -12072,14 +11848,6 @@
       "changed": false
     },
     {
-      "query": "リボスチン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "リボスチン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -12091,14 +11859,6 @@
       "query": "リボスチン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "リボスチン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "レボカバスチン点眼液",
       "resolutionSubject": "レボカバスチン点眼液",
       "changed": false
@@ -12304,14 +12064,6 @@
       "changed": false
     },
     {
-      "query": "レボカバスチン",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
       "query": "レボカバスチン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
@@ -12323,14 +12075,6 @@
       "query": "レボカバスチン点眼液",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
-      "legacySubject": "レボカバスチン点眼液",
-      "resolutionSubject": "レボカバスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "レボカバスチン点眼液",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "generic",
       "legacySubject": "レボカバスチン点眼液",
       "resolutionSubject": "レボカバスチン点眼液",
       "changed": false
