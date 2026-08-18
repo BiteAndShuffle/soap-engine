@@ -423,6 +423,20 @@
     "adjustmentExpression": {
       "increasePast": "点眼回数が増えた",
       "decreasePast": "点眼回数が減った"
+    },
+    "localInput": {
+      "enabled": true,
+      "label": "点眼部位（任意）",
+      "placeholder": "左・右・両 など",
+      "targetField": "S",
+      "insertMode": "placeholder",
+      "siteButtonType": "eye",
+      "applyScenarioIds": [
+        "initial",
+        "restart",
+        "external_start"
+      ],
+      "emptyBehavior": "keep_original"
     }
   },
   "defaults": {

@@ -358,6 +358,21 @@ display:
   adjustmentExpression:
     increasePast: "点眼回数が増えた"
     decreasePast: "点眼回数が減った"
+  # localInput: SCENARIOS本文の initial/restart/external_start が S に
+  # {{applicationSite}} を含むため、旧chemical mediator点眼と同一構造で
+  # 点眼部位入力UIを有効化する（値は旧chemical mediator点眼の稼働実績値を転用）。
+  localInput:
+    enabled: true
+    label: "点眼部位（任意）"
+    placeholder: "左・右・両 など"
+    targetField: "S"
+    insertMode: "placeholder"
+    siteButtonType: "eye"
+    applyScenarioIds:
+      - "initial"
+      - "restart"
+      - "external_start"
+    emptyBehavior: "keep_original"
 scenarioEngine:
   mode: "bridge"
   sourceType: "natural_language_scenarios"
