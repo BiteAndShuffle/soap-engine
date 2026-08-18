@@ -93,6 +93,8 @@ Phase 1 の各シナリオに以下のフィールドを追加する。
   "followupRef": "{phase1_text_spine[id].followupRef — phase1 の値をそのまま採用}",
   "addonsRef": "{phase1_text_spine[id].addonsRef — phase1 の値をそのまま採用（存在するシナリオのみ）}",
   "intentTags": "{phase3a_decisions.scenarioDecisions[id].intentTags}",
+  "scenarioRequiredTags": "{phase3a_decisions.scenarioDecisions[id].scenarioRequiredTags — 存在する場合のみ設定。phase3a に無ければこのキー自体を省略する}",
+  "scenarioColor": "{phase3a_decisions.scenarioDecisions[id].scenarioColor — 存在する場合のみ設定。phase3a に無ければこのキー自体を省略する}",
   "SStructured": [],
   "AStructured": [],
   "PStructured": [],
@@ -103,6 +105,13 @@ Phase 1 の各シナリオに以下のフィールドを追加する。
 ```
 
 **followupRef / addonsRef は Phase 1 の値を採用する。Phase 3B では配列順を含めて変更しない（addonsRef.P の順序は表示順として扱われる。RULES.md §25）。**
+
+**scenarioRequiredTags は optional metadata である。** `phase3a_decisions.scenarioDecisions[id]` に `scenarioRequiredTags` キーが存在する場合のみ、その配列値をそのまま出力へ含める。
+存在しない場合は当該シナリオの出力から `scenarioRequiredTags` キー自体を省略する（空配列 `[]` を推測生成しない。「map に記載がない = タグ条件なし = 常時表示」という bridge 側の意味を保つため）。
+
+**scenarioColor も optional metadata である。** `phase3a_decisions.scenarioDecisions[id]` に `scenarioColor` キーが存在する場合のみ、その値をそのまま出力へ含める。
+存在しない場合は当該シナリオの出力から `scenarioColor` キー自体を省略する（`null` を生成しない。「bridge に記載なし = 既存の `scenarioToColor()` 導出ロジックへ 100% fallback」という runtime 側の意味を保つため）。
+色の推測・計算・正規化は行わない。Phase 3A が保持した値をそのまま転記するだけの preservation に徹する。
 
 #### thirdPanelSPlacement の付与
 
@@ -145,6 +154,8 @@ Phase 1 の addon `text` / `sectionTexts` に対して以下のフィールド�
   "text": "{phase1凍結テキスト — 変更しない}",
   "sectionTexts": "{phase1凍結テキスト（存在するキーのみ）— 変更しない}",
   "uiVariant": "{phase3a_decisions.addonDecisions[id].uiVariant}",
+  "uiGroup": "{phase3a_decisions.addonDecisions[id].uiGroup — 存在する場合のみ設定}",
+  "requiredTags": "{phase3a_decisions.addonDecisions[id].requiredTags — 存在する場合のみ設定}",
   "clinicalTags": [],
   "counselingTags": [],
   "workflowTags": [],
@@ -155,6 +166,9 @@ Phase 1 の addon `text` / `sectionTexts` に対して以下のフィールド�
 ```
 
 **addon の text / sectionTexts は Phase 1 の値をそのまま採用する。Phase 3B では一切変更しない。**
+
+**uiGroup / requiredTags は optional metadata である。** `uiVariant` と同様、`phase3a_decisions.addonDecisions[id]` に
+当該キーが存在する場合のみ出力へ含める。存在しない場合はそのキー自体を省略する（`null` や空配列 `[]` を推測生成しない）。
 
 ---
 
@@ -204,5 +218,8 @@ PN3B 完了後、以下を報告する:
 - Phase 1 本文照合チェック結果（PASS / FAIL）
 - メタデータを付与したシナリオ数
 - thirdPanelSPlacement を付与したシナリオ（id リスト）
+- scenarioRequiredTags を付与したシナリオ数
+- scenarioColor を付与したシナリオ数
+- uiGroup / requiredTags を付与した addon 数
 
 次工程: PN4A（xStructured Group A）および PN4B（xStructured Group B）。両者は独立しており並列実行可。

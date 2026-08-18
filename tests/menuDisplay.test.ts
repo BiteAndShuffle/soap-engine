@@ -328,6 +328,33 @@ describe('scenarioToColor — treatment_start 色分け', () => {
       assert.equal(scenarioToColor(makeScenario({ id: 'external_start', scenarioGroup: 'treatment_start' })), 'blue')
     })
   })
+
+  describe('scenarioColor override（Unit B: optional opt-in）', () => {
+    test('scenarioColor が指定されている場合、既存導出ロジックより優先してその値を返す', () => {
+      // id/scenarioGroup の組み合わせだけなら既存ロジックで blue になるケースで、
+      // override が優先されることを確認する（本来なら 'blue' になるはずが 'orange' を返す）
+      const sc = makeScenario({ id: 'initial', scenarioGroup: 'start_or_change', scenarioColor: 'orange' })
+      assert.equal(scenarioToColor(sc), 'orange')
+    })
+
+    test('scenarioColor が green を指定していれば、他の導出条件に関わらず green を返す', () => {
+      const sc = makeScenario({ id: 'restart', scenarioGroup: 'start_or_change', scenarioColor: 'green' })
+      assert.equal(scenarioToColor(sc), 'green')
+    })
+
+    test('scenarioColor が未指定の場合は既存導出ロジックの結果と完全一致する（後方互換）', () => {
+      const withoutOverride = makeScenario({ id: 'initial', scenarioGroup: 'start_or_change' })
+      assert.equal(scenarioToColor(withoutOverride), 'blue')
+
+      const restartWithoutOverride = makeScenario({ id: 'restart', scenarioGroup: 'start_or_change' })
+      assert.equal(scenarioToColor(restartWithoutOverride), 'green')
+    })
+
+    test('scenarioColor を明示的に undefined にしても、既存導出ロジックの結果と完全一致する', () => {
+      const sc = makeScenario({ id: 'restart', scenarioGroup: 'start_or_change', scenarioColor: undefined })
+      assert.equal(scenarioToColor(sc), 'green')
+    })
+  })
 })
 
 // ─────────────────────────────────────────────────────────────

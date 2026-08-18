@@ -157,6 +157,18 @@ bridge の対応フィールドから移植する。
 `template.urgentFlag` / `urgentCriteria` はモジュールの臨床特性に基づいて設定する。
 参照: 同系統モジュール（dm_insulin_rapid_analog.json 等）。
 
+**`template.handlingTags` / `template.reservedHandlingTags` の保持（必須・明示 preservation 対象）:**
+
+この 2 フィールドは bridge Header に配列として記載されている場合、**値・順序とも一切変更せずそのまま転記する**。
+「対応フィールドから移植する」という総称規則に埋没させず、以下を個別に守ること。
+
+- `template.handlingTags` が bridge に存在する場合 → 全要素をそのままの順序で転記する。要素の追加・削除・言い換えをしない
+- `template.reservedHandlingTags` が bridge に存在する場合 → 同様にそのまま転記する。**この配列は
+  scenarioRequiredTags / addon.requiredTags が参照する到達不能タグを ERROR ではなく WARNING として
+  扱うための宣言であり（`prompts/RULES.md` §27）、欠落すると到達不能タグが ERROR 化し build が停止する**
+- bridge にいずれかのフィールドが存在しない場合 → canonical 側にも生成しない（空配列 `[]` を推測生成しない）
+- 値の推測・要約・並べ替えは禁止
+
 **bridge に `persona:` セクションが存在しない場合:**
 `persona` フィールドを OUTPUT_JSON から omit する（省略）。PENDING にしない。
 model_managed 項目であり、後工程で別途追加可能。

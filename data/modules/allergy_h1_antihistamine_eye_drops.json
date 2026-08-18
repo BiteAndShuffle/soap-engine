@@ -394,12 +394,16 @@
       "cold_storage",
       "cold_storage_before_opening",
       "reduced_frequency_option",
-      "concentration_variant"
+      "concentration_variant",
+      "single_use_container",
+      "preservative_free"
     ],
     "reservedHandlingTags": [
       "concentration_variant",
       "cold_storage",
-      "cold_storage_before_opening"
+      "cold_storage_before_opening",
+      "single_use_container",
+      "preservative_free"
     ],
     "urgentFlag": false,
     "urgentCriteria": null
@@ -569,12 +573,16 @@
           "addon_eye_drop_tip_contamination",
           "addon_eye_drop_after_opening_expiry",
           "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_after_suspension_5min",
           "addon_eye_drop_interval_10min",
+          "addon_eye_drop_interval_after_suspension_10min",
           "addon_eye_drop_suspension_shake",
           "addon_eye_drop_storage_upright_suspension",
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_storage_cold_before_opening",
+          "addon_eye_drop_single_dose_mini",
+          "addon_eye_drop_preservative_free_pf",
           "addon_eye_drop_contact_lens_remove_before_use"
         ]
       }
@@ -692,12 +700,16 @@
           "addon_eye_drop_tip_contamination",
           "addon_eye_drop_after_opening_expiry",
           "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_after_suspension_5min",
           "addon_eye_drop_interval_10min",
+          "addon_eye_drop_interval_after_suspension_10min",
           "addon_eye_drop_suspension_shake",
           "addon_eye_drop_storage_upright_suspension",
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_storage_cold_before_opening",
+          "addon_eye_drop_single_dose_mini",
+          "addon_eye_drop_preservative_free_pf",
           "addon_eye_drop_contact_lens_remove_before_use"
         ]
       }
@@ -815,12 +827,16 @@
           "addon_eye_drop_tip_contamination",
           "addon_eye_drop_after_opening_expiry",
           "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_after_suspension_5min",
           "addon_eye_drop_interval_10min",
+          "addon_eye_drop_interval_after_suspension_10min",
           "addon_eye_drop_suspension_shake",
           "addon_eye_drop_storage_upright_suspension",
           "addon_eye_drop_storage_light_protection",
           "addon_eye_drop_storage_cold",
           "addon_eye_drop_storage_cold_before_opening",
+          "addon_eye_drop_single_dose_mini",
+          "addon_eye_drop_preservative_free_pf",
           "addon_eye_drop_contact_lens_remove_before_use"
         ]
       }
@@ -926,7 +942,8 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "scenarioColor": "blue"
     },
     {
       "id": "strength_increase_low_perceived_effect",
@@ -1032,7 +1049,8 @@
       "workflowTags": [],
       "scenarioRequiredTags": [
         "concentration_variant"
-      ]
+      ],
+      "scenarioColor": "green"
     },
     {
       "id": "frequency_increase_due_to_other_med_adjustment",
@@ -1135,7 +1153,8 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "scenarioColor": "blue"
     },
     {
       "id": "strength_increase_due_to_other_med_adjustment",
@@ -1241,12 +1260,13 @@
       "workflowTags": [],
       "scenarioRequiredTags": [
         "concentration_variant"
-      ]
+      ],
+      "scenarioColor": "green"
     },
     {
       "id": "switch_to_high_strength_reduced_frequency",
       "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_high_strength_reduced_frequency",
-      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（高濃度・持続型製剤へ変更）",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
       "scenarioType": "treatment_adjustment",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
@@ -1347,7 +1367,8 @@
       "workflowTags": [],
       "scenarioRequiredTags": [
         "reduced_frequency_option"
-      ]
+      ],
+      "scenarioColor": "orange"
     },
     {
       "id": "frequency_decrease_improved",
@@ -1450,7 +1471,8 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "scenarioColor": "blue"
     },
     {
       "id": "strength_decrease_improved",
@@ -1556,7 +1578,8 @@
       "workflowTags": [],
       "scenarioRequiredTags": [
         "concentration_variant"
-      ]
+      ],
+      "scenarioColor": "green"
     },
     {
       "id": "frequency_decrease_low_perceived_effect",
@@ -1659,7 +1682,8 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "scenarioColor": "blue"
     },
     {
       "id": "frequency_decrease_due_to_other_med_adjustment",
@@ -1762,7 +1786,8 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": []
+      "workflowTags": [],
+      "scenarioColor": "blue"
     },
     {
       "id": "strength_decrease_due_to_other_med_adjustment",
@@ -1868,7 +1893,8 @@
       "workflowTags": [],
       "scenarioRequiredTags": [
         "concentration_variant"
-      ]
+      ],
+      "scenarioColor": "green"
     },
     {
       "id": "se_irritation_none",
@@ -4958,6 +4984,23 @@
         "intentTags": [],
         "tone": "standard"
       },
+      "addon_eye_drop_interval_after_suspension_5min": {
+        "key": "addon_eye_drop_interval_after_suspension_5min",
+        "id": "addon_eye_drop_interval_after_suspension_5min",
+        "title": "点眼間隔（懸濁・5分以上）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を5分以上あけてください。",
+        "sectionTexts": {
+          "P": "複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を5分以上あけてください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
       "addon_eye_drop_interval_10min": {
         "key": "addon_eye_drop_interval_10min",
         "id": "addon_eye_drop_interval_10min",
@@ -4967,6 +5010,23 @@
         "text": "複数の点眼薬を使用する場合は、10分以上あけて使用してください。",
         "sectionTexts": {
           "P": "複数の点眼薬を使用する場合は、10分以上あけて使用してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard"
+      },
+      "addon_eye_drop_interval_after_suspension_10min": {
+        "key": "addon_eye_drop_interval_after_suspension_10min",
+        "id": "addon_eye_drop_interval_after_suspension_10min",
+        "title": "点眼間隔（懸濁・10分以上）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を10分以上あけてください。",
+        "sectionTexts": {
+          "P": "複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を10分以上あけてください。"
         },
         "clinicalTags": [],
         "counselingTags": [],
@@ -5073,6 +5133,46 @@
         "tone": "standard",
         "requiredTags": [
           "cold_storage_before_opening"
+        ]
+      },
+      "addon_eye_drop_single_dose_mini": {
+        "key": "addon_eye_drop_single_dose_mini",
+        "id": "addon_eye_drop_single_dose_mini",
+        "title": "点眼方法（ミニ・1回使い切り）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "1回使い切りの点眼薬です。\n開封後は速やかに使用し、薬液が残っていても処分してください。",
+        "sectionTexts": {
+          "P": "1回使い切りの点眼薬です。\n開封後は速やかに使用し、薬液が残っていても処分してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "requiredTags": [
+          "single_use_container"
+        ]
+      },
+      "addon_eye_drop_preservative_free_pf": {
+        "key": "addon_eye_drop_preservative_free_pf",
+        "id": "addon_eye_drop_preservative_free_pf",
+        "title": "点眼方法（PF・防腐剤フリー）",
+        "group": "counseling",
+        "targetSection": "P",
+        "text": "防腐剤を使用していないため、特殊な構造の容器が使用されています。\n通常の点眼薬と容器の扱い方が異なるため、使用方法を確認して使用してください。",
+        "sectionTexts": {
+          "P": "防腐剤を使用していないため、特殊な構造の容器が使用されています。\n通常の点眼薬と容器の扱い方が異なるため、使用方法を確認して使用してください。"
+        },
+        "clinicalTags": [],
+        "counselingTags": [],
+        "workflowTags": [],
+        "evidenceRefs": [],
+        "intentTags": [],
+        "tone": "standard",
+        "requiredTags": [
+          "preservative_free"
         ]
       },
       "addon_eye_drop_contact_lens_remove_before_use": {

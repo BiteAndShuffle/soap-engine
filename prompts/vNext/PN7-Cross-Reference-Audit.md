@@ -13,7 +13,9 @@
 → prompts/RULES.md §16 scenario omit 禁止フィールド
 → prompts/RULES.md §20 addonsRef Source of Truth 原則
 → prompts/RULES.md §4 MANDATORY_PRESERVATION_TARGETS
-→ PN6-Assembly.md addon.text 標準ルール / addon.group 標準変換表 / addon.uiVariant 保持ルール
+→ PN6-Assembly.md addon.text 標準ルール / addon.group 標準変換表 / addon.uiVariant 保持ルール /
+  addon.uiGroup 保持ルール / addon.requiredTags 保持ルール
+→ prompts/RULES.md §27 template.reservedHandlingTags 予約タグ原則
 
 ## 位置づけ
 完成 JSON の構造整合性を全項目検証する。
@@ -591,6 +593,140 @@ CHECK は FAIL ではない（Z と同様、要確認フラグ）。PN8 進行�
 
 ---
 
+### AC. ADDON uiGroup Bridge Parity（uiGroup 保持確認）
+
+← PN6-Assembly.md addon.uiGroup 保持ルール
+
+```
+bridge の ADDON ヘッダーに uiGroup が定義されている addon:
+  JSON の addons.items[]{addon_id}.uiGroup が存在すること
+  かつ bridge の定義値と完全一致すること（改名・正規化されていないこと）
+  欠落または不一致 → FAIL
+
+bridge に uiGroup が定義されていない addon:
+  JSON に uiGroup フィールドが存在しないこと
+  推測生成による uiGroup の付与 → FAIL
+```
+
+---
+
+### AD. ADDON requiredTags Bridge Parity（requiredTags 保持確認 — Header map / inline 両対応）
+
+← PN6-Assembly.md addon.requiredTags 保持ルール / PN3A-Scenario-Classification.md「addon requiredTags（Header map / inline 両対応）」
+
+本項目は表現形式（Header map か inline か）を問わず、**bridge が持つ意味データと canonical の一致**を確認する。
+
+```
+Step 1: 対象 addon id について、bridge から2つのソースを個別に確認する
+  - map ソース: bridge Header の addonRequiredTags: map に当該 addon id の記載があるか
+  - inline ソース: 当該 ADDON ヘッダー行に｜requiredTags=[...]｜トークンがあるか
+
+Step 2: ソースの状態で判定する
+  片方のみ存在:
+    JSON の addons.items[]{addon_id}.requiredTags が、存在する側の値と完全一致すること（要素・順序とも）
+    欠落または不一致 → FAIL
+
+  両方存在し、値が完全一致:
+    JSON が当該値と一致していること → PASS
+    ただし「map と inline の両方に記載がある」こと自体を CHECK として報告する
+    （現 Repository に併存 precedent がないため。PN3A の CHECK 報告と一致しているかも確認する）
+
+  両方存在し、値が不一致:
+    生成物 data/modules/{moduleId}.json がこの状態のまま存在すること自体が異常
+    （PN3A が MUST_STOP すべき状態のため）→ FAIL（重大: 競合未解決のまま生成された疑い）
+
+  いずれにも存在しない:
+    JSON に requiredTags フィールドが存在しないこと
+    推測生成による requiredTags の付与 → FAIL
+
+map に記載・inline に記載のいずれかがあるにもかかわらず、現行 brandCatalog のどのブランドにも
+対応 handlingTag が付与されておらず到達不能な requiredTags であることのみを理由に
+addon 本体または P_ADDON 参照が削除・省略されている → FAIL
+（到達不能は正常な状態であり、削除の理由にならない。PN6-Assembly.md addon.requiredTags 保持ルール参照）
+```
+
+---
+
+### AE. SCENARIO scenarioRequiredTags Bridge Parity（scenarioRequiredTags 保持確認 — Header map / inline 両対応）
+
+本項目も AD と同一原則（表現形式ではなく意味データの parity を確認する）。
+
+```
+Step 1: 対象 scenario id について、bridge から2つのソースを個別に確認する
+  - map ソース: bridge Header の scenarioRequiredTags: map に当該 scenario id の記載があるか
+  - inline ソース: 当該 SCENARIO ヘッダー行に｜scenarioRequiredTags=[...]｜トークンがあるか
+
+Step 2: ソースの状態で判定する（AD と同一の5パターン）
+  片方のみ存在 → JSON がその値と完全一致すること。欠落・不一致 → FAIL
+  両方存在し完全一致 → JSON が当該値と一致していれば PASS。CHECK として報告する
+  両方存在し不一致 → FAIL（PN3A が MUST_STOP すべき状態のまま生成された疑い）
+  いずれにも存在しない → JSON に scenarioRequiredTags フィールドが存在しないこと。推測生成 → FAIL
+
+map・inline いずれかに記載があるにもかかわらず、到達不能であることのみを理由に
+scenario 本体が削除されている → FAIL
+```
+
+---
+
+### AF. template.handlingTags Bridge Parity（handlingTags 保持確認）
+
+← PN2-Drug-Header.md template.handlingTags 保持
+
+```
+bridge の template.handlingTags が存在する場合:
+  JSON の template.handlingTags が、要素・順序とも bridge と完全一致すること
+  不一致（追加・削除・並べ替え） → FAIL
+
+bridge に template.handlingTags が存在しない場合:
+  JSON にも存在しないこと（推測生成による付与 → FAIL）
+```
+
+---
+
+### AG. template.reservedHandlingTags Bridge Parity（reservedHandlingTags 保持確認）
+
+← PN2-Drug-Header.md template.reservedHandlingTags 保持 / prompts/RULES.md §27
+
+```
+bridge の template.reservedHandlingTags が存在する場合:
+  JSON の template.reservedHandlingTags が、要素・順序とも bridge と完全一致すること
+  不一致 → FAIL
+
+bridge に template.reservedHandlingTags が存在しない場合:
+  JSON にも存在しないこと（推測生成による付与 → FAIL）
+
+reservedHandlingTags に宣言されているタグを参照する到達不能な
+scenarioRequiredTags / addon.requiredTags が存在するにもかかわらず、
+reservedHandlingTags 側の当該タグが欠落している → FAIL
+（到達不能タグが ERROR 化し build 停止の原因になるため。prompts/RULES.md §27）
+```
+
+---
+
+### AH. SCENARIO scenarioColor Bridge Parity（scenarioColor 保持確認）
+
+← PN3A-Scenario-Classification.md「scenario scenarioColor（inline のみ・lossless preservation 専用）」/
+  PN6-Assembly.md scenarios[] 構築 Step 3
+
+本項目は「表示結果」ではなく「bridge に明示された metadata そのものの保存一致」を監査する。
+scenarioColor は Header map 形式を持たない（inline のみ）ため、AD/AE のような map/inline 統合判定は不要。
+
+```
+bridge SCENARIO ヘッダーに scenarioColor= が存在する scenario id:
+  JSON の scenarios[]{scenario_id}.scenarioColor が存在すること
+  かつ bridge の値と完全一致すること
+  欠落または不一致 → FAIL（例: bridge blue → canonical green）
+
+bridge SCENARIO ヘッダーに scenarioColor= が存在しない scenario id:
+  JSON に scenarioColor フィールドが存在しないこと
+  以下はすべて FAIL:
+    - scenarioType / scenarioGroup / sideEffectPresence / id からの推測生成による付与
+    - lib/buildSoap.ts の scenarioToColor() が返す fallback 色を canonical へ materialize したもの
+    - null や空文字列としての付与
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -640,6 +776,12 @@ Y. bridge P_ADDON⇔addonsRef一致:      PASS / FAIL
 Z. Addon責務一貫性:                   PASS / CHECK
 AA. alias系フィールド同期:            PASS / FAIL
 AB. displayGenericName責務確認:       PASS / FAIL / CHECK
+AC. ADDON uiGroup保持確認:            PASS / FAIL / NOT_CHECKED
+AD. ADDON requiredTags保持確認:       PASS / FAIL / NOT_CHECKED
+AE. SCENARIO scenarioRequiredTags保持確認: PASS / FAIL / NOT_CHECKED
+AF. template.handlingTags保持確認:    PASS / FAIL / NOT_CHECKED
+AG. template.reservedHandlingTags保持確認: PASS / FAIL / NOT_CHECKED
+AH. SCENARIO scenarioColor保持確認:    PASS / FAIL / NOT_CHECKED
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件 / CHECK: {N} 件
@@ -684,7 +826,13 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "Y_addonsRefBridgeMatch": "PASS",
     "Z_addonResponsibilityConsistency": "PASS",
     "AA_aliasFieldBridgeParity": "PASS",
-    "AB_displayGenericNameResponsibility": "PASS"
+    "AB_displayGenericNameResponsibility": "PASS",
+    "AC_addonUiGroupParity": "PASS",
+    "AD_addonRequiredTagsParity": "PASS",
+    "AE_scenarioRequiredTagsParity": "PASS",
+    "AF_templateHandlingTagsParity": "PASS",
+    "AG_templateReservedHandlingTagsParity": "PASS",
+    "AH_scenarioColorParity": "PASS"
   },
   "failCount": 0,
   "checkCount": 0,
@@ -701,11 +849,15 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 
 ## 監査項目の採番について（欠番注記）
 
-本ファイルの標準監査項目は **A〜AB の全 26 項目**である。以下の点に注意すること。
+本ファイルの標準監査項目は **A〜AH の全 32 項目**である。以下の点に注意すること。
 
 - **Q と X は欠番**である。項目記号は再採番せず、欠番を許容する
-- **項目 O は末尾に配置されている**（`### AB.` の後）。アルファベット順ではないが、これは意図された現状であり、
+- **項目 O は末尾に配置されている**（`### AH.` の後）。アルファベット順ではないが、これは意図された現状であり、
   監査時に読み飛ばしてはならない。大規模 JSON の分割 Read で末尾を省略すると **O が欠落する**
+- **AC〜AG は 2026-08 追加**（uiGroup / requiredTags / scenarioRequiredTags / template.handlingTags /
+  template.reservedHandlingTags の bridge ⇔ canonical parity 監査。既存 A〜AB の番号・判定内容は変更していない）
+- **AH は 2026-08 追加**（scenarioColor の bridge ⇔ canonical parity 監査。Unit C。scenarioColor は
+  Header map 形式を持たないため、AD/AE のような map/inline 統合判定は不要）
 - 監査項目を数える際は `grep -cE "^### [A-Z]{1,2}\. "` を用いる。`grep -c "^### "` は
   監査項目以外の見出しを含むため使用しない
 
@@ -719,7 +871,7 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 - 報告のみ行う
 - FAIL を PENDING に格下げしない
 - FAIL の根拠を曖昧にしない
-- **A〜AB の標準監査項目（全 26 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
+- **A〜AH の標準監査項目（全 32 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
 
 ---
 

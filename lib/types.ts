@@ -32,6 +32,15 @@ export type SideEffectPresence =
   | 'not_applicable'
 
 // ─────────────────────────────────────────────────────────────
+// ChipColor — Scenario card の表示色
+//
+// 正本定義はここ（lib/types.ts）。`lib/buildSoap.ts` は import して re-export する
+// （`scenarioToColor()` の戻り値型として使用するため、循環 import を避ける目的）。
+// ─────────────────────────────────────────────────────────────
+
+export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
+
+// ─────────────────────────────────────────────────────────────
 // SComposition（S欄合成メタデータ）
 //
 // 2剤目合成時に S フィールドを構成するためのメタデータ。
@@ -92,6 +101,14 @@ export interface Scenario {
    *   "not_applicable"         → 副作用軸以外のグループ
    */
   sideEffectPresence: SideEffectPresence
+  /**
+   * カード色の明示指定（optional opt-in）。
+   * 存在する場合、`scenarioToColor()`（lib/buildSoap.ts）は既存の導出ロジックより優先してこの値を返す。
+   * 存在しない場合は、sideEffectPresence / scenarioGroup / id から導出する既存ロジックが
+   * そのまま適用される（後方互換。全既存 module は本フィールド未指定のため表示は完全不変）。
+   * 値の妥当性はビルド時に検証されない（`AddonItem.uiVariant` と同じ precedent）。
+   */
+  scenarioColor?: ChipColor
   /** SOAP フィールド（直接持つ） */
   S: string
   O: string

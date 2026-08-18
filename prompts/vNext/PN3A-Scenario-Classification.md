@@ -205,6 +205,89 @@ injection module においてのみ適用する。← RULES.md §14
 
 bridge ヘッダーの `uiVariant=` フィールドから取得する。存在しない場合は `null`。
 
+#### addon uiGroup
+
+bridge ADDON ヘッダーの `uiGroup=` フィールドから取得する。**`uiVariant` と同じ扱い**（bridge ヘッダーを直接参照して取得する）。
+存在しない場合は `addonDecisions[id]` へ `uiGroup` キー自体を含めない（`null` を明示的に設定しない）。
+値の正規化・改名・推測補完は禁止。bridge 記載値をそのまま採用する。
+
+#### addon requiredTags（Header map / inline 両対応）
+
+bridge には2つの記法が存在しうる。**いずれも同じ canonical 格納先（`addons.items[].requiredTags`）を持つ、
+表現形式が異なるだけの等価な metadata である。表現形式の統一は行わない（module ごとに好きな方式を使ってよい）。**
+
+- **Header map 由来**: bridge Header の `addonRequiredTags:` ブロック（`{addon_id}: [tags...]` の id → tags map 形式）
+- **inline 由来**: 個別 ADDON ヘッダー行の `｜requiredTags=[tags...]｜` トークン。`uiVariant` / `uiGroup` と同じ扱いで、
+  bridge ヘッダーを直接参照して取得する（PN1 は経由しない）
+
+**統合・競合規則（addon id ごとに判定）:**
+
+1. map のみに記載がある → map の値を `addonDecisions[id].requiredTags` として採用する
+2. inline のみに記載がある → inline の値を採用する
+3. 両方に記載があり、値が完全一致（要素・順序とも） → その値を採用する。
+   **ただし現 Repository には map/inline 併存の precedent が存在しないため、自動的に仕様化せず、
+   PN3A 完了報告で「map と inline の両方に記載があった addon id」として個別に CHECK 報告する**
+4. 両方に記載があり、値が不一致 → **MUST_STOP**。どちらか一方を優先しない・merge しない・union しない・
+   タグを補完しない。該当 addon id と map 値・inline 値の両方を明示して報告し、
+   Owner 確認を得るまで PN3A を完了させない
+5. いずれにも記載がない → `addonDecisions[id]` へ `requiredTags` キーを含めない（空配列 `[]` を推測生成しない）
+
+値の追加・削除・言い換えは禁止。取得した配列をそのまま転記する。
+
+---
+
+### scenario requiredTags（Header map / inline 両対応）
+
+bridge には2つの記法が存在しうる。**いずれも同じ canonical 格納先（`scenarios[].scenarioRequiredTags`）を持つ、
+表現形式が異なるだけの等価な metadata である。表現形式の統一は行わない。**
+
+- **Header map 由来**: bridge Header の `scenarioRequiredTags:` ブロック（`{scenario_id}: [tags...]` の id → tags map 形式）
+- **inline 由来**: 個別 SCENARIO ヘッダー行の `｜scenarioRequiredTags=[tags...]｜` トークン。bridge ヘッダーを
+  直接参照して取得する（PN1 は経由しない）
+
+**統合・競合規則（scenario id ごとに判定。addon requiredTags と同一原則）:**
+
+1. map のみに記載がある → map の値を `scenarioDecisions[id].scenarioRequiredTags` として採用する
+2. inline のみに記載がある → inline の値を採用する
+3. 両方に記載があり、値が完全一致（要素・順序とも） → その値を採用する。
+   PN3A 完了報告で該当 scenario id を CHECK として個別報告する
+4. 両方に記載があり、値が不一致 → **MUST_STOP**。map 値・inline 値の両方と該当 scenario id を明示して報告する
+5. いずれにも記載がない → `scenarioDecisions[id]` へ `scenarioRequiredTags` キーを含めない
+
+値の追加・削除・言い換えは禁止。
+
+---
+
+### scenario scenarioColor（inline のみ・lossless preservation 専用）
+
+bridge SCENARIO ヘッダー行の `｜scenarioColor=...｜` トークンから取得する。`uiVariant` / `uiGroup` と同じ扱いで、
+bridge ヘッダーを直接参照して取得する（PN1 は経由しない）。
+
+**Header map 形式は存在しない。** `addonRequiredTags:` / `scenarioRequiredTags:` とは異なり、現 Repository に
+`scenarioColor:` の map ブロックは存在しない（実測済み）。したがって map/inline の統合・競合規則は不要であり、
+inline 由来の単純な transcription のみを行う。将来 map 形式が出現した場合は、requiredTags と同型の統合・競合
+規則を別途検討すること（今回は仕様化しない）。
+
+**規則:**
+
+- bridge SCENARIO ヘッダーに `scenarioColor=` が存在する → その値をそのまま `scenarioDecisions[id].scenarioColor` として保持する
+- 存在しない → `scenarioDecisions[id]` へ `scenarioColor` キーを含めない（`null` も生成しない）
+
+**絶対禁止（推測生成）:**
+
+- `scenarioType` / `scenarioGroup` / `sideEffectPresence` / `id` の内容から色を推測・付与しない
+- 既存の色導出ロジック（`lib/buildSoap.ts` の `scenarioToColor()`）が返すはずの fallback 結果を
+  先取りして `scenarioColor` へ書き込まない（`scenarioColor` は「bridge に明示された値をそのまま運ぶ」
+  ためのフィールドであり、「最終的に表示される色を計算する」フィールードではない）
+- bridge に記載がない scenario へ補完しない
+
+**許容値について:** `scenarioColor` の値は `lib/types.ts` の `ChipColor` 型と対応する（Unit B で追加済み）。
+ただし本 Phase はこの値域を独自に列挙・検証しない。`uiVariant`（`rightAccentBlue` 等）と同じ precedent —
+bridge に書かれた文字列をそのまま転記するのみで、正規化・変換・未知値の ERROR 化を行わない。
+prompt 側に色の許容値リストを新設・複製しない（二重正本化を避ける）。
+
+値の追加・削除・言い換えは禁止。
+
 ---
 
 ## 出力
@@ -239,6 +322,35 @@ bridge ヘッダーの `uiVariant=` フィールドから取得する。存在�
       "groupKey": "side_effect_monitoring",
       "intentTags": ["hypoglycemia_attention", "followup_monitoring"],
       "thirdPanelSPlacement": true
+    },
+    "strength_increase_low_perceived_effect": {
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "situationFilter": ["general"],
+      "sideEffectPresence": "not_applicable",
+      "sCompositionIntent": "dose_increase",
+      "sCompositionTemplate": "status_based",
+      "symptomCodes": [],
+      "symptoms": [],
+      "groupKey": "glycemic_control_adjustment",
+      "intentTags": ["dose_increase_explanation"],
+      "thirdPanelSPlacement": false,
+      "scenarioRequiredTags": ["concentration_variant"]
+    },
+    "switch_to_high_strength_reduced_frequency": {
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "situationFilter": ["general"],
+      "sideEffectPresence": "not_applicable",
+      "sCompositionIntent": "dose_increase",
+      "sCompositionTemplate": "status_based",
+      "symptomCodes": [],
+      "symptoms": [],
+      "groupKey": "glycemic_control_adjustment",
+      "intentTags": ["dose_increase_explanation"],
+      "thirdPanelSPlacement": false,
+      "scenarioRequiredTags": ["reduced_frequency_option"],
+      "scenarioColor": "orange"
     }
   },
   "addonDecisions": {
@@ -253,6 +365,16 @@ bridge ヘッダーの `uiVariant=` フィールドから取得する。存在�
     "addon_alarm": {
       "group": "adherence",
       "uiVariant": "rightAccentBlue"
+    },
+    "addon_glinide_before_meal_guidance": {
+      "group": "adherence",
+      "uiVariant": "rightAccentAmber",
+      "uiGroup": "薬剤固有介入"
+    },
+    "addon_eye_drop_single_dose_mini": {
+      "group": "counseling",
+      "uiVariant": null,
+      "requiredTags": ["single_use_container"]
     }
   },
   "groupKeyRegistry": [
@@ -289,5 +411,11 @@ PN3A 完了後、以下を報告する:
 - thirdPanelSPlacement: true に設定したシナリオ（injection module の場合）
 - situationFilter: ["sickday"] のみとしたシナリオ
 - groupKeyRegistry のエントリ数
+- uiGroup を保持した addon 数（bridge ADDON ヘッダーに `uiGroup=` が定義されていた件数）
+- requiredTags を保持した addon 数（Header map 由来 / inline 由来を内訳で報告）
+- scenarioRequiredTags を保持した scenario 数（Header map 由来 / inline 由来を内訳で報告）
+- **CHECK**: map と inline の両方に requiredTags/scenarioRequiredTags 記載があった id（値が完全一致していた場合のみ。0件なら「該当なし」と明記）
+- **MUST_STOP**: map と inline の値が不一致だった id（発生した場合、値の相違点を明示し PN3A を完了させない）
+- scenarioColor を保持した scenario 数（bridge SCENARIO ヘッダーに `scenarioColor=` が定義されていた件数。内訳を値ごとに報告）
 
 次工程: PN3B（Scenario Metadata Apply）

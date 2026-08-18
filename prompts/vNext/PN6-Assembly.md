@@ -75,6 +75,11 @@ Phase 3B の scenarios[] をベースとし、各シナリオの空配列 `SStru
 - Phase 4B の対象（side_effect / adherence / lifestyle_guidance / sickday / followup）は Phase 4B から取得
 - id キーで突き合わせる
 - `addonsRef` は Phase 3B の値（配列順を含む）をそのまま引き継ぐ。PN6 では並び替えない（addonsRef.P の順序は表示順として扱われる。RULES.md §25）
+- `scenarioRequiredTags` は Phase 3B にキーが存在する scenario のみそのまま引き継ぐ。Phase 3B に存在しない scenario へ新規に付与しない（推測生成禁止）
+- `scenarioColor` は Phase 3B にキーが存在する scenario のみそのまま引き継ぐ。存在しない scenario へ
+  `scenarioToColor()` の fallback 結果や推測値を書き込まない（`scenarioColor` は bridge 由来の明示値の
+  preservation 専用であり、PN6 が計算・補完するフィールドではない）。scenarioColor の有無を理由に
+  scenario の並び順・分類・grouping を変更しない
 
 **xStructured 突き合わせ時の確認手順（シナリオ 20 件超の場合）:**
 1. phase4a_structured.json の scenarios キー一覧を確認し、対象 id リストを把握する
@@ -123,6 +128,24 @@ bridge 上の type をそのまま `group` にコピーしない。必ず以下�
 bridge の ADDON ヘッダーに `uiVariant` が定義されている addon → JSON に `uiVariant` フィールドを含める。
 bridge に `uiVariant` の定義がない addon → `uiVariant` フィールドを生成しない。
 **推測生成は禁止。bridge に存在しない uiVariant を付与してはならない。**
+
+#### addon.uiGroup 保持ルール（必須）
+
+`uiVariant` と同型のルール。Phase 3A の `addonDecisions[id]` に `uiGroup` が存在する addon → JSON に `uiGroup` フィールドを含める。
+存在しない addon → `uiGroup` フィールドを生成しない。**推測生成は禁止。**
+
+#### addon.requiredTags 保持ルール（必須）
+
+Phase 3A の `addonDecisions[id]` に `requiredTags` が存在する addon（bridge Header の `addonRequiredTags:` map、または
+ADDON ヘッダー行の inline `｜requiredTags=[...]｜` のいずれかに記載があった addon。取得元は PN3A-Scenario-Classification.md
+「addon requiredTags（Header map / inline 両対応）」を参照）→
+JSON に `requiredTags` フィールドを含める。存在しない addon → `requiredTags` フィールドを生成しない（空配列 `[]` も生成しない）。
+
+**重要:** `requiredTags` が付与された addon は、現行 brandCatalog のどのブランドにも対応 handlingTag が
+付与されていない場合がある（到達不能）。これは正常な状態であり、**到達不能を理由に addon 本体・P_ADDON参照を
+削除・省略してはならない**。表示制御は Header 側の tag 機構が担い、PN6 は生成物をそのまま保持するだけである
+（`docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` §2、`template.reservedHandlingTags` が宣言する到達不能タグの
+意図的保持と同じ設計思想）。
 
 **Step 5: 非シナリオ構造の追加**
 Phase 5 の以下をそのまま追加する:
@@ -191,6 +214,12 @@ data/modules/{moduleId}.json
 scenarios 数: {N}
 addons.items 数: {N}
 xStructured 突き合わせ: PN4A {N}件 / PN4B {N}件 / 合計 {N}件（全シナリオと一致）
+uiGroup 保持: {N} addon
+uiVariant 保持: {N} addon
+requiredTags 保持: {N} addon
+scenarioRequiredTags 保持: {N} scenario
+scenarioColor 保持: {N} scenario
+template.handlingTags / reservedHandlingTags: 保持 {あり/なし}
 ```
 
 **不完全な出力が発生した場合:**

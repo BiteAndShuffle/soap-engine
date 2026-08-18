@@ -43,8 +43,12 @@ bridge.md の SCENARIOS_START ～ SCENARIOS_END セクション
 
 各 ADDON ヘッダー行を識別する。
 ```
-【ADDON｜type={type}｜id={id}｜title={title}（｜uiVariant={v}）】
+【ADDON｜type={type}｜id={id}｜title={title}（｜uiGroup={g}）（｜uiVariant={v}）】
 ```
+
+`uiGroup=` は `uiVariant=` と同様、bridge に定義がある場合のみ出現する任意トークンである。
+値の抽出・保持は PN3A（ADDON 分類フェーズ）が bridge ヘッダーを直接参照して行う（`uiVariant` と同じ扱い）。
+PN1 はヘッダー形式として認識すれば足り、`phase1_text_spine.json` へ転記する必要はない。
 
 各 addon から以下を抽出する。
 - `P_APPEND` → `text` フィールド（addon の主テキスト）

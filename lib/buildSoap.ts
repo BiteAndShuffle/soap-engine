@@ -1,4 +1,4 @@
-import type { Scenario, SoapFields, SoapKey, MergedBlock, AddonsData, ModuleData } from './types'
+import type { Scenario, SoapFields, SoapKey, MergedBlock, AddonsData, ModuleData, ChipColor } from './types'
 import { resolveDrugSubject } from './drugSubject'
 
 // ─────────────────────────────────────────────────────────────
@@ -315,10 +315,17 @@ export function buildSoapFull(
 // sideEffectPresence ベースに変更
 // ─────────────────────────────────────────────────────────────
 
-export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
+// ChipColor の正本定義は lib/types.ts。既存 import 元（app/components/SecondaryPanel.tsx 等）を
+// 変更せずに済むよう、ここから re-export する。
+export type { ChipColor }
 
 /**
  * Scenario の sideEffectPresence と scenarioGroup/id からチップ色を決定する。
+ *
+ * scenario.scenarioColor が指定されている場合（optional opt-in）は、
+ * 以下の既存導出ロジックより優先してその値をそのまま返す。値の妥当性はビルド時に
+ * 検証されない（AddonItem.uiVariant と同じ precedent）。scenarioColor 未指定の
+ * scenario では従来どおり以下のロジックのみで決定される（後方互換）。
  *
  * treatment_start 系（初回・再開・他所開始）— 青/緑の差分:
  *   "restart" / restart_* → green  （全モジュール共通: bare id も prefix も対応）
@@ -341,6 +348,8 @@ export type ChipColor = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'gray'
  * その他                              → gray
  */
 export function scenarioToColor(scenario: Scenario): ChipColor {
+  if (scenario.scenarioColor) return scenario.scenarioColor
+
   const sep = scenario.sideEffectPresence
   const sg = scenario.scenarioGroup
   const sid = scenario.id

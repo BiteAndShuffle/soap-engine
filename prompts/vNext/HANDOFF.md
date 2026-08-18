@@ -1,7 +1,16 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-08-16（Structured role coverage-gap Finding の scope を S / A / P 全体へ拡張）  
+最終更新: 2026-08-18（Unit C: scenarioColor の bridge → canonical lossless 移送経路を PN3A/PN3B/PN6/PN7 へ接続。
+scenarioColor は inline 専用（Header map 形式なし）のため PN3A が bridge SCENARIO ヘッダーを直接参照して取得する
+（uiVariant/uiGroup と同型。PN1/PN2 は無変更）。PN7 監査項目 AH を新設（全32項目）。canonical 格納先は
+`scenarios[].scenarioColor`（Unit B で追加した型のみ使用。新しい色語彙は作らない）。H1 canonical JSON の
+再生成はまだ実施していない（Unit D で実施予定）。
+先行する Unit A.1: PN3A の addon requiredTags / scenario scenarioRequiredTags を Header map 方式と
+inline 方式の両対応へ拡張し、両方式併存時の競合規則（片方のみ採用／両方一致は CHECK／不一致は MUST_STOP）を追加。
+PN1 は変更なし。PN7 AD/AE を両方式対応の意味 parity 監査へ拡張。先行する Unit A：PN1/PN2/PN3A/PN3B/PN6/PN7 へ
+uiGroup・requiredTags・scenarioRequiredTags・template.handlingTags/reservedHandlingTags の lossless 保持規則を追加、
+PN7 監査項目 AC〜AG を新設）  
 対象ブランチ: `feat/nlp-input-panel-and-new-schema`  
 リポジトリ: `/Users/AdNauseumTendrils/Desktop/soap-engine`
 
@@ -215,6 +224,7 @@ PN3B が完了した時点で PN4A / PN4B / PN5 の 3 者は同時実行可能�
 - `【SCENARIO｜...】` ヘッダーから S / O / A / P を抽出
 - `【ADDON｜...】` ヘッダーから P_APPEND / S_APPEND / A_APPEND を抽出  
   **ADDON ヘッダーはシナリオと混在・分散して出現する。漏れなく全件収集すること**
+- ADDON ヘッダーの `uiGroup=` は `uiVariant=` と同じ任意トークンとして認識する（値の取得は PN3A が bridge を直接参照）
 - `P_CLOSING` の内容を followupProfiles の雛形として記録する（P フィールドに格納）
 - 薬剤名 / 薬効分類名を `{{drug_subject}}` に置換する（詳細なルールは bridge の editingRules 参照）
 - S の主語省略を許容するシナリオ（cp_good 等）では `{{drug_subject}}` を補わない
@@ -246,6 +256,9 @@ PN3B が完了した時点で PN4A / PN4B / PN5 の 3 者は同時実行可能�
 **出力**: `/tmp/soap-build/{moduleId}/phase2_drug_header.json`
 
 責務: composition / drug / drugResolution / regulatory / topical / template / display / defaults / persona を生成する。
+
+`template.handlingTags` / `template.reservedHandlingTags` は bridge の配列を値・順序とも変更せず転記する（PN2-Drug-Header.md 参照。
+`reservedHandlingTags` の欠落は到達不能 requiredTags の ERROR 化・build 停止に直結するため軽視しないこと）。
 
 bridge に `composition:` / `persona:` / `regulatory:` / `topical:` セクションが存在しない場合は、  
 PN2 に実装されたフォールバックルールを使用する（PN2-Drug-Header.md 参照）。
@@ -284,7 +297,25 @@ bridge 未記載の場合、`composition.nodeKey`（= `display.nodeKey` フォ�
 - `groupKey`（semantic merge 用）
 - `thirdPanelSPlacement`（injection module の特定シナリオ）
 
-各 ADDON の `group` / `uiVariant` も PN3A で確定させます:
+各 ADDON の `group` / `uiVariant` / `uiGroup` / `requiredTags` も PN3A で確定させます
+（`uiGroup` は bridge ADDON ヘッダーに定義がある場合のみ。`requiredTags` は bridge Header の
+`addonRequiredTags:` map、または ADDON ヘッダー行の inline `｜requiredTags=[...]｜` トークンの
+**いずれか**に記載がある場合のみ。いずれも存在しない場合はキー自体を省略する）。
+
+シナリオ側も同様に、bridge Header の `scenarioRequiredTags:` map、または SCENARIO ヘッダー行の
+inline `｜scenarioRequiredTags=[...]｜` トークンのいずれかに記載がある scenario id のみ
+`scenarioRequiredTags` を確定させます（PN3A-Scenario-Classification.md「addon requiredTags（Header map / inline 両対応）」
+「scenario requiredTags（Header map / inline 両対応）」参照）。
+
+**map と inline の両方に記載があり値が不一致の場合は MUST_STOP**（どちらか一方を優先しない・merge しない）。
+両方に記載があり値が完全一致する場合はその値を採用しつつ CHECK として報告する
+（現 Repository には両方式併存の precedent がないため）。詳細は PN3A の該当節を参照。
+
+**scenarioColor（2026-08 追加・Unit C）**: SCENARIO ヘッダー行の inline `｜scenarioColor=...｜` トークンに
+記載がある scenario id のみ PN3A が確定させます（Header map 形式は存在しない）。canonical 格納先は
+`scenarios[].scenarioColor`（`lib/types.ts` の `Scenario.scenarioColor?: ChipColor`。Unit B で追加済み）。
+記載がない scenario は runtime の既存 `scenarioToColor()` 導出ロジックへ 100% fallback するため、PN3A は
+このフィールドを補完・推測せず、bridge に明示された値のみを転記します（詳細は PN3A の該当節を参照）。
 
 | type= | group |
 |---|---|
@@ -310,6 +341,10 @@ bridge 未記載の場合、`composition.nodeKey`（= `display.nodeKey` フォ�
 
 PN3A の決定表を phase1_text_spine に適用して、シナリオと addon のメタデータ構造を完成させます。  
 S / O / A / P / addon text は **一切変更しません**。
+
+`scenarioRequiredTags`（scenario）/ `uiGroup` / `requiredTags`（addon）は PN3A の決定表にキーが
+存在する場合のみ出力へ含める optional metadata です。存在しない場合はキー自体を省略します
+（空配列・null の推測生成は禁止）。
 
 出力規模: シナリオ数・ADDON 数が多い場合は 1,500〜2,000 行になります。  
 Write ツールで 1 回出力し、完了後 `wc -l` で確認してください。
@@ -380,6 +415,12 @@ ui / risks / searchConfig / tagCatalog / expressModes を生成します。
 新規コンテンツを生成しません。統合と保存のみ。  
 最終 JSON はチャットテキストとして出力しません。Write ツールで保存します。
 
+`uiVariant` と同型のルールで `uiGroup` / `requiredTags`（addon）/ `scenarioRequiredTags`（scenario）/
+`scenarioColor`（scenario・2026-08 追加）を losslessly 保持します。中間工程に存在しないキーを PN6 が
+独自補完することはありません（PN6-Assembly.md addon.uiGroup 保持ルール / addon.requiredTags 保持ルール参照）。
+`template.handlingTags` / `reservedHandlingTags` は Step 1 で `template` セクションごと Phase 2 の値をそのまま採用するため、
+個別ルールは不要です。
+
 **Read 順序（コンテキスト効率化）**:
 1. phase3a_decisions.json（軽量）
 2. phase2_drug_header.json（中量）
@@ -399,14 +440,16 @@ xStructured 突き合わせ確認: PN4A の id 一覧 + PN4B の id 一覧の和
 **入力**: `data/modules/{moduleId}.json` + `/tmp/soap-build/{moduleId}/phase1_text_spine.json`  
 **出力**: `/tmp/soap-build/{moduleId}/audit_report.json`
 
-修正は行いません。26 項目を全確認します（A〜AB。**Q / X は欠番、項目 O は末尾に配置**）。
+修正は行いません。32 項目を全確認します（A〜AH。**Q / X は欠番、項目 O は末尾に配置**）。
+AC〜AG は uiGroup / requiredTags / scenarioRequiredTags / template.handlingTags / reservedHandlingTags、
+AH は scenarioColor の bridge ⇔ canonical parity 監査（いずれも 2026-08 追加）。
 
 **大規模 JSON の Read 手順**:
 1. `wc -l data/modules/{moduleId}.json` で行数確認
 2. 2,000 行超なら `offset=0, limit=2000` → `offset=2000, limit=2000` ... と分割 Read
 3. 末尾（addons / expressModes / searchConfig）の確認を省略しない
 
-26 項目すべて PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
+32 項目すべて PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
 FAIL がある → 該当 Phase に差し戻し。PN8 は開始しない。
 
 ---

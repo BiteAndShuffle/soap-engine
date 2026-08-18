@@ -3,8 +3,11 @@
 # allergy_h1_antihistamine_eye_drops
 # =========================================
 #
-# 本Headerは、既に凍結済みのSCENARIOS_START〜SCENARIOS_END本文に対して
-# 後付けで作成されたものである。SCENARIOS本文は本Header作成時点で一切変更していない。
+# 本Headerは、当初SCENARIOS_START〜SCENARIOS_END本文に対して後付けで作成された
+# ものであり、Header作成時点ではSCENARIOS本文を変更していない。
+# その後、Owner明示指示によりSCENARIOS本文へも更新（ADDON追加・P_ADDON参照追加・
+# scenarioColor付与・title調整等）が加えられている。現在はHeader + SCENARIOS本文を
+# 合わせたbridge原稿全体を内容の正本として扱う。
 #
 # ファイルは allergy_h1_antihistamine_eye_drops.md へリネーム済み。
 # moduleId・ファイル名・templateId（allergy_h1_antihistamine_eye_drops_v1）の
@@ -292,10 +295,10 @@ template:
     - "solution_eye_drop"
     - "suspension_eye_drop"
   handlingTags:
-    # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの正式な語彙一覧（6種、最小集合）。
+    # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの正式な語彙一覧（8種、最小集合）。
     # 現行8製剤のうち suspension / light_protection / reduced_frequency_option の3種のみ実際に付与済み。
-    # cold_storage / cold_storage_before_opening / concentration_variant は
-    # 対応するSCENARIO/ADDONを非表示に保つために定義するが、現行製剤には付与しない。
+    # cold_storage / cold_storage_before_opening / concentration_variant / single_use_container /
+    # preservative_free は対応するSCENARIO/ADDONを非表示に保つために定義するが、現行製剤には付与しない。
     #
     # reduced_frequency_option についての運用メモ:
     #   「高濃度製剤そのもの」を表すタグではない。アレジオン／エピナスチン系に、
@@ -324,6 +327,8 @@ template:
     - "cold_storage_before_opening"
     - "reduced_frequency_option"
     - "concentration_variant"
+    - "single_use_container"
+    - "preservative_free"
   reservedHandlingTags:
     # 2026-07-24 追加。現行8製剤のどのbrandCatalogエントリも持たないが、
     # 将来の製品・製品バリエーション追加時に到達可能になる想定で意図的に保持しているタグ。
@@ -337,6 +342,8 @@ template:
     - "concentration_variant"
     - "cold_storage"
     - "cold_storage_before_opening"
+    - "single_use_container"
+    - "preservative_free"
 display:
   title: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
   subtitle: "アレルギー性結膜炎・目のかゆみに対する点眼治療"
@@ -390,9 +397,9 @@ scenarioEngine:
 #
 # ─────────────────────────────────────────
 # scenarioRequiredTags / addonRequiredTags:
-# SCENARIOS本文が凍結済みのため、他モジュールのようにSCENARIO/ADDONヘッダー行への
-# インライン記載（｜scenarioRequiredTags=[...]｜）ができない。そのため本Headerに
-# 正式な構造データ（id → tags のマップ）として定義し、canonical JSON生成時に
+# 本モジュールでは、これらのタグをSCENARIO/ADDONヘッダー行への個別インライン記載
+# （｜scenarioRequiredTags=[...]｜。他モジュールでの例: dm_dpp4_oral）ではなく、
+# 本Headerに正式な構造データ（id → tags のマップ）として定義し、canonical JSON生成時に
 # 各scenario/addonのフィールドへ機械的に反映する正本とする。
 # 記載のないscenario/addonは常時表示（タグ条件なし）とする。
 # ─────────────────────────────────────────
@@ -423,6 +430,14 @@ addonRequiredTags:
   addon_eye_drop_storage_light_protection: ["light_protection"]
   addon_eye_drop_storage_cold: ["cold_storage"]
   addon_eye_drop_storage_cold_before_opening: ["cold_storage_before_opening"]
+  addon_eye_drop_single_dose_mini: ["single_use_container"]
+  addon_eye_drop_preservative_free_pf: ["preservative_free"]
+# 次の2件のADDONのみ、
+# handlingTags・addonRequiredTags は設定せず、
+# 全点眼薬で常時表示する。
+# 対象:
+# - addon_eye_drop_interval_after_suspension_5min
+# - addon_eye_drop_interval_after_suspension_10min
 #
 constitution:
   purpose: "このテンプレートは自然言語シナリオ原稿をJSONへ橋渡しするための軽量構造定義である。"
@@ -464,8 +479,9 @@ constitution:
     - "提案は現在要件と将来拡張を明確に分離して述べる"
 
 
-
 =======SCENARIOS_START=======
+
+
 【SCENARIO｜type=treatment_start｜id=initial｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 初回】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、{{applicationSite}}眼のかゆみが気になるため追加となった。
@@ -481,12 +497,16 @@ P_ADDON
 - addon_eye_drop_tip_contamination
 - addon_eye_drop_after_opening_expiry
 - addon_eye_drop_interval_5min
+- addon_eye_drop_interval_after_suspension_5min
 - addon_eye_drop_interval_10min
+- addon_eye_drop_interval_after_suspension_10min
 - addon_eye_drop_suspension_shake
 - addon_eye_drop_storage_upright_suspension
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_storage_cold
 - addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_single_dose_mini
+- addon_eye_drop_preservative_free_pf
 - addon_eye_drop_contact_lens_remove_before_use
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -500,9 +520,13 @@ P_APPEND
 先端部分に触れないように使用してください。
 
 
+
+
 【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_after_opening_expiry｜title=使用期限（開封後1ヶ月）】
 P_APPEND
 開封後の点眼薬は、衛生面を考慮し、1ヶ月を目安に処分してください。
+
+
 
 
 【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_5min｜title=点眼間隔（5分以上）】
@@ -510,9 +534,27 @@ P_APPEND
 複数の点眼薬を使用する場合は、5分以上あけて使用してください。
 
 
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_after_suspension_5min｜title=点眼間隔（懸濁・5分以上）】
+P_APPEND
+複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を5分以上あけてください。
+
+
+
+
 【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_10min｜title=点眼間隔（10分以上）】
 P_APPEND
 複数の点眼薬を使用する場合は、10分以上あけて使用してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_after_suspension_10min｜title=点眼間隔（懸濁・10分以上）】
+P_APPEND
+複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を10分以上あけてください。
+
+
 
 
 【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_suspension_shake｜title=点眼方法（懸濁性・振り混ぜ）】
@@ -521,9 +563,13 @@ P_APPEND
 使用する前に、よく振り混ぜてから使用してください。
 
 
+
+
 【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_upright_suspension｜title=保管方法（懸濁性・先端上向き）】
 P_APPEND
 保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。
+
+
 
 
 【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_light_protection｜title=保管方法（遮光）】
@@ -532,16 +578,38 @@ P_APPEND
 使用していない間は、遮光袋に入れて保管してください。
 
 
+
+
 【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold｜title=保管方法（冷所保存）】
 P_APPEND
 温度の影響により、効果が十分に出ない可能性があります。
 使用していない間は、冷所で保管してください。
 
 
+
+
 【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold_before_opening｜title=保管方法（未開封時のみ冷所）】
 P_APPEND
 温度の影響により、効果が十分に出ない可能性があります。
 開封するまでは冷所で保管してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_single_dose_mini｜title=点眼方法（ミニ・1回使い切り）】
+P_APPEND
+1回使い切りの点眼薬です。
+開封後は速やかに使用し、薬液が残っていても処分してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_preservative_free_pf｜title=点眼方法（PF・防腐剤フリー）】
+P_APPEND
+防腐剤を使用していないため、特殊な構造の容器が使用されています。
+通常の点眼薬と容器の扱い方が異なるため、使用方法を確認して使用してください。
+
+
 
 
 【ADDON｜type=administration_guidance｜id=addon_eye_drop_contact_lens_remove_before_use｜title=コンタクトレンズ（外して点眼）】
@@ -566,12 +634,16 @@ P_ADDON
 - addon_eye_drop_tip_contamination
 - addon_eye_drop_after_opening_expiry
 - addon_eye_drop_interval_5min
+- addon_eye_drop_interval_after_suspension_5min
 - addon_eye_drop_interval_10min
+- addon_eye_drop_interval_after_suspension_10min
 - addon_eye_drop_suspension_shake
 - addon_eye_drop_storage_upright_suspension
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_storage_cold
 - addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_single_dose_mini
+- addon_eye_drop_preservative_free_pf
 - addon_eye_drop_contact_lens_remove_before_use
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -594,12 +666,16 @@ P_ADDON
 - addon_eye_drop_tip_contamination
 - addon_eye_drop_after_opening_expiry
 - addon_eye_drop_interval_5min
+- addon_eye_drop_interval_after_suspension_5min
 - addon_eye_drop_interval_10min
+- addon_eye_drop_interval_after_suspension_10min
 - addon_eye_drop_suspension_shake
 - addon_eye_drop_storage_upright_suspension
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_storage_cold
 - addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_single_dose_mini
+- addon_eye_drop_preservative_free_pf
 - addon_eye_drop_contact_lens_remove_before_use
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
@@ -607,7 +683,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（効果実感乏しい）｜scenarioColor=blue】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しいため点眼回数が増えた。
 O
@@ -623,7 +699,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=strength_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_increase_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（効果実感乏しい）｜scenarioColor=green】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しいため、より効果が高いものへ変更となった。
 O
@@ -639,7 +715,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数増（他剤との調整）｜scenarioColor=blue】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により点眼回数が増えた。
 O
@@ -655,7 +731,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=strength_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_increase_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（他剤との調整）｜scenarioColor=green】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により、より効果が高いものへ変更となった。
 O
@@ -671,7 +747,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=switch_to_high_strength_reduced_frequency｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度増（高濃度・持続型製剤へ変更）】
+【SCENARIO｜type=treatment_adjustment｜id=switch_to_high_strength_reduced_frequency｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）｜scenarioColor=orange】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすために変更となった。
 O
@@ -687,7 +763,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）｜scenarioColor=blue】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため点眼回数が減った。
 O
@@ -703,7 +779,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（症状改善）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（症状改善）｜scenarioColor=green】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため、より効果が穏やかなものへ変更となった。
 O
@@ -719,7 +795,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）｜scenarioColor=blue】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。
 O
@@ -735,7 +811,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（他剤との調整）｜scenarioColor=blue】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により点眼回数が減った。
 O
@@ -751,7 +827,7 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（他剤との調整）】
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_due_to_other_med_adjustment｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（他剤との調整）｜scenarioColor=green】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、他剤との調整により、より効果が穏やかなものへ変更となった。
 O
@@ -900,9 +976,13 @@ P_APPEND
 使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
 
 
+
+
 【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_app｜title=記録アプリ｜uiGroup=通知｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
+
+
 
 
 【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=カレンダー・チェックリスト｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
@@ -910,9 +990,13 @@ P_APPEND
 使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
 
 
+
+
 【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=貼り紙｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。
+
+
 
 
 【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=前夜に準備｜uiGroup=事前準備｜uiVariant=rightAccentBlue】
@@ -920,9 +1004,13 @@ P_APPEND
 使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の薬を目につく場所へ準備しておく方法があります。
 
 
+
+
 【ADDON｜type=adherence_guidance｜id=addon_adherence_habit_routine_link｜title=生活習慣と結びつける｜uiGroup=習慣化｜uiVariant=rightAccentBlue】
 P_APPEND
 使用忘れを防ぐ方法の一つとして、毎日の生活習慣と使用を結びつける方法があります。
+
+
 
 
 【ADDON｜type=adherence_guidance｜id=addon_adherence_family_support_reminder｜title=家族などの声掛け｜uiGroup=家族の支援｜uiVariant=rightAccentLavender】
@@ -1280,4 +1368,6 @@ P
 開封するまでは冷所で保管してください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
+
+
 =======SCENARIOS_END=======
