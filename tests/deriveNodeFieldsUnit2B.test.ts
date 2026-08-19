@@ -115,11 +115,26 @@ describe('1. deriveRawFields が primary raw の単一生成経路である', ()
     )
   })
 
-  test('buildNodeFields 自体は変更されていない（node 分岐からの直接呼び出しが残る）', () => {
-    // node ブランチ（buildUpdatedNode / handleAddonToggle node分岐）は
-    // 既に deterministic derive のため Unit 2B では触らない
-    const count = (src.match(/buildNodeFields\(/g) ?? []).length
-    assert.equal(count, 2, `buildNodeFields の直接呼び出しは node 分岐の 2 箇所のみのはず（実際: ${count}）`)
+  test('buildNodeFields 自体は変更されていない（Unit 3A 更新: node 分岐は deriveNodeBlockCore へ収束した）', () => {
+    // Unit 2B 時点: node ブランチ（buildUpdatedNode / handleAddonToggle node分岐）は
+    // buildNodeFields を直接 2 回呼んでいた（既に deterministic だが Unit 2B では触らなかった）。
+    //
+    // Unit 3A: secondary Node の block 構築を単一の production pure helper
+    // （lib/deriveNodeFields.ts の deriveNodeBlockCore）へ収束させた。
+    // node 分岐は DashboardClient.tsx から直接 buildNodeFields を呼ばなくなり、
+    // 代わりに deriveNodeBlockCore を呼ぶ（buildNodeFields 自体はその内部で
+    // 1 回だけ呼ばれる。lib/deriveNodeFields.ts 側は
+    // tests/nodeSnapshotUnit3A.test.ts の T-3A-4 が検証する）。
+    //
+    // このファイル（lib/buildSoap.ts の buildNodeFields 定義）が変更されていないことは
+    // 別 assertion（deriveRawFields signature 不変）と合わせて Unit 2A/2B/3A 全体で
+    // 保存されている。ここでは DashboardClient.tsx から buildNodeFields への
+    // 直接呼び出しが 0（deriveNodeBlockCore への収束が完了している）ことを検証する。
+    const directCount = (src.match(/buildNodeFields\(/g) ?? []).length
+    assert.equal(directCount, 0, `buildNodeFields の直接呼び出しは残っていないはず（実際: ${directCount}）`)
+
+    const coreCount = (src.match(/deriveNodeBlockCore\(/g) ?? []).length
+    assert.equal(coreCount, 2, `deriveNodeBlockCore の呼び出しは node 分岐の 2 箇所のみのはず（実際: ${coreCount}）`)
   })
 })
 

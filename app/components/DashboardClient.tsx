@@ -5,7 +5,7 @@ import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import type { ModuleData, SoapKey, SoapFields, MergedBlock, ComposeNode } from '../../lib/types'
 import { TAG_TO_GENERIC_NAME } from '../../lib/types'
 import type { BrandResolution } from '../../lib/brandResolution'
-import { buildNodeFields, mergeBlocks } from '../../lib/buildSoap'
+import { mergeBlocks } from '../../lib/buildSoap'
 import { resolveDrugSubject, resolveDrugName, resolveSubjectFromResolution } from '../../lib/drugSubject'
 import { buildSearchIndex, getDrugSuggestions, normalizeText } from '../../lib/search'
 import type { DrugSuggestionItem } from '../../lib/search'
@@ -47,7 +47,7 @@ import {
   nextRapidStateOnScenarioChange,
 } from '../../lib/rapidState'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
-import { deriveRawFields } from '../../lib/deriveNodeFields'
+import { deriveRawFields, deriveNodeBlockCore } from '../../lib/deriveNodeFields'
 import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
@@ -980,28 +980,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // brandCatalog 解決キー（先発名）から薬剤名を解決。これはアドオンフィルタリング用。
     // {{drug_subject}} の置換は displayName を優先し、省略時のみ matchedBrandName から解決する。
     const drugName = displayName ?? resolveDrugName(mod.drug, matchedBrandName)
-    const { fields: rawFields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, addonIds, drugName)
-    const guard = derivePersonaGuard(sc, mod.template?.urgentFlag)
+    // Unit 3A: block core は deriveNodeBlockCore が deterministic に導出する。
+    // rapid は Unit 3A では常に null（ComposeNode は rapid をまだ所有しない）。
+    // Unit 3B で node.rapid へ差し替える。
+    const core = deriveNodeBlockCore(sc, mod, addonIds, null, drugName)
     const fields = personaEnabled
-      ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
-      : rawFields
+      ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
+      : core.rawFields
     const domain = resolveDomain(mod)
     return {
       ...node,
       scenarioId: newScenarioId,
-      block: {
-        id: node.block.id,
-        templateLabel: sc.title,
-        fields,
-        rawFields,
-        guard,
-        symptomCodes: sc.sComposition?.symptomCodes,
-        closingText,
-        domain,
-        groupKey,
-        clinicalDomain,
-        closingBehavior,
-      },
+      block: { id: node.block.id, ...core, fields, domain },
       selectedAddonIds: addonIds,
       baseLabel: sc.title,
       baseDomain: domain,
@@ -1369,17 +1359,18 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
           const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
           if (sc) {
+            // Unit 3A: buildUpdatedNode と同一の deterministic derive を使う。
+            // rapid は Unit 3A では常に null。Unit 3B で node.rapid へ差し替える。
             // node.resolvedDrugName を渡して {{drug_subject}} を再解決
-            const { fields: rawFields, closingText, groupKey, clinicalDomain, closingBehavior } = buildNodeFields(sc, mod, newAddonIds, node.resolvedDrugName ?? '')
-            const guard = derivePersonaGuard(sc, mod.template?.urgentFlag)
+            const core = deriveNodeBlockCore(sc, mod, newAddonIds, null, node.resolvedDrugName ?? '')
             const fields = personaEnabled
-              ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersona, guard)
-              : rawFields
+              ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
+              : core.rawFields
             const domain = resolveDomain(mod)
             setComposeNodes(nodes.map(n =>
               n.id !== nodeId ? n : {
                 ...n,
-                block: { ...n.block, fields, rawFields, guard, closingText, domain, groupKey, clinicalDomain, closingBehavior },
+                block: { ...n.block, ...core, fields, domain },
                 selectedAddonIds: newAddonIds,
                 baseLabel: sc.title,
                 baseDomain: domain,

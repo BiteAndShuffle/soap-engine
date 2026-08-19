@@ -350,8 +350,23 @@ describe('責務境界: Unit 2A の scope が守られている', () => {
     .replace(/^[ \t]*\/\/.*$/gm, '')    // 行コメント
 
   test('persona を derive helper へ入れていない（RAPID-V2-10）', () => {
+    // Unit 3A: 同一ファイルへ secondary Node 用 deriveNodeBlockCore を追加した。
+    // deriveNodeBlockCore は block.guard（PersonaGuard 記述子）を返す責務を持つため
+    // derivePersonaGuard を参照する（persona を適用するのではなく、後段の
+    // applyPersonaToFieldsWithGuard が使う記述子を返すだけ。呼び出し側の責務は
+    // Unit 3A 以前の buildUpdatedNode / handleAddonToggle と同一で、単に本ファイルへ
+    // 移設しただけである）。
+    //
+    // RAPID-V2-10 が守る invariant は「deriveRawFields（primary 経路）が
+    // persona 未適用の raw fields までを担当する」ことであり、ファイル全体が
+    // persona を一切参照しないことではない。deriveRawFields 自身とその依存
+    // （withRapidFirstSentence）の region に限定して検証する。
+    const start = code.indexOf('function withRapidFirstSentence')
+    const end = code.indexOf('export type NodeBlockCore')
+    assert.ok(start !== -1 && end !== -1 && end > start, 'deriveRawFields region の抽出に失敗した')
+    const deriveRawFieldsRegion = code.slice(start, end)
     assert.ok(
-      !/applyPersona|personaGuard|PersonaId|derivePersonaGuard/.test(code),
+      !/applyPersona|personaGuard|PersonaId|derivePersonaGuard/.test(deriveRawFieldsRegion),
       'deriveRawFields は persona 未適用の raw fields までを担当する。' +
       'persona は既存どおり後段で適用し、global boundary を維持すること',
     )
