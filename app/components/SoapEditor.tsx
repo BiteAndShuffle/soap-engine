@@ -20,85 +20,34 @@ interface SoapEditorProps {
 
 // ─────────────────────────────────────────────────────────────
 // S欄先頭文: relation × condition の2軸
+//
+// 実体は lib/rapidSentence.ts へ移送済み（Rapid Mode v2 / Unit 1）。
+// 本ファイルは CSS module を import するため node:test から直接 import できず、
+// production 関数を test から検証できなかった（RAPID-V2-20 違反の原因）。
+//
+// 既存の import（`from './SoapEditor'`）を壊さないため re-export を維持する。
+// 新規コードは lib/rapidSentence.ts から直接 import すること。
 // ─────────────────────────────────────────────────────────────
 
-/**
- * 前回との関係性（新規追加 / 薬変更 / 増量 / 減量 / Do継続）
- * UI上の「前回、新薬追加」「前回、薬変更」「前回、増量」「前回、減量」「前回、Do」に対応する。
- */
-export type SRelation = 'new_addition' | 'med_changed' | 'dose_increased' | 'dose_decreased' | 'continued_do'
+export type {
+  SRelation,
+  SCondition,
+  AdjustmentExpression,
+} from '../../lib/rapidSentence'
 
-/**
- * 体調状態（落ち着いている / 改善 / 変わりない / 改善不十分）
- * UI上の4ボタンに対応する。
- */
-export type SCondition = 'stable' | 'improved' | 'unchanged' | 'not_improved'
+export {
+  S_RELATION_LABELS,
+  S_CONDITION_LABELS,
+  buildSFirstSentence,
+  replaceSFirstSentence,
+  buildResolvedSFirstSentence,
+  firstSentenceOf,
+  restoreScenarioFirstSentence,
+} from '../../lib/rapidSentence'
 
 // 後方互換エイリアス（既存の import を壊さないため残す）
-export type SPrefix = SRelation
-export type SStatus = SCondition
-
-/** relation の表示ラベル */
-export const S_RELATION_LABELS: Record<SRelation, string> = {
-  new_addition:   '新規追加',
-  med_changed:    '薬変更',
-  dose_increased: '増量',
-  dose_decreased: '減量',
-  continued_do:   'Do',
-}
-
-/** condition の表示ラベル */
-export const S_CONDITION_LABELS: Record<SCondition, string> = {
-  stable:       '落ち着いている',
-  improved:     '良くなってきた',
-  unchanged:    '変わりない',
-  not_improved: 'あまり良くなっていない',
-}
-
-/**
- * relation × condition から「S欄先頭文」を汎用生成する。
- *
- * 糖尿病・感染症・整形など診療科を問わず使用できる汎用関数。
- * シナリオ種別（副作用なし系/CP系など）による分岐は行わない。
- * シナリオ固有の観察文（「低血糖症状は認めない」等）は
- * replaceSFirstSentence により先頭文の後ろに連結される。
- */
-export function buildSFirstSentence(relation: SRelation, condition: SCondition): string {
-  const cond = S_CONDITION_LABELS[condition]
-  switch (relation) {
-    case 'new_addition':
-      return `前回から新しく薬を使用して${cond}。`
-    case 'med_changed':
-      return condition === 'not_improved'
-        ? `前回から薬が変更となったが、十分な改善はみられない。`
-        : `前回から薬が変更となり、${cond}。`
-    case 'dose_increased':
-      return condition === 'not_improved'
-        ? `前回から薬が増量となったが、十分な改善はみられない。`
-        : `前回から薬が増量となり${cond}。`
-    case 'dose_decreased':
-      return condition === 'not_improved'
-        ? `前回から薬が減量となったが、十分な改善はみられない。`
-        : `前回から薬が減量となり${cond}。`
-    case 'continued_do':
-      return condition === 'not_improved'
-        ? `引き続き使用しているが、十分な改善はみられない。`
-        : `引き続き使用して${cond}。`
-  }
-}
-
-/**
- * Sフィールドの先頭文（最初の「。」まで）を新しい文に差し替える。
- */
-export function replaceSFirstSentence(current: string, newFirst: string): string {
-  const dotIdx = current.indexOf('。')
-  if (dotIdx === -1) {
-    return newFirst
-  }
-  const rest = current.slice(dotIdx + 1)
-  const restTrimmed = rest.replace(/^[\n\r\s]+/, '')
-  return restTrimmed ? `${newFirst}\n${restTrimmed}` : newFirst
-}
+export type SPrefix = import('../../lib/rapidSentence').SRelation
+export type SStatus = import('../../lib/rapidSentence').SCondition
 
 // ─────────────────────────────────────────────────────────────
 // S/O/A/Pのラベル名

@@ -4,7 +4,8 @@ import { useRef, useState, useCallback, useEffect, useId } from 'react'
 import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
 import type { Scenario, ModuleData } from '../../lib/types'
-import type { SRelation, SCondition } from './SoapEditor'
+import type { SRelation, SCondition } from '../../lib/rapidSentence'
+import type { RapidState } from '../../lib/rapidState'
 import { isSReplacementEligible } from '../../lib/isSReplacementEligible'
 import s from '../styles/layout.module.css'
 
@@ -323,8 +324,12 @@ interface ThirdPanelProps {
    * thirdPanelSPlacement.enabled の判定に使用する。
    */
   primaryScenario?: Scenario
-  currentSRelation: SRelation
-  currentSCondition: SCondition
+  /**
+   * 現在の Rapid 選択状態（RAPID-V2-03）。
+   * null = Rapid 未選択。この場合どのボタンもアクティブにならない。
+   * `{ continued_do, stable }` とは別状態として扱うこと。
+   */
+  rapidState: RapidState
   onSAction: (relation: SRelation, condition: SCondition) => void
   /** 合成薬剤追加検索クエリ */
   composeSearchValue?: string
@@ -376,8 +381,7 @@ export default function ThirdPanel({
   thirdPanelEnabled,
   isSingleDrug,
   primaryScenario,
-  currentSRelation,
-  currentSCondition,
+  rapidState,
   onSAction,
   composeSearchValue = '',
   onComposeSearchChange,
@@ -824,7 +828,13 @@ export default function ThirdPanel({
                 <div className={s.sActionSectionLabel}>{sec.label}</div>
                 <div className={s.sActionBtnGrid}>
                   {STATUSES.map(st => {
-                    const isActive = currentSRelation === sec.relation && currentSCondition === st.condition
+                    // RAPID-V2-03: rapidState === null（未選択）ではどのボタンも点灯しない。
+                    // 旧実装は sRelation/sCondition の初期値が continued_do/stable であったため、
+                    // 未選択状態でも「前回、Do × 体調落ち着いている」が点灯していた。
+                    const isActive =
+                      rapidState !== null &&
+                      rapidState.previousEvent === sec.relation &&
+                      rapidState.currentOutcome === st.condition
                     return (
                       <button
                         key={st.condition}

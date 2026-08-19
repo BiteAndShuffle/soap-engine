@@ -9,8 +9,12 @@
  *
  * 本ファイルは DashboardClient.tsx の以下のロジックを純粋関数としてミラーし検証する
  * （tests/stateTransitions.test.ts / tests/mergeBlocks.test.ts と同じ方針:
- *  React hooks を使わず state 遷移を plain object で追う。SoapEditor.tsx 等の
- *  'use client' コンポーネントは CSS module import を含むため直接 import しない）:
+ *  React hooks を使わず state 遷移を plain object で追う）。
+ *
+ * Rapid S先頭文（replaceSFirstSentence / buildResolvedSFirstSentence）は
+ * Unit 1 で lib/rapidSentence.ts へ移送済みのため、**production を直接 import する**
+ * （RAPID-V2-20）。以下に残るミラーは DashboardClient.tsx 内のインライン実装であり、
+ * production 関数として抽出されていないためミラーのまま維持する:
  *   - derivePrimaryDisplayFields（H-1 対応で追加したヘルパー）
  *   - handleAddonToggle（primary ブランチの raw/表示 分離ロジック）
  *   - handleSToggle（トグル ON / OFF 両分岐）
@@ -38,6 +42,10 @@ import assert from 'node:assert/strict'
 
 import type { SoapFields, ModuleData, Scenario, SoapKey } from '../lib/types'
 import { buildNodeFields } from '../lib/buildSoap'
+// RAPID-V2-20: Rapid S先頭文の production 実装を直接 import する。
+// Unit 1 で lib/rapidSentence.ts へ移送したため mirror 実装が不要になった
+// （移送前は SoapEditor.tsx の CSS module import により import 不能だった）。
+import { replaceSFirstSentence, buildResolvedSFirstSentence } from '../lib/rapidSentence'
 import { applyPersonaToFieldsWithGuard, type PersonaId } from '../lib/applyPersona'
 import { derivePersonaGuard, type PersonaGuard } from '../lib/personaGuard'
 import oralData from '../data/modules/dm_glp1ra_semaglutide_oral.json' assert { type: 'json' }
@@ -78,19 +86,6 @@ function resolveClosingText(
     return (defaults?.followup as Record<string, string> | undefined)?.P
   }
   return undefined
-}
-
-/**
- * replaceSFirstSentence（app/components/SoapEditor.tsx と同一）。
- * SoapEditor.tsx は CSS module（layout.module.css）を import するため
- * node:test 実行環境では直接 import せず、純粋関数部分のみローカル複製する。
- */
-function replaceSFirstSentence(current: string, newFirst: string): string {
-  const dotIdx = current.indexOf('。')
-  if (dotIdx === -1) return newFirst
-  const rest = current.slice(dotIdx + 1)
-  const restTrimmed = rest.replace(/^[\n\r\s]+/, '')
-  return restTrimmed ? `${newFirst}\n${restTrimmed}` : newFirst
 }
 
 /**
@@ -299,7 +294,9 @@ describe('④ Rapid S先頭文変更 → persona ON/OFF で S先頭文が維持�
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
     const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
 
-    const NEW_FIRST = `前回から新しく${DRUG_NAME}を使用して症状は落ち着いている。`
+    // production の文生成をそのまま使う（RAPID-V2-20）。
+    // 以前はテスト側で先頭文を手書きしており、production 出力と一致していなかった。
+    const NEW_FIRST = buildResolvedSFirstSentence('new_addition', 'stable', DRUG_NAME)
     const raw = applySToggleOnRaw(scenarioRaw, NEW_FIRST)
     assert.ok(raw.S.startsWith(NEW_FIRST), '前提: raw の S 先頭文が更新されている')
 

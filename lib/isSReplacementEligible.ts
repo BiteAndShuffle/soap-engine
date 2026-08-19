@@ -73,18 +73,25 @@ export interface SReplacementContext {
 }
 
 /**
- * S置換UI（S先頭文ボタン群）の表示可否を返す。
+ * scenario 単体で S置換（Rapid）の適用可否を返す（RAPID-V2-08）。
  *
- * @param scenario - 現在選択中の primary scenario（null/undefined なら false）
- * @param context  - 表示コンテキスト（単剤判定・シナリオ確定判定）
- * @returns true ならS置換UIを表示してよい
+ * **UI context に依存しない scenario intrinsic predicate である。**
+ * 以下に依存してはならない:
+ *   isSingleDrug / editingNodeId / ThirdPanel visibility / compose 状態 / UI context
+ *
+ * Rapid Mode v2 / Unit 1 で isSReplacementEligible から分離した。
+ * 判定内容は分離前と完全に同一であり、behavior を変更していない
+ * （分離前の関数から context 判定 2 行だけを取り除いたもの）。
+ *
+ * scenario 変更時の RapidState 遷移（RAPID-V2-07）は、UI の表示可否ではなく
+ * 本 predicate の結果を根拠に判定する。
+ *
+ * @param scenario - 判定対象シナリオ（null/undefined なら false）
+ * @returns true ならこのシナリオは Rapid を適用できる
  */
-export function isSReplacementEligible(
+export function isScenarioSReplacementCapable(
   scenario: Scenario | null | undefined,
-  context: SReplacementContext,
 ): boolean {
-  // Context 条件: すべて満たさなければ即 false
-  if (!context.thirdPanelEnabled || !context.isSingleDrug) return false
   if (!scenario) return false
 
   // ── 明示設定優先（override 禁止） ──────────────────────────
@@ -118,4 +125,24 @@ export function isSReplacementEligible(
   if (scenario.id.startsWith('cp_good')) return true
 
   return false
+}
+
+/**
+ * S置換UI（S先頭文ボタン群）の表示可否を返す。
+ *
+ * context 条件（UI）と scenario intrinsic 条件（capability）の 2 段構成:
+ *   1. context: 単剤 primary / シナリオ確定済み  ← Unit 1 時点でも 1剤目限定を維持（RAPID-V2-17）
+ *   2. capability: isScenarioSReplacementCapable
+ *
+ * @param scenario - 現在選択中の primary scenario（null/undefined なら false）
+ * @param context  - 表示コンテキスト（単剤判定・シナリオ確定判定）
+ * @returns true ならS置換UIを表示してよい
+ */
+export function isSReplacementEligible(
+  scenario: Scenario | null | undefined,
+  context: SReplacementContext,
+): boolean {
+  // Context 条件: すべて満たさなければ即 false
+  if (!context.thirdPanelEnabled || !context.isSingleDrug) return false
+  return isScenarioSReplacementCapable(scenario)
 }

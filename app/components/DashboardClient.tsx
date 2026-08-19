@@ -34,12 +34,20 @@ import { TemplateListPanel } from './SecondaryPanel'
 import AddonPanel from './AddonPanel'
 import ThirdPanel from './ThirdPanel'
 import NlpInputPanel from './NlpInputPanel'
-import SoapEditor, {
+import SoapEditor from './SoapEditor'
+import {
   type SRelation,
   type SCondition,
-  buildSFirstSentence,
+  buildResolvedSFirstSentence,
   replaceSFirstSentence,
-} from './SoapEditor'
+  restoreScenarioFirstSentence,
+} from '../../lib/rapidSentence'
+import {
+  type RapidState,
+  isSameRapid,
+  nextRapidStateOnScenarioChange,
+} from '../../lib/rapidState'
+import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
 import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
@@ -211,9 +219,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const [nlpConfidence, setNlpConfidence] = useState(0)
   const [nlpIsGenerating, setNlpIsGenerating] = useState(false)
 
-  // ── S relation/condition ─────────────────────────────────────
-  const [sRelation, setSRelation] = useState<SRelation>('continued_do')
-  const [sCondition, setSCondition] = useState<SCondition>('stable')
+  // ── Rapid state（RAPID-V2-03）──────────────────────────────
+  // null = Rapid 未選択。`{ continued_do, stable }` とは別状態である。
+  // Unit 1 以前は sRelation / sCondition の 2 state で表現していたが、
+  // 初期値が continued_do / stable だったため未選択と区別できなかった。
+  const [rapidState, setRapidState] = useState<RapidState>(null)
 
   // ── localSiteInput: display.localInput 対応モジュール用・部位入力 ──
   // 1剤目（primaryBaseFields）に紐づく部位入力値。
@@ -309,9 +319,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 1剤目の BrandResolution を callback / useEffect から stale closure なしに読むための ref。
   // U-4a では保持のみ（読み出し側は U-4b / U-5 で追加する）。
   const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)
-  // handleSToggle 内で現在の sRelation/sCondition を stale closure なしに読むための ref。
-  const sRelationRef  = useRef<SRelation>('continued_do')
-  const sConditionRef = useRef<SCondition>('stable')
+  // handleSToggle / useEffect 内で現在の RapidState を stale closure なしに読むための ref。
+  const rapidStateRef = useRef<RapidState>(null)
   // NLP生成モード専用 ref（将来機能・現在 UI 未接続）。
   // NLP生成モード（handleSwitchToNlp）に入る直前の manual 状態スナップショット。
   // handleSwitchToManual でこれをそのまま復元する（buildNodeFields は呼ばない）。
@@ -327,8 +336,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     selectedGroup:      MenuGroup | null
     primaryAddonIds:    Set<string>
     selectedAddonIds:   Set<string>
-    sRelation:          SRelation
-    sCondition:         SCondition
+    rapidState:         RapidState
   }
   const manualSnapshotRef = useRef<ManualSnapshot | null>(null)
   // ユーザーが明示的に手動でシナリオを選択したときのみ true になるフラグ。
@@ -524,8 +532,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   activeDrugDisplayNameRef.current = activeDrugDisplayName
   activeResolutionRef.current      = activeResolution
   displayFieldsRef.current     = displayFields
-  sRelationRef.current         = sRelation
-  sConditionRef.current        = sCondition
+  rapidStateRef.current        = rapidState
   selectedScenarioIdRef.current = selectedScenarioId
   // 未編集状態のときだけスナップショットを追従させる。
   // editedSOAP が非null（編集中）のときは固定したまま更新しない。
@@ -812,15 +819,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // EFFECTS
   // ══════════════════════════════════════════════════════════════
 
-  // S prefix/status リセット（シナリオ変更時）
-  // thirdPanelSPlacement.enabled === true のシナリオに切り替わった場合のみ
-  // sRelation / sCondition を初期値にリセットする。
-  useEffect(() => {
-    if (primaryScenario?.thirdPanelSPlacement?.enabled === true) {
-      setSRelation('continued_do')
-      setSCondition('stable')
-    }
-  }, [primaryScenario])
+  // ─────────────────────────────────────────────────────────────
+  // Rapid state のリセットについて（Unit 1 / RAPID-V2-07）
+  //
+  // Unit 1 以前はここに「thirdPanelSPlacement.enabled === true のシナリオへ
+  // 切り替わった場合のみ sRelation/sCondition を初期化する」effect があった。
+  // これは明示指定のある 46 シナリオにしか発火せず、fallback で capable と
+  // 判定される 124 シナリオでは state が据え置かれていた（state/text desync の原因）。
+  //
+  // Unit 1 では scenario 遷移の判定を nextRapidStateOnScenarioChange へ一本化し、
+  // 呼び出し側（handleSelectScenario）が明示的に次の状態を決める。
+  // シナリオ解除・薬剤切替・Express 確定・NLP 遷移は「コンテキスト破棄」であり
+  // 遷移ではないため、各 handler が setRapidState(null) を明示する。
+  // ─────────────────────────────────────────────────────────────
 
   // 1剤目シナリオ切替時に primaryBaseFields を初期化（addon なし素の状態）
   // - selectedScenarioId 変化時のみ走る
@@ -857,8 +868,32 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const primaryDrugName = activeDrugDisplayNameRef.current
         ?? resolveDrugName(activeModuleData.drug, activeBrandName)
-      const { fields: rawFields } = buildNodeFields(primaryScenario, activeModuleData, [], primaryDrugName)
+      const { fields: builtFields } = buildNodeFields(primaryScenario, activeModuleData, [], primaryDrugName)
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
+
+      // ── Rapid 再適用（RAPID-V2-07 / Owner Decision 解釈①）─────────
+      // ここへ到達した時点で rapidStateRef は遷移判定済みの値になっている
+      //   （handleSelectScenario が setRapidState と setSelectedScenarioId を同一
+      //     バッチで呼び、ref は render 時に同期されてから effect が走るため）。
+      // non-null ＝ capable → capable の遷移で保持された状態であり、
+      // 「state だけ保持して本文へ反映しない」ことは禁止されている。
+      // したがって新シナリオの pristine S を基点として先頭文を再適用する。
+      const carriedRapid = rapidStateRef.current
+      const rawFields = carriedRapid === null
+        ? builtFields
+        : {
+            ...builtFields,
+            S: replaceSFirstSentence(
+              builtFields.S,
+              buildResolvedSFirstSentence(
+                carriedRapid.previousEvent,
+                carriedRapid.currentOutcome,
+                primaryDrugName,
+                activeModuleData.display?.adjustmentExpression,
+              ),
+            ),
+          }
+
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
       if (isManualSelect) {
@@ -933,6 +968,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryBaseFields(EMPTY_FIELDS)
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
+      // シナリオ解除はコンテキスト破棄。Rapid を残すと「non-null なのに
+      // SOAP へ反映されていない」状態になるため明示的に null にする。
+      setRapidState(null)
     }
   }, [])
 
@@ -1045,18 +1083,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       manualSnapshotRef.current = null
       setSelectedScenarioId(prev => {
         if (prev === id) {
-          // 同じシナリオを再タップ → 解除
+          // 同じシナリオを再タップ → 解除（コンテキスト破棄。遷移ではない）
           setPrimaryBaseFields(EMPTY_FIELDS)
           setPrimaryAddonIds(new Set())
           setSelectedAddonIds(new Set())
-          setSRelation('continued_do')
-          setSCondition('stable')
+          setRapidState(null)
           return null
         }
         const sc = activeModuleData.scenarios.find(s => s.globalId === id)
         if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
-        setSRelation('continued_do')
-        setSCondition('stable')
+        // ── scenario 遷移（RAPID-V2-07）────────────────────────
+        // capability は scenario intrinsic predicate で判定する（RAPID-V2-08）。
+        // UI の表示可否（isSingleDrug / thirdPanelEnabled）には依存させない。
+        // 保持された場合、useEffect(selectedScenarioId) が新シナリオの
+        // pristine S を基点に Rapid 先頭文を再適用する（解釈①）。
+        setRapidState(prevRapid => nextRapidStateOnScenarioChange(
+          prevRapid,
+          isScenarioSReplacementCapable(primaryScenarioRef.current),
+          isScenarioSReplacementCapable(sc),
+        ))
         // primaryBaseFields は useEffect(selectedScenarioId) で同期される
         return id
       })
@@ -1092,8 +1137,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
       setSelectedGroup(null)
-      setSRelation('continued_do')
-      setSCondition('stable')
+      // 薬剤切替はコンテキスト破棄（遷移ではない）
+      setRapidState(null)
       setMainSearch('')
       setComposeNodes([])
       setEditingNodeId(null)
@@ -1490,69 +1535,54 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   const handleSToggle = useCallback((relation: SRelation, condition: SCondition) => {
     if (editingNodeIdRef.current !== null) return
     confirmDiscard(() => {
-      // 同じボタンを再クリックした場合: S先頭文を解除してベースの S に戻す
-      const isAlreadyActive =
-        sRelationRef.current === relation && sConditionRef.current === condition
-      if (isAlreadyActive) {
-        // S先頭文の選択状態を解除し、表示を raw から再導出する。
-        // raw 自体は変更しない（H-1 対応: raw ベースが persona 再計算の基点であり、
-        // ここで書き換えると persona トグルで ADDON 分が消失する）。
-        setSRelation('continued_do')
-        setSCondition('stable')
-        setPrimaryBaseFields(derivePrimaryDisplayFields(rawPrimaryFieldsRef.current))
-        setEditedSOAP(null)
-        return
-      }
-      setSRelation(relation)
-      setSCondition(condition)
-      // 汎用先頭文を生成（「前回から新しく薬を使用して〜」など）
-      const newFirst = buildSFirstSentence(relation, condition)
-      // この関数が呼ばれる時点で、表示条件（1剤目 + 副作用なし/CP良好）は
-      // ThirdPanel 側で既に保証されている。
-      // その安全な場面に限り、generic な「薬」を解決済み薬剤名に置換する。
-      // relation ごとに薬剤名置換パターンを分ける。
-      //   new_addition: 「薬を」→「{drug}を」
-      //   med_changed:  「薬が変更と」→「{drug}に変更と」（stable/improved/unchanged/not_improved 共通）
-      //   continued_do: 薬剤名なし（「引き続き使用して〜」は主語省略が自然）
       // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const drugName = activeDrugDisplayName
         ?? resolveDrugName(activeModuleData.drug, activeBrandName)
-      // adjustmentExpression: S先頭文生成用（menuGroupLabels はメニュー表示専用・役割分離）
-      // display.adjustmentExpression が最優先。省略時は従来の増量/減量テンプレートにフォールバック。
-      const adjustmentExpression = activeModuleData.display?.adjustmentExpression
-      // condition に応じた後続句（adjustmentExpression あり時に使用）
-      const condSuffix = (() => {
-        switch (condition) {
-          case 'stable':       return '症状は落ち着いている。'
-          case 'improved':     return '症状は良くなってきた。'
-          case 'unchanged':    return '症状は変わりない。'
-          case 'not_improved': return '十分な改善はみられない。'
-        }
-      })()
-      const resolvedFirst = (() => {
-        if (!drugName) return newFirst
-        if (relation === 'new_addition')   return newFirst.replace('薬を', `${drugName}を`)
-        if (relation === 'med_changed')    return newFirst.replace('薬が変更と', `${drugName}に変更と`)
-        if (relation === 'dose_increased') {
-          if (adjustmentExpression) {
-            // adjustmentExpression あり: 「前回から{drug}の{increasePast}が、{condSuffix}」
-            return `前回から${drugName}の${adjustmentExpression.increasePast}が、${condSuffix}`
+
+      // ── toggle-off（RAPID-V2-05）────────────────────────────
+      // 現在アクティブな Rapid を再クリック → RapidState = null にし、
+      // S 本文を scenario 本来の先頭文へ差し戻す。
+      //
+      // Unit 1 以前は state だけ戻して raw を触らなかったため、ON 時に raw へ
+      // 焼き込んだ Rapid 文が残り S が復元されなかった（実測 0/3400 復元）。
+      // ここでは raw の**先頭文だけ**を差し戻す:
+      //   - 残余（シナリオ固有の観察文）と ADDON テキストは保持される
+      //   - raw を persona 再計算の基点として保ち続ける（H-1 / 37a9262 の invariant）
+      //   - localInput は finalFields で render 時に適用されるため巻き戻らない
+      if (isSameRapid(rapidStateRef.current, relation, condition)) {
+        setRapidState(null)
+        const sc = primaryScenarioRef.current
+        if (sc) {
+          // 素のシナリオ（addon なし）を組み立て、その先頭文を復元の基点にする。
+          // useEffect(selectedScenarioId) と同一の呼び出しであり deterministic。
+          const { fields: pristine } = buildNodeFields(sc, activeModuleData, [], drugName)
+          const rawBase = rawPrimaryFieldsRef.current
+          const restored = {
+            ...rawBase,
+            S: restoreScenarioFirstSentence(rawBase.S, pristine.S),
           }
-          return newFirst
-            .replace('薬が増量となり', `${drugName}が増量となり`)
-            .replace('薬が増量となったが', `${drugName}が増量となったが`)
+          rawPrimaryFieldsRef.current = restored
+          setPrimaryBaseFields(derivePrimaryDisplayFields(restored))
+        } else {
+          setPrimaryBaseFields(derivePrimaryDisplayFields(rawPrimaryFieldsRef.current))
         }
-        if (relation === 'dose_decreased') {
-          if (adjustmentExpression) {
-            // adjustmentExpression あり: 「前回から{drug}の{decreasePast}が、{condSuffix}」
-            return `前回から${drugName}の${adjustmentExpression.decreasePast}が、${condSuffix}`
-          }
-          return newFirst
-            .replace('薬が減量となり', `${drugName}が減量となり`)
-            .replace('薬が減量となったが', `${drugName}が減量となったが`)
-        }
-        return newFirst  // continued_do: 薬剤名なしが自然
-      })()
+        setEditedSOAP(null)
+        return
+      }
+
+      setRapidState({ previousEvent: relation, currentOutcome: condition })
+      // この関数が呼ばれる時点で、表示条件（1剤目 + capable シナリオ）は
+      // ThirdPanel 側で既に保証されている。
+      // その安全な場面に限り、generic な「薬」を解決済み薬剤名に置換する。
+      // 文生成は buildResolvedSFirstSentence（lib/rapidSentence.ts）へ集約した。
+      // scenario 変更時の再適用（useEffect）と必ず同じ文を生成させるため。
+      const resolvedFirst = buildResolvedSFirstSentence(
+        relation,
+        condition,
+        drugName,
+        // adjustmentExpression: S先頭文生成用（menuGroupLabels はメニュー表示専用・役割分離）
+        activeModuleData.display?.adjustmentExpression,
+      )
       // Rapid 原本（NLP専用・現在UI未接続のため通常は null）がある場合は
       // rapidBaseFieldsRef をベースに S だけ差し替える（既存のNLP経路の分岐を変更しない）。
       // 通常経路（rapidBaseFieldsRef が null）は raw ベースを更新し、
@@ -1648,8 +1678,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         // シナリオを即時確定（通常フローでは handleSelectScenario が行う処理を一括実行）
         setSelectedScenarioId(globalId)
         setSelectedGroup(getMenuGroupFromScenario(sc))
-        setSRelation('continued_do')
-        setSCondition('stable')
+        // Express 確定はコンテキスト破棄。Rapid を自動付与しない（RAPID-V2-07）
+        setRapidState(null)
         setPrimaryAddonIds(new Set())
         setSelectedAddonIds(new Set())
         setEditedSOAP(null)
@@ -1752,8 +1782,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         selectedGroup:      selectedGroup,
         primaryAddonIds:    new Set(primaryAddonIdsRef.current),
         selectedAddonIds:   new Set(selectedAddonIdsRef.current),
-        sRelation:          sRelationRef.current,
-        sCondition:         sConditionRef.current,
+        rapidState:         rapidStateRef.current,
       }
       setUiMode('nlp')
       setSelectedScenarioId(null)
@@ -1761,8 +1790,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
       setSelectedGroup(null)
-      setSRelation('continued_do')
-      setSCondition('stable')
+      // NLP 遷移はコンテキスト破棄
+      setRapidState(null)
       setComposeNodes([])
       setEditingNodeId(null)
       setEditingPrimary(false)
@@ -1787,8 +1816,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryBaseFields(snap.primaryBaseFields)
       setPrimaryAddonIds(snap.primaryAddonIds)
       setSelectedAddonIds(snap.selectedAddonIds)
-      setSRelation(snap.sRelation)
-      setSCondition(snap.sCondition)
+      setRapidState(snap.rapidState)
       setSelectedGroup(snap.selectedGroup)
       setEditedSOAP(null)
       restoringFromSnapshotRef.current = true
@@ -1981,8 +2009,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             thirdPanelEnabled={thirdPanelEnabled}
             isSingleDrug={isSingleDrug}
             primaryScenario={primaryScenario}
-            currentSRelation={sRelation}
-            currentSCondition={sCondition}
+            rapidState={rapidState}
             onSAction={handleSToggle}
             composeSearchValue={composeSearch}
             onComposeSearchChange={setComposeSearch}
