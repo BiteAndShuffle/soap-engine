@@ -883,10 +883,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setEditedSOAP(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedScenarioId, editingNodeId])
+  }, [selectedScenarioId])
   // ↑ primaryScenario / activeModuleData.defaults は deps に入れない。
   //   シナリオ切替タイミングだけで同期すれば十分。
   //   deps に入れると別モジュール選択時など意図しない再実行が起きる。
+  //
+  //   editingNodeId も deps に入れない（Unit 0 / RAPID-V2-06）。
+  //   入れると editingNodeId が non-null → null へ戻るだけで再発火し、
+  //   primary を素のシナリオから作り直して Rapid 適用文と ADDON を破棄する
+  //   （node 追加後に node bar の1剤目をクリックしただけで内容が消える）。
+  //   editingNodeId は「どのノードの UI を表示するか」という UI-only state であり、
+  //   1剤目の内容を再構築する理由にはならない。上の early return は
+  //   「シナリオ切替時にノード編集中なら primary を触らない」ガードとして残す。
+  //   なお handleSelectPrimaryNode / handleSelectNode（解除）/ handleRemoveComposeNode /
+  //   handleResetCompose / handleExpressAdd（ノードトグルオフ）は、いずれも
+  //   setSelectedAddonIds(primaryAddonIdsRef.current) で1剤目の ADDON 選択を
+  //   復元しており、この effect の再発火はその意図とも矛盾していた。
 
   // ══════════════════════════════════════════════════════════════
   // CALLBACKS
