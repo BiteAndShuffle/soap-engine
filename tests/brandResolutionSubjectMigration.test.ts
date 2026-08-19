@@ -248,7 +248,11 @@ describe('T-U4b-7 検索由来 path に文字列推論が残っていない', ()
 describe('T-U4b-8 検索由来の subject 解決に resolveDrugName() を使っていない（Owner Decision S-1-A）', () => {
   test('残る resolveDrugName 呼出しはすべて ?? の右辺（legacy / Express 分岐）である', () => {
     const calls = codeLines(src).filter(l => l.includes('resolveDrugName('))
-    assert.equal(calls.length, 3, `resolveDrugName の呼出し数が想定（3件）と異なる: ${calls.length}`)
+    // 4件目（primary ADDON 分岐）は {{drug_subject}} resolution contract fix で追加された。
+    // 呼び出し元固有の fallback（?? activeBrandName ?? ''）を、scenario本文/Rapid側と同じ
+    // resolveDrugName() 経由へ揃えたもの。?? の右辺であり、検索由来 write site
+    // （handleSelectDrugSuggestion / handleComposeDrugSelect）には無い（次の test で検証）。
+    assert.equal(calls.length, 4, `resolveDrugName の呼出し数が想定（4件）と異なる: ${calls.length}`)
     const primarySource = calls.filter(l => !l.includes('?? resolveDrugName('))
     assert.deepEqual(primarySource, [], `resolveDrugName が主 source として使われている: ${primarySource.join(' / ')}`)
   })

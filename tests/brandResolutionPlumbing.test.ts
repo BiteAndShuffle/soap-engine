@@ -275,14 +275,20 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
 
   test('legacy resolver は Express / legacy 非検索経路の分岐に限定されている（U-4b・Owner Decision S-1）', () => {
     // **U-4b での意図的更新**: U-4a/U-5 では「4 件のまま」を U-4b 未実施のガードとして
-    // 固定していた。U-4b で検索由来 compose の 1 件が resolution 由来へ移行し 3 件になる。
+    // 固定していた。U-4b で検索由来 compose の 1 件が resolution 由来へ移行し 3 件になった。
+    //
+    // **{{drug_subject}} resolution contract fix での意図的更新**: primary ADDON 分岐が
+    // 独自 fallback（?? activeBrandName ?? ''）を使っていた latent contract violation を、
+    // scenario本文/Rapid側と同じ `?? resolveDrugName(...)` へ揃えたことで 4 件になった。
+    // これは検索由来 write site への回帰ではなく、legacy resolver の適用範囲内での
+    // 既存契約遵守（lib/drugSubject.ts）である。
     //
     // Owner Decision S-1-A により production 0 件化は U-4b の目標ではない。
     // 代わりに「残る呼び出しがすべて `?? resolveDrugName(...)` の形、すなわち
     // resolution 由来 subject が存在しないとき（Express / legacy 非検索経路）にのみ
     // 到達する分岐であること」を固定する。
     const calls = codeLines(src).map(norm).filter(l => /resolveDrugName\(/.test(l))
-    assert.equal(calls.length, 3, `resolveDrugName の呼び出し数が U-4b 前提（3件）と異なる: ${calls.length}`)
+    assert.equal(calls.length, 4, `resolveDrugName の呼び出し数が想定（4件）と異なる: ${calls.length}`)
     const primarySource = calls.filter(l => !l.includes('?? resolveDrugName('))
     assert.deepEqual(
       primarySource,

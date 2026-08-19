@@ -1423,7 +1423,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
             // {{drug_subject}} を実薬剤名に解決するヘルパー
             // strip/add 両フェーズで同じ解決済みテキストを使うことで整合性を保つ
-            const rapidDrugName = activeDrugDisplayNameRef.current ?? activeBrandName ?? ''
+            // resolveDrugName: 薬剤名解決のSSOT（lib/drugSubject.ts）。
+            // 呼び出し元固有の fallback を書かず、常にこの関数を経由する契約に従う
+            // （scenario 本文側 [869行目付近] / Rapid 側 [1539行目付近] と同一経路）。
+            const rapidDrugName = activeDrugDisplayNameRef.current
+              ?? resolveDrugName(activeModuleData.drug, activeBrandName)
             const resolveAddonText = (t: string) =>
               rapidDrugName ? t.replaceAll('{{drug_subject}}', rapidDrugName) : t
 
