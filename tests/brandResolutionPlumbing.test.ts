@@ -122,6 +122,7 @@ describe('T-U4a-3 resolution 未設定の ComposeNode が成立する（Express 
     selectedAddonIds: [],
     baseLabel: '',
     baseDomain: 'dm',
+    rapid: null,
   }
 
   test('resolution を省略した ComposeNode が構築でき、値は undefined になる', () => {
@@ -150,6 +151,7 @@ describe('T-U4a-4 node 再構築（spread）が resolution をそのまま維持
     selectedAddonIds: [],
     baseLabel: '',
     baseDomain: 'dm',
+    rapid: null,
   }
 
   test('buildUpdatedNode / handleAddonToggle が使う ...node パターンで resolution が保持される', () => {

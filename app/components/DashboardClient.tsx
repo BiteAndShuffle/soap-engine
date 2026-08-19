@@ -980,10 +980,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // brandCatalog 解決キー（先発名）から薬剤名を解決。これはアドオンフィルタリング用。
     // {{drug_subject}} の置換は displayName を優先し、省略時のみ matchedBrandName から解決する。
     const drugName = displayName ?? resolveDrugName(mod.drug, matchedBrandName)
-    // Unit 3A: block core は deriveNodeBlockCore が deterministic に導出する。
-    // rapid は Unit 3A では常に null（ComposeNode は rapid をまだ所有しない）。
-    // Unit 3B で node.rapid へ差し替える。
-    const core = deriveNodeBlockCore(sc, mod, addonIds, null, drugName)
+    // ── Unit 3B: scenario 遷移（RAPID-V2-07）を node 単位で適用する ──────────
+    // primary（handleSelectScenario）と同一の transition function を使う。
+    // 旧 scenario は node.scenarioId から解決する。pending node（scenarioId === ''）は
+    // 解決できず undefined になるが、isScenarioSReplacementCapable(undefined) は
+    // false を返すため、新規 Node の初回確定は自動的に null になる（特別扱い不要）。
+    const prevSc = mod.scenarios.find(s => s.globalId === node.scenarioId)
+    const nextRapid = nextRapidStateOnScenarioChange(
+      node.rapid,
+      isScenarioSReplacementCapable(prevSc),
+      isScenarioSReplacementCapable(sc),
+    )
+    // Unit 3B: node が所有する Rapid を derive の入力として使う。
+    // production UI から non-null になる経路は存在しない（Rapid UI は 1剤目限定）が、
+    // dead field にはしない — non-null なら必ずこの Node の SOAP へ反映される。
+    const core = deriveNodeBlockCore(sc, mod, addonIds, nextRapid, drugName)
     const fields = personaEnabled
       ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
       : core.rawFields
@@ -991,6 +1002,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     return {
       ...node,
       scenarioId: newScenarioId,
+      rapid: nextRapid,          // ← 明示必須。省略すると `...node` が旧 rapid を保持し遷移しない
       block: { id: node.block.id, ...core, fields, domain },
       selectedAddonIds: addonIds,
       baseLabel: sc.title,
@@ -1161,6 +1173,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         selectedAddonIds: [],
         baseLabel: '',
         baseDomain: resolveDomain(mod),
+        // Unit 3B: Rapid 未選択で初期化する。primary の global rapidState を
+        // 引き継がない（別 Drug / 別 Node の独立 state である）。
+        rapid: null,
       }
       // pending ノードは block が EMPTY_FIELDS のため computeDisplayFields に影響しない
       // (scenarioId が空なので confirmedNodes に含まれない)
@@ -1359,10 +1374,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
           const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
           if (sc) {
-            // Unit 3A: buildUpdatedNode と同一の deterministic derive を使う。
-            // rapid は Unit 3A では常に null。Unit 3B で node.rapid へ差し替える。
+            // Unit 3B: node が所有する Rapid を derive の入力として使う。
+            // ADDON トグルは scenario 遷移ではないため transition function は通さない
+            // （node.rapid をそのまま維持する）。
             // node.resolvedDrugName を渡して {{drug_subject}} を再解決
-            const core = deriveNodeBlockCore(sc, mod, newAddonIds, null, node.resolvedDrugName ?? '')
+            const core = deriveNodeBlockCore(sc, mod, newAddonIds, node.rapid, node.resolvedDrugName ?? '')
             const fields = personaEnabled
               ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
               : core.rawFields
@@ -1611,6 +1627,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           selectedAddonIds: [],
           baseLabel: '',
           baseDomain: resolveDomain(mod),
+          // Unit 3B: Rapid 未選択で初期化する（handleComposeDrugSelect と同一契約）
+          rapid: null,
         }
         // ノードを追加して即時確定。
         // buildUpdatedNode に displayName（GE名 / 先発名）を渡し、{{drug_subject}} を正しく解決する。

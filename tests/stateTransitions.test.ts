@@ -180,6 +180,7 @@ function applyAddComposeNode(
     selectedAddonIds: [],
     baseLabel: '',
     baseDomain: resolveDomain(mod),
+    rapid: null,
   }
   return {
     ...state,

@@ -1,4 +1,5 @@
 import type { BrandResolution } from './brandResolution'
+import type { RapidState } from './rapidState'
 
 // ─────────────────────────────────────────────────────────────
 // 基本型
@@ -590,6 +591,28 @@ export interface ComposeNode {
    * 薬剤ごとに異なる部位を指定できるよう、グローバル state とは分離して保持する。
    */
   localSiteInput?: string
+  /**
+   * この Drug Node の Rapid 選択状態（RAPID-V2-01 / Unit 3B）。
+   *
+   * `RapidState` は `{ previousEvent, currentOutcome } | null` であり、
+   * **null が「Rapid 未選択」を表す正式な状態である**（RAPID-V2-03）。
+   * したがって本フィールドを optional にしてはならない —
+   * optional にすると undefined / null / selected という意味のない
+   * 三状態が生まれる（Owner Decision D-2）。
+   *
+   * 全 Node 生成経路で `rapid: null` を明示初期化する。
+   *
+   * **Unit 3B 時点では production UI からこの値が非 null になる経路は存在しない。**
+   * Rapid UI は isSReplacementEligible の isSingleDrug 条件で 1剤目に限定されており、
+   * handleSToggle も editingNodeId !== null で early return する。
+   * multi-node Rapid の解禁は Unit 6 の責務である。
+   *
+   * ただし dead field ではない: buildUpdatedNode / handleAddonToggle の node branch が
+   * deriveNodeBlockCore の入力として本フィールドを消費する。non-null のとき
+   * その意味が必ずこの Node の生成 SOAP へ反映されることは
+   * tests/nodeRapidOwnershipUnit3B.test.ts が production helper 経由で固定する。
+   */
+  rapid: RapidState
 }
 
 // ─────────────────────────────────────────────────────────────

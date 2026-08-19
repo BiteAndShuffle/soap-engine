@@ -15,6 +15,11 @@
  *   RAPID-V2-17  Unit 1 終了時点でも Rapid は 1剤目限定を維持する
  *   RAPID-V2-20  production 関数を直接 import する。mirror 実装は行わない
  *
+ * Unit 3B 更新: 「ComposeNode に rapid フィールドを追加していない（Unit 2 の責務）」
+ * という migration scope guard は、Unit 3B が正式にその責務を実施したため退役した
+ * （Owner Decision D-1）。ComposeNode.rapid の正方向の契約は
+ * tests/nodeRapidOwnershipUnit3B.test.ts が固定する。
+ *
  * 方針:
  *   本ファイルは mirror 実装を一切持たない。すべて production を直接 import する
  *   （lib/rapidState.ts / lib/rapidSentence.ts / lib/isSReplacementEligible.ts /
@@ -526,18 +531,6 @@ describe('13. Unit 1 終了時点でも Rapid は 1剤目限定である（RAPID
     assert.ok(
       /if \(editingNodeIdRef\.current !== null\) return/.test(toggleBlock),
       'ノード編集中は early return しなければならない（multi-node Rapid は未解禁）',
-    )
-  })
-
-  test('ComposeNode に rapid フィールドを追加していない（Unit 2 の責務）', () => {
-    const types = readFileSync(new URL('../lib/types.ts', import.meta.url), 'utf-8')
-    const block = types.slice(
-      types.indexOf('export interface ComposeNode'),
-      types.indexOf('export interface ComposeNode') + 2000,
-    )
-    assert.ok(
-      !/\brapid\b/i.test(block),
-      'ComposeNode への rapid 追加は Unit 2 の責務であり Unit 1 では行わない',
     )
   })
 })

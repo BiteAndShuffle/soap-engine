@@ -13,11 +13,16 @@
  *   3. ADDON primary path に strip/re-add mutation が残っていない
  *   4. operation-order independence（同じ最終 state → byte-identical raw）
  *   5. Unit 0 の effect dependency [selectedScenarioId] を維持
- *   6. ComposeNode / composer は無変更（rapid フィールドを持たない）
+ *   6. composer（mergeBlocks）は無変更
  *
  * RAPID-V2-20:
  *   production 関数を直接 import する。mirror 実装は作らない。
  *   DashboardClient.tsx 内部構造の確認（1・2・3・5・6）のみ source contract で行う。
+ *
+ * Unit 3B 更新: 「ComposeNode に rapid フィールドが追加されていない」という
+ * migration scope guard は、Unit 3B が正式にその責務を実施したため退役した
+ * （Owner Decision D-1）。ComposeNode.rapid の正方向の契約は
+ * tests/nodeRapidOwnershipUnit3B.test.ts が固定する。
  *
  * 実行:
  *   npx tsx --test tests/deriveNodeFieldsUnit2B.test.ts
@@ -329,19 +334,10 @@ describe('5. Unit 0 invariant: effect dependency は [selectedScenarioId] のま
 })
 
 // ═══════════════════════════════════════════════════════════════
-// 6. ComposeNode / composer は無変更
+// 6. composer は無変更
 // ═══════════════════════════════════════════════════════════════
 
-describe('6. ComposeNode / composer は Unit 2B で変更していない', () => {
-  test('ComposeNode に rapid フィールドが追加されていない', () => {
-    const typesSrc = readFileSync(new URL('../lib/types.ts', import.meta.url), 'utf-8')
-    const block = typesSrc.slice(
-      typesSrc.indexOf('export interface ComposeNode'),
-      typesSrc.indexOf('export interface ComposeNode') + 2000,
-    )
-    assert.ok(!/\brapid\b/i.test(block), 'ComposeNode への rapid 追加は Unit 3 以降の責務であり Unit 2B では行わない')
-  })
-
+describe('6. composer は Unit 2B で変更していない', () => {
   test('mergeBlocks（composer）は Unit 2B で変更していない', () => {
     const buildSoapSrc = readFileSync(new URL('../lib/buildSoap.ts', import.meta.url), 'utf-8')
     assert.ok(/export function mergeBlocks/.test(buildSoapSrc), 'mergeBlocks が存在しない')
