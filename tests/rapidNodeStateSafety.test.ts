@@ -102,9 +102,13 @@ describe('Unit 0 / RAPID-V2-06: editingNodeId は 1剤目再構築のトリガ�
   test('effect 本体は依然として scenario 変更時に primary を再構築する', () => {
     const effect = extractPrimaryRebuildEffect()
 
-    // scenario 変更時の再構築責務（Unit 0 では変更しない）が残っていること
+    // scenario 変更時の再構築責務（Unit 0 では変更しない）が残っていること。
+    // Unit 2B で buildNodeFields 直呼び + 手動 Rapid 再適用が
+    // deriveRawFields(primaryScenario, activeModuleData, [], carriedRapid, primaryDrugName)
+    // の単一呼び出しへ置換された（deterministic derive）。addonIds=[] で
+    // 再構築する契約自体は不変。
     assert.ok(
-      /buildNodeFields\(primaryScenario, activeModuleData, \[\], primaryDrugName\)/.test(effect),
+      /deriveRawFields\(primaryScenario, activeModuleData, \[\], carriedRapid, primaryDrugName\)/.test(effect),
       'scenario 変更時の primary 再構築が失われている',
     )
     assert.ok(

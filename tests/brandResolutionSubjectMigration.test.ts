@@ -217,7 +217,17 @@ describe('T-U4b-6 Rapid / 通常 SOAP / S先頭文 / ADDON 再生成が同一 su
   })
 
   test('Rapid ADDON 再生成が同じ activeDrugDisplayNameRef を読む', () => {
-    assert.ok(src.includes('const rapidDrugName = activeDrugDisplayNameRef.current'), 'Rapid consumer の source が変わっている')
+    // Unit 2B: primary ADDON 分岐が deriveRawFields へ一本化されたのに伴い、
+    // 変数名が rapidDrugName → drugName へ変わった（scenario 本文側の変数名と統一）。
+    // source（activeDrugDisplayNameRef.current ?? resolveDrugName(...)）自体は不変。
+    const addonToggleRegion = src.slice(
+      src.indexOf('const handleAddonToggle = useCallback'),
+      src.indexOf('const handleSToggle = useCallback'),
+    )
+    assert.ok(
+      addonToggleRegion.includes('const drugName = activeDrugDisplayNameRef.current'),
+      'Rapid consumer の source が変わっている',
+    )
   })
 
   test('S先頭文が同じ activeDrugDisplayName を読む', () => {

@@ -274,22 +274,33 @@ describe('5b. capable → capable では新 scenario の S へ再適用される
   })
 
   test('再適用の文生成は toggle 時と同一関数を使う（文の乖離を防ぐ）', () => {
-    // useEffect（再適用）と handleSToggle（ON）が同じ production 関数を呼ぶこと
+    // Unit 2B: useEffect（再適用）と handleSToggle（ON/OFF）はいずれも
+    // deriveRawFields（lib/deriveNodeFields.ts）を呼ぶ。deriveRawFields 内部で
+    // buildResolvedSFirstSentence を一度だけ呼ぶため、Unit 1 時点の「同じ関数を
+    // 直接呼ぶ」制約よりも強い形（唯一の呼び出し経路）で乖離が防がれている。
+    const deriveSrc = readFileSync(
+      new URL('../lib/deriveNodeFields.ts', import.meta.url), 'utf-8',
+    )
+    assert.ok(
+      /buildResolvedSFirstSentence\(/.test(deriveSrc),
+      'deriveRawFields は buildResolvedSFirstSentence で Rapid 先頭文を生成すること',
+    )
+
     const effectBlock = src.slice(
       src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化'),
       src.indexOf('// ══', src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化')),
     )
     assert.ok(
-      /buildResolvedSFirstSentence\(/.test(effectBlock),
-      'scenario 再構築 effect は buildResolvedSFirstSentence で Rapid を再適用すること',
+      /deriveRawFields\(/.test(effectBlock),
+      'scenario 再構築 effect は deriveRawFields で Rapid を再適用すること',
     )
     const toggleBlock = src.slice(
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('handleSubcategorySelect'),
     )
     assert.ok(
-      /buildResolvedSFirstSentence\(/.test(toggleBlock),
-      'handleSToggle も同一関数で文を生成すること',
+      /deriveRawFields\(/.test(toggleBlock),
+      'handleSToggle も deriveRawFields で文を生成すること',
     )
   })
 })
@@ -352,15 +363,37 @@ describe('9. Rapid OFF は persona 設定を変更しない（RAPID-V2-09）', (
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('handleSubcategorySelect'),
     )
-    // raw を戻さないと persona トグルで Rapid 文が復活してしまう
+    // Unit 2B: toggle-off は deriveRawFields(sc, mod, addonIds, null, drugName) の
+    // 単一呼び出しで raw を再導出する（restoreScenarioFirstSentence による手動
+    // S mutation は撤去済み）。raw を戻さないと persona トグルで Rapid 文が復活してしまう。
+    const offBranch = toggleBlock.slice(
+      toggleBlock.indexOf('if (isSameRapid('),
+      toggleBlock.indexOf('setRapidState({ previousEvent: relation, currentOutcome: condition })'),
+    )
     assert.ok(
-      /rawPrimaryFieldsRef\.current = restored/.test(toggleBlock),
+      /deriveRawFields\(sc, activeModuleData, currentAddonIds, null, drugName\)/.test(offBranch),
+      'toggle-off は deriveRawFields(rapid=null) で raw を再導出しなければならない',
+    )
+    assert.ok(
+      /rawPrimaryFieldsRef\.current = rawFields/.test(offBranch),
       'toggle-off は rawPrimaryFieldsRef を復元しなければならない' +
       '（raw は persona 再計算の基点であり、戻さないと persona トグルで Rapid 文が復活する）',
     )
     assert.ok(
-      /derivePrimaryDisplayFields\(restored\)/.test(toggleBlock),
+      /derivePrimaryDisplayFields\(rawFields\)/.test(offBranch),
       'toggle-off の表示は復元した raw から persona 再適用で導出すること',
+    )
+  })
+
+  test('toggle-off は restoreScenarioFirstSentence を使わない（deriveRawFields に一本化）', () => {
+    const toggleBlock = src.slice(
+      src.indexOf('const handleSToggle = useCallback'),
+      src.indexOf('handleSubcategorySelect'),
+    )
+    assert.ok(
+      !/restoreScenarioFirstSentence/.test(toggleBlock),
+      'toggle-off が手動の restoreScenarioFirstSentence mutation を使ってはならない' +
+      '（Unit 2B で deriveRawFields(rapid=null) へ統一済み）',
     )
   })
 })

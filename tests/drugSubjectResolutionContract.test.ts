@@ -256,9 +256,11 @@ describe('7. multi-drug Node で drug subject が混線しない', () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe('8. primary ADDON の drugName 解決が scenario 本文側と同一契約を使う（source contract）', () => {
+  // Unit 2B: primary ADDON 分岐が deriveRawFields へ一本化されたのに伴い、
+  // 変数名が rapidDrugName → drugName へ変わった。source（契約）自体は不変。
   test('handleAddonToggle の primary 分岐が resolveDrugName を経由する', () => {
-    const startIdx = dashboardSrc.indexOf('const rapidDrugName = activeDrugDisplayNameRef.current')
-    assert.notEqual(startIdx, -1, 'rapidDrugName の定義箇所が見つからない')
+    const startIdx = dashboardSrc.indexOf('const drugName = activeDrugDisplayNameRef.current')
+    assert.notEqual(startIdx, -1, 'drugName（ADDON分岐）の定義箇所が見つからない')
     const block = dashboardSrc.slice(startIdx, startIdx + 300)
     assert.ok(
       /resolveDrugName\(activeModuleData\.drug, activeBrandName\)/.test(block),
@@ -268,7 +270,7 @@ describe('8. primary ADDON の drugName 解決が scenario 本文側と同一契
   })
 
   test('呼び出し元固有の fallback（?? activeBrandName ?? \'\'）が残っていない', () => {
-    const startIdx = dashboardSrc.indexOf('const rapidDrugName = activeDrugDisplayNameRef.current')
+    const startIdx = dashboardSrc.indexOf('const drugName = activeDrugDisplayNameRef.current')
     const block = dashboardSrc.slice(startIdx, startIdx + 300)
     assert.ok(
       !/\?\?\s*activeBrandName\s*\?\?\s*''/.test(block),
@@ -374,18 +376,20 @@ describe('責務境界: 禁止領域に変更がないことの source contract'
     assert.ok(/return resolution\?\.denotation === 'module'/.test(src))
   })
 
-  test('lib/deriveNodeFields.ts（Unit 2A helper）を変更していない', () => {
+  test('lib/deriveNodeFields.ts（Unit 2A helper）の signature を変更していない', () => {
+    // Unit 2A 完了時点では「runtime から呼ばれていないこと」も本 test で固定していたが、
+    // Unit 2B で primary runtime への配線が完了したためその assertion は撤去した
+    // （配線されることが Unit 2B の目的そのものであり、恒久的に false になるため）。
+    // ここでは deriveRawFields の signature 自体が変更されていないことのみを守る。
     const src = readFileSync(new URL('../lib/deriveNodeFields.ts', import.meta.url), 'utf-8')
-    assert.ok(/export function deriveRawFields/.test(src))
-    // runtime から呼ばれていないこと（Unit 2A の behavior change = 0 契約を維持）
     assert.ok(
-      !/deriveRawFields|deriveNodeFields/.test(dashboardSrc),
-      'Unit 2A helper が runtime から呼ばれていないこと',
+      /export function deriveRawFields\(\s*scenario: Scenario,\s*mod: ModuleData,\s*addonIds: string\[\],\s*rapid: RapidState,\s*drugName = '',\s*\): SoapFields/.test(src),
+      'deriveRawFields の signature が変更されている',
     )
   })
 
   test('persona / localInput 関連の resolution 経路には触れていない', () => {
-    const startIdx = dashboardSrc.indexOf('const rapidDrugName = activeDrugDisplayNameRef.current')
+    const startIdx = dashboardSrc.indexOf('const drugName = activeDrugDisplayNameRef.current')
     const block = dashboardSrc.slice(startIdx, startIdx + 300)
     assert.ok(
       !/applyPersona|personaGuard|localSiteInput/.test(block),

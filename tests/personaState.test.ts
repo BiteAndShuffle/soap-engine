@@ -7,18 +7,13 @@
  * 本文から無音で消失していたバグ（root cause: rawPrimaryFieldsRef が
  * ADDON/Rapid 反映前の素テキストのまま固定され、persona 再計算の基点になっていた）。
  *
- * 本ファイルは DashboardClient.tsx の以下のロジックを純粋関数としてミラーし検証する
- * （tests/stateTransitions.test.ts / tests/mergeBlocks.test.ts と同じ方針:
- *  React hooks を使わず state 遷移を plain object で追う）。
- *
- * Rapid S先頭文（replaceSFirstSentence / buildResolvedSFirstSentence）は
- * Unit 1 で lib/rapidSentence.ts へ移送済みのため、**production を直接 import する**
- * （RAPID-V2-20）。以下に残るミラーは DashboardClient.tsx 内のインライン実装であり、
- * production 関数として抽出されていないためミラーのまま維持する:
- *   - derivePrimaryDisplayFields（H-1 対応で追加したヘルパー）
- *   - handleAddonToggle（primary ブランチの raw/表示 分離ロジック）
- *   - handleSToggle（トグル ON / OFF 両分岐）
- *   - handleAddonToggle（node ブランチ。修正不要だが多剤合成の回帰確認として含める）
+ * Unit 2B（primary deterministic derive migration）により、primary の
+ * ADDON strip/re-add と Rapid 先頭文の手動 mutation はいずれも
+ * lib/deriveNodeFields.ts の deriveRawFields() へ一本化された。
+ * 本ファイルはその production 関数を直接 import して検証する
+ * （RAPID-V2-20: production ロジックの mirror 実装は作らない）。
+ * Unit 2B 以前に存在した applyAddonTogglePrimaryRaw / applySToggleOnRaw の
+ * mirror 実装は撤去済み。
  *
  * 検証項目（監査記録 §8.12 必須回帰 1〜5 + 推奨マトリクスの主要組み合わせ）:
  *   ① シナリオ確定 → ADDON ON → persona ON → OFF の全時点で ADDON 文が本文に残る
@@ -40,12 +35,10 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
-import type { SoapFields, ModuleData, Scenario, SoapKey } from '../lib/types'
+import type { SoapFields, ModuleData, Scenario } from '../lib/types'
 import { buildNodeFields } from '../lib/buildSoap'
-// RAPID-V2-20: Rapid S先頭文の production 実装を直接 import する。
-// Unit 1 で lib/rapidSentence.ts へ移送したため mirror 実装が不要になった
-// （移送前は SoapEditor.tsx の CSS module import により import 不能だった）。
-import { replaceSFirstSentence, buildResolvedSFirstSentence } from '../lib/rapidSentence'
+import { deriveRawFields } from '../lib/deriveNodeFields'
+import { buildResolvedSFirstSentence } from '../lib/rapidSentence'
 import { applyPersonaToFieldsWithGuard, type PersonaId } from '../lib/applyPersona'
 import { derivePersonaGuard, type PersonaGuard } from '../lib/personaGuard'
 import oralData from '../data/modules/dm_glp1ra_semaglutide_oral.json' assert { type: 'json' }
@@ -58,11 +51,7 @@ function getScenario(mod: ModuleData, id: string): Scenario {
   return sc as Scenario
 }
 
-// ─────────────────────────────────────────────────────────────
-// DashboardClient.tsx のロジックを純粋関数としてミラー
-// ─────────────────────────────────────────────────────────────
-
-/** derivePrimaryDisplayFields（DashboardClient.tsx と同一） */
+/** derivePrimaryDisplayFields（DashboardClient.tsx と同一。React state を持たないため mirror のまま維持） */
 function derivePrimaryDisplayFields(
   raw: SoapFields,
   personaEnabled: boolean,
@@ -71,116 +60,6 @@ function derivePrimaryDisplayFields(
 ): SoapFields {
   if (!personaEnabled || !guard) return raw
   return applyPersonaToFieldsWithGuard(raw, true, persona, guard)
-}
-
-/** resolveClosingText（DashboardClient.tsx と同一） */
-function resolveClosingText(
-  scenario: Pick<Scenario, 'followupRef' | 'followup'>,
-  defaults?: ModuleData['defaults'],
-): string | undefined {
-  if (scenario.followupRef) {
-    return (defaults?.followupProfiles?.[scenario.followupRef] as Record<string, string> | undefined)?.P
-  }
-  const val = (scenario.followup as Record<string, string> | undefined)?.P
-  if (val === 'default') {
-    return (defaults?.followup as Record<string, string> | undefined)?.P
-  }
-  return undefined
-}
-
-/**
- * handleAddonToggle（primary ブランチ）の raw 更新ロジック。
- * DashboardClient.tsx L1305〜1414（修正後）と同一。
- * {{drug_subject}} は buildNodeFields 呼び出し時点で解決済みの drugName を用いる。
- */
-function applyAddonTogglePrimaryRaw(
-  rawFields: SoapFields,
-  prevAddonIds: Set<string>,
-  addonKey: string,
-  mod: ModuleData,
-  primaryScenario: Scenario,
-  drugName: string,
-): { rawFields: SoapFields; addonIds: Set<string> } {
-  const next = new Set(prevAddonIds)
-  next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
-  const newAddonIds = [...next]
-
-  const addonItems = mod.addons?.items ?? {}
-  const resolveAddonText = (t: string) => (drugName ? t.replaceAll('{{drug_subject}}', drugName) : t)
-
-  const allAddonTextsBySec = new Map<SoapKey, string[]>()
-  for (const key of prevAddonIds) {
-    const item = addonItems[key]
-    if (!item) continue
-    if (item.sectionTexts) {
-      for (const sec of ['S', 'A', 'P'] as const) {
-        const t = item.sectionTexts[sec]
-        if (!t) continue
-        const list = allAddonTextsBySec.get(sec) ?? []
-        list.push(resolveAddonText(t))
-        allAddonTextsBySec.set(sec, list)
-      }
-    } else {
-      const sec = item.targetSection as SoapKey
-      const list = allAddonTextsBySec.get(sec) ?? []
-      list.push(resolveAddonText(item.text))
-      allAddonTextsBySec.set(sec, list)
-    }
-  }
-
-  const stripped: SoapFields = { S: '', O: '', A: '', P: '' }
-  for (const sec of ['S', 'O', 'A', 'P'] as const) {
-    let val = rawFields[sec] ?? ''
-    for (const addonText of (allAddonTextsBySec.get(sec) ?? [])) {
-      const withSep = '\n' + addonText
-      val = val.includes(withSep) ? val.replace(withSep, '') : val.replace(addonText, '')
-    }
-    stripped[sec] = val
-  }
-
-  const sectionMap = new Map<SoapKey, string[]>()
-  for (const key of newAddonIds) {
-    const item = addonItems[key]
-    if (!item) continue
-    if (item.sectionTexts) {
-      for (const sec of ['S', 'A', 'P'] as const) {
-        const t = item.sectionTexts[sec]
-        if (!t) continue
-        if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-        sectionMap.get(sec)!.push(resolveAddonText(t))
-      }
-    } else {
-      const sec = item.targetSection as SoapKey
-      if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-      sectionMap.get(sec)!.push(resolveAddonText(item.text))
-    }
-  }
-
-  const closingText = resolveClosingText(primaryScenario, mod.defaults)
-  const overlaid: SoapFields = { ...stripped }
-  for (const [sec, texts] of sectionMap) {
-    const block = texts.join('\n')
-    if (sec === 'P' && closingText) {
-      const withSep = '\n' + closingText
-      const withoutClosing = overlaid.P.includes(withSep)
-        ? overlaid.P.replace(withSep, '')
-        : overlaid.P === closingText
-          ? ''
-          : overlaid.P
-      overlaid.P = withoutClosing
-        ? `${withoutClosing}\n${block}\n${closingText}`
-        : `${block}\n${closingText}`
-    } else {
-      overlaid[sec] = overlaid[sec] ? `${overlaid[sec]}\n${block}` : block
-    }
-  }
-
-  return { rawFields: overlaid, addonIds: next }
-}
-
-/** handleSToggle（トグル ON）の raw 更新ロジック。DashboardClient.tsx と同一。 */
-function applySToggleOnRaw(rawFields: SoapFields, resolvedFirst: string): SoapFields {
-  return { ...rawFields, S: replaceSFirstSentence(rawFields.S, resolvedFirst) }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -202,13 +81,12 @@ describe('① ADDON 文が persona トグルで消失しない（H-1 直接回�
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
 
-    // 1) シナリオ確定（addonIds=[] で raw を初期化。DashboardClient.tsx L818 相当）
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
+    // 1) シナリオ確定（addonIds=[] で raw を初期化。deriveRawFields(rapid=null) 相当）
+    const scenarioRaw = deriveRawFields(scenario, oral, [], null, DRUG_NAME)
     assert.ok(!scenarioRaw.P.includes(ADDON_RAW_SNIPPET), '前提: ADDON未選択時点でADDON文を含まない')
 
-    // 2) ADDON ON
-    const afterAddon = applyAddonTogglePrimaryRaw(scenarioRaw, new Set(), ADDON_KEY, oral, scenario, DRUG_NAME)
-    const raw = afterAddon.rawFields
+    // 2) ADDON ON（handleAddonToggle primary ブランチ = deriveRawFields(addonIds, rapid)）
+    const raw = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
     assert.ok(raw.P.includes(ADDON_RAW_SNIPPET), 'ADDON ON直後: raw P に ADDON文が含まれる')
 
     let display = derivePrimaryDisplayFields(raw, false, 'concise', guard)
@@ -229,8 +107,7 @@ describe('① ADDON 文が persona トグルで消失しない（H-1 直接回�
   test('persona ON/OFF を複数回繰り返しても ADDON 文が欠落しない', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
-    const { rawFields: raw } = applyAddonTogglePrimaryRaw(scenarioRaw, new Set(), ADDON_KEY, oral, scenario, DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
 
     for (let i = 0; i < 5; i++) {
       const onDisplay = derivePrimaryDisplayFields(raw, true, 'concise', guard)
@@ -242,19 +119,18 @@ describe('① ADDON 文が persona トグルで消失しない（H-1 直接回�
 })
 
 describe('② addonIds（選択状態）と本文の整合', () => {
-  test('ADDON OFF に戻すと addonIds から key が消え、本文からも ADDON 文が消える', () => {
+  test('ADDON OFF に戻すと本文からも ADDON 文が消える', () => {
     const scenario = getScenario(oral, 'initial')
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
 
-    const on = applyAddonTogglePrimaryRaw(scenarioRaw, new Set(), ADDON_KEY, oral, scenario, DRUG_NAME)
-    assert.ok(on.addonIds.has(ADDON_KEY))
-    assert.ok(on.rawFields.P.includes(ADDON_RAW_SNIPPET))
+    // ON: addonIds = [ADDON_KEY]
+    const onRaw = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
+    assert.ok(onRaw.P.includes(ADDON_RAW_SNIPPET))
 
-    const off = applyAddonTogglePrimaryRaw(on.rawFields, on.addonIds, ADDON_KEY, oral, scenario, DRUG_NAME)
-    assert.ok(!off.addonIds.has(ADDON_KEY), 'OFF後: addonIds から key が消える')
-    assert.ok(!off.rawFields.P.includes(ADDON_RAW_SNIPPET), 'OFF後: raw P から ADDON 文が消える')
+    // OFF: addonIds = []（handleAddonToggle が Set から key を削除した後の状態）
+    const offRaw = deriveRawFields(scenario, oral, [], null, DRUG_NAME)
+    assert.ok(!offRaw.P.includes(ADDON_RAW_SNIPPET), 'OFF後: raw P から ADDON 文が消える')
     // closing 行は ADDON OFF 後も保持される
-    assert.ok(off.rawFields.P.includes(CLOSING_TEXT), 'OFF後も closing 行は保持される')
+    assert.ok(offRaw.P.includes(CLOSING_TEXT), 'OFF後も closing 行は保持される')
   })
 })
 
@@ -262,8 +138,7 @@ describe('③ persona ON 時に ADDON 文が変換され、文体が一貫する
   test('ADDON ON 中に persona を ON にすると、シナリオ本文と ADDON 文の両方が同じペルソナで変換される', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
-    const { rawFields: raw } = applyAddonTogglePrimaryRaw(scenarioRaw, new Set(), ADDON_KEY, oral, scenario, DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
 
     const display = derivePrimaryDisplayFields(raw, true, 'concise', guard)
     // シナリオ本文側の DENSITY 変換
@@ -279,9 +154,8 @@ describe('③ persona ON 時に ADDON 文が変換され、文体が一貫する
     // 現在のペルソナを適用した結果が常に表示される」の直接検証
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
 
-    const { rawFields: rawAfterAddon } = applyAddonTogglePrimaryRaw(scenarioRaw, new Set(), ADDON_KEY, oral, scenario, DRUG_NAME)
+    const rawAfterAddon = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
     // ADDON トグルの直後、persona が既に ON なら display は変換済みで返るべき
     const displayImmediatelyAfterToggle = derivePrimaryDisplayFields(rawAfterAddon, true, 'concise', guard)
     assert.ok(displayImmediatelyAfterToggle.P.includes(ADDON_CONCISE_SNIPPET))
@@ -292,12 +166,13 @@ describe('④ Rapid S先頭文変更 → persona ON/OFF で S先頭文が維持�
   test('S先頭文を変更した状態で persona を ON/OFF しても新しい先頭文が保持される', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
 
-    // production の文生成をそのまま使う（RAPID-V2-20）。
-    // 以前はテスト側で先頭文を手書きしており、production 出力と一致していなかった。
+    // production の derive をそのまま使う（RAPID-V2-20）。
+    // handleSToggle の Rapid ON 分岐と同一の deriveRawFields 呼び出し。
+    const raw = deriveRawFields(
+      scenario, oral, [], { previousEvent: 'new_addition', currentOutcome: 'stable' }, DRUG_NAME,
+    )
     const NEW_FIRST = buildResolvedSFirstSentence('new_addition', 'stable', DRUG_NAME)
-    const raw = applySToggleOnRaw(scenarioRaw, NEW_FIRST)
     assert.ok(raw.S.startsWith(NEW_FIRST), '前提: raw の S 先頭文が更新されている')
 
     const onDisplay = derivePrimaryDisplayFields(raw, true, 'concise', guard)
@@ -316,8 +191,7 @@ describe('⑤ personaGuard 保護行（closing）が全ペルソナで無変換'
   test('ADDON 込みの P でも closing 行は 3 ペルソナすべてで無変換', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: scenarioRaw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
-    const { rawFields: raw } = applyAddonTogglePrimaryRaw(scenarioRaw, new Set(), ADDON_KEY, oral, scenario, DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
 
     for (const persona of ['polite', 'concise', 'gentle'] as const) {
       const display = derivePrimaryDisplayFields(raw, true, persona, guard)
@@ -328,15 +202,11 @@ describe('⑤ personaGuard 保護行（closing）が全ペルソナで無変換'
 
 describe('⑥ 多剤合成（node ブランチ）でも ADDON が persona トグルで保持される', () => {
   test('node の ADDON 込み rawFields は persona ON/OFF 双方で ADDON 文を保持する', () => {
-    // DashboardClient.tsx handleAddonToggle の node ブランチ（L1284〜1298）は
-    // buildNodeFields の結果を block.rawFields に ADDON 込みで保存しており、
-    // primary ブランチと異なり修正不要（監査記録 §8.6）。回帰確認として残す。
+    // DashboardClient.tsx handleAddonToggle の node ブランチは buildNodeFields の
+    // 結果を block.rawFields に ADDON 込みで保存しており、primary ブランチと
+    // 同じ deterministic derive をすでに使っている（監査記録 §8.6・Unit 2A/2B 監査で再確認済み）。
     const scenario = getScenario(oral, 'initial')
-    const { fields: nodeRaw, guard: _unused } = (() => {
-      const fields = buildNodeFields(scenario, oral, [ADDON_KEY], DRUG_NAME)
-      const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-      return { fields: fields.fields, guard }
-    })()
+    const { fields: nodeRaw } = buildNodeFields(scenario, oral, [ADDON_KEY], DRUG_NAME)
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
 
     assert.ok(nodeRaw.P.includes(ADDON_RAW_SNIPPET), '前提: node の rawFields に ADDON 文が含まれる')
@@ -353,7 +223,7 @@ describe('⑦ persona 適用の最小プロパティ（H-2 一部: 情報欠損�
   test('enabled=false のとき applyPersonaToFieldsWithGuard は入力と同一参照を返す', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: raw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [], null, DRUG_NAME)
     const result = applyPersonaToFieldsWithGuard(raw, false, 'concise', guard)
     assert.equal(result, raw, 'enabled=false は raw と同一参照を返す（無変換の保証）')
   })
@@ -361,7 +231,7 @@ describe('⑦ persona 適用の最小プロパティ（H-2 一部: 情報欠損�
   test('plain（JSONそのまま）は 3 フィールドとも内容が変化しない', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: raw } = buildNodeFields(scenario, oral, [ADDON_KEY], DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [ADDON_KEY], null, DRUG_NAME)
     const result = applyPersonaToFieldsWithGuard(raw, true, 'plain', guard)
     assert.equal(result.S, raw.S, 'plain: S は無変換')
     assert.equal(result.O, raw.O, 'plain: O は無変換')
@@ -373,7 +243,7 @@ describe('⑦ persona 適用の最小プロパティ（H-2 一部: 情報欠損�
   test('固有名詞・数値は 3 ペルソナすべてで保持される（情報欠損なし）', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: raw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [], null, DRUG_NAME)
     for (const persona of ['polite', 'concise', 'gentle'] as const) {
       const result = applyPersonaToFieldsWithGuard(raw, true, persona, guard)
       assert.ok(result.S.includes(DRUG_NAME), `${persona}: S に薬剤名が保持される`)
@@ -384,7 +254,7 @@ describe('⑦ persona 適用の最小プロパティ（H-2 一部: 情報欠損�
   test('closing 行は 3 ペルソナすべてで isMedicalRecord により無変換（ADDON なし単剤でも成立）', () => {
     const scenario = getScenario(oral, 'initial')
     const guard = derivePersonaGuard(scenario, oral.template?.urgentFlag)
-    const { fields: raw } = buildNodeFields(scenario, oral, [], DRUG_NAME)
+    const raw = deriveRawFields(scenario, oral, [], null, DRUG_NAME)
     for (const persona of ['polite', 'concise', 'gentle'] as const) {
       const result = applyPersonaToFieldsWithGuard(raw, true, persona, guard)
       assert.ok(result.P.includes(CLOSING_TEXT), `${persona}: closing 行が無変換のまま含まれる`)

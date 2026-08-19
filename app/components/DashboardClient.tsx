@@ -40,7 +40,6 @@ import {
   type SCondition,
   buildResolvedSFirstSentence,
   replaceSFirstSentence,
-  restoreScenarioFirstSentence,
 } from '../../lib/rapidSentence'
 import {
   type RapidState,
@@ -48,6 +47,7 @@ import {
   nextRapidStateOnScenarioChange,
 } from '../../lib/rapidState'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
+import { deriveRawFields } from '../../lib/deriveNodeFields'
 import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
@@ -868,31 +868,20 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const primaryDrugName = activeDrugDisplayNameRef.current
         ?? resolveDrugName(activeModuleData.drug, activeBrandName)
-      const { fields: builtFields } = buildNodeFields(primaryScenario, activeModuleData, [], primaryDrugName)
       const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
 
-      // ── Rapid 再適用（RAPID-V2-07 / Owner Decision 解釈①）─────────
+      // ── deriveRawFields へ一本化（Unit 2B）─────────────────────
       // ここへ到達した時点で rapidStateRef は遷移判定済みの値になっている
       //   （handleSelectScenario が setRapidState と setSelectedScenarioId を同一
       //     バッチで呼び、ref は render 時に同期されてから effect が走るため）。
       // non-null ＝ capable → capable の遷移で保持された状態であり、
-      // 「state だけ保持して本文へ反映しない」ことは禁止されている。
-      // したがって新シナリオの pristine S を基点として先頭文を再適用する。
+      // 「state だけ保持して本文へ反映しない」ことは禁止されている（RAPID-V2-07）。
+      // deriveRawFields は rapid が null なら scenario 本来の S を、non-null なら
+      // 新シナリオの pristine S を基点に先頭文を再適用した結果を返す（決定的）。
+      // addon なしで再構築するため addonIds は [] を渡す（下の
+      // setPrimaryAddonIds(new Set()) / setSelectedAddonIds(new Set()) と対応）。
       const carriedRapid = rapidStateRef.current
-      const rawFields = carriedRapid === null
-        ? builtFields
-        : {
-            ...builtFields,
-            S: replaceSFirstSentence(
-              builtFields.S,
-              buildResolvedSFirstSentence(
-                carriedRapid.previousEvent,
-                carriedRapid.currentOutcome,
-                primaryDrugName,
-                activeModuleData.display?.adjustmentExpression,
-              ),
-            ),
-          }
+      const rawFields = deriveRawFields(primaryScenario, activeModuleData, [], carriedRapid, primaryDrugName)
 
       rawPrimaryFieldsRef.current = rawFields
       primaryGuardRef.current = guard
@@ -1356,11 +1345,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   //
   // Rapid の一部（右パネル ADDON ボタン）。Express / NLP生成とは無関係。
   //
-  //   node    → ノードの block を addon 込みで再構築（composeNodes を書き換え）
-  //   primary → rawPrimaryFieldsRef.current（persona 未適用ベース）から
-  //             全 ADDON を剥がし選択分だけ再付加し、表示は persona を再適用して導出する
-  //             （H-1 対応: raw が更新されないと persona トグルで ADDON が消失するため）
-  //             ※ buildNodeFields は呼ばない（S先頭文・フラグ変更を保持するため）
+  //   node    → ノードの block を addon 込みで再構築（composeNodes を書き換え。
+  //             既に buildNodeFields による deterministic derive）
+  //   primary → deriveRawFields(scenario, mod, newAddonIds, rapidState, drugName) で
+  //             raw を再導出する（Unit 2B）。ADDON の strip/re-add ではなく
+  //             常に scenario + 選択中 ADDON + Rapid から作り直すため、
+  //             S先頭文（Rapid）・{{drug_subject}}・closing 順はすべて
+  //             deriveRawFields 内の buildNodeFields が一貫して保証する。
   // ─────────────────────────────────────────────────────────────
 
   const handleAddonToggle = useCallback((addonKey: string, _text: string) => {
@@ -1401,132 +1392,35 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     } else {
       // ── primary ブランチ（editedSOAP があれば確認する）────────
       confirmDiscard(() => {
-        // raw ベースは setSelectedAddonIds の外でスナップショットする。
-        // setSelectedAddonIds(prev => {...}) の内側で rawPrimaryFieldsRef を
-        // 読み書きすると、React（StrictMode 下の開発時二重実行）が updater を
-        // 2回呼んだ際に ref への書き込みが1回目の呼び出し間で可視化されてしまい、
-        // 2回目の呼び出しが「1回目の結果を含む raw」から再度 ADDON を付加して
-        // ADDON 文が二重に挿入される。呼び出し前に一度だけ読むことで、
-        // updater が複数回呼ばれても結果が同じになる（冪等）ようにする。
-        const rawBeforeToggle = rawPrimaryFieldsRef.current
+        const sc = primaryScenarioRef.current
+        // resolveDrugName: 薬剤名解決のSSOT（lib/drugSubject.ts）。
+        // scenario 本文側 [869行目付近] / Rapid 側 [1543行目付近] と同一経路。
+        const drugName = activeDrugDisplayNameRef.current
+          ?? resolveDrugName(activeModuleData.drug, activeBrandName)
         setSelectedAddonIds(prev => {
           const next = new Set(prev)
           next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
           const newAddonIds = [...next]
           setPrimaryAddonIds(next)
 
-          // ── Rapid ADDON 操作: primaryBaseFieldsRef.current をベースに
-          // 全 ADDON テキストを一旦剥がし、選択中の ADDON だけ再付加する。
-          // buildNodeFields は呼ばない（S先頭文/フラグ変更が消えるのを防ぐ）。
-          {
-            const addonItems = activeModuleData.addons?.items ?? {}
-
-            // {{drug_subject}} を実薬剤名に解決するヘルパー
-            // strip/add 両フェーズで同じ解決済みテキストを使うことで整合性を保つ
-            // resolveDrugName: 薬剤名解決のSSOT（lib/drugSubject.ts）。
-            // 呼び出し元固有の fallback を書かず、常にこの関数を経由する契約に従う
-            // （scenario 本文側 [869行目付近] / Rapid 側 [1539行目付近] と同一経路）。
-            const rapidDrugName = activeDrugDisplayNameRef.current
-              ?? resolveDrugName(activeModuleData.drug, activeBrandName)
-            const resolveAddonText = (t: string) =>
-              rapidDrugName ? t.replaceAll('{{drug_subject}}', rapidDrugName) : t
-
-            // 現在アクティブな ADDON テキストのみをセクション別に整理（剥がし対象）
-            // 全アドオンではなく prev（トグル前のアクティブ set）のみを対象にすることで
-            // 非アクティブなアドオンのテキストがシナリオ本文と一致しても誤 strip しない
-            const allAddonTextsBySec = new Map<SoapKey, string[]>()
-            for (const key of prev) {
-              const item = addonItems[key]
-              if (!item) continue
-              if (item.sectionTexts) {
-                for (const sec of ['S', 'A', 'P'] as const) {
-                  const t = item.sectionTexts[sec]
-                  if (!t) continue
-                  const list = allAddonTextsBySec.get(sec) ?? []
-                  list.push(resolveAddonText(t))
-                  allAddonTextsBySec.set(sec, list)
-                }
-              } else {
-                const sec = item.targetSection as SoapKey
-                const list = allAddonTextsBySec.get(sec) ?? []
-                list.push(resolveAddonText(item.text))
-                allAddonTextsBySec.set(sec, list)
-              }
-            }
-
-            // rawPrimaryFieldsRef（persona 未適用ベース）から全 ADDON テキストを除去してベースを得る
-            // 行単位比較ではなく substring 除去を使う（複数行テキスト対応）
-            // ※ H-1 対応: primaryBaseFieldsRef（表示ベース）ではなく raw を使うことで
-            //   persona 再計算の基点に ADDON 分が確実に含まれるようにする
-            // ※ ref を再読みせず rawBeforeToggle（呼び出し前スナップショット）を使う
-            //   （updater 二重実行時の冪等性のため。上のコメント参照）
-            const currentFields = rawBeforeToggle
-            const stripped: SoapFields = { S: '', O: '', A: '', P: '' }
-            for (const sec of ['S', 'O', 'A', 'P'] as const) {
-              let val = currentFields[sec] ?? ''
-              for (const addonText of (allAddonTextsBySec.get(sec) ?? [])) {
-                const withSep = '\n' + addonText
-                if (val.includes(withSep)) {
-                  val = val.replace(withSep, '')
-                } else {
-                  val = val.replace(addonText, '')
-                }
-              }
-              stripped[sec] = val
-            }
-
-            // 選択中 ADDON テキストをセクション別にまとめる
-            const sectionMap = new Map<SoapKey, string[]>()
-            for (const key of newAddonIds) {
-              const item = addonItems[key]
-              if (!item) continue
-              if (item.sectionTexts) {
-                for (const sec of ['S', 'A', 'P'] as const) {
-                  const t = item.sectionTexts[sec]
-                  if (!t) continue
-                  if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-                  sectionMap.get(sec)!.push(resolveAddonText(t))
-                }
-              } else {
-                const sec = item.targetSection
-                if (!sectionMap.has(sec)) sectionMap.set(sec, [])
-                sectionMap.get(sec)!.push(resolveAddonText(item.text))
-              }
-            }
-
-            // ベースに選択 ADDON を付加して新しい primaryBaseFields を作る
-            // P セクションのみ: closing 行（followup P）の前に ADDON テキストを挿入する
-            const closingText = primaryScenarioRef.current
-              ? resolveClosingText(primaryScenarioRef.current, activeModuleData.defaults)
-              : undefined
-            const overlaid: SoapFields = { ...stripped }
-            for (const [sec, texts] of sectionMap) {
-              const block = texts.join('\n')
-              if (sec === 'P' && closingText) {
-                // closing を一旦除去し ADDON テキストを挟んで再付加
-                const withSep = '\n' + closingText
-                const withoutClosing = overlaid.P.includes(withSep)
-                  ? overlaid.P.replace(withSep, '')
-                  : overlaid.P === closingText
-                    ? ''
-                    : overlaid.P
-                overlaid.P = withoutClosing
-                  ? `${withoutClosing}\n${block}\n${closingText}`
-                  : `${block}\n${closingText}`
-              } else {
-                overlaid[sec] = overlaid[sec] ? `${overlaid[sec]}\n${block}` : block
-              }
-            }
-            // raw ベースを更新し、表示は persona を再適用して導出する（H-1 対応）
-            rawPrimaryFieldsRef.current = overlaid
-            setPrimaryBaseFields(derivePrimaryDisplayFields(overlaid))
+          // ── deriveRawFields へ一本化（Unit 2B）─────────────────
+          // scenario + newAddonIds + 現在の Rapid state から raw を deterministic に
+          // 再導出する（strip/re-add の増分 patch は行わない）。
+          // deriveRawFields は newAddonIds のみを入力に取る純関数のため、
+          // StrictMode の updater 二重実行でも出力は自然に冪等
+          // （同じ newAddonIds → 常に同じ raw。旧実装が必要とした
+          //   rawBeforeToggle スナップショットは不要になった）。
+          if (sc) {
+            const rawFields = deriveRawFields(sc, activeModuleData, newAddonIds, rapidStateRef.current, drugName)
+            rawPrimaryFieldsRef.current = rawFields
+            setPrimaryBaseFields(derivePrimaryDisplayFields(rawFields))
           }
           setEditedSOAP(null)
           return next
         })
       })
     }
-  }, [activeModuleData, activeBrandName, activeDrugDisplayName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard, derivePrimaryDisplayFields])
+  }, [activeModuleData, activeBrandName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard, derivePrimaryDisplayFields])
 
   // ─────────────────────────────────────────────────────────────
   // handleSToggle【Rapid 操作】（S先頭文トグル）
@@ -1542,31 +1436,24 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const drugName = activeDrugDisplayName
         ?? resolveDrugName(activeModuleData.drug, activeBrandName)
+      const sc = primaryScenarioRef.current
+      const currentAddonIds = [...primaryAddonIdsRef.current]
 
       // ── toggle-off（RAPID-V2-05）────────────────────────────
       // 現在アクティブな Rapid を再クリック → RapidState = null にし、
       // S 本文を scenario 本来の先頭文へ差し戻す。
       //
-      // Unit 1 以前は state だけ戻して raw を触らなかったため、ON 時に raw へ
-      // 焼き込んだ Rapid 文が残り S が復元されなかった（実測 0/3400 復元）。
-      // ここでは raw の**先頭文だけ**を差し戻す:
-      //   - 残余（シナリオ固有の観察文）と ADDON テキストは保持される
+      // Unit 2B: deriveRawFields(rapid=null) が単一の deterministic 経路として
+      // scenario本文・ADDON・raw復元をすべて再導出する（手動 S mutation は行わない）。
+      //   - 残余（シナリオ固有の観察文）と ADDON テキストは deriveRawFields が保持する
       //   - raw を persona 再計算の基点として保ち続ける（H-1 / 37a9262 の invariant）
       //   - localInput は finalFields で render 時に適用されるため巻き戻らない
       if (isSameRapid(rapidStateRef.current, relation, condition)) {
         setRapidState(null)
-        const sc = primaryScenarioRef.current
         if (sc) {
-          // 素のシナリオ（addon なし）を組み立て、その先頭文を復元の基点にする。
-          // useEffect(selectedScenarioId) と同一の呼び出しであり deterministic。
-          const { fields: pristine } = buildNodeFields(sc, activeModuleData, [], drugName)
-          const rawBase = rawPrimaryFieldsRef.current
-          const restored = {
-            ...rawBase,
-            S: restoreScenarioFirstSentence(rawBase.S, pristine.S),
-          }
-          rawPrimaryFieldsRef.current = restored
-          setPrimaryBaseFields(derivePrimaryDisplayFields(restored))
+          const rawFields = deriveRawFields(sc, activeModuleData, currentAddonIds, null, drugName)
+          rawPrimaryFieldsRef.current = rawFields
+          setPrimaryBaseFields(derivePrimaryDisplayFields(rawFields))
         } else {
           setPrimaryBaseFields(derivePrimaryDisplayFields(rawPrimaryFieldsRef.current))
         }
@@ -1577,29 +1464,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setRapidState({ previousEvent: relation, currentOutcome: condition })
       // この関数が呼ばれる時点で、表示条件（1剤目 + capable シナリオ）は
       // ThirdPanel 側で既に保証されている。
-      // その安全な場面に限り、generic な「薬」を解決済み薬剤名に置換する。
-      // 文生成は buildResolvedSFirstSentence（lib/rapidSentence.ts）へ集約した。
-      // scenario 変更時の再適用（useEffect）と必ず同じ文を生成させるため。
-      const resolvedFirst = buildResolvedSFirstSentence(
-        relation,
-        condition,
-        drugName,
-        // adjustmentExpression: S先頭文生成用（menuGroupLabels はメニュー表示専用・役割分離）
-        activeModuleData.display?.adjustmentExpression,
-      )
       // Rapid 原本（NLP専用・現在UI未接続のため通常は null）がある場合は
-      // rapidBaseFieldsRef をベースに S だけ差し替える（既存のNLP経路の分岐を変更しない）。
-      // 通常経路（rapidBaseFieldsRef が null）は raw ベースを更新し、
-      // 表示は persona を再適用して導出する（H-1 対応）。
+      // rapidBaseFieldsRef をベースに S だけ差し替える（既存の NLP 経路の分岐を変更しない。
+      // NLP は showNlpButton=false / handleSwitchToNlp 未配線のため到達不能）。
+      // 通常経路（rapidBaseFieldsRef が null）は deriveRawFields で raw を再導出する。
       const rapidBase = rapidBaseFieldsRef.current
       if (rapidBase !== null) {
+        const resolvedFirst = buildResolvedSFirstSentence(
+          relation,
+          condition,
+          drugName,
+          activeModuleData.display?.adjustmentExpression,
+        )
         const updated = replaceSFirstSentence(rapidBase.S, resolvedFirst)
         setPrimaryBaseFields({ ...rapidBase, S: updated })
-      } else {
-        const rawBase = rawPrimaryFieldsRef.current
-        const updatedRaw = { ...rawBase, S: replaceSFirstSentence(rawBase.S, resolvedFirst) }
-        rawPrimaryFieldsRef.current = updatedRaw
-        setPrimaryBaseFields(derivePrimaryDisplayFields(updatedRaw))
+      } else if (sc) {
+        const rawFields = deriveRawFields(
+          sc, activeModuleData, currentAddonIds,
+          { previousEvent: relation, currentOutcome: condition }, drugName,
+        )
+        rawPrimaryFieldsRef.current = rawFields
+        setPrimaryBaseFields(derivePrimaryDisplayFields(rawFields))
       }
       setEditedSOAP(null)
     })

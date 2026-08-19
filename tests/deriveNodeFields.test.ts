@@ -375,14 +375,9 @@ describe('責務境界: Unit 2A の scope が守られている', () => {
     )
   })
 
-  test('Unit 2A では runtime から呼ばれていない（behavior change = 0）', () => {
-    const dashboard = readFileSync(
-      new URL('../app/components/DashboardClient.tsx', import.meta.url), 'utf-8',
-    )
-    assert.ok(
-      !/deriveRawFields|deriveNodeFields/.test(dashboard),
-      'Unit 2A では新 helper を runtime から呼ばない。' +
-      '呼び出し経路の移行は Unit 2B（primary）/ Unit 3（secondary）の責務',
-    )
-  })
+  // Unit 2A 時点では「runtime から呼ばれていないこと」を固定していたが、
+  // Unit 2B で primary runtime への配線が完了したためこの assertion は
+  // 恒久的に false になる（配線されることが Unit 2B の目的そのものであるため）。
+  // 配線後の contract（単一 derive 経路であること等）は
+  // tests/deriveNodeFieldsUnit2B.test.ts が担う。
 })
