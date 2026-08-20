@@ -368,11 +368,20 @@ describe('G. PRIMARY_NODE_ID は secondary node id と衝突しない', () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe('H. production runtime から未接続である（補助的保証）', () => {
-  test('app/components/DashboardClient.tsx は buildPrimaryNodeSnapshot / PRIMARY_NODE_ID を import していない', () => {
+  test('app/components/DashboardClient.tsx は buildPrimaryNodeSnapshot を import / 呼び出していない', () => {
+    // Unit 4A の scope guard は「helper が runtime へ接続されていない」ことを守る。
+    //
+    // Unit 4B 更新（Owner Decision D-4B-4）:
+    //   PRIMARY_NODE_ID の参照禁止は寿命を終えた。Unit 4B は read-only primary
+    //   projection の identity として PRIMARY_NODE_ID を使う（予定された変更であり、
+    //   Unit 4A helper の runtime 接続を意味しない）。
+    //   一方 buildPrimaryNodeSnapshot の未接続は Unit 4C まで維持されるため、
+    //   そちらのガードは残す。
     const src = readFileSync(new URL('../app/components/DashboardClient.tsx', import.meta.url), 'utf-8')
-    assert.ok(!/from ['"]\.\.\/\.\.\/lib\/primaryNode['"]/.test(src))
-    assert.ok(!/buildPrimaryNodeSnapshot/.test(src))
-    assert.ok(!/PRIMARY_NODE_ID/.test(src))
+    assert.ok(
+      !/buildPrimaryNodeSnapshot/.test(src),
+      'buildPrimaryNodeSnapshot は Unit 4C まで production 未接続を維持する',
+    )
   })
 
   test('lib/primaryNode.ts は deriveNodeBlockCore を re-implement せず import している（ロジック複製の禁止）', () => {

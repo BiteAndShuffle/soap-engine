@@ -48,6 +48,7 @@ import {
 } from '../../lib/rapidState'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
 import { deriveRawFields, deriveNodeBlockCore } from '../../lib/deriveNodeFields'
+import { PRIMARY_NODE_ID } from '../../lib/primaryNode'
 import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
@@ -57,6 +58,16 @@ import s from '../styles/layout.module.css'
 // ─────────────────────────────────────────────────────────────
 
 const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
+
+/**
+ * primary projection の block id（Unit 4B）。
+ *
+ * mergeBlocks は block.id を一切読まない（実測確認済み）。production での
+ * block.id の用途は `id: node.block.id` による carry-forward のみであり、
+ * React key にも editing にも使われない。したがって固定値で足りる。
+ * secondary の block id は `${Date.now()}-${random}` 形式であり衝突しない。
+ */
+const PRIMARY_BLOCK_ID = 'primary-block'
 
 // ─────────────────────────────────────────────────────────────
 // ノードラベルマッピング
@@ -126,25 +137,19 @@ function resolveClosingText(
 // ─────────────────────────────────────────────────────────────
 
 function computeDisplayFields(
-  primaryBaseFields: SoapFields,
-  primaryScenario: ModuleData['scenarios'][number] | undefined,
+  primaryNode: ComposeNode,
   composeNodes: ComposeNode[],
-  defaults: ModuleData['defaults'],
-  primaryMod: ModuleData,
 ): SoapFields {
   const confirmedNodes = composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null)
-  if (confirmedNodes.length === 0) return { ...primaryBaseFields }
-  // 1剤目の groupKey / clinicalDomain を渡して reason 統合の同一性判定を正しく行う
-  const currentGroupKey     = primaryScenario?.mergePolicy?.S?.groupKey
-  const currentClinicalDomain = primaryMod.composition?.clinicalDomain
+  if (confirmedNodes.length === 0) return { ...primaryNode.block.fields }
   return mergeBlocks(
     confirmedNodes.map(n => n.block),
-    primaryBaseFields,
-    primaryScenario?.title ?? '',
-    primaryScenario ? resolveClosingText(primaryScenario, defaults) : undefined,
+    primaryNode.block.fields,
+    primaryNode.block.templateLabel,
+    primaryNode.block.closingText,
     undefined,           // currentDomain（旧引数: 未使用のまま維持）
-    currentGroupKey,
-    currentClinicalDomain,
+    primaryNode.block.groupKey,
+    primaryNode.block.clinicalDomain,
   )
 }
 
@@ -358,6 +363,54 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [activeModuleData.scenarios, selectedScenarioId],
   )
 
+  // ── primaryNode projection（Unit 4B / read-only）────────────────
+  //
+  // primary の read path を secondary（ComposeNode）と同じ shape へ寄せるための
+  // **read-only derived value**。writable SSOT は依然 global primary state であり、
+  // 本 projection へ書き込む経路は存在しない（Unit 4C で SSOT を反転する）。
+  //
+  // block.fields は **primaryBaseFields をそのまま使う**。
+  // render 時に (scenario, addonIds, rapid) から再 derive してはならない:
+  // scenario 切替時、handleSelectScenario は selectedScenarioId / rapidState のみを
+  // 同一 batch で更新し、primaryAddonIds / primaryBaseFields の更新は
+  // useEffect([selectedScenarioId]) が行う。したがって effect 前の render では
+  // 「新 scenario × 旧 addonIds」という状態が存在し、そこで再 derive すると
+  // 現行表示（旧 primaryBaseFields）と乖離する（CHECK-4A-1。全 35 module の
+  // scenario ペアで 100% 乖離することを実測済み）。
+  //
+  // block.rawFields / block.guard は含めない。read path から参照されず
+  // （consumer は reapplyPersonaToAllBlocks のみで、これは handler 経路）、
+  // 含めると render 中に ref を読む必要が生じるため。
+  const primaryNodeProjection = useMemo<ComposeNode>(() => ({
+    id:         PRIMARY_NODE_ID,
+    moduleId:   activeModuleData.moduleId,
+    scenarioId: selectedScenarioId ?? '',
+    block: {
+      id:              PRIMARY_BLOCK_ID,
+      templateLabel:   primaryScenario?.title ?? '',
+      fields:          primaryBaseFields,
+      closingText:     primaryScenario ? resolveClosingText(primaryScenario, activeModuleData.defaults) : undefined,
+      closingBehavior: primaryScenario?.mergePolicy?.P?.closingBehavior,
+      groupKey:        primaryScenario?.mergePolicy?.S?.groupKey,
+      clinicalDomain:  activeModuleData.composition?.clinicalDomain,
+      symptomCodes:    primaryScenario?.sComposition?.symptomCodes,
+      domain:          resolveDomain(activeModuleData),
+    },
+    drugLabel:        resolveNodeLabel(activeModuleData),
+    selectedAddonIds: [...primaryAddonIds],
+    baseLabel:        primaryScenario?.title ?? '',
+    baseDomain:       resolveDomain(activeModuleData),
+    matchedBrandName: activeBrandName,
+    resolvedDrugName: activeDrugDisplayName,
+    resolution:       activeResolution,
+    localSiteInput:   localSiteInput,
+    rapid:            rapidState,
+  }), [
+    activeModuleData, selectedScenarioId, primaryScenario, primaryBaseFields,
+    primaryAddonIds, activeBrandName, activeDrugDisplayName, activeResolution,
+    localSiteInput, rapidState,
+  ])
+
   // ══════════════════════════════════════════════════════════════
   // ACTIVE CONTEXT（derived）
   //
@@ -373,31 +426,30 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   )
 
   // TemplateListPanel ハイライト・ThirdPanel 有効化用
-  const currentScenarioId: string | null = activeNode !== null
-    ? (activeNode.scenarioId || null)
-    : selectedScenarioId
+  const currentScenarioId: string | null =
+    (activeNode ?? primaryNodeProjection).scenarioId || null
 
   // ══════════════════════════════════════════════════════════════
   // DISPLAY FIELDS（derived: pure function、state は変えない）
   // ══════════════════════════════════════════════════════════════
 
   const displayFields = useMemo(
-    () => computeDisplayFields(primaryBaseFields, primaryScenario, composeNodes, activeModuleData.defaults, activeModuleData),
-    [primaryBaseFields, primaryScenario, composeNodes, activeModuleData],
+    () => computeDisplayFields(primaryNodeProjection, composeNodes),
+    [primaryNodeProjection, composeNodes],
   )
 
   // ── targetModule: activeContext のモジュール ─────────────────
   const targetModule = useMemo<ModuleData>(() => {
-    if (activeNode === null) return activeModuleData
-    return allModules.find(m => m.moduleId === activeNode.moduleId) ?? activeModuleData
-  }, [activeNode, activeModuleData, allModules])
+    const ctx = activeNode ?? primaryNodeProjection
+    return allModules.find(m => m.moduleId === ctx.moduleId) ?? activeModuleData
+  }, [activeNode, primaryNodeProjection, activeModuleData, allModules])
 
   // ── activeContextResolution: activeContext の BrandResolution ─
   // targetModule と同じ activeContext パターン（ノード編集中はそのノード、
   // それ以外は1剤目）。undefined = 検索サジェスト以外の経路（初期ロード・Express）。
   const activeContextResolution = useMemo<BrandResolution | undefined>(
-    () => (activeNode !== null ? activeNode.resolution : activeResolution),
-    [activeNode, activeResolution],
+    () => (activeNode ?? primaryNodeProjection).resolution,
+    [activeNode, primaryNodeProjection],
   )
 
   // ── U-5 安全 gate: 指示対象が未確定（denotation='module'）か ──
@@ -415,10 +467,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── activeLocalSiteInput: 現在編集中のコンテキストに紐づく部位入力値 ──
   // activeNode !== null → そのノードの localSiteInput（per-node 保持）
-  // activeNode === null → グローバルの localSiteInput（1剤目用）
-  const activeLocalSiteInput = activeNode !== null
-    ? (activeNode.localSiteInput ?? '')
-    : localSiteInput
+  // activeNode === null → グローバルの localSiteInput（1剤目用。projection 経由）
+  const activeLocalSiteInput = (activeNode ?? primaryNodeProjection).localSiteInput ?? ''
 
   // ── finalFields: {{applicationSite}} placeholder 解決 + prefix 適用 ──
   //
@@ -515,7 +565,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       if (patched === null) return n  // 対象外 or 変更なし
       return { ...n, block: { ...n.block, fields: { ...n.block.fields, S: patched } } }
     })
-    return computeDisplayFields(patchedPrimaryFields, primaryScenario, patchedNodes, activeModuleData.defaults, activeModuleData)
+    return computeDisplayFields(
+      { ...primaryNodeProjection, block: { ...primaryNodeProjection.block, fields: patchedPrimaryFields } },
+      patchedNodes,
+    )
   })()
 
   // ── Refs を render ごとに同期 ──────────────────────────────
@@ -541,10 +594,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── addonTargetScenario: activeContext のシナリオ（AddonPanel 用） ─
   const addonTargetScenario = useMemo(() => {
-    if (activeNode === null) return primaryScenario
-    if (!activeNode.scenarioId) return undefined
-    return targetModule.scenarios.find(sc => sc.globalId === activeNode.scenarioId)
-  }, [activeNode, targetModule, primaryScenario])
+    const ctx = activeNode ?? primaryNodeProjection
+    if (!ctx.scenarioId) return undefined
+    return targetModule.scenarios.find(sc => sc.globalId === ctx.scenarioId)
+  }, [activeNode, primaryNodeProjection, targetModule])
 
   // 選択中ブランドの handlingTags を取得してaddonフィルタに渡す。
   // brandCatalog を持たないモジュールは undefined → フィルタスキップ（後方互換）。
@@ -560,12 +613,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const brandCatalog = targetModule.drug?.brandCatalog
     if (!brandCatalog) return undefined
     // legacy キー（resolution を持たない経路でのみ使用する）
-    // ノード編集中: そのノードの matchedBrandName / 1剤目操作中: activeBrandName
-    const legacyBrandKey = activeNode !== null
-      ? (activeNode.matchedBrandName ?? targetModule.drug?.brandNames?.[0])
-      : (activeBrandName ?? activeModuleData.drug?.brandNames?.[0])
+    // ノード編集中: そのノードの matchedBrandName / 1剤目操作中: projection.matchedBrandName
+    const ctx = activeNode ?? primaryNodeProjection
+    const legacyBrandKey = ctx.matchedBrandName ?? targetModule.drug?.brandNames?.[0]
     return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)
-  }, [targetModule, activeNode, activeBrandName, activeModuleData, activeContextResolution])
+  }, [targetModule, activeNode, primaryNodeProjection, activeContextResolution])
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),

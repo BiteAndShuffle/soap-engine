@@ -171,11 +171,23 @@ describe('T-U4a-4 node 再構築（spread）が resolution をそのまま維持
 
   test('production の再構築箇所が resolution を明示的に上書きしていない', () => {
     // buildUpdatedNode の戻り値と handleAddonToggle の node 更新はいずれも spread 起点であり、
-    // resolution を代入するのは handleComposeDrugSelect の node リテラルのみである。
+    // resolution を代入するのは「意図した preservation site」だけである。
+    //
+    // 許可される代入は 2 箇所のみ:
+    //   1. handleComposeDrugSelect の node リテラル（item.resolution を node へ保持）
+    //   2. primaryNodeProjection（Unit 4B。既存 activeResolution を read-only な
+    //      Node-shaped projection へ載せ替えるだけ）
+    //
+    // いずれも **既存の resolution をそのまま保持** するものであり、
+    // 新しい source の導入・再生成・fallback の追加ではない。
+    // ここに 3 つ目が現れたら、それは新しい resolution consumer / source の疑いがある。
     const assignments = codeLines(src).map(norm).filter(l => /\bresolution:\s/.test(l))
     assert.deepEqual(
       assignments,
-      ['resolution: item.resolution,'],
+      [
+        'resolution: activeResolution,',   // Unit 4B: primaryNodeProjection への保持
+        'resolution: item.resolution,',    // U-4a: compose node への保持
+      ],
       `resolution を代入している箇所が想定外に存在する: ${assignments.join(' / ')}`,
     )
   })
@@ -203,16 +215,24 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     // ── U-4a: 保持 ──
     'const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)',
     'const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)',
+    // ── Unit 4B: primaryNode projection への保持（read-only）──
+    //   既存 activeResolution を Node-shaped read interface へ載せ替えるだけであり、
+    //   新しい resolution source / fallback を作っていない。
+    //   （node 側の 'resolution: item.resolution,' と同じ preservation パターン）
+    'resolution: activeResolution,',
+    //   projection の useMemo dependency（保持元を追跡するため）
+    'primaryAddonIds, activeBrandName, activeDrugDisplayName, activeResolution,',
     // ── U-5: activeContext の resolution 導出と gate 判定 ──
+    //   Unit 4B: primary 分岐を projection 経由へ統一（読み替えのみ。導出規則は不変）
     'const activeContextResolution = useMemo<BrandResolution | undefined>(',
-    '() => (activeNode !== null ? activeNode.resolution : activeResolution),',
-    '[activeNode, activeResolution],',
+    '() => (activeNode ?? primaryNodeProjection).resolution,',
     'const subjectUnresolved = isSubjectUnresolvedFor(activeContextResolution)',
     // ── U-4a: ref 同期 ──
     'activeResolutionRef.current = activeResolution',
     // ── U-5: handlingTags 導出（lib/brandTags.ts へ委譲） ──
     'return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)',
-    '}, [targetModule, activeNode, activeBrandName, activeModuleData, activeContextResolution])',
+    //   Unit 4B: legacyBrandKey も projection 経由になったため dependency が追従
+    '}, [targetModule, activeNode, primaryNodeProjection, activeContextResolution])',
     // ── U-5: SOAP 生成 gate（scenario 提示の遮断） ──
     'if (subjectUnresolved) return []',
     '}, [allGroups, selectedGroup, addonBrandHandlingTags, subjectUnresolved])',

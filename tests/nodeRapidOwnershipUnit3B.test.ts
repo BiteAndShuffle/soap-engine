@@ -450,12 +450,12 @@ describe('I. 同一最終 state から同一 block が得られる（operation-o
 describe('J. primary global rapidState と node.rapid は独立している', () => {
   const src = readFileSync(new URL('../app/components/DashboardClient.tsx', import.meta.url), 'utf-8')
 
-  test('T-3B-13: computeDisplayFields は primaryBaseFields と composeNodes を別引数で受け取る（primary は composeNodes に含まれない）', () => {
+  test('T-3B-13: computeDisplayFields は primaryNode と composeNodes を別引数で受け取る（primary は composeNodes に含まれない。Unit 4B 更新）', () => {
     const block = src.slice(
       src.indexOf('function computeDisplayFields'),
       src.indexOf('function computeDisplayFields') + 1200,
     )
-    assert.ok(/primaryBaseFields: SoapFields/.test(block))
+    assert.ok(/primaryNode: ComposeNode/.test(block))
     assert.ok(/composeNodes: ComposeNode\[\]/.test(block))
   })
 
