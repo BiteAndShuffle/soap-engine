@@ -102,15 +102,100 @@ export type PrimaryNodeInput = {
 }
 
 /**
+ * 既存 ComposeNode に「確定 scenario × ADDON × Rapid」を適用して
+ * 次の ComposeNode を導出する **canonical rebuild core**（pure）。
+ *
+ * Rapid Mode v2 / Unit 4D-2。
+ *
+ * ## 本関数の位置づけ
+ * Unit 4D-2 以前、ComposeNode の rebuild semantics は 3 箇所に実装されていた:
+ *   - buildPrimaryNodeSnapshot（primary）
+ *   - buildUpdatedNode（secondary / scenario 確定）      … DashboardClient.tsx
+ *   - handleAddonToggle node branch（secondary / ADDON）… DashboardClient.tsx
+ * 3 者は同一の semantics（deriveNodeBlockCore → persona → ComposeNode 再構築）を
+ * 持ちながら別実装だった。本関数はその semantics の**唯一の実装**であり、
+ * 上記 3 経路はすべて本関数へ委譲する。
+ *
+ * ## primary / secondary を区別しない
+ * 本関数は node の**位置**を一切参照しない。primary か secondary かは
+ * `input.node.id` という identity の違いにすぎず、rebuild semantics の違いではない。
+ * 配列 index / composeNodes[0] / isPrimary 分岐 / primary 固定 id の暗黙注入は
+ * いずれも本関数に存在してはならない（Unit 4D-2 identity contract）。
+ *
+ * ## identity / lifecycle field の扱い
+ * 以下は delta では変化しないため、`input.node` からそのまま引き継ぐ:
+ *   id / block.id / matchedBrandName / resolvedDrugName / resolution / localSiteInput
+ * `drugLabel` / `baseDomain` は呼び出し側が解決して渡す（resolveNodeLabel /
+ * resolveDomain は DashboardClient の local 関数であり、本 Unit では lib へ移設しない）。
+ *
+ * ## rapid について
+ * 本関数は **RapidState の遷移を計算しない**。`rapid` は呼び出し側が確定させた値を
+ * そのまま derive の入力として使う。scenario 遷移（RAPID-V2-07 /
+ * nextRapidStateOnScenarioChange）の適用は呼び出し側の責務である
+ * （primary は handleSelectScenario、secondary は buildUpdatedNode が担う）。
+ *
+ * ## determinism / purity
+ * 同一入力に対して常に deepStrictEqual な出力を返し、引数を破壊しない。
+ * setter / ref / React state / global mutable state を一切参照しない。
+ */
+export type RebuildNodeInput = {
+  /** 直前の Node（identity と lifecycle field の供給元） */
+  node: ComposeNode
+  /** この Node の module */
+  mod: ModuleData
+  /** 確定済み scenario。undefined を渡してはならない */
+  scenario: Scenario
+  /** 確定 ADDON。配列順がそのまま本文順序になる */
+  addonIds: string[]
+  /** Rapid 選択状態（遷移計算済みの値。本関数は遷移を計算しない） */
+  rapid: RapidState
+  /** {{drug_subject}} 解決値 */
+  drugName: string
+  /** ノードチップ表示ラベル。呼び出し側が resolveNodeLabel(mod) で解決して渡す */
+  drugLabel: string
+  /** S欄ドメイン。呼び出し側が resolveDomain(mod) で解決して渡す */
+  baseDomain: string
+  /** persona 適用可否（global） */
+  personaEnabled: boolean
+  /** 適用する persona（global） */
+  persona: PersonaId
+}
+
+export function rebuildNode(input: RebuildNodeInput): ComposeNode {
+  const {
+    node, mod, scenario, addonIds, rapid, drugName,
+    drugLabel, baseDomain, personaEnabled, persona,
+  } = input
+
+  const core = deriveNodeBlockCore(scenario, mod, addonIds, rapid, drugName)
+  const fields = personaEnabled
+    ? applyPersonaToFieldsWithGuard(core.rawFields, true, persona, core.guard)
+    : core.rawFields
+
+  return {
+    ...node,                                   // identity / lifecycle field を保存
+    id:               node.id,                 // 明示: 位置からは決めない（identity contract）
+    moduleId:         mod.moduleId,
+    scenarioId:       scenario.globalId,
+    block:            { id: node.block.id, ...core, fields, domain: baseDomain },
+    drugLabel,
+    selectedAddonIds: addonIds,
+    baseLabel:        scenario.title,
+    baseDomain,
+    rapid,
+  }
+}
+
+/**
  * primary の state から ComposeNode snapshot を組み立てる（pure）。
  *
- * Rapid Mode v2 / Unit 4A。
+ * Rapid Mode v2 / Unit 4A。Unit 4D-2 で rebuild 部を rebuildNode へ委譲した。
  *
  * ## secondary との parity
  * 本関数の block は secondary（buildUpdatedNode / handleAddonToggle node branch）と
- * **同一の deriveNodeBlockCore** を使って導出する。したがって
- * 「同じ (scenario, mod, addonIds, rapid, drugName) なら primary と secondary が
- *   同一の block を得る」ことが構造的に保証される。
+ * **同一の rebuildNode**（内部で deriveNodeBlockCore を呼ぶ）を使って導出する。
+ * したがって「同じ (scenario, mod, addonIds, rapid, drugName) なら primary と secondary が
+ * 同一の block を得る」ことが構造的に保証される。
  * この parity は tests/primaryNodeParityUnit4A.test.ts が実測で固定する。
  *
  * ## determinism
@@ -128,45 +213,30 @@ export function buildPrimaryNodeSnapshot(input: PrimaryNodeInput): ComposeNode {
 
   // scenario 未確定 = pending node 相当。secondary の handleComposeDrugSelect が
   // 作る pending node（scenarioId: '', block: EMPTY_FIELDS）と同形にする。
-  if (!scenario) {
-    return {
-      id: PRIMARY_NODE_ID,
-      moduleId: mod.moduleId,
-      scenarioId: '',
-      block: { id: blockId, templateLabel: '', fields: EMPTY_FIELDS, closingText: undefined },
-      drugLabel,
-      selectedAddonIds: [],
-      baseLabel: '',
-      baseDomain,
-      matchedBrandName,
-      resolvedDrugName,
-      resolution,
-      localSiteInput,
-      rapid: null,
-    }
-  }
-
-  // secondary（buildUpdatedNode）と同一の derive を使う。ロジックを複製しない。
-  const core = deriveNodeBlockCore(scenario, mod, addonIds, rapid, drugName)
-  const fields = personaEnabled
-    ? applyPersonaToFieldsWithGuard(core.rawFields, true, persona, core.guard)
-    : core.rawFields
-
-  return {
+  // scenario 確定時は、この pending node が rebuildNode への
+  // identity / lifecycle 供給元（＝ input.node）になる。
+  const pending: ComposeNode = {
     id: PRIMARY_NODE_ID,
     moduleId: mod.moduleId,
-    scenarioId: scenario.globalId,
-    block: { id: blockId, ...core, fields, domain: baseDomain },
+    scenarioId: '',
+    block: { id: blockId, templateLabel: '', fields: EMPTY_FIELDS, closingText: undefined },
     drugLabel,
-    selectedAddonIds: addonIds,
-    baseLabel: scenario.title,
+    selectedAddonIds: [],
+    baseLabel: '',
     baseDomain,
     matchedBrandName,
     resolvedDrugName,
     resolution,
     localSiteInput,
-    rapid,
+    rapid: null,
   }
+  if (!scenario) return pending
+
+  // secondary と同一の canonical rebuild core を使う。ロジックを複製しない。
+  return rebuildNode({
+    node: pending, mod, scenario, addonIds, rapid, drugName,
+    drugLabel, baseDomain, personaEnabled, persona,
+  })
 }
 
 /**

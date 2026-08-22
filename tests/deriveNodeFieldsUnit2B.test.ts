@@ -149,8 +149,16 @@ describe('1. deriveRawFields が primary raw の単一生成経路である', ()
     const directCount = (src.match(/buildNodeFields\(/g) ?? []).length
     assert.equal(directCount, 0, `buildNodeFields の直接呼び出しは残っていないはず（実際: ${directCount}）`)
 
+    // Unit 4D-2 更新: node 分岐の block 再構築は canonical rebuild core（lib/primaryNode.ts の
+    // rebuildNode）へ委譲した。DashboardClient.tsx からの deriveNodeBlockCore 直接呼び出しは
+    // 2 → 0 になる。守っている契約（「DashboardClient は block derive を再実装しない」）は
+    // 変わらず、収束先が 1 段深くなったぶん強くなっている。
     const coreCount = (src.match(/deriveNodeBlockCore\(/g) ?? []).length
-    assert.equal(coreCount, 2, `deriveNodeBlockCore の呼び出しは node 分岐の 2 箇所のみのはず（実際: ${coreCount}）`)
+    assert.equal(coreCount, 0, `deriveNodeBlockCore の直接呼び出しは rebuildNode へ収束済みのはず（実際: ${coreCount}）`)
+
+    // 収束先が実在すること（0 件が「derive をやめた」ではなく「委譲した」ことの担保）
+    const rebuildNodeCount = (src.match(/rebuildNode\(\{/g) ?? []).length
+    assert.equal(rebuildNodeCount, 2, `node 分岐 2 経路が rebuildNode へ委譲しているはず（実際: ${rebuildNodeCount}）`)
   })
 })
 

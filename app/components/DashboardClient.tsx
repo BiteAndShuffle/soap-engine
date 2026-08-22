@@ -47,8 +47,7 @@ import {
   nextRapidStateOnScenarioChange,
 } from '../../lib/rapidState'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
-import { deriveRawFields, deriveNodeBlockCore } from '../../lib/deriveNodeFields'
-import { PRIMARY_NODE_ID, rebuildPrimary } from '../../lib/primaryNode'
+import { PRIMARY_NODE_ID, rebuildPrimary, rebuildNode } from '../../lib/primaryNode'
 import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
@@ -1082,20 +1081,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // Unit 3B: node が所有する Rapid を derive の入力として使う。
     // production UI から non-null になる経路は存在しない（Rapid UI は 1剤目限定）が、
     // dead field にはしない — non-null なら必ずこの Node の SOAP へ反映される。
-    const core = deriveNodeBlockCore(sc, mod, addonIds, nextRapid, drugName)
-    const fields = personaEnabled
-      ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
-      : core.rawFields
-    const domain = resolveDomain(mod)
-    return {
-      ...node,
-      scenarioId: newScenarioId,
-      rapid: nextRapid,          // ← 明示必須。省略すると `...node` が旧 rapid を保持し遷移しない
-      block: { id: node.block.id, ...core, fields, domain },
-      selectedAddonIds: addonIds,
-      baseLabel: sc.title,
-      baseDomain: domain,
-    }
+    //
+    // Unit 4D-2: block 再構築は canonical rebuild core（rebuildNode）へ委譲する。
+    // 本関数の残る責務は「どの scenario / ADDON / drugName / rapid で組み直すか」の
+    // 解決のみであり、rebuild semantics 自体は primary と共有する。
+    // rapid の遷移計算（nextRapid）は上記のとおり本関数の責務であり、
+    // rebuildNode は遷移済みの値を受け取るだけである。
+    return rebuildNode({
+      node, mod, scenario: sc, addonIds, rapid: nextRapid, drugName,
+      drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),
+      personaEnabled, persona: selectedPersona,
+    })
   }, [allModules, moduleData, personaEnabled, selectedPersona])
 
   // ─────────────────────────────────────────────────────────────
@@ -1474,18 +1470,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         // ADDON トグルは scenario 遷移ではないため transition function は通さない
         // （node.rapid をそのまま維持する）。
         // node.resolvedDrugName を渡して {{drug_subject}} を再解決
-        const core = deriveNodeBlockCore(sc, mod, newAddonIds, node.rapid, node.resolvedDrugName ?? '')
-        const fields = personaEnabled
-          ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
-          : core.rawFields
-        const domain = resolveDomain(mod)
-        const updated: ComposeNode = {
-          ...node,
-          block: { ...node.block, ...core, fields, domain },
-          selectedAddonIds: newAddonIds,
-          baseLabel: sc.title,
-          baseDomain: domain,
-        }
+        //
+        // Unit 4D-2: block 再構築は canonical rebuild core（rebuildNode）へ委譲する。
+        // rebuildNode は純関数のため、updater 内で呼んでも purity contract を壊さない
+        // （StrictMode の二重実行でも同じ prev × 同じ newAddonIds → 常に同じ block）。
+        const updated = rebuildNode({
+          node, mod, scenario: sc, addonIds: newAddonIds, rapid: node.rapid,
+          drugName: node.resolvedDrugName ?? '',
+          drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),
+          personaEnabled, persona: selectedPersona,
+        })
         return prev.map(n => n.id !== nodeId ? n : updated)  // 対象外 node は同一参照で通す
       })
     } else {

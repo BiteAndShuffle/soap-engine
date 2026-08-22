@@ -317,8 +317,16 @@ describe('D. ADDON 変更で node.rapid が不変である', () => {
       src.indexOf('const handleAddonToggle = useCallback'),
       src.indexOf('const handleSToggle = useCallback'),
     )
-    assert.ok(/deriveNodeBlockCore\(sc, mod, newAddonIds, node\.rapid,/.test(addonBlock))
-    assert.ok(!/deriveNodeBlockCore\(sc, mod, newAddonIds, null,/.test(addonBlock))
+    // Unit 4D-2 更新: block 再構築は canonical rebuild core（rebuildNode）へ委譲した。
+    // 守る契約は不変 —「ADDON トグルは node が所有する Rapid を derive へ渡す。
+    // null リテラルで潰さない」。式の形だけが deriveNodeBlockCore の位置引数から
+    // rebuildNode の named field へ変わっている。
+    assert.ok(
+      /rapid: node\.rapid,/.test(addonBlock),
+      'handleAddonToggle node branch が rebuildNode へ node.rapid を渡していない',
+    )
+    assert.ok(!/rapid: null,/.test(addonBlock), 'node.rapid が null リテラルで潰されている')
+    assert.ok(!/deriveNodeBlockCore\(/.test(addonBlock), 'derive が inline に残っている（4D-2 で委譲済みのはず）')
   })
 })
 

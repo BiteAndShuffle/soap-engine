@@ -43,6 +43,7 @@ import { ALL_MODULES } from '../data/modules/index'
 import { deriveNodeBlockCore } from '../lib/deriveNodeFields'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../lib/applyPersona'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
+import { rebuildNode } from '../lib/primaryNode'
 import type { RapidState } from '../lib/rapidState'
 
 const src = readFileSync(
@@ -148,18 +149,14 @@ function applyNodeAddonUpdater(
   const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
   const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
   if (!sc) return prev
-  const core = deriveNodeBlockCore(sc, mod, newAddonIds, node.rapid, node.resolvedDrugName ?? '')
-  const fields = personaEnabled
-    ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
-    : core.rawFields
-  const domain = resolveDomain(mod)
-  const updated: ComposeNode = {
-    ...node,
-    block: { ...node.block, ...core, fields, domain },
-    selectedAddonIds: newAddonIds,
-    baseLabel: sc.title,
-    baseDomain: domain,
-  }
+  // Unit 4D-2: block 再構築は production の canonical rebuild core をそのまま呼ぶ。
+  // 4D-1 時点はここに derive を複製していたが、4D-2 で委譲先が生まれたため mirror を廃止した。
+  const updated = rebuildNode({
+    node, mod, scenario: sc, addonIds: newAddonIds, rapid: node.rapid,
+    drugName: node.resolvedDrugName ?? '',
+    drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),
+    personaEnabled, persona: selectedPersona,
+  })
   return prev.map(n => n.id !== nodeId ? n : updated)
 }
 
@@ -498,17 +495,18 @@ describe('F. ADDON ON/OFF 往復の値保存', () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe('G. applyNodeAddonUpdater は production node ブランチと同一の式である', () => {
+  // Unit 4D-2 更新: derive は canonical rebuild core（rebuildNode）へ委譲された。
+  // 本群の目的（値テストが production と同じ式を使っていることの担保）は不変で、
+  // 期待する式が委譲形になっただけである。
   const EXPECTED_EXPRESSIONS = [
     'const node = prev.find(n => n.id === nodeId)',
     'const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData',
     'const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)',
-    "const core = deriveNodeBlockCore(sc, mod, newAddonIds, node.rapid, node.resolvedDrugName ?? '')",
-    'applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)',
-    'const domain = resolveDomain(mod)',
-    'block: { ...node.block, ...core, fields, domain }',
-    'selectedAddonIds: newAddonIds,',
-    'baseLabel: sc.title,',
-    'baseDomain: domain,',
+    'const updated = rebuildNode({',
+    'node, mod, scenario: sc, addonIds: newAddonIds, rapid: node.rapid,',
+    "drugName: node.resolvedDrugName ?? '',",
+    'drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),',
+    'personaEnabled, persona: selectedPersona,',
     'return prev.map(n => n.id !== nodeId ? n : updated)',
   ]
 
@@ -532,9 +530,15 @@ describe('G. applyNodeAddonUpdater は production node ブランチと同一の�
 // ═══════════════════════════════════════════════════════════════
 
 describe('H. スコープ外の不変（4D-2 以降の論点を先取りしていない）', () => {
-  test('buildUpdatedNode が存続し、rebuildNode へ一般化されていない', () => {
+  test('buildUpdatedNode が存続し、canonical rebuild core へ委譲している（Unit 4D-2）', () => {
+    // 4D-1 時点では「rebuildNode が先取り導入されていないこと」を守る scope guard だった。
+    // 4D-2 で一般化が正式に行われたため、guard を「委譲が成立していること」へ反転する。
     assert.ok(src.includes('const buildUpdatedNode = useCallback('), 'buildUpdatedNode が消えている')
-    assert.equal(/\brebuildNode\b/.test(src), false, 'rebuildNode が先取り導入されている（4D-2 の責務）')
+    assert.ok(/\brebuildNode\b/.test(src), 'rebuildNode への委譲が無い（4D-2 未適用）')
+    assert.equal(
+      (src.match(/deriveNodeBlockCore\(/g) ?? []).length, 0,
+      'DashboardClient に block derive の inline 実装が残っている',
+    )
   })
 
   test('handleSToggle の 1剤目限定 early return が維持されている（node Rapid 未解禁）', () => {
