@@ -245,8 +245,6 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     "import { resolveDrugSubject, resolveDrugName, resolveSubjectFromResolution } from '../../lib/drugSubject'",
     // ── Unit 4C-2: primaryNode 初期値（旧: useState の初期値） ──
     'resolution: undefined,',
-    // ── Unit 4C-2: derived const alias（旧: activeResolution state 宣言） ──
-    'const activeResolution = primaryNode.resolution',
     // ── U-5: activeContext の resolution 導出と gate 判定 ──
     //   Unit 4B: primary 分岐を projection 経由へ統一（読み替えのみ。導出規則は不変）
     //   Unit 4C-5 での意図的更新: activeContextResolution はすでに primaryNode と同値の
@@ -265,7 +263,10 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     'if (subjectUnresolved) return []',
     '}, [allGroups, selectedGroup, addonBrandHandlingTags, subjectUnresolved])',
     // ── U-5: brand 固有データアクセス（表示用 resolvedBrand とは分離） ──
-    'const tagBrandKey = resolveDataAccessBrandKey(activeResolution, activeBrandName ?? activeModuleData.drug?.brandNames?.[0])',
+    //   Unit 4C-6: activeResolution / activeBrandName alias は削除され、
+    //   primaryNode.resolution / primaryNode.matchedBrandName の直参照になった
+    //   （導出規則は不変。値 parity は tests/primaryAliasDirectReadUnit4C6.test.ts が固定）。
+    'const tagBrandKey = resolveDataAccessBrandKey(primaryNode.resolution, primaryNode.matchedBrandName ?? activeModuleData.drug?.brandNames?.[0])',
     'const drugResolution = activeModuleData.drugResolution',
     'if (tagBrandKey && drugResolution) {',
     'for (const tag of drugResolution.brandToTags[tagBrandKey] ?? []) {',

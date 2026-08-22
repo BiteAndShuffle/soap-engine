@@ -251,13 +251,18 @@ describe('A. transient（scenario A→B の effect 前）で再 derive してい
     )
   })
 
-  test('T-4B-1b: production の projection が block.fields に primaryBaseFields を使っている（補助的保証）', () => {
+  test('T-4B-1b: production の projection が block.fields に primaryNode.block.fields を直接使っている（Unit 4C-6 successor。補助的保証）', () => {
+    // Unit 4C-6: primaryBaseFields alias は削除され、projection の fields override は
+    // 同一 key の RHS を primaryNode.block.fields（authoritative field）へ置換した。
+    // key の存在・re-derive 禁止という保証は変えず、RHS の期待値のみ更新する。
+    // Design P transient semantics（commit1 = metadata 新 × fields 旧）の値契約は
+    // tests/primaryAliasDirectReadUnit4C6.test.ts の P3 が独立に固定する。
     const code = codeOnly(src)
     const start = code.indexOf('const primaryNodeProjection = useMemo')
     assert.notEqual(start, -1, 'primaryNodeProjection が見つからない')
     const end = code.indexOf('}), [', start)
     const body = code.slice(start, end)
-    assert.ok(/fields:\s*primaryBaseFields/.test(body), 'block.fields に primaryBaseFields を使っていない')
+    assert.ok(/fields:\s*primaryNode\.block\.fields/.test(body), 'block.fields に primaryNode.block.fields を使っていない')
     // 再 derive の混入を禁止
     assert.ok(!/deriveRawFields\(/.test(body), 'projection 内で deriveRawFields を呼んではならない')
     assert.ok(!/deriveNodeBlockCore\(/.test(body), 'projection 内で deriveNodeBlockCore を呼んではならない')

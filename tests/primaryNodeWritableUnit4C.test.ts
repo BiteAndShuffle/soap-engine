@@ -246,18 +246,23 @@ describe('T-4C2-4: makeInitialPrimaryNode(moduleData) は起点 HEAD の初期 p
 })
 
 describe('T-4C2-5: derived const alias は const 宣言であり再代入されない', () => {
-  test('activeModuleData / activeBrandName / activeDrugDisplayName / activeResolution / localSiteInput は const 宣言', () => {
+  test('activeModuleData / localSiteInput は const 宣言。activeBrandName / activeDrugDisplayName / activeResolution は Unit 4C-6 で削除済み（0 件）', () => {
     const lines = codeLines(src).map(norm)
+    // 残存 2 種（semantic derived value。Unit 4C-6 対象外）
     assert.ok(lines.some(l => l.startsWith('const activeModuleData = useMemo(')), 'activeModuleData が const 宣言でない')
-    assert.ok(lines.some(l => l === 'const activeBrandName = primaryNode.matchedBrandName'), 'activeBrandName が const 宣言でない')
-    assert.ok(lines.some(l => l === 'const activeDrugDisplayName = primaryNode.resolvedDrugName'), 'activeDrugDisplayName が const 宣言でない')
-    assert.ok(lines.some(l => l === 'const activeResolution = primaryNode.resolution'), 'activeResolution が const 宣言でない')
     assert.ok(lines.some(l => l === "const localSiteInput = primaryNode.localSiteInput ?? ''"), 'localSiteInput が const 宣言でない')
+    // 削除 3 種（pure direct alias。Unit 4C-6 で primaryNode.<field> 直参照へ移管済み）。
+    // 旧 literal 宣言の要求を「宣言 0 件」へ successor 化する（保証を弱めない）。
+    assert.ok(!lines.some(l => l.startsWith('const activeBrandName ')), 'activeBrandName の宣言が残っている（Unit 4C-6 で削除されたはず）')
+    assert.ok(!lines.some(l => l.startsWith('const activeDrugDisplayName ')), 'activeDrugDisplayName の宣言が残っている（Unit 4C-6 で削除されたはず）')
+    assert.ok(!lines.some(l => l.startsWith('const activeResolution ')), 'activeResolution の宣言が残っている（Unit 4C-6 で削除されたはず）')
   })
 
-  test('これらの識別子への再代入（= 単独の代入文）が存在しない', () => {
+  test('残存 alias（activeModuleData / localSiteInput）への再代入（= 単独の代入文）が存在しない', () => {
     const lines = codeLines(src).map(norm)
-    for (const name of ['activeModuleData', 'activeBrandName', 'activeDrugDisplayName', 'activeResolution', 'localSiteInput']) {
+    // 削除済み 3 種（activeBrandName / activeDrugDisplayName / activeResolution）は
+    // 識別子自体が 0 件であるため「再代入 0 件」は自明に含意される（前段の assertion が担保）。
+    for (const name of ['activeModuleData', 'localSiteInput']) {
       // 変数再代入（`name = value;` 形）のみを対象にする。JSX 属性（`name={value}`）は
       // `=` の直後が `{` になるため除外する。
       const reassignments = lines.filter(l => new RegExp(`^${name}\\s*=\\s*[^={]`).test(l))
@@ -761,16 +766,28 @@ describe('T-4C4-F1-3: 旧 authority 識別子のコード出現が 0 件', () =>
   })
 })
 
-describe('T-4C4-F1-4: primaryBaseFields は derived const alias。残存 ref は render 同期ブロックの 1 行でのみ代入される', () => {
-  test('primaryBaseFields が useState ではなく primaryNode.block.fields の derived const である', () => {
+describe('T-4C4-F1-4: primaryBaseFields alias は Unit 4C-6 で削除済み。consumer は primaryNode.block.fields を直参照する。残存 ref は render 同期ブロックの 1 行でのみ代入される', () => {
+  test('primaryBaseFields 識別子が 0 件（Unit 4C-6 で primaryNode.block.fields 直参照へ successor 化）', () => {
     const code = codeOnly(src)
     assert.ok(
-      /const primaryBaseFields\s*=\s*primaryNode\.block\.fields/.test(code),
-      'primaryBaseFields が primaryNode.block.fields の derived const alias として宣言されていない',
+      !/\bprimaryBaseFields\b/.test(code),
+      'primaryBaseFields alias がまだ存在する（Unit 4C-6 で削除されたはず）',
     )
     assert.ok(
       !/const \[primaryBaseFields, setPrimaryBaseFields\]/.test(code),
       'primaryBaseFields が useState として宣言されている（4C-4 で derived alias 化されたはず）',
+    )
+  })
+
+  test('primaryNode.block.fields の direct authority read が projection / finalFields に存在する', () => {
+    const code = codeOnly(src)
+    assert.ok(
+      /fields:\s*primaryNode\.block\.fields,/.test(code),
+      'projection の fields override が primaryNode.block.fields の direct read になっていない',
+    )
+    assert.ok(
+      /primaryNode\.block\.fields\.S/.test(code),
+      'finalFields の primaryS 算出が primaryNode.block.fields.S の direct read になっていない',
     )
   })
 

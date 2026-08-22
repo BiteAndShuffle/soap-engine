@@ -258,13 +258,15 @@ describe('7. multi-drug Node で drug subject が混線しない', () => {
 describe('8. primary ADDON の drugName 解決が scenario 本文側と同一契約を使う（source contract）', () => {
   // Unit 2B: primary ADDON 分岐が deriveRawFields へ一本化されたのに伴い、
   // 変数名が rapidDrugName → drugName へ変わった。source（契約）自体は不変。
+  // Unit 4C-6: activeBrandName alias は削除され、consumer は primaryNode.matchedBrandName
+  // （successor authority）を直接参照する。fallback の経路・意味は不変。
   test('handleAddonToggle の primary 分岐が resolveDrugName を経由する', () => {
     const startIdx = dashboardSrc.indexOf('const drugName = activeDrugDisplayNameRef.current')
     assert.notEqual(startIdx, -1, 'drugName（ADDON分岐）の定義箇所が見つからない')
     const block = dashboardSrc.slice(startIdx, startIdx + 300)
     assert.ok(
-      /resolveDrugName\(activeModuleData\.drug, activeBrandName\)/.test(block),
-      'primary ADDON の drugName 解決は resolveDrugName(activeModuleData.drug, activeBrandName) を' +
+      /resolveDrugName\(activeModuleData\.drug, primaryNode\.matchedBrandName\)/.test(block),
+      'primary ADDON の drugName 解決は resolveDrugName(activeModuleData.drug, primaryNode.matchedBrandName) を' +
       '経由すること（scenario 本文側 [869行目付近] と同一の経路）',
     )
   })
@@ -280,11 +282,11 @@ describe('8. primary ADDON の drugName 解決が scenario 本文側と同一契
   })
 
   test('scenario 本文側・Rapid 側・ADDON 側の 3 箇所すべてが resolveDrugName を経由する', () => {
-    const count = (dashboardSrc.match(/resolveDrugName\(activeModuleData\.drug, activeBrandName\)/g) ?? []).length
+    const count = (dashboardSrc.match(/resolveDrugName\(activeModuleData\.drug, primaryNode\.matchedBrandName\)/g) ?? []).length
     assert.ok(
       count >= 3,
       `primary の drugName 解決は scenario本文/Rapid/ADDON の3箇所とも` +
-      `resolveDrugName(activeModuleData.drug, activeBrandName) を使うこと（実際: ${count}箇所）`,
+      `resolveDrugName(activeModuleData.drug, primaryNode.matchedBrandName) を使うこと（実際: ${count}箇所）`,
     )
   })
 })
