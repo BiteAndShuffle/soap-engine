@@ -1445,37 +1445,48 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     if (nodeId !== null) {
       // ── node ブランチ（確認不要: editedSOAP は primary のみ対象）─
-      setSelectedAddonIds(prev => {
-        const next = new Set(prev)
-        next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
-        const newAddonIds = [...next]
-        const nodes = composeNodesRef.current
-        const node = nodes.find(n => n.id === nodeId)
-        if (node) {
-          const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
-          const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
-          if (sc) {
-            // Unit 3B: node が所有する Rapid を derive の入力として使う。
-            // ADDON トグルは scenario 遷移ではないため transition function は通さない
-            // （node.rapid をそのまま維持する）。
-            // node.resolvedDrugName を渡して {{drug_subject}} を再解決
-            const core = deriveNodeBlockCore(sc, mod, newAddonIds, node.rapid, node.resolvedDrugName ?? '')
-            const fields = personaEnabled
-              ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
-              : core.rawFields
-            const domain = resolveDomain(mod)
-            setComposeNodes(nodes.map(n =>
-              n.id !== nodeId ? n : {
-                ...n,
-                block: { ...n.block, ...core, fields, domain },
-                selectedAddonIds: newAddonIds,
-                baseLabel: sc.title,
-                baseDomain: domain,
-              },
-            ))
-          }
+      //
+      // Unit 4D-1: primary ブランチと同一の purity contract へ揃える。
+      //   ① 次の ADDON 選択は updater の外で確定する（updater 内で ref を読まない。A-9）
+      //   ② setSelectedAddonIds は値形式で呼ぶ（updater から別 setter を呼ばない。A-13）
+      //   ③ composeNodes は prev のみを入力に取る pure functional updater で更新する
+      //      （composeNodesRef.current から次の配列全体を確定しない）
+      //
+      // ③ の形は handleSelectScenario の node ブランチ（prev.find → prev.map）と同一であり、
+      // 本 Unit で新しいパターンを持ち込んではいない。
+      //
+      // derive の意味論は変更しない: 入力（scenario / mod / newAddonIds / node.rapid /
+      // node.resolvedDrugName / persona）も出力（block の組み立て方）も従来どおりである。
+      // deriveNodeBlockCore は純関数のため、StrictMode の updater 二重実行でも出力は冪等
+      // （同じ prev × 同じ newAddonIds → 常に同じ block）。
+      const next = new Set(selectedAddonIdsRef.current)      // updater の外で読む
+      next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
+      const newAddonIds = [...next]
+
+      setSelectedAddonIds(next)                              // UI buffer（値形式）
+      setComposeNodes(prev => {
+        const node = prev.find(n => n.id === nodeId)
+        if (!node) return prev                               // 対象なし → composeNodes を触らない
+        const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+        const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
+        if (!sc) return prev                                 // scenario 未確定 → 同上（現行挙動）
+        // Unit 3B: node が所有する Rapid を derive の入力として使う。
+        // ADDON トグルは scenario 遷移ではないため transition function は通さない
+        // （node.rapid をそのまま維持する）。
+        // node.resolvedDrugName を渡して {{drug_subject}} を再解決
+        const core = deriveNodeBlockCore(sc, mod, newAddonIds, node.rapid, node.resolvedDrugName ?? '')
+        const fields = personaEnabled
+          ? applyPersonaToFieldsWithGuard(core.rawFields, true, selectedPersona, core.guard)
+          : core.rawFields
+        const domain = resolveDomain(mod)
+        const updated: ComposeNode = {
+          ...node,
+          block: { ...node.block, ...core, fields, domain },
+          selectedAddonIds: newAddonIds,
+          baseLabel: sc.title,
+          baseDomain: domain,
         }
-        return next
+        return prev.map(n => n.id !== nodeId ? n : updated)  // 対象外 node は同一参照で通す
       })
     } else {
       // ── primary ブランチ（editedSOAP があれば確認する）────────
