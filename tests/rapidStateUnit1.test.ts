@@ -54,6 +54,10 @@ import {
   replaceSFirstSentence,
   restoreScenarioFirstSentence,
 } from '../lib/rapidSentence'
+import { deriveRawFields } from '../lib/deriveNodeFields'
+import { rebuildPrimary, PRIMARY_NODE_ID } from '../lib/primaryNode'
+import { applyPersonaToFieldsWithGuard } from '../lib/applyPersona'
+import type { ComposeNode } from '../lib/types'
 
 const src = readFileSync(
   new URL('../app/components/DashboardClient.tsx', import.meta.url),
@@ -91,15 +95,51 @@ function applyRapid(s: string, mod: ModuleData, rapid: NonNullable<RapidState>):
   )
 }
 
+/**
+ * rebuildPrimary の `node` 引数用ダミー（Unit 4C-4）。
+ * tests/primaryNodeRebuildUnit4C.test.ts の makeExistingNode と同じパターン。
+ * lifecycle field（id / block.id / localSiteInput 等）は rebuildPrimary の
+ * 出力に影響しないため、値検証（S 先頭文の byte 一致）にとって非本質的な値でよい。
+ */
+function makeExistingNode(): ComposeNode {
+  return {
+    id: PRIMARY_NODE_ID,
+    moduleId: 'irrelevant',
+    scenarioId: 'irrelevant',
+    block: {
+      id: 'EXISTING_BLOCK_ID',
+      templateLabel: '',
+      fields: { S: '', O: '', A: '', P: '' },
+      closingText: undefined,
+    },
+    drugLabel: 'old-label',
+    selectedAddonIds: [],
+    baseLabel: '',
+    baseDomain: 'old-domain',
+    matchedBrandName: undefined,
+    resolvedDrugName: undefined,
+    resolution: undefined,
+    localSiteInput: '',
+    rapid: null,
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════
 // 1. RapidState null 初期状態（RAPID-V2-03）
 // ═══════════════════════════════════════════════════════════════
 
 describe('1. RapidState の初期状態は null である（RAPID-V2-03）', () => {
   test('DashboardClient の rapidState 初期値が null である', () => {
+    // Unit 4C-3: rapidState の実体は useState<RapidState>(null) から
+    // primaryNode.rapid（makeInitialPrimaryNode の `rapid: null` で初期化）へ移った。
+    // 「rapidState は初期状態で null」という契約自体は不変。
     assert.ok(
-      /useState<RapidState>\(null\)/.test(src),
-      'rapidState は useState<RapidState>(null) で初期化されなければならない',
+      /rapid: null,/.test(src),
+      'primaryNode の初期値（makeInitialPrimaryNode）で rapid: null が設定されていなければならない',
+    )
+    assert.ok(
+      !/useState<RapidState>\(null\)/.test(src),
+      'rapidState はもはや専用の useState を持たない（primaryNode.rapid の derived alias である）',
     )
   })
 
@@ -279,10 +319,11 @@ describe('5b. capable → capable では新 scenario の S へ再適用される
   })
 
   test('再適用の文生成は toggle 時と同一関数を使う（文の乖離を防ぐ）', () => {
-    // Unit 2B: useEffect（再適用）と handleSToggle（ON/OFF）はいずれも
-    // deriveRawFields（lib/deriveNodeFields.ts）を呼ぶ。deriveRawFields 内部で
-    // buildResolvedSFirstSentence を一度だけ呼ぶため、Unit 1 時点の「同じ関数を
-    // 直接呼ぶ」制約よりも強い形（唯一の呼び出し経路）で乖離が防がれている。
+    // Unit 4C-4: useEffect（再適用）と handleSToggle（ON/OFF）はいずれも
+    // rebuildPrimary（lib/primaryNode.ts）を呼ぶ。rebuildPrimary は内部で
+    // deriveNodeBlockCore → buildResolvedSFirstSentence を一度だけ呼ぶ（Unit 2B の
+    // 「唯一の呼び出し経路」という保証は、経路が deriveRawFields から rebuildPrimary へ
+    // 変わっただけで維持されている）。
     const deriveSrc = readFileSync(
       new URL('../lib/deriveNodeFields.ts', import.meta.url), 'utf-8',
     )
@@ -296,17 +337,47 @@ describe('5b. capable → capable では新 scenario の S へ再適用される
       src.indexOf('// ══', src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化')),
     )
     assert.ok(
-      /deriveRawFields\(/.test(effectBlock),
-      'scenario 再構築 effect は deriveRawFields で Rapid を再適用すること',
+      /rebuildPrimary\(/.test(effectBlock),
+      'scenario 再構築 effect は rebuildPrimary で Rapid を再適用すること',
     )
     const toggleBlock = src.slice(
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('handleSubcategorySelect'),
     )
     assert.ok(
-      /deriveRawFields\(/.test(toggleBlock),
-      'handleSToggle も deriveRawFields で文を生成すること',
+      /rebuildPrimary\(/.test(toggleBlock),
+      'handleSToggle も rebuildPrimary で文を生成すること',
     )
+
+    // 値レベル: rebuildPrimary の出力（S 先頭文含む raw）が deriveRawFields と
+    // byte 一致することを capable→capable 遷移で確認する（production helper を
+    // 直接比較。mirror 実装は作らない。RAPID-V2-20）。
+    let checked = 0
+    for (const mod of ALL_MODULES) {
+      const caps = (mod.scenarios ?? []).filter(isScenarioSReplacementCapable)
+      if (caps.length < 2) continue
+      const [from, to] = caps
+      const rapid: RapidState = { previousEvent: 'dose_increased', currentOutcome: 'unchanged' }
+      const carried = nextRapidStateOnScenarioChange(
+        rapid,
+        isScenarioSReplacementCapable(from),
+        isScenarioSReplacementCapable(to),
+      )
+      if (carried === null) continue
+
+      const rebuilt = rebuildPrimary({
+        node: makeExistingNode(), mod, scenario: to, addonIds: [], rapid: carried,
+        drugName: DRUG, drugLabel: 'ラベル', baseDomain: 'ドメイン',
+        personaEnabled: false, persona: 'plain',
+      })
+      const direct = deriveRawFields(to, mod, [], carried, DRUG)
+      assert.equal(
+        rebuilt.block.rawFields?.S, direct.S,
+        `${mod.moduleId}: rebuildPrimary の S 先頭文が deriveRawFields と乖離している`,
+      )
+      checked++
+    }
+    assert.ok(checked >= 30, `capable 2件以上のモジュールで検証すること（実際: ${checked}）`)
   })
 })
 
@@ -368,26 +439,51 @@ describe('9. Rapid OFF は persona 設定を変更しない（RAPID-V2-09）', (
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('handleSubcategorySelect'),
     )
-    // Unit 2B: toggle-off は deriveRawFields(sc, mod, addonIds, null, drugName) の
-    // 単一呼び出しで raw を再導出する（restoreScenarioFirstSentence による手動
-    // S mutation は撤去済み）。raw を戻さないと persona トグルで Rapid 文が復活してしまう。
+    // Unit 4C-4: toggle-off は rebuildPrimary(rapid: null) の単一呼び出しで
+    // block.rawFields / block.fields を再導出する（deriveRawFields 直呼びから
+    // rebuildPrimary 経由へ一本化された。restoreScenarioFirstSentence による手動
+    // S mutation を使わない契約自体は不変）。raw を戻さないと persona トグルで
+    // Rapid 文が復活してしまう。
     const offBranch = toggleBlock.slice(
       toggleBlock.indexOf('if (isSameRapid('),
-      toggleBlock.indexOf('setRapidState({ previousEvent: relation, currentOutcome: condition })'),
+      toggleBlock.indexOf('const nextRapid: RapidState = { previousEvent: relation, currentOutcome: condition }'),
     )
     assert.ok(
-      /deriveRawFields\(sc, activeModuleData, currentAddonIds, null, drugName\)/.test(offBranch),
-      'toggle-off は deriveRawFields(rapid=null) で raw を再導出しなければならない',
+      /rebuildPrimary\(\{ node: p, mod, scenario: sc, addonIds: currentAddonIds,\s*rapid: null,/.test(offBranch),
+      'toggle-off は rebuildPrimary(rapid: null) で raw を再導出しなければならない',
     )
-    assert.ok(
-      /rawPrimaryFieldsRef\.current = rawFields/.test(offBranch),
-      'toggle-off は rawPrimaryFieldsRef を復元しなければならない' +
-      '（raw は persona 再計算の基点であり、戻さないと persona トグルで Rapid 文が復活する）',
+
+    // 値レベル: rebuildPrimary(rapid: null) の block.rawFields が
+    // deriveRawFields(sc, mod, addonIds, null, drugName) と byte 一致すること
+    // （raw が persona 再計算の基点として正しく復元されていることの証明。production
+    // helper を直接比較。mirror 実装は作らない。RAPID-V2-20）。
+    let checked = 0
+    for (const { mod, sc } of capableScenarios().slice(0, 50)) {
+      const addonIds: string[] = []
+      const rebuilt = rebuildPrimary({
+        node: makeExistingNode(), mod, scenario: sc, addonIds, rapid: null,
+        drugName: DRUG, drugLabel: 'ラベル', baseDomain: 'ドメイン',
+        personaEnabled: false, persona: 'plain',
+      })
+      const direct = deriveRawFields(sc, mod, addonIds, null, DRUG)
+      assert.deepEqual(rebuilt.block.rawFields, direct, `${mod.moduleId}/${sc.id}: raw が deriveRawFields と乖離`)
+      checked++
+    }
+    assert.ok(checked > 0, '検証対象の capable scenario が 0 件')
+
+    // 表示（block.fields）は persona 再適用で導出される: personaEnabled かつ guard がある
+    // 場合、applyPersonaToFieldsWithGuard(rawFields, true, persona, guard) と一致する。
+    const { mod, sc } = capableScenarios()[0]
+    const withPersona = rebuildPrimary({
+      node: makeExistingNode(), mod, scenario: sc, addonIds: [], rapid: null,
+      drugName: DRUG, drugLabel: 'ラベル', baseDomain: 'ドメイン',
+      personaEnabled: true, persona: 'gentle',
+    })
+    assert.ok(withPersona.block.guard, 'guard が設定されていない（前提が崩れている）')
+    const expectedFields = applyPersonaToFieldsWithGuard(
+      withPersona.block.rawFields!, true, 'gentle', withPersona.block.guard!,
     )
-    assert.ok(
-      /derivePrimaryDisplayFields\(rawFields\)/.test(offBranch),
-      'toggle-off の表示は復元した raw から persona 再適用で導出すること',
-    )
+    assert.deepEqual(withPersona.block.fields, expectedFields, 'toggle-off 後の表示が persona 再適用と一致しない')
   })
 
   test('toggle-off は restoreScenarioFirstSentence を使わない（deriveRawFields に一本化）', () => {
@@ -555,12 +651,27 @@ describe('14. scenario 遷移判定は transition function へ一本化されて
     )
   })
 
-  test('コンテキスト破棄経路は setRapidState(null) を明示する', () => {
-    const count = src.split('setRapidState(null)').length - 1
-    assert.ok(
-      count >= 5,
-      'シナリオ解除 / 薬剤切替 / グループ切替 / Express 確定 / NLP 遷移は ' +
-      `コンテキスト破棄として明示的に null にすること（実際: ${count} 箇所）`,
-    )
+  test('コンテキスト破棄経路は rapid: null を明示する（Unit 4C-3: setPrimaryNode 経由）', () => {
+    // Unit 4C-3: setRapidState(null) は setPrimaryNode(...) の rapid: null field へ
+    // 移った。シナリオ解除 / 薬剤切替 / グループ切替 / Express 確定 / NLP 遷移の
+    // 各コンテキスト破棄経路が、引き続き rapid を明示的に null へリセットしている
+    // ことを個別に固定する（handleComposeDrugSelect / handleExpressAdd の compose
+    // 分岐が持つ「新規 node 初期値としての rapid: null」は対象外）。
+    const regions: Array<[string, string, string]> = [
+      ['グループ切替', 'const handleSelectGroup = useCallback', 'const buildUpdatedNode = useCallback'],
+      ['シナリオ解除（再タップ）', 'const handleSelectScenario = useCallback', 'const handleSelectDrugSuggestion = useCallback'],
+      ['薬剤切替', 'const handleSelectDrugSuggestion = useCallback', 'const handleComposeDrugSelect = useCallback'],
+      ['S先頭文トグルオフ', 'const handleSToggle = useCallback', 'const handleSubcategorySelect = useCallback'],
+      ['Express 確定', 'if (isPrimaryEmpty) {', '} else {'],
+      ['NLP 遷移', 'const handleSwitchToNlp = useCallback', 'const handleSwitchToManual = useCallback'],
+    ]
+    for (const [label, startMarker, endMarker] of regions) {
+      const start = src.indexOf(startMarker)
+      assert.ok(start >= 0, `${label}: anchor が見つからない (${startMarker})`)
+      const end = src.indexOf(endMarker, start)
+      assert.ok(end > start, `${label}: 終端 anchor が見つからない (${endMarker})`)
+      const region = src.slice(start, end)
+      assert.ok(/rapid:\s*null/.test(region), `${label}: rapid: null が見つからない`)
+    }
   })
 })

@@ -90,7 +90,13 @@ function assertFieldsEqual(a: SoapFields, b: SoapFields, msg: string): void {
 // ═══════════════════════════════════════════════════════════════
 
 describe('1. deriveRawFields が primary raw の単一生成経路である', () => {
-  test('scenario rebuild effect / handleSToggle / handleAddonToggle の primary 分岐がすべて deriveRawFields を呼ぶ', () => {
+  // Unit 4C-4: primary の write site が `rebuildPrimary`（lib/primaryNode.ts）へ一本化された。
+  // rebuildPrimary は内部で deriveNodeBlockCore を呼び、その rawFields は
+  // deriveRawFields(scenario, mod, addonIds, rapid, drugName) と常に同値である
+  // （lib/deriveNodeFields.ts の NodeBlockCore コメント参照。T-4C4-F1-1 が値レベルで固定する）。
+  // 「primary raw の生成経路が単一である」という契約自体は維持されるため、
+  // 検証対象を deriveRawFields の直接呼び出しから rebuildPrimary の直接呼び出しへ差し替える。
+  test('scenario rebuild effect / handleSToggle / handleAddonToggle の primary 分岐がすべて rebuildPrimary（deriveRawFields 相当の単一経路）を呼ぶ', () => {
     const effectBlock = src.slice(
       src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化'),
       src.indexOf('// ══', src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化')),
@@ -103,13 +109,18 @@ describe('1. deriveRawFields が primary raw の単一生成経路である', ()
       src.indexOf('const handleAddonToggle = useCallback'),
       src.indexOf('const handleSToggle = useCallback'),
     )
-    assert.ok(/deriveRawFields\(/.test(effectBlock), 'scenario rebuild effect が deriveRawFields を呼んでいない')
-    assert.ok(/deriveRawFields\(/.test(toggleBlock), 'handleSToggle が deriveRawFields を呼んでいない')
-    assert.ok(/deriveRawFields\(/.test(addonBlock), 'handleAddonToggle が deriveRawFields を呼んでいない')
+    assert.ok(/rebuildPrimary\(/.test(effectBlock), 'scenario rebuild effect が rebuildPrimary を呼んでいない')
+    assert.ok(/rebuildPrimary\(/.test(toggleBlock), 'handleSToggle が rebuildPrimary を呼んでいない')
+    assert.ok(/rebuildPrimary\(/.test(addonBlock), 'handleAddonToggle が rebuildPrimary を呼んでいない')
+    // primary で deriveRawFields を直接呼ぶ箇所は 0（rebuildPrimary 経由に一本化された）
+    assert.equal(
+      (codeOnly(src).match(/deriveRawFields\(/g) ?? []).length, 0,
+      'deriveRawFields の直接呼び出しは残っていないはず（rebuildPrimary 経由に一本化）',
+    )
 
-    // primary への deriveRawFields 呼び出しは 4 箇所（effect / ADDON / toggle-off / toggle-on）
-    const count = (codeOnly(src).match(/deriveRawFields\(/g) ?? []).length
-    assert.equal(count, 4, `deriveRawFields の呼び出し数が想定と異なる（実際: ${count}）`)
+    // primary への rebuildPrimary 呼び出しは 4 箇所（effect / ADDON / toggle-off / toggle-on）
+    const count = (codeOnly(src).match(/rebuildPrimary\(/g) ?? []).length
+    assert.equal(count, 4, `rebuildPrimary の呼び出し数が想定と異なる（実際: ${count}）`)
   })
 
   test('deriveRawFields の signature は Unit 2A から変更されていない', () => {
@@ -167,14 +178,17 @@ describe('2. Rapid ON/OFF で手動 S mutation を使用しない', () => {
       src.indexOf('handleSubcategorySelect'),
     )
     // NLP dead path（rapidBase !== null 分岐）は Unit 2B の対象外として明示的に残す
+    // Unit 4C-4: toggle-on 分岐は `const nextRapid: RapidState = { ... }; setPrimaryNode(p => { ... })`
+    // という構造になり、rapidBase / sc の分岐は updater 内の if 文の早期 return（else-if ではない）
+    // で表現されるようになった。anchor をそれに追随させる（意味は不変: Rapid ON 時の rapid 更新箇所）。
     const onBranch = toggleBlock.slice(
-      toggleBlock.indexOf('setRapidState({ previousEvent: relation, currentOutcome: condition })'),
+      toggleBlock.indexOf('const nextRapid: RapidState = { previousEvent: relation, currentOutcome: condition }'),
     )
     const nlpBranch = onBranch.slice(
       onBranch.indexOf('if (rapidBase !== null) {'),
-      onBranch.indexOf('} else if (sc) {'),
+      onBranch.indexOf('if (sc) return rebuildPrimary('),
     )
-    const normalBranch = onBranch.slice(onBranch.indexOf('} else if (sc) {'))
+    const normalBranch = onBranch.slice(onBranch.indexOf('if (sc) return rebuildPrimary('))
     assert.ok(
       /replaceSFirstSentence\(/.test(nlpBranch),
       'NLP dead path（rapidBaseFieldsRef 分岐）は変更しない契約のため replaceSFirstSentence を維持すること',
@@ -184,8 +198,8 @@ describe('2. Rapid ON/OFF で手動 S mutation を使用しない', () => {
       '通常経路（rapidBase === null）に手動 replaceSFirstSentence が残っている',
     )
     assert.ok(
-      /deriveRawFields\(/.test(normalBranch),
-      '通常経路は deriveRawFields で raw を再導出すること',
+      /rebuildPrimary\(/.test(normalBranch),
+      '通常経路は rebuildPrimary（deriveRawFields 相当）で raw を再導出すること',
     )
   })
 
@@ -323,13 +337,18 @@ describe('4. operation-order independence（同じ最終 state → byte-identica
 // 5. Unit 0 の effect dependency [selectedScenarioId] を維持
 // ═══════════════════════════════════════════════════════════════
 
-describe('5. Unit 0 invariant: effect dependency は [selectedScenarioId] のまま', () => {
-  test('scenario rebuild effect の dependency 配列が変更されていない', () => {
+describe('5. Unit 0 invariant: effect dependency は primaryNode.scenarioId 単独のまま', () => {
+  // Unit 4C-3: deps が `selectedScenarioId`（旧 useState）から `primaryNode.scenarioId`
+  // （primaryNode state の member access）へ変わった。Unit 0 invariant の本質
+  // 「シナリオ確定 ID のみで発火し、editingNodeId や primaryNode 全体（オブジェクト
+  // identity）では発火しない」という契約は変わっていない
+  // （`[primaryNode]` は絶対禁止 — A-14 / T-4C3-1 が別途固定する）。
+  test('scenario rebuild effect の dependency 配列が primaryNode.scenarioId 単独である', () => {
     const startIdx = src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化')
     const depsMatch = src.slice(startIdx).match(/\n\s*\}, \[([^\]]*)\]\)/)
     assert.ok(depsMatch, 'dependency 配列が見つからない')
     const deps = depsMatch![1].split(',').map(s => s.trim()).filter(Boolean)
-    assert.deepEqual(deps, ['selectedScenarioId'], `dependency が変化している（実際: [${deps.join(', ')}]）`)
+    assert.deepEqual(deps, ['primaryNode.scenarioId'], `dependency が変化している（実際: [${deps.join(', ')}]）`)
   })
 })
 

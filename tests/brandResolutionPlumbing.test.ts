@@ -65,32 +65,39 @@ const EMPTY_FIELDS: SoapFields = { S: '', O: '', A: '', P: '' }
 
 // ─────────────────────────────────────────────────────────────
 
-describe('T-U4a-1 primary: item.resolution → activeResolution の保持経路', () => {
-  test('handleSelectDrugSuggestion 内に setActiveResolution(item.resolution) が存在する', () => {
+describe('T-U4a-1 primary: item.resolution → primaryNode.resolution の保持経路', () => {
+  // Unit 4C-2: activeResolution state / activeResolutionRef は primaryNode state へ
+  // 移管された。identifiers を primaryNode / setPrimaryNode / primaryNodeRef へ移すが、
+  // 「item.resolution が保持される」という契約自体は変えない。
+  test('handleSelectDrugSuggestion 内で setPrimaryNode が item.resolution を primaryNode.resolution へ保持する', () => {
     const start = src.indexOf('const handleSelectDrugSuggestion')
     assert.ok(start >= 0, 'handleSelectDrugSuggestion が見つからない')
     const end = src.indexOf('const handleComposeDrugSelect', start)
     assert.ok(end > start, 'handleComposeDrugSelect が見つからない')
     const region = src.slice(start, end)
     assert.ok(
-      region.includes('setActiveResolution(item.resolution)'),
-      'handleSelectDrugSuggestion が item.resolution を保持していない',
+      region.includes('setPrimaryNode('),
+      'handleSelectDrugSuggestion が setPrimaryNode を呼んでいない',
+    )
+    assert.ok(
+      /resolution:\s*item\.resolution/.test(region),
+      'handleSelectDrugSuggestion が item.resolution を primaryNode.resolution へ保持していない',
     )
   })
 
-  test('activeResolution state と activeResolutionRef が宣言され ref 同期されている', () => {
+  test('primaryNode state と primaryNodeRef が宣言され ref 同期されている', () => {
     const lines = codeLines(src).map(norm)
     assert.ok(
-      lines.some(l => l.includes('const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)')),
-      'activeResolution state が宣言されていない',
+      lines.some(l => l.includes('const [primaryNode, setPrimaryNode] = useState<ComposeNode>(() => makeInitialPrimaryNode(moduleData))')),
+      'primaryNode state が宣言されていない',
     )
     assert.ok(
-      lines.some(l => l.includes('const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)')),
-      'activeResolutionRef が宣言されていない',
+      lines.some(l => l.includes('const primaryNodeRef = useRef<ComposeNode>(makeInitialPrimaryNode(moduleData))')),
+      'primaryNodeRef が宣言されていない',
     )
     assert.ok(
-      lines.some(l => l === 'activeResolutionRef.current = activeResolution'),
-      'activeResolutionRef が既存の ref 同期ブロックで同期されていない',
+      lines.some(l => l === 'primaryNodeRef.current = primaryNode'),
+      'primaryNodeRef が既存の ref 同期ブロックで同期されていない',
     )
   })
 })
@@ -171,22 +178,30 @@ describe('T-U4a-4 node 再構築（spread）が resolution をそのまま維持
 
   test('production の再構築箇所が resolution を明示的に上書きしていない', () => {
     // buildUpdatedNode の戻り値と handleAddonToggle の node 更新はいずれも spread 起点であり、
-    // resolution を代入するのは「意図した preservation site」だけである。
+    // resolution を代入するのは「意図した preservation site / lifecycle site」だけである。
     //
-    // 許可される代入は 2 箇所のみ:
-    //   1. handleComposeDrugSelect の node リテラル（item.resolution を node へ保持）
-    //   2. primaryNodeProjection（Unit 4B。既存 activeResolution を read-only な
-    //      Node-shaped projection へ載せ替えるだけ）
+    // Unit 4C-2: primaryNode（旧 activeResolution）の write authority が
+    // setActiveResolution(...) から setPrimaryNode(...) の object field へ移った。
+    // これに伴い「resolution: の代入箇所」自体も 2 箇所から 4 箇所（重複込み）へ増える
+    // ——旧実装では関数呼び出し（setActiveResolution(...)）だった箇所が、
+    // 新実装ではすべて object field リテラル（resolution: ...）になったため。
+    // 契約（許可される代入元）は変わっていない:
+    //   1. makeInitialPrimaryNode の初期値（旧: useState の初期値。resolution: undefined）
+    //   2. handleSelectDrugSuggestion の setPrimaryNode（旧: setActiveResolution(item.resolution)）
+    //   3. handleComposeDrugSelect の node リテラル（item.resolution を node へ保持。不変）
+    //   4. handleExpressAdd の setPrimaryNode（旧: setActiveResolution(undefined)。lifecycle reset）
     //
-    // いずれも **既存の resolution をそのまま保持** するものであり、
+    // いずれも **既存の resolution をそのまま保持 / 初期化 / 明示リセット**するものであり、
     // 新しい source の導入・再生成・fallback の追加ではない。
-    // ここに 3 つ目が現れたら、それは新しい resolution consumer / source の疑いがある。
+    // ここに 5 つ目が現れたら、それは新しい resolution consumer / source の疑いがある。
     const assignments = codeLines(src).map(norm).filter(l => /\bresolution:\s/.test(l))
     assert.deepEqual(
       assignments,
       [
-        'resolution: activeResolution,',   // Unit 4B: primaryNodeProjection への保持
-        'resolution: item.resolution,',    // U-4a: compose node への保持
+        'resolution: undefined,',          // Unit 4C-2: makeInitialPrimaryNode の初期値
+        'resolution: item.resolution,',     // Unit 4C-2: handleSelectDrugSuggestion の setPrimaryNode
+        'resolution: item.resolution,',     // U-4a: compose node への保持（不変）
+        'resolution: undefined,',           // Unit 4C-2: handleExpressAdd の setPrimaryNode（lifecycle reset）
       ],
       `resolution を代入している箇所が想定外に存在する: ${assignments.join(' / ')}`,
     )
@@ -204,35 +219,48 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
    * 更新後の意味は「resolution の使用が **保持（U-4a）と gate（U-5）に限定**されており、
    * subject 算出（U-4b）へは波及していない」ことの固定である。
    *
-   * 判定は **case-insensitive**（`/resolution/i`）で行う。`setActiveResolution(undefined)` の
-   * ように小文字の `resolution` を含まない行を取りこぼさないためである。
+   * 判定は **case-insensitive**（`/resolution/i`）で行う。`resolution: undefined` の
+   * ように小文字の `resolution` を含まない行を取りこぼさないためである
+   * （旧 `setActiveResolution(undefined)` も同じ理由で case-insensitive にしていた）。
+   *
+   * **Unit 4C-2 での意図的更新**: activeResolution の write authority が
+   * `useState`/`useRef`（専用 state + ref）から `primaryNode` state の 1 field へ
+   * 移った。これに伴い:
+   *   - state/ref 宣言（旧 #3,#4）・ref 同期行（旧 #10）は消滅
+   *     （primaryNodeRef 経由の同期は T-U4a-1 が別途固定する）
+   *   - projection の明示 field（旧 `resolution: activeResolution,` #5）と
+   *     dependency 行（旧 #6）は `...primaryNode` spread に吸収されて消滅
+   *   - 代わりに `const activeResolution = primaryNode.resolution`（derived alias）
+   *     と、primaryNode 初期値の `resolution: undefined,` が新規出現
+   *   - primary の write（旧 `setActiveResolution(item.resolution)` /
+   *     `setActiveResolution(undefined)`）は `setPrimaryNode(...)` の
+   *     object field（`resolution: item.resolution,` / `resolution: undefined,`）へ
+   *     形を変える（保持 / lifecycle reset という契約自体は不変）
+   * 「resolution の使用が保持と gate に限定されている」という契約は変えていない。
    */
   const ALLOWED = [
     // ── 型 import ──
     "import type { BrandResolution } from '../../lib/brandResolution'",
     // ── U-4b: subject resolver の import ──
     "import { resolveDrugSubject, resolveDrugName, resolveSubjectFromResolution } from '../../lib/drugSubject'",
-    // ── U-4a: 保持 ──
-    'const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)',
-    'const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)',
-    // ── Unit 4B: primaryNode projection への保持（read-only）──
-    //   既存 activeResolution を Node-shaped read interface へ載せ替えるだけであり、
-    //   新しい resolution source / fallback を作っていない。
-    //   （node 側の 'resolution: item.resolution,' と同じ preservation パターン）
-    'resolution: activeResolution,',
-    //   projection の useMemo dependency（保持元を追跡するため）
-    'primaryAddonIds, activeBrandName, activeDrugDisplayName, activeResolution,',
+    // ── Unit 4C-2: primaryNode 初期値（旧: useState の初期値） ──
+    'resolution: undefined,',
+    // ── Unit 4C-2: derived const alias（旧: activeResolution state 宣言） ──
+    'const activeResolution = primaryNode.resolution',
     // ── U-5: activeContext の resolution 導出と gate 判定 ──
     //   Unit 4B: primary 分岐を projection 経由へ統一（読み替えのみ。導出規則は不変）
+    //   Unit 4C-5 での意図的更新: activeContextResolution はすでに primaryNode と同値の
+    //   slice（resolution）しか読んでおらず、primaryNodeProjection 経由は read
+    //   responsibility の最小化対象だった（値 parity は T-4C5-P1 が固定）。
+    //   primaryNodeProjection → primaryNode への置換（pure alias swap。導出規則は不変）。
     'const activeContextResolution = useMemo<BrandResolution | undefined>(',
-    '() => (activeNode ?? primaryNodeProjection).resolution,',
+    '() => (activeNode ?? primaryNode).resolution,',
     'const subjectUnresolved = isSubjectUnresolvedFor(activeContextResolution)',
-    // ── U-4a: ref 同期 ──
-    'activeResolutionRef.current = activeResolution',
     // ── U-5: handlingTags 導出（lib/brandTags.ts へ委譲） ──
     'return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)',
     //   Unit 4B: legacyBrandKey も projection 経由になったため dependency が追従
-    '}, [targetModule, activeNode, primaryNodeProjection, activeContextResolution])',
+    //   Unit 4C-5: dependency も primaryNode 直参照へ（値 parity は T-4C5-P1 が固定）
+    '}, [targetModule, activeNode, primaryNode, activeContextResolution])',
     // ── U-5: SOAP 生成 gate（scenario 提示の遮断） ──
     'if (subjectUnresolved) return []',
     '}, [allGroups, selectedGroup, addonBrandHandlingTags, subjectUnresolved])',
@@ -243,12 +271,14 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     'for (const tag of drugResolution.brandToTags[tagBrandKey] ?? []) {',
     // ── U-4b: subject を BrandResolution から解決（primary / compose の write site） ──
     'const subject = resolveSubjectFromResolution(item.resolution)',
-    // ── U-4a: 保持（primary / node） ──
-    'setActiveResolution(item.resolution)',
-    "const nodeDrugName = resolveSubjectFromResolution(item.resolution) ?? ''",
+    // ── Unit 4C-2: 保持（primary 検索経路。旧 setActiveResolution(item.resolution)） ──
     'resolution: item.resolution,',
-    // ── U-5: lifecycle reset（Express primary 遷移で stale resolution を破棄） ──
-    'setActiveResolution(undefined)',
+    "const nodeDrugName = resolveSubjectFromResolution(item.resolution) ?? ''",
+    // ── U-4a: 保持（node） ──
+    'resolution: item.resolution,',
+    // ── Unit 4C-2: lifecycle reset（Express primary 遷移で stale resolution を破棄。
+    //    旧 setActiveResolution(undefined)） ──
+    'resolution: undefined,',
     // ── U-5: gate の描画反映 ──
     'availableGroups={drugSelected && !subjectUnresolved ? availableGroups : new Set()}',
     '{drugSelected && subjectUnresolved ? (',
@@ -320,15 +350,32 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
   })
 })
 
-describe('T-U4a-6 Express 経路が resolution に触れていない', () => {
-  test('handleExpressAdd の本文に resolution が出現しない', () => {
+describe('T-U4a-6 Express 経路が resolution に触れていない（lifecycle reset を除く）', () => {
+  // Unit 4C-2 での意図的更新:
+  //   旧実装は Express primary 分岐の resolution リセットを専用関数呼び出し
+  //   `setActiveResolution(undefined)` で行っていた。この呼び出しは camelCase の
+  //   "Active" が大文字始まりのため、小文字限定の /\bresolution\b/ にも
+  //   /activeResolution/（小文字 a 始まり）にもマッチせず、本テストの検出網を
+  //   すり抜けていた（=「Express は resolution に触れていない」という assertion は
+  //   実際には lifecycle reset を見落としていた）。
+  //   Unit 4C-2 でこのリセットが setPrimaryNode の object field
+  //   `resolution: undefined,`（小文字 "resolution:"）へ形を変えたことで、
+  //   本来あった lifecycle reset が正しく可視化されるようになった。
+  //   T-U5-10（tests/brandResolutionGate.test.ts）がこの reset の存在自体を
+  //   別途固定しているため、本テストは「reset 以外の resolution 使用が無い」
+  //   （denotation 構築や resolution 読み出しが無い）という契約へ更新する。
+  test('handleExpressAdd の本文で resolution に触れるのは lifecycle reset（resolution: undefined）のみ', () => {
     const start = src.indexOf('const handleExpressAdd')
     assert.ok(start >= 0, 'handleExpressAdd が見つからない')
     const end = src.indexOf('const handleSwitchToNlp', start)
     assert.ok(end > start, 'handleSwitchToNlp が見つからない')
     const region = codeLines(src.slice(start, end)).map(norm)
     const hits = region.filter(l => /\bresolution\b/.test(l) || /activeResolution/.test(l))
-    assert.deepEqual(hits, [], `Express 経路が resolution に触れている: ${hits.join(' / ')}`)
+    assert.deepEqual(
+      hits,
+      ['resolution: undefined,'],
+      `Express 経路が resolution に想定外の形で触れている: ${hits.join(' / ')}`,
+    )
   })
 
   test('expressCandidates の構築にも resolution が出現しない', () => {

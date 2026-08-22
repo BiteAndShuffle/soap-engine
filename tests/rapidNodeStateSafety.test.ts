@@ -57,6 +57,18 @@ function extractPrimaryRebuildEffect(): string {
   return src.slice(startIdx, startIdx + depsMatch!.index! + depsMatch![0].length)
 }
 
+/**
+ * コメントを除いた実装本体だけを取り出す。
+ * 「識別子が実装コードに存在しない」ことを検証する assertion が、
+ * 説明コメント中の言及（旧識別子への言及等）を誤検出しないようにする。
+ * tests/deriveNodeFieldsUnit2B.test.ts と同じ実装。
+ */
+function codeOnly(s: string): string {
+  return s
+    .replace(/\/\*[\s\S]*?\*\//g, '')   // ブロックコメント
+    .replace(/^[ \t]*\/\/.*$/gm, '')    // 行コメント
+}
+
 /** 切り出した effect から dependency 配列の中身（生文字列）を取り出す */
 function extractDeps(effectBlock: string): string {
   const m = effectBlock.match(/\}, \[([^\]]*)\]\)\s*$/)
@@ -65,15 +77,18 @@ function extractDeps(effectBlock: string): string {
 }
 
 describe('Unit 0 / RAPID-V2-06: editingNodeId は 1剤目再構築のトリガにならない', () => {
-  test('1剤目再構築 useEffect の dependency は selectedScenarioId のみである', () => {
+  test('1剤目再構築 useEffect の dependency は primaryNode.scenarioId のみである', () => {
+    // Unit 4C-3: deps が selectedScenarioId（旧 useState）から primaryNode.scenarioId
+    // （primaryNode state の member access）へ移った。「単一の scenario ID 値でのみ
+    // 発火し、editingNodeId や primaryNode 全体では発火しない」という契約は不変。
     const deps = extractDeps(extractPrimaryRebuildEffect())
       .split(',')
       .map(s => s.trim())
       .filter(Boolean)
 
     assert.deepEqual(
-      deps, ['selectedScenarioId'],
-      '1剤目再構築 useEffect の dependency は [selectedScenarioId] でなければならない。' +
+      deps, ['primaryNode.scenarioId'],
+      '1剤目再構築 useEffect の dependency は [primaryNode.scenarioId] でなければならない。' +
       `実際: [${deps.join(', ')}]`,
     )
   })
@@ -103,22 +118,45 @@ describe('Unit 0 / RAPID-V2-06: editingNodeId は 1剤目再構築のトリガ�
     const effect = extractPrimaryRebuildEffect()
 
     // scenario 変更時の再構築責務（Unit 0 では変更しない）が残っていること。
-    // Unit 2B で buildNodeFields 直呼び + 手動 Rapid 再適用が
-    // deriveRawFields(primaryScenario, activeModuleData, [], carriedRapid, primaryDrugName)
-    // の単一呼び出しへ置換された（deterministic derive）。addonIds=[] で
-    // 再構築する契約自体は不変。
+    // Unit 4C-4: 「deriveRawFields(primaryScenario, activeModuleData, [], carriedRapid,
+    // primaryDrugName) を直接呼ぶ」という Unit 2B 時点の実装詳細は、
+    // primary の write site が rebuildPrimary（lib/primaryNode.ts）へ一本化されたことで
+    // 消滅した。rebuildPrimary の rawFields は deriveRawFields と常に同値
+    // （tests/primaryNodeWritableUnit4C.test.ts の T-4C4-F1-1 が値レベルで固定する）
+    // であるため「scenario 変更時に primary を再構築する」という契約自体は不変。
+    // ここでは rebuildPrimary が正しい引数（scenario: primaryScenario / addonIds: [] /
+    // drugName: primaryDrugName）で呼ばれていることを検証する。
     assert.ok(
-      /deriveRawFields\(primaryScenario, activeModuleData, \[\], carriedRapid, primaryDrugName\)/.test(effect),
-      'scenario 変更時の primary 再構築が失われている',
+      /setPrimaryNode\(prev => rebuildPrimary\(\{/.test(effect),
+      'scenario 変更時の primary 再構築（rebuildPrimary 呼び出し）が失われている',
     )
     assert.ok(
-      /rawPrimaryFieldsRef\.current = rawFields/.test(effect),
-      'scenario 変更時の rawPrimaryFieldsRef 更新が失われている',
+      /scenario: primaryScenario,/.test(effect),
+      'rebuildPrimary へ primaryScenario が渡されていない',
     )
     assert.ok(
-      /setPrimaryAddonIds\(new Set\(\)\)/.test(effect) &&
+      /addonIds: \[\],/.test(effect),
+      'rebuildPrimary へ addonIds: [] が渡されていない（addon なしで再構築する契約）',
+    )
+    assert.ok(
+      /drugName: primaryDrugName,/.test(effect),
+      'rebuildPrimary へ primaryDrugName が渡されていない',
+    )
+    // Unit 4C-4: rawPrimaryFieldsRef は廃止され、rawFields の write authority は
+    // rebuildPrimary が返す block.rawFields（primaryNode.block.rawFields）へ移管された。
+    // 「effect が primary の rawFields を更新する」という契約自体は不変であり、
+    // その保存先が primaryNode.block へ変わったことを確認する。
+    assert.ok(
+      !/rawPrimaryFieldsRef/.test(codeOnly(effect)),
+      'rawPrimaryFieldsRef は Unit 4C-4 で廃止されたはずだが、まだ実装コードに参照が残っている',
+    )
+    // Unit 4C-3: setPrimaryAddonIds(new Set()) は setSelectedAddonIds(new Set()) へ
+    // 移った（primaryAddonIds の write authority が primaryNode へ移管されたため）。
+    // selectedAddonIds: [] は rebuildPrimary への addonIds: [] 経由で primaryNode.block
+    // 側へ反映される（上の assertion で検証済み）。ADDON reset の契約自体は不変。
+    assert.ok(
       /setSelectedAddonIds\(new Set\(\)\)/.test(effect),
-      'scenario 変更時の ADDON reset が失われている',
+      'scenario 変更時の ADDON reset（UI buffer 側）が失われている',
     )
   })
 })
@@ -153,9 +191,18 @@ describe('Unit 0: Node 操作 handler の primary ADDON 復元意図が保たれ
       !/buildNodeFields\(/.test(block),
       'handleSelectPrimaryNode が buildNodeFields を呼んではならない（内容再構築の禁止）',
     )
+    // Unit 4C-4: rawPrimaryFieldsRef は廃止された。旧 assertion
+    // （!/rawPrimaryFieldsRef\.current =/）は識別子消滅により vacuous 化するため、
+    // 「primary の内容（block）を再構築しない」という契約そのものを、現在の write
+    // authority である setPrimaryNode の非呼び出しで直接検証する（rebuildPrimary /
+    // setPrimaryNode いずれも handleSelectPrimaryNode からは呼ばれない）。
     assert.ok(
-      !/rawPrimaryFieldsRef\.current =/.test(block),
-      'handleSelectPrimaryNode が rawPrimaryFieldsRef を書き換えてはならない',
+      !/setPrimaryNode\(/.test(block),
+      'handleSelectPrimaryNode が primaryNode（block を含む）を書き換えてはならない',
+    )
+    assert.ok(
+      !/rebuildPrimary\(/.test(block),
+      'handleSelectPrimaryNode が rebuildPrimary を呼んではならない（内容再構築の禁止）',
     )
     assert.ok(
       !/setPrimaryAddonIds\(new Set\(\)\)/.test(block),

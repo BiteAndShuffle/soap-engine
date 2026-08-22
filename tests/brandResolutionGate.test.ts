@@ -325,6 +325,32 @@ function sliceBetween(src: string, startMarker: string, endMarker: string, from 
   return src.slice(start, end)
 }
 
+/**
+ * `callMarker`（末尾が `(` で終わる呼び出しマーカー。例: `'setPrimaryNode('`）の
+ * 全出現について、開き括弧から対応する閉じ括弧までを括弧の深さで正確に切り出す
+ * （固定長ウィンドウでは呼び出し本体の外側のコードを誤って含みうるため）。
+ */
+function extractBalancedCalls(src: string, callMarker: string): string[] {
+  const calls: string[] = []
+  let searchFrom = 0
+  for (;;) {
+    const start = src.indexOf(callMarker, searchFrom)
+    if (start < 0) break
+    let depth = 0
+    let i = start + callMarker.length - 1 // callMarker の末尾 '(' の位置
+    for (; i < src.length; i++) {
+      if (src[i] === '(') depth++
+      else if (src[i] === ')') {
+        depth--
+        if (depth === 0) { i++; break }
+      }
+    }
+    calls.push(src.slice(start, i))
+    searchFrom = i
+  }
+  return calls
+}
+
 /** 検索経路（handleSelectDrugSuggestion）の本文 */
 const searchTransition = sliceBetween(dashboardSrc, 'const handleSelectDrugSuggestion', 'const handleComposeDrugSelect')
 /** Express の primary 分岐（isPrimaryEmpty === true）の本文 */
@@ -334,50 +360,66 @@ const expressComposeBranch = sliceBetween(dashboardSrc, '} else {', 'const handl
 
 describe('T-U5-9 primary context を切り替える全遷移が activeResolution を更新する', () => {
   /**
+   * Unit 4C-2: identity/brand slice の write authority は setActiveXxx の 4 setter
+   * から `setPrimaryNode` の単一 write（1 write に 4 field を同時に含める）へ移管された。
    * 「呼び出し回数の完全一致」ではなく **transition 単位**で検証する。
    * state ごとに用途が異なるため単純な件数比較は将来の false positive になりうるが、
-   * 「primary context を切り替える遷移」は必ずこの 4 つを揃える必要がある、という
-   * 不変条件はコンテキストに依存せず成立する。
+   * 「primary context を切り替える遷移」は必ずこの 4 つの field を
+   * **1 回の `setPrimaryNode` で同時更新する**、という不変条件はコンテキストに
+   * 依存せず成立する。
    */
-  const PRIMARY_CONTEXT_SETTERS = [
-    'setActiveModuleData(',
-    'setActiveBrandName(',
-    'setActiveDrugDisplayName(',
-    'setActiveResolution(',
+  const PRIMARY_CONTEXT_FIELDS = [
+    'moduleId:',
+    'matchedBrandName:',
+    'resolvedDrugName:',
+    'resolution:',
   ]
 
-  test('検索経路（handleSelectDrugSuggestion）が 4 つの primary context state をすべて更新する', () => {
-    const missing = PRIMARY_CONTEXT_SETTERS.filter(s => !searchTransition.includes(s))
-    assert.deepEqual(missing, [], `検索経路で更新されていない state: ${missing.join(' / ')}`)
+  test('検索経路（handleSelectDrugSuggestion）が setPrimaryNode で 4 つの primary context field をすべて更新する', () => {
+    assert.equal(
+      (searchTransition.match(/setPrimaryNode\(/g) ?? []).length,
+      1,
+      '検索経路の setPrimaryNode 呼び出しは 1 回であるべき',
+    )
+    const missing = PRIMARY_CONTEXT_FIELDS.filter(f => !searchTransition.includes(f))
+    assert.deepEqual(missing, [], `検索経路の setPrimaryNode で更新されていない field: ${missing.join(' / ')}`)
   })
 
-  test('Express primary 分岐が 4 つの primary context state をすべて更新する', () => {
-    const missing = PRIMARY_CONTEXT_SETTERS.filter(s => !expressPrimaryBranch.includes(s))
+  test('Express primary 分岐が setPrimaryNode で 4 つの primary context field をすべて更新する', () => {
+    assert.equal(
+      (expressPrimaryBranch.match(/setPrimaryNode\(/g) ?? []).length,
+      1,
+      'Express primary 分岐の setPrimaryNode 呼び出しは 1 回であるべき',
+    )
+    const missing = PRIMARY_CONTEXT_FIELDS.filter(f => !expressPrimaryBranch.includes(f))
     assert.deepEqual(
       missing,
       [],
-      `Express primary 分岐で更新されていない state: ${missing.join(' / ')}（stale resolution により U-5 gate が誤発火する）`,
+      `Express primary 分岐の setPrimaryNode で更新されていない field: ${missing.join(' / ')}（stale resolution により U-5 gate が誤発火する）`,
     )
   })
 
-  test('Express compose 分岐は primary context state を更新しない（primary の resolution を壊さない）', () => {
-    const touched = PRIMARY_CONTEXT_SETTERS.filter(s => expressComposeBranch.includes(s))
-    assert.deepEqual(touched, [], `Express compose 分岐が primary context を書き換えている: ${touched.join(' / ')}`)
+  test('Express compose 分岐は primary context（setPrimaryNode）を更新しない（primary の resolution を壊さない）', () => {
+    assert.ok(
+      !expressComposeBranch.includes('setPrimaryNode('),
+      'Express compose 分岐が setPrimaryNode を呼んでいる（primary context を書き換えている）',
+    )
   })
 
-  test('activeResolution を更新するのは primary context 遷移の 2 経路のみ', () => {
-    // state 宣言行を除いた呼び出し箇所を数える。
-    const calls = dashboardSrc
-      .split('\n')
-      .filter(l => l.includes('setActiveResolution(') && !l.includes('useState'))
-    assert.equal(calls.length, 2, `setActiveResolution の呼び出しが 2 経路ではない: ${calls.length} 件`)
+  test('resolution を更新するのは primary context 遷移（setPrimaryNode 呼び出し）の 2 経路のみ', () => {
+    // setPrimaryNode( の全呼び出しを括弧の深さで正確に切り出し、
+    // 呼び出し本体に resolution: フィールドを含むものだけを数える
+    // （handleLocalSiteInputChange など resolution を触らない setPrimaryNode 呼び出しは対象外）。
+    const calls = extractBalancedCalls(dashboardSrc, 'setPrimaryNode(')
+    const withResolution = calls.filter(c => /resolution:/.test(c))
+    assert.equal(withResolution.length, 2, `resolution: を含む setPrimaryNode 呼び出しが 2 経路ではない: ${withResolution.length} 件`)
   })
 })
 
 describe('T-U5-10 Express primary 分岐は直前の検索由来 resolution を破棄する', () => {
-  test('Express primary 分岐に setActiveResolution(undefined) が存在する', () => {
+  test('Express primary 分岐の setPrimaryNode に resolution: undefined が存在する', () => {
     assert.ok(
-      /setActiveResolution\(\s*undefined\s*\)/.test(expressPrimaryBranch),
+      /resolution:\s*undefined/.test(expressPrimaryBranch),
       'Express primary 分岐が前の context の resolution を破棄していない',
     )
   })
@@ -392,11 +434,11 @@ describe('T-U5-10 Express primary 分岐は直前の検索由来 resolution を�
 
   test('検索経路は item.resolution を保持する（破棄しない）', () => {
     assert.ok(
-      searchTransition.includes('setActiveResolution(item.resolution)'),
+      searchTransition.includes('resolution:       item.resolution'),
       '検索経路が item.resolution を保持していない',
     )
     assert.ok(
-      !/setActiveResolution\(\s*undefined\s*\)/.test(searchTransition),
+      !/resolution:\s*undefined/.test(searchTransition),
       '検索経路が resolution を破棄している',
     )
   })

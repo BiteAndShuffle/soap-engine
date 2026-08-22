@@ -418,15 +418,31 @@ describe('C. read path が現行式と同値である', () => {
 describe('D. projection は read-only であり writable SSOT を増やしていない', () => {
   const code = codeOnly(src)
 
-  test('T-4B-7: primaryNodeProjection への代入 / setter が存在しない', () => {
-    assert.ok(!/setPrimaryNode/.test(code), 'setPrimaryNode を作ってはならない')
+  // Unit 4C-2 での意図的退役:
+  //   T-4B-7 / T-4B-8 は Unit 4B 時点で「primaryNode の write authority はまだ
+  //   反転していない」ことを守るための暫定ガードだった。Unit 4C は
+  //   まさにこの write authority を反転する Unit であり、`primaryNode` state /
+  //   `setPrimaryNode` / `primaryNodeRef` の導入は Unit 4C-2 で計画された変更である
+  //   （旧 activeModuleData / activeBrandName / activeDrugDisplayName / activeResolution /
+  //   localSiteInput の write authority が primaryNode へ移った）。
+  //   したがって「setPrimaryNode / primaryNodeRef が存在しないこと」という
+  //   旧 assertion はそのまま更新の余地なく無効化し、後継の不変条件へ置き換える:
+  //     - primaryNodeProjection という read-only 合成 view 自体への直接代入は
+  //       引き続き禁止する（T-4B-7 が本来固定していた最も重要な契約）。
+  //     - primaryNode state は ComposeNode | null ではなく ComposeNode（non-null）
+  //       として宣言されている（pending 状態も null ではなく
+  //       makeInitialPrimaryNode の実値で表現する。T-4B-8 の後継）。
+  test('T-4B-7: primaryNodeProjection という read-only 合成 view 自体への直接代入は存在しない', () => {
     assert.ok(!/primaryNodeProjection\s*=/.test(code.replace(/const primaryNodeProjection = useMemo/g, '')),
       'primaryNodeProjection へ再代入してはならない')
   })
 
-  test('T-4B-8: primaryNode の React state / ref が追加されていない', () => {
-    assert.ok(!/useState<ComposeNode\s*\|\s*null>/.test(code), 'writable primaryNode state を作ってはならない')
-    assert.ok(!/primaryNodeRef/.test(code), 'Unit 4B では primaryNodeRef を作らない')
+  test('T-4B-8: primaryNode state は ComposeNode（non-null）として宣言されている（null を pending の表現に使わない）', () => {
+    assert.ok(!/useState<ComposeNode\s*\|\s*null>/.test(code), 'primaryNode は ComposeNode | null であってはならない')
+    assert.ok(
+      /const \[primaryNode, setPrimaryNode\] = useState<ComposeNode>/.test(code),
+      'primaryNode state が ComposeNode（non-null）として宣言されていない',
+    )
   })
 
   test('T-4B-13: buildPrimaryNodeSnapshot は未接続のまま（PRIMARY_NODE_ID の利用は許可）', () => {
@@ -434,13 +450,17 @@ describe('D. projection は read-only であり writable SSOT を増やしてい
     assert.ok(/PRIMARY_NODE_ID/.test(src), 'projection identity に PRIMARY_NODE_ID を使う')
   })
 
-  test('T-4B-9: scenario rebuild effect の dependency が変わっていない（Unit 0 invariant）', () => {
+  test('T-4B-9: scenario rebuild effect の dependency が単一の scenario ID 値のまま（Unit 0 invariant）', () => {
+    // Unit 4C-3: deps が `selectedScenarioId`（旧 useState）から `primaryNode.scenarioId`
+    // （primaryNode state の member access）へ移った。Unit 0 invariant 本体
+    // 「シナリオ確定 ID の値そのものでのみ発火し、editingNodeId や primaryNode 全体
+    //  （オブジェクト identity）では発火しない」という契約は変わっていない。
     const start = src.indexOf('// 1剤目シナリオ切替時に primaryBaseFields を初期化')
     assert.notEqual(start, -1, 'effect のアンカーコメントが見つからない')
     const depsMatch = src.slice(start).match(/\n\s*\}, \[([^\]]*)\]\)/)
     assert.ok(depsMatch, 'effect の dependency 配列が見つからない')
     const deps = depsMatch![1].split(',').map(s => s.trim()).filter(Boolean)
-    assert.deepEqual(deps, ['selectedScenarioId'], `effect deps が変化している: [${deps.join(', ')}]`)
+    assert.deepEqual(deps, ['primaryNode.scenarioId'], `effect deps が変化している: [${deps.join(', ')}]`)
   })
 
   test('T-4B-9b: primary write path（handler / effect）に projection が混入していない', () => {
@@ -513,22 +533,28 @@ describe('E. Persona / localInput boundary', () => {
     assertFieldsEqual(a.block.fields as SoapFields, b.block.fields as SoapFields, 'localInput が block.fields へ漏れている')
   })
 
-  test('T-4B-12: projection.block に rawFields / guard が含まれない', () => {
-    const mod = ALL_MODULES[0]
-    const sc = (mod.scenarios ?? [])[0]
-    const proj = buildProjection({
-      mod, scenario: sc, primaryBaseFields: deriveRawFields(sc, mod, [], null, DRUG),
-      addonIds: [], rapid: null,
-    })
-    assert.equal(proj.block.rawFields, undefined, 'read path で rawFields を正本にしない')
-    assert.equal(proj.block.guard, undefined, 'read path で guard を正本にしない')
-    // production 側も同様
-    const code = codeOnly(src)
-    const start = code.indexOf('const primaryNodeProjection = useMemo')
-    const body = code.slice(start, code.indexOf('}), [', start))
-    assert.ok(!/rawFields:/.test(body), 'projection に rawFields を入れてはならない')
-    assert.ok(!/guard:/.test(body), 'projection に guard を入れてはならない')
-  })
+  // Unit 4C-4 での意図的退役:
+  //   T-4B-12 は「projection.block に rawFields / guard が含まれない」ことを、
+  //   test-local mirror（buildProjection）と production source regex
+  //   （`/rawFields:/` / `/guard:/` の非存在）の 2 経路で固定していた。
+  //
+  //   Unit 4C-4 で primary の rawFields / guard の write authority が
+  //   primaryNode.block へ移管され、primaryNodeProjection の block は
+  //   `{ ...primaryNode.block, <override 6 項目> }`（Design P）という構造になった。
+  //   rawFields / guard はこの override 6 項目に含まれないため、
+  //   projection.block.rawFields / .guard は primaryNode.block の実値を
+  //   そのまま透過する（= undefined ではなくなる）のが Unit 4C-4 時点の正しい
+  //   contract である。「undefined であるべき」という旧 assertion は
+  //   Design P と矛盾するため退役する。
+  //   （source regex 側も `...primaryNode.block` という spread はそもそも
+  //   `rawFields:` という literal を含まないため、実際には最初から vacuous
+  //   だったことが Unit 4C-4 の監査で判明している）。
+  //
+  //   後継 = tests/primaryNodeWritableUnit4C.test.ts の T-4C4-F1-2。
+  //   そちらは production 経路（rebuildPrimary / 解除 reducer）で primaryNode を
+  //   構築し、block.rawFields / block.guard が authority（rebuildPrimary の
+  //   出力）と値レベルで一致することを検証する（source regex 非依存）。
+  test.skip('T-4B-12: 退役（後継 = primaryNodeWritableUnit4C.test.ts の T-4C4-F1-2）', () => {})
 })
 
 // ═══════════════════════════════════════════════════════════════

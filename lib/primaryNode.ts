@@ -168,3 +168,68 @@ export function buildPrimaryNodeSnapshot(input: PrimaryNodeInput): ComposeNode {
     rapid,
   }
 }
+
+/**
+ * 既存の primary Node へ「scenario / ADDON / Rapid の変化」を適用し、
+ * 新しい ComposeNode を返す（pure）。
+ *
+ * Rapid Mode v2 / Unit 4C。
+ *
+ * ## buildPrimaryNodeSnapshot との責務分離（Owner Decision D-4C-11）
+ *   buildPrimaryNodeSnapshot — creation / projection（state を明示列挙して Node を組み立てる）
+ *   rebuildPrimary          — transition / rebuild（既存 Node + delta から次の Node を導く）
+ * 両者を 1 関数へ統合しない。本関数は前者へ委譲し、derive を複製しない（RAPID-V2-20）。
+ *
+ * ## 保持されるもの（lifecycle field。delta では変化しない）
+ *   id / block.id / localSiteInput / matchedBrandName / resolvedDrugName / resolution
+ *
+ * ## 本関数を使ってはならない経路（Unit 4C 事前監査 実測4）
+ * scenario 解除（primary の scenarioId → ''）には使わない。
+ * buildPrimaryNodeSnapshot の `!scenario` 分岐は **secondary の pending node** を模した
+ * 意味論であり、primary の「シナリオ解除」とは
+ *   block.clinicalDomain / block.domain / selectedAddonIds / rapid
+ * の 4 点で非等価である。解除経路は呼び出し側が明示 reducer で扱うこと。
+ * 本関数の scenario 引数を optional にしてはならない（誤用を型で防ぐ）。
+ *
+ * ## Unit 4C-1 時点では production 未接続である（behavior change = 0）。
+ * 接続は Unit 4C-4 の責務であり、Owner 承認を要する。
+ */
+export type RebuildPrimaryInput = {
+  /** 直前の primary Node（lifecycle field の供給元） */
+  node: ComposeNode
+  /** primary の module */
+  mod: ModuleData
+  /** 確定済み scenario。undefined を渡してはならない */
+  scenario: Scenario
+  /** 確定 ADDON。配列順がそのまま本文順序になる */
+  addonIds: string[]
+  /** Rapid 選択状態 */
+  rapid: RapidState
+  /** {{drug_subject}} 解決値 */
+  drugName: string
+  /** ノードチップ表示ラベル。呼び出し側が resolveNodeLabel(mod) で解決して渡す */
+  drugLabel: string
+  /** S欄ドメイン。呼び出し側が resolveDomain(mod) で解決して渡す */
+  baseDomain: string
+  /** persona 適用可否（global） */
+  personaEnabled: boolean
+  /** 適用する persona（global） */
+  persona: PersonaId
+}
+
+export function rebuildPrimary(input: RebuildPrimaryInput): ComposeNode {
+  const {
+    node, mod, scenario, addonIds, rapid, drugName,
+    drugLabel, baseDomain, personaEnabled, persona,
+  } = input
+  return buildPrimaryNodeSnapshot({
+    mod, scenario, addonIds, rapid, drugName,
+    localSiteInput:   node.localSiteInput ?? '',
+    matchedBrandName: node.matchedBrandName,
+    resolvedDrugName: node.resolvedDrugName,
+    resolution:       node.resolution,
+    drugLabel, baseDomain,
+    blockId:          node.block.id,
+    personaEnabled, persona,
+  })
+}

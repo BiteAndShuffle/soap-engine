@@ -173,7 +173,10 @@ describe('T-U4b-4 primary は BrandResolution から subject を write する', 
       region.includes('const subject = resolveSubjectFromResolution(item.resolution)'),
       'primary が BrandResolution から subject を解決していない',
     )
-    assert.ok(region.includes('setActiveDrugDisplayName(subject ?? undefined)'), 'subject の保持形が想定と異なる')
+    // Unit 4C-2: setActiveDrugDisplayName(subject ?? undefined) は
+    // setPrimaryNode(...) の resolvedDrugName: subject ?? undefined, field へ移った
+    // （保持の契約自体は不変）。
+    assert.ok(region.includes('resolvedDrugName: subject ?? undefined,'), 'subject の保持形が想定と異なる')
   })
 
   test('primary write に resolveDrugName / 文字列推論が存在しない', () => {
@@ -298,7 +301,9 @@ describe('T-U4b-9 resolution.subject から legacy fallback するコードが�
   test('許可される形は「未確定の記録」のみ（undefined / 空文字）', () => {
     // ?? undefined は「主語の上書きなし」、?? '' は「主語なし」の記録であり、
     // 別の値で主語を捏造していない（Owner Decision S-2-A）。
-    assert.ok(src.includes('setActiveDrugDisplayName(subject ?? undefined)'))
+    // Unit 4C-2: setActiveDrugDisplayName(subject ?? undefined) は
+    // setPrimaryNode(...) の resolvedDrugName: subject ?? undefined, field へ移った。
+    assert.ok(src.includes('resolvedDrugName: subject ?? undefined,'))
     assert.ok(src.includes("resolveSubjectFromResolution(item.resolution) ?? ''"))
   })
 })
@@ -313,11 +318,15 @@ describe('T-U4b-10 Express path が完全に不変', () => {
   })
 
   test('Express primary の lifecycle reset（U-5）が維持されている', () => {
-    assert.ok(/setActiveResolution\(\s*undefined\s*\)/.test(expressPrimary), 'U-5 の lifecycle reset が失われている')
+    // Unit 4C-2: setActiveResolution(undefined) は setPrimaryNode(...) の
+    // resolution: undefined, field へ移った（reset の契約自体は不変）。
+    assert.ok(/resolution:\s*undefined/.test(expressPrimary), 'U-5 の lifecycle reset が失われている')
   })
 
   test('Express の subject 書き込みが従来どおり', () => {
-    assert.ok(expressPrimary.includes('setActiveDrugDisplayName('), 'Express の subject 書き込みが失われている')
+    // Unit 4C-2: setActiveDrugDisplayName(...) は setPrimaryNode(...) の
+    // resolvedDrugName: ... field へ移った（書き込みの契約自体は不変）。
+    assert.ok(expressPrimary.includes('resolvedDrugName:'), 'Express の subject 書き込みが失われている')
     assert.ok(expressPrimary.includes('resolvedDisplayName !== resolvedBrandKey ? resolvedDisplayName : undefined'),
       'Express の subject 書き込み条件が変わっている')
   })

@@ -48,7 +48,7 @@ import {
 } from '../../lib/rapidState'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
 import { deriveRawFields, deriveNodeBlockCore } from '../../lib/deriveNodeFields'
-import { PRIMARY_NODE_ID } from '../../lib/primaryNode'
+import { PRIMARY_NODE_ID, rebuildPrimary } from '../../lib/primaryNode'
 import ComposeNodeBar from './ComposeNodeBar'
 
 import s from '../styles/layout.module.css'
@@ -164,6 +164,45 @@ function resolveDomain(mod: ModuleData): string {
     ?? mod.moduleId
 }
 
+/**
+ * primary Node の初期値（Unit 4C-2）。
+ *
+ * 起点 HEAD の primaryNodeProjection が「薬剤未選択・シナリオ未確定」の
+ * 状態で返していた値と等価であること（T-4C2-4 が実測固定）。
+ * clinicalDomain / domain は scenario ではなく module 由来のため、
+ * scenario 未確定でも設定される（projection と同一。
+ * lib/primaryNode.ts の pending 分岐用 helper とは非等価な点に注意）。
+ */
+function makeInitialPrimaryNode(mod: ModuleData): ComposeNode {
+  return {
+    id: PRIMARY_NODE_ID,
+    moduleId: mod.moduleId,
+    scenarioId: '',
+    block: {
+      id: PRIMARY_BLOCK_ID,
+      templateLabel: '',
+      fields: EMPTY_FIELDS,
+      closingText: undefined,
+      closingBehavior: undefined,
+      groupKey: undefined,
+      clinicalDomain: mod.composition?.clinicalDomain,
+      symptomCodes: undefined,
+      domain: resolveDomain(mod),
+      rawFields: EMPTY_FIELDS,
+      guard: undefined,          // Owner Decision D-4C-5: 未設定は undefined（null を使わない）
+    },
+    drugLabel: resolveNodeLabel(mod),
+    selectedAddonIds: [],
+    baseLabel: '',
+    baseDomain: resolveDomain(mod),
+    matchedBrandName: undefined,
+    resolvedDrugName: undefined,
+    resolution: undefined,
+    localSiteInput: '',
+    rapid: null,
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 // DashboardClient
 //
@@ -186,27 +225,37 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     [allModules],
   )
 
+  // ══════════════════════════════════════════════════════════════
+  // SOURCE OF TRUTH — primary（1剤目）
+  //
+  // Unit 4C: primary の semantic state は本 state が単独で所有する。
+  // 旧 global state（activeModuleData / activeBrandName / ... ）は
+  // derived const alias へ降格しており、write authority を持たない。
+  // ══════════════════════════════════════════════════════════════
+  const [primaryNode, setPrimaryNode] = useState<ComposeNode>(() => makeInitialPrimaryNode(moduleData))
+
+  // ── derived const alias（Unit 4C 一時層。write authority を持たない）──
+  // read 経路を step 内で書き換えないための降格層。4C-6 で全削除する。
+  const activeModuleData = useMemo(
+    () => allModules.find(m => m.moduleId === primaryNode.moduleId) ?? moduleData,
+    [allModules, moduleData, primaryNode.moduleId],
+  )
+  const activeBrandName       = primaryNode.matchedBrandName
+  const activeDrugDisplayName = primaryNode.resolvedDrugName
+  const activeResolution      = primaryNode.resolution
+  const localSiteInput        = primaryNode.localSiteInput ?? ''
+  // Unit 4C-3: selection slice（scenarioId / selectedAddonIds / rapid）の derived alias。
+  const selectedScenarioId = primaryNode.scenarioId === '' ? null : primaryNode.scenarioId
+  const primaryAddonIds    = useMemo(
+    () => new Set(primaryNode.selectedAddonIds),
+    [primaryNode.selectedAddonIds],
+  )
+  const rapidState         = primaryNode.rapid
+  // Unit 4C-4: block slice の authority は primaryNode.block が単独で所有する。
+  // primaryBaseFields は read 経路互換のための derived const alias（setter なし）。4C-6 で削除。
+  const primaryBaseFields  = primaryNode.block.fields
+
   // ── 薬剤モジュール ─────────────────────────────────────────
-  const [activeModuleData, setActiveModuleData] = useState<ModuleData>(moduleData)
-  const [activeBrandName, setActiveBrandName] = useState<string | undefined>(undefined)
-  /**
-   * 1剤目の {{drug_subject}} / 表示名として使う名前。
-   * 通常フローでは activeBrandName と同値。
-   * Express GEモード選択時のみ GE名が入る（activeBrandName は先発名のまま）。
-   */
-  const [activeDrugDisplayName, setActiveDrugDisplayName] = useState<string | undefined>(undefined)
-  /**
-   * 1剤目が指す薬剤の domain state（`lib/brandResolution.ts`）。
-   *
-   * **U-4a では保持のみを行い、production の判断入力には使用しない。**
-   * 薬剤名解決・handlingTags・scenario 表示・SOAP 生成のいずれも、引き続き
-   * activeBrandName / activeDrugDisplayName（legacy 経路）が駆動する。
-   * consumer 移行は U-4b、`denotation: 'module'` の安全 gate は U-5 の責務である
-   * （`docs/OPEN_DESIGN_QUESTIONS.md` Q-S2）。
-   *
-   * undefined = 検索サジェスト以外の経路（初期ロード・Express）で薬剤が確定した状態。
-   */
-  const [activeResolution, setActiveResolution] = useState<BrandResolution | undefined>(undefined)
   const [drugSelected, setDrugSelected] = useState(false)
 
   // ── 検索テキスト ─────────────────────────────────────────
@@ -228,13 +277,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // null = Rapid 未選択。`{ continued_do, stable }` とは別状態である。
   // Unit 1 以前は sRelation / sCondition の 2 state で表現していたが、
   // 初期値が continued_do / stable だったため未選択と区別できなかった。
-  const [rapidState, setRapidState] = useState<RapidState>(null)
+  // Unit 4C-3: state 実体は primaryNode.rapid へ移管。rapidState は
+  // derived const alias（後述）。
 
   // ── localSiteInput: display.localInput 対応モジュール用・部位入力 ──
   // 1剤目（primaryBaseFields）に紐づく部位入力値。
   // 2剤目以降（ComposeNode）は node.localSiteInput に個別保持する。
   // 現在の編集コンテキストに応じて activeLocalSiteInput を使う（下記参照）。
-  const [localSiteInput, setLocalSiteInput] = useState('')
+  // Unit 4C-2: state 実体は primaryNode.localSiteInput へ移管。localSiteInput は
+  // derived const alias（後述）。
 
   // ── ペルソナ（文体切替）: 表示変換のみ、医療ロジック不変 ──
   // デフォルトは無変換（JSONそのまま）。ペルソナ切替ボタンで有効化できる。
@@ -247,13 +298,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ══════════════════════════════════════════════════════════════
 
   // 1剤目シナリオ ID（1剤目専用。ノード操作では絶対に書き換えない）
-  const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null)
+  // Unit 4C-3: state 実体は primaryNode.scenarioId へ移管。selectedScenarioId は
+  // derived const alias（後述）。
 
   // 1剤目の確定 SOAP（addon 込み。ノード操作では絶対に書き換えない）
-  const [primaryBaseFields, setPrimaryBaseFields] = useState<SoapFields>(EMPTY_FIELDS)
+  // Unit 4C-4: state 実体は primaryNode.block.fields へ移管。primaryBaseFields は
+  // derived const alias（前述の selectedScenarioId / primaryAddonIds / rapidState と同じ並び）。
 
   // 1剤目の addon 選択状態（ノード操作では書き換えない）
-  const [primaryAddonIds, setPrimaryAddonIds] = useState<Set<string>>(new Set())
+  // Unit 4C-3: state 実体は primaryNode.selectedAddonIds へ移管。primaryAddonIds は
+  // derived const alias（後述）。
 
   // 2剤目以降ノードのリスト（scenarioId / block / selectedAddonIds を持つ）
   const [composeNodes, setComposeNodes] = useState<ComposeNode[]>([])
@@ -286,16 +340,19 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // REFS（stale closure 防止。callbacks 内で最新値を参照する）
   // ══════════════════════════════════════════════════════════════
 
-  const primaryBaseFieldsRef  = useRef<SoapFields>(EMPTY_FIELDS)
+  // Unit 4C: primary Node の read-only mirror。
+  // handler が updater の外で primary の現在値を読むために使う
+  // （updater 内から別 setter を呼ばないため。§Q1/Q2）。
+  // 本 ref へ handler から代入してはならない（render 同期のみ）。
+  const primaryNodeRef        = useRef<ComposeNode>(makeInitialPrimaryNode(moduleData))
   const primaryAddonIdsRef    = useRef<Set<string>>(new Set())
   const selectedAddonIdsRef   = useRef<Set<string>>(new Set())
   const editingNodeIdRef      = useRef<string | null>(null)
   const editingPrimaryRef     = useRef(false)
   const composeNodesRef       = useRef<ComposeNode[]>([])
   const primaryScenarioRef    = useRef<ModuleData['scenarios'][number] | undefined>(undefined)
-  // persona 再計算用: 1剤目の rawFields / guard を保持
-  const rawPrimaryFieldsRef   = useRef<SoapFields>(EMPTY_FIELDS)
-  const primaryGuardRef       = useRef<ReturnType<typeof derivePersonaGuard> | null>(null)
+  // Unit 4C-4: rawPrimaryFieldsRef / primaryGuardRef は廃止。
+  // persona 再計算用の rawFields / guard は primaryNode.block.rawFields / .guard が単独で持つ。
   // useEffect / useCallback 内で stale closure を踏まずに persona 状態を参照するための ref
   const personaEnabledRef     = useRef(false)
   const selectedPersonaRef    = useRef<PersonaId>('polite')
@@ -321,11 +378,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // 1剤目 SOAP 再構築時に {{drug_subject}} で使う表示名（GE名 / 先発名）。
   // useEffect([selectedScenarioId]) の deps に含めず ref で参照することで stale closure を防ぐ。
   const activeDrugDisplayNameRef = useRef<string | undefined>(undefined)
-  // 1剤目の BrandResolution を callback / useEffect から stale closure なしに読むための ref。
-  // U-4a では保持のみ（読み出し側は U-4b / U-5 で追加する）。
-  const activeResolutionRef = useRef<BrandResolution | undefined>(undefined)
-  // handleSToggle / useEffect 内で現在の RapidState を stale closure なしに読むための ref。
-  const rapidStateRef = useRef<RapidState>(null)
+  // Unit 4C-3: rapidStateRef は廃止。読み出しはすべて primaryNodeRef.current.rapid へ置換した。
   // NLP生成モード専用 ref（将来機能・現在 UI 未接続）。
   // NLP生成モード（handleSwitchToNlp）に入る直前の manual 状態スナップショット。
   // handleSwitchToManual でこれをそのまま復元する（buildNodeFields は呼ばない）。
@@ -334,22 +387,17 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // null = スナップショットなし（現在 UI 未接続のため常にこの状態）。
   // → docs/feature-glossary.md「NLP生成」の定義を参照
   type ManualSnapshot = {
-    primaryBaseFields:  SoapFields
-    rawPrimaryFields:   SoapFields
-    primaryGuard:       ReturnType<typeof derivePersonaGuard> | null
-    selectedScenarioId: string | null
+    primaryBlock:       Pick<MergedBlock, 'fields' | 'rawFields' | 'guard'>   // Unit 4C-4 で統合
+    primarySelection:   Pick<ComposeNode, 'scenarioId' | 'selectedAddonIds' | 'rapid'>  // Unit 4C-3 で統合
     selectedGroup:      MenuGroup | null
-    primaryAddonIds:    Set<string>
     selectedAddonIds:   Set<string>
-    rapidState:         RapidState
   }
   const manualSnapshotRef = useRef<ManualSnapshot | null>(null)
   // ユーザーが明示的に手動でシナリオを選択したときのみ true になるフラグ。
   // useEffect([selectedScenarioId]) 内で rapidBaseFieldsRef.current を null にするのは
   // このフラグが true のときだけに限定し、NLP 生成後の誤クリアを防ぐ。
   const manualScenarioSelectRef = useRef(false)
-  // handleNlpGenerate / handleSwitchToManual 内で stale closure なしに参照するための ref
-  const selectedScenarioIdRef = useRef<string | null>(null)
+  // Unit 4C-3: selectedScenarioIdRef は廃止。読み出しは primaryNodeRef.current.scenarioId へ置換した。
   // handleFieldChange で editedSOAP の一致判定に使う（stale closure 防止）
   const displayFieldsRef      = useRef<SoapFields>(EMPTY_FIELDS)
   // 編集開始時点の finalFields スナップショット（一度確定したら次の編集開始まで変化しない）
@@ -381,12 +429,25 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // block.rawFields / block.guard は含めない。read path から参照されず
   // （consumer は reapplyPersonaToAllBlocks のみで、これは handler 経路）、
   // 含めると render 中に ref を読む必要が生じるため。
+  //
+  // Unit 4C-2/4C-3: identity / brand / localInput slice と selection slice
+  // （scenarioId / selectedAddonIds / rapid）の authority は primaryNode へ
+  // 移管済み。block（templateLabel 以下）/ baseLabel はまだ旧 state
+  // （primaryScenario / primaryBaseFields 等）が authority を持つため、
+  // hybrid（read-only 合成 view）のまま維持する（単純 alias にしてはならない）。
+  // block.rawFields / block.guard は `...primaryNode.block` から入るが、
+  // まだ authority を持たない（makeInitialPrimaryNode の EMPTY_FIELDS / undefined のまま）。
+  //
+  // Unit 4C-5: consumer は computeDisplayFields / finalFields の 2 系統に限定した
+  // （旧 8 系統のうち 6 系統は primaryNode と同値の slice しか読んでおらず、
+  // primaryNode 直参照へ移管した。値 parity は T-4C5-P1 が固定）。
+  // declaration shape（object の key 集合）は Unit 4C-5 では変更しない
+  // （responsibility の最小化は read consumer 側の話であり、shape の話ではない）。
   const primaryNodeProjection = useMemo<ComposeNode>(() => ({
-    id:         PRIMARY_NODE_ID,
-    moduleId:   activeModuleData.moduleId,
-    scenarioId: selectedScenarioId ?? '',
-    block: {
-      id:              PRIMARY_BLOCK_ID,
+    ...primaryNode,                                    // 移管済み slice（scenarioId / selectedAddonIds / rapid 含む）
+    baseLabel:        primaryScenario?.title ?? '',    // 未移管（4C-4）
+    block: {                                           // 未移管（4C-4）
+      ...primaryNode.block,
       templateLabel:   primaryScenario?.title ?? '',
       fields:          primaryBaseFields,
       closingText:     primaryScenario ? resolveClosingText(primaryScenario, activeModuleData.defaults) : undefined,
@@ -396,20 +457,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       symptomCodes:    primaryScenario?.sComposition?.symptomCodes,
       domain:          resolveDomain(activeModuleData),
     },
-    drugLabel:        resolveNodeLabel(activeModuleData),
-    selectedAddonIds: [...primaryAddonIds],
-    baseLabel:        primaryScenario?.title ?? '',
-    baseDomain:       resolveDomain(activeModuleData),
-    matchedBrandName: activeBrandName,
-    resolvedDrugName: activeDrugDisplayName,
-    resolution:       activeResolution,
-    localSiteInput:   localSiteInput,
-    rapid:            rapidState,
-  }), [
-    activeModuleData, selectedScenarioId, primaryScenario, primaryBaseFields,
-    primaryAddonIds, activeBrandName, activeDrugDisplayName, activeResolution,
-    localSiteInput, rapidState,
-  ])
+  }), [primaryNode, primaryScenario, primaryBaseFields, activeModuleData])
 
   // ══════════════════════════════════════════════════════════════
   // ACTIVE CONTEXT（derived）
@@ -427,7 +475,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // TemplateListPanel ハイライト・ThirdPanel 有効化用
   const currentScenarioId: string | null =
-    (activeNode ?? primaryNodeProjection).scenarioId || null
+    (activeNode ?? primaryNode).scenarioId || null
 
   // ══════════════════════════════════════════════════════════════
   // DISPLAY FIELDS（derived: pure function、state は変えない）
@@ -440,16 +488,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── targetModule: activeContext のモジュール ─────────────────
   const targetModule = useMemo<ModuleData>(() => {
-    const ctx = activeNode ?? primaryNodeProjection
+    const ctx = activeNode ?? primaryNode
     return allModules.find(m => m.moduleId === ctx.moduleId) ?? activeModuleData
-  }, [activeNode, primaryNodeProjection, activeModuleData, allModules])
+  }, [activeNode, primaryNode, activeModuleData, allModules])
 
   // ── activeContextResolution: activeContext の BrandResolution ─
   // targetModule と同じ activeContext パターン（ノード編集中はそのノード、
   // それ以外は1剤目）。undefined = 検索サジェスト以外の経路（初期ロード・Express）。
   const activeContextResolution = useMemo<BrandResolution | undefined>(
-    () => (activeNode ?? primaryNodeProjection).resolution,
-    [activeNode, primaryNodeProjection],
+    () => (activeNode ?? primaryNode).resolution,
+    [activeNode, primaryNode],
   )
 
   // ── U-5 安全 gate: 指示対象が未確定（denotation='module'）か ──
@@ -467,8 +515,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── activeLocalSiteInput: 現在編集中のコンテキストに紐づく部位入力値 ──
   // activeNode !== null → そのノードの localSiteInput（per-node 保持）
-  // activeNode === null → グローバルの localSiteInput（1剤目用。projection 経由）
-  const activeLocalSiteInput = (activeNode ?? primaryNodeProjection).localSiteInput ?? ''
+  // activeNode === null → グローバルの localSiteInput（1剤目用。Unit 4C-5: primaryNode 直参照）
+  const activeLocalSiteInput = (activeNode ?? primaryNode).localSiteInput ?? ''
 
   // ── finalFields: {{applicationSite}} placeholder 解決 + prefix 適用 ──
   //
@@ -572,7 +620,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   })()
 
   // ── Refs を render ごとに同期 ──────────────────────────────
-  primaryBaseFieldsRef.current = primaryBaseFields
+  primaryNodeRef.current       = primaryNode
   primaryAddonIdsRef.current   = primaryAddonIds
   selectedAddonIdsRef.current  = selectedAddonIds
   editingNodeIdRef.current     = editingNodeId
@@ -583,10 +631,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   selectedPersonaRef.current   = selectedPersona
   uiModeRef.current                = uiMode
   activeDrugDisplayNameRef.current = activeDrugDisplayName
-  activeResolutionRef.current      = activeResolution
   displayFieldsRef.current     = displayFields
-  rapidStateRef.current        = rapidState
-  selectedScenarioIdRef.current = selectedScenarioId
   // 未編集状態のときだけスナップショットを追従させる。
   // editedSOAP が非null（編集中）のときは固定したまま更新しない。
   // これにより、mergeBlocks/addon の再計算が editSnapshotRef を汚染しない。
@@ -594,10 +639,10 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   // ── addonTargetScenario: activeContext のシナリオ（AddonPanel 用） ─
   const addonTargetScenario = useMemo(() => {
-    const ctx = activeNode ?? primaryNodeProjection
+    const ctx = activeNode ?? primaryNode
     if (!ctx.scenarioId) return undefined
     return targetModule.scenarios.find(sc => sc.globalId === ctx.scenarioId)
-  }, [activeNode, primaryNodeProjection, targetModule])
+  }, [activeNode, primaryNode, targetModule])
 
   // 選択中ブランドの handlingTags を取得してaddonフィルタに渡す。
   // brandCatalog を持たないモジュールは undefined → フィルタスキップ（後方互換）。
@@ -613,11 +658,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const brandCatalog = targetModule.drug?.brandCatalog
     if (!brandCatalog) return undefined
     // legacy キー（resolution を持たない経路でのみ使用する）
-    // ノード編集中: そのノードの matchedBrandName / 1剤目操作中: projection.matchedBrandName
-    const ctx = activeNode ?? primaryNodeProjection
+    // ノード編集中: そのノードの matchedBrandName / 1剤目操作中: primaryNode.matchedBrandName（Unit 4C-5）
+    const ctx = activeNode ?? primaryNode
     const legacyBrandKey = ctx.matchedBrandName ?? targetModule.drug?.brandNames?.[0]
     return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)
-  }, [targetModule, activeNode, primaryNodeProjection, activeContextResolution])
+  }, [targetModule, activeNode, primaryNode, activeContextResolution])
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),
@@ -920,46 +965,43 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const primaryDrugName = activeDrugDisplayNameRef.current
         ?? resolveDrugName(activeModuleData.drug, activeBrandName)
-      const guard = derivePersonaGuard(primaryScenario, activeModuleData.template?.urgentFlag)
-
-      // ── deriveRawFields へ一本化（Unit 2B）─────────────────────
-      // ここへ到達した時点で rapidStateRef は遷移判定済みの値になっている
-      //   （handleSelectScenario が setRapidState と setSelectedScenarioId を同一
-      //     バッチで呼び、ref は render 時に同期されてから effect が走るため）。
-      // non-null ＝ capable → capable の遷移で保持された状態であり、
-      // 「state だけ保持して本文へ反映しない」ことは禁止されている（RAPID-V2-07）。
-      // deriveRawFields は rapid が null なら scenario 本来の S を、non-null なら
-      // 新シナリオの pristine S を基点に先頭文を再適用した結果を返す（決定的）。
-      // addon なしで再構築するため addonIds は [] を渡す（下の
-      // setPrimaryAddonIds(new Set()) / setSelectedAddonIds(new Set()) と対応）。
-      const carriedRapid = rapidStateRef.current
-      const rawFields = deriveRawFields(primaryScenario, activeModuleData, [], carriedRapid, primaryDrugName)
-
-      rawPrimaryFieldsRef.current = rawFields
-      primaryGuardRef.current = guard
       if (isManualSelect) {
         rapidBaseFieldsRef.current = null  // ユーザーの手動シナリオ選択で NLP 原本をクリア
       }
-      // persona が ON の場合は初期表示から変換済みフィールドを使用する
-      // personaEnabled / selectedPersona は ref 経由で参照（effect の deps に加えない）
-      const displayableFields = personaEnabledRef.current
-        ? applyPersonaToFieldsWithGuard(rawFields, true, selectedPersonaRef.current, guard)
-        : rawFields
-      setPrimaryBaseFields(displayableFields)
-      setPrimaryAddonIds(new Set())
+      // ── rebuildPrimary へ一本化（Unit 4C-4）─────────────────────
+      // ここへ到達した時点で prev.rapid（= primaryNodeRef.current.rapid）は遷移判定済みの値になっている
+      //   （handleSelectScenario が単一の setPrimaryNode で scenarioId / rapid を同一
+      //     バッチで更新し、ref は render 時に同期されてから effect が走るため）。
+      // non-null ＝ capable → capable の遷移で保持された状態であり、
+      // 「state だけ保持して本文へ反映しない」ことは禁止されている（RAPID-V2-07）。
+      // addon なしで再構築するため addonIds は [] を渡す（下の setSelectedAddonIds(new Set()) と対応）。
+      const pEnabled = personaEnabledRef.current    // ← hoist（updater 外）
+      const pId      = selectedPersonaRef.current   // ← hoist（updater 外）
+      const mod      = activeModuleData
+      const label    = resolveNodeLabel(mod)
+      const bDomain  = resolveDomain(mod)
+      setPrimaryNode(prev => rebuildPrimary({
+        node: prev, mod, scenario: primaryScenario,
+        addonIds: [],                 // 現行 effect の [] を保存
+        rapid: prev.rapid,            // 旧 primaryNodeRef.current.rapid と同値
+        drugName: primaryDrugName,
+        drugLabel: label, baseDomain: bDomain,
+        personaEnabled: pEnabled, persona: pId,
+      }))
       setSelectedAddonIds(new Set())
       setEditedSOAP(null)
     } else if (selectedScenarioId === null) {
-      rawPrimaryFieldsRef.current = EMPTY_FIELDS
-      primaryGuardRef.current = null
       if (isManualSelect) {
         rapidBaseFieldsRef.current = null  // シナリオ解除で NLP 原本をクリア
       }
-      setPrimaryBaseFields(EMPTY_FIELDS)
+      setPrimaryNode(prev => ({
+        ...prev,
+        block: { ...prev.block, fields: EMPTY_FIELDS, rawFields: EMPTY_FIELDS, guard: undefined },
+      }))
       setEditedSOAP(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedScenarioId])
+  }, [primaryNode.scenarioId])
   // ↑ primaryScenario / activeModuleData.defaults は deps に入れない。
   //   シナリオ切替タイミングだけで同期すれば十分。
   //   deps に入れると別モジュール選択時など意図しない再実行が起きる。
@@ -1005,13 +1047,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // editingNodeId !== null（node 編集中）や editingPrimary（1剤目の別グループ切替）は
     // selectedScenarioId をリセットしない。
     if (editingNodeIdRef.current === null && !editingPrimaryRef.current) {
-      setSelectedScenarioId(null)
-      setPrimaryBaseFields(EMPTY_FIELDS)
-      setPrimaryAddonIds(new Set())
-      setSelectedAddonIds(new Set())
       // シナリオ解除はコンテキスト破棄。Rapid を残すと「non-null なのに
       // SOAP へ反映されていない」状態になるため明示的に null にする。
-      setRapidState(null)
+      setPrimaryNode(prev => ({
+        ...prev, scenarioId: '', selectedAddonIds: [], rapid: null,
+        block: { ...prev.block, fields: EMPTY_FIELDS, rawFields: EMPTY_FIELDS, guard: undefined },
+      }))
+      setSelectedAddonIds(new Set())
     }
   }, [])
 
@@ -1120,34 +1162,41 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // editingPrimary 中にシナリオを選んだら編集モードを終了
       if (editingPrimaryRef.current) setEditingPrimary(false)
       // ユーザーが明示的に手動でシナリオを選択した印を付ける。
-      // useEffect([selectedScenarioId]) で rapidBaseFieldsRef を null にする条件として使う。
+      // useEffect([primaryNode.scenarioId]) で rapidBaseFieldsRef を null にする条件として使う。
       manualScenarioSelectRef.current = true
       // 手動でシナリオを選択したら Rapid 前スナップショットは不要になるのでクリアする。
       manualSnapshotRef.current = null
-      setSelectedScenarioId(prev => {
-        if (prev === id) {
-          // 同じシナリオを再タップ → 解除（コンテキスト破棄。遷移ではない）
-          setPrimaryBaseFields(EMPTY_FIELDS)
-          setPrimaryAddonIds(new Set())
-          setSelectedAddonIds(new Set())
-          setRapidState(null)
-          return null
-        }
-        const sc = activeModuleData.scenarios.find(s => s.globalId === id)
-        if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
-        // ── scenario 遷移（RAPID-V2-07）────────────────────────
-        // capability は scenario intrinsic predicate で判定する（RAPID-V2-08）。
-        // UI の表示可否（isSingleDrug / thirdPanelEnabled）には依存させない。
-        // 保持された場合、useEffect(selectedScenarioId) が新シナリオの
-        // pristine S を基点に Rapid 先頭文を再適用する（解釈①）。
-        setRapidState(prevRapid => nextRapidStateOnScenarioChange(
-          prevRapid,
-          isScenarioSReplacementCapable(primaryScenarioRef.current),
-          isScenarioSReplacementCapable(sc),
-        ))
-        // primaryBaseFields は useEffect(selectedScenarioId) で同期される
-        return id
-      })
+
+      // updater の外で現在値を読む（primaryNodeRef は render 同期の read-only mirror）。
+      // 1 batch につき setPrimaryNode を 1 回しか呼ばないため、ここでの値は
+      // updater の prev と一致する。
+      const snap = primaryNodeRef.current
+      const isDeselect = snap.scenarioId === id
+      const sc = activeModuleData.scenarios.find(s => s.globalId === id)
+
+      if (!isDeselect && sc) setSelectedGroup(getMenuGroupFromScenario(sc))
+      if (isDeselect) {
+        // 同じシナリオを再タップ → 解除（コンテキスト破棄。遷移ではない）
+        setSelectedAddonIds(new Set())
+      }
+
+      // ── scenario 遷移（RAPID-V2-07）────────────────────────
+      // capability は scenario intrinsic predicate で判定する（RAPID-V2-08）。
+      // UI の表示可否（isSingleDrug / thirdPanelEnabled）には依存させない。
+      // 保持された場合、useEffect(primaryNode.scenarioId) が新シナリオの
+      // pristine S を基点に Rapid 先頭文を再適用する（解釈①）。
+      // primaryBaseFields（= primaryNode.block.fields）は useEffect(primaryNode.scenarioId) で同期される。
+      // 切替側（else）は block を絶対に触らない（transient 保存の要。§3）。
+      // updater 内で ref を read しない（A-9）ため、旧 scenario の capable 判定は外で確定する。
+      const oldCapable = isScenarioSReplacementCapable(primaryScenarioRef.current)
+      setPrimaryNode(p => isDeselect
+        ? { ...p, scenarioId: '', selectedAddonIds: [], rapid: null,
+            block: { ...p.block, fields: EMPTY_FIELDS, rawFields: EMPTY_FIELDS, guard: undefined } }
+        : { ...p, scenarioId: id, rapid: nextRapidStateOnScenarioChange(
+            p.rapid,
+            oldCapable,
+            isScenarioSReplacementCapable(sc),
+          ) })
     })
   }, [activeModuleData.scenarios, buildUpdatedNode, confirmDiscard])
 
@@ -1161,8 +1210,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       manualSnapshotRef.current = null
       rapidBaseFieldsRef.current = null
       const mod = allModules.find(m => m.moduleId === item.moduleId) ?? moduleData
-      setActiveModuleData(mod)
-      setActiveBrandName(item.matchedBrandName)
       // U-4b: SOAP {{drug_subject}} は BrandResolution から解決する。
       // 旧実装は drugDisplayLabel と matchedBrandName の文字列比較から意味論を逆算していたが、
       // これは brandNames[0]（JSON の配列宣言順）を主語へ流す経路になっていた（F-3）。
@@ -1172,23 +1219,31 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // 意味する既存の state 表現であり、activeBrandName / drugDisplayLabel / brandNames[0] 等で
       // 埋めてはならない（DP-15）。
       const subject = resolveSubjectFromResolution(item.resolution)
-      setActiveDrugDisplayName(subject ?? undefined)
-      setActiveResolution(item.resolution)
+      setPrimaryNode(prev => ({
+        ...prev,
+        moduleId:         mod.moduleId,
+        matchedBrandName: item.matchedBrandName,
+        resolvedDrugName: subject ?? undefined,
+        resolution:       item.resolution,
+        localSiteInput:   '',
+        drugLabel:        resolveNodeLabel(mod),
+        baseDomain:       resolveDomain(mod),
+        block: {
+          ...prev.block,
+          domain: resolveDomain(mod), clinicalDomain: mod.composition?.clinicalDomain,
+          fields: EMPTY_FIELDS, rawFields: EMPTY_FIELDS, guard: undefined,
+        },
+        scenarioId: '', selectedAddonIds: [], rapid: null,      // ← 4C-3 で追加
+      }))
       setDrugSelected(true)
-      setSelectedScenarioId(null)
-      setPrimaryBaseFields(EMPTY_FIELDS)
-      setPrimaryAddonIds(new Set())
       setSelectedAddonIds(new Set())
       setSelectedGroup(null)
-      // 薬剤切替はコンテキスト破棄（遷移ではない）
-      setRapidState(null)
       setMainSearch('')
       setComposeNodes([])
       setEditingNodeId(null)
       setEditingPrimary(false)
       setPendingNodeIds(new Set())
       setEditedSOAP(null)
-      setLocalSiteInput('')
     })
   }, [allModules, moduleData, confirmDiscard])
 
@@ -1336,7 +1391,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         n.id === nodeId ? { ...n, localSiteInput: value } : n
       ))
     } else {
-      setLocalSiteInput(value)
+      setPrimaryNode(prev => ({ ...prev, localSiteInput: value }))
     }
   }, [])
 
@@ -1375,26 +1430,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         next.A === snap.A && next.P === snap.P
       return isIdentical ? null : next
     })
-  }, [])
-
-  // ─────────────────────────────────────────────────────────────
-  // derivePrimaryDisplayFields【H-1 対応】
-  //
-  // rawPrimaryFieldsRef（persona 未適用・ADDON/Rapid 反映済みベース）から
-  // 表示用フィールドを導出する。personaEnabled が false、または guard が
-  // 存在しない（シナリオ未確定）場合は raw をそのまま返す。
-  //
-  // handleAddonToggle（primary）/ handleSToggle が
-  // raw ベースを更新した直後、この関数で表示を再導出することで、
-  // 「persona 再計算の基点（raw）」と「表示中の本文」を常に同期させる。
-  // reapplyPersonaToAllBlocks はこの関数を使わず現状のまま
-  // （呼び出し時点で ref が未更新のため、明示的な nextEnabled/nextPersona 引数が必要）。
-  // ─────────────────────────────────────────────────────────────
-
-  const derivePrimaryDisplayFields = useCallback((raw: SoapFields): SoapFields => {
-    const guard = primaryGuardRef.current
-    if (!personaEnabledRef.current || !guard) return raw
-    return applyPersonaToFieldsWithGuard(raw, true, selectedPersonaRef.current, guard)
   }, [])
 
   // ─────────────────────────────────────────────────────────────
@@ -1456,30 +1491,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         // scenario 本文側 [869行目付近] / Rapid 側 [1543行目付近] と同一経路。
         const drugName = activeDrugDisplayNameRef.current
           ?? resolveDrugName(activeModuleData.drug, activeBrandName)
-        setSelectedAddonIds(prev => {
-          const next = new Set(prev)
-          next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
-          const newAddonIds = [...next]
-          setPrimaryAddonIds(next)
 
-          // ── deriveRawFields へ一本化（Unit 2B）─────────────────
-          // scenario + newAddonIds + 現在の Rapid state から raw を deterministic に
-          // 再導出する（strip/re-add の増分 patch は行わない）。
-          // deriveRawFields は newAddonIds のみを入力に取る純関数のため、
-          // StrictMode の updater 二重実行でも出力は自然に冪等
-          // （同じ newAddonIds → 常に同じ raw。旧実装が必要とした
-          //   rawBeforeToggle スナップショットは不要になった）。
-          if (sc) {
-            const rawFields = deriveRawFields(sc, activeModuleData, newAddonIds, rapidStateRef.current, drugName)
-            rawPrimaryFieldsRef.current = rawFields
-            setPrimaryBaseFields(derivePrimaryDisplayFields(rawFields))
-          }
-          setEditedSOAP(null)
-          return next
-        })
+        const next = new Set(selectedAddonIdsRef.current)      // updater の外で読む
+        next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
+        const newAddonIds = [...next]
+        const rapidNow = primaryNodeRef.current.rapid
+        const pEnabled = personaEnabledRef.current, pId = selectedPersonaRef.current   // ← hoist
+        const mod = activeModuleData, label = resolveNodeLabel(mod), bDomain = resolveDomain(mod)
+
+        setSelectedAddonIds(next)                                          // UI buffer
+        // ── rebuildPrimary へ一本化（Unit 4C-4）─────────────────
+        // scenario + newAddonIds + 現在の Rapid state から raw を deterministic に
+        // 再導出する（strip/re-add の増分 patch は行わない）。rebuildPrimary は
+        // newAddonIds のみを入力に取る純関数のため、StrictMode の updater 二重実行でも
+        // 出力は自然に冪等（同じ newAddonIds → 常に同じ raw）。
+        setPrimaryNode(p => sc
+          ? rebuildPrimary({ node: p, mod, scenario: sc, addonIds: newAddonIds, rapid: rapidNow,
+              drugName, drugLabel: label, baseDomain: bDomain, personaEnabled: pEnabled, persona: pId })
+          : { ...p, selectedAddonIds: newAddonIds })      // sc 無しなら本文を触らない（現行挙動）
+        setEditedSOAP(null)
       })
     }
-  }, [activeModuleData, activeBrandName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard, derivePrimaryDisplayFields])
+  }, [activeModuleData, activeBrandName, allModules, moduleData, personaEnabled, selectedPersona, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSToggle【Rapid 操作】（S先頭文トグル）
@@ -1497,57 +1530,59 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         ?? resolveDrugName(activeModuleData.drug, activeBrandName)
       const sc = primaryScenarioRef.current
       const currentAddonIds = [...primaryAddonIdsRef.current]
+      const rapidBase = rapidBaseFieldsRef.current                 // NLP dead path
+      const pEnabled = personaEnabledRef.current, pId = selectedPersonaRef.current   // ← hoist
+      const mod = activeModuleData, label = resolveNodeLabel(mod), bDomain = resolveDomain(mod)
 
       // ── toggle-off（RAPID-V2-05）────────────────────────────
       // 現在アクティブな Rapid を再クリック → RapidState = null にし、
       // S 本文を scenario 本来の先頭文へ差し戻す。
       //
-      // Unit 2B: deriveRawFields(rapid=null) が単一の deterministic 経路として
-      // scenario本文・ADDON・raw復元をすべて再導出する（手動 S mutation は行わない）。
+      // Unit 2B: deriveRawFields(rapid=null)（rebuildPrimary 経由）が単一の deterministic
+      // 経路として scenario本文・ADDON・raw復元をすべて再導出する（手動 S mutation は行わない）。
       //   - 残余（シナリオ固有の観察文）と ADDON テキストは deriveRawFields が保持する
       //   - raw を persona 再計算の基点として保ち続ける（H-1 / 37a9262 の invariant）
       //   - localInput は finalFields で render 時に適用されるため巻き戻らない
-      if (isSameRapid(rapidStateRef.current, relation, condition)) {
-        setRapidState(null)
-        if (sc) {
-          const rawFields = deriveRawFields(sc, activeModuleData, currentAddonIds, null, drugName)
-          rawPrimaryFieldsRef.current = rawFields
-          setPrimaryBaseFields(derivePrimaryDisplayFields(rawFields))
-        } else {
-          setPrimaryBaseFields(derivePrimaryDisplayFields(rawPrimaryFieldsRef.current))
-        }
+      if (isSameRapid(primaryNodeRef.current.rapid, relation, condition)) {
+        setPrimaryNode(p => {
+          if (sc) return rebuildPrimary({ node: p, mod, scenario: sc, addonIds: currentAddonIds,
+            rapid: null, drugName, drugLabel: label, baseDomain: bDomain,
+            personaEnabled: pEnabled, persona: pId })
+          // 【D-4C-7】production 到達不能。現行
+          //   setPrimaryBaseFields(derivePrimaryDisplayFields(rawPrimaryFieldsRef.current))
+          // の意味論を prev.block.rawFields から逐語 preservation する。削除しない。
+          const raw = p.block.rawFields ?? EMPTY_FIELDS
+          const fields = (pEnabled && p.block.guard)
+            ? applyPersonaToFieldsWithGuard(raw, true, pId, p.block.guard) : raw
+          return { ...p, rapid: null, block: { ...p.block, fields } }
+        })
         setEditedSOAP(null)
         return
       }
 
-      setRapidState({ previousEvent: relation, currentOutcome: condition })
       // この関数が呼ばれる時点で、表示条件（1剤目 + capable シナリオ）は
       // ThirdPanel 側で既に保証されている。
       // Rapid 原本（NLP専用・現在UI未接続のため通常は null）がある場合は
       // rapidBaseFieldsRef をベースに S だけ差し替える（既存の NLP 経路の分岐を変更しない。
       // NLP は showNlpButton=false / handleSwitchToNlp 未配線のため到達不能）。
-      // 通常経路（rapidBaseFieldsRef が null）は deriveRawFields で raw を再導出する。
-      const rapidBase = rapidBaseFieldsRef.current
-      if (rapidBase !== null) {
-        const resolvedFirst = buildResolvedSFirstSentence(
-          relation,
-          condition,
-          drugName,
-          activeModuleData.display?.adjustmentExpression,
-        )
-        const updated = replaceSFirstSentence(rapidBase.S, resolvedFirst)
-        setPrimaryBaseFields({ ...rapidBase, S: updated })
-      } else if (sc) {
-        const rawFields = deriveRawFields(
-          sc, activeModuleData, currentAddonIds,
-          { previousEvent: relation, currentOutcome: condition }, drugName,
-        )
-        rawPrimaryFieldsRef.current = rawFields
-        setPrimaryBaseFields(derivePrimaryDisplayFields(rawFields))
-      }
+      // 通常経路（rapidBaseFieldsRef が null）は rebuildPrimary で raw を再導出する。
+      const nextRapid: RapidState = { previousEvent: relation, currentOutcome: condition }
+      setPrimaryNode(p => {
+        if (rapidBase !== null) {
+          // 【D-4C-8】NLP dead path。fields のみ差し替え rawFields を更新しない現行契約を維持する
+          //   （dead-path migration debt として許容）。
+          const updated = replaceSFirstSentence(rapidBase.S,
+            buildResolvedSFirstSentence(relation, condition, drugName, mod.display?.adjustmentExpression))
+          return { ...p, rapid: nextRapid, block: { ...p.block, fields: { ...rapidBase, S: updated } } }
+        }
+        if (sc) return rebuildPrimary({ node: p, mod, scenario: sc, addonIds: currentAddonIds,
+          rapid: nextRapid, drugName, drugLabel: label, baseDomain: bDomain,
+          personaEnabled: pEnabled, persona: pId })
+        return { ...p, rapid: nextRapid }               // 現行: sc も rapidBase も無ければ本文を触らない
+      })
       setEditedSOAP(null)
     })
-  }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard, derivePrimaryDisplayFields])
+  }, [activeBrandName, activeDrugDisplayName, activeModuleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect【Express 操作】
@@ -1603,19 +1638,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         //   - selectedScenarioId を null にリセットせず globalId に確定
         //   - selectedGroup を sc から解決してセット
         //   - composeSearch をクリア（サブカテゴリ選択で設定された値をリセット）
-        setActiveModuleData(mod)
-        setActiveBrandName(resolvedBrandKey)
-        // displayName が指定されていて brandKey と異なる場合のみ activeDrugDisplayName に設定
+        // displayName が指定されていて brandKey と異なる場合のみ resolvedDrugName に設定
         // （handleSelectDrugSuggestion と同じロジック）
-        setActiveDrugDisplayName(
-          resolvedDisplayName !== resolvedBrandKey ? resolvedDisplayName : undefined,
-        )
+        //
         // Express は DrugSuggestionItem を経由しないため BrandResolution を持たない。
         // primary context が Express へ切り替わる時点で、直前の検索由来 resolution を
         // 必ず破棄する（残すと U-5 gate が前の context の denotation で誤発火する）。
         // undefined は「legacy / 非検索経路」を表す既存契約であり、新しい resolution を
-        // 生成する処理ではない（lib/brandTags.ts）。
-        setActiveResolution(undefined)
+        // 生成する処理ではない（lib/brandTags.ts）。resolution: undefined を明示する
+        // ことで U-5 lifecycle reset を保存する。
+        setPrimaryNode(prev => ({
+          ...prev,
+          moduleId:         mod.moduleId,
+          matchedBrandName: resolvedBrandKey,
+          resolvedDrugName: resolvedDisplayName !== resolvedBrandKey ? resolvedDisplayName : undefined,
+          resolution:       undefined,
+          drugLabel:        resolveNodeLabel(mod),
+          baseDomain:       resolveDomain(mod),
+          block: { ...prev.block, domain: resolveDomain(mod), clinicalDomain: mod.composition?.clinicalDomain },
+          // シナリオを即時確定（通常フローでは handleSelectScenario が行う処理を一括実行）。
+          // Express 確定はコンテキスト破棄。Rapid を自動付与しない（RAPID-V2-07）
+          scenarioId: globalId, selectedAddonIds: [], rapid: null,
+        }))
         setDrugSelected(true)
         setComposeNodes([])
         setEditingNodeId(null)
@@ -1623,12 +1667,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
         setPendingNodeIds(new Set())
         setMainSearch('')
         setComposeSearch('')  // サブカテゴリ選択でセットされた値をリセット
-        // シナリオを即時確定（通常フローでは handleSelectScenario が行う処理を一括実行）
-        setSelectedScenarioId(globalId)
         setSelectedGroup(getMenuGroupFromScenario(sc))
-        // Express 確定はコンテキスト破棄。Rapid を自動付与しない（RAPID-V2-07）
-        setRapidState(null)
-        setPrimaryAddonIds(new Set())
         setSelectedAddonIds(new Set())
         setEditedSOAP(null)
       } else {
@@ -1725,23 +1764,27 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // 以降の state リセット前に取得することで正確な復元元を確保する。
       // 毎回必ず上書きする（直前の manual 状態が常に復元対象）。
       manualSnapshotRef.current = {
-        primaryBaseFields:  { ...primaryBaseFieldsRef.current },
-        rawPrimaryFields:   { ...rawPrimaryFieldsRef.current },
-        primaryGuard:       primaryGuardRef.current,
-        selectedScenarioId: selectedScenarioIdRef.current,
+        primaryBlock: {
+          fields:    primaryNodeRef.current.block.fields,
+          rawFields: primaryNodeRef.current.block.rawFields,
+          guard:     primaryNodeRef.current.block.guard,
+        },
+        primarySelection: {
+          scenarioId:       primaryNodeRef.current.scenarioId,
+          selectedAddonIds: primaryNodeRef.current.selectedAddonIds,
+          rapid:            primaryNodeRef.current.rapid,
+        },
         selectedGroup:      selectedGroup,
-        primaryAddonIds:    new Set(primaryAddonIdsRef.current),
         selectedAddonIds:   new Set(selectedAddonIdsRef.current),
-        rapidState:         rapidStateRef.current,
       }
       setUiMode('nlp')
-      setSelectedScenarioId(null)
-      setPrimaryBaseFields(EMPTY_FIELDS)
-      setPrimaryAddonIds(new Set())
+      // NLP 遷移はコンテキスト破棄
+      setPrimaryNode(p => ({
+        ...p, scenarioId: '', selectedAddonIds: [], rapid: null,
+        block: { ...p.block, fields: EMPTY_FIELDS, rawFields: EMPTY_FIELDS, guard: undefined },
+      }))
       setSelectedAddonIds(new Set())
       setSelectedGroup(null)
-      // NLP 遷移はコンテキスト破棄
-      setRapidState(null)
       setComposeNodes([])
       setEditingNodeId(null)
       setEditingPrimary(false)
@@ -1761,16 +1804,11 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     if (snap !== null) {
       manualSnapshotRef.current = null
       rapidBaseFieldsRef.current = null
-      rawPrimaryFieldsRef.current = snap.rawPrimaryFields
-      primaryGuardRef.current     = snap.primaryGuard
-      setPrimaryBaseFields(snap.primaryBaseFields)
-      setPrimaryAddonIds(snap.primaryAddonIds)
       setSelectedAddonIds(snap.selectedAddonIds)
-      setRapidState(snap.rapidState)
       setSelectedGroup(snap.selectedGroup)
       setEditedSOAP(null)
       restoringFromSnapshotRef.current = true
-      setSelectedScenarioId(snap.selectedScenarioId)
+      setPrimaryNode(p => ({ ...p, ...snap.primarySelection, block: { ...p.block, ...snap.primaryBlock } }))
     }
   }, [])
 
@@ -1798,8 +1836,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       const guard = sc
         ? derivePersonaGuard(sc, activeModuleData.template?.urgentFlag)
         : null
-      rawPrimaryFieldsRef.current = nlpFields
-      primaryGuardRef.current = guard
       // persona が ON かつ guard がある場合は変換済みフィールドを表示する
       const displayableFields = (personaEnabledRef.current && guard)
         ? applyPersonaToFieldsWithGuard(nlpFields, true, selectedPersonaRef.current, guard)
@@ -1808,21 +1844,21 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       // S先頭文・ADDON 操作はこれをベースに差分だけ重ねる。
       // persona 変換済み・addonsRef 展開済みの displayableFields を原本とする。
       rapidBaseFieldsRef.current = displayableFields
-      setPrimaryBaseFields(displayableFields)
-      if (result.scenarioId) {
-        // scenarioIdFromNlpRef を true にしてから setSelectedScenarioId を呼ぶ。
-        // useEffect([selectedScenarioId]) はこの ref が true のときはスキップし、
-        // rapidBaseFieldsRef / rawPrimaryFieldsRef / primaryBaseFields を上書きしない。
-        scenarioIdFromNlpRef.current = true
-        setSelectedScenarioId(result.scenarioId)
-        if (sc) setSelectedGroup(getMenuGroupFromScenario(sc))
-      }
+      // scenarioIdFromNlpRef を true にしてから setPrimaryNode を呼ぶ。
+      // useEffect([primaryNode.scenarioId]) はこの ref が true のときはスキップし、
+      // rapidBaseFieldsRef / block.rawFields / block.fields を上書きしない。
+      if (result.scenarioId) scenarioIdFromNlpRef.current = true
+      setPrimaryNode(p => ({
+        ...p, scenarioId: result.scenarioId ?? p.scenarioId,
+        block: { ...p.block, fields: displayableFields, rawFields: nlpFields, guard: guard ?? undefined },
+      }))
+      if (result.scenarioId && sc) setSelectedGroup(getMenuGroupFromScenario(sc))
     } else {
-      rawPrimaryFieldsRef.current = EMPTY_FIELDS
-      primaryGuardRef.current = null
       rapidBaseFieldsRef.current = null  // NLP 生成失敗: 原本をクリア
-      setPrimaryBaseFields(EMPTY_FIELDS)
-      setSelectedScenarioId(null)
+      setPrimaryNode(p => ({
+        ...p, scenarioId: '',
+        block: { ...p.block, fields: EMPTY_FIELDS, rawFields: EMPTY_FIELDS, guard: undefined },
+      }))
     }
     setNlpIsGenerating(false)
   }, [activeModuleData])
@@ -1839,14 +1875,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
   const reapplyPersonaToAllBlocks = useCallback((nextEnabled: boolean, nextPersona: PersonaId) => {
     // 1剤目の再計算
-    const rawPrimary = rawPrimaryFieldsRef.current
-    const primaryGuard = primaryGuardRef.current
-    if (primaryGuard) {
-      const fields = nextEnabled
-        ? applyPersonaToFieldsWithGuard(rawPrimary, true, nextPersona, primaryGuard)
-        : rawPrimary
-      setPrimaryBaseFields(fields)
-    }
+    setPrimaryNode(prev => {
+      if (!prev.block.guard) return prev                 // 現行 `if (primaryGuard)` の逐語移植
+      const raw = prev.block.rawFields ?? EMPTY_FIELDS
+      return { ...prev, block: { ...prev.block,
+        fields: nextEnabled
+          ? applyPersonaToFieldsWithGuard(raw, true, nextPersona, prev.block.guard) : raw } }
+    })
     // 2剤目以降: rawFields / guard がある block のみ再計算
     setComposeNodes(prev => prev.map(node => {
       if (!node.block.rawFields || !node.block.guard) return node
