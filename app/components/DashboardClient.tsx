@@ -1133,16 +1133,30 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
 
     if (nodeId !== null) {
       // ── node ブランチ ────────────────────────────────────────
-      const addonIds = [...selectedAddonIdsRef.current]
-      setPendingNodeIds(prev => { const n = new Set(prev); n.delete(nodeId); return n })
-      setComposeNodes(prev => {
-        const node = prev.find(n => n.id === nodeId)
-        if (!node) return prev
-        // matchedBrandName: brandCatalog 解決キー（先発名）
-        // resolvedDrugName: {{drug_subject}} 用の表示名（GEモードなら GE名）
-        const updated = buildUpdatedNode(node, id, addonIds, node.matchedBrandName, node.resolvedDrugName)
-        if (!updated) return prev
-        return prev.map(n => n.id === nodeId ? updated : n)
+      //
+      // Unit 4D-3a（Owner Decision D-4D3-OD1）: primary content write と同一の
+      // discard contract を通す。editedSOAP は「現在表示されている合成 SOAP 全体の
+      // manual override」であり primary 専用ではないため、secondary の content write も
+      // 手動編集を無言で無視してはならない。
+      //
+      // 破棄は confirmDiscard / ダイアログ確定側が担う（本 callback では
+      // setEditedSOAP を呼ばない。D-4D3-5）。callback は editedSOAP !== null の状態では
+      // 実行されないため、callback 内 reset は値を変えない。
+      //
+      // ADDON 読み出し / pendingNodeIds 解除 / node 再構築はすべて callback の内側に置く。
+      // これにより cancel 時に content state が 1 つも変化しない。
+      confirmDiscard(() => {
+        const addonIds = [...selectedAddonIdsRef.current]
+        setPendingNodeIds(prev => { const n = new Set(prev); n.delete(nodeId); return n })
+        setComposeNodes(prev => {
+          const node = prev.find(n => n.id === nodeId)
+          if (!node) return prev
+          // matchedBrandName: brandCatalog 解決キー（先発名）
+          // resolvedDrugName: {{drug_subject}} 用の表示名（GEモードなら GE名）
+          const updated = buildUpdatedNode(node, id, addonIds, node.matchedBrandName, node.resolvedDrugName)
+          if (!updated) return prev
+          return prev.map(n => n.id === nodeId ? updated : n)
+        })
       })
       return
     }
@@ -1440,47 +1454,57 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const nodeId = editingNodeIdRef.current
 
     if (nodeId !== null) {
-      // ── node ブランチ（確認不要: editedSOAP は primary のみ対象）─
+      // ── node ブランチ（primary と同一の discard contract を通す）─
       //
-      // Unit 4D-1: primary ブランチと同一の purity contract へ揃える。
+      // Unit 4D-3a（Owner Decision D-4D3-OD1）: editedSOAP は「現在表示されている
+      // 合成 SOAP 全体の manual override」であり primary 専用ではない
+      // （handleFieldChange は editingNodeId に関係なく editedSOAP へ書き込む）。
+      // したがって secondary の content write も手動編集を無言で無視してはならない。
+      // 旧コメントの「確認不要: editedSOAP は primary のみ対象」は、handleFieldChange の
+      // node 分岐が存在した時代の前提であり現在は成立しない。
+      //
+      // 破棄は confirmDiscard / ダイアログ確定側が担う（本 callback では
+      // setEditedSOAP を呼ばない。D-4D3-5）。
+      //
+      // Unit 4D-1: primary ブランチと同一の purity contract を維持する。
       //   ① 次の ADDON 選択は updater の外で確定する（updater 内で ref を読まない。A-9）
       //   ② setSelectedAddonIds は値形式で呼ぶ（updater から別 setter を呼ばない。A-13）
       //   ③ composeNodes は prev のみを入力に取る pure functional updater で更新する
       //      （composeNodesRef.current から次の配列全体を確定しない）
       //
-      // ③ の形は handleSelectScenario の node ブランチ（prev.find → prev.map）と同一であり、
-      // 本 Unit で新しいパターンを持ち込んではいない。
+      // toggle 計算を callback の内側へ置くことで、cancel 時に UI buffer も node も
+      // 一切変化しない（primary ブランチと同形）。
       //
       // derive の意味論は変更しない: 入力（scenario / mod / newAddonIds / node.rapid /
       // node.resolvedDrugName / persona）も出力（block の組み立て方）も従来どおりである。
-      // deriveNodeBlockCore は純関数のため、StrictMode の updater 二重実行でも出力は冪等
-      // （同じ prev × 同じ newAddonIds → 常に同じ block）。
-      const next = new Set(selectedAddonIdsRef.current)      // updater の外で読む
-      next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
-      const newAddonIds = [...next]
+      confirmDiscard(() => {
+        const next = new Set(selectedAddonIdsRef.current)      // updater の外で読む
+        next.has(addonKey) ? next.delete(addonKey) : next.add(addonKey)
+        const newAddonIds = [...next]
 
-      setSelectedAddonIds(next)                              // UI buffer（値形式）
-      setComposeNodes(prev => {
-        const node = prev.find(n => n.id === nodeId)
-        if (!node) return prev                               // 対象なし → composeNodes を触らない
-        const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
-        const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
-        if (!sc) return prev                                 // scenario 未確定 → 同上（現行挙動）
-        // Unit 3B: node が所有する Rapid を derive の入力として使う。
-        // ADDON トグルは scenario 遷移ではないため transition function は通さない
-        // （node.rapid をそのまま維持する）。
-        // node.resolvedDrugName を渡して {{drug_subject}} を再解決
-        //
-        // Unit 4D-2: block 再構築は canonical rebuild core（rebuildNode）へ委譲する。
-        // rebuildNode は純関数のため、updater 内で呼んでも purity contract を壊さない
-        // （StrictMode の二重実行でも同じ prev × 同じ newAddonIds → 常に同じ block）。
-        const updated = rebuildNode({
-          node, mod, scenario: sc, addonIds: newAddonIds, rapid: node.rapid,
-          drugName: node.resolvedDrugName ?? '',
-          drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),
-          personaEnabled, persona: selectedPersona,
+        setSelectedAddonIds(next)                              // UI buffer（値形式）
+        setComposeNodes(prev => {
+          const node = prev.find(n => n.id === nodeId)
+          if (!node) return prev                               // 対象なし → composeNodes を触らない
+          const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+          const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
+          if (!sc) return prev                                 // scenario 未確定 → 同上（現行挙動）
+          // Unit 3B: node が所有する Rapid を derive の入力として使う。
+          // ADDON トグルは scenario 遷移ではないため transition function は通さない
+          // （node.rapid をそのまま維持する）。
+          // node.resolvedDrugName を渡して {{drug_subject}} を再解決
+          //
+          // Unit 4D-2: block 再構築は canonical rebuild core（rebuildNode）へ委譲する。
+          // rebuildNode は純関数のため、updater 内で呼んでも purity contract を壊さない
+          // （StrictMode の二重実行でも同じ prev × 同じ newAddonIds → 常に同じ block）。
+          const updated = rebuildNode({
+            node, mod, scenario: sc, addonIds: newAddonIds, rapid: node.rapid,
+            drugName: node.resolvedDrugName ?? '',
+            drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),
+            personaEnabled, persona: selectedPersona,
+          })
+          return prev.map(n => n.id !== nodeId ? n : updated)  // 対象外 node は同一参照で通す
         })
-        return prev.map(n => n.id !== nodeId ? n : updated)  // 対象外 node は同一参照で通す
       })
     } else {
       // ── primary ブランチ（editedSOAP があれば確認する）────────

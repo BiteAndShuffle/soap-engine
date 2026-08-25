@@ -373,14 +373,32 @@ describe('D. 非対象 node の identity / value が変化しない', () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe('E. node ブランチは primaryNode を書き換えない', () => {
-  test('node ブランチに setPrimaryNode / setEditedSOAP / confirmDiscard が無い', () => {
+  /**
+   * Unit 4D-3a contract migration（Owner Decision D-4D3-OD1 / D-4D3-7）。
+   *
+   * 4D-1 時点の本テストは `confirmDiscard(` も禁止していたが、それは
+   * 「secondary content write は editedSOAP を無視してよい」という historical
+   * asymmetry を契約として固定してしまっていた。D-4D3-OD1 により、editedSOAP は
+   * 合成 SOAP 全体の manual override であり secondary content write も同じ
+   * discard contract を通すことが確定したため、`confirmDiscard(` を **必須へ反転**する。
+   *
+   * これは test weakening / retirement ではなく successor contract である:
+   *   - setPrimaryNode(  … 禁止を維持（primary state を汚さない）
+   *   - setEditedSOAP(   … 禁止を維持（破棄 authority は dialog 側。D-4D3-5）
+   *   - confirmDiscard(  … 禁止 → 必須（本 Unit で反転）
+   */
+  test('node ブランチに setPrimaryNode / setEditedSOAP が無く、confirmDiscard を通す', () => {
     const region = codeOnly(extractNodeBranch())
-    for (const forbidden of ['setPrimaryNode(', 'setEditedSOAP(', 'confirmDiscard(']) {
+    for (const forbidden of ['setPrimaryNode(', 'setEditedSOAP(']) {
       assert.equal(
         region.includes(forbidden), false,
         `node ブランチに ${forbidden} が混入している（primary 側の意味論を持ち込まない）`,
       )
     }
+    assert.ok(
+      region.includes('confirmDiscard(() => {'),
+      'node ブランチが confirmDiscard を通していない（Unit 4D-3a の統一 contract）',
+    )
   })
 
   test('node ブランチが primaryNode / primaryNodeRef / primaryAddonIdsRef を参照しない', () => {
