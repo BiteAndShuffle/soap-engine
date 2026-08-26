@@ -556,7 +556,7 @@ describe('12. capability は scenario intrinsic predicate である（RAPID-V2-0
       for (const sc of mod.scenarios ?? []) {
         assert.equal(
           isScenarioSReplacementCapable(sc),
-          isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: true }),
+          isSReplacementEligible(sc, { thirdPanelEnabled: true }),
           `${mod.moduleId}/${sc.id}: 分離前後で判定が変わってはならない`,
         )
       }
@@ -608,21 +608,21 @@ describe('12. capability は scenario intrinsic predicate である（RAPID-V2-0
 // 13. 1剤目限定の維持（RAPID-V2-17）
 // ═══════════════════════════════════════════════════════════════
 
-describe('13. Unit 1 終了時点でも Rapid は 1剤目限定である（RAPID-V2-17）', () => {
-  test('UI gate は capability AND context の 2 段である', () => {
+describe('13. Unit 1 時点の 1剤目限定（RAPID-V2-17）は Unit 4D-4 で撤廃されている（D-4D4-3）', () => {
+  test('UI gate は capability AND thirdPanelEnabled の 2 段である（isSingleDrug という第3軸は Unit 4D-4 で撤廃）', () => {
     const caps = capableScenarios()
     assert.ok(caps.length > 0)
     const { sc } = caps[0]
-    // capable でも context が満たされなければ表示しない
-    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: false }), false)
-    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: false, isSingleDrug: true }), false)
-    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: true }), true)
+    // thirdPanelEnabled が満たされなければ capable でも表示しない
+    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: false }), false)
+    // capable かつ thirdPanelEnabled=true なら true（複数 ComposeNode が存在していても制限しない）
+    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true }), true)
   })
 
-  test('handleSToggle は node Rapid write path を持つが、production UI からは isSingleDrug gate により到達不能である（Unit 4D-3b successor contract）', () => {
+  test('handleSToggle は node Rapid write path を持ち、Unit 4D-4 で production UI から到達可能になった（Unit 4D-3b successor contract）', () => {
     // 4D-3b 以前は「何もしない early return」で node 編集中の 1剤目 S 変更を防いでいた。
-    // 4D-3b で node Rapid write path（node branch）が追加されたため、
-    // 「何もしない」ではなく「production UI からは到達しない」ことを固定する。
+    // 4D-3b で node Rapid write path（node branch）が追加され、
+    // Unit 4D-4 で isSingleDrug gate が撤廃されて到達可能になった（D-4D4-3）。
     const toggleBlock = src.slice(
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('handleSubcategorySelect'),
@@ -631,13 +631,18 @@ describe('13. Unit 1 終了時点でも Rapid は 1剤目限定である（RAPID
       /if \(nodeId !== null\) \{/.test(toggleBlock),
       'node Rapid write path（node branch）が存在しない',
     )
-    // 到達不能性の根拠: editingNodeId が non-null になる経路は必ず composeNodes へ
-    // node を足す / 既存 node を要求するため、editingNodeId !== null ⟹
-    // composeNodes.length > 0 ⟹ isSingleDrug === false ⟹ showSButtons === false。
-    assert.ok(
-      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
-      'isSingleDrug gate が変更されている（Rapid UI 到達不能性の根拠が崩れた）',
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(
+      src.includes('const isSingleDrug ='), false,
+      'isSingleDrug が live variable として production contract に残っている（Unit 4D-4 で除去されているはず）',
     )
+    assert.equal(
+      src.includes('isSingleDrug={'), false,
+      'isSingleDrug が ThirdPanel へ prop として渡されている',
+    )
+    assert.ok(src.includes('activeScenario={addonTargetScenario}'), 'activeScenario={addonTargetScenario} が渡されていない')
+    assert.ok(src.includes('rapidState={(activeNode ?? primaryNode).rapid}'), 'rapidState={(activeNode ?? primaryNode).rapid} が渡されていない')
   })
 })
 

@@ -8,23 +8,11 @@
  *     新規モジュールでも自動的にS置換UIが有効になる。
  *   - thirdPanelSPlacement が明示されている場合は最優先（override 禁止）。
  *     特に enabled: false の明示は fallback で true にしてはならない。
- *   - 単剤・primary drug・main search 選択時のみ有効。
- *     追加薬剤・SOAP合成時・composed state では必ず false。
+ *   - active context（primary、または編集中の ComposeNode）のシナリオに対して判定する。
+ *     Unit 4D-4 で 1剤目限定を撤廃し、任意の node で判定可能にした。
  *
- * Context 条件（すべて満たす場合のみ eligibility 判定に進む）:
- *   - thirdPanelEnabled: シナリオ確定済み
- *   - isSingleDrug: 「右上メイン検索で選択した1剤目 primary drug が確定済み、
- *                   かつ追加薬剤（composeNodes）がゼロ件」を意味する。
- *                   以下のすべてが成立する場合のみ true とすること:
- *                     isPrimaryDrug         — 1剤目のシナリオ（selectedScenarioId 非null）
- *                     isPrimaryScenario     — primary drug のシナリオを表示中
- *                     isMainSearchSelection — サードパネル薬剤追加検索ではなく右上メイン検索由来
- *                     !isAdditionalDrugSelection — composeNodes への追加薬剤選択中ではない
- *                     !isSynthesisMode      — 多剤合成中（composeNodes.length > 0）ではない
- *                     !isComposedSoapMode   — 合成済み SOAP の再編集中ではない
- *                   DashboardClient では
- *                     selectedScenarioId !== null && composeNodes.length === 0
- *                   がこれらすべてを包含して isSingleDrug として計算される。
+ * Context 条件（満たす場合のみ eligibility 判定に進む）:
+ *   - thirdPanelEnabled: active context のシナリオが確定済み
  *
  * Generic fallback（thirdPanelSPlacement 未設定時）:
  *   1. sideEffectPresence === "absent_or_not_observed"
@@ -38,38 +26,16 @@ import type { Scenario } from './types'
 /**
  * S置換UI 表示コンテキスト。
  *
- * ## isSingleDrug の意味（= primary main-search context）
+ * thirdPanelEnabled: active context（primary または編集中 ComposeNode）の
+ *   シナリオが確定済みであること。シナリオ未確定では false にすること。
  *
- * このフィールドは単なる「薬剤が1剤か」ではなく、以下をすべて包含する:
- *   - isPrimaryDrug:          右上メイン検索で選ばれた1剤目（selectedScenarioId 非null）
- *   - isPrimaryScenario:      その primary drug のシナリオを表示・編集中
- *   - isMainSearchSelection:  サードパネル内「薬剤追加」検索経由ではない
- *   - !isAdditionalDrugSelection: composeNodes への2剤目以降追加中ではない
- *   - !isSynthesisMode:       composeNodes が空（多剤合成未開始）
- *   - !isComposedSoapMode:    合成済み SOAP 再編集中ではない
- *
- * DashboardClient での算出式:
- *   isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0
- *
- * S置換UI はこのすべてが成立する場合のみ表示する。
- * 追加薬剤（2剤目以降）・合成窓・合成済み SOAP 再編集中は必ず false にすること。
- *
- * thirdPanelEnabled: currentScenarioId !== null かつ !== ''。
- *   シナリオ未確定では false にすること。
+ * Unit 4D-4 より前は isSingleDrug（primary main-search context）フィールドを
+ * 併せ持ち、1剤目にのみ表示を限定していた。Unit 4D-4 でこの制約を撤廃し、
+ * 本 context は thirdPanelEnabled 単独で判定する（D-4D4-2）。
  */
 export interface SReplacementContext {
-  /** シナリオ確定済み（currentScenarioId が有効） */
+  /** active context のシナリオが確定済み */
   thirdPanelEnabled: boolean
-  /**
-   * primary drug / main-search / non-synthesis context。
-   *
-   * 以下をすべて包含する複合条件（詳細は上記 JSDoc 参照）:
-   *   isPrimaryDrug / isPrimaryScenario / isMainSearchSelection /
-   *   !isAdditionalDrugSelection / !isSynthesisMode / !isComposedSoapMode
-   *
-   * DashboardClient: selectedScenarioId !== null && composeNodes.length === 0
-   */
-  isSingleDrug: boolean
 }
 
 /**
@@ -131,18 +97,22 @@ export function isScenarioSReplacementCapable(
  * S置換UI（S先頭文ボタン群）の表示可否を返す。
  *
  * context 条件（UI）と scenario intrinsic 条件（capability）の 2 段構成:
- *   1. context: 単剤 primary / シナリオ確定済み  ← Unit 1 時点でも 1剤目限定を維持（RAPID-V2-17）
+ *   1. context: active context のシナリオ確定済み
  *   2. capability: isScenarioSReplacementCapable
  *
- * @param scenario - 現在選択中の primary scenario（null/undefined なら false）
- * @param context  - 表示コンテキスト（単剤判定・シナリオ確定判定）
+ * Unit 4D-4 より前は 1剤目（primary main-search context）にのみ表示を限定していたが、
+ * この制約は撤廃した（D-4D4-3）。同一 clinicalDomain を含め、複数 ComposeNode が
+ * 同時に non-null Rapid を持つことを制限しない。
+ *
+ * @param scenario - active context（primary または編集中 ComposeNode）のシナリオ（null/undefined なら false）
+ * @param context  - 表示コンテキスト（シナリオ確定判定）
  * @returns true ならS置換UIを表示してよい
  */
 export function isSReplacementEligible(
   scenario: Scenario | null | undefined,
   context: SReplacementContext,
 ): boolean {
-  // Context 条件: すべて満たさなければ即 false
-  if (!context.thirdPanelEnabled || !context.isSingleDrug) return false
+  // Context 条件: 満たさなければ即 false
+  if (!context.thirdPanelEnabled) return false
   return isScenarioSReplacementCapable(scenario)
 }

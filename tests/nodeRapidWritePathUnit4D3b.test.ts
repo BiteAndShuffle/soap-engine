@@ -1,21 +1,25 @@
 /**
  * nodeRapidWritePathUnit4D3b.test.ts — Rapid Mode v2 / Unit 4D-3b 契約テスト
  *
- * Unit 4D-3b の責務は「secondary node に Rapid の write path を追加すること」だけである。
- * Rapid UI の解禁は行わない（Unit 4D-4 の責務）。
+ * Unit 4D-3b の責務は「secondary node に Rapid の write path を追加すること」だった。
+ * Rapid UI の解禁は Unit 4D-4 の責務であり、Unit 4D-4 完了時点で解禁済みである。
  *
- *   Unit 4D-3b 完了時点の正しい完成状態:
+ *   Unit 4D-3b 完了時点の状態（Unit 4D-4 で更新済み）:
  *     - internal node Rapid write path = 実装済み
- *     - production UI から node Rapid  = 到達不能
- *     - multi-Rapid production enablement = 未実施
+ *     - production UI から node Rapid  = Unit 4D-4 で到達可能になった
+ *     - multi-Rapid production enablement = Unit 4D-4 で UI 上の制約を追加せず解禁した（D-4D4-3）
  *
- * ## 到達不能性の構造的根拠（Group U が固定する）
+ * ## 到達可能性への移行（Group U が固定する。Unit 4D-4 successor contract）
  * editingNodeId を non-null にする production 経路は 3 つ
  * （handleComposeDrugSelect / handleSelectNode / handleExpressAdd node 分岐）のみで、
  * いずれも同一 batch で composeNodes へ node を足す、または既存 node を要求する。
- * したがって editingNodeId !== null ⟹ composeNodes.length > 0 ⟹ isSingleDrug === false
- * ⟹ ThirdPanel の showSButtons === false。Rapid ボタンが見えている間、
- * editingNodeId は常に null である。node branch を実装しても UI には現れない。
+ * Unit 4D-3b 時点は editingNodeId !== null ⟹ composeNodes.length > 0 ⟹
+ * isSingleDrug === false ⟹ ThirdPanel の showSButtons === false であったため
+ * node Rapid ボタンは常に非表示だった。Unit 4D-4 で isSingleDrug gate を撤廃し、
+ * ThirdPanel へ activeScenario（= addonTargetScenario）/
+ * rapidState（= (activeNode ?? primaryNode).rapid）を渡すようにしたため、
+ * editingNodeId !== null の node が capable scenario を持つ場合は
+ * showSButtons === true になり、node branch は production UI から到達可能になった。
  *
  * ## discard contract（4D-3a からの再利用。新規 rule は作らない）
  * editedSOAP === null → 即時実行 / !== null → confirmDiscard dialog。
@@ -310,29 +314,46 @@ describe('P. primary Rapid / 既存 architecture の preservation', () => {
     assert.ok(p.includes('【D-4C-8】'))
   })
 
-  test('isSingleDrug の定義が変更されていない', () => {
-    assert.ok(src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'))
+  test('isSingleDrug は Unit 4D-4 で production contract から除去されている', () => {
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(src.includes('const isSingleDrug ='), false, 'isSingleDrug が live variable として残っている')
+    assert.equal(src.includes('isSingleDrug={'), false, 'isSingleDrug が ThirdPanel へ prop として渡されている')
+    assert.ok(src.includes('activeScenario={addonTargetScenario}'), 'activeScenario={addonTargetScenario} が渡されていない')
+    assert.ok(src.includes('rapidState={(activeNode ?? primaryNode).rapid}'), 'rapidState={(activeNode ?? primaryNode).rapid} が渡されていない')
   })
 
-  test('ThirdPanel の showSButtons / FEATURE_S_BUTTONS / props が変更されていない', () => {
+  test('ThirdPanel の showSButtons は Unit 4D-4 で active context scope（isSReplacementEligible(activeScenario, { thirdPanelEnabled })）へ移行している', () => {
     assert.ok(thirdPanelSrc.includes('const FEATURE_S_BUTTONS = true'))
     assert.ok(thirdPanelSrc.includes(
-      'isSReplacementEligible(primaryScenario, { thirdPanelEnabled, isSingleDrug })'))
-    assert.ok(/primaryScenario\?:\s*Scenario/.test(thirdPanelSrc))
+      'isSReplacementEligible(activeScenario, { thirdPanelEnabled })'))
+    assert.ok(/activeScenario\?:\s*Scenario/.test(thirdPanelSrc))
     assert.ok(/rapidState:\s*RapidState/.test(thirdPanelSrc))
+    // props type / destructure に isSingleDrug が live field として残っていないことを確認する。
+    assert.equal(/isSingleDrug\??:\s*boolean/.test(thirdPanelSrc), false, 'ThirdPanelProps に isSingleDrug field が残っている')
+    assert.equal(/\bisSingleDrug\b,/.test(thirdPanelSrc), false, 'ThirdPanel の destructure に isSingleDrug が残っている')
   })
 
-  test('DashboardClient が ThirdPanel へ primaryScenario / primaryNode.rapid を渡している', () => {
-    assert.ok(src.includes('primaryScenario={primaryScenario}'))
-    assert.ok(src.includes('rapidState={primaryNode.rapid}'))
+  test('DashboardClient が ThirdPanel へ activeScenario / active node の rapid を渡している', () => {
+    assert.ok(src.includes('activeScenario={addonTargetScenario}'))
+    assert.ok(src.includes('rapidState={(activeNode ?? primaryNode).rapid}'))
   })
 
-  test('isSReplacementEligible / SReplacementContext が変更されていない（signature 不変）', () => {
+  test('isSReplacementEligible は維持され、SReplacementContext は { thirdPanelEnabled } の1フィールドへ縮小している（D-4D4-2）', () => {
     const fn = readFileSync(new URL('../lib/isSReplacementEligible.ts', import.meta.url), 'utf-8')
     assert.ok(fn.includes('export function isSReplacementEligible('))
     assert.ok(fn.includes('export interface SReplacementContext {'))
     assert.ok(fn.includes('thirdPanelEnabled: boolean'))
-    assert.ok(fn.includes('isSingleDrug: boolean'))
+    // interface 本体（宣言に付随する JSDoc は含めない）を live-code region として
+    // 抽出し、その region に isSingleDrug field が無いことを確認する（D-4D4-5）。
+    // JSDoc 内の historical reference は failure 条件にしない。
+    const ifaceStart = fn.indexOf('export interface SReplacementContext {')
+    const ifaceRegion = fn.slice(ifaceStart, fn.indexOf('}', ifaceStart) + 1)
+    assert.equal(ifaceRegion.includes('isSingleDrug'), false, 'SReplacementContext に isSingleDrug field が残っている')
+    // isSReplacementEligible 関数本体でも context.isSingleDrug を参照していないことを確認する。
+    const fnStart = fn.indexOf('export function isSReplacementEligible(')
+    const fnRegion = fn.slice(fnStart, fn.indexOf('\n}', fnStart) + 2)
+    assert.equal(fnRegion.includes('isSingleDrug'), false, 'isSReplacementEligible が context.isSingleDrug を参照している')
   })
 
   test('primaryNodeProjection が存続している', () => {
@@ -639,18 +660,23 @@ describe('U. Rapid UI はまだ解禁されていない', () => {
     assert.ok(composeSetIdx > 0 && composeSetIdx < nodeBranchIdx)
   })
 
-  test('isSingleDrug は composeNodes.length === 0 を要求する（editingNodeId !== null では常に false）', () => {
-    assert.ok(/isSingleDrug = selectedScenarioId !== null && composeNodes\.length === 0/.test(src))
+  test('isSingleDrug は Unit 4D-4 で除去され、editingNodeId !== null でも showSButtons を false 固定しない', () => {
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(src.includes('const isSingleDrug ='), false, 'isSingleDrug が live variable として残っている')
+    assert.equal(src.includes('isSingleDrug={'), false, 'isSingleDrug が ThirdPanel へ prop として渡されている')
   })
 
-  test('ThirdPanel の showSButtons は primaryScenario / isSingleDrug 経由のまま（editingNodeId を見ない）', () => {
+  test('ThirdPanel の showSButtons は activeScenario / thirdPanelEnabled 経由（editingNodeId を直接は見ない）', () => {
     const region = sliceBetween(thirdPanelSrc, 'const showSButtons =', 'const expressByCat')
-    assert.ok(region.includes('isSReplacementEligible(primaryScenario, { thirdPanelEnabled, isSingleDrug })'))
+    assert.ok(region.includes('isSReplacementEligible(activeScenario, { thirdPanelEnabled })'))
     assert.equal(/editingNodeId/.test(region), false, 'showSButtons が editingNodeId に依存している')
   })
 
-  test('multi-node Rapid の production enablement（複数 node が同時に non-null rapid を持つ UI 経路）が存在しない', () => {
+  test('multi-node Rapid は同一 handleSToggle 経由で UI 上制限なく enablement されている（onNodeSAction 等の専用ハンドラは追加しない。D-4D4-3）', () => {
     // Rapid UI ボタン（onSAction）は handleSToggle 1 本のみに接続されている
+    // （node ごとの分岐は handleSToggle 内部の editingNodeId 判定が担い、
+    //   ThirdPanel 側に node 専用ハンドラを追加しない）
     const count = (src.match(/onSAction=\{handleSToggle\}/g) ?? []).length
     assert.equal(count, 1)
     // ThirdPanel には node 用の Rapid ボタンやハンドラは存在しない

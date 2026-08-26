@@ -602,12 +602,14 @@ export interface ComposeNode {
    *
    * 全 Node 生成経路で `rapid: null` を明示初期化する。
    *
-   * **Unit 3B 時点では production UI からこの値が非 null になる経路は存在しない。**
-   * Rapid UI は isSReplacementEligible の isSingleDrug 条件で 1剤目に限定されており、
-   * handleSToggle も editingNodeId !== null で early return する。
-   * multi-node Rapid の解禁は Unit 6 の責務である。
+   * Unit 3B〜4D-3b では production UI からこの値が非 null になる経路は存在せず、
+   * Rapid UI は isSReplacementEligible の isSingleDrug 条件で 1剤目に限定されていた。
+   * **Unit 4D-4 でこの制約を撤廃し、任意の ComposeNode で non-null になりうる。**
+   * ThirdPanel には activeScenario（= addonTargetScenario）/
+   * rapidState（= (activeNode ?? primaryNode).rapid）が渡され、
+   * handleSToggle の node branch（editingNodeId !== null）が到達可能になった。
    *
-   * ただし dead field ではない: buildUpdatedNode / handleAddonToggle の node branch が
+   * dead field ではない: buildUpdatedNode / handleAddonToggle の node branch が
    * deriveNodeBlockCore の入力として本フィールドを消費する。non-null のとき
    * その意味が必ずこの Node の生成 SOAP へ反映されることは
    * tests/nodeRapidOwnershipUnit3B.test.ts が production helper 経由で固定する。

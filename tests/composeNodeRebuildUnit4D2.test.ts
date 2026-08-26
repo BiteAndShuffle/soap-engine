@@ -602,18 +602,27 @@ describe('J. rebuildNode は pure function であり実装は 1 箇所に集約�
 // ═══════════════════════════════════════════════════════════════
 
 describe('K. スコープ外の不変', () => {
-  test('handleSToggle は node Rapid write path を持つが、isSingleDrug gate により production UI から到達不能である（Unit 4D-3b successor contract）', () => {
+  test('handleSToggle は node Rapid write path を持ち、Unit 4D-4 で production UI から到達可能になった（Unit 4D-3b successor contract）', () => {
     // 4D-2 時点は「何もしない early return」だった。4D-3b で node Rapid write path
-    // （node branch）が追加されたため、契約を「node branch は存在するが到達不能」へ更新する。
+    // （node branch）が追加され、4D-4 で isSingleDrug gate が撤廃されて到達可能になった。
     assert.ok(/if \(nodeId !== null\) \{/.test(dashSrc), 'node Rapid write path（node branch）が存在しない')
-    assert.ok(
-      dashSrc.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
-      'isSingleDrug gate が変更されている',
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(
+      dashSrc.includes('const isSingleDrug ='), false,
+      'isSingleDrug が live variable として production contract に残っている（Unit 4D-4 で除去されているはず）',
     )
+    assert.equal(
+      dashSrc.includes('isSingleDrug={'), false,
+      'isSingleDrug が ThirdPanel へ prop として渡されている',
+    )
+    assert.ok(dashSrc.includes('activeScenario={addonTargetScenario}'), 'activeScenario={addonTargetScenario} が渡されていない')
+    assert.ok(dashSrc.includes('rapidState={(activeNode ?? primaryNode).rapid}'), 'rapidState={(activeNode ?? primaryNode).rapid} が渡されていない')
   })
 
-  test('Rapid UI gate（isSingleDrug）が変更されていない', () => {
-    assert.ok(dashSrc.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'))
+  test('Rapid UI gate は Unit 4D-4 で active context scope（isSingleDrug 除去）へ移行している', () => {
+    assert.ok(dashSrc.includes('activeScenario={addonTargetScenario}'))
+    assert.ok(dashSrc.includes('rapidState={(activeNode ?? primaryNode).rapid}'))
   })
 
   test('4D-1 の purity contract が維持されている（node ADDON 経路）', () => {

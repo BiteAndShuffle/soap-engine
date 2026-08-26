@@ -546,14 +546,20 @@ describe('9. confirmDiscard 導入後も updater purity が維持されている
 // ═══════════════════════════════════════════════════════════════
 
 describe('10. primary branch semantics 不変', () => {
-  test('handleSToggle は node Rapid write path を持つが production UI からは到達不能である（Unit 4D-3b successor contract）', () => {
+  test('handleSToggle は node Rapid write path を持ち、Unit 4D-4 で production UI から到達可能になった（Unit 4D-3b successor contract）', () => {
     assert.ok(
       /if \(nodeId !== null\) \{/.test(src),
       'handleSToggle の node branch（node Rapid write path）が存在しない',
     )
-    assert.ok(
-      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
-      'isSingleDrug gate が変更されている',
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(
+      src.includes('const isSingleDrug ='), false,
+      'isSingleDrug が live variable として production contract に残っている（Unit 4D-4 で除去されているはず）',
+    )
+    assert.equal(
+      src.includes('isSingleDrug={'), false,
+      'isSingleDrug が ThirdPanel へ prop として渡されている',
     )
   })
 

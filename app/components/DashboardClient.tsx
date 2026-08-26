@@ -1549,14 +1549,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const nodeId = editingNodeIdRef.current
 
     if (nodeId !== null) {
-      // ── node ブランチ（Unit 4D-3b）──────────────────────────
+      // ── node ブランチ（Unit 4D-3b。Unit 4D-4 で UI 解禁済み）───
       // 4D-3a で確定した discard contract をそのまま適用する（新規 rule を作らない）。
       // 破棄 authority は dialog confirm 側。本 callback に setEditedSOAP を置かない。
       //
-      // production UI からは到達しない: editingNodeId が non-null になる 3 経路は
-      // いずれも同一 batch で composeNodes へ node を足す / 既存 node を要求するため、
-      // editingNodeId !== null ⟹ composeNodes.length > 0 ⟹ isSingleDrug === false
-      // ⟹ ThirdPanel の showSButtons === false。UI 解禁は Unit 4D-4 の責務。
+      // Unit 4D-4 より前は editingNodeId !== null のとき ThirdPanel の showSButtons が
+      // isSingleDrug gate により常に false となり、この node branch は production UI から
+      // 到達不能だった。Unit 4D-4 で activeScenario（= addonTargetScenario）/
+      // rapidState（= (activeNode ?? primaryNode).rapid）を渡すよう変更し、
+      // 編集中の node が capable scenario を持つ場合はこの branch に到達する。
       confirmDiscard(() => {
         const pEnabled = personaEnabledRef.current, pId = selectedPersonaRef.current
         setComposeNodes(prev => {
@@ -1966,11 +1967,6 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ThirdPanel（合成窓・Sボタン）: シナリオ確定後のみ有効
   const thirdPanelEnabled = currentScenarioId !== null && currentScenarioId !== ''
 
-  // 単剤モード: 1剤目が確定済みかつ composeNodes が空
-  // composeNodes は pending 含む全ての2剤目以降ノードを保持するため、
-  // length === 0 で「薬剤が1剤のみ」を判定する
-  const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0
-
   // SOAPエディター: 1剤目確定 or 確定済みノードあり（pending のみは不可）
   const hasValidComposeNodes = composeNodes.some(n => n.scenarioId !== '' && n.scenarioId != null)
   const showSoapEditor = selectedScenarioId !== null || hasValidComposeNodes
@@ -2051,9 +2047,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
           <ThirdPanel
             selectedGroup={selectedGroup}
             thirdPanelEnabled={thirdPanelEnabled}
-            isSingleDrug={isSingleDrug}
-            primaryScenario={primaryScenario}
-            rapidState={primaryNode.rapid}
+            activeScenario={addonTargetScenario}
+            rapidState={(activeNode ?? primaryNode).rapid}
             onSAction={handleSToggle}
             composeSearchValue={composeSearch}
             onComposeSearchChange={setComposeSearch}

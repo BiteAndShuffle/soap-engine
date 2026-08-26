@@ -84,7 +84,7 @@ function runMerge(primary: MergedBlock, rest: MergedBlock[]): SoapFields {
 // ─────────────────────────────────────────────────────────────
 
 describe('① derm 単剤 — S置換対象判定', () => {
-  const ctx = { thirdPanelEnabled: true, isSingleDrug: true }
+  const ctx = { thirdPanelEnabled: true }
 
   test('cp_good → S置換 true', () => {
     const sc = getScenario(derm, 'cp_good')
@@ -162,12 +162,12 @@ describe('② 2剤合成 — GLP-1内服 + derm', () => {
     }
   })
 
-  test('derm + GLP-1 合成後 isSReplacementEligible は false（isSingleDrug=false）', () => {
+  test('derm + GLP-1 合成後も isSReplacementEligible は true（Unit 4D-4: capable なら複数 ComposeNode でも true。D-4D4-3）', () => {
     const dermSc = getScenario(derm, 'cp_good')
     assert.equal(
-      isSReplacementEligible(dermSc, { thirdPanelEnabled: true, isSingleDrug: false }),
-      false,
-      '多剤合成中は isSingleDrug=false なので S置換は false'
+      isSReplacementEligible(dermSc, { thirdPanelEnabled: true }),
+      true,
+      'capable な scenario は複数 ComposeNode が存在していても thirdPanelEnabled=true なら true'
     )
   })
 })
@@ -221,15 +221,15 @@ describe('② 2剤合成 — H1内服 + H1点眼', () => {
   })
 })
 
-describe('② 2剤合成 — derm cp_good + H1内服 initial_nasal (S置換抑制確認)', () => {
-  test('derm(cp_good) primary 単剤: S置換 true', () => {
+describe('② 2剤合成 — derm cp_good + H1内服 initial_nasal (Unit 4D-4: S置換は capability のみで判定)', () => {
+  test('derm(cp_good) 単剤: S置換 true', () => {
     const sc = getScenario(derm, 'cp_good')
-    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: true }), true)
+    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true }), true)
   })
 
-  test('derm(cp_good) secondary（H1追加後）: S置換 false', () => {
+  test('derm(cp_good) 複数 ComposeNode 存在時（H1追加後）: capable なら S置換 true（旧: secondary で false。D-4D4-3）', () => {
     const sc = getScenario(derm, 'cp_good')
-    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: false }), false)
+    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true }), true)
   })
 
   test('mergeBlocks 自体は S が空にならない', () => {
@@ -265,9 +265,9 @@ describe('③ 3剤合成 — derm + H1内服 + H1点眼', () => {
     }
   })
 
-  test('S置換は primary(derm single-drug)のみ、3剤合成後は false', () => {
+  test('S置換は capability のみで判定、3剤合成後も capable なら true（旧: primary 限定で false。D-4D4-3）', () => {
     const sc = getScenario(derm, 'cp_good')
-    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: false }), false)
+    assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true }), true)
   })
 })
 
@@ -442,54 +442,54 @@ describe('⑤ compose 編集ストレス', () => {
 // 6. S置換 suppression — 全コンテキスト網羅
 // ─────────────────────────────────────────────────────────────
 
-describe('⑥ S置換 suppression — context 境界', () => {
+describe('⑥ S置換 eligibility — context 境界（Unit 4D-4: thirdPanelEnabled + capability のみで判定）', () => {
   const dermEligibleIds = ['cp_good', 'se_contact_dermatitis_none', 'se_redness_none', 'se_pruritus_none', 'se_dermatitis_none']
 
   test('thirdPanelEnabled=false → 常に false', () => {
     for (const id of dermEligibleIds) {
       const sc = getScenario(derm, id)
       assert.equal(
-        isSReplacementEligible(sc, { thirdPanelEnabled: false, isSingleDrug: true }),
+        isSReplacementEligible(sc, { thirdPanelEnabled: false }),
         false,
         `${id}: thirdPanelEnabled=false なら false`
       )
     }
   })
 
-  test('isSingleDrug=false → 常に false（多剤合成中）', () => {
+  test('複数 ComposeNode が存在していても capable なら true（旧: isSingleDrug=false で常に false。D-4D4-3）', () => {
     for (const id of dermEligibleIds) {
       const sc = getScenario(derm, id)
       assert.equal(
-        isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: false }),
-        false,
-        `${id}: isSingleDrug=false なら false`
+        isSReplacementEligible(sc, { thirdPanelEnabled: true }),
+        true,
+        `${id}: thirdPanelEnabled=true なら capable な scenario は true`
       )
     }
   })
 
-  test('primary=true かつ isSingleDrug=true → eligible シナリオは true', () => {
+  test('thirdPanelEnabled=true → eligible シナリオは true', () => {
     for (const id of dermEligibleIds) {
       const sc = getScenario(derm, id)
       assert.equal(
-        isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: true }),
+        isSReplacementEligible(sc, { thirdPanelEnabled: true }),
         true,
-        `${id}: primary context では true`
+        `${id}: thirdPanelEnabled=true では true`
       )
     }
   })
 
   test('scenario=null → 常に false', () => {
     assert.equal(
-      isSReplacementEligible(null, { thirdPanelEnabled: true, isSingleDrug: true }),
+      isSReplacementEligible(null, { thirdPanelEnabled: true }),
       false
     )
     assert.equal(
-      isSReplacementEligible(undefined, { thirdPanelEnabled: true, isSingleDrug: true }),
+      isSReplacementEligible(undefined, { thirdPanelEnabled: true }),
       false
     )
   })
 
-  test('derm 非対象シナリオは primary context でも false', () => {
+  test('derm 非対象シナリオは thirdPanelEnabled=true でも false（シナリオ自体が capable でない）', () => {
     const nonEligibleIds = [
       'initial_dryness',
       'frequency_increase_low_perceived_effect',
@@ -501,21 +501,19 @@ describe('⑥ S置換 suppression — context 境界', () => {
     for (const id of nonEligibleIds) {
       const sc = getScenario(derm, id)
       assert.equal(
-        isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: true }),
+        isSReplacementEligible(sc, { thirdPanelEnabled: true }),
         false,
         `${id}: 非対象は false`
       )
     }
   })
 
-  test('GLP-1内服 cp_good + derm cp_good: derm が secondary → derm は false', () => {
+  test('GLP-1内服 cp_good + derm cp_good: 複数 ComposeNode が存在していても双方 capable なら true（旧: secondary は false。D-4D4-3）', () => {
     const glp1CpGood = getScenario(oral, 'cp_good')
     const dermCpGood = getScenario(derm, 'cp_good')
 
-    // primary は GLP-1（isSingleDrug=true）
-    assert.equal(isSReplacementEligible(glp1CpGood, { thirdPanelEnabled: true, isSingleDrug: true }), true, 'GLP-1 primary cp_good → true')
-    // derm は secondary（isSingleDrug=false）
-    assert.equal(isSReplacementEligible(dermCpGood, { thirdPanelEnabled: true, isSingleDrug: false }), false, 'derm secondary cp_good → false')
+    assert.equal(isSReplacementEligible(glp1CpGood, { thirdPanelEnabled: true }), true, 'GLP-1 cp_good → true')
+    assert.equal(isSReplacementEligible(dermCpGood, { thirdPanelEnabled: true }), true, 'derm cp_good（複数 ComposeNode 存在下）→ true')
   })
 })
 

@@ -317,13 +317,12 @@ export interface ExpressCandidate {
 interface ThirdPanelProps {
   selectedGroup: MenuGroup | null
   thirdPanelEnabled: boolean
-  /** 単剤モードかどうか（false の場合S先頭文ボタンを非表示） */
-  isSingleDrug: boolean
   /**
-   * 現在選択中の1剤目シナリオ。
+   * 現在の active context（primary、または編集中の ComposeNode）のシナリオ。
    * thirdPanelSPlacement.enabled の判定に使用する。
+   * Unit 4D-4 で primaryScenario から改名し、1剤目限定を撤廃した。
    */
-  primaryScenario?: Scenario
+  activeScenario?: Scenario
   /**
    * 現在の Rapid 選択状態（RAPID-V2-03）。
    * null = Rapid 未選択。この場合どのボタンもアクティブにならない。
@@ -379,8 +378,7 @@ interface ThirdPanelProps {
 export default function ThirdPanel({
   selectedGroup,
   thirdPanelEnabled,
-  isSingleDrug,
-  primaryScenario,
+  activeScenario,
   rapidState,
   onSAction,
   composeSearchValue = '',
@@ -397,10 +395,10 @@ export default function ThirdPanel({
   onLocalSiteInputChange,
 }: ThirdPanelProps) {
   const resolvedSections = applyMenuGroupLabels(SECTIONS, menuGroupLabelOverrides)
-  // S先頭文ボタン群: isSReplacementEligible で汎用判定（単剤 primary 時のみ）
+  // S先頭文ボタン群: isSReplacementEligible で汎用判定（Unit 4D-4: active context 単位）
   const showSButtons =
     FEATURE_S_BUTTONS &&
-    isSReplacementEligible(primaryScenario, { thirdPanelEnabled, isSingleDrug })
+    isSReplacementEligible(activeScenario, { thirdPanelEnabled })
 
   // ── Express候補ポップアップ管理 ──────────────────────────────
   // expressCategory/Group/SubGroup でグルーピングしたマップ（メモ化）

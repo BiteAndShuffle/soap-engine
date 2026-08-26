@@ -96,44 +96,43 @@ describe('getMenuGroupFromScenario — treatment_adjustment generic classificati
 // 2. isSReplacementEligible — generic S置換UI eligibility
 // ─────────────────────────────────────────────────────────────
 
-describe('isSReplacementEligible — generic fallback', () => {
+describe('isSReplacementEligible — generic fallback（Unit 4D-4: thirdPanelEnabled + capability のみで判定）', () => {
   const derm = dermData as unknown as ModuleData
   const oral = oralData as unknown as ModuleData
   const h1Oral = h1OralData as unknown as ModuleData
 
-  // 単剤 primary context（true が返るべき基本条件）
-  const primaryCtx = { thirdPanelEnabled: true, isSingleDrug: true }
-  // 多剤合成中（isSingleDrug: false）
-  const multiDrugCtx = { thirdPanelEnabled: true, isSingleDrug: false }
-  // シナリオ未確定（thirdPanelEnabled: false）
-  const noScenarioCtx = { thirdPanelEnabled: false, isSingleDrug: true }
+  // シナリオ確定済み context（capable なら true が返るべき基本条件）。
+  // Unit 4D-4 以前は isSingleDrug（1剤目限定）も併せ持っていたが、D-4D4-3 により撤廃した。
+  const enabledCtx = { thirdPanelEnabled: true }
+  // シナリオ未確定（thirdPanelEnabled: false）。これは今も eligibility を強制的に false にする。
+  const disabledCtx = { thirdPanelEnabled: false }
 
-  describe('derm: cp_good — 単剤 primary 時 true', () => {
-    test('cp_good: isSingleDrug=true → true', () => {
+  describe('derm: cp_good — capable かつ thirdPanelEnabled なら true', () => {
+    test('cp_good: thirdPanelEnabled=true → true', () => {
       const sc = findScenario(derm, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), true)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('cp_good: isSingleDrug=false（多剤合成）→ false', () => {
+    test('cp_good: 複数 ComposeNode が存在していても thirdPanelEnabled=true なら true（D-4D4-3: multi-Rapid を UI 上制限しない）', () => {
       const sc = findScenario(derm, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, multiDrugCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
     test('cp_good: thirdPanelEnabled=false → false', () => {
       const sc = findScenario(derm, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, noScenarioCtx), false)
+      assert.equal(isSReplacementEligible(sc, disabledCtx), false)
     })
   })
 
-  describe('derm: se_contact_dermatitis_none — 単剤 primary 時 true', () => {
-    test('se_contact_dermatitis_none: isSingleDrug=true → true', () => {
+  describe('derm: se_contact_dermatitis_none — capable かつ thirdPanelEnabled なら true', () => {
+    test('se_contact_dermatitis_none: thirdPanelEnabled=true → true', () => {
       const sc = findScenario(derm, 'se_contact_dermatitis_none')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), true)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('se_contact_dermatitis_none: isSingleDrug=false（多剤合成）→ false', () => {
+    test('se_contact_dermatitis_none: 複数 ComposeNode が存在していても thirdPanelEnabled=true なら true（D-4D4-3）', () => {
       const sc = findScenario(derm, 'se_contact_dermatitis_none')
-      assert.equal(isSReplacementEligible(sc, multiDrugCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
   })
 
@@ -141,18 +140,18 @@ describe('isSReplacementEligible — generic fallback', () => {
     test('cp_good: 明示 enabled:true → true', () => {
       const sc = findScenario(oral, 'cp_good')
       assert.ok(sc.thirdPanelSPlacement?.enabled === true, 'precondition: GLP-1 cp_good has explicit thirdPanelSPlacement.enabled=true')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), true)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
     test('se_hypo_none: 明示 enabled:true → true', () => {
       const sc = findScenario(oral, 'se_hypo_none')
       assert.ok(sc.thirdPanelSPlacement?.enabled === true, 'precondition: GLP-1 se_hypo_none has explicit thirdPanelSPlacement.enabled=true')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), true)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('GLP-1 cp_good: isSingleDrug=false → false（明示設定あっても context 条件で弾く）', () => {
+    test('GLP-1 cp_good: 複数 ComposeNode が存在していても明示設定 + thirdPanelEnabled=true なら true（D-4D4-3）', () => {
       const sc = findScenario(oral, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, multiDrugCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
   })
 
@@ -177,101 +176,91 @@ describe('isSReplacementEligible — generic fallback', () => {
         P: 'テスト',
         thirdPanelSPlacement: { enabled: false, trigger: 'single_drug_only', mode: 'replace', persistAsCompositionBase: false },
       }
-      assert.equal(isSReplacementEligible(syntheticScenario, primaryCtx), false)
+      assert.equal(isSReplacementEligible(syntheticScenario, enabledCtx), false)
     })
   })
 
   describe('null/undefined scenario → false', () => {
     test('scenario=null → false', () => {
-      assert.equal(isSReplacementEligible(null, primaryCtx), false)
+      assert.equal(isSReplacementEligible(null, enabledCtx), false)
     })
 
     test('scenario=undefined → false', () => {
-      assert.equal(isSReplacementEligible(undefined, primaryCtx), false)
+      assert.equal(isSReplacementEligible(undefined, enabledCtx), false)
     })
   })
 
   describe('GLP-1内服: 既存挙動が壊れないこと', () => {
-    test('se_nausea_diarrhea_none: 単剤 primary → true', () => {
+    test('se_nausea_diarrhea_none: thirdPanelEnabled=true → true', () => {
       const sc = findScenario(oral, 'se_nausea_diarrhea_none')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), true)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('initial: 初回シナリオ → false', () => {
+    test('initial: 初回シナリオ → false（シナリオ自体が capable ではない）', () => {
       const sc = findScenario(oral, 'initial')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), false)
     })
   })
 
   describe('H1内服: cp_good — generic fallback で動作', () => {
-    test('h1_oral cp_good: isSingleDrug=true → true', () => {
+    test('h1_oral cp_good: thirdPanelEnabled=true → true', () => {
       const sc = findScenario(h1Oral, 'cp_good')
       // H1 oral の cp_good は thirdPanelSPlacement を持たないので generic fallback
       assert.equal(sc.thirdPanelSPlacement, undefined, 'precondition: H1 oral cp_good has no explicit thirdPanelSPlacement')
-      assert.equal(isSReplacementEligible(sc, primaryCtx), true)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
   })
 
   // ─────────────────────────────────────────────────────────────
-  // secondary / additional / composed / synthesis context テスト
+  // node scope / capability context テスト（Unit 4D-4 successor）
   //
-  // isSingleDrug は「primary drug / main-search / non-synthesis」の複合条件。
-  // 以下のいずれかに該当する場合は isSingleDrug=false として渡す:
-  //   - isAdditionalDrugSelection: 2剤目・3剤目の薬剤追加検索選択中
-  //   - isSynthesisMode:           composeNodes.length > 0（多剤合成中）
-  //   - isComposedSoapMode:        合成済み SOAP の再編集中
-  //   - secondary scenario:        primary ではない追加薬剤のシナリオ
+  // Unit 4D-4 以前は isSingleDrug が「primary drug / main-search / non-synthesis」の
+  // 複合条件を担い、追加薬剤選択中・多剤合成中・合成済み SOAP 再編集中は
+  // 一律 false を強制していた。Unit 4D-4（D-4D4-3）でこの制約を撤廃し、
+  // eligibility は thirdPanelEnabled と scenario の capability のみで決まる。
+  // したがって以下は「複数 ComposeNode が存在する状況でも capable な scenario は
+  // true になる」ことを確認する（false になるのは scenario 自体が capable でない場合のみ）。
   // ─────────────────────────────────────────────────────────────
 
-  describe('secondary / additional / composed context — すべて false', () => {
-    // additionalDrugCtx: 追加薬剤選択中（composeNodes.length > 0 に相当）
-    const additionalDrugCtx = { thirdPanelEnabled: true, isSingleDrug: false }
-    // synthesisCtx: 多剤合成中（composeNodes.length > 0）
-    const synthesisCtx = { thirdPanelEnabled: true, isSingleDrug: false }
-    // composedSoapCtx: 合成済み SOAP 再編集中
-    const composedSoapCtx = { thirdPanelEnabled: true, isSingleDrug: false }
-    // noScenario: シナリオ未確定
-    const noScenarioCtx = { thirdPanelEnabled: false, isSingleDrug: false }
-
-    test('derm cp_good: additional drug context (isSingleDrug=false) → false', () => {
+  describe('複数 ComposeNode が存在する状況（Unit 4D-4 successor: capability があれば true）', () => {
+    test('derm cp_good: 複数 ComposeNode が存在していても capable なら true（旧: additional drug context → false）', () => {
       const sc = findScenario(dermData as unknown as ModuleData, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, additionalDrugCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('derm se_contact_dermatitis_none: synthesis mode context → false', () => {
+    test('derm se_contact_dermatitis_none: 複数 ComposeNode が存在していても capable なら true（旧: synthesis mode → false）', () => {
       const sc = findScenario(dermData as unknown as ModuleData, 'se_contact_dermatitis_none')
-      assert.equal(isSReplacementEligible(sc, synthesisCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('derm cp_good: composed SOAP mode context → false', () => {
+    test('derm cp_good: 合成済み SOAP 再編集中でも capable なら true（旧: composed SOAP mode → false）', () => {
       const sc = findScenario(dermData as unknown as ModuleData, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, composedSoapCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('GLP-1 cp_good (explicit enabled:true): additional drug context → false', () => {
+    test('GLP-1 cp_good (explicit enabled:true): 複数 ComposeNode が存在していても true（旧: additional drug context → false）', () => {
       const sc = findScenario(oralData as unknown as ModuleData, 'cp_good')
       assert.ok(sc.thirdPanelSPlacement?.enabled === true, 'precondition')
-      // 明示 enabled:true でも context が additional なら false
-      assert.equal(isSReplacementEligible(sc, additionalDrugCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('GLP-1 se_hypo_none (explicit enabled:true): synthesis mode → false', () => {
+    test('GLP-1 se_hypo_none (explicit enabled:true): 複数 ComposeNode が存在していても true（旧: synthesis mode → false）', () => {
       const sc = findScenario(oralData as unknown as ModuleData, 'se_hypo_none')
       assert.ok(sc.thirdPanelSPlacement?.enabled === true, 'precondition')
-      assert.equal(isSReplacementEligible(sc, synthesisCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), true)
     })
 
-    test('secondary scenario (derm initial_dryness — 非S置換対象): primary context でも false', () => {
+    test('non-capable scenario (derm initial_dryness): thirdPanelEnabled=true でも false（シナリオ自体が対象外）', () => {
       // 初回シナリオは sideEffectPresence=not_applicable かつ
-      // scenarioType=treatment_start → generic fallback の条件をいずれも満たさない
+      // scenarioType=treatment_start → generic fallback の条件をいずれも満たさない。
+      // これは context ではなく scenario 自体の capability による false であり、
+      // Unit 4D-4 の制約撤廃後も変わらない。
       const sc = findScenario(dermData as unknown as ModuleData, 'initial_dryness')
       assert.equal(sc.sideEffectPresence, 'not_applicable', 'precondition: not a side_effect/adherence scenario')
-      // primary context で渡しても eligibility は false（シナリオ自体が対象外）
-      assert.equal(isSReplacementEligible(sc, primaryCtx), false)
+      assert.equal(isSReplacementEligible(sc, enabledCtx), false)
     })
 
-    test('synthetic secondary scenario (治療_start, not_applicable): context=additional → false', () => {
-      // 追加薬剤の treatment_start シナリオを secondary として渡す想定
+    test('synthetic non-capable scenario (治療_start, not_applicable): thirdPanelEnabled=true でも false（シナリオ自体が対象外）', () => {
       const secondaryScenario: Scenario = {
         id: 'secondary_initial',
         globalId: 'test.secondary_initial',
@@ -289,13 +278,13 @@ describe('isSReplacementEligible — generic fallback', () => {
         A: '{{drug_subject}}は、治療目的で使用する。',
         P: '次回確認。',
       }
-      // additional drug context（isSingleDrug=false）
-      assert.equal(isSReplacementEligible(secondaryScenario, additionalDrugCtx), false)
+      // capability がないため、thirdPanelEnabled=true でも false のまま
+      assert.equal(isSReplacementEligible(secondaryScenario, enabledCtx), false)
     })
 
-    test('no-scenario context (thirdPanelEnabled=false, isSingleDrug=false) → false', () => {
+    test('no-scenario context (thirdPanelEnabled=false) → false', () => {
       const sc = findScenario(dermData as unknown as ModuleData, 'cp_good')
-      assert.equal(isSReplacementEligible(sc, noScenarioCtx), false)
+      assert.equal(isSReplacementEligible(sc, disabledCtx), false)
     })
   })
 })

@@ -236,7 +236,11 @@ describe('M2: 全 read site が primaryNode の authoritative field を直参照
     { name: 'genericPart', text: 'const genericPart = brandCatalogGenericName ?? primaryNode.resolvedDrugName' },
     { name: 'scenario rebuild effect / primaryDrugName', text: 'resolveDrugName(activeModuleData.drug, primaryNode.matchedBrandName)' },
     { name: 'handleSToggle / drugName 宣言', text: 'const drugName = primaryNode.resolvedDrugName' },
-    { name: 'JSX rapidState', text: 'rapidState={primaryNode.rapid}' },
+    // Unit 4D-4 successor（D-4D4-6）: ThirdPanel は active context（primary または
+    // 編集中 ComposeNode）の authoritative rapid を直接読む。alias state / alias
+    // variable を介さない意味論は不変。activeNode が null なら primaryNode.rapid へ
+    // 自然に fallback する。
+    { name: 'JSX rapidState（active context の authoritative ComposeNode.rapid を直接参照）', text: 'rapidState={(activeNode ?? primaryNode).rapid}' },
     { name: 'projection fields override', text: 'fields:          primaryNode.block.fields,' },
     { name: 'finalFields / primaryS', text: 'const primaryS = primaryNode.block.fields.S' },
     { name: 'finalFields / patchedPrimaryFields', text: '{ ...primaryNode.block.fields, S: patchedPrimaryS }' },

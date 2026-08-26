@@ -559,21 +559,31 @@ describe('H. スコープ外の不変（4D-2 以降の論点を先取りして�
     )
   })
 
-  test('handleSToggle は node Rapid write path を持つが production UI からは到達不能である（Unit 4D-3b successor contract。Rapid UI gate 変更は 4D-4 の責務）', () => {
+  test('handleSToggle は node Rapid write path を持ち、Unit 4D-4 で production UI から到達可能になった（Unit 4D-3b successor contract）', () => {
     assert.ok(
       /if \(nodeId !== null\) \{/.test(src),
       'handleSToggle の node branch（node Rapid write path）が存在しない',
     )
-    assert.ok(
-      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
-      'isSingleDrug gate が変更されている（Rapid UI 到達不能性の根拠が崩れた）',
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(
+      src.includes('const isSingleDrug ='), false,
+      'isSingleDrug が live variable として production contract に残っている（Unit 4D-4 で除去されているはず）',
+    )
+    assert.equal(
+      src.includes('isSingleDrug={'), false,
+      'isSingleDrug が ThirdPanel へ prop として渡されている',
     )
   })
 
-  test('Rapid UI gate（isSingleDrug）が変更されていない', () => {
+  test('Rapid UI gate は Unit 4D-4 で active context scope（isSingleDrug 除去）へ移行している', () => {
     assert.ok(
-      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
-      'isSingleDrug の定義が変わっている（multi-Rapid 解禁は本 Unit の責務ではない）',
+      src.includes('activeScenario={addonTargetScenario}'),
+      'ThirdPanel へ activeScenario={addonTargetScenario} が渡されていない',
+    )
+    assert.ok(
+      src.includes('rapidState={(activeNode ?? primaryNode).rapid}'),
+      'ThirdPanel へ rapidState={(activeNode ?? primaryNode).rapid} が渡されていない',
     )
   })
 

@@ -502,22 +502,27 @@ describe('J. primary global rapidState と node.rapid は独立している', ()
 // K. UI gate boundary（不可侵の確認）
 // ═══════════════════════════════════════════════════════════════
 
-describe('K. Rapid UI gate は 1剤目限定のまま変更されていない', () => {
+describe('K. Rapid UI gate は Unit 4D-4 で active context scope（isSingleDrug 除去）へ移行している', () => {
   const dashboardSrc = readFileSync(new URL('../app/components/DashboardClient.tsx', import.meta.url), 'utf-8')
   const thirdPanelSrc = readFileSync(new URL('../app/components/ThirdPanel.tsx', import.meta.url), 'utf-8')
 
-  test('T-3B-14a: isSingleDrug は composeNodes.length === 0 を要求する', () => {
-    assert.ok(/isSingleDrug = selectedScenarioId !== null && composeNodes\.length === 0/.test(dashboardSrc))
+  test('T-3B-14a: isSingleDrug は Unit 4D-4 で production contract から除去されている', () => {
+    // isSingleDrug は live code（変数宣言・ThirdPanel への prop 渡し）としては
+    // 存在しないことを確認する。historical comment 内の言及は failure 条件にしない（D-4D4-5）。
+    assert.equal(dashboardSrc.includes('const isSingleDrug ='), false, 'isSingleDrug が live variable として残っている')
+    assert.equal(dashboardSrc.includes('isSingleDrug={'), false, 'isSingleDrug が ThirdPanel へ prop として渡されている')
+    assert.ok(dashboardSrc.includes('activeScenario={addonTargetScenario}'), 'activeScenario={addonTargetScenario} が渡されていない')
+    assert.ok(dashboardSrc.includes('rapidState={(activeNode ?? primaryNode).rapid}'), 'rapidState={(activeNode ?? primaryNode).rapid} が渡されていない')
   })
 
-  test('T-3B-14b: ThirdPanel の showSButtons は isSReplacementEligible(..., { thirdPanelEnabled, isSingleDrug }) を経由する', () => {
-    assert.ok(/isSReplacementEligible\(primaryScenario, \{ thirdPanelEnabled, isSingleDrug \}\)/.test(thirdPanelSrc))
+  test('T-3B-14b: ThirdPanel の showSButtons は isSReplacementEligible(activeScenario, { thirdPanelEnabled }) を経由する', () => {
+    assert.ok(/isSReplacementEligible\(activeScenario, \{ thirdPanelEnabled \}\)/.test(thirdPanelSrc))
   })
 
-  test('T-3B-14c: handleSToggle は node Rapid write path を持つが production UI からは到達不能である（Unit 4D-3b successor contract）', () => {
+  test('T-3B-14c: handleSToggle は node Rapid write path を持ち、Unit 4D-4 で production UI から到達可能になった（Unit 4D-3b successor contract）', () => {
     // Unit 3B 時点は「early return して何もしない」ことで multi-node Rapid 未解禁を表現していた。
-    // Unit 4D-3b で node Rapid write path（node branch）が追加されたため、
-    // 契約を「node branch は存在するが isSingleDrug gate により到達不能」へ更新する。
+    // Unit 4D-3b で node Rapid write path（node branch）が追加され、
+    // Unit 4D-4 で isSingleDrug gate が撤廃されて到達可能になった（D-4D4-3）。
     const toggleBlock = dashboardSrc.slice(
       dashboardSrc.indexOf('const handleSToggle = useCallback'),
       dashboardSrc.indexOf('const handleSubcategorySelect = useCallback'),
@@ -527,8 +532,12 @@ describe('K. Rapid UI gate は 1剤目限定のまま変更されていない', 
       'node Rapid write path（node branch）が存在しない',
     )
     assert.ok(
-      dashboardSrc.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
-      'isSingleDrug gate が変更されている（Rapid UI 到達不能性の根拠が崩れた）',
+      dashboardSrc.includes('activeScenario={addonTargetScenario}'),
+      'ThirdPanel へ activeScenario={addonTargetScenario} が渡されていない',
+    )
+    assert.ok(
+      dashboardSrc.includes('rapidState={(activeNode ?? primaryNode).rapid}'),
+      'ThirdPanel へ rapidState={(activeNode ?? primaryNode).rapid} が渡されていない',
     )
   })
 
