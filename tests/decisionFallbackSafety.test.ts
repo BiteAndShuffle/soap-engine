@@ -90,6 +90,57 @@ for (const mod of ALL_MODULES) {
 const anyList = [...anyRepresentative.values()]
 const capableList = [...capableRepresentative.values()]
 
+// ─────────────────────────────────────────────────────────────
+// B3 / B5 共有ヘルパー: buildS 内 classifySLine / splitDecision /
+// normalizeAdminVerbForKey の test-local mirror（buildS は非 export のため
+// 直接検証できない）。B3 と B5 が重複して定義せず共有する。
+// ─────────────────────────────────────────────────────────────
+
+const OBS_PREFIX = '使用して、症状は落ち着いている。'
+const SUBJECT_MAX_LEN = 30
+
+function classifyLine(t: string): 'decision' | 'reason' | 'observation' | 'other' {
+  if (/(?:増量|中止|変更)(?:となった|になった|ました|となり)/.test(t)) return 'decision'
+  if (/(?:減量|希望)(?:となった|になった|なりました|された)/.test(t)) return 'decision'
+  if (/(?:追加|導入)となった/.test(t)) return 'reason'
+  if (t.startsWith(OBS_PREFIX)) return 'observation'
+  return 'other'
+}
+
+function splitDecisionLine(t: string): { subject: string; predicate: string } {
+  const m = t.match(/^(.+?)(は[、,].+)$/)
+  if (m) {
+    const s = m[1].length <= SUBJECT_MAX_LEN ? m[1] : m[1].slice(0, SUBJECT_MAX_LEN)
+    return { subject: s, predicate: t.slice(s.length) }
+  }
+  const m2 = t.match(/^(.+?)(が.+)$/)
+  if (m2) {
+    const s = m2[1].length <= SUBJECT_MAX_LEN ? m2[1] : m2[1].slice(0, SUBJECT_MAX_LEN)
+    return { subject: s, predicate: t.slice(s.length) }
+  }
+  return { subject: t, predicate: '' }
+}
+
+function normalizeAdminVerbKey(t: string): string {
+  return t.replace(/服用により/g, '使用により').replace(/服用後/g, '使用後').replace(/服用中/g, '使用中')
+}
+
+// 全 module × 全 scenario（module 追加で自動的に拡張される。golden 値を持たない）。
+const allCases: Case[] = []
+for (const mod of ALL_MODULES) {
+  for (const sc of mod.scenarios) allCases.push({ mod, sc })
+}
+
+// 全 capable scenario（B1/B2 が使う capableList は per-module 代表のため変更しない。
+// B5 の fallback key corpus 構成にのみ用いる。代表ではなく全件を必要とする）。
+const capableCases: Case[] = allCases.filter(c => isScenarioSReplacementCapable(c.sc))
+
+// base（Rapid なし）で decision に分類される scenario 全件（B3 の候補集合）。
+const decisionBaseCases: Case[] = allCases.filter(c => {
+  const text = blockOf(c.mod, c.sc, null).fields.S.trim()
+  return text !== '' && classifyLine(text) === 'decision'
+})
+
 // ═══════════════════════════════════════════════════════════════
 // Layer A — rule contract（synthetic MergedBlock / module 非依存）
 // ═══════════════════════════════════════════════════════════════
@@ -190,19 +241,44 @@ describe('Layer B: corpus invariant', () => {
 
   test('B3: corpus に genuine multi-subject decision merge（predicate !== \'\'）が1件以上存在する', () => {
     // B1/B2 が「そもそも decision merge が発生しない corpus」で無意味に PASS していないことの保証。
+    //
+    // 「genuine」の定義: 2つの異なる module の base scenario（Rapid なし）が
+    //   - ともに classifyLine で 'decision' に分類され
+    //   - ともに splitDecisionLine で predicate !== ''（構造化に成功）
+    //   - 正規化後の predicate が一致し、正規化後の subject が異なる
+    // 場合、production mergeBlocks が両者を「1行」へ統合し、その1行に両方の
+    // subject が含まれることを直接検証する。この判定は reason 行・薬剤名内の
+    // 中黒（例: 配合剤名）・fallback（predicate === ''）では真にならないため、
+    // それらで誤って GREEN になることはない。
     let found = 0
-    let example: string | undefined
-    for (const p of anyList) {
-      for (const q of anyList) {
+    outer:
+    for (const p of decisionBaseCases) {
+      for (const q of decisionBaseCases) {
         if (p.mod.moduleId === q.mod.moduleId) continue
         if (clinicalDomainOf(p) !== clinicalDomainOf(q)) continue
+
+        const textP = blockOf(p.mod, p.sc, null).fields.S.trim()
+        const textQ = blockOf(q.mod, q.sc, null).fields.S.trim()
+        const splitP = splitDecisionLine(textP)
+        const splitQ = splitDecisionLine(textQ)
+        if (splitP.predicate === '' || splitQ.predicate === '') continue // fallback は対象外
+        if (normalizeAdminVerbKey(splitP.predicate) !== normalizeAdminVerbKey(splitQ.predicate)) continue
+        if (normalizeAdminVerbKey(splitP.subject) === normalizeAdminVerbKey(splitQ.subject)) continue // 同一 subject は dedupe 対象であり multi-subject ではない
+
         const out = mergeNodes(blockOf(p.mod, p.sc, null), [blockOf(q.mod, q.sc, null)])
-        // 「・」で結合され、かつ「。・」splice ではない行 = 意図された subject 統合
-        const hasIntendedMerge = out.S.split('\n').some(line => line.includes('・') && !SPLICE.test(line))
-        if (hasIntendedMerge) {
-          found++
-          if (!example) example = out.S
-        }
+        const decisionLines = out.S.split('\n').filter(l => classifyLine(l) === 'decision')
+
+        assert.equal(
+          decisionLines.length, 1,
+          `p/q は同一 predicate group のため1行へ統合されるはずだが ${decisionLines.length} 行になった: ${p.mod.moduleId}/${p.sc.id} + ${q.mod.moduleId}/${q.sc.id}\nS=${out.S}`,
+        )
+        assert.ok(
+          decisionLines[0].includes(splitP.subject) && decisionLines[0].includes(splitQ.subject),
+          `統合行に両方の subject が含まれていない: ${decisionLines[0]}`,
+        )
+
+        found++
+        break outer
       }
     }
     assert.ok(found > 0, 'no genuine multi-subject decision merge found in corpus (B1/B2 may be vacuous)')
@@ -216,42 +292,32 @@ describe('Layer B: corpus invariant', () => {
   test('B5: corpus上、fallback の subjectKey と非fallback の predicateKey が衝突しない', () => {
     // S1 実装（predicateKey = predicate === '' ? subjectKey : normalizeAdminVerbForKey(predicate)）は
     // fallback と非fallback を同一 key 空間で扱う。衝突すれば fallback が非fallback bucket へ
-    // 誤って合流し、「・」結合が復活する。corpus 全体（capable scenario は全 Rapid 20 通り）で
-    // この前提が成立することを実測ガードする。
-    const OBS_PREFIX = '使用して、症状は落ち着いている。'
-    function classify(t: string): 'decision' | 'reason' | 'observation' | 'other' {
-      if (/(?:増量|中止|変更)(?:となった|になった|ました|となり)/.test(t)) return 'decision'
-      if (/(?:減量|希望)(?:となった|になった|なりました|された)/.test(t)) return 'decision'
-      if (/(?:追加|導入)となった/.test(t)) return 'reason'
-      if (t.startsWith(OBS_PREFIX)) return 'observation'
-      return 'other'
-    }
-    const MAX = 30
-    function splitDecisionLocal(t: string): { subject: string; predicate: string } {
-      const m = t.match(/^(.+?)(は[、,].+)$/)
-      if (m) { const s = m[1].length <= MAX ? m[1] : m[1].slice(0, MAX); return { subject: s, predicate: t.slice(s.length) } }
-      const m2 = t.match(/^(.+?)(が.+)$/)
-      if (m2) { const s = m2[1].length <= MAX ? m2[1] : m2[1].slice(0, MAX); return { subject: s, predicate: t.slice(s.length) } }
-      return { subject: t, predicate: '' }
-    }
-    const normalizeAdminVerb = (t: string) => t.replace(/服用により/g, '使用により').replace(/服用後/g, '使用後').replace(/服用中/g, '使用中')
-
+    // 誤って合流し、「・」結合が復活する。
+    //
+    // non-fallback predicateKey は base scenario（Rapid なし）の decision 分類テキストに出現する
+    // ため全 module × 全 scenario を走査する。fallback subjectKey は Rapid 適用時にほぼ独占的に
+    // 出現するため、全 capable scenario × 全 Rapid variant（relation × condition）を走査する。
+    // いずれも per-module 代表ではなく全件が必要（代表のみでは predicateKey 側が populate されない）。
     const fallbackKeys = new Set<string>()
     const predicateKeys = new Set<string>()
     const feed = (text: string) => {
-      if (!text || classify(text) !== 'decision') return
-      const { subject, predicate } = splitDecisionLocal(text)
-      if (predicate === '') fallbackKeys.add(normalizeAdminVerb(subject))
-      else predicateKeys.add(normalizeAdminVerb(predicate))
+      if (!text || classifyLine(text) !== 'decision') return
+      const { subject, predicate } = splitDecisionLine(text)
+      if (predicate === '') fallbackKeys.add(normalizeAdminVerbKey(subject))
+      else predicateKeys.add(normalizeAdminVerbKey(predicate))
     }
-    for (const c of anyList) feed(blockOf(c.mod, c.sc, null).fields.S.trim())
-    for (const c of capableList) {
+    for (const c of allCases) feed(blockOf(c.mod, c.sc, null).fields.S.trim())
+    for (const c of capableCases) {
       for (const r of RELATIONS) {
         for (const cond of CONDITIONS) {
           feed(blockOf(c.mod, c.sc, { previousEvent: r, currentOutcome: cond }).fields.S.trim())
         }
       }
     }
+
+    assert.ok(fallbackKeys.size > 0, 'no fallback subjectKey collected (test would be vacuous)')
+    assert.ok(predicateKeys.size > 0, 'no non-fallback predicateKey collected (test would be vacuous)')
+
     const collisions = [...fallbackKeys].filter(k => predicateKeys.has(k))
     assert.deepEqual(
       collisions, [],
