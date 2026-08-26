@@ -619,14 +619,24 @@ describe('13. Unit 1 終了時点でも Rapid は 1剤目限定である（RAPID
     assert.equal(isSReplacementEligible(sc, { thirdPanelEnabled: true, isSingleDrug: true }), true)
   })
 
-  test('handleSToggle はノード編集中に 1剤目の S を変更しない', () => {
+  test('handleSToggle は node Rapid write path を持つが、production UI からは isSingleDrug gate により到達不能である（Unit 4D-3b successor contract）', () => {
+    // 4D-3b 以前は「何もしない early return」で node 編集中の 1剤目 S 変更を防いでいた。
+    // 4D-3b で node Rapid write path（node branch）が追加されたため、
+    // 「何もしない」ではなく「production UI からは到達しない」ことを固定する。
     const toggleBlock = src.slice(
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('handleSubcategorySelect'),
     )
     assert.ok(
-      /if \(editingNodeIdRef\.current !== null\) return/.test(toggleBlock),
-      'ノード編集中は early return しなければならない（multi-node Rapid は未解禁）',
+      /if \(nodeId !== null\) \{/.test(toggleBlock),
+      'node Rapid write path（node branch）が存在しない',
+    )
+    // 到達不能性の根拠: editingNodeId が non-null になる経路は必ず composeNodes へ
+    // node を足す / 既存 node を要求するため、editingNodeId !== null ⟹
+    // composeNodes.length > 0 ⟹ isSingleDrug === false ⟹ showSButtons === false。
+    assert.ok(
+      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
+      'isSingleDrug gate が変更されている（Rapid UI 到達不能性の根拠が崩れた）',
     )
   })
 })

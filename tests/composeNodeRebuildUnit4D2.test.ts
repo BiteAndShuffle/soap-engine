@@ -562,9 +562,14 @@ describe('J. rebuildNode は pure function であり実装は 1 箇所に集約�
     assert.equal(dashCount, 0, `DashboardClient に block derive の inline 実装が残っている（実際: ${dashCount}）`)
   })
 
-  test('secondary の 2 経路が rebuildNode を呼んでいる', () => {
+  test('secondary の 3 経路が rebuildNode を呼んでいる（Unit 4D-3b successor: handleSToggle node branch を追加）', () => {
+    // Unit 4D-2 時点は buildUpdatedNode / handleAddonToggle node branch の 2 経路だった。
+    // Unit 4D-3b で node Rapid write path（handleSToggle node branch）が
+    // 承認済みの第3 caller として加わったため、canonical rebuild authority の契約
+    // 「secondary の rebuild は rebuildNode に集約されている」は維持したまま
+    // caller 数のみ 2 → 3 へ更新する。
     const count = (dashSrc.match(/rebuildNode\(\{/g) ?? []).length
-    assert.equal(count, 2, `secondary の rebuildNode 呼び出しは 2 経路のはず（実際: ${count}）`)
+    assert.equal(count, 3, `secondary の rebuildNode 呼び出しは 3 経路のはず（実際: ${count}）`)
     const buildUpdated = dashSrc.slice(
       dashSrc.indexOf('const buildUpdatedNode = useCallback'),
       dashSrc.indexOf('const handleSelectPrimaryNode = useCallback'),
@@ -575,6 +580,11 @@ describe('J. rebuildNode は pure function であり実装は 1 箇所に集約�
       dashSrc.indexOf('const handleSToggle = useCallback'),
     )
     assert.ok(/rebuildNode\(\{/.test(addonBranch), 'handleAddonToggle node branch が rebuildNode へ委譲していない')
+    const sToggleBlock = dashSrc.slice(
+      dashSrc.indexOf('const handleSToggle = useCallback'),
+      dashSrc.indexOf('const handleSubcategorySelect = useCallback'),
+    )
+    assert.ok(/rebuildNode\(\{/.test(sToggleBlock), 'handleSToggle node branch が rebuildNode へ委譲していない')
   })
 
   test('primary 経路は rebuildPrimary → buildPrimaryNodeSnapshot → rebuildNode の委譲鎖である', () => {
@@ -592,8 +602,14 @@ describe('J. rebuildNode は pure function であり実装は 1 箇所に集約�
 // ═══════════════════════════════════════════════════════════════
 
 describe('K. スコープ外の不変', () => {
-  test('handleSToggle の 1剤目限定 early return が維持されている', () => {
-    assert.ok(dashSrc.includes('if (editingNodeIdRef.current !== null) return'))
+  test('handleSToggle は node Rapid write path を持つが、isSingleDrug gate により production UI から到達不能である（Unit 4D-3b successor contract）', () => {
+    // 4D-2 時点は「何もしない early return」だった。4D-3b で node Rapid write path
+    // （node branch）が追加されたため、契約を「node branch は存在するが到達不能」へ更新する。
+    assert.ok(/if \(nodeId !== null\) \{/.test(dashSrc), 'node Rapid write path（node branch）が存在しない')
+    assert.ok(
+      dashSrc.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
+      'isSingleDrug gate が変更されている',
+    )
   })
 
   test('Rapid UI gate（isSingleDrug）が変更されていない', () => {

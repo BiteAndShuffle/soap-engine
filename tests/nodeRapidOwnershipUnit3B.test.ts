@@ -467,12 +467,34 @@ describe('J. primary global rapidState と node.rapid は独立している', ()
     assert.ok(/composeNodes: ComposeNode\[\]/.test(block))
   })
 
-  test('primary の handleSToggle / handleAddonToggle primary branch は setComposeNodes を呼ばない', () => {
+  test('primary の handleSToggle / handleAddonToggle primary branch は setComposeNodes を呼ばない（Unit 4D-3b successor: node branch を除外して抽出）', () => {
+    // Unit 4D-3b で handleSToggle に node branch（node Rapid write path）が追加され、
+    // node branch は正当に setComposeNodes を呼ぶ。したがって handleSToggle 全体ではなく、
+    // node branch を brace matching で除外した primary branch のみを対象にする。
     const toggleBlock = src.slice(
       src.indexOf('const handleSToggle = useCallback'),
       src.indexOf('const handleSubcategorySelect = useCallback'),
     )
-    assert.ok(!/setComposeNodes/.test(toggleBlock))
+    const nodeBranchStart = toggleBlock.indexOf('if (nodeId !== null) {')
+    assert.notEqual(nodeBranchStart, -1, 'handleSToggle の node branch 開始アンカーが見つからない')
+    const openBrace = nodeBranchStart + 'if (nodeId !== null) {'.length - 1
+    let depth = 0
+    let i = openBrace
+    for (; i < toggleBlock.length; i++) {
+      if (toggleBlock[i] === '{') depth++
+      else if (toggleBlock[i] === '}') { depth--; if (depth === 0) break }
+    }
+    assert.ok(i < toggleBlock.length, 'handleSToggle の node branch の対応する閉じ括弧が見つからない')
+    const nodeBranch = toggleBlock.slice(nodeBranchStart, i + 1)
+    const primaryBranch = toggleBlock.slice(i + 1)
+
+    // non-vacuous 検証: node branch 側には setComposeNodes が実在すること
+    // （境界抽出が誤って空 / primary 側へ寄っていた場合にここで検出する）
+    assert.ok(/setComposeNodes/.test(nodeBranch), 'node branch の抽出が vacuous（setComposeNodes が見当たらない）')
+    assert.ok(primaryBranch.includes('confirmDiscard(() => {'), 'primary branch の confirmDiscard アンカーが見つからない（境界抽出が誤っている疑い）')
+
+    // 本来の契約: primary branch は setComposeNodes を呼ばない
+    assert.ok(!/setComposeNodes/.test(primaryBranch), 'primary branch が setComposeNodes を呼んでいる')
   })
 })
 
@@ -492,12 +514,22 @@ describe('K. Rapid UI gate は 1剤目限定のまま変更されていない', 
     assert.ok(/isSReplacementEligible\(primaryScenario, \{ thirdPanelEnabled, isSingleDrug \}\)/.test(thirdPanelSrc))
   })
 
-  test('T-3B-14c: handleSToggle はノード編集中に early return する（multi-node Rapid は未解禁）', () => {
+  test('T-3B-14c: handleSToggle は node Rapid write path を持つが production UI からは到達不能である（Unit 4D-3b successor contract）', () => {
+    // Unit 3B 時点は「early return して何もしない」ことで multi-node Rapid 未解禁を表現していた。
+    // Unit 4D-3b で node Rapid write path（node branch）が追加されたため、
+    // 契約を「node branch は存在するが isSingleDrug gate により到達不能」へ更新する。
     const toggleBlock = dashboardSrc.slice(
       dashboardSrc.indexOf('const handleSToggle = useCallback'),
       dashboardSrc.indexOf('const handleSubcategorySelect = useCallback'),
     )
-    assert.ok(/if \(editingNodeIdRef\.current !== null\) return/.test(toggleBlock))
+    assert.ok(
+      /if \(nodeId !== null\) \{/.test(toggleBlock),
+      'node Rapid write path（node branch）が存在しない',
+    )
+    assert.ok(
+      dashboardSrc.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
+      'isSingleDrug gate が変更されている（Rapid UI 到達不能性の根拠が崩れた）',
+    )
   })
 
   test('T-3B-14d: lib/deriveNodeFields.ts は Unit 3A から変更されていない（deriveNodeBlockCore / NodeBlockCore / deriveRawFields が存在する）', () => {

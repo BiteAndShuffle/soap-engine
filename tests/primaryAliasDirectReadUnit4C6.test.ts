@@ -254,9 +254,9 @@ describe('M2: 全 read site が primaryNode の authoritative field を直参照
     )
   })
 
-  test('handleSToggle deps に primaryNode.matchedBrandName / primaryNode.resolvedDrugName が含まれる', () => {
+  test('handleSToggle deps に primaryNode.matchedBrandName / primaryNode.resolvedDrugName が含まれる（Unit 4D-3b: node branch の module 解決用に allModules / moduleData を追加）', () => {
     assert.ok(
-      src.includes('}, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, confirmDiscard])'),
+      src.includes('}, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, allModules, moduleData, confirmDiscard])'),
       'handleSToggle の deps 配列が想定と異なる',
     )
   })

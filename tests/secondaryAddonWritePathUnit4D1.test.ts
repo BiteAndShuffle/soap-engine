@@ -559,10 +559,14 @@ describe('H. スコープ外の不変（4D-2 以降の論点を先取りして�
     )
   })
 
-  test('handleSToggle の 1剤目限定 early return が維持されている（node Rapid 未解禁）', () => {
+  test('handleSToggle は node Rapid write path を持つが production UI からは到達不能である（Unit 4D-3b successor contract。Rapid UI gate 変更は 4D-4 の責務）', () => {
     assert.ok(
-      src.includes('if (editingNodeIdRef.current !== null) return'),
-      'handleSToggle の node early return が消えている（Rapid UI gate 変更は 4D-4 の責務）',
+      /if \(nodeId !== null\) \{/.test(src),
+      'handleSToggle の node branch（node Rapid write path）が存在しない',
+    )
+    assert.ok(
+      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
+      'isSingleDrug gate が変更されている（Rapid UI 到達不能性の根拠が崩れた）',
     )
   })
 

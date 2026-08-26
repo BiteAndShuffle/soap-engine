@@ -546,8 +546,15 @@ describe('9. confirmDiscard 導入後も updater purity が維持されている
 // ═══════════════════════════════════════════════════════════════
 
 describe('10. primary branch semantics 不変', () => {
-  test('handleSToggle の 1剤目限定 early return が維持されている', () => {
-    assert.ok(src.includes('if (editingNodeIdRef.current !== null) return'))
+  test('handleSToggle は node Rapid write path を持つが production UI からは到達不能である（Unit 4D-3b successor contract）', () => {
+    assert.ok(
+      /if \(nodeId !== null\) \{/.test(src),
+      'handleSToggle の node branch（node Rapid write path）が存在しない',
+    )
+    assert.ok(
+      src.includes('const isSingleDrug = selectedScenarioId !== null && composeNodes.length === 0'),
+      'isSingleDrug gate が変更されている',
+    )
   })
 
   test('primary の rebuildPrimary 呼び出しが 4 件のまま', () => {
@@ -609,9 +616,12 @@ describe('11. 4D-1 / 4D-2 contract の維持', () => {
     assert.ok(/prev\.map\(n => n\.id === nodeId \? updated : n\)/.test(s))
   })
 
-  test('DashboardClient に block derive の inline 実装が無く rebuildNode へ委譲している', () => {
+  test('DashboardClient に block derive の inline 実装が無く rebuildNode へ委譲している（Unit 4D-3b successor: rebuildNode caller 2→3）', () => {
+    // 4D-3a 時点の 2 caller（handleSelectScenario node branch / handleAddonToggle node branch）に、
+    // Unit 4D-3b で node Rapid write path（handleSToggle node branch）が承認済みの第3 caller として
+    // 加わった。inline derive が無いこと（deriveNodeBlockCore( = 0）の契約は不変。
     assert.equal((src.match(/deriveNodeBlockCore\(/g) ?? []).length, 0)
-    assert.equal((src.match(/rebuildNode\(\{/g) ?? []).length, 2)
+    assert.equal((src.match(/rebuildNode\(\{/g) ?? []).length, 3)
   })
 
   test('node index addressing が 0 件', () => {

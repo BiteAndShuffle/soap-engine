@@ -1546,7 +1546,43 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ─────────────────────────────────────────────────────────────
 
   const handleSToggle = useCallback((relation: SRelation, condition: SCondition) => {
-    if (editingNodeIdRef.current !== null) return
+    const nodeId = editingNodeIdRef.current
+
+    if (nodeId !== null) {
+      // ── node ブランチ（Unit 4D-3b）──────────────────────────
+      // 4D-3a で確定した discard contract をそのまま適用する（新規 rule を作らない）。
+      // 破棄 authority は dialog confirm 側。本 callback に setEditedSOAP を置かない。
+      //
+      // production UI からは到達しない: editingNodeId が non-null になる 3 経路は
+      // いずれも同一 batch で composeNodes へ node を足す / 既存 node を要求するため、
+      // editingNodeId !== null ⟹ composeNodes.length > 0 ⟹ isSingleDrug === false
+      // ⟹ ThirdPanel の showSButtons === false。UI 解禁は Unit 4D-4 の責務。
+      confirmDiscard(() => {
+        const pEnabled = personaEnabledRef.current, pId = selectedPersonaRef.current
+        setComposeNodes(prev => {
+          const node = prev.find(n => n.id === nodeId)
+          if (!node) return prev
+          const mod = allModules.find(m => m.moduleId === node.moduleId) ?? moduleData
+          const sc = mod.scenarios.find(s => s.globalId === node.scenarioId)
+          if (!sc) return prev
+          // toggle-off（RAPID-V2-05）: 同一 Rapid の再選択 → null。
+          // S は手動で戻さず rebuildNode の deterministic rebuild で再 materialize する。
+          const nextRapid: RapidState = isSameRapid(node.rapid, relation, condition)
+            ? null
+            : { previousEvent: relation, currentOutcome: condition }
+          const updated = rebuildNode({
+            node, mod, scenario: sc,
+            addonIds: node.selectedAddonIds,          // ← UI buffer ではなく node 自身が authority
+            rapid: nextRapid,
+            drugName: node.resolvedDrugName ?? '',
+            drugLabel: node.drugLabel, baseDomain: resolveDomain(mod),
+            personaEnabled: pEnabled, persona: pId,
+          })
+          return prev.map(n => n.id !== nodeId ? n : updated)
+        })
+      })
+      return
+    }
     confirmDiscard(() => {
       // resolveDrugName: 薬剤名解決のSSOT（ブランド未確定時は brandNames[0] の displayGenericName に解決）
       const drugName = primaryNode.resolvedDrugName
@@ -1605,7 +1641,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       })
       setEditedSOAP(null)
     })
-  }, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, confirmDiscard])
+  }, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, allModules, moduleData, confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect【Express 操作】

@@ -157,8 +157,12 @@ describe('1. deriveRawFields が primary raw の単一生成経路である', ()
     assert.equal(coreCount, 0, `deriveNodeBlockCore の直接呼び出しは rebuildNode へ収束済みのはず（実際: ${coreCount}）`)
 
     // 収束先が実在すること（0 件が「derive をやめた」ではなく「委譲した」ことの担保）
+    // Unit 4D-3b 更新: node Rapid write path（handleSToggle node branch）が
+    // 承認済みの第3 caller として加わったため、2 → 3 経路へ更新する。
+    // 守っている契約（DashboardClient は block derive を再実装せず canonical
+    // rebuildNode へ収束する）自体は不変。
     const rebuildNodeCount = (src.match(/rebuildNode\(\{/g) ?? []).length
-    assert.equal(rebuildNodeCount, 2, `node 分岐 2 経路が rebuildNode へ委譲しているはず（実際: ${rebuildNodeCount}）`)
+    assert.equal(rebuildNodeCount, 3, `node 分岐 3 経路が rebuildNode へ委譲しているはず（実際: ${rebuildNodeCount}）`)
   })
 })
 
