@@ -814,8 +814,12 @@ function buildS(sEntries: SEntry[]): string {
   const predicateOrder: string[] = []   // predicateKey の出現順
   for (const dec of decisions) {
     const { subject, predicate } = splitDecision(dec)
-    const predicateKey = normalizeAdminVerbForKey(predicate)
     const subjectKey   = normalizeAdminVerbForKey(subject)
+    // predicate === '' は splitDecision が subject / predicate を構造化できなかった
+    // ことと厳密に同値である（両分岐とも成功時は predicate に .+ を割り当てるため）。
+    // 統合可能な decision group として扱う根拠がないので、共有 bucket へ入れず
+    // entry 固有のキーで独立させる。完全重複の排除は既存の subjectMap が担う。
+    const predicateKey = predicate === '' ? subjectKey : normalizeAdminVerbForKey(predicate)
     if (!decisionByPredicate.has(predicateKey)) {
       decisionByPredicate.set(predicateKey, {
         predicate,
