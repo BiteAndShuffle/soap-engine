@@ -1035,11 +1035,28 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   }, [editedSOAP])
 
   const handleSelectGroup = useCallback((group: MenuGroup) => {
-    setSelectedGroup(group)
     // グループ切り替え時に前シナリオの addon 残留を防ぐ。
     // editingNodeId !== null（node 編集中）や editingPrimary（1剤目の別グループ切替）は
     // selectedScenarioId をリセットしない。
-    if (editingNodeIdRef.current === null && !editingPrimaryRef.current) {
+    const clearsPrimary = editingNodeIdRef.current === null && !editingPrimaryRef.current
+    // Unit 4D-5（Owner Decision D-4D5-1 / OD-4D5-A）: primary context を実際に破棄する
+    // ときだけ Unit 4D-3a / D-4D3-OD1 の discard contract を通す。
+    //
+    // 判定は「scenario rebuild effect の解除分岐が走るか」と同値である。
+    //   scenarioId が '' → ''      : effect の deps が変化せず editedSOAP は失われない
+    //   scenarioId !== '' → ''     : effect の else if 分岐が setEditedSOAP(null) を実行し、
+    //                                手動編集が確認なしに消える（本 Unit が閉じる hole）
+    // 前者まで confirmDiscard を通すと dialog confirm 側の setEditedSOAP(null) が
+    // 従来は保持されていた手動編集を新たに失わせるため、判定に含める（OD-4D5-A）。
+    //
+    // primaryNodeRef は render 同期の read-only mirror。setter updater の外で読む
+    // （handleSelectScenario の snap と同一形。updater 内 ref read には該当しない）。
+    const needsConfirm = clearsPrimary && primaryNodeRef.current.scenarioId !== ''
+    // apply は setter updater ではない。confirm 経路と非 confirm 経路の双方から呼ぶことで
+    // setPrimaryNode の call site を 1 箇所に保つ。
+    const apply = () => {
+      setSelectedGroup(group)
+      if (!clearsPrimary) return
       // シナリオ解除はコンテキスト破棄。Rapid を残すと「non-null なのに
       // SOAP へ反映されていない」状態になるため明示的に null にする。
       setPrimaryNode(prev => ({
@@ -1048,7 +1065,12 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       }))
       setSelectedAddonIds(new Set())
     }
-  }, [])
+    // 破棄は confirmDiscard / ダイアログ確定側が担う（本 callback では setEditedSOAP を
+    // 呼ばない。D-4D3-5）。setSelectedGroup も apply の内側にあるため、cancel 時に
+    // UI / content state が 1 つも変化しない（D-4D5-1）。
+    if (!needsConfirm) { apply(); return }
+    confirmDiscard(apply)
+  }, [confirmDiscard])
 
   // ─────────────────────────────────────────────────────────────
   // ノードブロック再構築ヘルパー（pure: state を直接変えない）
