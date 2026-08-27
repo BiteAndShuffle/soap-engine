@@ -132,6 +132,28 @@ Phase 3A 決定表で `thirdPanelSPlacement: true` とされたシナリオに�
 
 scenarioType / scenarioGroup / id パターンを組み合わせて生成する。
 
+**MUST（決定的規則。例示ではない）**
+
+`phase3a_decisions.scenarioDecisions[id].scenarioGroup` が `"adherence_good"` である
+scenario の `scenarioTags` には、literal `"good"` を必ず含める。
+
+- 導出元は `scenarioGroup` のみとする。
+- bridge 本文・scenario id・title・`cp_good` という id 命名・その他 heuristic から
+  `"good"` を推論してはならない。
+- `scenarioGroup` が `"adherence_good"` でない scenario へ `"good"` を付与してはならない。
+
+**根拠**: `lib/isSReplacementEligible.ts` の generic fallback ③ は
+`scenarioType === "adherence"` かつ `scenarioTags` に `"good"` を含むことを Rapid
+（S置換UI）eligibility の条件とする。本タグの欠落は ERROR も WARNING も出さず、
+当該 scenario の Rapid が無検出のまま失われる。`thirdPanelSPlacement` が付与されない
+非 injection module（RULES.md §14 の対象外）では、この経路が Rapid capability の
+唯一の根拠となる。
+
+**本規則は新しい clinical rule を追加しない。** 「CP良好 → `adherence_good`」という
+classification は PN3A-Scenario-Classification.md「scenarioGroup」対応表が既に決定的に
+定めている。本規則は、その決定を PN3B の出力へ決定的に写像する手順を明文化したに
+すぎない。
+
 例:
 - id=initial, type=treatment_start → `["treatment_start", "start_or_change", "initial"]`
 - id=dose_increase_xxx, group=dose_change → `["treatment_adjustment", "dose_change", "increase"]`
@@ -221,5 +243,7 @@ PN3B 完了後、以下を報告する:
 - scenarioRequiredTags を付与したシナリオ数
 - scenarioColor を付与したシナリオ数
 - uiGroup / requiredTags を付与した addon 数
+- scenarioGroup が `"adherence_good"` のシナリオ数、そのうち scenarioTags に `"good"` を
+  付与した数（両者は一致すること）
 
 次工程: PN4A（xStructured Group A）および PN4B（xStructured Group B）。両者は独立しており並列実行可。

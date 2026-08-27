@@ -38,6 +38,8 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
+
 import { ALL_MODULES } from '../data/modules/index'
 import type { Scenario } from '../lib/types'
 
@@ -539,5 +541,126 @@ describe('route別 adherence 標準ADDON の canonical 契約（corpus-derived i
     const sc = sample.scenarios.find(s => s.id === 'cp_poor_missed_doses')!
     const broken = [...sc.addonsRef!.P!].reverse()
     assert.notDeepEqual(broken, ROUTE_STANDARD.oral.order, '順序を破壊した配列は標準と不一致として検出されなければならない')
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// adherence_good → Rapid metadata contract（P-R2）
+//
+// ── 背景（新しい規則は追加していない）─────────────────────────────────
+//
+// 「CP良好 → adherence_good」という classification は本ファイル冒頭の契約が既に
+// 機械的に担保している。本節が追加で担保するのは、その classification 結果が
+// scenarioTags の literal "good" として決定的に写像されていることである。
+// 宣言元は prompts/vNext/PN3B-Scenario-Metadata-Apply.md「scenarioTags の自動生成
+// ルール」MUST 節（P-R2 で追加）。本テストはその MUST を機械的に担保する層に
+// すぎず、新しい clinical rule を導入しない。
+//
+// ── なぜ機械層が必要か ───────────────────────────────────────────────
+//
+// lib/isSReplacementEligible.ts の isScenarioSReplacementCapable() は、
+// thirdPanelSPlacement が明示されない scenario に対して generic fallback で
+// eligibility を判定する。fallback ③ は
+//   scenarioType === "adherence" && scenarioTags.includes("good")
+// を要求する。scenarioTags に "good" が欠落しても ERROR も WARNING も出ず、
+// 当該 scenario の Rapid（S置換UI）が無検出のまま失われる。この欠落を検出する
+// validator / audit / 既存 test は存在しない（P-R2 Repository 実測）。
+//
+// ── 既知の限界（P-R2 scope外）─────────────────────────────────────────
+//
+// 本テストは corpus / production helper の契約を検証するものであり、
+// prompts/vNext/PN3B-Scenario-Metadata-Apply.md の MUST 節本文そのものを
+// source-anchor 化しない（PN3B の prompt text を正規表現等で固定しない）。
+// したがって PN3B の MUST 節が将来削除・改変されても本テストは直接には
+// 検出できない。P-R2 はこれを意図的な責務分離とする（prompt contract の
+// 自己保護は本 Unit の scope 外）。
+// ─────────────────────────────────────────────────────────────
+
+describe('adherence_good → Rapid metadata 契約（scenarioTags "good"・P-R2）', () => {
+  /** corpus 上の adherence_good scenario を module 込みで列挙する */
+  function adherenceGoodScenarios(): Array<{ moduleId: string; sc: Scenario }> {
+    const out: Array<{ moduleId: string; sc: Scenario }> = []
+    for (const mod of ALL_MODULES) {
+      for (const sc of mod.scenarios ?? []) {
+        if (sc.scenarioGroup === 'adherence_good') out.push({ moduleId: mod.moduleId, sc })
+      }
+    }
+    return out
+  }
+
+  test('T-1: scenarioGroup="adherence_good" の scenario が corpus に1件以上存在し、走査に取りこぼしがない', () => {
+    const found = adherenceGoodScenarios()
+    assert.ok(found.length > 0, 'adherence_good scenario が corpus に1件も無い（test が空振り）')
+
+    // loop completeness: 直接フィルタした結果と再走査した結果が一致すること
+    let recount = 0
+    for (const mod of ALL_MODULES) {
+      for (const sc of mod.scenarios ?? []) {
+        if (sc.scenarioGroup === 'adherence_good') recount++
+      }
+    }
+    assert.equal(recount, found.length, '走査結果が再走査と一致しない（loop の取りこぼし）')
+  })
+
+  test('T-2: 全 adherence_good scenario が isScenarioSReplacementCapable() で true になる', () => {
+    const violations: string[] = []
+    for (const { moduleId, sc } of adherenceGoodScenarios()) {
+      if (!isScenarioSReplacementCapable(sc)) violations.push(`${moduleId}.${sc.id}`)
+    }
+    assert.deepEqual(
+      violations, [],
+      `adherence_good だが Rapid capable ではない scenario がある:\n  ${violations.join('\n  ')}`,
+    )
+  })
+
+  test('T-3: explicit thirdPanelSPlacement を持たない adherence_good scenario は scenarioTags に "good" を含む', () => {
+    // explicit scenario（thirdPanelSPlacement 明示済み）は対象外とする。
+    // canonical は今回変更しない（Owner Decision OD-PR2-1: 見送り）ため、
+    // 既存 explicit scenario のタグ形状の統一はこのテストの対象にしない。
+    const violations: string[] = []
+    for (const { moduleId, sc } of adherenceGoodScenarios()) {
+      if (sc.thirdPanelSPlacement !== undefined) continue
+      const tags = sc.scenarioTags ?? []
+      if (!tags.includes('good')) violations.push(`${moduleId}.${sc.id}`)
+    }
+    assert.deepEqual(
+      violations, [],
+      `explicit thirdPanelSPlacement を持たない adherence_good scenario で "good" タグが欠落:\n  ${violations.join('\n  ')}`,
+    )
+  })
+
+  test('T-4: scenarioTags に "good" を持つ scenario は scenarioGroup==="adherence_good" に限られる（過剰付与の防止）', () => {
+    const violations: string[] = []
+    for (const mod of ALL_MODULES) {
+      for (const sc of mod.scenarios ?? []) {
+        const tags = sc.scenarioTags ?? []
+        if (tags.includes('good') && sc.scenarioGroup !== 'adherence_good') {
+          violations.push(`${mod.moduleId}.${sc.id} (scenarioGroup="${sc.scenarioGroup}")`)
+        }
+      }
+    }
+    assert.deepEqual(
+      violations, [],
+      `scenarioGroup が adherence_good でないのに "good" タグを持つ scenario がある:\n  ${violations.join('\n  ')}`,
+    )
+  })
+
+  test('T-5: 検出ロジックの健全性 — "good" タグ欠落 + 非 cp_good id の scenario は capable ではないと検出される', () => {
+    // 実データではなく意図的に壊した in-memory clone で、検査ロジック自体が
+    // 実際に差分を捕まえることを確認する（本ファイル既存の他テストと同じ方針）。
+    const sample = adherenceGoodScenarios().find(({ sc }) => sc.thirdPanelSPlacement === undefined)
+    assert.ok(sample, '前提の健全性: explicit ではない adherence_good scenario が corpus に必要')
+
+    const tags = (sample!.sc.scenarioTags ?? []).filter(t => t !== 'good')
+    const broken: Scenario = { ...sample!.sc, id: 'adherence_stable', scenarioTags: tags }
+
+    assert.equal(
+      isScenarioSReplacementCapable(broken), false,
+      '"good" タグ欠落 + 非 cp_good id の scenario は capable ではないと検出されなければならない',
+    )
+    assert.equal(
+      isScenarioSReplacementCapable(sample!.sc), true,
+      '前提の健全性: 実データ側は capable でなければならない',
+    )
   })
 })
