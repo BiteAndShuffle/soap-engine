@@ -163,6 +163,31 @@ describe('4. buildNodeFields: scenario本文とADDON本文が同一 drugName で
 // 5. 既存19 ADDON 全件で非空drugName時にliteral tokenが残らない
 // ═══════════════════════════════════════════════════════════════
 
+/**
+ * U-CR1: {{drug_subject}} を含む ADDON の corpus 走査を 1 度だけ materialize する。
+ * exact な corpus snapshot（旧 addonTotal 518 / withSlot 19 / affectedModules 15 /
+ * tested 19）は仕様値として使用しない。他 test（section 6 の tested）からも
+ * 同じ導出値を参照し、走査ロジックの二重実装を避ける。
+ */
+function scanDrugSubjectAddons(): { addonTotal: number; withSlot: number; affectedModules: Set<string> } {
+  let addonTotal = 0, withSlot = 0
+  const affectedModules = new Set<string>()
+  for (const mod of ALL_MODULES) {
+    const items = mod.addons?.items ?? {}
+    for (const key of Object.keys(items)) {
+      addonTotal++
+      const it = items[key]
+      const texts = [it.text, it.sectionTexts?.S, it.sectionTexts?.A, it.sectionTexts?.P].filter(Boolean) as string[]
+      if (texts.some(t => t.includes(DRUG_SUBJECT_SLOT))) {
+        withSlot++
+        affectedModules.add(mod.moduleId)
+      }
+    }
+  }
+  return { addonTotal, withSlot, affectedModules }
+}
+const DRUG_SUBJECT_SCAN = scanDrugSubjectAddons()
+
 describe('5. {{drug_subject}} を含む既存 ADDON 全件で literal token が残らない', () => {
   test('19 ADDON / 15 module の内訳を再測定する', () => {
     let addonTotal = 0, withSlot = 0
@@ -179,9 +204,20 @@ describe('5. {{drug_subject}} を含む既存 ADDON 全件で literal token が�
         }
       }
     }
-    assert.equal(addonTotal, 518, `ADDON 定義総数（実際: ${addonTotal}）`)
-    assert.equal(withSlot, 19, `{{drug_subject}} を含む ADDON 数（実際: ${withSlot}）`)
-    assert.equal(affectedModules.size, 15, `対象 module 数（実際: ${affectedModules.size}）`)
+    // U-CR1: exact count ではなく、(1) corpus 由来の走査件数（loop-completeness）、
+    // (2) 対象 ADDON / module が 0 件でないこと（non-vacuity）、
+    // (3) affectedModules ⊆ withSlot ⊆ addonTotal という分割・包含関係、
+    // の 3 点を守る。addonTotal 自体は ALL_MODULES から独立に導出した値と突合する。
+    const derivedAddonTotal = ALL_MODULES.reduce((n, mod) => n + Object.keys(mod.addons?.items ?? {}).length, 0)
+    assert.ok(derivedAddonTotal > 0, 'ADDON が corpus に 1 件も無い（test が空振り）')
+    assert.equal(addonTotal, derivedAddonTotal, `ADDON 総数の走査に取りこぼしがある（実際: ${addonTotal} / corpus 由来: ${derivedAddonTotal}）`)
+    assert.ok(withSlot > 0, '{{drug_subject}} を含む ADDON が corpus に 1 件も無い（test が空振り）')
+    assert.ok(affectedModules.size > 0, '{{drug_subject}} を含む ADDON を持つ module が corpus に 1 件も無い（test が空振り）')
+    assert.ok(
+      affectedModules.size <= ALL_MODULES.length,
+      `対象 module 数が corpus の module 総数を超えている（${affectedModules.size} / ${ALL_MODULES.length}）`,
+    )
+    assert.ok(withSlot >= affectedModules.size, 'ADDON 数が対象 module 数を下回っている（1 module 最低 1 ADDON のはず）')
   })
 
   test('非空 drugName を与えると、対象 ADDON はいずれも literal token を残さない', () => {
@@ -206,7 +242,11 @@ describe('5. {{drug_subject}} を含む既存 ADDON 全件で literal token が�
         tested++
       }
     }
-    assert.equal(tested, 19, `検証した ADDON 数（実際: ${tested}）`)
+    assert.ok(tested > 0, '{{drug_subject}} を含む ADDON を 1 件も検証していない（test が空振り）')
+    assert.equal(
+      tested, DRUG_SUBJECT_SCAN.withSlot,
+      `検証件数が section 5 の走査結果と一致しない（実際: ${tested} / 走査: ${DRUG_SUBJECT_SCAN.withSlot}）`,
+    )
   })
 })
 
@@ -220,7 +260,7 @@ describe('6. 他 module への regression がない', () => {
       assert.doesNotThrow(() => resolveDrugName(mod.drug, undefined))
       assert.doesNotThrow(() => resolveDrugName(mod.drug, mod.drug?.brandNames?.[0]))
     }
-    assert.equal(ALL_MODULES.length, 35, `module 数（実際: ${ALL_MODULES.length}）`)
+    assert.ok(ALL_MODULES.length > 0, 'module が corpus に 1 件も無い（test が空振り）')
   })
 
   test('resolveDrugSubject: drugName 空文字ならフィールドを変更しない（サイレント失敗なし）', () => {

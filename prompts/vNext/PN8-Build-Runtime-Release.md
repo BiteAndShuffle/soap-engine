@@ -53,6 +53,60 @@ grep "{moduleId}" data/modules/index.ts
 tsc / build が成功しても registry 未登録ではアプリ上にモジュールが表示されない。
 必ず登録確認を tsc より前に実施すること。
 
+### npm test（U-CR1・2026-08-27 追加）
+
+```bash
+npm test 2>&1 | tail -20
+```
+
+- `fail 0` → PASS
+- `fail 1` 以上 → **RELEASE_HOLD**（失敗した test 名を全件報告する）
+- `skip` / `todo` / `only` の件数が、直前の baseline（前回 RELEASE_OK 時点の値）から
+  **予測外に増えていないこと**も確認する。予測外に増えている場合も RELEASE_HOLD とし、
+  増加理由を報告する
+- `docs/IMPLEMENTATION_CHECKLIST.md`（「実装後に毎回行う検証チェックリスト」）が
+  `npm test（0 fail であること）` を既に無条件項目として定めている。本節はこれを
+  PN8 の release gate へ反映するものであり、新しい policy を追加するものではない
+
+**stale generated artifact の remediation**: 新規 module 追加後、`npm test` の RED が
+`data/search-manifest.json` 等の生成物 stale 検出（例:
+`tests/searchManifestParity.test.ts` の T-3 / `tests/searchCoverage.test.ts`）に
+起因する場合がある。この場合の対応は以下の順で行う。PN8 自身が JSON / 生成物を
+書き換える工程にはしない。
+
+1. RELEASE_HOLD とし、原因が生成物 stale であることを報告に明記する
+2. `docs/IMPLEMENTATION_CHECKLIST.md` の既存 remediation に従い、該当する生成工程
+   （例: `npm run generate:search-manifest`）で生成物を再生成する
+3. `npm test` を再実行し、PASS を確認する
+4. PASS を確認できた時点で PN8 の判定を再開する
+
+### npm run audit（U-CR1・2026-08-27 追加）
+
+```bash
+npm run audit 2>&1 | tail -10
+```
+
+- 4 系統（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety）
+  すべて PASS → PASS
+- いずれか 1 系統でも FAIL → **RELEASE_HOLD**（FAIL 内容を全文報告する）
+- `docs/IMPLEMENTATION_CHECKLIST.md` が既に無条件項目として定めている。新規 policy ではない
+
+### npm run test:multi-drug（条件付き・U-CR1・2026-08-27 追加）
+
+無条件 gate にはしない。次のいずれかに該当する場合のみ実行する
+（`prompts/PROJECT_CONTEXT.md` Module Expansion guardrail #4 /
+`docs/IMPLEMENTATION_CHECKLIST.md`）。
+
+- 新しい薬効領域を追加した場合
+- 検索・alias・drug 構造を変更した場合
+
+```bash
+npm run test:multi-drug 2>&1 | tail -10
+```
+
+- 該当し、`FAIL` が 1 件でもある → **RELEASE_HOLD**
+- 該当しない場合は **NOT_APPLICABLE** とする（PASS 扱いにも FAIL 扱いにもしない）
+
 ### 配信量の観測（F-1・観測項目）
 
 ```bash
@@ -80,11 +134,14 @@ moduleValidator が存在しない場合は NOT_CHECKED とする。
 
 | 条件 | 判定 |
 |---|---|
-| registry 登録済み + tsc PASS + build PASS + PN7 全 PASS | RELEASE_OK |
-| registry 登録済み + tsc PASS + build PASS + PN7 NOT_CHECKED のみ残存 | RELEASE_OK_WITH_MONITOR |
+| registry 登録済み + tsc PASS + build PASS + npm test PASS + npm run audit PASS + （該当時）test:multi-drug PASS + PN7 全 PASS | RELEASE_OK |
+| 上記 + PN7 NOT_CHECKED のみ残存 | RELEASE_OK_WITH_MONITOR |
 | registry 未登録 | RELEASE_HOLD |
 | tsc FAIL | RELEASE_HOLD |
 | build FAIL | RELEASE_HOLD |
+| npm test FAIL（U-CR1） | RELEASE_HOLD（生成物 stale が原因の場合は上記 remediation workflow に従う） |
+| npm run audit FAIL（U-CR1） | RELEASE_HOLD |
+| test:multi-drug FAIL（該当時のみ・U-CR1） | RELEASE_HOLD |
 | PN7 FAIL 残存 | RELEASE_HOLD（PN8 を開始しないこと）|
 
 ---
@@ -97,7 +154,11 @@ moduleValidator が存在しない場合は NOT_CHECKED とする。
 registry登録確認:      PASS / RELEASE_HOLD
 tsc:                  PASS / FAIL
 build:                PASS / FAIL
+npm test:             PASS / FAIL（fail 件数 / skip・todo・only の baseline からの増減）
+npm run audit:        PASS / FAIL（4 系統の内訳）
+test:multi-drug:      PASS / FAIL / NOT_APPLICABLE
 runtime compatibility: PASS / FAIL / NOT_CHECKED
+PN7 verdict:           PASS / NOT_CHECKED 残存 / FAIL
 
 Release判定: RELEASE_OK / RELEASE_OK_WITH_MONITOR / RELEASE_HOLD
 
@@ -106,6 +167,8 @@ Release判定: RELEASE_OK / RELEASE_OK_WITH_MONITOR / RELEASE_HOLD
   data/modules/index.ts（registry 登録）
 
 RELEASE_HOLD の場合は原因を明記する。
+npm test の FAIL が生成物 stale に起因する場合は、再生成 → 再実行の remediation を
+実施したかどうかも明記する。
 ```
 
 ---

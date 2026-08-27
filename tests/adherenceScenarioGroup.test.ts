@@ -464,14 +464,29 @@ function routeStandardTargets(route: string): typeof ALL_MODULES[number][] {
   return ALL_MODULES.filter(m => m.drug?.route === route && !ROUTE_STANDARD_EXCLUDED.has(m.moduleId))
 }
 
-describe('route別 adherence 標準ADDON の canonical 契約（30 module invariant）', () => {
+describe('route別 adherence 標準ADDON の canonical 契約（corpus-derived invariant・U-CR1）', () => {
   test('対象module数が想定どおりである（テストの空振り防止）', () => {
     const counts = {
       oral: routeStandardTargets('oral').length,
       injection: routeStandardTargets('injection').length,
       topical: routeStandardTargets('topical').length,
     }
-    assert.deepEqual(counts, { oral: 16, injection: 10, topical: 4 }, `route別対象数が想定と不一致: ${JSON.stringify(counts)}`)
+    // U-CR1: exact count（旧 oral 16 / injection 10 / topical 4）は仕様値として使用しない。
+    // 各 route が 1 件以上（空振り防止）であることと、3 route の合計が
+    // 「対象 route かつ除外リスト外」という述語から corpus 上導出できる件数と
+    // 一致すること（loop-completeness / 二重計上や取りこぼしがないこと）を守る。
+    for (const [route, n] of Object.entries(counts)) {
+      assert.ok(n > 0, `route=${route} の対象 module が 0 件（test が空振り）`)
+    }
+    const derivedTotal = ALL_MODULES.filter(m =>
+      ['oral', 'injection', 'topical'].includes(m.drug?.route ?? '') &&
+      !ROUTE_STANDARD_EXCLUDED.has(m.moduleId),
+    ).length
+    const countedTotal = counts.oral + counts.injection + counts.topical
+    assert.equal(
+      countedTotal, derivedTotal,
+      `route別集計の合計が corpus 導出値と一致しない: ${JSON.stringify(counts)}（合計 ${countedTotal}） vs ${derivedTotal}`,
+    )
   })
 
   test('除外5 moduleがこの契約の対象に含まれていない', () => {

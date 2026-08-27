@@ -31,6 +31,8 @@ import {
   type SRelation,
   type SCondition,
   buildResolvedSFirstSentence,
+  S_RELATION_LABELS,
+  S_CONDITION_LABELS,
 } from '../lib/rapidSentence'
 
 const SECTIONS: SoapKey[] = ['S', 'O', 'A', 'P']
@@ -62,6 +64,29 @@ function capableScenarios(): Array<{ mod: ModuleData; sc: Scenario }> {
     }
   }
   return out
+}
+
+/**
+ * U-CR1: corpus を 1 度だけ materialize する。loop-completeness は
+ * checked === CAPABLE_SCENARIOS.length（× 組合せ数）で検証し、
+ * exact な corpus snapshot（旧 170）は仕様値として使用しない。
+ */
+const CAPABLE_SCENARIOS = capableScenarios()
+const RAPID_COMBOS = RELATIONS.length * CONDITIONS.length
+
+/**
+ * U-CR1: test 側 RELATIONS / CONDITIONS が runtime authority
+ * （S_RELATION_LABELS / S_CONDITION_LABELS）の全値を網羅していることを保証する。
+ */
+function assertRapidAxesCoverProduction(): void {
+  assert.deepEqual(
+    [...RELATIONS].sort(), Object.keys(S_RELATION_LABELS).sort(),
+    'RELATIONS が production の SRelation 全値（S_RELATION_LABELS）を網羅していない',
+  )
+  assert.deepEqual(
+    [...CONDITIONS].sort(), Object.keys(S_CONDITION_LABELS).sort(),
+    'CONDITIONS が production の SCondition 全値（S_CONDITION_LABELS）を網羅していない',
+  )
 }
 
 /**
@@ -102,7 +127,18 @@ describe('A. rapid === null は buildNodeFields の出力を変更しない', ()
       assertFieldsEqual(actual, expected, `${mod.moduleId}/${sc.id}`)
       checked++
     }
-    assert.equal(checked, 170, `capable scenario 数（実際: ${checked}）`)
+    assert.ok(CAPABLE_SCENARIOS.length > 0, 'capable scenario が corpus に 1 件も無い（test が空振り）')
+    const moduleWithoutCapable = ALL_MODULES
+      .filter(mod => !(mod.scenarios ?? []).some(isScenarioSReplacementCapable))
+      .map(mod => mod.moduleId)
+    assert.deepEqual(
+      moduleWithoutCapable, [],
+      `Rapid-capable scenario を 1 件も持たない module がある: ${moduleWithoutCapable.join(', ')}`,
+    )
+    assert.equal(
+      checked, CAPABLE_SCENARIOS.length,
+      `検証件数が capable scenario の corpus 導出値と一致しない（実際: ${checked}）`,
+    )
   })
 
   test('drugName 省略時も buildNodeFields の既定挙動と一致する', () => {
@@ -164,7 +200,11 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
         }
       }
     }
-    assert.equal(checked, 170 * 20, `検証した組合せ数（実際: ${checked}）`)
+    assertRapidAxesCoverProduction()
+    assert.equal(
+      checked, CAPABLE_SCENARIOS.length * RAPID_COMBOS,
+      `検証した組合せ数が corpus 期待値と一致しない（実際: ${checked}）`,
+    )
   })
 
   test('S の先頭文は buildResolvedSFirstSentence の出力と一致する', () => {

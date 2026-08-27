@@ -127,8 +127,10 @@ function collectAndQueries(): string[] {
 
 describe('T-1 structured search parity（canonical ⇔ manifest）', () => {
   test('SearchEntry の件数が一致する', () => {
+    // U-CR1: exact count（旧 1060）は仕様値として使用しない。manifest 由来と canonical 由来の
+    // 件数一致（parity 本体）と非空虚性のみを守る。
     assert.equal(manifestIndex.length, canonicalIndex.length)
-    assert.equal(manifestIndex.length, 1060)
+    assert.ok(manifestIndex.length > 0, 'SearchEntry が corpus に 1 件も無い（test が空振り）')
   })
 
   test('templateId の並びが一致する（検索結果の順序も manifest の意味の一部）', () => {

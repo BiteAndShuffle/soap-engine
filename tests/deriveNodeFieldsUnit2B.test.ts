@@ -79,6 +79,13 @@ function capableScenarios(): Array<{ mod: ModuleData; sc: Scenario }> {
   return out
 }
 
+/**
+ * U-CR1: corpus を 1 度だけ materialize する。loop-completeness は
+ * checked === CAPABLE_SCENARIOS.length で検証し、exact な corpus snapshot
+ * （旧 170）は仕様値として使用しない。
+ */
+const CAPABLE_SCENARIOS = capableScenarios()
+
 function assertFieldsEqual(a: SoapFields, b: SoapFields, msg: string): void {
   for (const sec of SECTIONS) {
     assert.equal(a[sec], b[sec], `${msg} [${sec}]`)
@@ -286,7 +293,11 @@ describe('4. operation-order independence（同じ最終 state → byte-identica
       assertFieldsEqual(off, pristine, `${mod.moduleId}/${sc.id}: OFF は pristine と一致すること`)
       checked++
     }
-    assert.equal(checked, 170, `検証した capable scenario 数（実際: ${checked}）`)
+    assert.ok(CAPABLE_SCENARIOS.length > 0, 'capable scenario が corpus に 1 件も無い（test が空振り）')
+    assert.equal(
+      checked, CAPABLE_SCENARIOS.length,
+      `検証件数が capable scenario の corpus 導出値と一致しない（実際: ${checked}）`,
+    )
   })
 
   test('E. ADDON ON → OFF → ON は最終的に ON 状態と一致する', () => {

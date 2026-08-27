@@ -543,6 +543,13 @@ function capableScenarios(): Array<{ mod: ModuleData; sc: Scenario }> {
   return allScenarios().filter(({ sc }) => isScenarioSReplacementCapable(sc))
 }
 
+/**
+ * U-CR1: corpus を 1 度だけ materialize する。loop-completeness は
+ * checked === CAPABLE_SCENARIOS.length で検証し、exact な corpus snapshot
+ * （旧 170）は仕様値として使用しない。
+ */
+const CAPABLE_SCENARIOS = capableScenarios()
+
 function addonKeysOf(scenario: Scenario): string[] {
   const ref = (scenario as unknown as { addonsRef?: unknown }).addonsRef
   if (Array.isArray(ref)) return ref.filter((x): x is string => typeof x === 'string')
@@ -1221,7 +1228,11 @@ describe('Group D-4: Rapid ON/OFF（全 capable scenario × 代表 20 組合せ�
       assertFieldsEqual(off.block.rawFields as SoapFields, pristine.block.rawFields as SoapFields, `${mod.moduleId}/${sc.id}: OFF が pristine と乖離`)
       checked++
     }
-    assert.equal(checked, 170, `検証した capable scenario 数（実際: ${checked}）`)
+    assert.ok(CAPABLE_SCENARIOS.length > 0, 'capable scenario が corpus に 1 件も無い（test が空振り）')
+    assert.equal(
+      checked, CAPABLE_SCENARIOS.length,
+      `検証件数が capable scenario の corpus 導出値と一致しない（実際: ${checked}）`,
+    )
   })
 
   test('代表 20 組合せ（relation × condition）で rebuildPrimary の S 先頭文が buildResolvedSFirstSentence 相当になる', () => {

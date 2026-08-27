@@ -53,6 +53,8 @@ import {
   buildResolvedSFirstSentence,
   replaceSFirstSentence,
   restoreScenarioFirstSentence,
+  S_RELATION_LABELS,
+  S_CONDITION_LABELS,
 } from '../lib/rapidSentence'
 import { deriveRawFields } from '../lib/deriveNodeFields'
 import { rebuildPrimary, PRIMARY_NODE_ID } from '../lib/primaryNode'
@@ -80,6 +82,32 @@ function capableScenarios(): Array<{ mod: ModuleData; sc: Scenario }> {
     }
   }
   return out
+}
+
+/**
+ * U-CR1: corpus を 1 度だけ materialize する。module 追加で件数が変わっても
+ * 各テストは自身が「実際に列挙した corpus」を検査対象とし、loop の取りこぼしを
+ * checked === CAPABLE.length（× 組合せ数）で検出する。exact な corpus snapshot
+ * （旧 170 / 1060 / 46 / 124）は仕様値として使用しない。
+ */
+const CAPABLE_SCENARIOS = capableScenarios()
+const RAPID_COMBOS = RELATIONS.length * CONDITIONS.length
+
+/**
+ * U-CR1: test 側 RELATIONS / CONDITIONS が runtime authority
+ * （production export の S_RELATION_LABELS / S_CONDITION_LABELS）の全値を
+ * 網羅していることを key-set で保証する。20 という組合せ数自体は
+ * relation 5 × condition 4 の派生値であり、独立した golden count にしない。
+ */
+function assertRapidAxesCoverProduction(): void {
+  assert.deepEqual(
+    [...RELATIONS].sort(), Object.keys(S_RELATION_LABELS).sort(),
+    'RELATIONS が production の SRelation 全値（S_RELATION_LABELS）を網羅していない',
+  )
+  assert.deepEqual(
+    [...CONDITIONS].sort(), Object.keys(S_CONDITION_LABELS).sort(),
+    'CONDITIONS が production の SCondition 全値（S_CONDITION_LABELS）を網羅していない',
+  )
 }
 
 /** production と同じ順で Rapid を S へ適用する（handleSToggle / useEffect と同一手順） */
@@ -186,7 +214,12 @@ describe('2. Rapid A を ON にすると S 先頭文が置換される', () => {
         }
       }
     }
-    assert.equal(checked, 170 * 20, `capable 170 × 20 組合せを検証すること（実際: ${checked}）`)
+    assertRapidAxesCoverProduction()
+    assert.ok(CAPABLE_SCENARIOS.length > 0, 'capable scenario が corpus に 1 件も無い（test が空振り）')
+    assert.equal(
+      checked, CAPABLE_SCENARIOS.length * RAPID_COMBOS,
+      `検証件数が capable scenario × Rapid 組合せの corpus 期待値と一致しない（実際: ${checked}）`,
+    )
   })
 })
 
@@ -208,7 +241,9 @@ describe('3. Rapid A 再クリック → null + S 完全復元（RAPID-V2-05）'
         }
       }
     }
-    assert.equal(checked, 170 * 20)
+    assertRapidAxesCoverProduction()
+    assert.ok(CAPABLE_SCENARIOS.length > 0, 'capable scenario が corpus に 1 件も無い（test が空振り）')
+    assert.equal(checked, CAPABLE_SCENARIOS.length * RAPID_COMBOS)
   })
 
   test('再クリック判定は isSameRapid が担う', () => {
@@ -241,7 +276,9 @@ describe('4. Rapid A → Rapid B は置換される（残骸を残さない）',
         }
       }
     }
-    assert.equal(checked, 170 * 20)
+    assertRapidAxesCoverProduction()
+    assert.ok(CAPABLE_SCENARIOS.length > 0, 'capable scenario が corpus に 1 件も無い（test が空振り）')
+    assert.equal(checked, CAPABLE_SCENARIOS.length * RAPID_COMBOS)
   })
 })
 
@@ -534,7 +571,7 @@ describe('10. Rapid 操作は localInput を巻き戻さない（RAPID-V2-09）'
 // ═══════════════════════════════════════════════════════════════
 
 describe('12. capability は scenario intrinsic predicate である（RAPID-V2-08）', () => {
-  test('capable 総数は 170 / 明示 46 / fallback 124（現行 behavior 維持）', () => {
+  test('capable は corpus 由来の明示 + fallback に分割され、両経路とも corpus 上 live である（U-CR1: exact snapshot は仕様値ではない）', () => {
     let total = 0, capable = 0, explicit = 0, fallback = 0
     for (const mod of ALL_MODULES) {
       for (const sc of mod.scenarios ?? []) {
@@ -545,10 +582,32 @@ describe('12. capability は scenario intrinsic predicate である（RAPID-V2-0
         else fallback++
       }
     }
-    assert.equal(total, 1060, `全 scenario 数（実際: ${total}）`)
-    assert.equal(capable, 170, `capable 総数（実際: ${capable}）`)
-    assert.equal(explicit, 46, `明示 thirdPanelSPlacement 由来（実際: ${explicit}）`)
-    assert.equal(fallback, 124, `generic fallback 由来（実際: ${fallback}）`)
+    const derivedTotal = ALL_MODULES.reduce((n, mod) => n + (mod.scenarios?.length ?? 0), 0)
+    assert.ok(derivedTotal > 0, 'corpus に scenario が 1 件も無い（test が空振り）')
+    assert.equal(total, derivedTotal, `全 scenario 走査に取りこぼしがある（実際: ${total} / corpus 由来: ${derivedTotal}）`)
+    assert.equal(
+      capable, CAPABLE_SCENARIOS.length,
+      `capable 総数が isScenarioSReplacementCapable の corpus 導出値と一致しない（実際: ${capable} / 導出: ${CAPABLE_SCENARIOS.length}）`,
+    )
+    assert.ok(capable > 0 && capable <= total, `capable が正しい範囲にない（capable=${capable} / total=${total}）`)
+    // OD-CR1-1: explicit/fallback は分割不変条件のみを固定する。exact count（旧 46 / 124）は
+    // 仕様値として使用しない。両分岐が corpus 上 live であることは、fallback 経路が silent に
+    // 死んでいない・明示経路が silent に消えていないことの regression guard として維持する。
+    assert.equal(
+      explicit + fallback, capable,
+      `明示 thirdPanelSPlacement 由来 + fallback 由来の合計が capable と一致しない（${explicit} + ${fallback} != ${capable}）`,
+    )
+    assert.ok(explicit > 0, '明示 thirdPanelSPlacement 経路が corpus 上 1 件も live でない')
+    assert.ok(fallback > 0, 'generic fallback 経路が corpus 上 1 件も live でない')
+    // U-CR1 6-E: 全 module が Rapid-capable scenario を 1 件以上持つという corpus invariant を
+    // permanent guard として追加する。診断性のため欠落 moduleId を特定する。
+    const moduleWithoutCapable = ALL_MODULES
+      .filter(mod => !(mod.scenarios ?? []).some(isScenarioSReplacementCapable))
+      .map(mod => mod.moduleId)
+    assert.deepEqual(
+      moduleWithoutCapable, [],
+      `Rapid-capable scenario を 1 件も持たない module がある: ${moduleWithoutCapable.join(', ')}`,
+    )
   })
 
   test('分離した predicate は context=true の isSReplacementEligible と完全一致する', () => {
