@@ -169,6 +169,25 @@ bridge の対応フィールドから移植する。
 - bridge にいずれかのフィールドが存在しない場合 → canonical 側にも生成しない（空配列 `[]` を推測生成しない）
 - 値の推測・要約・並べ替えは禁止
 
+**`display.adjustmentExpression` の保持（必須・明示 preservation 対象）:**
+
+本フィールドは bridge Header 由来の **preservation field** であり、derived metadata ではない。
+`template.handlingTags` / `reservedHandlingTags` と同様、「対応フィールドから移植する」という
+総称規則に埋没させず、以下を個別に守ること。
+
+- bridge Header の `display.adjustmentExpression` に `increasePast` / `decreasePast` が記載されている
+  場合 → 両文字列を canonical の `display.adjustmentExpression.increasePast` /
+  `display.adjustmentExpression.decreasePast` へ **exact preservation** で転記する。
+  正規化・言い換え・語尾変換・文法的な調整をしない
+- bridge に `display.adjustmentExpression` が記載されていない場合 → canonical 側にも生成しない。
+  「他 module が持っている」「同じ route だから」「Rapid で使うから」等を理由に補完しない
+- 以下から値を推測・導出してはならない: `drug.route` / `drug.dosageForms` / `moduleId` /
+  `drug.drugClass` / 既存 canonical の前例。route から deterministic に導出できない実例として、
+  同じ `topical` route 内でも「使用回数」と「使用量」に分岐するモジュールが存在する（route ごとの
+  固定マッピングを作ってはならない）
+- `display.menuGroupLabels` は本規則の対象外である（別フィールド・別 consumer。本規則は
+  `adjustmentExpression` のみを対象とし、`menuGroupLabels` の既存規則は変更しない）
+
 **bridge に `persona:` セクションが存在しない場合:**
 `persona` フィールドを OUTPUT_JSON から omit する（省略）。PENDING にしない。
 model_managed 項目であり、後工程で別途追加可能。
@@ -299,5 +318,6 @@ PN2 完了後、以下を報告する:
 - brandCatalog ブランド数
 - aliasToBrand キー数
 - 整合確認結果（nameAliases一致 / aliases一致 / aliasToBrand網羅）
+- display.adjustmentExpression を転記したか（bridge 記載の有無。記載ありの場合は転記した exact value）
 
 次工程: PN3A（Scenario Classification）
