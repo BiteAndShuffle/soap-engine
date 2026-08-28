@@ -138,11 +138,21 @@ export function buildResolvedSFirstSentence(
     }
   })()
 
+  // adjustmentExpression（past-clause fragment）と condSuffix を繋ぐ接続助詞（P-R3B / OD-PR3-7）。
+  // adjustmentExpression は bridge からの free-text preservation field であり、
+  // 「〜となった」「〜が増えた」等の過去形のまま runtime へ渡される（連用形への
+  // morphology 変換はしない）。過去形へそのまま接続できる助詞のみを候補とする:
+  //   stable / improved / unchanged → 「ところ、」（因果・逆接を主張しない中立的観察）
+  //   not_improved                  → 「が、」（逆接を維持。「増量となったが、十分な改善はみられない」）
+  // 「〜たため、」は不採用: unchanged で「増量となったため、症状は変わりない」という
+  // 不成立の因果関係を主張してしまう。
+  const condConjunction = condition === 'not_improved' ? 'が、' : 'ところ、'
+
   if (relation === 'new_addition') return newFirst.replace('薬を', `${drugName}を`)
   if (relation === 'med_changed')  return newFirst.replace('薬が変更と', `${drugName}に変更と`)
   if (relation === 'dose_increased') {
     if (adjustmentExpression) {
-      return `前回から${drugName}の${adjustmentExpression.increasePast}が、${condSuffix}`
+      return `前回から${drugName}の${adjustmentExpression.increasePast}${condConjunction}${condSuffix}`
     }
     return newFirst
       .replace('薬が増量となり', `${drugName}が増量となり`)
@@ -150,7 +160,7 @@ export function buildResolvedSFirstSentence(
   }
   if (relation === 'dose_decreased') {
     if (adjustmentExpression) {
-      return `前回から${drugName}の${adjustmentExpression.decreasePast}が、${condSuffix}`
+      return `前回から${drugName}の${adjustmentExpression.decreasePast}${condConjunction}${condSuffix}`
     }
     return newFirst
       .replace('薬が減量となり', `${drugName}が減量となり`)
