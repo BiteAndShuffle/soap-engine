@@ -121,7 +121,11 @@
     "drugClassLabel": "混合型インスリン製剤（超速効型＋持効型）",
     "nodeKey": "insulin_mixed_rapid_long_injection",
     "nodeLabelShort": "混合型インスリン（超速効+持効）",
-    "nodeLabelLong": "混合型インスリン製剤（超速効型＋持効型）"
+    "nodeLabelLong": "混合型インスリン製剤（超速効型＋持効型）",
+    "adjustmentExpression": {
+      "increasePast": "増量となった",
+      "decreasePast": "減量となった"
+    }
   },
   "risks": {
     "urgentFlag": true,

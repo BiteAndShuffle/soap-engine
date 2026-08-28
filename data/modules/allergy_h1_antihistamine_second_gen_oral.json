@@ -539,7 +539,11 @@
     "drugGeneric": "フェキソフェナジン 他",
     "nodeLabelShort": "抗ヒスタミン薬",
     "nodeLabelLong": "第二世代抗ヒスタミン薬（内服）",
-    "nodeKey": "h1_antihistamine_oral"
+    "nodeKey": "h1_antihistamine_oral",
+    "adjustmentExpression": {
+      "increasePast": "増量となった",
+      "decreasePast": "減量となった"
+    }
   },
   "defaults": {
     "followup": {

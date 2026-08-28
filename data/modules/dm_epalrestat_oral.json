@@ -148,10 +148,6 @@
     "menuGroupLabels": {
       "増量": "増量",
       "減量": "減量"
-    },
-    "adjustmentExpression": {
-      "increasePast": "増量となった",
-      "decreasePast": "減量となった"
     }
   },
   "defaults": {
