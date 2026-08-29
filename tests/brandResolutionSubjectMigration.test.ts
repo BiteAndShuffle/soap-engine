@@ -87,6 +87,43 @@ function legacySubjectOf(item: DrugSuggestionItem): string {
   return resolveDrugName(drug, item.matchedBrandName)
 }
 
+/**
+ * U-CR2: historical fixture 検証専用スコープ。
+ *
+ * `tests/fixtures/subjectMigration.expected.json` は U-4b / Q-S2 migration 時点
+ * （fixture の `generatedAgainst` 参照）の historical regression artifact であり、
+ * ongoing corpus snapshot ではない。fixture の各行が記録している query/module の
+ * 組は生成時点の corpus に対する evidence であって、その後 registry に追加された
+ * module の参加を意図していない。
+ *
+ * `index`（ALL_MODULES 全体）をそのまま historical fixture 照合に使うと、
+ * 新規 module が同じクエリの検索結果へ割り込み、件数増加や 8-result cap 内での
+ * 玉突き（既存 module の押し出し）を引き起こす。これは fixture が検出すべき
+ * semantic regression ではなく、fixture の検証スコープが誤って corpus 全体へ
+ * 広がっていることによる false RED である（U-CR2 Design Review 実測）。
+ *
+ * historicalModuleIds は fixture.rows から導出する（moduleId のハードコード禁止）。
+ * これにより fixture が参照した module 集合だけを再構築し、その集合だけで
+ * 検索 index を組み直して照合する。新規 module は historicalIndex に一切
+ * 混入しないため、corpus 成長に対して構造的に免疫を持つ。
+ *
+ * 一方、T-U4b-1.2 / T-U4b-3.2 は「現在の runtime が持つべき性質」を検証する
+ * live 契約であり、意図的に `index`（全体）を使い続ける。歴史的 fixture の
+ * 照合とは責務が異なるため、置き換えない。
+ */
+const historicalModuleIds = new Set<string>(fixture.rows.map(r => r.moduleId))
+const historicalModules = ALL_MODULES.filter(m => historicalModuleIds.has(m.moduleId))
+const historicalIndex: SearchEntry[] = historicalModules.flatMap(m => buildSearchIndex(m))
+const historicalModOf = (id: string) => historicalModules.find(m => m.moduleId === id) as unknown as ModuleData
+
+/** 上記 historicalModOf を使う legacySubjectOf（下の legacySubjectOf と同一ロジック） */
+function legacySubjectOfHistorical(item: DrugSuggestionItem): string {
+  const drug = historicalModOf(item.moduleId).drug
+  if (item.displayName !== undefined && item.displayName !== item.matchedBrandName) return item.displayName
+  if (item.drugDisplayLabel !== undefined && item.drugDisplayLabel !== item.matchedBrandName) return item.drugDisplayLabel
+  return resolveDrugName(drug, item.matchedBrandName)
+}
+
 // ─────────────────────────────────────────────────────────────
 
 describe('T-U4b-1 brand candidate は subject 変化 0', () => {
@@ -131,11 +168,15 @@ describe('T-U4b-2 generic は expected パターンだけ subject が変化す�
   })
 
   test('各 delta の新 subject が実データの resolution.subject と一致する', () => {
+    // U-CR2: historical fixture の delta lookup。`index`（全体）で検索すると、
+    // 新規 module が同じクエリの 8-result cap 内で historical module を押し出し得る
+    // （実測: derm 系 module を +6 した overlay で発生）。historicalIndex に限定して
+    // corpus 成長の影響を構造的に排除する。
     for (const d of fixture.expectedReachableDelta) {
-      const hit = getDrugSuggestions(d.exampleQuery, index, 8).find(r => r.moduleId === d.moduleId)
+      const hit = getDrugSuggestions(d.exampleQuery, historicalIndex, 8).find(r => r.moduleId === d.moduleId)
       assert.ok(hit, `${d.moduleId} の候補が見つからない (q=${d.exampleQuery})`)
       assert.equal(resolveSubjectFromResolution(hit!.resolution), d.resolutionSubject)
-      assert.equal(legacySubjectOf(hit!), d.legacySubject)
+      assert.equal(legacySubjectOfHistorical(hit!), d.legacySubject)
     }
   })
 })
@@ -337,11 +378,24 @@ describe('T-U4b-10 Express path が完全に不変', () => {
 })
 
 describe('T-U4b-12 expected semantic delta fixture と完全一致する', () => {
+  test('fixture が参照する historical module がすべて registry に現存する（U-CR2 SCOPE）', () => {
+    // historical fixture の前提条件そのものの健全性チェック。ここが崩れている場合、
+    // 以下の projection 一致テストは意味を持たない（存在しない module を除外して
+    // 「一致」と誤判定することを防ぐ）。
+    const missing = [...historicalModuleIds].filter(id => !ALL_MODULES.some(m => m.moduleId === id))
+    assert.deepEqual(missing, [], `historical fixture が参照する module が registry から消えている: ${missing.join(', ')}`)
+  })
+
   test('全 1572 行の projection が fixture と一致する', () => {
+    // U-CR2: `index`（全体）ではなく `historicalIndex`（fixture が参照する module のみ）で
+    // 再計算する。fixture は U-4b / Q-S2 migration 時点の historical regression artifact
+    // であり、その後追加された module の結果混入は corpus 成長であって semantic regression
+    // ではない（U-CR2 Design Review 実測: +1 module で 1540→1587 行、8-cap 内の玉突きで
+    // T-U4b-2.4 相当の delta lookup が false RED になることを確認済み）。
     const recomputed: Fixture['rows'] = []
     for (const query of [...new Set(fixture.rows.map(r => r.query))].sort()) {
-      for (const r of getDrugSuggestions(query, index, 8)) {
-        const legacySubject = legacySubjectOf(r)
+      for (const r of getDrugSuggestions(query, historicalIndex, 8)) {
+        const legacySubject = legacySubjectOfHistorical(r)
         const resolutionSubject = resolveSubjectFromResolution(r.resolution)
         recomputed.push({
           query, moduleId: r.moduleId, denotation: r.resolution.denotation,
