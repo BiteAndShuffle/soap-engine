@@ -86,7 +86,7 @@ npm test 2>&1 | tail -20
 npm run audit 2>&1 | tail -10
 ```
 
-- 4 系統（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety）
+- 5 系統（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety / adjustmentExpression 保持）
   すべて PASS → PASS
 - いずれか 1 系統でも FAIL → **RELEASE_HOLD**（FAIL 内容を全文報告する）
 - `docs/IMPLEMENTATION_CHECKLIST.md` が既に無条件項目として定めている。新規 policy ではない
@@ -155,7 +155,7 @@ registry登録確認:      PASS / RELEASE_HOLD
 tsc:                  PASS / FAIL
 build:                PASS / FAIL
 npm test:             PASS / FAIL（fail 件数 / skip・todo・only の baseline からの増減）
-npm run audit:        PASS / FAIL（4 系統の内訳）
+npm run audit:        PASS / FAIL（5 系統の内訳）
 test:multi-drug:      PASS / FAIL / NOT_APPLICABLE
 runtime compatibility: PASS / FAIL / NOT_CHECKED
 PN7 verdict:           PASS / NOT_CHECKED 残存 / FAIL

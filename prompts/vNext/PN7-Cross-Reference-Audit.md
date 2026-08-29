@@ -727,6 +727,35 @@ bridge SCENARIO ヘッダーに scenarioColor= が存在しない scenario id:
 
 ---
 
+### AI. display.adjustmentExpression Bridge Parity（adjustmentExpression 保持確認）
+
+← PN2-Drug-Header.md「display.adjustmentExpression の保持（必須・明示 preservation 対象）」/
+  RULES.md §4 MANDATORY_PRESERVATION_TARGETS
+
+AA（alias系フィールド）と同じ構造の監査を、`display.adjustmentExpression` に適用する。
+詳細な機械比較は `scripts/audit-adjustment-expression-bridge-chain.ts` に委譲し、
+本チェックでは対象範囲と判定基準のみを定義する（PN7 自体にパーサ実装を重複させない）。
+
+```
+対象: display.adjustmentExpression のみ（display.menuGroupLabels は対象外。別フィールド・
+      別 consumer であり、本チェックの scope に含まれない）
+
+bridge Header が display.adjustmentExpression を宣言している場合:
+  canonical の display.adjustmentExpression が存在すること
+  かつ increasePast / decreasePast が bridge と完全一致すること
+  欠落または不一致 → FAIL
+
+bridge Header が正しく parse でき、かつ adjustmentExpression について沈黙している場合:
+  canonical に display.adjustmentExpression が存在しないこと
+  存在する場合（route/dosage form/drug class からの推測生成、他 module からの流用、
+  precedent からの補完を含む）→ FAIL
+
+1. npx tsx scripts/audit-adjustment-expression-bridge-chain.ts を実行する
+2. 出力された不整合はすべて bridge⇔canonical preservation 違反として扱う
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16

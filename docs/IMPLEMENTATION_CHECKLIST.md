@@ -15,13 +15,14 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ npx tsc --noEmit
 □ npm test（0 fail であること。件数は実行時に再測定し、変更前後で減っていないことを確認する）
 □ npm run build
-□ npm run audit（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety の 4 監査。個別実行する場合は下記 4 行を参照）
+□ npm run audit（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety / adjustmentExpression 保持 の 5 監査。個別実行する場合は下記 5 行を参照）
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
 □ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合。`npm run audit` に含まれる）
 □ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期。`npm run audit` に含まれる）
 □ scripts/audit-generic-name-reachability.ts（displayGenericName の読み到達性。`npm run audit` に含まれる）
 □ scripts/audit-brand-resolution-safety.ts（BrandResolution の brand/generic 解決安全性。`npm run audit` に含まれる）
+□ scripts/audit-adjustment-expression-bridge-chain.ts（display.adjustmentExpression の bridge⇔canonical 保持一致。`npm run audit` に含まれる）
 □ 検索・alias・drug構造を変更した場合は `npm run test:multi-drug`（buildNodeFields + mergeBlocksによる複数module合成の回帰テスト）を実施する
 □ canonical JSON のうち search-manifest の生成対象フィールド（`lib/searchManifest.ts`）を変更した場合は `npm run generate:search-manifest` を実行し、`data/search-manifest.json` を再生成する（手編集禁止。再生成漏れは `npm test` の `tests/searchManifestParity.test.ts` が検出する）
 □ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）
@@ -45,7 +46,8 @@ npm run audit
   ├ ADDON bridge→JSON→UI chain
   ├ Alias fields bridge⇔JSON
   ├ Generic name reachability          （Q-S1: module への到達性）
-  └ Brand resolution safety            （Q-S2: brand/generic 解決の安全性）
+  ├ Brand resolution safety            （Q-S2: brand/generic 解決の安全性）
+  └ adjustmentExpression bridge⇔canonical 保持一致
         FAIL  → exit 1。module 追加不可。JSON を修正して再実行する
         CHECK → exit 0 だが人間レビューが必要（generic 選択時に gate 対象 ADDON / scenario が減る）
   ↓
