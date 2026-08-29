@@ -190,7 +190,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 |---|---|
 | `prompts/PROJECT_CONTEXT.md` | 現在のフェーズ・進捗・プロジェクト概要を確認するとき |
 | `prompts/RULES.md` | 横断ルール辞書。禁止事項・ERROR/PENDING/CHECK定義・型変換表・matchPolicy変更ルール等 |
-| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-18。DP-06 / DP-14 は欠番） |
+| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-19。DP-06 / DP-14 は欠番） |
 | `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」。**Canonical Requirement Class（JS-A〜JS-E）の正本**。Lifecycle State との直交性は JS-00 |
 | `docs/OPEN_DESIGN_QUESTIONS.md` | まだ決めていないこと（保留事項と判断タイミング） |
 | `docs/VALIDATOR_STANDARD.md` | Validatorが何を保証し、何を保証しないか。errorCode一覧 |
