@@ -185,8 +185,30 @@ bridge の対応フィールドから移植する。
   `drug.drugClass` / 既存 canonical の前例。route から deterministic に導出できない実例として、
   同じ `topical` route 内でも「使用回数」と「使用量」に分岐するモジュールが存在する（route ごとの
   固定マッピングを作ってはならない）
-- `display.menuGroupLabels` は本規則の対象外である（別フィールド・別 consumer。本規則は
-  `adjustmentExpression` のみを対象とし、`menuGroupLabels` の既存規則は変更しない）
+- `display.menuGroupLabels` は本規則の対象外である（別フィールド・別 consumer）。
+  `menuGroupLabels` の保持規則は下記「`display.menuGroupLabels` の保持」を参照する
+
+**`display.menuGroupLabels` の保持（bridge 明示時は必須・明示 preservation 対象）:**
+
+本フィールドは左メニューの MenuGroup 表示ラベルをモジュール単位でオーバーライドする
+UI 表示専用フィールドである。`display.adjustmentExpression`（文生成専用）とは別フィールド・
+別 consumer であり、両者が同一の文言を持つ必要はない。一方の値からもう一方を推測・複製しない。
+
+- bridge Header の `display.menuGroupLabels` にラベルオーバーライドが記載されている場合 →
+  記載された mapping を canonical の `display.menuGroupLabels` へ **exact preservation** で
+  転記する。正規化・言い換え・sibling module（同一薬効クラス・同一 route の他 module）の値からの
+  流用をしない
+- bridge に `display.menuGroupLabels` が記載されていない場合 → canonical 側に必ず生成する
+  必要はない。省略時の runtime fallback は MenuGroup 標準値そのもの（`lib/types.ts` 参照）であり、
+  全エントリが `value === key` となる identity/default override
+  （例: `{ "増量": "増量", "減量": "減量" }`）は、省略時の fallback と描画結果が完全に一致するため
+  preservation 違反として扱わない。bridge が沈黙していることのみを理由に、既存の identity override
+  を削除しない
+- bridge が沈黙しており、かつ canonical に identity ではない値（`value !== key` となるエントリを
+  含む override）が存在する場合 → 現時点でこれを承認する生成規則は存在しない。推測で承認・削除
+  せず、authority 未確認の状態として保持し、別途確認する
+- 以下から値を推測・導出してはならない: `drug.route` / `drug.dosageForms` / `moduleId` /
+  `drug.drugClass` / 既存 canonical の前例（sibling module の値をそのまま流用しない）
 
 **bridge に `persona:` セクションが存在しない場合:**
 `persona` フィールドを OUTPUT_JSON から omit する（省略）。PENDING にしない。
