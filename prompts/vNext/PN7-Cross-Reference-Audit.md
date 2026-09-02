@@ -756,6 +756,42 @@ bridge Header が正しく parse でき、かつ adjustmentExpression につい�
 
 ---
 
+### AJ. display.menuGroupLabels Bridge Parity（menuGroupLabels 保持確認）
+
+← PN2-Drug-Header.md「display.menuGroupLabels の保持（bridge 明示時は必須・明示 preservation 対象）」
+
+AI（adjustmentExpression）と同じ構造の監査を、`display.menuGroupLabels` に適用する。
+詳細な機械比較は `scripts/audit-menu-group-labels-bridge-chain.ts` に委譲し、
+本チェックでは対象範囲と判定基準のみを定義する（PN7 自体にパーサ実装を重複させない）。
+
+対象は `display.menuGroupLabels` のみ。`display.adjustmentExpression` は別フィールド・別
+consumer であり本チェックの scope に含まれない（AI が担当する）。両者に同一の文言を要求する
+cross-field equality は課さない。
+
+```
+対象: display.menuGroupLabels のみ
+
+bridge Header が display.menuGroupLabels を宣言している場合:
+  canonical の display.menuGroupLabels が存在すること
+  かつ bridge の宣言した key set と canonical の key set が完全一致すること
+  かつ各 key の値が bridge と canonical で完全一致すること
+  （bridge 宣言が identity/default 値であっても exact preservation は必須。
+   「値が自明だから省略してよい」という例外は無い）
+  欠落・key set 不一致・値不一致 → FAIL
+
+bridge Header が正しく parse でき、かつ menuGroupLabels について沈黙している場合:
+  canonical が menuGroupLabels を持たない場合 → PASS
+  canonical が menuGroupLabels を持つ場合、宣言された全エントリが `value === key`
+  （identity/default。部分的な identity mapping も含む）であれば → PASS
+  1件でも `value !== key` のエントリが存在すれば → FAIL
+  （authority 未確認の semantic override。推測で承認・削除・正規化しない）
+
+1. npx tsx scripts/audit-menu-group-labels-bridge-chain.ts を実行する
+2. 出力された不整合はすべて bridge⇔canonical preservation 違反として扱う
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
