@@ -540,6 +540,10 @@
     "nodeLabelShort": "抗ヒスタミン薬",
     "nodeLabelLong": "第二世代抗ヒスタミン薬（内服）",
     "nodeKey": "h1_antihistamine_oral",
+    "menuGroupLabels": {
+      "増量": "増量",
+      "減量": "減量"
+    },
     "adjustmentExpression": {
       "increasePast": "増量となった",
       "decreasePast": "減量となった"

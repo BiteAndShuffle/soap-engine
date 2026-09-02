@@ -272,6 +272,10 @@
     "nodeLabelShort": "抗ロイコトリエン内服",
     "nodeLabelLong": "ロイコトリエン受容体拮抗薬（内服）",
     "nodeKey": "leukotriene_receptor_antagonist_oral",
+    "menuGroupLabels": {
+      "増量": "増量",
+      "減量": "減量"
+    },
     "adjustmentExpression": {
       "increasePast": "増量となった",
       "decreasePast": "減量となった"
