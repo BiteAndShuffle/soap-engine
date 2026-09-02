@@ -321,8 +321,8 @@
       "減量": "使用回数減"
     },
     "adjustmentExpression": {
-      "increasePast": "使用量が増えた",
-      "decreasePast": "使用量が減った"
+      "increasePast": "使用回数が増えた",
+      "decreasePast": "使用回数が減った"
     },
     "localInput": {
       "enabled": true,

@@ -182,9 +182,8 @@ bridge の対応フィールドから移植する。
 - bridge に `display.adjustmentExpression` が記載されていない場合 → canonical 側にも生成しない。
   「他 module が持っている」「同じ route だから」「Rapid で使うから」等を理由に補完しない
 - 以下から値を推測・導出してはならない: `drug.route` / `drug.dosageForms` / `moduleId` /
-  `drug.drugClass` / 既存 canonical の前例。route から deterministic に導出できない実例として、
-  同じ `topical` route 内でも「使用回数」と「使用量」に分岐するモジュールが存在する（route ごとの
-  固定マッピングを作ってはならない）
+  `drug.drugClass` / 既存 canonical の前例。`drug.route` は値を deterministic に導出できる
+  根拠にはならない（route ごとの固定マッピングを作ってはならない）
 - `display.menuGroupLabels` は本規則の対象外である（別フィールド・別 consumer）。
   `menuGroupLabels` の保持規則は下記「`display.menuGroupLabels` の保持」を参照する
 

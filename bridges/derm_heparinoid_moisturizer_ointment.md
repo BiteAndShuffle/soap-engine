@@ -230,11 +230,11 @@ display:
   nodeLabelLong: "ヘパリン類似物質系保湿剤軟膏"
   nodeKey: "heparinoid_moisturizer_ointment"
   menuGroupLabels:
-    増量: "使用量増"
-    減量: "使用量減"
+    増量: "使用回数増"
+    減量: "使用回数減"
   adjustmentExpression:
-    increasePast: "使用量が増えた"
-    decreasePast: "使用量が減った"
+    increasePast: "使用回数が増えた"
+    decreasePast: "使用回数が減った"
 scenarioEngine:
   mode: "bridge"
   sourceType: "natural_language_scenarios"
