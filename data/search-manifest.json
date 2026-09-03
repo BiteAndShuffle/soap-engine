@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "b9ba97102c88eab5e84eed43284f7cc782ae2e1329e1f9ae266d5648eabc8d66",
+  "sourceHash": "b9c63d81d8de60b0a0ebf004f99ad3e97785e6ccf7151d5c63bf27f02922a9f0",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -496,7 +496,8 @@
         "cold_storage",
         "cold_storage_before_opening",
         "single_use_container",
-        "preservative_free"
+        "preservative_free",
+        "avoid_cold_storage"
       ]
     },
     {
@@ -5876,8 +5877,8 @@
     },
     {
       "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_high_strength_reduced_frequency",
-      "id": "switch_to_high_strength_reduced_frequency",
+      "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "id": "switch_to_sustained_formulation_reduced_frequency",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
       "scenarioGroup": "dose_change",
       "scenarioTags": [

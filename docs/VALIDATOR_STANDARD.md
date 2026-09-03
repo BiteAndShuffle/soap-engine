@@ -462,10 +462,10 @@ Validator が検出するが、意図的に残存させている WARNING の台�
 |---|---|
 | **errorCode** | `ADDON_REQUIRED_TAG_UNREACHABLE` |
 | **module** | `allergy_h1_antihistamine_eye_drops` |
-| **対象** | `addons.items["addon_eye_drop_storage_cold"].requiredTags["cold_storage"]` |
+| **対象** | `addons.items["addon_eye_drop_storage_cold"].requiredTags["cold_storage"]` / `addons.items["addon_eye_drop_warm_container_after_cold_storage"].requiredTags["cold_storage"]`（同一の reserved tag `cold_storage` を共有する冷所保存関連 addon 2件。後者は「冷所から出した後の取り扱い」guidance で、`cold_storage` を持つ製品にのみ表示すれば足りるため独立タグは設けない〔2026-09 Owner Decision〕） |
 | **status** | `INTENTIONAL_KEEP` |
 | **理由** | H1点眼を ophthalmic module の base として使用しているため。現在の登録ブランド（アレジオン・ザジテン・パタノール・リボスチン）はいずれも室温保存であり `cold_storage` tag を持たないが、将来の冷所保存点眼薬 module 横展開時の canonical addon structure として保持する。 |
-| **対応方針** | 削除しない。冷所保存点眼薬 module 追加時に `cold_storage` ブランドが登録されることで自然解消する。 |
+| **対応方針** | 削除しない。冷所保存点眼薬 module 追加時に `cold_storage` ブランドが登録されることで、この2件とも自然解消する。 |
 
 ### KW-002
 
@@ -488,3 +488,14 @@ Validator が検出するが、意図的に残存させている WARNING の台�
 | **status** | `INTENTIONAL_KEEP` |
 | **理由** | DPP-4 阻害薬クラス共通の既知副作用（膵炎）について、強い腹痛・背部放散痛・嘔吐等の危険徴候が続く場合の受診勧奨を行う安全性コンテンツである。bridge 原稿（`bridges/dm_dpp4_biguanide_combination_oral.md` 設計メモ）に「addon_se_pancreatitis_guidance（DPP4由来）」と明記されたクラス共通 addon であり、4 module すべてで文言は薬効クラス名部分を除き実質同一。bridge ⇔ canonical のテキスト一致を確認済み（preservation 違反なし）。`prompts/RULES.md` §17 PStructured.role 正規語彙 `urgent_consult_guidance`（緊急受診・医師相談の指示）、および §22 addon 設計原則「ベースPの指示より重い状態への対応（例: 受診が必要になる具体的な症状）」が、この種の受診勧奨を addon の正当な設計パターンとして既に定めている。Owner Decision OD-W1（2026-08-16）により意図的保持を確定した |
 | **対応方針** | bridge 本文・canonical JSON・addon の group/scope・validator rule のいずれも変更しない。`ADDON_SCOPE_EXEMPT_GROUPS` は本件を理由に拡張しない。`sideEffects` group 全体、または「重篤副作用に対する受診勧奨」全般を自動 exemption にすることも行わない（Owner Decision OD-W3・2026-08-16）。将来、他薬効領域で同型の intentional WARNING が繰り返し発生した場合、個別 Appendix B 登録を継続するか validator / exemption 設計を一般化するかは別 Unit として再評価する。 |
+
+### KW-004
+
+| 項目 | 内容 |
+|---|---|
+| **errorCode** | `ADDON_REQUIRED_TAG_UNREACHABLE` |
+| **module** | `allergy_h1_antihistamine_eye_drops` |
+| **対象** | `addons.items["addon_eye_drop_avoid_cold_storage"].requiredTags["avoid_cold_storage"]` |
+| **status** | `INTENTIONAL_KEEP` |
+| **理由** | `avoid_cold_storage` は「低温保存が必要」（`cold_storage`）の**否定ではなく**、独立した陽性の運用 capability（低温保存を避けるべき製品向けの guidance）である（2026-09 Owner Decision）。現行8製剤はいずれも該当せず、`template.reservedHandlingTags` に宣言済みの予約タグとして保持する。 |
+| **対応方針** | 削除しない。低温保存を避けるべき製品が module へ追加された時点で該当ブランドへ `avoid_cold_storage` を付与し、自然解消する。`cold_storage` の否定として扱う実装（negation logic）は導入しないこと。 |

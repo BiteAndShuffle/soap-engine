@@ -299,20 +299,27 @@ template:
     - "solution_eye_drop"
     - "suspension_eye_drop"
   handlingTags:
-    # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの正式な語彙一覧（8種、最小集合）。
+    # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの正式な語彙一覧（9種、最小集合）。
     # 現行8製剤のうち suspension / light_protection / reduced_frequency_option の3種のみ実際に付与済み。
     # cold_storage / cold_storage_before_opening / concentration_variant / single_use_container /
-    # preservative_free は対応するSCENARIO/ADDONを非表示に保つために定義するが、現行製剤には付与しない。
+    # preservative_free / avoid_cold_storage は対応するSCENARIO/ADDONを非表示に保つために定義するが、
+    # 現行製剤には付与しない。
     #
     # reduced_frequency_option についての運用メモ:
     #   「高濃度製剤そのもの」を表すタグではない。アレジオン／エピナスチン系に、
     #   点眼回数を減らすための持続型製剤への切替選択肢が存在することを示す運用タグである。
     #   LX等の製品バリエーションを独立した検索候補・SOAP主語（{{drug_subject}}）として
-    #   持つことは意図していない。切替時のみ switch_to_high_strength_reduced_frequency
+    #   持つことは意図していない。切替時のみ switch_to_sustained_formulation_reduced_frequency
     #   シナリオを表示し、切替後の継続・副作用・CP・終了等はベース薬剤
     #   （アレジオン／エピナスチン）の通常シナリオをそのまま使用する。
     #   製品バリエーションごとにcanonicalデータ（brandCatalogエントリ・SCENARIO・alias等）を
     #   複製しない設計方針（将来の他点眼薬にも適用予定）。
+    #
+    # avoid_cold_storage についての運用メモ（2026-09 追加）:
+    #   「低温保存が必要」の否定ではなく、「低温保存を避けるべき」という独立した
+    #   陽性の運用タグである（requiredTagsのAND判定は否定条件を表現できないため）。
+    #   cold_storage と同時に真になることは想定しない。現行8製剤はいずれも
+    #   低温保存関連の指示を要しないため、両タグとも付与しない。
     #
     # concentration_variant についての運用メモ（CHECK・未解決）:
     #   本来、通常の濃度増減4件（strength_increase/decrease系）と、
@@ -333,6 +340,7 @@ template:
     - "concentration_variant"
     - "single_use_container"
     - "preservative_free"
+    - "avoid_cold_storage"
   reservedHandlingTags:
     # 2026-07-24 追加。現行8製剤のどのbrandCatalogエントリも持たないが、
     # 将来の製品・製品バリエーション追加時に到達可能になる想定で意図的に保持しているタグ。
@@ -343,11 +351,13 @@ template:
     # 到達可能なため、このリストには含めない。
     # タグの誤記・設定漏れを免責する汎用的な逃げ道ではない。将来対応製品が確定した時点で
     # 該当タグをこのリストから外し、対象brandCatalogエントリへ正式に付与すること。
+    # avoid_cold_storage は2026-09追加。現行8製剤はいずれも該当しないため保留のまま。
     - "concentration_variant"
     - "cold_storage"
     - "cold_storage_before_opening"
     - "single_use_container"
     - "preservative_free"
+    - "avoid_cold_storage"
 display:
   title: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
   subtitle: "アレルギー性結膜炎・目のかゆみに対する点眼治療"
@@ -433,8 +443,7 @@ scenarioRequiredTags:
   # reduced_frequency_optionを持つ製剤（アレジオン/エピナスチン）でのみ表示。
   # 切替時のみこのシナリオを使用し、切替後の継続・副作用・CP・終了等は
   # ベース薬剤（アレジオン／エピナスチン）の通常シナリオをそのまま使用する。
-  # scenario id自体は変更しない（参照範囲が広いため別作業）。
-  switch_to_high_strength_reduced_frequency: ["reduced_frequency_option"]
+  switch_to_sustained_formulation_reduced_frequency: ["reduced_frequency_option"]
   # 通常の濃度増減4件。現行8製剤はいずれもconcentration_variantを持たないため非表示。
   strength_increase_low_perceived_effect: ["concentration_variant"]
   strength_increase_due_to_other_med_adjustment: ["concentration_variant"]
@@ -448,7 +457,12 @@ addonRequiredTags:
   addon_eye_drop_storage_upright_suspension: ["suspension"]
   addon_eye_drop_storage_light_protection: ["light_protection"]
   addon_eye_drop_storage_cold: ["cold_storage"]
+  # 低温保存製品向けの「冷所から出した後の取り扱い」guidance。cold_storageで
+  # ゲートされた製品にのみ表示すれば足り、独立タグは設けない（2026-09 Owner決定）。
+  addon_eye_drop_warm_container_after_cold_storage: ["cold_storage"]
   addon_eye_drop_storage_cold_before_opening: ["cold_storage_before_opening"]
+  # 「低温保存が必要」の否定ではなく独立した陽性タグ。2026-09 Owner決定。
+  addon_eye_drop_avoid_cold_storage: ["avoid_cold_storage"]
   addon_eye_drop_single_dose_mini: ["single_use_container"]
   addon_eye_drop_preservative_free_pf: ["preservative_free"]
 # 次の2件のADDONのみ、
@@ -523,7 +537,9 @@ P_ADDON
 - addon_eye_drop_storage_upright_suspension
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_storage_cold
+- addon_eye_drop_warm_container_after_cold_storage
 - addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_avoid_cold_storage
 - addon_eye_drop_single_dose_mini
 - addon_eye_drop_preservative_free_pf
 - addon_eye_drop_contact_lens_remove_before_use
@@ -607,10 +623,26 @@ P_APPEND
 
 
 
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_warm_container_after_cold_storage｜title=点眼方法（冷所保存後・手で温める）】
+P_APPEND
+冷所から取り出した後すぐに点眼すると、薬液が連続して落ちる可能性があります。
+キャップを閉めたまま容器を手で温めてから点眼してください。
+
+
+
+
 【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold_before_opening｜title=保管方法（未開封時のみ冷所）】
 P_APPEND
 温度の影響により、効果が十分に出ない可能性があります。
 開封するまでは冷所で保管してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_avoid_cold_storage｜title=保管方法（低温保存を避ける）】
+P_APPEND
+低温で保管すると、薬液の状態が変化することがあります。
+冷蔵庫には入れず、指示された保管方法に従って保管してください。
 
 
 
@@ -660,7 +692,9 @@ P_ADDON
 - addon_eye_drop_storage_upright_suspension
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_storage_cold
+- addon_eye_drop_warm_container_after_cold_storage
 - addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_avoid_cold_storage
 - addon_eye_drop_single_dose_mini
 - addon_eye_drop_preservative_free_pf
 - addon_eye_drop_contact_lens_remove_before_use
@@ -692,7 +726,9 @@ P_ADDON
 - addon_eye_drop_storage_upright_suspension
 - addon_eye_drop_storage_light_protection
 - addon_eye_drop_storage_cold
+- addon_eye_drop_warm_container_after_cold_storage
 - addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_avoid_cold_storage
 - addon_eye_drop_single_dose_mini
 - addon_eye_drop_preservative_free_pf
 - addon_eye_drop_contact_lens_remove_before_use
@@ -766,22 +802,6 @@ P_CLOSING
 
 
 
-【SCENARIO｜type=treatment_adjustment｜id=switch_to_high_strength_reduced_frequency｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）｜scenarioColor=orange】
-S
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすために変更となった。
-O
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　持続型製剤へ変更
-A
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすため、高濃度・持続型製剤へ変更となった。
-製剤変更後は、症状や使用感の変化について確認を要する。
-P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
-P_CLOSING
-次回、引き続き使用できているか、副作用の有無を確認。
-
-
-
-
 【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_improved｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）｜scenarioColor=blue】
 S
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、症状が改善したため点眼回数が減った。
@@ -816,14 +836,15 @@ P_CLOSING
 
 【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）｜scenarioColor=blue】
 S
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しく使用継続に不安があるため、点眼回数を減らして継続することとなった。
 O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　点眼回数減
 A
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。
-点眼回数の変更後は、症状や使用感の変化について確認を要する。
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果実感の乏しさと使用継続への不安を踏まえ、点眼回数を減らして治療継続となった。
+点眼回数変更後は、症状や使用状況について確認を要する。
 P
-ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、変更された点眼回数で継続してください。
+症状や使用感に変化がある場合はご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
 
@@ -853,6 +874,22 @@ O
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　低濃度製剤へ変更
 A
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、併用薬との調整のため、低濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=switch_to_sustained_formulation_reduced_frequency｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）｜scenarioColor=orange】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすために変更となった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　持続型製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、点眼回数を減らすため、持続型製剤へ変更となった。
 製剤変更後は、症状や使用感の変化について確認を要する。
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
