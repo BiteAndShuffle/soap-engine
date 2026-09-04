@@ -1287,113 +1287,6 @@
       "scenarioColor": "green"
     },
     {
-      "id": "switch_to_sustained_formulation_reduced_frequency",
-      "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_sustained_formulation_reduced_frequency",
-      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
-      "scenarioType": "treatment_adjustment",
-      "scenarioGroup": "dose_change",
-      "scenarioTags": [
-        "treatment_adjustment",
-        "dose_change",
-        "decrease"
-      ],
-      "situationFilter": [
-        "general"
-      ],
-      "sideEffectPresence": "not_applicable",
-      "sComposition": {
-        "intent": "dose_decrease",
-        "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
-      },
-      "S": "{{drug_subject}}は、点眼回数を減らすために変更となった。",
-      "O": "{{drug_subject}}　持続型製剤へ変更",
-      "A": "{{drug_subject}}は、点眼回数を減らすため、持続型製剤へ変更となった。\n製剤変更後は、症状や使用感の変化について確認を要する。",
-      "P": "{{drug_subject}}は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。",
-      "mergePolicy": {
-        "S": {
-          "domain": "allergy",
-          "behavior": "replace",
-          "groupKey": "allergy_dose_adjustment",
-          "mergeLevel": "clinical_domain",
-          "sectionRole": "subjective"
-        },
-        "O": {
-          "behavior": "append",
-          "mergeLevel": "section_line",
-          "sectionRole": "objective"
-        },
-        "A": {
-          "behavior": "append",
-          "mergeLevel": "section_block",
-          "sectionRole": "assessment"
-        },
-        "P": {
-          "behavior": "append",
-          "mergeLevel": "section_block",
-          "closingBehavior": "dedupe_or_last",
-          "sectionRole": "plan"
-        }
-      },
-      "followupRef": "default_followup",
-      "intentTags": [
-        "dose_decrease_explanation",
-        "followup_monitoring"
-      ],
-      "SStructured": [
-        {
-          "id": "s_1",
-          "text": "{{drug_subject}}は、点眼回数を減らすために変更となった。",
-          "role": "dose_adjustment_reason",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        }
-      ],
-      "AStructured": [
-        {
-          "id": "a_1",
-          "text": "{{drug_subject}}は、点眼回数を減らすため、持続型製剤へ変更となった。",
-          "role": "treatment_assessment",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        },
-        {
-          "id": "a_2",
-          "text": "製剤変更後は、症状や使用感の変化について確認を要する。",
-          "role": "treatment_assessment",
-          "transform": "moderate",
-          "safety": "low",
-          "lockTerms": [],
-          "notes": null
-        }
-      ],
-      "PStructured": [
-        {
-          "id": "p_1",
-          "text": "{{drug_subject}}は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。",
-          "role": "dose_adjustment_guidance",
-          "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [
-            "ご相談ください"
-          ],
-          "notes": null
-        }
-      ],
-      "clinicalTags": [],
-      "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "reduced_frequency_option"
-      ],
-      "scenarioColor": "orange"
-    },
-    {
       "id": "frequency_decrease_improved",
       "globalId": "allergy_h1_antihistamine_eye_drops.frequency_decrease_improved",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）",
@@ -1918,6 +1811,113 @@
         "concentration_variant"
       ],
       "scenarioColor": "green"
+    },
+    {
+      "id": "switch_to_sustained_formulation_reduced_frequency",
+      "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}は、点眼回数を減らすために変更となった。",
+      "O": "{{drug_subject}}　持続型製剤へ変更",
+      "A": "{{drug_subject}}は、点眼回数を減らすため、持続型製剤へ変更となった。\n製剤変更後は、症状や使用感の変化について確認を要する。",
+      "P": "{{drug_subject}}は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、点眼回数を減らすために変更となった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、点眼回数を減らすため、持続型製剤へ変更となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "製剤変更後は、症状や使用感の変化について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。",
+          "role": "dose_adjustment_guidance",
+          "transform": "minimal",
+          "safety": "medium",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioRequiredTags": [
+        "reduced_frequency_option"
+      ],
+      "scenarioColor": "orange"
     },
     {
       "id": "se_irritation_none",

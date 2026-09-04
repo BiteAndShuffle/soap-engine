@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "f63c433bd170082062452afbaa34e66b65946df812ef42f8aed8129c1ccfb41a",
+  "sourceHash": "fe902402ab9c9cc75455623965b70c9d2d816c918b7ff5721be82166da9f75eb",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -5877,24 +5877,6 @@
     },
     {
       "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_sustained_formulation_reduced_frequency",
-      "id": "switch_to_sustained_formulation_reduced_frequency",
-      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
-      "scenarioGroup": "dose_change",
-      "scenarioTags": [
-        "treatment_adjustment",
-        "dose_change",
-        "decrease"
-      ],
-      "sideEffectPresence": "not_applicable",
-      "intentTags": [
-        "dose_decrease_explanation",
-        "followup_monitoring"
-      ],
-      "sCompositionIntent": "dose_decrease"
-    },
-    {
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
       "globalId": "allergy_h1_antihistamine_eye_drops.frequency_decrease_improved",
       "id": "frequency_decrease_improved",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（症状改善）",
@@ -5970,6 +5952,24 @@
       "globalId": "allergy_h1_antihistamine_eye_drops.strength_decrease_due_to_other_med_adjustment",
       "id": "strength_decrease_due_to_other_med_adjustment",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "globalId": "allergy_h1_antihistamine_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "id": "switch_to_sustained_formulation_reduced_frequency",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",
