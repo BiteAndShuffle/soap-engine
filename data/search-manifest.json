@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "b9c63d81d8de60b0a0ebf004f99ad3e97785e6ccf7151d5c63bf27f02922a9f0",
+  "sourceHash": "f63c433bd170082062452afbaa34e66b65946df812ef42f8aed8129c1ccfb41a",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -5884,14 +5884,14 @@
       "scenarioTags": [
         "treatment_adjustment",
         "dose_change",
-        "increase"
+        "decrease"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "dose_increase_explanation",
+        "dose_decrease_explanation",
         "followup_monitoring"
       ],
-      "sCompositionIntent": "dose_increase"
+      "sCompositionIntent": "dose_decrease"
     },
     {
       "moduleId": "allergy_h1_antihistamine_eye_drops",

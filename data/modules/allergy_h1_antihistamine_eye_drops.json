@@ -1295,14 +1295,14 @@
       "scenarioTags": [
         "treatment_adjustment",
         "dose_change",
-        "increase"
+        "decrease"
       ],
       "situationFilter": [
         "general"
       ],
       "sideEffectPresence": "not_applicable",
       "sComposition": {
-        "intent": "dose_increase",
+        "intent": "dose_decrease",
         "template": "status_based",
         "symptomCodes": [],
         "symptoms": []
@@ -1338,7 +1338,7 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "dose_increase_explanation",
+        "dose_decrease_explanation",
         "followup_monitoring"
       ],
       "SStructured": [
