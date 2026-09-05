@@ -609,9 +609,11 @@ MEMORY は Repository の正本ではなく、補助情報として扱う。MEMO
 同一 module 内に複数 brand を持ち、そのうち特定 brand が一般名そのものを peer brand として `brandCatalog` に登録している場合（例: メトホルミン塩酸塩単剤と、同薬効クラス系列に属する配合剤）。
 
 **方針**
-- `drug.search.matchPolicy.preferOwnNameMatchOverGenericMatch`: module の direct 候補内で、自身の名称／alias に一致した brand を、`brandCatalog[].genericName` 経由でのみ一致した brand より優先して並べる
+- `drug.search.matchPolicy.preferOwnNameMatchOverGenericMatch`: module の direct 候補内で、自身の名称／alias に一致した brand（tier1）を、`brandCatalog[].genericName` 経由でのみ一致した brand（tier2）より優先して並べる。この tier 優先は direct（ブランド名検索）経路だけでなく genericMode（成分名検索）経路のグルーピング内順序にも一貫して適用する
 - `drug.search.matchPolicy.suppressRedundantGenericHeaderOnDirectMatch`: 同一成分の direct／genericMode 候補が既に存在する場合、独立した salt-name header 候補を出さない
 - salt-name full reading（例: 一般名の塩類名まで含めた読み）は、**generic-labeled brand（一般名をそのまま brand 名として持つエントリ）自身の `brandCatalog[brand].aliases` にのみ登録する**。同一 family 内の他 brand（配合剤等）へ機械的に複製しない
+- **tier2 の一致面としてのペア一般名 alias 参照（own-name優先を維持したまま候補消失を防ぐ拡張）**: 一般名の完全な読み（例:「てんがん」等の剤形かな読みを含む full reading）は、上記の複製禁止により先発品側の own alias（tier1）には存在しない。この場合でも、`preferOwnNameMatchOverGenericMatch` が有効かつ両エントリが同一グルーピングキー（`genericKey` 未設定時は `displayGenericName` へフォールバック）を共有するペアに限り、先発品は**ペアの一般名候補が保持する alias**を tier2 の一致面として参照してよい。これらの alias の所有権は一般名候補側に残ったままであり、先発品側の own alias（tier1）へは一切複製されない。同一グルーピングキーであることの確認は、metformin/pioglitazone のように異なる `genericKey` を持つペア（own-name優先度が既に成立している）へこの拡張が誤って波及しないための必須ゲートである
+- **direct-over-genericMode 促進の例外**: 単一トークンのクエリが、別モジュールの「完全な一般名識別」（`brandCatalogGenericMap`——`brandCatalog[brand].displayGenericName` 由来——の完全一致。前方一致は含まない）そのものである場合、`preferOwnNameMatchOverGenericMatch` が有効な自モジュールの direct 候補は、その別モジュールを追い抜いて全体促進（`[direct]` を `[genericMode]` より先に処理する既存の促進契約）を発動しない。これにより、剤形を問わない bare な一般名クエリ（例:「エピナスチン」）は促進未適用時の既存の剤形間表示順を保ったまま、剤形intentを含むクエリ（例:「エピナスチン点眼」）でのみ該当剤形の module が正しく優先される
 
 **不採用とした方針**
 salt-name full reading を family 内の全 brand の `aliases` へ複製する方式は、複製そのものが「どの brand が正しい帰属先か」という意味を薄め、複数配合剤が同一 salt-name reading に反応してしまう曖昧さを生むため採用しない。

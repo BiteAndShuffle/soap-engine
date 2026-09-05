@@ -124,6 +124,12 @@ drug:
       preferExactAlias: true
       allowPrefixMatch: true
       suppressCrossModuleSuggestionsOnExactHit: true
+      # 2026-09 追加（H1点眼 先発/一般名検索順位修正）:
+      # direct候補内でブランド自身の正式名/alias一致（tier1）をgenericName経由の
+      # 一致（tier2）より優先する（dm_biguanide_metformin_oral 等と同一の既存flag・
+      # 既存意味論）。本フラグの効果を得るには、各先発品エントリの aliases が
+      # ペアの一般名読みを借用していないこと（DP-18）が前提となる。
+      preferOwnNameMatchOverGenericMatch: true
       # direct候補内に同一成分のブランド候補（ブランド名エントリ／一般名エントリの
       # ペア）が既に存在する場合、冗長な一般名単独の generic header 候補を
       # 追加しない（dm_biguanide_metformin_oral 等と同一の既存flag・既存意味論）。
@@ -158,16 +164,14 @@ drug:
       displayGenericName: "エピナスチン点眼液"
       handlingTags:
         - "reduced_frequency_option"
+      # DP-18: ペアの一般名読み（えぴなすちん系）は借用しない。
+      # 一般名読みはエピナスチン点眼液エントリ側にのみ保持する。
       aliases:
         - "あれじおんてんがん"
         - "あれじおん"
-        - "えぴなすちんてんがん"
-        - "えぴなすちん"
       normalizedAliases:
         - "あれじおんてんがん"
         - "あれじおん"
-        - "えぴなすちんてんがん"
-        - "えぴなすちん"
     エピナスチン点眼液:
       displayName: "エピナスチン点眼液"
       genericName: "エピナスチン"
@@ -185,16 +189,14 @@ drug:
       genericName: "ケトチフェン"
       displayGenericName: "ケトチフェン点眼液"
       handlingTags: []
+      # DP-18: ペアの一般名読み（けとちふぇん系）は借用しない。
+      # 一般名読みはケトチフェン点眼液エントリ側にのみ保持する。
       aliases:
         - "ざじてんてんがん"
         - "ざじてん"
-        - "けとちふぇんてんがん"
-        - "けとちふぇん"
       normalizedAliases:
         - "ざじてんてんがん"
         - "ざじてん"
-        - "けとちふぇんてんがん"
-        - "けとちふぇん"
     ケトチフェン点眼液:
       displayName: "ケトチフェン点眼液"
       genericName: "ケトチフェン"
@@ -212,16 +214,14 @@ drug:
       displayGenericName: "オロパタジン点眼液"
       handlingTags:
         - "light_protection"
+      # DP-18: ペアの一般名読み（おろぱたじん系）は借用しない。
+      # 一般名読みはオロパタジン点眼液エントリ側にのみ保持する。
       aliases:
         - "ぱたのーるてんがん"
         - "ぱたのーる"
-        - "おろぱたじんてんがん"
-        - "おろぱたじん"
       normalizedAliases:
         - "ぱたのーるてんがん"
         - "ぱたのーる"
-        - "おろぱたじんてんがん"
-        - "おろぱたじん"
     オロパタジン点眼液:
       displayName: "オロパタジン点眼液"
       genericName: "オロパタジン"
@@ -240,16 +240,14 @@ drug:
       displayGenericName: "レボカバスチン点眼液"
       handlingTags:
         - "suspension"
+      # DP-18: ペアの一般名読み（れぼかばすちん系）は借用しない。
+      # 一般名読みはレボカバスチン点眼液エントリ側にのみ保持する。
       aliases:
         - "りぼすちんてんがん"
         - "りぼすちん"
-        - "れぼかばすちんてんがん"
-        - "れぼかばすちん"
       normalizedAliases:
         - "りぼすちんてんがん"
         - "りぼすちん"
-        - "れぼかばすちんてんがん"
-        - "れぼかばすちん"
     レボカバスチン点眼液:
       displayName: "レボカバスチン点眼液"
       genericName: "レボカバスチン"

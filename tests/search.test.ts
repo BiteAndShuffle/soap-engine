@@ -493,11 +493,45 @@ describe('⑫ 最終tie-break: 解決済み表示名の自然順（H1: アレジ
   })
 
   test('"エピナスチン"（一般名）でも内服が点眼より上位', () => {
+    // H1点眼（allergy_h1_antihistamine_eye_drops）の preferOwnNameMatchOverGenericMatch
+    // 有効化 + DP-18 alias重複排除（本ファイル ⑪ 参照）は、点眼モジュール内部の
+    // ブランド/一般名順位（エピナスチン点眼液 vs アレジオン点眼液）を修正するための
+    // ものであり、内服モジュール（allergy_h1_antihistamine_second_gen_oral）との
+    // 剤形間（クロスダウセージフォーム）表示順には影響しない（Owner Decision）。
+    // "エピナスチン" は剤形を一切指定しないクエリであり、既存の内服優先順位を
+    // そのまま維持する。剤形intentを含むクエリ（"エピナスチン点眼" 等）が
+    // 点眼モジュールを正しく優先することは ⑪ の別テストで検証する。
     const results = getDrugSuggestions('エピナスチン', fullIndex, 8)
     const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
     const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
-    assert.ok(oralPos >= 0 && eyePos >= 0)
-    assert.ok(oralPos < eyePos)
+    assert.ok(oralPos >= 0 && eyePos >= 0, '内服・点眼の両候補が存在するはず（削除されていない）')
+    assert.ok(oralPos < eyePos, `内服(${oralPos})が点眼(${eyePos})より上位であるべき`)
+  })
+
+  test('"エピナスチン"（一般名・剤形指定なし）: 点眼モジュール内部ではエピナスチン点眼液がアレジオン点眼液より上位', () => {
+    // 上記テストが検証する「剤形間（内服 vs 点眼）の順序」とは独立な軸として、
+    // 点眼モジュール内部の「ブランド/一般名順位」を同一クエリで確認する。
+    // preferOwnNameMatchOverGenericMatch + DP-18 alias重複排除により、
+    // 点眼モジュール内部では常にエピナスチン点眼液（own name/own alias, tier1）が
+    // アレジオン点眼液（ペア一般名経由, tier2）より上位になる。
+    const results = getDrugSuggestions('エピナスチン', fullIndex, 8)
+    const eyeResults = results.filter(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    const genericPos = eyeResults.findIndex(r => r.matchedBrandName === 'エピナスチン点眼液')
+    const brandPos = eyeResults.findIndex(r => r.matchedBrandName === 'アレジオン点眼液')
+    assert.ok(genericPos >= 0 && brandPos >= 0, '点眼モジュール内でエピナスチン点眼液・アレジオン点眼液の両方が候補に含まれるべき')
+    assert.ok(genericPos < brandPos, `点眼モジュール内部ではエピナスチン点眼液(${genericPos})がアレジオン点眼液(${brandPos})より上位であるべき`)
+  })
+
+  test('"オロパタジン"（一般名）でも内服（アレロック）が点眼より上位（剤形間順序の別ペアでの再確認）', () => {
+    // エピナスチンと同一の剤形間不変条件を、もう一組の H1 ペア（オロパタジン/パタノール）
+    // でも確認する。promoteDirectOverGenericMode の抑制条件
+    // （exactGenericIdentityModules）は特定ペアに限定されないため、
+    // 一般名が複数モジュールにまたがる全てのケースで同様に機能するはず。
+    const results = getDrugSuggestions('オロパタジン', fullIndex, 8)
+    const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(oralPos >= 0 && eyePos >= 0, '内服・点眼の両候補が存在するはず（削除されていない）')
+    assert.ok(oralPos < eyePos, `内服(${oralPos})が点眼(${eyePos})より上位であるべき`)
   })
 
   test('"アレジオン 点眼" → 点眼液のみに絞られる（tie-break変更の影響を受けない）', () => {
@@ -603,5 +637,123 @@ describe('⑭ genericMode 表示枠制御', () => {
       unlimited.some(r => r.isGenericLabel),
       '候補生成レベルでは一般名見出しが保持されているべき',
     )
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 15. H1点眼: preferOwnNameMatchOverGenericMatch による先発/一般名順位修正
+//
+//   allergy_h1_antihistamine_eye_drops は brandCatalog に先発品4件・一般名品
+//   4件を1:1ペアで持つ。一般名を狙ったクエリ（例: "エピナス　テン"）が
+//   先発品（アレジオン点眼液）と一般名品（エピナスチン点眼液）で
+//   countMatchedTokens が同点になり、宣言順で先発品が先に出ていた不具合の
+//   回帰テスト。matchPolicy.preferOwnNameMatchOverGenericMatch を有効化し、
+//   各先発品エントリの aliases からペアの一般名読みを除去（DP-18）することで
+//   自身の名称一致（tier1）が一般名経由のみの一致（tier2）より優先される。
+// ─────────────────────────────────────────────────────────────
+
+describe('⑮ H1点眼: preferOwnNameMatchOverGenericMatch（先発/一般名順位）', () => {
+  const H1_PAIRS: Array<{ brand: string; generic: string; brandQuery: string; genericQuery: string; fullReadingQuery: string }> = [
+    { brand: 'アレジオン点眼液', generic: 'エピナスチン点眼液', brandQuery: 'アレジオン点眼', genericQuery: 'エピナスチン点眼', fullReadingQuery: 'えぴなすちんてんがん' },
+    { brand: 'ザジテン点眼液', generic: 'ケトチフェン点眼液', brandQuery: 'ザジテン点眼', genericQuery: 'ケトチフェン点眼', fullReadingQuery: 'けとちふぇんてんがん' },
+    { brand: 'パタノール点眼液', generic: 'オロパタジン点眼液', brandQuery: 'パタノール点眼', genericQuery: 'オロパタジン点眼', fullReadingQuery: 'おろぱたじんてんがん' },
+    { brand: 'リボスチン点眼液', generic: 'レボカバスチン点眼液', brandQuery: 'リボスチン', genericQuery: 'レボカバスチン', fullReadingQuery: 'れぼかばすちんてんがん' },
+  ]
+
+  test('"エピナス　テン"（全角スペース区切り） → エピナスチン点眼液がアレジオン点眼液より上位', () => {
+    const results = getDrugSuggestions('エピナス　テン', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    const genericIdx = labels.indexOf('エピナスチン点眼液')
+    const brandIdx = labels.indexOf('アレジオン点眼液')
+    assert.ok(genericIdx !== -1 && brandIdx !== -1, `両候補が含まれるべき: ${JSON.stringify(labels)}`)
+    assert.ok(genericIdx < brandIdx, `エピナスチン点眼液がアレジオン点眼液より上位であるべき: ${JSON.stringify(labels)}`)
+  })
+
+  test('"エピナス テン"（半角スペース区切り） → 同様にエピナスチン点眼液が上位', () => {
+    const results = getDrugSuggestions('エピナス テン', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    const genericIdx = labels.indexOf('エピナスチン点眼液')
+    const brandIdx = labels.indexOf('アレジオン点眼液')
+    assert.ok(genericIdx !== -1 && brandIdx !== -1, `両候補が含まれるべき: ${JSON.stringify(labels)}`)
+    assert.ok(genericIdx < brandIdx, `エピナスチン点眼液がアレジオン点眼液より上位であるべき: ${JSON.stringify(labels)}`)
+  })
+
+  for (const { brand, generic, brandQuery, genericQuery, fullReadingQuery } of H1_PAIRS) {
+    test(`一般名狙いクエリ "${genericQuery}" → ${generic} が ${brand} より上位`, () => {
+      const results = getDrugSuggestions(genericQuery, fullIndex, 8)
+      const labels = results.map(r => r.drugDisplayLabel)
+      const genericIdx = labels.indexOf(generic)
+      const brandIdx = labels.indexOf(brand)
+      assert.ok(genericIdx !== -1 && brandIdx !== -1, `両候補が含まれるべき: ${JSON.stringify(labels)}`)
+      assert.ok(genericIdx < brandIdx, `${generic} が ${brand} より上位であるべき: ${JSON.stringify(labels)}`)
+    })
+
+    test(`先発品狙いクエリ "${brandQuery}" → ${brand} が ${generic} より上位（brand対称性）`, () => {
+      const results = getDrugSuggestions(brandQuery, fullIndex, 8)
+      const labels = results.map(r => r.drugDisplayLabel)
+      const brandIdx = labels.indexOf(brand)
+      const genericIdx = labels.indexOf(generic)
+      assert.ok(brandIdx !== -1 && genericIdx !== -1, `両候補が含まれるべき: ${JSON.stringify(labels)}`)
+      assert.ok(brandIdx < genericIdx, `${brand} が ${generic} より上位であるべき: ${JSON.stringify(labels)}`)
+    })
+
+    test(`一般名かな全読みクエリ "${fullReadingQuery}" → ${generic} が ${brand} より上位、候補消失なし（本Unitの核心修正）`, () => {
+      // ペアの一般名候補が保持する alias（"てんがん" 等の剤形かな読みを含む）を
+      // tier2 の一致面として評価できるようにした resolveAllHighPrecisionBrands の
+      // 完成（preferOwnNameMatchOverGenericMatch + 同一グルーピングキー限定）により、
+      // このクエリ形式でも先発品候補が消失せず、tier1（一般名候補自身）→
+      // tier2（ペア先発品）の順で両方到達できる。
+      const results = getDrugSuggestions(fullReadingQuery, fullIndex, 8)
+      const labels = results.map(r => r.drugDisplayLabel)
+      const genericIdx = labels.indexOf(generic)
+      const brandIdx = labels.indexOf(brand)
+      assert.ok(genericIdx !== -1 && brandIdx !== -1, `"${fullReadingQuery}": 両候補が含まれるべき（候補消失は不可）: ${JSON.stringify(labels)}`)
+      assert.ok(genericIdx < brandIdx, `"${fullReadingQuery}": ${generic} が ${brand} より上位であるべき: ${JSON.stringify(labels)}`)
+    })
+  }
+
+  test('候補集合はクエリごとに変化しない（順序のみが変わる）', () => {
+    // "えぴなすちん" は先発品のエイリアスとしては借用されなくなったが、
+    // aliasToBrand 経由で一般名品へは到達でき、かつ先発品側は
+    // displayGenericName（displayGenericMap）経由で tier2 一致を保つため、
+    // 両候補は引き続き同時に返る。
+    for (const q of ['えぴなすちん', 'けとちふぇん', 'おろぱたじん', 'れぼかばすちん']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const h1Labels = results
+        .filter(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+        .map(r => r.drugDisplayLabel)
+      assert.equal(h1Labels.length, 2, `"${q}": H1候補は先発品・一般名品の2件が返るべき: ${JSON.stringify(h1Labels)}`)
+    }
+  })
+
+  test('全8製品が自身の名称から到達可能（1位で解決される）', () => {
+    for (const brand of Object.keys(
+      ALL_MODULES.find(m => m.moduleId === 'allergy_h1_antihistamine_eye_drops')!.drug!.brandCatalog!,
+    )) {
+      const results = getDrugSuggestions(brand, fullIndex, 8)
+      assert.equal(
+        results[0]?.matchedBrandName, brand,
+        `"${brand}" で検索した際、自身が1位であるべき: ${JSON.stringify(results.map(r => r.matchedBrandName))}`,
+      )
+    }
+  })
+
+  test('広範/曖昧クエリでもH1候補が消失・重複しない: 点眼 / てんがん / ヒスタミン', () => {
+    for (const q of ['点眼', 'てんがん', 'ヒスタミン']) {
+      const results = getDrugSuggestions(q, fullIndex, 50)
+      const h1 = results.filter(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+      const seen = new Set(h1.map(r => r.matchedBrandName))
+      assert.equal(seen.size, h1.length, `"${q}": H1候補に重複があってはならない: ${JSON.stringify(h1.map(r => r.matchedBrandName))}`)
+    }
+  })
+
+  test('既存の一般名見出し挙動は影響を受けない（ダパグリフロジン / 経口オロパタジン）', () => {
+    const dapa = getDrugSuggestions('ダパグリフロジン', fullIndex, 8)
+    assert.equal(dapa[0]?.resolution?.denotation, 'generic', `ダパグリフロジンは generic 見出しが1位であるべき: ${JSON.stringify(dapa.map(r=>r.drugDisplayLabel))}`)
+
+    const oralOlopa = getDrugSuggestions('オロパタジン', fullIndex, 8)
+    const oralEntry = oralOlopa.find(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    assert.ok(oralEntry, '経口オロパタジンの候補が含まれるべき')
+    assert.equal(oralEntry!.resolution?.denotation, 'generic', `経口オロパタジンの一般名候補は generic 見出しであるべき`)
   })
 })

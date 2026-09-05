@@ -1159,68 +1159,68 @@
   ],
   "り": [
     {
-      "moduleId": "dm_insulin_glp1_combination",
-      "matchedBrandName": "ソリクア",
-      "drugDisplayLabel": "ソリクア",
-      "uiLabel": "ソリクア（インスリングラルギン/リキシセナチド）",
-      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "リオベル",
+      "uiLabel": "リオベル（アログリプチン／ピオグリタゾン）",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_glp1_combination",
-      "matchedBrandName": "ゾルトファイ",
-      "drugDisplayLabel": "ゾルトファイ",
-      "uiLabel": "ゾルトファイ（インスリンデグルデク/リラグルチド）",
-      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
+      "moduleId": "dm_glp1ra_injection",
+      "matchedBrandName": "ビクトーザ",
+      "drugDisplayLabel": "ビクトーザ",
+      "uiLabel": "ビクトーザ（リラグルチド）",
+      "representativeTemplateId": "dm_glp1ra_injection.initial",
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_rapid_analog",
-      "matchedBrandName": "ヒューマログ",
-      "drugDisplayLabel": "ヒューマログ",
-      "uiLabel": "ヒューマログ（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "moduleId": "dm_glp1ra_injection",
+      "matchedBrandName": "リキスミア",
+      "drugDisplayLabel": "リキスミア",
+      "uiLabel": "リキスミア（リキシセナチド）",
+      "representativeTemplateId": "dm_glp1ra_injection.initial",
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_rapid_analog",
-      "matchedBrandName": "ルムジェブ",
-      "drugDisplayLabel": "ルムジェブ",
-      "uiLabel": "ルムジェブ（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "matchedBrandName": "リザベン点眼液",
+      "drugDisplayLabel": "リザベン点眼液",
+      "uiLabel": "リザベン点眼液（トラニラスト点眼液）",
+      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ25ミックス",
-      "drugDisplayLabel": "ヒューマログ25ミックス",
-      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "moduleId": "dm_glp1ra_semaglutide_oral",
+      "matchedBrandName": "リベルサス",
+      "drugDisplayLabel": "リベルサス",
+      "uiLabel": "リベルサス（セマグルチド）",
+      "representativeTemplateId": "dm_glp1ra_semaglutide_oral.initial",
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ50ミックス",
-      "drugDisplayLabel": "ヒューマログ50ミックス",
-      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
-      "isGenericLabel": null
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "アログリプチン／ピオグリタゾン",
+      "uiLabel": "アログリプチン／ピオグリタゾン",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": true
     },
     {
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "matchedBrandName": "トラディアンス",
-      "drugDisplayLabel": "トラディアンス",
-      "uiLabel": "トラディアンス（リナグリプチン/エンパグリフロジン）",
-      "representativeTemplateId": "dm_dpp4_sglt2_combination_oral.initial",
-      "isGenericLabel": null
+      "moduleId": "dm_glp1ra_injection",
+      "matchedBrandName": "ビクトーザ",
+      "drugDisplayLabel": "リキシセナチド",
+      "uiLabel": "リキシセナチド",
+      "representativeTemplateId": "dm_glp1ra_injection.initial",
+      "isGenericLabel": true
     },
     {
-      "moduleId": "dm_dpp4_oral",
-      "matchedBrandName": "トラゼンタ",
-      "drugDisplayLabel": "トラゼンタ",
-      "uiLabel": "トラゼンタ（リナグリプチン）",
-      "representativeTemplateId": "dm_dpp4_oral.initial",
-      "isGenericLabel": null
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "matchedBrandName": "リザベン点眼液",
+      "drugDisplayLabel": "トラニラスト点眼液",
+      "uiLabel": "トラニラスト点眼液",
+      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
+      "isGenericLabel": true
     }
   ],
   "あ": [

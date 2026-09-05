@@ -169,6 +169,7 @@
         "preferExactAlias": true,
         "allowPrefixMatch": true,
         "suppressCrossModuleSuggestionsOnExactHit": true,
+        "preferOwnNameMatchOverGenericMatch": true,
         "suppressRedundantGenericHeaderOnDirectMatch": true
       }
     },
@@ -182,15 +183,11 @@
         ],
         "aliases": [
           "あれじおんてんがん",
-          "あれじおん",
-          "えぴなすちんてんがん",
-          "えぴなすちん"
+          "あれじおん"
         ],
         "normalizedAliases": [
           "あれじおんてんがん",
-          "あれじおん",
-          "えぴなすちんてんがん",
-          "えぴなすちん"
+          "あれじおん"
         ]
       },
       "エピナスチン点眼液": {
@@ -216,15 +213,11 @@
         "handlingTags": [],
         "aliases": [
           "ざじてんてんがん",
-          "ざじてん",
-          "けとちふぇんてんがん",
-          "けとちふぇん"
+          "ざじてん"
         ],
         "normalizedAliases": [
           "ざじてんてんがん",
-          "ざじてん",
-          "けとちふぇんてんがん",
-          "けとちふぇん"
+          "ざじてん"
         ]
       },
       "ケトチフェン点眼液": {
@@ -250,15 +243,11 @@
         ],
         "aliases": [
           "ぱたのーるてんがん",
-          "ぱたのーる",
-          "おろぱたじんてんがん",
-          "おろぱたじん"
+          "ぱたのーる"
         ],
         "normalizedAliases": [
           "ぱたのーるてんがん",
-          "ぱたのーる",
-          "おろぱたじんてんがん",
-          "おろぱたじん"
+          "ぱたのーる"
         ]
       },
       "オロパタジン点眼液": {
@@ -286,15 +275,11 @@
         ],
         "aliases": [
           "りぼすちんてんがん",
-          "りぼすちん",
-          "れぼかばすちんてんがん",
-          "れぼかばすちん"
+          "りぼすちん"
         ],
         "normalizedAliases": [
           "りぼすちんてんがん",
-          "りぼすちん",
-          "れぼかばすちんてんがん",
-          "れぼかばすちん"
+          "りぼすちん"
         ]
       },
       "レボカバスチン点眼液": {

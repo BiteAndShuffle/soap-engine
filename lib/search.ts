@@ -718,6 +718,17 @@ function deriveMatchStrength(entry: SearchEntry, primaryToken: string): MatchStr
  *   2 = brandCatalog.genericName 経由のみの一致（priority 5-6）
  * preferOwnNameMatchOverGenericMatch が有効なモジュールでのみ、tier1 を tier2 より
  * 優先する並び替えに使用する（RULES.md 新設 §matchPolicy 拡張・2026-07 確定）。
+ *
+ * tier2 の一致対象は本来 displayGenericName 自体（priority 5-6）のみだったが、
+ * DP-18（一般名の読みaliasは一般名候補にのみ帰属し、ペアの先発品エントリへ複製しない）
+ * を守ったまま「先発品の一般名読みでのフルクエリ」を先発品自身の候補として復元するには、
+ * ペアの一般名候補が保持する alias（displayGenericName の文字列一致だけではカバーできない
+ * 送り仮名・読みのバリエーション。例:「てんがん」等の剤形かな読みを含むalias）をも
+ * tier2 の一致面として評価できる必要がある（2026-09 追加）。
+ * これらの alias の所有権は一般名候補側に残ったままであり、先発品側の own alias（tier1）
+ * には一切追加されない。preferOwnNameMatchOverGenericMatch が有効な同一
+ * genericKey/グルーピング内のペアに限定してのみ適用する（他モジュールへの波及や
+ * metformin/pioglitazone等の異なるgenericKeyを持つペアへの誤爆を防ぐための必須ゲート）。
  */
 type BrandMatchTier = 1 | 2
 
@@ -733,9 +744,23 @@ function resolveAllHighPrecisionBrands(entry: SearchEntry, q: string): Array<{ b
       aliases.some(a => a === q) ||                    // priority 2: alias 完全一致
       norm.startsWith(q) ||                            // priority 3: 正式名前方一致
       aliases.some(a => a.startsWith(q))                // priority 4: alias 前方一致
+    // ペアの一般名候補が保持する alias を tier2 の一致面として追加評価する。
+    // 一般名候補自身のエントリ（generic === b）は対象外（自分自身は既に ownNameMatch 側で判定済み）。
+    // 同一グルーピングキー（genericKey が無ければ displayGenericName にフォールバック）を
+    // 共有するペアに限定することで、「既に同一表示単位として扱われている」ことが
+    // データ上保証されている関係にのみ適用する。
+    const pairedSameGroup =
+      generic !== undefined && generic !== b &&
+      entry.brandCatalogGenericKeyMap[b] !== undefined &&
+      entry.brandCatalogGenericKeyMap[b] === entry.brandCatalogGenericKeyMap[generic]
+    const pairedGenericAliases =
+      entry.preferOwnNameMatchOverGenericMatch && pairedSameGroup
+        ? (entry.brandCatalogAliasMap[generic!] ?? [])
+        : []
     const genericOnlyMatch =
       normGeneric === q ||                             // priority 5: displayGenericName 完全一致
-      (normGeneric !== undefined && normGeneric.startsWith(q)) // priority 6: displayGenericName 前方一致
+      (normGeneric !== undefined && normGeneric.startsWith(q)) || // priority 6: displayGenericName 前方一致
+      pairedGenericAliases.some(a => a === q || a.startsWith(q))  // priority 6b: ペア一般名候補の alias 経由
     if (ownNameMatch) {
       matched.set(b, 1)
     } else if (genericOnlyMatch && !matched.has(b)) {
@@ -871,10 +896,36 @@ export function getDrugSuggestions(
     lowConfidence: [],
   }
 
+  // 単一トークンのクエリが、いずれかのモジュールの「完全な一般名識別」
+  // （brandCatalogGenericMap 経由の displayGenericName 完全一致）そのものである場合、
+  // そのモジュールIDを記録する。促進（promoteDirectOverGenericMode）は「配合剤の成分名が
+  // たまたま部分一致しただけの弱い候補」を抑制するためのものであり、クエリそのものと
+  // 完全に一致する一般名を持つ別モジュールは弱い候補ではなく同格の正当な候補である
+  // （2026-09 追加。前方一致・部分一致は対象外＝ここでの「完全一致」判定が本質。
+  //   例: "ぴおぐり" に前方一致する "ピオグリタゾン／グリメピリド"（ソニアス側）は
+  //   完全一致ではないため対象にならず、⑧ の既存促進は維持される）。
+  // 複数トークンのクエリは既にトークン自体に剤形等の追加シグナルを含むため対象外とする。
+  const exactGenericIdentityModules = new Set<string>()
+  if (tokens.length === 1) {
+    for (const { entry } of scored) {
+      if (exactGenericIdentityModules.has(entry.moduleId)) continue
+      for (const b of entry.brandNames) {
+        const g = entry.brandCatalogGenericMap[b]
+        if (g !== undefined && normalizeText(g) === tokens[0]) {
+          exactGenericIdentityModules.add(entry.moduleId)
+          break
+        }
+      }
+    }
+  }
+
   // opt-in モジュール（preferOwnNameMatchOverGenericMatch / suppressRedundantGenericHeaderOnDirectMatch）
   // が、このクエリで実際に自身のブランド識別による direct 候補を得た場合に true になる。
   // true の場合のみ、最終結合順で [direct/sibling/genericHeader] を [genericMode] より先に処理する
   // （未設定モジュールはこのフラグが立たないため、従来の [genericMode] 優先順を完全維持する）。
+  // ただし、別モジュールがこのクエリを自身の完全な一般名識別として保有している場合
+  // （exactGenericIdentityModules）、その別モジュールは促進で追い抜いてよい弱い候補ではないため、
+  // 自モジュール以外がそこに含まれるときは促進を発動しない（剤形間の既存表示順を維持する）。
   let promoteDirectOverGenericMode = false
 
   for (const { entry } of scored) {
@@ -939,22 +990,35 @@ export function getDrugSuggestions(
           //   genericKeyが解決できないブランドは従来通り個別表示にフォールバックする。
           const groups = new Map<string, string[]>()
           const ungrouped: string[] = []
+          const tierOf = new Map<string, BrandMatchTier>(hpBrands.map(x => [x.brand, x.tier]))
           for (const { brand } of hpBrands) {
             const key = entry.brandCatalogGenericKeyMap[brand]
             if (key === undefined) { ungrouped.push(brand); continue }
             if (!groups.has(key)) groups.set(key, [])
             groups.get(key)!.push(brand)
           }
-          // 各グループ内を、第2トークン以降（数字・XR/OD/HD等の剤形サフィックス）まで
-          // 一致したブランドが上位に来るよう並び替える（tokens[0] は全員一致するため
-          // 通常は差が出ず、tokens[1] 以降の一致差で順位が決まる）。
-          // 単一トークンのクエリでは全候補が同スコアになり安定ソートで元の順序を維持するため、
-          // 既存の単一トークン時の挙動は変わらない。
-          if (tokens.length > 1) {
+          // 各グループ内の並び替え。
+          //   - preferOwnNameMatchOverGenericMatch が有効なモジュールでは、まず tier
+          //     （1=自身のブランド識別一致 / 2=ペア一般名経由の一致）を最優先キーとする。
+          //     direct（ブランド名検索）側の tier 優先ロジック（本ファイル内、後述の
+          //     orderedHpBrands 生成箇所）と同一の優先順位契約をこの genericMode
+          //     （成分名検索）側にも適用し、両経路で tier 契約を一貫させる。
+          //   - 続いて、複数トークンクエリでは第2トークン以降（数字・XR/OD/HD等の
+          //     剤形サフィックス）まで一致したブランドが上位に来るよう score で並べる（既存動作）。
+          //   - フラグ未設定かつ単一トークンのクエリでは並び替えを一切行わず、
+          //     既存の宣言順（hpBrands 挿入順）維持という現行動作を完全に保つ。
+          const useTierOrder = entry.preferOwnNameMatchOverGenericMatch
+          const useScoreOrder = tokens.length > 1
+          if (useTierOrder || useScoreOrder) {
             for (const brandsInGroup of groups.values()) {
               brandsInGroup
-                .map((brand, originalIndex) => ({ brand, originalIndex, score: countMatchedTokens(entry, brand, tokens) }))
-                .sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex)
+                .map((brand, originalIndex) => ({
+                  brand,
+                  originalIndex,
+                  tier: useTierOrder ? (tierOf.get(brand) ?? 1) : 1,
+                  score: useScoreOrder ? countMatchedTokens(entry, brand, tokens) : 0,
+                }))
+                .sort((a, b) => a.tier - b.tier || b.score - a.score || a.originalIndex - b.originalIndex)
                 .forEach((x, i) => { brandsInGroup[i] = x.brand })
             }
           }
@@ -1223,7 +1287,11 @@ export function getDrugSuggestions(
         matchStrength: entryMatchStrength,
       })
       if (bucket === 'direct' && entry.preferOwnNameMatchOverGenericMatch) {
-        promoteDirectOverGenericMode = true
+        // 自モジュール以外が、このクエリを完全な一般名識別として保有している場合は
+        // 促進を発動しない（上記 exactGenericIdentityModules のコメント参照）。
+        const blockedByOtherModuleGenericIdentity =
+          [...exactGenericIdentityModules].some(mid => mid !== entry.moduleId)
+        if (!blockedByOtherModuleGenericIdentity) promoteDirectOverGenericMode = true
       }
     }
   }

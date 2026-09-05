@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "fe902402ab9c9cc75455623965b70c9d2d816c918b7ff5721be82166da9f75eb",
+  "sourceHash": "6d0ce8004598cda51a0d08aa224d52dc6d728ff34cae3f99d8016a22a5d7588f",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -388,6 +388,7 @@
           "preferExactAlias": true,
           "allowPrefixMatch": true,
           "suppressCrossModuleSuggestionsOnExactHit": true,
+          "preferOwnNameMatchOverGenericMatch": true,
           "suppressRedundantGenericHeaderOnDirectMatch": true
         },
         "primaryDisplayName": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"
@@ -396,9 +397,7 @@
         "アレジオン点眼液": {
           "aliases": [
             "あれじおんてんがん",
-            "あれじおん",
-            "えぴなすちんてんがん",
-            "えぴなすちん"
+            "あれじおん"
           ],
           "displayName": "アレジオン点眼液",
           "displayGenericName": "エピナスチン点眼液",
@@ -420,9 +419,7 @@
         "ザジテン点眼液": {
           "aliases": [
             "ざじてんてんがん",
-            "ざじてん",
-            "けとちふぇんてんがん",
-            "けとちふぇん"
+            "ざじてん"
           ],
           "displayName": "ザジテン点眼液",
           "displayGenericName": "ケトチフェン点眼液",
@@ -440,9 +437,7 @@
         "パタノール点眼液": {
           "aliases": [
             "ぱたのーるてんがん",
-            "ぱたのーる",
-            "おろぱたじんてんがん",
-            "おろぱたじん"
+            "ぱたのーる"
           ],
           "displayName": "パタノール点眼液",
           "displayGenericName": "オロパタジン点眼液",
@@ -464,9 +459,7 @@
         "リボスチン点眼液": {
           "aliases": [
             "りぼすちんてんがん",
-            "りぼすちん",
-            "れぼかばすちんてんがん",
-            "れぼかばすちん"
+            "りぼすちん"
           ],
           "displayName": "リボスチン点眼液",
           "displayGenericName": "レボカバスチン点眼液",
