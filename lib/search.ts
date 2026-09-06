@@ -52,6 +52,32 @@ export function normalizeText(s: string): string {
   )
 }
 
+/**
+ * 配合剤の displayGenericName（"A/B" 形式）を成分へ分解する際の区切り文字（OD-2）。
+ * scripts/audit-generic-name-reachability.ts と共有する唯一の定義であり、
+ * ここを推測で拡張してはならない（新しい区切りが必要になった場合は、まず
+ * 同スクリプトの UNKNOWN_SEPARATOR_CANDIDATES / UNKNOWN_COMPOUND_WORDS による
+ * fail-closed 検出を経て Owner Decision として確定させる）。
+ * SEPARATOR_PATTERN（トークン境界の汎用正規化用）とは目的が異なるため独立して持つ。
+ */
+export const GENERIC_COMPONENT_SEPARATORS = ['/', '／', '・'] as const
+const GENERIC_COMPONENT_SPLIT = new RegExp(`[${GENERIC_COMPONENT_SEPARATORS.join('')}]`)
+
+/**
+ * displayGenericName を配合剤の成分ラベルへ分解する。
+ * GENERIC_COMPONENT_SEPARATORS のいずれも含まない場合は単剤とみなし、
+ * そのまま1要素の配列を返す（呼び出し側で「配合剤かどうか」を再判定する必要がない）。
+ * 未知の区切り・複合表現の検出は scripts/audit-generic-name-reachability.ts の
+ * 責務であり、audit が PASS している前提のもとでのみ本関数の分解結果は信頼できる
+ * （本関数自身は未知区切りの検出を行わない）。
+ */
+export function splitGenericComponents(displayGenericName: string): string[] {
+  return displayGenericName
+    .split(GENERIC_COMPONENT_SPLIT)
+    .map(s => s.trim())
+    .filter(Boolean)
+}
+
 // ─────────────────────────────────────────────────────────────
 // B) 検索エントリ
 // ─────────────────────────────────────────────────────────────
@@ -864,6 +890,44 @@ export function getDrugSuggestions(
     a.originalIndex - b.originalIndex,
   )
 
+  // Search Family Phase 1（配合剤成分展開・候補集合の対称性）:
+  //
+  // 有効成分（displayGenericName）→ その成分を含む配合剤ブランド一覧の索引。
+  // index 全体（クエリと無関係に確定する構造情報）から毎回決定論的に構築する
+  // （他の索引（例: genericKeyModuleIds）と同じ既存パターン。事前計算・キャッシュは行わない）。
+  // GENERIC_COMPONENT_SEPARATORS で2要素以上に分解できる displayGenericName のみを
+  // 配合剤とみなし、その各成分を索引のキーとする（単剤側は対象外＝再帰防止の起点にしない）。
+  const combinationsByIngredient = new Map<string, Array<{ moduleId: string; brand: string }>>()
+  // moduleId -> index 内で最初に現れる SearchEntry（templateId 等の代表値取得用）。
+  // 配合剤モジュールはクエリ自体には一致しないため scored に含まれず、
+  // 展開候補を構築するには index 全体から代表 SearchEntry を引く必要がある。
+  const representativeEntryByModule = new Map<string, SearchEntry>()
+  {
+    const seenComboBrand = new Set<string>()
+    for (const entry of index) {
+      if (!representativeEntryByModule.has(entry.moduleId)) {
+        representativeEntryByModule.set(entry.moduleId, entry)
+      }
+      for (const brand of entry.brandNames) {
+        const dgn = entry.brandCatalogGenericMap[brand]
+        if (dgn === undefined) continue
+        const components = splitGenericComponents(dgn)
+        if (components.length < 2) continue
+        const comboKey = entry.moduleId + ':' + brand
+        if (seenComboBrand.has(comboKey)) continue
+        seenComboBrand.add(comboKey)
+        for (const component of components) {
+          if (!combinationsByIngredient.has(component)) combinationsByIngredient.set(component, [])
+          combinationsByIngredient.get(component)!.push({ moduleId: entry.moduleId, brand })
+        }
+      }
+    }
+  }
+  // このクエリで実際に一致した候補のうち、単剤（displayGenericName が区切りを含まない）に
+  // 解決したものの有効成分集合。配合剤自身が一致した場合はここに加えない
+  // （§7: 配合剤を展開の起点にしない＝配合剤の配合剤への再帰展開を構造的に防止する）。
+  const resolvedSingleAgentIngredients = new Set<string>()
+
   // 候補は最終的に4つのバケツへ振り分け、
   // [genericMode] → [direct] → [sibling] → [genericHeader] の順で結合する。
   //
@@ -1323,6 +1387,14 @@ export function getDrugSuggestions(
         resolution,
         matchStrength: entryMatchStrength,
       })
+      // Search Family Phase 1: この候補が単剤（displayGenericName が区切りを含まない）に
+      // 解決した場合のみ、その有効成分を配合剤展開の起点として記録する。
+      if (brand !== undefined) {
+        const dgn = entry.brandCatalogGenericMap[brand]
+        if (dgn !== undefined && splitGenericComponents(dgn).length === 1) {
+          resolvedSingleAgentIngredients.add(dgn)
+        }
+      }
       if (bucket === 'direct' && entry.preferOwnNameMatchOverGenericMatch) {
         // 自モジュールが扱う有効成分と、このクエリに該当する一般名識別を持つ「別モジュール」が
         // 扱う有効成分に共通するものがあれば促進を発動しない
@@ -1341,6 +1413,43 @@ export function getDrugSuggestions(
         }
         if (!blockedByRelatedModuleGenericIdentity) promoteDirectOverGenericMode = true
       }
+    }
+  }
+
+  // Search Family Phase 1（配合剤成分展開）:
+  // このクエリで単剤として解決した有効成分ごとに、同一成分を含む配合剤ブランドを
+  // 候補集合へ追加する。これにより、単剤の一般名/ブランド名いずれのクエリからも
+  // 同じ配合剤候補へ到達できる（候補集合の対称性。表示順の対称性は対象外＝Phase 2）。
+  // 展開元は resolvedSingleAgentIngredients（配合剤自身を含まない）に限定するため、
+  // 配合剤候補がさらに配合剤展開の起点になることはない（再帰防止）。
+  // 追加した候補は既存の pushCandidate dedup（moduleId:brand）へそのまま合流するため、
+  // 直接一致で既に候補化されている配合剤・複数の適応横断モジュールから同一配合剤が
+  // 展開される場合も二重には表示されない。
+  //
+  // 追加先を lowConfidence にする理由（ranking 凍結の遵守）:
+  //   genericMode は [genericMode]→[direct]→... の結合順で先頭に立つため、ここへ
+  //   追加すると新規に追加した配合剤候補が既存の強い直接一致（例:
+  //   「ぐらくてぃぶ」→グラクティブ自身）より前に表示されてしまい、Phase 1 が禁じる
+  //   ranking 変更を引き起こす。lowConfidence は既存4バケツ処理後の残り枠にのみ
+  //   追加される（Step 6）ため、既存候補の並び順・優先度を一切変えずに集合のみを
+  //   対称化できる。
+  for (const ingredient of resolvedSingleAgentIngredients) {
+    const combos = combinationsByIngredient.get(ingredient)
+    if (combos === undefined) continue
+    for (const { moduleId, brand } of combos) {
+      const comboEntry = representativeEntryByModule.get(moduleId)
+      if (comboEntry === undefined) continue
+      const genericName = comboEntry.brandCatalogGenericMap[brand]
+      bucketed.lowConfidence.push({
+        moduleId,
+        templateId: comboEntry.templateId,
+        brand,
+        displayLabel: brand,
+        uiLabel: genericName !== undefined ? `${brand}（${genericName}）` : brand,
+        tokenMatchScore: countMatchedTokens(comboEntry, brand, tokens),
+        resolution: makeBrandResolution(brand, brand),
+        matchStrength: 'weak',
+      })
     }
   }
 

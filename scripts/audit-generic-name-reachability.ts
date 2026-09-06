@@ -61,14 +61,18 @@
 import fs from 'fs'
 import path from 'path'
 import type { ModuleData } from '../lib/types'
-import { normalizeText } from '../lib/search'
+import { normalizeText, GENERIC_COMPONENT_SEPARATORS, splitGenericComponents } from '../lib/search'
 import { listModuleIds, printAuditReport, type AuditIssue } from './auditShared'
 
 const MODULES_DIR = path.resolve('./data/modules')
 
-/** 確定済みの成分区切り（OD-2）。ここを推測で拡張してはならない。 */
-const COMPONENT_SEPARATORS = ['/', '／', '・']
-const COMPONENT_SPLIT = new RegExp(`[${COMPONENT_SEPARATORS.join('')}]`)
+/**
+ * 確定済みの成分区切り（OD-2）。ここを推測で拡張してはならない。
+ * lib/search.ts の GENERIC_COMPONENT_SEPARATORS と単一定義を共有する
+ * （2026-09 Search Family Phase 1: runtime のコンビネーション展開と audit の
+ * 分解規則が乖離しないようにするため）。
+ */
+const COMPONENT_SEPARATORS = GENERIC_COMPONENT_SEPARATORS
 
 /**
  * 成分区切りとして解釈しうるが COMPONENT_SEPARATORS に含まれない文字。
@@ -135,10 +139,7 @@ for (const moduleId of moduleIds) {
       .map(normalizeText)
       .filter(Boolean)
 
-    const components = displayGenericName
-      .split(COMPONENT_SPLIT)
-      .map(s => s.trim())
-      .filter(Boolean)
+    const components = splitGenericComponents(displayGenericName)
 
     for (const component of components) {
       const q = normalizeText(component)

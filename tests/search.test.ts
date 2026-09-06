@@ -28,7 +28,7 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { ALL_MODULES } from '../data/modules/index'
-import { buildSearchIndex, getDrugSuggestions, getSuggestions, normalizeText } from '../lib/search'
+import { buildSearchIndex, getDrugSuggestions, getSuggestions, normalizeText, splitGenericComponents } from '../lib/search'
 
 const fullIndex = ALL_MODULES.flatMap(m => buildSearchIndex(m))
 
@@ -274,22 +274,38 @@ describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数
     assert.equal(results[0].isGenericLabel, true)
   })
 
-  test('"あくとす"（正式ブランド名検索）→ アクトス1件のみ、順位不変', () => {
+  test('"あくとす"（正式ブランド名検索）→ アクトス自身に加え、有効成分ピオグリタゾンを含む配合剤へ対称的に到達する（Search Family Phase 1）', () => {
+    // Phase 1（配合剤成分展開）により、単剤ブランドの直接一致クエリからも
+    // 同一有効成分を含む配合剤ブランドへ到達できるようになった
+    // （一般名クエリ側は既存どおりこれらへ到達できていた＝候補集合の対称性）。
+    // 表示順（Phase 2 の責務）は本テストの対象外とし、集合の中身のみを固定する。
     const results = getDrugSuggestions('あくとす', fullIndex, 8)
-    assert.equal(results.length, 1, `候補は1件のみのはず: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
-    assert.equal(results[0].matchedBrandName, 'アクトス')
+    const brands = results.map(r => r.matchedBrandName)
+    assert.equal(results[0].matchedBrandName, 'アクトス', `1位は先発品ブランド自身であるべき: ${JSON.stringify(brands)}`)
+    for (const combo of ['リオベル', 'メタクト', 'ソニアス']) {
+      assert.ok(brands.includes(combo), `ピオグリタゾンを含む配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    }
+    assert.equal(brands.length, 4, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
   })
 
-  test('"めとぐるこ" → メトグルコ1件のみ', () => {
+  test('"めとぐるこ" → メトグルコ自身に加え、有効成分メトホルミンを含む配合剤へ対称的に到達する（Search Family Phase 1）', () => {
     const results = getDrugSuggestions('めとぐるこ', fullIndex, 8)
-    assert.equal(results.length, 1)
-    assert.equal(results[0].matchedBrandName, 'メトグルコ')
+    const brands = results.map(r => r.matchedBrandName)
+    assert.equal(results[0].matchedBrandName, 'メトグルコ', `1位は先発品ブランド自身であるべき: ${JSON.stringify(brands)}`)
+    for (const combo of ['メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']) {
+      assert.ok(brands.includes(combo), `メトホルミンを含む配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    }
+    assert.equal(brands.length, 6, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
   })
 
-  test('"ぐりこらん" → グリコラン1件のみ', () => {
+  test('"ぐりこらん" → グリコラン自身に加え、有効成分メトホルミンを含む配合剤へ対称的に到達する（Search Family Phase 1）', () => {
     const results = getDrugSuggestions('ぐりこらん', fullIndex, 8)
-    assert.equal(results.length, 1)
-    assert.equal(results[0].matchedBrandName, 'グリコラン')
+    const brands = results.map(r => r.matchedBrandName)
+    assert.equal(results[0].matchedBrandName, 'グリコラン', `1位は先発品ブランド自身であるべき: ${JSON.stringify(brands)}`)
+    for (const combo of ['メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']) {
+      assert.ok(brands.includes(combo), `メトホルミンを含む配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    }
+    assert.equal(brands.length, 6, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
   })
 
   test('"ぐらく" → グラクティブが上位、アレグラは含まれない（既存回帰）', () => {
@@ -355,15 +371,19 @@ describe('⑩ 一般名見出し候補の displayGenericName 一本化', () => {
 
 describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sglt2_oral）', () => {
   // ブランド名検索: 直接一致（ブランド×2）→ 対応する一般名（×2）の順で4件
-  const brandQueries: Array<{ q: string; brand: string; generic: string; renalOnly?: boolean }> = [
+  // combo が設定されている行は、Search Family Phase 1（配合剤成分展開）により
+  // 5件目として当該配合剤ブランドが lowConfidence 経由で末尾に追加される
+  // （既存4件の並び順・isGenericLabel には一切影響しない — ranking 凍結の確認を兼ねる）。
+  const brandQueries: Array<{ q: string; brand: string; generic: string; renalOnly?: boolean; combo?: string }> = [
     { q: 'ふぉしー', brand: 'フォシーガ', generic: 'ダパグリフロジン' },
-    { q: 'じゃでぃ', brand: 'ジャディアンス', generic: 'エンパグリフロジン' },
-    { q: 'かなぐる', brand: 'カナグル', generic: 'カナグリフロジン', renalOnly: true },
+    { q: 'じゃでぃ', brand: 'ジャディアンス', generic: 'エンパグリフロジン', combo: 'トラディアンス（リナグリプチン/エンパグリフロジン）' },
+    { q: 'かなぐる', brand: 'カナグル', generic: 'カナグリフロジン', renalOnly: true, combo: 'カナリア（テネリグリプチン/カナグリフロジン）' },
   ]
-  for (const { q, brand, generic, renalOnly } of brandQueries) {
-    test(`ブランド名検索 "${q}" → ${brand}(糖尿病→心腎) → ${generic}(糖尿病→心腎) の4件`, () => {
+  for (const { q, brand, generic, renalOnly, combo } of brandQueries) {
+    const expectedLength = combo !== undefined ? 5 : 4
+    test(`ブランド名検索 "${q}" → ${brand}(糖尿病→心腎) → ${generic}(糖尿病→心腎) の${expectedLength}件`, () => {
       const results = getDrugSuggestions(q, fullIndex, 8)
-      assert.equal(results.length, 4, `候補は4件のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
+      assert.equal(results.length, expectedLength, `候補は${expectedLength}件のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
       const cardio = renalOnly ? '腎' : '心・腎'
       assert.equal(results[0].uiLabel, `${brand}（糖尿病）`)
       assert.equal(results[0].moduleId, 'dm_sglt2_oral')
@@ -377,6 +397,10 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
       assert.equal(results[3].uiLabel, `${generic}（${cardio}）`)
       assert.equal(results[3].moduleId, 'cardiorenal_sglt2_oral')
       assert.ok(results[3].isGenericLabel)
+      if (combo !== undefined) {
+        assert.equal(results[4].uiLabel, combo, `Search Family Phase 1: 5件目は配合剤 "${combo}" のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
+        assert.ok(!results[4].isGenericLabel)
+      }
     })
   }
 
@@ -431,14 +455,18 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
   })
 
   test('心腎モジュールを持たないSGLT2ブランド（スーグラ/ルセフィ/デベルザ）は従来どおり2件（ブランド・一般名）のみで適応ラベル化されない', () => {
-    for (const [q, expectedGeneric] of [
-      ['すーぐら', 'イプラグリフロジン'],
-      ['るせふぃ', 'ルセオグリフロジン'],
-      ['でべるざ', 'トホグリフロジン'],
+    // すーぐら（イプラグリフロジン）のみ、Search Family Phase 1（配合剤成分展開）により
+    // 配合剤スージャヌ（シタグリプチン/イプラグリフロジン）が3件目として末尾に追加される
+    // （ルセフィ/デベルザの有効成分を含む配合剤はこのコーパスに存在しないため2件のまま）。
+    for (const [q, expectedGeneric, combo] of [
+      ['すーぐら', 'イプラグリフロジン', 'スージャヌ（シタグリプチン/イプラグリフロジン）'],
+      ['るせふぃ', 'ルセオグリフロジン', undefined],
+      ['でべるざ', 'トホグリフロジン', undefined],
     ] as const) {
       const results = getDrugSuggestions(q, fullIndex, 8)
-      assert.equal(results.length, 2, `query "${q}": 候補は2件のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
-      const brandCandidate = results.find(r => !r.isGenericLabel)
+      const expectedLength = combo !== undefined ? 3 : 2
+      assert.equal(results.length, expectedLength, `query "${q}": 候補は${expectedLength}件のはず: ${JSON.stringify(results.map(r => r.uiLabel))}`)
+      const brandCandidate = results.find(r => !r.isGenericLabel && r.uiLabel !== combo)
       const genericCandidate = results.find(r => r.isGenericLabel)
       assert.ok(brandCandidate && genericCandidate, `query "${q}": ブランド・一般名候補が両方見つからない`)
       assert.equal(brandCandidate!.uiLabel, `${brandCandidate!.drugDisplayLabel}（${expectedGeneric}）`)
@@ -447,6 +475,12 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
         !brandCandidate!.uiLabel?.includes('糖尿病') && !genericCandidate!.uiLabel?.includes('糖尿病'),
         `query "${q}": 心腎モジュールに存在しないブランドは適応ラベル化されてはならない`,
       )
+      if (combo !== undefined) {
+        assert.ok(
+          results.some(r => r.uiLabel === combo),
+          `query "${q}": Search Family Phase 1 の配合剤 "${combo}" が含まれるべき: ${JSON.stringify(results.map(r => r.uiLabel))}`,
+        )
+      }
     }
   })
 
@@ -856,5 +890,100 @@ describe('⑯ H1点眼: 一般名前方一致の関係スコープ化（剤形�
       ['メタクト', 'メトアナ', 'メトグルコ', 'メトホルミン', 'エクメット', 'イニシンク', 'ピオグリタゾン／メトホルミン', 'ビルダグリプチン/メトホルミン'],
       `"め": 既存 HEAD の並びから変化してはならない: ${JSON.stringify(me)}`,
     )
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// 17. Search Family Phase 1: 配合剤成分展開による候補集合の対称性
+//
+//   単剤の一般名クエリ（例:「リナグリプチン」）は、当該成分を含む配合剤
+//   （トラディアンス）へ既存の仕組み（配合剤モジュール自身の nameAliases 経由）で
+//   到達できていたが、対になる先発品ブランドクエリ（例:「トラゼンタ」）からは
+//   同じ配合剤へ到達できなかった（候補集合の非対称性）。
+//
+//   本ブロックは、単剤ブランド/一般名の直接一致候補が解決した有効成分
+//   （brandCatalog[brand].displayGenericName、区切りなし＝単剤）を起点に、
+//   同一成分を含む配合剤ブランド（displayGenericName が "A/B" 形式に分解できる
+//   ブランド）を候補集合へ対称的に追加する Phase 1 の完成を検証する。
+//
+//   表示順（どちらを先に出すか、配合剤を候補全体のどこに挿入するか等）は
+//   Phase 2 の責務であり、本ブロックでは一切固定しない（membership のみを検証）。
+// ─────────────────────────────────────────────────────────────
+
+describe('⑰ Search Family Phase 1: 配合剤成分展開による候補集合の対称性', () => {
+  test('"トラゼンタ" → 配合剤トラディアンス（リナグリプチン/エンパグリフロジン）を含む', () => {
+    const results = getDrugSuggestions('トラゼンタ', fullIndex, 8)
+    const brands = results.map(r => r.matchedBrandName)
+    assert.ok(brands.includes('トラゼンタ'), `先発品自身が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    assert.ok(brands.includes('トラディアンス'), `リナグリプチンを含む配合剤トラディアンスが候補に含まれるべき: ${JSON.stringify(brands)}`)
+  })
+
+  test('"リナグリプチン" と "トラゼンタ" は同じ配合剤集合へ到達する（対称性の直接検証）', () => {
+    const generic = getDrugSuggestions('リナグリプチン', fullIndex, 8).map(r => r.matchedBrandName)
+    const brand = getDrugSuggestions('トラゼンタ', fullIndex, 8).map(r => r.matchedBrandName)
+    assert.ok(generic.includes('トラディアンス'), `一般名クエリ側にトラディアンスが含まれるべき: ${JSON.stringify(generic)}`)
+    assert.ok(brand.includes('トラディアンス'), `先発品クエリ側にもトラディアンスが含まれるべき: ${JSON.stringify(brand)}`)
+  })
+
+  test('"ジャディアンス" → 配合剤トラディアンス（リナグリプチン/エンパグリフロジン）を含む', () => {
+    const results = getDrugSuggestions('ジャディアンス', fullIndex, 8)
+    const brands = results.map(r => r.matchedBrandName)
+    assert.ok(brands.includes('ジャディアンス'), `先発品自身が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    assert.ok(brands.includes('トラディアンス'), `エンパグリフロジンを含む配合剤トラディアンスが候補に含まれるべき: ${JSON.stringify(brands)}`)
+  })
+
+  test('"エンパグリフロジン" と "ジャディアンス" は同じ配合剤集合へ到達する（対称性の直接検証）', () => {
+    const generic = getDrugSuggestions('エンパグリフロジン', fullIndex, 8).map(r => r.matchedBrandName)
+    const brand = getDrugSuggestions('ジャディアンス', fullIndex, 8).map(r => r.matchedBrandName)
+    assert.ok(generic.includes('トラディアンス'), `一般名クエリ側にトラディアンスが含まれるべき: ${JSON.stringify(generic)}`)
+    assert.ok(brand.includes('トラディアンス'), `先発品クエリ側にもトラディアンスが含まれるべき: ${JSON.stringify(brand)}`)
+  })
+
+  test('H1（アレジオン/エピナスチン/オロパタジン/アレロック系）の検索に Phase 1 が非H1・無関係モジュールの候補を混入させない（配合剤成分を持たないため展開対象外）', () => {
+    // H1 の有効成分はいずれも配合剤の成分として存在しないため、Phase 1 の展開は
+    // これらの検索へ allergy_ 以外のモジュールの候補を混入させてはならない。
+    // 本テストが直接固定するのはこの「無関係モジュール非混入」性のみであり、
+    // H1 候補集合全体（件数・順序を含む）が HEAD と完全一致することは
+    // レビュー時の HEAD 比較で別途確認済み。
+    for (const q of ['アレジオン', 'エピナスチン', 'オロパタジン', 'アレロック', 'アレジオン点眼', 'パタノール点眼']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      assert.ok(
+        results.every(r => r.moduleId.startsWith('allergy_')),
+        `"${q}": H1/アレルギー系以外の候補が紛れ込んではならない: ${JSON.stringify(results.map(r => r.moduleId))}`,
+      )
+    }
+  })
+
+  test('配合剤の displayGenericName はすべて既定の区切り文字（/／・）のみで単剤成分へ分解でき、各成分が既知の単剤有効成分と一致する', () => {
+    // scripts/audit-generic-name-reachability.ts の OD-2（区切り文字確定・fail-closed）を
+    // 前提として、Phase 1 の配合剤展開ロジックが依存する分解結果の健全性を
+    // 実行時ヘルパー（splitGenericComponents）に対して直接検証する。
+    // audit 自体の未知区切り検出ロジックを重複実装しない（npm run audit が別途保証する）。
+    const singleAgentIngredients = new Set<string>()
+    const multiIngredientEntries: Array<{ moduleId: string; brand: string; dgn: string }> = []
+    for (const m of ALL_MODULES) {
+      const brandCatalog = (m.drug as any)?.brandCatalog ?? {}
+      for (const [brand, entry] of Object.entries(brandCatalog) as any) {
+        const dgn = entry.displayGenericName
+        if (!dgn) continue
+        const components = splitGenericComponents(dgn)
+        if (components.length >= 2) {
+          multiIngredientEntries.push({ moduleId: m.moduleId, brand, dgn })
+        } else {
+          singleAgentIngredients.add(dgn)
+        }
+      }
+    }
+    assert.equal(multiIngredientEntries.length, 14, `配合剤エントリ件数が想定と異なる: ${multiIngredientEntries.length}`)
+    for (const { moduleId, brand, dgn } of multiIngredientEntries) {
+      const components = splitGenericComponents(dgn)
+      assert.equal(components.length, 2, `${moduleId}/${brand} の "${dgn}" は2成分に分解できるべき: ${JSON.stringify(components)}`)
+      for (const component of components) {
+        assert.ok(
+          singleAgentIngredients.has(component),
+          `${moduleId}/${brand} の成分 "${component}"（"${dgn}" 由来）が既知の単剤有効成分と一致しない`,
+        )
+      }
+    }
   })
 })

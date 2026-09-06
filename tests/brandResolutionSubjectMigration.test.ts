@@ -411,8 +411,12 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
   })
 
   test('サマリが一致する（brand 0 / generic 6 パターン / module は gate 済み）', () => {
-    assert.equal(fixture.summary.rows, 1540)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 893, generic: 589, module: 58 })
+    // Search Family Phase 1（配合剤成分展開）: rows 1540→1662 / brand 893→1015 は
+    // lowConfidence 経由で追加された配合剤 brand 候補（denotation='brand'）による
+    // 純増（+122行）。generic/module・reachableChangedRows/Patterns・
+    // gatedChangedRows/Modules は全て無変更（下記アサーション参照）。
+    assert.equal(fixture.summary.rows, 1662)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1015, generic: 589, module: 58 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 58)

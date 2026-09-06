@@ -687,6 +687,40 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 
 ---
 
+## DP-20: 配合剤成分展開による候補集合対称性原則（Combination Component Expansion Symmetry Principle）
+
+**目的**
+単剤の一般名／ブランド名のいずれで検索しても、その有効成分を含む配合剤の候補へ対称的に到達できるようにする。表示順（ranking）は対象外とする。
+
+**適用範囲**
+`brandCatalog[brand].displayGenericName` が OD-2 の区切り文字（`/` `／` `・`）で複数成分に分解できる配合剤 brand を持つ全 module。
+
+**背景**
+一般名クエリ（例:「リナグリプチン」）は配合剤モジュール自身の `nameAliases` 経由で配合剤（トラディアンス）へ既に到達できていたが、対になる先発品ブランドクエリ（例:「トラゼンタ」）からは到達できなかった（候補集合の非対称性。実機 build `d42efbe` で確認）。
+
+**方針**
+- 展開元は、そのクエリで**単剤**（`displayGenericName` が区切りを含まない）として解決した候補の有効成分に限定する。配合剤候補自身は展開の起点にしない（再帰防止）
+- 追加候補は既存の `pushCandidate` dedup（`moduleId:brand`）へそのまま合流させる。展開専用の第二の merge/dedup 機構を作らない
+- **追加候補は既存4バケツ（genericMode / direct / sibling / genericHeader）の処理をすべて終えたあとの残り枠にのみ追加する（`lowConfidence` バケツを使う）。** genericMode 等の先頭バケツへ追加すると、新規追加候補が既存の強い直接一致より前に表示されてしまい、ranking 凍結の要件に反する（2026-09 実装時に `ぐらくてぃぶ` 等で実際に検出・修正）
+- 成分分解は OD-2（`lib/search.ts` の `GENERIC_COMPONENT_SEPARATORS` / `splitGenericComponents()`、`scripts/audit-generic-name-reachability.ts` と単一定義を共有）にのみ依拠する。分解規則をここで独自に拡張しない
+
+**適用しないこと（Phase 2 として明示的に凍結）**
+- 配合剤候補の表示順・挿入位置の最適化
+- 単剤側・配合剤側どちらを先に見せるかの並び替え
+- 家族単位（brand family）での完全な集合対称性（`suppressRedundantGenericHeaderOnDirectMatch` 等、本原則が触れないフラグ群）
+
+**関連原則**
+- DP-09（一般名検索到達性原則）— `displayGenericName` を検索解決に用いる先例。本原則は「単剤 brand の解決」から「単剤成分を含む配合剤への展開」へ対象を拡張したもの
+- DP-11（適応横断検索到達性原則）— 「一方の型で検索した結果、他方の型の候補が消えてはならない」という相互到達性の思想を、単剤⇔配合剤の関係へ適用したもの
+
+**関連フィールド**
+`brandCatalog[brand].displayGenericName` / `lib/search.ts` の `splitGenericComponents()` / `combinationsByIngredient` / `resolvedSingleAgentIngredients` / `bucketed.lowConfidence`
+
+**詳細経緯**
+実装の技術的詳細は `lib/search.ts` の「Search Family Phase 1」コメントを参照。
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -714,6 +748,7 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 | Runtime 未接続資産が設計負債か Future Expansion か | DP-13 |
 | 不確定項目の扱い / PENDING・CHECK の判断 | DP-15 |
 | 最終仕様を確定する時期の判断 / 実物評価前の仕様固定 | DP-16 |
+| 配合剤成分展開 / 単剤⇔配合剤の候補集合対称性 | DP-20 |
 
 ### 失われると事故要因になる原則
 
@@ -729,3 +764,4 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 | DP-15 | 不確定を推測で埋める運用へ回帰 → 誤った値が「検証済み」として基盤に固定され、実機確認や最終監査まで発覚しない |
 | DP-16 | 実物評価前に最終仕様を確定 → 評価によって初めて分かる基準ではなく、設計時に想像した基準が仕様として恒久化する。保留中の構造整備を怠ると、方式確定後に型・canonical・Validator・UI の全面改修が発生する |
 | DP-18 | own-name priority を外す・salt-name reading を family 内へ複製 → 無関係な配合剤や非対称な候補が誤って先頭表示される回帰の再発 |
+| DP-20 | 配合剤展開候補を `genericMode` 等の先頭バケツへ追加 → 新規候補が既存の強い直接一致より前に表示され ranking 凍結が崩れる（2026-09 実装時に実際に発生し `lowConfidence` へ変更して修正） |

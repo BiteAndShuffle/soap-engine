@@ -3,9 +3,9 @@
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 575,
-    "rows": 1540,
+    "rows": 1662,
     "byDenotation": {
-      "brand": 893,
+      "brand": 1015,
       "generic": 589,
       "module": 58
     },
@@ -432,6 +432,30 @@
       "changed": false
     },
     {
+      "query": "あくとす",
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "リオベル",
+      "resolutionSubject": "リオベル",
+      "changed": false
+    },
+    {
+      "query": "あくとす",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
+      "changed": false
+    },
+    {
+      "query": "あくとす",
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "ソニアス",
+      "resolutionSubject": "ソニアス",
+      "changed": false
+    },
+    {
       "query": "あしたざのらすと",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "generic",
@@ -653,6 +677,14 @@
       "denotation": "generic",
       "legacySubject": "グリメピリド",
       "resolutionSubject": "グリメピリド",
+      "changed": false
+    },
+    {
+      "query": "あまりーる",
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "ソニアス",
+      "resolutionSubject": "ソニアス",
       "changed": false
     },
     {
@@ -1272,6 +1304,22 @@
       "changed": false
     },
     {
+      "query": "えくあ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "えくあ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
       "query": "えくめっと",
       "moduleId": "dm_dpp4_biguanide_combination_oral",
       "denotation": "brand",
@@ -1680,6 +1728,14 @@
       "changed": false
     },
     {
+      "query": "かなぐる",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
+      "changed": false
+    },
+    {
       "query": "かなりあ",
       "moduleId": "dm_dpp4_sglt2_combination_oral",
       "denotation": "brand",
@@ -1816,6 +1872,14 @@
       "changed": false
     },
     {
+      "query": "ぐらくてぃぶ",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
+      "changed": false
+    },
+    {
       "query": "ぐらるぎん",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "generic",
@@ -1877,6 +1941,46 @@
       "denotation": "brand",
       "legacySubject": "グリコラン",
       "resolutionSubject": "グリコラン",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
       "changed": false
     },
     {
@@ -1973,6 +2077,14 @@
       "denotation": "generic",
       "legacySubject": "ミチグリニド",
       "resolutionSubject": "ミチグリニド",
+      "changed": false
+    },
+    {
+      "query": "ぐるふぁすと",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
       "changed": false
     },
     {
@@ -2232,6 +2344,14 @@
       "changed": false
     },
     {
+      "query": "じゃでぃあんす",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "トラディアンス",
+      "resolutionSubject": "トラディアンス",
+      "changed": false
+    },
+    {
       "query": "じゃぬびあ",
       "moduleId": "dm_dpp4_oral",
       "denotation": "brand",
@@ -2253,6 +2373,14 @@
       "denotation": "generic",
       "legacySubject": "シタグリプチン",
       "resolutionSubject": "シタグリプチン",
+      "changed": false
+    },
+    {
+      "query": "じゃぬびあ",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -2285,6 +2413,14 @@
       "denotation": "generic",
       "legacySubject": "アナグリプチン",
       "resolutionSubject": "アナグリプチン",
+      "changed": false
+    },
+    {
+      "query": "すいにー",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
       "changed": false
     },
     {
@@ -2325,6 +2461,14 @@
       "denotation": "generic",
       "legacySubject": "イプラグリフロジン",
       "resolutionSubject": "イプラグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "すーぐら",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -2656,6 +2800,14 @@
       "changed": false
     },
     {
+      "query": "てねりあ",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
+      "changed": false
+    },
+    {
       "query": "てねりぐりぷちん",
       "moduleId": "dm_dpp4_sglt2_combination_oral",
       "denotation": "generic",
@@ -2845,6 +2997,14 @@
       "denotation": "generic",
       "legacySubject": "リナグリプチン",
       "resolutionSubject": "リナグリプチン",
+      "changed": false
+    },
+    {
+      "query": "とらぜんた",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "トラディアンス",
+      "resolutionSubject": "トラディアンス",
       "changed": false
     },
     {
@@ -3136,6 +3296,22 @@
       "changed": false
     },
     {
+      "query": "とれ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "とれ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "とれし",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -3149,6 +3325,22 @@
       "denotation": "generic",
       "legacySubject": "インスリンデグルデク",
       "resolutionSubject": "インスリンデグルデク",
+      "changed": false
+    },
+    {
+      "query": "とれし",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "とれし",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3168,6 +3360,22 @@
       "changed": false
     },
     {
+      "query": "とれしー",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "とれしー",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "とれしーば",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -3181,6 +3389,22 @@
       "denotation": "generic",
       "legacySubject": "インスリンデグルデク",
       "resolutionSubject": "インスリンデグルデク",
+      "changed": false
+    },
+    {
+      "query": "とれしーば",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "とれしーば",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3237,6 +3461,22 @@
       "denotation": "generic",
       "legacySubject": "アログリプチン",
       "resolutionSubject": "アログリプチン",
+      "changed": false
+    },
+    {
+      "query": "ねしーな",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "ねしーな",
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "リオベル",
+      "resolutionSubject": "リオベル",
       "changed": false
     },
     {
@@ -3320,6 +3560,14 @@
       "changed": false
     },
     {
+      "query": "のぼみっくす30",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼみっくす50",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3333,6 +3581,14 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド50ミックス",
       "resolutionSubject": "ノボラピッド50ミックス",
+      "changed": false
+    },
+    {
+      "query": "のぼみっくす50",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3352,6 +3608,14 @@
       "changed": false
     },
     {
+      "query": "のぼみっくす70",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼみっくすごじゅう",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3365,6 +3629,14 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド50ミックス",
       "resolutionSubject": "ノボラピッド50ミックス",
+      "changed": false
+    },
+    {
+      "query": "のぼみっくすごじゅう",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3384,6 +3656,14 @@
       "changed": false
     },
     {
+      "query": "のぼみっくすさんじゅう",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼみっくすななじゅう",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3400,6 +3680,14 @@
       "changed": false
     },
     {
+      "query": "のぼみっくすななじゅう",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼら",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
@@ -3448,6 +3736,14 @@
       "changed": false
     },
     {
+      "query": "のぼら",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼらぴ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
@@ -3496,6 +3792,14 @@
       "changed": false
     },
     {
+      "query": "のぼらぴ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼらぴっど",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
@@ -3541,6 +3845,14 @@
       "denotation": "generic",
       "legacySubject": "インスリンアスパルト",
       "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "のぼらぴっど",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3560,6 +3872,14 @@
       "changed": false
     },
     {
+      "query": "のぼらぴっどみっくす30",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼらぴっどみっくす50",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3573,6 +3893,14 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド50ミックス",
       "resolutionSubject": "ノボラピッド50ミックス",
+      "changed": false
+    },
+    {
+      "query": "のぼらぴっどみっくす50",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3592,6 +3920,14 @@
       "changed": false
     },
     {
+      "query": "のぼらぴっどみっくす70",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼらぴっどみっくすごじゅう",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3605,6 +3941,14 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド50ミックス",
       "resolutionSubject": "ノボラピッド50ミックス",
+      "changed": false
+    },
+    {
+      "query": "のぼらぴっどみっくすごじゅう",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -3624,6 +3968,14 @@
       "changed": false
     },
     {
+      "query": "のぼらぴっどみっくすさんじゅう",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "のぼらぴっどみっくすななじゅう",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3637,6 +3989,14 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
+      "changed": false
+    },
+    {
+      "query": "のぼらぴっどみっくすななじゅう",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -5048,6 +5408,14 @@
       "changed": false
     },
     {
+      "query": "びく",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
       "query": "びくと",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "brand",
@@ -5064,6 +5432,14 @@
       "changed": false
     },
     {
+      "query": "びくと",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
       "query": "びくとーざ",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "brand",
@@ -5077,6 +5453,14 @@
       "denotation": "generic",
       "legacySubject": "リラグルチド",
       "resolutionSubject": "リラグルチド",
+      "changed": false
+    },
+    {
+      "query": "びくとーざ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
       "changed": false
     },
     {
@@ -5264,6 +5648,14 @@
       "changed": false
     },
     {
+      "query": "ぴおぐりたぞんえんさんえん",
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "リオベル",
+      "resolutionSubject": "リオベル",
+      "changed": false
+    },
+    {
       "query": "ふぁすてぃっく",
       "moduleId": "dm_glinide_oral",
       "denotation": "brand",
@@ -5328,6 +5720,14 @@
       "changed": false
     },
     {
+      "query": "ふぃ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ふぃあ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
@@ -5352,6 +5752,14 @@
       "changed": false
     },
     {
+      "query": "ふぃあ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ふぃあすぷ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
@@ -5373,6 +5781,14 @@
       "denotation": "generic",
       "legacySubject": "インスリンアスパルト",
       "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "ふぃあすぷ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -6008,6 +6424,14 @@
       "changed": false
     },
     {
+      "query": "べいすん",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
+      "changed": false
+    },
+    {
       "query": "べぽたすちん",
       "moduleId": "allergy_h1_antihistamine_second_gen_oral",
       "denotation": "generic",
@@ -6304,6 +6728,46 @@
       "changed": false
     },
     {
+      "query": "めとぐるこ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
+      "query": "めとぐるこ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "めとぐるこ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "めとぐるこ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
+      "query": "めとぐるこ",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
+      "changed": false
+    },
+    {
       "query": "めとほるみん",
       "moduleId": "dm_biguanide_metformin_oral",
       "denotation": "brand",
@@ -6390,6 +6854,46 @@
       "legacySubject": "メトアナ",
       "resolutionSubject": null,
       "changed": true
+    },
+    {
+      "query": "めとほるみんえんさんえん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
+      "query": "めとほるみんえんさんえん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "めとほるみんえんさんえん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "めとほるみんえんさんえん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
+      "query": "めとほるみんえんさんえん",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
+      "changed": false
     },
     {
       "query": "めほびる",
@@ -6520,6 +7024,22 @@
       "changed": false
     },
     {
+      "query": "らん",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
+      "changed": false
+    },
+    {
+      "query": "らん",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
       "query": "らんた",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -6541,6 +7061,14 @@
       "denotation": "generic",
       "legacySubject": "インスリングラルギン",
       "resolutionSubject": "インスリングラルギン",
+      "changed": false
+    },
+    {
+      "query": "らんた",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -6568,6 +7096,14 @@
       "changed": false
     },
     {
+      "query": "らんたす",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
+      "changed": false
+    },
+    {
       "query": "らんたすxr",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -6589,6 +7125,14 @@
       "denotation": "generic",
       "legacySubject": "インスリングラルギン",
       "resolutionSubject": "インスリングラルギン",
+      "changed": false
+    },
+    {
+      "query": "らんたすxr",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -6605,6 +7149,14 @@
       "denotation": "brand",
       "legacySubject": "ランタスXR",
       "resolutionSubject": "ランタスXR",
+      "changed": false
+    },
+    {
+      "query": "らんたすえっくすあーる",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -6704,6 +7256,14 @@
       "changed": false
     },
     {
+      "query": "りきす",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
+      "changed": false
+    },
+    {
       "query": "りきすみあ",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "brand",
@@ -6717,6 +7277,14 @@
       "denotation": "generic",
       "legacySubject": "リキシセナチド",
       "resolutionSubject": "リキシセナチド",
+      "changed": false
+    },
+    {
+      "query": "りきすみあ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -7304,6 +7872,30 @@
       "changed": false
     },
     {
+      "query": "アクトス",
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "リオベル",
+      "resolutionSubject": "リオベル",
+      "changed": false
+    },
+    {
+      "query": "アクトス",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
+      "changed": false
+    },
+    {
+      "query": "アクトス",
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "ソニアス",
+      "resolutionSubject": "ソニアス",
+      "changed": false
+    },
+    {
       "query": "アシタザノラスト",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "generic",
@@ -7429,6 +8021,14 @@
       "denotation": "generic",
       "legacySubject": "グリメピリド",
       "resolutionSubject": "グリメピリド",
+      "changed": false
+    },
+    {
+      "query": "アマリール",
+      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "ソニアス",
+      "resolutionSubject": "ソニアス",
       "changed": false
     },
     {
@@ -8152,6 +8752,22 @@
       "changed": false
     },
     {
+      "query": "エクア",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "エクア",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
       "query": "エクメット",
       "moduleId": "dm_dpp4_biguanide_combination_oral",
       "denotation": "brand",
@@ -8528,6 +9144,14 @@
       "changed": false
     },
     {
+      "query": "カナグル",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
+      "changed": false
+    },
+    {
       "query": "カナリア",
       "moduleId": "dm_dpp4_sglt2_combination_oral",
       "denotation": "brand",
@@ -8680,6 +9304,14 @@
       "changed": false
     },
     {
+      "query": "グラクティブ",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
+      "changed": false
+    },
+    {
       "query": "グリクラジド",
       "moduleId": "dm_sulfonylurea_oral",
       "denotation": "generic",
@@ -8701,6 +9333,46 @@
       "denotation": "brand",
       "legacySubject": "グリコラン",
       "resolutionSubject": "グリコラン",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
       "changed": false
     },
     {
@@ -8821,6 +9493,14 @@
       "denotation": "generic",
       "legacySubject": "ミチグリニド",
       "resolutionSubject": "ミチグリニド",
+      "changed": false
+    },
+    {
+      "query": "グルファスト",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
       "changed": false
     },
     {
@@ -9088,6 +9768,14 @@
       "changed": false
     },
     {
+      "query": "ジャディアンス",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "トラディアンス",
+      "resolutionSubject": "トラディアンス",
+      "changed": false
+    },
+    {
       "query": "ジャヌビア",
       "moduleId": "dm_dpp4_oral",
       "denotation": "brand",
@@ -9109,6 +9797,14 @@
       "denotation": "generic",
       "legacySubject": "シタグリプチン",
       "resolutionSubject": "シタグリプチン",
+      "changed": false
+    },
+    {
+      "query": "ジャヌビア",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -9141,6 +9837,14 @@
       "denotation": "generic",
       "legacySubject": "アナグリプチン",
       "resolutionSubject": "アナグリプチン",
+      "changed": false
+    },
+    {
+      "query": "スイニー",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
       "changed": false
     },
     {
@@ -9205,6 +9909,14 @@
       "denotation": "generic",
       "legacySubject": "イプラグリフロジン",
       "resolutionSubject": "イプラグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "スーグラ",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -9520,6 +10232,14 @@
       "changed": false
     },
     {
+      "query": "テネリア",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
+      "changed": false
+    },
+    {
       "query": "テネリグリプチン",
       "moduleId": "dm_dpp4_sglt2_combination_oral",
       "denotation": "generic",
@@ -9645,6 +10365,14 @@
       "denotation": "generic",
       "legacySubject": "リナグリプチン",
       "resolutionSubject": "リナグリプチン",
+      "changed": false
+    },
+    {
+      "query": "トラゼンタ",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "トラディアンス",
+      "resolutionSubject": "トラディアンス",
       "changed": false
     },
     {
@@ -9824,6 +10552,22 @@
       "changed": false
     },
     {
+      "query": "トレ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "トレ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "トレシ",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -9837,6 +10581,22 @@
       "denotation": "generic",
       "legacySubject": "インスリンデグルデク",
       "resolutionSubject": "インスリンデグルデク",
+      "changed": false
+    },
+    {
+      "query": "トレシ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "トレシ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -9856,6 +10616,22 @@
       "changed": false
     },
     {
+      "query": "トレシー",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "トレシー",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "トレシーバ",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -9869,6 +10645,22 @@
       "denotation": "generic",
       "legacySubject": "インスリンデグルデク",
       "resolutionSubject": "インスリンデグルデク",
+      "changed": false
+    },
+    {
+      "query": "トレシーバ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
+      "query": "トレシーバ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -9928,6 +10720,22 @@
       "changed": false
     },
     {
+      "query": "ネシーナ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "ネシーナ",
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "リオベル",
+      "resolutionSubject": "リオベル",
+      "changed": false
+    },
+    {
       "query": "ノボラピッド",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
@@ -9976,6 +10784,14 @@
       "changed": false
     },
     {
+      "query": "ノボラピッド",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ノボラピッド30ミックス",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
@@ -10008,6 +10824,14 @@
       "changed": false
     },
     {
+      "query": "ノボラピッド30ミックス",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ノボラピッド50ミックス",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
@@ -10040,6 +10864,14 @@
       "changed": false
     },
     {
+      "query": "ノボラピッド50ミックス",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ノボラピッド70ミックス",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
@@ -10069,6 +10901,14 @@
       "denotation": "generic",
       "legacySubject": "インスリンアスパルト",
       "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "ノボラピッド70ミックス",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -10088,6 +10928,14 @@
       "changed": false
     },
     {
+      "query": "ノボラピッドミックス30",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ノボラピッドミックス50",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -10104,6 +10952,14 @@
       "changed": false
     },
     {
+      "query": "ノボラピッドミックス50",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
+      "changed": false
+    },
+    {
       "query": "ノボラピッドミックス70",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -10117,6 +10973,14 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
+      "changed": false
+    },
+    {
+      "query": "ノボラピッドミックス70",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -10744,6 +11608,14 @@
       "changed": false
     },
     {
+      "query": "ビクトーザ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
+      "changed": false
+    },
+    {
       "query": "ビグアナイド系糖尿病薬",
       "moduleId": "dm_biguanide_metformin_oral",
       "denotation": "module",
@@ -10933,6 +11805,14 @@
       "denotation": "generic",
       "legacySubject": "インスリンアスパルト",
       "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "フィアスプ",
+      "moduleId": "dm_insulin_mixed_rapid_long",
+      "denotation": "brand",
+      "legacySubject": "ライゾデグ",
+      "resolutionSubject": "ライゾデグ",
       "changed": false
     },
     {
@@ -11181,6 +12061,14 @@
       "denotation": "generic",
       "legacySubject": "ボグリボース",
       "resolutionSubject": "ボグリボース",
+      "changed": false
+    },
+    {
+      "query": "ベイスン",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
       "changed": false
     },
     {
@@ -11456,6 +12344,46 @@
       "changed": false
     },
     {
+      "query": "メトグルコ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
+      "query": "メトグルコ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "エクメット",
+      "resolutionSubject": "エクメット",
+      "changed": false
+    },
+    {
+      "query": "メトグルコ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "イニシンク",
+      "resolutionSubject": "イニシンク",
+      "changed": false
+    },
+    {
+      "query": "メトグルコ",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メホビル",
+      "resolutionSubject": "メホビル",
+      "changed": false
+    },
+    {
+      "query": "メトグルコ",
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メタクト",
+      "resolutionSubject": "メタクト",
+      "changed": false
+    },
+    {
       "query": "メトホルミン",
       "moduleId": "dm_biguanide_metformin_oral",
       "denotation": "brand",
@@ -11632,6 +12560,22 @@
       "changed": false
     },
     {
+      "query": "ラン",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
+      "changed": false
+    },
+    {
+      "query": "ラン",
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "メトアナ",
+      "resolutionSubject": "メトアナ",
+      "changed": false
+    },
+    {
       "query": "ランタ",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -11653,6 +12597,14 @@
       "denotation": "generic",
       "legacySubject": "インスリングラルギン",
       "resolutionSubject": "インスリングラルギン",
+      "changed": false
+    },
+    {
+      "query": "ランタ",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -11680,6 +12632,14 @@
       "changed": false
     },
     {
+      "query": "ランタス",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
+      "changed": false
+    },
+    {
       "query": "ランタスXR",
       "moduleId": "dm_insulin_long_acting",
       "denotation": "brand",
@@ -11701,6 +12661,14 @@
       "denotation": "generic",
       "legacySubject": "インスリングラルギン",
       "resolutionSubject": "インスリングラルギン",
+      "changed": false
+    },
+    {
+      "query": "ランタスXR",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -11765,6 +12733,14 @@
       "denotation": "generic",
       "legacySubject": "リキシセナチド",
       "resolutionSubject": "リキシセナチド",
+      "changed": false
+    },
+    {
+      "query": "リキスミア",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {

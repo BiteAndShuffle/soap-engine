@@ -89,6 +89,46 @@
       "uiLabel": null,
       "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
       "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "メトアナ",
+      "drugDisplayLabel": "メトアナ",
+      "uiLabel": "メトアナ（アナグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "エクメット",
+      "drugDisplayLabel": "エクメット",
+      "uiLabel": "エクメット（ビルダグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "イニシンク",
+      "drugDisplayLabel": "イニシンク",
+      "uiLabel": "イニシンク（アログリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_biguanide_combination_oral",
+      "matchedBrandName": "メホビル",
+      "drugDisplayLabel": "メホビル",
+      "uiLabel": "メホビル（ビルダグリプチン/メトホルミン）",
+      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
+      "matchedBrandName": "メタクト",
+      "drugDisplayLabel": "メタクト",
+      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
+      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
+      "isGenericLabel": null
     }
   ],
   "ぴおぐり": [
@@ -203,6 +243,14 @@
       "matchedBrandName": null,
       "drugDisplayLabel": "リオベル",
       "uiLabel": null,
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "リオベル",
+      "uiLabel": "リオベル（アログリプチン／ピオグリタゾン）",
       "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
       "isGenericLabel": null
     }
@@ -753,6 +801,14 @@
       "uiLabel": "インスリングラルギン",
       "representativeTemplateId": "dm_insulin_long_acting.initial",
       "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_glp1_combination",
+      "matchedBrandName": "ソリクア",
+      "drugDisplayLabel": "ソリクア",
+      "uiLabel": "ソリクア（インスリングラルギン/リキシセナチド）",
+      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
+      "isGenericLabel": null
     }
   ],
   "えんぱぐりふろじん": [
@@ -837,6 +893,14 @@
       "uiLabel": "エンパグリフロジン（心・腎）",
       "representativeTemplateId": "cardiorenal_sglt2_oral.initial_heart_failure",
       "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "matchedBrandName": "トラディアンス",
+      "drugDisplayLabel": "トラディアンス",
+      "uiLabel": "トラディアンス（リナグリプチン/エンパグリフロジン）",
+      "representativeTemplateId": "dm_dpp4_sglt2_combination_oral.initial",
+      "isGenericLabel": null
     }
   ],
   "あれるぎー": [
