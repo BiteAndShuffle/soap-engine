@@ -204,7 +204,7 @@ bridge が明示的に opt-in した module のみ有効化する。省略時（
 ```ts
 interface BrandEntry {
   displayName: string          // 商品名
-  genericName: string          // 正式名称（塩類名・水和物等を含み得る）
+  genericName: string          // 有効成分同一性（DP-21 により塩類名・水和物等を含まない基本成分名。旧値は歴史記録として保持）
   displayGenericName: string   // 表示用一般名（必須・SSOT）
   genericKey?: string          // 検索グルーピング判定専用キー（表示には使わない）
   aliases: string[]
@@ -220,13 +220,13 @@ interface BrandEntry {
 | フィールド | 責務 | 参照元 |
 |---|---|---|
 | `displayName` | 商品名 | ブランド確定検索候補・パンくずの商品名部分 |
-| `genericName` | 正式名称。塩類名・水和物等の技術的修飾語を含み得る | 内部識別・将来の専門/監査文脈専用。**通常UI（検索候補・パンくず・SOAP本文）からは参照しない** |
+| `genericName` | 有効成分同一性（剤形非依存）。**DP-21（SH-1B・2026-09）により塩類名・水和物等の技術的修飾語を含まない基本成分名へ正規化済み**。塩再混入ガード（`DISPLAY_GENERIC_NAME_SALT_COPY`）は存置 | 内部識別（`brandCatalogIngredientMap`）・監査文脈。**通常UI（検索候補・パンくず・SOAP本文）からは参照しない** |
 | `displayGenericName` | 表示用一般名。**必須**。通常UIにおける一般名表示のSSOT | 一般名見出し検索候補・パンくずの一般名部分・SOAP本文の `{{drug_subject}}` |
 
 **制約**
 
-- `genericName` と `displayGenericName` は同一値でもよい（`genericName` がもともと塩類名等を含まない場合）
-- ただし `genericName` に塩類名・水和物等の技術的修飾語が含まれる場合、`displayGenericName` への単純コピーは禁止する。値は bridge で人間が確定する（機械的な塩類名除去による自動生成は行わない）
+- `genericName`（剤形非依存の正規化済み有効成分同一性）と `displayGenericName`（利用者向け・検索用の一般名ラベル）は、剤形修飾が不要なブランドでは同一値になる（DP-21 後の通常ケース。実測 96/119 ブランド）。点眼液・皮下注・軟膏等では `displayGenericName` のみが剤形名を含み、両者は一致しない。両フィールドが常に同一とは限らない
+- `genericName` は DP-21 により基本成分名へ正規化済み。仮に塩類名・水和物等の技術的修飾語が混入した場合、`displayGenericName` への単純コピーは引き続き禁止する（`DISPLAY_GENERIC_NAME_SALT_COPY` が検出）。値は bridge で人間が確定する（機械的な塩類名除去による自動生成は行わない）
 - `displayGenericName` の欠落・空文字・上記の旧コピー運用は ModuleValidator の ERROR（`DISPLAY_GENERIC_NAME_MISSING` / `DISPLAY_GENERIC_NAME_EMPTY` / `DISPLAY_GENERIC_NAME_SALT_COPY`）
 - UI側（検索候補生成・パンくず・`{{drug_subject}}` 解決）は `genericName` へのフォールバックを行わない
 - **`{{drug_subject}}` の解決経路は 2 系統である（Q-S2 U-4b・2026-08-12 時点）**
@@ -332,7 +332,9 @@ O フィールドは `resolveDrugSubject()` の対象であり、固定文字列
 
 **適用除外（別文脈）**: 薬学的説明・成分確認・監査等、正式名称の明示自体が目的の専用文脈は本ルールの対象外とする。この場合は塩類名を含む正式名称を用いてよい。一律禁止として機械的に適用せず、個別に判断する。
 
-**適用外（正式名称を維持するフィールド）**: `drug.name` / `drug.genericName` / `brandCatalog.{brand}.genericName` / 一般名 / `drug.search.nameAliases` / alias 系フィールド全般 / 成分名 / その他の内部識別情報・検索用データ・JSONメタデータ。
+**適用外（本SOAP本文表示ルールの対象外のフィールド）**: `drug.name` / `drug.genericName`（module 単位のクラス名）/ 一般名 / `drug.search.nameAliases` / alias 系フィールド全般 / 成分名 / その他の内部識別情報・検索用データ・JSONメタデータ。これらは患者向けSOAP本文ではないため、本表示ルール（読みやすさ優先の塩類名非表示）の対象外である。
+
+**DP-21（塩／水和物正規化原則）との関係**: `brandCatalog.{brand}.genericName` は「正式名称を維持するフィールド」ではない。DP-21 により**塩類名・水和物等を含まない剤形非依存の基本有効成分名へ正規化済み**であり、形式的正式名称の忠実性のために塩／水和物表記を保持しない。alias 系フィールドについても、塩／水和物の正式名読み（例:「めとほるみんえんさんえん」）は検索面として保持しない（Owner Decision D-2）。基本一般名読み・ブランド名読みは従来どおり保持する。
 
 **注意（責務の分離）**: `brandCatalog.{brand}.displayGenericName` は上記「適用外」には含まれない。表示用一般名のSSOTとして、bridge作成時に人間が確定した値がそのままJSONへ転記され、常に塩類名を含まない（責務の詳細は JS-A-drug を正本とする）。`genericName` から `displayGenericName` を実行時に導出・簡略化する処理は存在しない。
 

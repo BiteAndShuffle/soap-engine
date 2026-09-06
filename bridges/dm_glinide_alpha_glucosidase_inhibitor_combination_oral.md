@@ -76,6 +76,12 @@ drug:
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
   #
+  # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
+  #   以下の「成分名読みの扱い」では塩形 kana 読み（〜えんさんえん／〜すいわぶつ）を
+  #   alias 面へ追加する旨を記載しているが、これらの塩形読みは SH-1B で検索面から
+  #   撤去済みである（塩／水和物の正式名読みは検索面を持たない）。現在の成分名読みは
+  #   基本一般名読みのみ。以下の記述は当時の設計判断の記録として保持する。
+  #
   # 成分名読みの扱い（既存グリニド/αGIモジュールにある読みのみを流用。新規推測なし）:
   #   - みちぐりにど（ミチグリニド）は dm_glinide_oral.drug.search.nameAliases に
   #     確立済みの読みを流用
@@ -106,13 +112,11 @@ drug:
     prefixAliases:
       - "ぐるべす"
       - "みちぐりにど"
-      - "みちぐりにどかるしうむすいわぶつ"
       - "ぼぐりぼーす"
 
     nameAliases:
       - "ぐるべす"
       - "みちぐりにど"
-      - "みちぐりにどかるしうむすいわぶつ"
       - "ぼぐりぼーす"
 
     keywords: []
@@ -127,7 +131,6 @@ drug:
   nameAliases:
     - "ぐるべす"
     - "みちぐりにど"
-    - "みちぐりにどかるしうむすいわぶつ"
     - "ぼぐりぼーす"
 
   # ─────────────────────────────────────────
@@ -138,32 +141,30 @@ drug:
   brandCatalog:
     グルベス:
       displayName: "グルベス"
-      genericName: "ミチグリニドカルシウム水和物・ボグリボース"
+      genericName: "ミチグリニド・ボグリボース"
       displayGenericName: "ミチグリニド・ボグリボース"
       genericKey: "mitiglinide_voglibose_combo"
       handlingTags: []
       aliases:
         - "ぐるべす"
         - "ぼぐりぼーす"
-        - "みちぐりにどかるしうむすいわぶつ"
       normalizedAliases:
         - "ぐるべす"
         - "ぼぐりぼーす"
-        - "みちぐりにどかるしうむすいわぶつ"
 
   aliasToBrand:
     "ぐるべす": "グルベス"
     "ぼぐりぼーす": "グルベス"
-    "みちぐりにどかるしうむすいわぶつ": "グルベス"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。3件・3件で一致。
+  # （RULES.md §10）。2件・2件で一致（SH-1B: DP-21 により塩形読み「みちぐりにどかるしうむすいわぶつ」を撤去したため 3件→2件）。
   # 第2成分読み「ぼぐりぼーす」は brandCatalog.グルベス.aliases に登録したため
   # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソニアスの既存実績
-  # ＝U-D-S3-1と同型）。第1成分の塩形読み「みちぐりにどかるしうむすいわぶつ」も
-  # 同様に brandCatalog.グルベス.aliases へ登録し aliasToBrand にも追加した
-  # （Class S。メタクト／ソニアスの同型登録と揃える）。第1成分読み（みちぐりにど）は
+  # ＝U-D-S3-1と同型）。第1成分読み（みちぐりにど）は
   # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
-  # 引き続き aliasToBrand の対象外。
+  # aliasToBrand の対象外。
+  # 第1成分の塩形読み「みちぐりにどかるしうむすいわぶつ」は 2026-07 に Class S として
+  # brandCatalog.グルベス.aliases / aliasToBrand へ登録していたが、SH-1B（DP-21）で
+  # 全 alias 面から撤去済み。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags

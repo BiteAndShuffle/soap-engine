@@ -78,6 +78,12 @@ drug:
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
   #
+  # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
+  #   以下の「成分名読みの扱い」では塩形 kana 読み（〜えんさんえん／〜すいわぶつ）を
+  #   alias 面へ追加する旨を記載しているが、これらの塩形読みは SH-1B で検索面から
+  #   撤去済みである（塩／水和物の正式名読みは検索面を持たない）。現在の成分名読みは
+  #   基本一般名読みのみ。以下の記述は当時の設計判断の記録として保持する。
+  #
   # 成分名読みの扱い（既存TZD/SUモジュールにある読みのみを流用。新規推測なし）:
   #   - ぴおぐりたぞん（ピオグリタゾン）/ ぴおぐりたぞんえんさんえん
   #     （ピオグリタゾン塩酸塩）は dm_thiazolidinedione_pioglitazone_oral.drug.search.nameAliases
@@ -105,13 +111,11 @@ drug:
     prefixAliases:
       - "そにあす"
       - "ぴおぐりたぞん"
-      - "ぴおぐりたぞんえんさんえん"
       - "ぐりめぴりど"
 
     nameAliases:
       - "そにあす"
       - "ぴおぐりたぞん"
-      - "ぴおぐりたぞんえんさんえん"
       - "ぐりめぴりど"
 
     keywords: []
@@ -126,7 +130,6 @@ drug:
   nameAliases:
     - "そにあす"
     - "ぴおぐりたぞん"
-    - "ぴおぐりたぞんえんさんえん"
     - "ぐりめぴりど"
 
   # ─────────────────────────────────────────
@@ -136,32 +139,30 @@ drug:
   brandCatalog:
     ソニアス:
       displayName: "ソニアス"
-      genericName: "ピオグリタゾン塩酸塩／グリメピリド"
+      genericName: "ピオグリタゾン／グリメピリド"
       displayGenericName: "ピオグリタゾン／グリメピリド"
       genericKey: "pioglitazone_glimepiride_combo"
       handlingTags: []
       aliases:
         - "そにあす"
         - "ぐりめぴりど"
-        - "ぴおぐりたぞんえんさんえん"
       normalizedAliases:
         - "そにあす"
         - "ぐりめぴりど"
-        - "ぴおぐりたぞんえんさんえん"
 
   aliasToBrand:
     "そにあす": "ソニアス"
     "ぐりめぴりど": "ソニアス"
-    "ぴおぐりたぞんえんさんえん": "ソニアス"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。3件・3件で一致。
+  # （RULES.md §10）。2件・2件で一致（SH-1B: DP-21 により塩形読み「ぴおぐりたぞんえんさんえん」を撤去したため 3件→2件）。
   # 第2成分読み「ぐりめぴりど」は brandCatalog.ソニアス.aliases に登録したため
   # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソリクア/ゾルトファイ/
-  # ライゾデグの既存実績と同型）。第1成分の塩形読み「ぴおぐりたぞんえんさんえん」も
-  # 同様に brandCatalog.ソニアス.aliases へ登録し aliasToBrand にも追加した
-  # （Class S。メタクト／グルベスの同型登録と揃える）。第1成分読み（ぴおぐりたぞん）は
+  # ライゾデグの既存実績と同型）。第1成分読み（ぴおぐりたぞん）は
   # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していないため、
-  # 引き続き aliasToBrand の対象外。
+  # aliasToBrand の対象外。
+  # 第1成分の塩形読み「ぴおぐりたぞんえんさんえん」は 2026-07 に Class S として
+  # brandCatalog.ソニアス.aliases / aliasToBrand へ登録していたが、SH-1B（DP-21）で
+  # 全 alias 面から撤去済み。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags

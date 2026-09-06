@@ -70,13 +70,11 @@
       ],
       "prefixAliases": [
         "あくとす",
-        "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん"
+        "ぴおぐりたぞん"
       ],
       "nameAliases": [
         "あくとす",
-        "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん"
+        "ぴおぐりたぞん"
       ],
       "keywords": [],
       "priority": 5,
@@ -90,13 +88,12 @@
     },
     "nameAliases": [
       "あくとす",
-      "ぴおぐりたぞん",
-      "ぴおぐりたぞんえんさんえん"
+      "ぴおぐりたぞん"
     ],
     "brandCatalog": {
       "アクトス": {
         "displayName": "アクトス",
-        "genericName": "ピオグリタゾン塩酸塩",
+        "genericName": "ピオグリタゾン",
         "displayGenericName": "ピオグリタゾン",
         "genericKey": "pioglitazone_actos",
         "handlingTags": [],
@@ -109,24 +106,21 @@
       },
       "ピオグリタゾン": {
         "displayName": "ピオグリタゾン",
-        "genericName": "ピオグリタゾン塩酸塩",
+        "genericName": "ピオグリタゾン",
         "displayGenericName": "ピオグリタゾン",
         "genericKey": "pioglitazone_actos_generic",
         "handlingTags": [],
         "aliases": [
-          "ぴおぐりたぞん",
-          "ぴおぐりたぞんえんさんえん"
+          "ぴおぐりたぞん"
         ],
         "normalizedAliases": [
-          "ぴおぐりたぞん",
-          "ぴおぐりたぞんえんさんえん"
+          "ぴおぐりたぞん"
         ]
       }
     },
     "aliasToBrand": {
       "あくとす": "アクトス",
-      "ぴおぐりたぞん": "ピオグリタゾン",
-      "ぴおぐりたぞんえんさんえん": "ピオグリタゾン"
+      "ぴおぐりたぞん": "ピオグリタゾン"
     }
   },
   "drugResolution": {

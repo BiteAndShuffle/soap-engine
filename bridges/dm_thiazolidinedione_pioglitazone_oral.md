@@ -65,9 +65,13 @@ drug:
   # search セクション（確定・2026-07-05）
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
-  # 成分名（ピオグリタゾン塩酸塩）の読み「ぴおぐりたぞんえんさんえん」は module 単位の
-  # prefixAliases/nameAliases に加え、brandCatalog.ピオグリタゾン.aliases/normalizedAliases
-  # にも追加する（2026-07 改訂、dm_biguanide_metformin_oral と同型）。
+  # 成分名の基本読み「ぴおぐりたぞん」は module 単位の prefixAliases/nameAliases に加え、
+  # brandCatalog.ピオグリタゾン.aliases/normalizedAliases にも登録する。
+  #
+  # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
+  #   塩形読み「ぴおぐりたぞんえんさんえん」は 2026-07 改訂で全 alias 面へ追加されていたが、
+  #   検索面から撤去した（塩／水和物の正式名読みは検索面を持たない）。
+  #   以下の【従来方針からの変更点】は当時の設計判断の記録として保持する。
   #
   # 【従来方針からの変更点】
   # 旧方針: 複数ブランドへの複製で aliasToBrand の解決先が曖昧になることを避けるため、
@@ -88,12 +92,10 @@ drug:
     prefixAliases:
       - "あくとす"
       - "ぴおぐりたぞん"
-      - "ぴおぐりたぞんえんさんえん"
 
     nameAliases:
       - "あくとす"
       - "ぴおぐりたぞん"
-      - "ぴおぐりたぞんえんさんえん"
 
     keywords: []
 
@@ -114,18 +116,17 @@ drug:
   nameAliases:
     - "あくとす"
     - "ぴおぐりたぞん"
-    - "ぴおぐりたぞんえんさんえん"
 
   # ─────────────────────────────────────────
   # brandCatalog: 2 ブランド
   # ─────────────────────────────────────────
-  # 2ブランドは同一成分（ピオグリタゾン塩酸塩）。「ピオグリタゾン」はGE代表名として
+  # 2ブランドは同一成分（ピオグリタゾン。DP-21 正規化後の genericName）。「ピオグリタゾン」はGE代表名として
   # ブランド名自体に成分名を用いる構成であり、dm_biguanide_metformin_oral の
   # メトグルコ／メトホルミン(GE) と同型（genericKey は base + "_generic" 接尾辞で分離）。
   brandCatalog:
     アクトス:
       displayName: "アクトス"
-      genericName: "ピオグリタゾン塩酸塩"
+      genericName: "ピオグリタゾン"
       displayGenericName: "ピオグリタゾン"
       genericKey: "pioglitazone_actos"
       handlingTags: []
@@ -136,24 +137,21 @@ drug:
 
     ピオグリタゾン:
       displayName: "ピオグリタゾン"
-      genericName: "ピオグリタゾン塩酸塩"
+      genericName: "ピオグリタゾン"
       displayGenericName: "ピオグリタゾン"
       # ↑ アクトスと同一成分（GE代表名）
       genericKey: "pioglitazone_actos_generic"
       handlingTags: []
       aliases:
         - "ぴおぐりたぞん"
-        - "ぴおぐりたぞんえんさんえん"
       normalizedAliases:
         - "ぴおぐりたぞん"
-        - "ぴおぐりたぞんえんさんえん"
 
   aliasToBrand:
     "あくとす": "アクトス"
     "ぴおぐりたぞん": "ピオグリタゾン"
-    "ぴおぐりたぞんえんさんえん": "ピオグリタゾン"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。3件・3件で一致（2026-07: ピオグリタゾンへ塩名読み追加に伴い増加）。
+  # （RULES.md §10）。2件・2件で一致（SH-1B: DP-21 により塩形読み「ぴおぐりたぞんえんさんえん」を撤去したため 3件→2件）。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags

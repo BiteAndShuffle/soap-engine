@@ -37,9 +37,13 @@ describe('resolveDrugName: ブランド未確定時', () => {
     assert.equal(resolveDrugName(imeglimin.drug, undefined), 'イメグリミン')
   })
 
-  test('drug.genericName（正式名称・塩類名含む）へフォールバックしない', () => {
+  test('displayGenericName に解決し、drug.genericName（クラス名）へフォールバックしない', () => {
     const result = resolveDrugName(imeglimin.drug, undefined)
-    assert.notEqual(result, imeglimin.drug?.brandCatalog?.['ツイミーグ']?.genericName)
+    // SH-1B（塩/水和物正規化）以降 brandCatalog.genericName は塩類名を含まず
+    // displayGenericName と同値になりうるため、「displayGenericName に解決すること」と
+    // 「module 単位の drug.genericName（クラス名）へ逃げないこと」を直接固定する。
+    assert.equal(result, imeglimin.drug?.brandCatalog?.['ツイミーグ']?.displayGenericName)
+    assert.notEqual(result, imeglimin.drug?.genericName)
     assert.ok(!result.includes('塩酸塩'), `ブランド未確定時の結果に塩類名が混入している: "${result}"`)
   })
 })

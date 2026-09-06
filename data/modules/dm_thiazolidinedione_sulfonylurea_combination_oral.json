@@ -69,13 +69,11 @@
       "prefixAliases": [
         "そにあす",
         "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん",
         "ぐりめぴりど"
       ],
       "nameAliases": [
         "そにあす",
         "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん",
         "ぐりめぴりど"
       ],
       "keywords": [],
@@ -89,32 +87,28 @@
     "nameAliases": [
       "そにあす",
       "ぴおぐりたぞん",
-      "ぴおぐりたぞんえんさんえん",
       "ぐりめぴりど"
     ],
     "brandCatalog": {
       "ソニアス": {
         "displayName": "ソニアス",
-        "genericName": "ピオグリタゾン塩酸塩／グリメピリド",
+        "genericName": "ピオグリタゾン／グリメピリド",
         "displayGenericName": "ピオグリタゾン／グリメピリド",
         "genericKey": "pioglitazone_glimepiride_combo",
         "handlingTags": [],
         "aliases": [
           "そにあす",
-          "ぐりめぴりど",
-          "ぴおぐりたぞんえんさんえん"
+          "ぐりめぴりど"
         ],
         "normalizedAliases": [
           "そにあす",
-          "ぐりめぴりど",
-          "ぴおぐりたぞんえんさんえん"
+          "ぐりめぴりど"
         ]
       }
     },
     "aliasToBrand": {
       "そにあす": "ソニアス",
-      "ぐりめぴりど": "ソニアス",
-      "ぴおぐりたぞんえんさんえん": "ソニアス"
+      "ぐりめぴりど": "ソニアス"
     }
   },
   "drugResolution": {

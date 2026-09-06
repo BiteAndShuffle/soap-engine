@@ -386,7 +386,7 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     assert.deepEqual(missing, [], `historical fixture が参照する module が registry から消えている: ${missing.join(', ')}`)
   })
 
-  test('全 1572 行の projection が fixture と一致する', () => {
+  test('全 1644 行の projection が fixture と一致する', () => {
     // U-CR2: `index`（全体）ではなく `historicalIndex`（fixture が参照する module のみ）で
     // 再計算する。fixture は U-4b / Q-S2 migration 時点の historical regression artifact
     // であり、その後追加された module の結果混入は corpus 成長であって semantic regression
@@ -412,14 +412,20 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
 
   test('サマリが一致する（brand 0 / generic 6 パターン / module は gate 済み）', () => {
     // Search Family Phase 1（配合剤成分展開）: rows 1540→1662 / brand 893→1015 は
-    // lowConfidence 経由で追加された配合剤 brand 候補（denotation='brand'）による
-    // 純増（+122行）。generic/module・reachableChangedRows/Patterns・
-    // gatedChangedRows/Modules は全て無変更（下記アサーション参照）。
-    assert.equal(fixture.summary.rows, 1662)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1015, generic: 589, module: 58 })
+    // lowConfidence 経由で追加された配合剤 brand 候補（denotation='brand'）による純増（+122行）。
+    //
+    // SH-1B（塩/水和物正規化・Owner D-2）: クエリ母集団から塩形読み4件
+    // （めとほるみんえんさんえん / ぴおぐりたぞんえんさんえん / いめぐりみんえんさんえん /
+    //  みちぐりにどかるしうむすいわぶつ）が撤去され、それらが返していた 18 行が消えた
+    //   rows 1662→1644 / brand 1015→1001 / generic 589→586 / module 58→57 /
+    //   changedRows 83→82 / gatedChangedRows 58→57。
+    //   reachableChangedRows/Patterns（意図された U-4b delta）と gatedChangedModules の
+    //   構成（20件）は不変。
+    assert.equal(fixture.summary.rows, 1644)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1001, generic: 586, module: 57 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
-    assert.equal(fixture.summary.gatedChangedRows, 58)
+    assert.equal(fixture.summary.gatedChangedRows, 57)
     assert.equal(fixture.summary.gatedChangedModules.length, 20)
   })
 })

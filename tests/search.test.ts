@@ -194,15 +194,13 @@ describe('⑦ メトホルミン系: preferOwnNameMatchOverGenericMatch / suppre
     )
   })
 
-  test('"めとほるみんえんさんえん" → メトホルミン系候補へ到達し、メトホルミン塩酸塩の独立候補は出ない', () => {
+  test('"めとほるみんえんさんえん"（塩形読み）は検索面から撤去済み → 0件（SH-1B / Owner D-2）', () => {
+    // SH-1B の Owner Decision D-2: 塩/水和物の正式名読みは検索到達性を持たない。
+    // 基本一般名読み「めとほるみん」は従来どおり到達する（別テストで担保）。
     const results = getDrugSuggestions('めとほるみんえんさんえん', fullIndex, 8)
-    assert.ok(results.length > 0, '候補が1件も返らない')
-    assert.equal(results[0].drugDisplayLabel, 'メトホルミン', `1位はメトホルミンであるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
-    assert.equal(results[0].matchedBrandName, 'メトホルミン')
-    assert.ok(
-      !results.some(r => r.drugDisplayLabel === 'メトホルミン塩酸塩'),
-      'メトホルミン塩酸塩が独立候補として表示されてはならない',
-    )
+    assert.equal(results.length, 0, `塩形読みは候補を返してはならない: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    const base = getDrugSuggestions('めとほるみん', fullIndex, 8)
+    assert.equal(base[0]?.drugDisplayLabel, 'メトホルミン', '基本一般名読みは従来どおりメトホルミンへ到達する')
   })
 
   test('主語解決条件（drugDisplayLabel === matchedBrandName）: メトホルミン/メトグルコ/グリコラン', () => {
@@ -233,15 +231,13 @@ describe('⑧ ピオグリタゾン系: preferOwnNameMatchOverGenericMatch / sup
     )
   })
 
-  test('"ぴおぐりたぞんえんさんえん" → ピオグリタゾン系候補へ到達し、ピオグリタゾン塩酸塩の独立候補は出ない', () => {
+  test('"ぴおぐりたぞんえんさんえん"（塩形読み）は検索面から撤去済み → 0件（SH-1B / Owner D-2）', () => {
+    // SH-1B の Owner Decision D-2: 塩/水和物の正式名読みは検索到達性を持たない。
+    // 基本一般名読み「ぴおぐりたぞん」は従来どおり到達する（別テストで担保）。
     const results = getDrugSuggestions('ぴおぐりたぞんえんさんえん', fullIndex, 8)
-    assert.ok(results.length > 0, '候補が1件も返らない')
-    assert.equal(results[0].drugDisplayLabel, 'ピオグリタゾン', `1位はピオグリタゾンであるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
-    assert.equal(results[0].matchedBrandName, 'ピオグリタゾン')
-    assert.ok(
-      !results.some(r => r.drugDisplayLabel === 'ピオグリタゾン塩酸塩'),
-      'ピオグリタゾン塩酸塩が独立候補として表示されてはならない',
-    )
+    assert.equal(results.length, 0, `塩形読みは候補を返してはならない: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    const base = getDrugSuggestions('ぴおぐりたぞん', fullIndex, 8)
+    assert.equal(base[0]?.drugDisplayLabel, 'ピオグリタゾン', '基本一般名読みは従来どおりピオグリタゾンへ到達する')
   })
 
   test('主語解決条件（drugDisplayLabel === matchedBrandName）: ピオグリタゾン/アクトス/メタクト（配合剤）', () => {

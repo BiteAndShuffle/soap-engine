@@ -69,14 +69,12 @@
       "prefixAliases": [
         "りおべる",
         "あろぐりぷちん",
-        "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん"
+        "ぴおぐりたぞん"
       ],
       "nameAliases": [
         "りおべる",
         "あろぐりぷちん",
-        "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん"
+        "ぴおぐりたぞん"
       ],
       "keywords": [],
       "priority": 5,
@@ -89,13 +87,12 @@
     "nameAliases": [
       "りおべる",
       "あろぐりぷちん",
-      "ぴおぐりたぞん",
-      "ぴおぐりたぞんえんさんえん"
+      "ぴおぐりたぞん"
     ],
     "brandCatalog": {
       "リオベル": {
         "displayName": "リオベル",
-        "genericName": "アログリプチン安息香酸塩／ピオグリタゾン塩酸塩",
+        "genericName": "アログリプチン／ピオグリタゾン",
         "displayGenericName": "アログリプチン／ピオグリタゾン",
         "genericKey": "alogliptin_pioglitazone_combo",
         "handlingTags": [],

@@ -80,8 +80,7 @@
         "あなぐりぷちん",
         "びるだぐりぷちん",
         "あろぐりぷちん",
-        "めとほるみん",
-        "めとほるみんえんさんえん"
+        "めとほるみん"
       ],
       "nameAliases": [
         "めとあな",
@@ -91,8 +90,7 @@
         "あなぐりぷちん",
         "びるだぐりぷちん",
         "あろぐりぷちん",
-        "めとほるみん",
-        "めとほるみんえんさんえん"
+        "めとほるみん"
       ],
       "keywords": [],
       "priority": 5,
@@ -110,13 +108,12 @@
       "あなぐりぷちん",
       "びるだぐりぷちん",
       "あろぐりぷちん",
-      "めとほるみん",
-      "めとほるみんえんさんえん"
+      "めとほるみん"
     ],
     "brandCatalog": {
       "メトアナ": {
         "displayName": "メトアナ",
-        "genericName": "アナグリプチン/メトホルミン塩酸塩",
+        "genericName": "アナグリプチン/メトホルミン",
         "displayGenericName": "アナグリプチン/メトホルミン",
         "genericKey": "anagliptin_metformin_combo",
         "handlingTags": [
@@ -133,7 +130,7 @@
       },
       "エクメット": {
         "displayName": "エクメット",
-        "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
+        "genericName": "ビルダグリプチン/メトホルミン",
         "displayGenericName": "ビルダグリプチン/メトホルミン",
         "genericKey": "vildagliptin_metformin_combo",
         "handlingTags": [
@@ -150,7 +147,7 @@
       },
       "イニシンク": {
         "displayName": "イニシンク",
-        "genericName": "アログリプチン/メトホルミン塩酸塩",
+        "genericName": "アログリプチン/メトホルミン",
         "displayGenericName": "アログリプチン/メトホルミン",
         "genericKey": "alogliptin_metformin_combo",
         "handlingTags": [
@@ -167,7 +164,7 @@
       },
       "メホビル": {
         "displayName": "メホビル",
-        "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
+        "genericName": "ビルダグリプチン/メトホルミン",
         "displayGenericName": "ビルダグリプチン/メトホルミン",
         "genericKey": "vildagliptin_metformin_combo_generic",
         "handlingTags": [

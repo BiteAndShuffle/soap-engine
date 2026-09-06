@@ -721,6 +721,34 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 
 ---
 
+## DP-21: 塩／水和物正規化原則（Salt / Hydrate Normalization Principle）
+
+**Owner Decision（2026-09、SH-1B。旧「塩非表記／塩表記の2形式併記」運用をこの時点以降で置き換える）**
+
+**方針**
+- canonical の有効成分同一性（検索同一性・Search Family 同一性・brand⇔generic ペアリング・配合剤成分関係・ユーザー向け一般名表示）は、**塩・水和物・溶媒和物・対イオン等の製剤形態修飾語を含まない基本有効成分名**を用いる。
+  - `メトホルミン塩酸塩` → `メトホルミン` ／ `ピオグリタゾン塩酸塩` → `ピオグリタゾン` ／ `アログリプチン安息香酸塩` → `アログリプチン` ／ `ミチグリニドカルシウム水和物` → `ミチグリニド`
+  - 配合剤は成分ごとに、監査済みの `displayGenericName` を正規化ターゲットとして用いる。regex による接尾辞除去・文字列からの基本成分推測は行わない。
+- **塩／水和物の正式名読みは検索面を持たない。** 塩形の kana 読み（例: `めとほるみんえんさんえん` `ぴおぐりたぞんえんさんえん` `いめぐりみんえんさんえん` `みちぐりにどかるしうむすいわぶつ`）は alias から撤去する。基本一般名読み（`めとほるみん` 等）は従来どおり到達性を保持する。
+- **医学的に意味のある塩／水和物表記は削除しない。** 公式名称の引用・出典忠実性・製剤特異的説明・安定性／配合変化・安全性情報・用量／力価解釈・物質間の医学的差異に必要な場合は保持する（SH-1B 監査では該当 0 件）。
+- **塩再混入ガードは維持する。** `lib/moduleValidator.ts` の `SALT_TERMS` と `DISPLAY_GENERIC_NAME_SALT_COPY` は将来の塩／水和物再混入を検出するために存置する（正規化後の corpus に塩形 genericName が無くなっても弱めない）。
+
+**適用対象フィールド**
+`brandCatalog[brand].genericName`（唯一の canonical 塩表記フィールドだった）を正規化する。`displayGenericName` / `genericKey` は SH-1B 以前から塩非表記であり変更しない。alias 系フィールド（`search.nameAliases` / `search.prefixAliases` / module `nameAliases` / `brandCatalog[brand].aliases` / `normalizedAliases` / `aliasToBrand`）からは、上記の塩形 kana 読み4件のみを撤去する（Owner Decision D-2）。基本一般名読み・ブランド名読みは変更しない。`data/search-manifest.json` の `genericName` / alias projection は generator で追随する。
+
+**歴史記録の扱い（D-3）**
+bridge の `# 確定済み事項` 節・`docs/reviews/` 配下・`docs/OPEN_DESIGN_QUESTIONS.md` の過去 Owner Decision 記録に残る旧塩表記値（`メトホルミン塩酸塩` 等）は**歴史記録として逐語保持する**。本 DP-21 がそれらを prospective に supersede する。過去記録を書き換えて塩表記を消す運用はしない。
+
+**関連原則**
+- DP-09（一般名検索到達性原則）— 基本一般名読みの到達性は不変。撤去するのは塩形読みのみ。
+- DP-18（own-name 優先 / salt-name reading を family 内へ複製しない）— salt-name reading 自体が canonical から撤去されたことで、DP-18 が警告する「salt-name reading の family 内複製」の再発余地が構造的に縮小した。
+- SF-2A（Search Family Phase 2）— `suppressRedundantGenericHeaderOnDirectMatch` の runtime 挙動は SH-1B では変更しない。正規化により同フラグの塩名由来の存在意義は薄れたが、その再解釈は Phase 2 の責務。
+
+**関連フィールド**
+`brandCatalog[brand].genericName` / `lib/search.ts` の `brandCatalogIngredientMap` / `lib/moduleValidator.ts` の `SALT_TERMS`・`DISPLAY_GENERIC_NAME_SALT_COPY`
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -749,6 +777,7 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 | 不確定項目の扱い / PENDING・CHECK の判断 | DP-15 |
 | 最終仕様を確定する時期の判断 / 実物評価前の仕様固定 | DP-16 |
 | 配合剤成分展開 / 単剤⇔配合剤の候補集合対称性 | DP-20 |
+| 塩／水和物と有効成分同一性 / 塩形読みの検索面 | DP-21 |
 
 ### 失われると事故要因になる原則
 
@@ -765,3 +794,4 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 | DP-16 | 実物評価前に最終仕様を確定 → 評価によって初めて分かる基準ではなく、設計時に想像した基準が仕様として恒久化する。保留中の構造整備を怠ると、方式確定後に型・canonical・Validator・UI の全面改修が発生する |
 | DP-18 | own-name priority を外す・salt-name reading を family 内へ複製 → 無関係な配合剤や非対称な候補が誤って先頭表示される回帰の再発 |
 | DP-20 | 配合剤展開候補を `genericMode` 等の先頭バケツへ追加 → 新規候補が既存の強い直接一致より前に表示され ranking 凍結が崩れる（2026-09 実装時に実際に発生し `lowConfidence` へ変更して修正） |
+| DP-21 | 塩再混入ガード（`SALT_TERMS` / `DISPLAY_GENERIC_NAME_SALT_COPY`）を削除 → 塩／水和物名が canonical 有効成分同一性へ再混入し、検索・Search Family・SOAP 主語に技術的修飾語が露出する回帰を検出できなくなる。／ 基本一般名読みまで撤去 → DP-09 一般名検索到達性の回帰 |

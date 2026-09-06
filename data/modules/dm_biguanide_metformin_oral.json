@@ -73,14 +73,12 @@
       "prefixAliases": [
         "めとぐるこ",
         "めとほるみん",
-        "ぐりこらん",
-        "めとほるみんえんさんえん"
+        "ぐりこらん"
       ],
       "nameAliases": [
         "めとぐるこ",
         "めとほるみん",
-        "ぐりこらん",
-        "めとほるみんえんさんえん"
+        "ぐりこらん"
       ],
       "keywords": [],
       "priority": 5,
@@ -95,13 +93,12 @@
     "nameAliases": [
       "めとぐるこ",
       "めとほるみん",
-      "ぐりこらん",
-      "めとほるみんえんさんえん"
+      "ぐりこらん"
     ],
     "brandCatalog": {
       "メトグルコ": {
         "displayName": "メトグルコ",
-        "genericName": "メトホルミン塩酸塩",
+        "genericName": "メトホルミン",
         "displayGenericName": "メトホルミン",
         "genericKey": "metformin_mt",
         "handlingTags": [
@@ -117,7 +114,7 @@
       },
       "メトホルミン": {
         "displayName": "メトホルミン",
-        "genericName": "メトホルミン塩酸塩",
+        "genericName": "メトホルミン",
         "displayGenericName": "メトホルミン",
         "genericKey": "metformin_mt_generic",
         "handlingTags": [
@@ -125,17 +122,15 @@
           "renal_dose_adjustment"
         ],
         "aliases": [
-          "めとほるみん",
-          "めとほるみんえんさんえん"
+          "めとほるみん"
         ],
         "normalizedAliases": [
-          "めとほるみん",
-          "めとほるみんえんさんえん"
+          "めとほるみん"
         ]
       },
       "グリコラン": {
         "displayName": "グリコラン",
-        "genericName": "メトホルミン塩酸塩",
+        "genericName": "メトホルミン",
         "displayGenericName": "メトホルミン",
         "genericKey": "metformin_legacy",
         "handlingTags": [
@@ -153,8 +148,7 @@
     "aliasToBrand": {
       "めとぐるこ": "メトグルコ",
       "めとほるみん": "メトホルミン",
-      "ぐりこらん": "グリコラン",
-      "めとほるみんえんさんえん": "メトホルミン"
+      "ぐりこらん": "グリコラン"
     }
   },
   "drugResolution": {

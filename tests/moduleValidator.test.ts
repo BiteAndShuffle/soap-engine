@@ -69,10 +69,13 @@ describe('displayGenericName 必須化（自己テスト）', () => {
   })
 
   test('genericName（塩類名含む）をそのまま displayGenericName にコピー → DISPLAY_GENERIC_NAME_SALT_COPY', () => {
+    // SH-1B（塩/水和物正規化）以降、canonical の brandCatalog.genericName は塩類名を
+    // 含まない。ガード自体の健全性（将来の塩類名再混入を検出できること）は不変であり、
+    // 実データ依存をやめて合成した塩類名で検証する。
     const broken = cloneModule()
-    const genericName = broken.drug.brandCatalog[BRAND].genericName
-    assert.ok(genericName.includes('塩酸塩'), '前提: イメグリミンの genericName は塩酸塩を含む')
-    broken.drug.brandCatalog[BRAND].displayGenericName = genericName // 旧コピーパターンを再現
+    const syntheticSalted = 'イメグリミン塩酸塩'
+    broken.drug.brandCatalog[BRAND].genericName = syntheticSalted
+    broken.drug.brandCatalog[BRAND].displayGenericName = syntheticSalted // 旧コピーパターンを再現
     const codes = errorCodesOf(broken)
     assert.ok(
       codes.includes('DISPLAY_GENERIC_NAME_SALT_COPY'),

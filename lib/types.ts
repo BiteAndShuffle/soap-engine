@@ -440,8 +440,10 @@ export interface DrugSearch {
 /**
  * ブランド名ごとのエントリ。
  * displayName        — 表示用ブランド名（brandCatalog キーと一致・商品名）
- * genericName        — 正式名称（塩類名等を含む。drug.genericName はクラス名のため別管理）
- *                       専門・監査文脈専用。通常UI（検索候補・パンくず・SOAP本文）からは参照しない。
+ * genericName        — 有効成分同一性（剤形非依存）。DP-21（SH-1B）により塩類名・水和物等を
+ *                       含まない基本成分名へ正規化済み。drug.genericName はクラス名のため別管理。
+ *                       内部識別（brandCatalogIngredientMap）・監査文脈専用。
+ *                       通常UI（検索候補・パンくず・SOAP本文）からは参照しない。
  * displayGenericName — 表示用一般名のSSOT（塩類名を含まない）。検索候補・パンくず・
  *                       SOAP本文（{{drug_subject}}）が参照する唯一の一般名表示フィールド。
  *                       必須。genericName への暗黙フォールバックは行わない

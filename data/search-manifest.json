@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "3159de061d88d83455a2b86e7b73d0c2d555a315d9b95188edcf0d4d8119214a",
+  "sourceHash": "5e552b6a9c3ae1e235b7e322b63552234a3613cca67b4bb089a906a7bb3d3f70",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -2944,8 +2944,7 @@
       "nameAliases": [
         "めとぐるこ",
         "めとほるみん",
-        "ぐりこらん",
-        "めとほるみんえんさんえん"
+        "ぐりこらん"
       ],
       "drugClass": [
         "BIGUANIDE"
@@ -2962,8 +2961,7 @@
         "nameAliases": [
           "めとぐるこ",
           "めとほるみん",
-          "ぐりこらん",
-          "めとほるみんえんさんえん"
+          "ぐりこらん"
         ],
         "keywords": [],
         "formulationSearchTokens": [],
@@ -2985,7 +2983,7 @@
           "displayName": "メトグルコ",
           "displayGenericName": "メトホルミン",
           "genericKey": "metformin_mt",
-          "genericName": "メトホルミン塩酸塩",
+          "genericName": "メトホルミン",
           "handlingTags": [
             "metformin_high_dose",
             "renal_dose_adjustment"
@@ -2993,13 +2991,12 @@
         },
         "メトホルミン": {
           "aliases": [
-            "めとほるみん",
-            "めとほるみんえんさんえん"
+            "めとほるみん"
           ],
           "displayName": "メトホルミン",
           "displayGenericName": "メトホルミン",
           "genericKey": "metformin_mt_generic",
-          "genericName": "メトホルミン塩酸塩",
+          "genericName": "メトホルミン",
           "handlingTags": [
             "metformin_high_dose",
             "renal_dose_adjustment"
@@ -3012,7 +3009,7 @@
           "displayName": "グリコラン",
           "displayGenericName": "メトホルミン",
           "genericKey": "metformin_legacy",
-          "genericName": "メトホルミン塩酸塩",
+          "genericName": "メトホルミン",
           "handlingTags": [
             "metformin_legacy_low_dose",
             "renal_dose_adjustment"
@@ -3046,8 +3043,7 @@
         "あなぐりぷちん",
         "びるだぐりぷちん",
         "あろぐりぷちん",
-        "めとほるみん",
-        "めとほるみんえんさんえん"
+        "めとほるみん"
       ],
       "drugClass": [
         "DPP4_BIGUANIDE_COMBINATION"
@@ -3070,8 +3066,7 @@
           "あなぐりぷちん",
           "びるだぐりぷちん",
           "あろぐりぷちん",
-          "めとほるみん",
-          "めとほるみんえんさんえん"
+          "めとほるみん"
         ],
         "keywords": [],
         "formulationSearchTokens": [],
@@ -3092,7 +3087,7 @@
           "displayName": "メトアナ",
           "displayGenericName": "アナグリプチン/メトホルミン",
           "genericKey": "anagliptin_metformin_combo",
-          "genericName": "アナグリプチン/メトホルミン塩酸塩",
+          "genericName": "アナグリプチン/メトホルミン",
           "handlingTags": [
             "renal_dose_adjustment"
           ]
@@ -3105,7 +3100,7 @@
           "displayName": "エクメット",
           "displayGenericName": "ビルダグリプチン/メトホルミン",
           "genericKey": "vildagliptin_metformin_combo",
-          "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
+          "genericName": "ビルダグリプチン/メトホルミン",
           "handlingTags": [
             "renal_dose_adjustment"
           ]
@@ -3118,7 +3113,7 @@
           "displayName": "イニシンク",
           "displayGenericName": "アログリプチン/メトホルミン",
           "genericKey": "alogliptin_metformin_combo",
-          "genericName": "アログリプチン/メトホルミン塩酸塩",
+          "genericName": "アログリプチン/メトホルミン",
           "handlingTags": [
             "renal_dose_adjustment"
           ]
@@ -3131,7 +3126,7 @@
           "displayName": "メホビル",
           "displayGenericName": "ビルダグリプチン/メトホルミン",
           "genericKey": "vildagliptin_metformin_combo_generic",
-          "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
+          "genericName": "ビルダグリプチン/メトホルミン",
           "handlingTags": [
             "renal_dose_adjustment",
             "generic_equivalent"
@@ -3157,8 +3152,7 @@
       ],
       "nameAliases": [
         "あくとす",
-        "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん"
+        "ぴおぐりたぞん"
       ],
       "drugClass": [
         "THIAZOLIDINEDIONE"
@@ -3173,8 +3167,7 @@
         ],
         "nameAliases": [
           "あくとす",
-          "ぴおぐりたぞん",
-          "ぴおぐりたぞんえんさんえん"
+          "ぴおぐりたぞん"
         ],
         "keywords": [],
         "formulationSearchTokens": [],
@@ -3196,18 +3189,17 @@
           "displayName": "アクトス",
           "displayGenericName": "ピオグリタゾン",
           "genericKey": "pioglitazone_actos",
-          "genericName": "ピオグリタゾン塩酸塩",
+          "genericName": "ピオグリタゾン",
           "handlingTags": []
         },
         "ピオグリタゾン": {
           "aliases": [
-            "ぴおぐりたぞん",
-            "ぴおぐりたぞんえんさんえん"
+            "ぴおぐりたぞん"
           ],
           "displayName": "ピオグリタゾン",
           "displayGenericName": "ピオグリタゾン",
           "genericKey": "pioglitazone_actos_generic",
-          "genericName": "ピオグリタゾン塩酸塩",
+          "genericName": "ピオグリタゾン",
           "handlingTags": []
         }
       },
@@ -3230,8 +3222,7 @@
       "nameAliases": [
         "りおべる",
         "あろぐりぷちん",
-        "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん"
+        "ぴおぐりたぞん"
       ],
       "drugClass": [
         "DPP4_THIAZOLIDINEDIONE_COMBINATION"
@@ -3246,8 +3237,7 @@
         "nameAliases": [
           "りおべる",
           "あろぐりぷちん",
-          "ぴおぐりたぞん",
-          "ぴおぐりたぞんえんさんえん"
+          "ぴおぐりたぞん"
         ],
         "keywords": [],
         "formulationSearchTokens": [],
@@ -3268,7 +3258,7 @@
           "displayName": "リオベル",
           "displayGenericName": "アログリプチン／ピオグリタゾン",
           "genericKey": "alogliptin_pioglitazone_combo",
-          "genericName": "アログリプチン安息香酸塩／ピオグリタゾン塩酸塩",
+          "genericName": "アログリプチン／ピオグリタゾン",
           "handlingTags": []
         }
       },
@@ -3291,9 +3281,7 @@
       "nameAliases": [
         "めたくと",
         "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん",
-        "めとほるみん",
-        "めとほるみんえんさんえん"
+        "めとほるみん"
       ],
       "drugClass": [
         "THIAZOLIDINEDIONE_BIGUANIDE_COMBINATION"
@@ -3308,9 +3296,7 @@
         "nameAliases": [
           "めたくと",
           "ぴおぐりたぞん",
-          "ぴおぐりたぞんえんさんえん",
-          "めとほるみん",
-          "めとほるみんえんさんえん"
+          "めとほるみん"
         ],
         "keywords": [],
         "formulationSearchTokens": [],
@@ -3326,13 +3312,12 @@
         "メタクト": {
           "aliases": [
             "めたくと",
-            "めとほるみん",
-            "ぴおぐりたぞんえんさんえん"
+            "めとほるみん"
           ],
           "displayName": "メタクト",
           "displayGenericName": "ピオグリタゾン／メトホルミン",
           "genericKey": "pioglitazone_metformin_combo",
-          "genericName": "ピオグリタゾン塩酸塩／メトホルミン塩酸塩",
+          "genericName": "ピオグリタゾン／メトホルミン",
           "handlingTags": []
         }
       },
@@ -3443,7 +3428,6 @@
       "nameAliases": [
         "そにあす",
         "ぴおぐりたぞん",
-        "ぴおぐりたぞんえんさんえん",
         "ぐりめぴりど"
       ],
       "drugClass": [
@@ -3459,7 +3443,6 @@
         "nameAliases": [
           "そにあす",
           "ぴおぐりたぞん",
-          "ぴおぐりたぞんえんさんえん",
           "ぐりめぴりど"
         ],
         "keywords": [],
@@ -3476,13 +3459,12 @@
         "ソニアス": {
           "aliases": [
             "そにあす",
-            "ぐりめぴりど",
-            "ぴおぐりたぞんえんさんえん"
+            "ぐりめぴりど"
           ],
           "displayName": "ソニアス",
           "displayGenericName": "ピオグリタゾン／グリメピリド",
           "genericKey": "pioglitazone_glimepiride_combo",
-          "genericName": "ピオグリタゾン塩酸塩／グリメピリド",
+          "genericName": "ピオグリタゾン／グリメピリド",
           "handlingTags": []
         }
       },
@@ -3695,7 +3677,6 @@
       "nameAliases": [
         "ぐるべす",
         "みちぐりにど",
-        "みちぐりにどかるしうむすいわぶつ",
         "ぼぐりぼーす"
       ],
       "drugClass": [
@@ -3711,7 +3692,6 @@
         "nameAliases": [
           "ぐるべす",
           "みちぐりにど",
-          "みちぐりにどかるしうむすいわぶつ",
           "ぼぐりぼーす"
         ],
         "keywords": [],
@@ -3728,13 +3708,12 @@
         "グルベス": {
           "aliases": [
             "ぐるべす",
-            "ぼぐりぼーす",
-            "みちぐりにどかるしうむすいわぶつ"
+            "ぼぐりぼーす"
           ],
           "displayName": "グルベス",
           "displayGenericName": "ミチグリニド・ボグリボース",
           "genericKey": "mitiglinide_voglibose_combo",
-          "genericName": "ミチグリニドカルシウム水和物・ボグリボース",
+          "genericName": "ミチグリニド・ボグリボース",
           "handlingTags": []
         }
       },
@@ -3756,8 +3735,7 @@
       ],
       "nameAliases": [
         "ついみーぐ",
-        "いめぐりみん",
-        "いめぐりみんえんさんえん"
+        "いめぐりみん"
       ],
       "drugClass": [
         "IMEGLIMIN"
@@ -3771,8 +3749,7 @@
         ],
         "nameAliases": [
           "ついみーぐ",
-          "いめぐりみん",
-          "いめぐりみんえんさんえん"
+          "いめぐりみん"
         ],
         "keywords": [],
         "formulationSearchTokens": [],
@@ -3792,7 +3769,7 @@
           "displayName": "ツイミーグ",
           "displayGenericName": "イメグリミン",
           "genericKey": "imeglimin",
-          "genericName": "イメグリミン塩酸塩",
+          "genericName": "イメグリミン",
           "handlingTags": []
         }
       },

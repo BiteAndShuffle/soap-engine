@@ -74,11 +74,13 @@ describe('T-U2-1 既存 field projection が golden fixture と一致する（ra
 })
 
 describe('T-U2-2 single-brand module の unresolved 候補は denotation=brand へ構造的に導出される', () => {
-  // module 到達は module 単位 alias 経由で、brand 単位では未解決のままのケース（D-2 / D-3 / D-4）
+  // module 到達は module 単位 alias 経由で、brand 単位では未解決のままのケース（D-2 / D-3 / D-4）。
+  // SH-1B（Owner D-2）で塩形読みを検索面から撤去したため、同じ「module 到達・brand 未解決」
+  // 状態を作る vehicle をクラス名・薬効群読みへ差し替える（導出ロジック自体は不変）。
   const cases: Array<[string, string, string]> = [
-    ['D-2 リオベル', 'dm_dpp4_thiazolidinedione_combination_oral', 'ぴおぐりたぞんえんさんえん'],
-    ['D-3 メタクト', 'dm_thiazolidinedione_biguanide_combination_oral', 'めとほるみんえんさんえん'],
-    ['D-4 ツイミーグ', 'dm_imeglimin_oral', 'いめぐりみんえんさんえん'],
+    ['D-2 リオベル', 'dm_dpp4_thiazolidinedione_combination_oral', 'dpp4'],
+    ['D-3 メタクト', 'dm_thiazolidinedione_biguanide_combination_oral', 'ちあぞりじん'],
+    ['D-4 ツイミーグ', 'dm_imeglimin_oral', 'イメグリミン系経口血糖降下剤'],
   ]
   for (const [label, moduleId, query] of cases) {
     test(`${label}: matchedBrandName が未確定でも resolution.denotation='brand'`, () => {
@@ -127,7 +129,8 @@ describe('T-U2-3 multi-brand / generic group 1 件の module は denotation=gene
 
 describe('T-U2-4 multi-brand / generic group 複数の module は denotation=module / subject=null', () => {
   const cases: Array<[string, string, string]> = [
-    ['D-1 メトアナ系（brand 4 / group 4）', 'dm_dpp4_biguanide_combination_oral', 'めとほるみんえんさんえん'],
+    // SH-1B（Owner D-2）で塩形読み撤去。薬効群読みで同じ「真に曖昧」状態を再現する。
+    ['D-1 メトアナ系（brand 4 / group 4）', 'dm_dpp4_biguanide_combination_oral', 'びぐあないど'],
     ['leukotriene（brand 5 / group 2）', 'allergy_leukotriene_receptor_antagonist_oral', 'ろいことりえん'],
   ]
   for (const [label, moduleId, query] of cases) {
@@ -177,7 +180,8 @@ describe('T-U2-6 corpus 部分一致のみの候補は matchStrength=weak', () =
 
 describe('T-U2-7 generic resolution は authoritative な単一 brandKey を持たない', () => {
   test('denotation=generic の候補に brandKey フィールドが存在しない', () => {
-    const queries = ['ぴおぐりたぞんえんさんえん', 'いんすりんあすぱると', 'へぱりんるいじぶっしつ', 'いんすりんひと']
+    // SH-1B（Owner D-2）で塩形読み撤去。基本一般名読み「ぴおぐりたぞん」で generic 候補へ到達する。
+    const queries = ['ぴおぐりたぞん', 'いんすりんあすぱると', 'へぱりんるいじぶっしつ', 'いんすりんひと']
     let checked = 0
     for (const q of queries) {
       for (const r of getDrugSuggestions(q, index, 8)) {

@@ -80,6 +80,12 @@ drug:
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
   #
+  # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
+  #   以下の「成分名読みの扱い」では塩形 kana 読み（〜えんさんえん／〜すいわぶつ）を
+  #   alias 面へ追加する旨を記載しているが、これらの塩形読みは SH-1B で検索面から
+  #   撤去済みである（塩／水和物の正式名読みは検索面を持たない）。現在の成分名読みは
+  #   基本一般名読みのみ。以下の記述は当時の設計判断の記録として保持する。
+  #
   # 成分名読みの扱い（dm_dpp4_oral / dm_biguanide_metformin_oral と同型の判断）:
   #   - あなぐりぷちん（アナグリプチン）/ びるだぐりぷちん（ビルダグリプチン）/
   #     あろぐりぷちん（アログリプチン）は dm_dpp4_oral.drug.search.nameAliases に
@@ -124,7 +130,6 @@ drug:
       - "びるだぐりぷちん"
       - "あろぐりぷちん"
       - "めとほるみん"
-      - "めとほるみんえんさんえん"
 
     nameAliases:
       - "めとあな"
@@ -135,7 +140,6 @@ drug:
       - "びるだぐりぷちん"
       - "あろぐりぷちん"
       - "めとほるみん"
-      - "めとほるみんえんさんえん"
 
     keywords: []
 
@@ -155,7 +159,6 @@ drug:
     - "びるだぐりぷちん"
     - "あろぐりぷちん"
     - "めとほるみん"
-    - "めとほるみんえんさんえん"
 
   # ─────────────────────────────────────────
   # brandCatalog: 4 ブランド（先発3・GE1、区分して整理）
@@ -169,7 +172,7 @@ drug:
     # ───────── 先発ブランド ─────────
     メトアナ:
       displayName: "メトアナ"
-      genericName: "アナグリプチン/メトホルミン塩酸塩"
+      genericName: "アナグリプチン/メトホルミン"
       displayGenericName: "アナグリプチン/メトホルミン"
       genericKey: "anagliptin_metformin_combo"
       handlingTags:
@@ -183,7 +186,7 @@ drug:
 
     エクメット:
       displayName: "エクメット"
-      genericName: "ビルダグリプチン/メトホルミン塩酸塩"
+      genericName: "ビルダグリプチン/メトホルミン"
       displayGenericName: "ビルダグリプチン/メトホルミン"
       genericKey: "vildagliptin_metformin_combo"
       handlingTags:
@@ -197,7 +200,7 @@ drug:
 
     イニシンク:
       displayName: "イニシンク"
-      genericName: "アログリプチン/メトホルミン塩酸塩"
+      genericName: "アログリプチン/メトホルミン"
       displayGenericName: "アログリプチン/メトホルミン"
       genericKey: "alogliptin_metformin_combo"
       handlingTags:
@@ -212,7 +215,7 @@ drug:
     # ───────── GEブランド ─────────
     メホビル:
       displayName: "メホビル"
-      genericName: "ビルダグリプチン/メトホルミン塩酸塩"
+      genericName: "ビルダグリプチン/メトホルミン"
       displayGenericName: "ビルダグリプチン/メトホルミン"
       # ↑ エクメットと同一成分（GE）
       genericKey: "vildagliptin_metformin_combo_generic"

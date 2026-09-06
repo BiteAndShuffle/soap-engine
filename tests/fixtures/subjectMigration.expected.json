@@ -2,14 +2,14 @@
   "_comment": "U-4b expected semantic delta。scripts/generate-subject-migration-fixture.ts で生成する。手で編集しない。",
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
-    "queries": 575,
-    "rows": 1662,
+    "queries": 571,
+    "rows": 1644,
     "byDenotation": {
-      "brand": 1015,
-      "generic": 589,
-      "module": 58
+      "brand": 1001,
+      "generic": 586,
+      "module": 57
     },
-    "changedRows": 83,
+    "changedRows": 82,
     "reachableChangedRows": 25,
     "reachableChangedPatterns": 6,
     "reachableChangedModules": [
@@ -20,7 +20,7 @@
       "dm_insulin_mixed_regular_intermediate",
       "dm_insulin_regular"
     ],
-    "gatedChangedRows": 58,
+    "gatedChangedRows": 57,
     "gatedChangedModules": [
       "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "allergy_h1_antihistamine_eye_drops",
@@ -150,7 +150,7 @@
       "denotation": "module",
       "legacySubject": "メトアナ",
       "resolutionSubject": null,
-      "exampleQuery": "めとほるみんえんさんえん"
+      "exampleQuery": "DPP-4阻害薬／ビグアナイド配合剤"
     },
     {
       "moduleId": "dm_dpp4_oral",
@@ -1073,14 +1073,6 @@
     },
     {
       "query": "いめぐりみん",
-      "moduleId": "dm_imeglimin_oral",
-      "denotation": "brand",
-      "legacySubject": "ツイミーグ",
-      "resolutionSubject": "ツイミーグ",
-      "changed": false
-    },
-    {
-      "query": "いめぐりみんえんさんえん",
       "moduleId": "dm_imeglimin_oral",
       "denotation": "brand",
       "legacySubject": "ツイミーグ",
@@ -5600,62 +5592,6 @@
       "changed": false
     },
     {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
-      "denotation": "brand",
-      "legacySubject": "ピオグリタゾン",
-      "resolutionSubject": "ピオグリタゾン",
-      "changed": false
-    },
-    {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "ピオグリタゾン／グリメピリド",
-      "resolutionSubject": "ピオグリタゾン／グリメピリド",
-      "changed": false
-    },
-    {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "ソニアス",
-      "resolutionSubject": "ソニアス",
-      "changed": false
-    },
-    {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "ピオグリタゾン／メトホルミン",
-      "resolutionSubject": "ピオグリタゾン／メトホルミン",
-      "changed": false
-    },
-    {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "メタクト",
-      "resolutionSubject": "メタクト",
-      "changed": false
-    },
-    {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "リオベル",
-      "resolutionSubject": "リオベル",
-      "changed": false
-    },
-    {
-      "query": "ぴおぐりたぞんえんさんえん",
-      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "リオベル",
-      "resolutionSubject": "リオベル",
-      "changed": false
-    },
-    {
       "query": "ふぁすてぃっく",
       "moduleId": "dm_glinide_oral",
       "denotation": "brand",
@@ -6625,6 +6561,22 @@
     },
     {
       "query": "みちぐりにど",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "ミチグリニド・ボグリボース",
+      "resolutionSubject": "ミチグリニド・ボグリボース",
+      "changed": false
+    },
+    {
+      "query": "みちぐりにど",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
+      "changed": false
+    },
+    {
+      "query": "みちぐりにど",
       "moduleId": "dm_glinide_oral",
       "denotation": "generic",
       "legacySubject": "ミチグリニド",
@@ -6637,38 +6589,6 @@
       "denotation": "brand",
       "legacySubject": "グルファスト",
       "resolutionSubject": "グルファスト",
-      "changed": false
-    },
-    {
-      "query": "みちぐりにど",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "ミチグリニド・ボグリボース",
-      "resolutionSubject": "ミチグリニド・ボグリボース",
-      "changed": false
-    },
-    {
-      "query": "みちぐりにど",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "グルベス",
-      "resolutionSubject": "グルベス",
-      "changed": false
-    },
-    {
-      "query": "みちぐりにどかるしうむすいわぶつ",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "ミチグリニド・ボグリボース",
-      "resolutionSubject": "ミチグリニド・ボグリボース",
-      "changed": false
-    },
-    {
-      "query": "みちぐりにどかるしうむすいわぶつ",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "グルベス",
-      "resolutionSubject": "グルベス",
       "changed": false
     },
     {
@@ -6825,70 +6745,6 @@
     },
     {
       "query": "めとほるみん",
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "メタクト",
-      "resolutionSubject": "メタクト",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_biguanide_metformin_oral",
-      "denotation": "brand",
-      "legacySubject": "メトホルミン",
-      "resolutionSubject": "メトホルミン",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "メタクト",
-      "resolutionSubject": "メタクト",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "denotation": "module",
-      "legacySubject": "メトアナ",
-      "resolutionSubject": null,
-      "changed": true
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "メトアナ",
-      "resolutionSubject": "メトアナ",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "エクメット",
-      "resolutionSubject": "エクメット",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "イニシンク",
-      "resolutionSubject": "イニシンク",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "メホビル",
-      "resolutionSubject": "メホビル",
-      "changed": false
-    },
-    {
-      "query": "めとほるみんえんさんえん",
       "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
       "denotation": "brand",
       "legacySubject": "メタクト",
@@ -12257,22 +12113,6 @@
     },
     {
       "query": "ミチグリニド",
-      "moduleId": "dm_glinide_oral",
-      "denotation": "generic",
-      "legacySubject": "ミチグリニド",
-      "resolutionSubject": "ミチグリニド",
-      "changed": false
-    },
-    {
-      "query": "ミチグリニド",
-      "moduleId": "dm_glinide_oral",
-      "denotation": "brand",
-      "legacySubject": "グルファスト",
-      "resolutionSubject": "グルファスト",
-      "changed": false
-    },
-    {
-      "query": "ミチグリニド",
       "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
       "denotation": "generic",
       "legacySubject": "ミチグリニド・ボグリボース",
@@ -12285,6 +12125,22 @@
       "denotation": "brand",
       "legacySubject": "グルベス",
       "resolutionSubject": "グルベス",
+      "changed": false
+    },
+    {
+      "query": "ミチグリニド",
+      "moduleId": "dm_glinide_oral",
+      "denotation": "generic",
+      "legacySubject": "ミチグリニド",
+      "resolutionSubject": "ミチグリニド",
+      "changed": false
+    },
+    {
+      "query": "ミチグリニド",
+      "moduleId": "dm_glinide_oral",
+      "denotation": "brand",
+      "legacySubject": "グルファスト",
+      "resolutionSubject": "グルファスト",
       "changed": false
     },
     {

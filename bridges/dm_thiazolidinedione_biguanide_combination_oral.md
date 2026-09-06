@@ -75,6 +75,12 @@ drug:
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
   #
+  # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
+  #   以下の「成分名読みの扱い」では塩形 kana 読み（〜えんさんえん／〜すいわぶつ）を
+  #   alias 面へ追加する旨を記載しているが、これらの塩形読みは SH-1B で検索面から
+  #   撤去済みである（塩／水和物の正式名読みは検索面を持たない）。現在の成分名読みは
+  #   基本一般名読みのみ。以下の記述は当時の設計判断の記録として保持する。
+  #
   # 成分名読みの扱い（既存TZD/ビグアナイドモジュールにある読みのみを流用。新規推測なし）:
   #   - ぴおぐりたぞん（ピオグリタゾン）/ ぴおぐりたぞんえんさんえん
   #     （ピオグリタゾン塩酸塩）は dm_thiazolidinedione_pioglitazone_oral.drug.search.nameAliases
@@ -106,16 +112,12 @@ drug:
     prefixAliases:
       - "めたくと"
       - "ぴおぐりたぞん"
-      - "ぴおぐりたぞんえんさんえん"
       - "めとほるみん"
-      - "めとほるみんえんさんえん"
 
     nameAliases:
       - "めたくと"
       - "ぴおぐりたぞん"
-      - "ぴおぐりたぞんえんさんえん"
       - "めとほるみん"
-      - "めとほるみんえんさんえん"
 
     keywords: []
 
@@ -129,9 +131,7 @@ drug:
   nameAliases:
     - "めたくと"
     - "ぴおぐりたぞん"
-    - "ぴおぐりたぞんえんさんえん"
     - "めとほるみん"
-    - "めとほるみんえんさんえん"
 
   # ─────────────────────────────────────────
   # brandCatalog: 1 ブランド（メタクトのみ、単一ブランドとして扱う）
@@ -142,34 +142,32 @@ drug:
   brandCatalog:
     メタクト:
       displayName: "メタクト"
-      genericName: "ピオグリタゾン塩酸塩／メトホルミン塩酸塩"
+      genericName: "ピオグリタゾン／メトホルミン"
       displayGenericName: "ピオグリタゾン／メトホルミン"
       genericKey: "pioglitazone_metformin_combo"
       handlingTags: []
       aliases:
         - "めたくと"
         - "めとほるみん"
-        - "ぴおぐりたぞんえんさんえん"
       normalizedAliases:
         - "めたくと"
         - "めとほるみん"
-        - "ぴおぐりたぞんえんさんえん"
 
   aliasToBrand:
     "めたくと": "メタクト"
     "めとほるみん": "メタクト"
-    "ぴおぐりたぞんえんさんえん": "メタクト"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。3件・3件で一致。
+  # （RULES.md §10）。2件・2件で一致（SH-1B: DP-21 により塩形読み「ぴおぐりたぞんえんさんえん」を撤去したため 3件→2件）。
   # 第2成分読み「めとほるみん」は brandCatalog.メタクト.aliases に登録したため
   # aliasToBrand にも同一読みを追加した（DP-09 配合剤条項。ソニアス＝U-D-S3-1 /
-  # グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。塩形読み
-  # 「ぴおぐりたぞんえんさんえん」も同様に brandCatalog.メタクト.aliases へ登録し
-  # aliasToBrand にも追加した（Class S。ソニアス／グルベスの同型登録と揃える）。
-  # 第1成分読み（ぴおぐりたぞん）および塩形読み「めとほるみんえんさんえん」は
-  # module 単位 nameAliases 側のみに存在し brandCatalog.aliases には複製していない
-  # ため、引き続き aliasToBrand の対象外（後者は Deferred Finding「89cf33f
-  # own-name priority と DP-09 cross-module reachability の衝突」に該当）。
+  # グルベス＝U-D-S3-2 / リオベル＝U-D-S3-3 の既存実績と同型）。
+  # 第1成分読み（ぴおぐりたぞん）は module 単位 nameAliases 側のみに存在し
+  # brandCatalog.aliases には複製していないため、aliasToBrand の対象外。
+  # 塩形読み「ぴおぐりたぞんえんさんえん」は 2026-07 に Class S として
+  # brandCatalog.メタクト.aliases / aliasToBrand へ登録していたが、SH-1B（DP-21）で
+  # 全 alias 面から撤去済み。塩形読み「めとほるみんえんさんえん」も同様に SH-1B で撤去済み
+  # （module 単位 nameAliases のみに存在していた。Deferred Finding「89cf33f own-name
+  # priority と DP-09 cross-module reachability の衝突」の記録は歴史として保持）。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags

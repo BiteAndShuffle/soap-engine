@@ -481,13 +481,15 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   // 3-dgn) brandCatalog[brand].displayGenericName の必須化・旧コピーパターン検出
   //
   // displayGenericName は表示用一般名の SSOT（塩類名を含まない）。
-  // genericName（正式名称・塩類名を含む）へは暗黙にも明示にもフォールバックしない設計のため、
+  // genericName へは暗黙にも明示にもフォールバックしない設計のため、
   // ここで構造的に「存在しないデータを作れない」ことを保証する。
   //
-  // SALT_TERMS は genericName に含まれうる塩類・結晶水由来の修飾語。
-  // displayGenericName がこれと完全一致する場合は「genericName をそのままコピーした」
-  // 旧アンチパターンとみなし、機械的な名称生成・修正は行わずエラーとして停止する
-  // （値の決定は常に bridge の人間判断に委ねる）。
+  // DP-21（SH-1B・2026-09）により canonical の genericName は塩類名・水和物等を含まない
+  // 基本成分名へ正規化済み。SALT_TERMS / DISPLAY_GENERIC_NAME_SALT_COPY は
+  // **将来の塩／水和物再混入を検出する予防ガード**として存置する（弱めない）。
+  // genericName に塩類・結晶水由来の修飾語が混入し、かつ displayGenericName と完全一致する
+  // 場合は「genericName をそのままコピーした」旧アンチパターンとみなし、機械的な名称生成・
+  // 修正は行わずエラーとして停止する（値の決定は常に bridge の人間判断に委ねる）。
   const SALT_TERMS = [
     '塩酸塩', 'メシル酸塩', 'マレイン酸塩', 'リン酸塩', '硫酸塩',
     'クエン酸塩', '酒石酸塩', 'フマル酸塩', '臭化水素酸塩', 'コハク酸塩',

@@ -65,72 +65,7 @@
       "isGenericLabel": null
     }
   ],
-  "めとほるみんえんさんえん": [
-    {
-      "moduleId": "dm_biguanide_metformin_oral",
-      "matchedBrandName": "メトホルミン",
-      "drugDisplayLabel": "メトホルミン",
-      "uiLabel": "メトホルミン（メトホルミン）",
-      "representativeTemplateId": "dm_biguanide_metformin_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "matchedBrandName": null,
-      "drugDisplayLabel": "メタクト",
-      "uiLabel": null,
-      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "matchedBrandName": null,
-      "drugDisplayLabel": "メトアナ",
-      "uiLabel": null,
-      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "matchedBrandName": "メトアナ",
-      "drugDisplayLabel": "メトアナ",
-      "uiLabel": "メトアナ（アナグリプチン/メトホルミン）",
-      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "matchedBrandName": "エクメット",
-      "drugDisplayLabel": "エクメット",
-      "uiLabel": "エクメット（ビルダグリプチン/メトホルミン）",
-      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "matchedBrandName": "イニシンク",
-      "drugDisplayLabel": "イニシンク",
-      "uiLabel": "イニシンク（アログリプチン/メトホルミン）",
-      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_biguanide_combination_oral",
-      "matchedBrandName": "メホビル",
-      "drugDisplayLabel": "メホビル",
-      "uiLabel": "メホビル（ビルダグリプチン/メトホルミン）",
-      "representativeTemplateId": "dm_dpp4_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "matchedBrandName": "メタクト",
-      "drugDisplayLabel": "メタクト",
-      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
-      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    }
-  ],
+  "めとほるみんえんさんえん": [],
   "ぴおぐり": [
     {
       "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
@@ -197,74 +132,8 @@
       "isGenericLabel": null
     }
   ],
-  "ぴおぐりたぞんえんさんえん": [
-    {
-      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
-      "matchedBrandName": "ピオグリタゾン",
-      "drugDisplayLabel": "ピオグリタゾン",
-      "uiLabel": "ピオグリタゾン（ピオグリタゾン）",
-      "representativeTemplateId": "dm_thiazolidinedione_pioglitazone_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
-      "matchedBrandName": "ソニアス",
-      "drugDisplayLabel": "ピオグリタゾン／グリメピリド",
-      "uiLabel": "ピオグリタゾン／グリメピリド",
-      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
-      "matchedBrandName": "ソニアス",
-      "drugDisplayLabel": "ソニアス",
-      "uiLabel": "ソニアス（ピオグリタゾン／グリメピリド）",
-      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "matchedBrandName": "メタクト",
-      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
-      "uiLabel": "ピオグリタゾン／メトホルミン",
-      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "matchedBrandName": "メタクト",
-      "drugDisplayLabel": "メタクト",
-      "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
-      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
-      "matchedBrandName": null,
-      "drugDisplayLabel": "リオベル",
-      "uiLabel": null,
-      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
-      "matchedBrandName": "リオベル",
-      "drugDisplayLabel": "リオベル",
-      "uiLabel": "リオベル（アログリプチン／ピオグリタゾン）",
-      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
-      "isGenericLabel": null
-    }
-  ],
-  "いめぐりみんえんさんえん": [
-    {
-      "moduleId": "dm_imeglimin_oral",
-      "matchedBrandName": null,
-      "drugDisplayLabel": "ツイミーグ",
-      "uiLabel": null,
-      "representativeTemplateId": "dm_imeglimin_oral.initial",
-      "isGenericLabel": null
-    }
-  ],
+  "ぴおぐりたぞんえんさんえん": [],
+  "いめぐりみんえんさんえん": [],
   "めたくと": [
     {
       "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",

@@ -65,9 +65,13 @@ drug:
   # search セクション: 確定（2026-07-05）
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
-  # 成分名（メトホルミン塩酸塩）の読み「めとほるみんえんさんえん」は module 単位の
-  # prefixAliases/nameAliases に加え、brandCatalog.メトホルミン.aliases/normalizedAliases
-  # にも追加する（2026-07 改訂）。
+  # 成分名の基本読み「めとほるみん」は module 単位の prefixAliases/nameAliases に加え、
+  # brandCatalog.メトホルミン.aliases/normalizedAliases にも登録する。
+  #
+  # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
+  #   塩形読み「めとほるみんえんさんえん」は 2026-07 改訂で全 alias 面へ追加されていたが、
+  #   検索面から撤去した（塩／水和物の正式名読みは検索面を持たない）。
+  #   以下の【2026-07-05 決定からの変更点】は当時の設計判断の記録として保持する。
   #
   # 【2026-07-05 決定からの変更点】
   # 旧方針: 複数ブランドへの複製で aliasToBrand の解決先が曖昧になることを避けるため、
@@ -90,13 +94,11 @@ drug:
       - "めとぐるこ"
       - "めとほるみん"
       - "ぐりこらん"
-      - "めとほるみんえんさんえん"
 
     nameAliases:
       - "めとぐるこ"
       - "めとほるみん"
       - "ぐりこらん"
-      - "めとほるみんえんさんえん"
 
     keywords: []
 
@@ -118,12 +120,11 @@ drug:
     - "めとぐるこ"
     - "めとほるみん"
     - "ぐりこらん"
-    - "めとほるみんえんさんえん"
 
   # ─────────────────────────────────────────
   # brandCatalog: 3 ブランド
   # ─────────────────────────────────────────
-  # 3ブランドはすべて同一成分（メトホルミン塩酸塩）だが、用量帯・剤形設計が異なるため
+  # 3ブランドはすべて同一成分（メトホルミン。DP-21 正規化後の genericName）だが、用量帯・剤形設計が異なるため
   # genericKey をユーザー指定どおり3種に分離する（意図的差分・確定済み）:
   #   - メトグルコ / メトホルミン（GE）: 高用量製剤系統（最大2250mg/日）
   #   - グリコラン: 旧来低用量製剤系統（最大750mg/日）
@@ -144,7 +145,7 @@ drug:
   brandCatalog:
     メトグルコ:
       displayName: "メトグルコ"
-      genericName: "メトホルミン塩酸塩"
+      genericName: "メトホルミン"
       displayGenericName: "メトホルミン"
       genericKey: "metformin_mt"
       handlingTags:
@@ -157,7 +158,7 @@ drug:
 
     メトホルミン:
       displayName: "メトホルミン"
-      genericName: "メトホルミン塩酸塩"
+      genericName: "メトホルミン"
       displayGenericName: "メトホルミン"
       genericKey: "metformin_mt_generic"
       handlingTags:
@@ -165,14 +166,12 @@ drug:
         - "renal_dose_adjustment"
       aliases:
         - "めとほるみん"
-        - "めとほるみんえんさんえん"
       normalizedAliases:
         - "めとほるみん"
-        - "めとほるみんえんさんえん"
 
     グリコラン:
       displayName: "グリコラン"
-      genericName: "メトホルミン塩酸塩"
+      genericName: "メトホルミン"
       displayGenericName: "メトホルミン"
       genericKey: "metformin_legacy"
       handlingTags:
@@ -187,9 +186,8 @@ drug:
     "めとぐるこ": "メトグルコ"
     "めとほるみん": "メトホルミン"
     "ぐりこらん": "グリコラン"
-    "めとほるみんえんさんえん": "メトホルミン"
   # aliasToBrand は brandCatalog[brand].normalizedAliases を過不足なく網羅する
-  # （RULES.md §10）。4件・4件で一致（2026-07: メトホルミンへ塩名読み追加に伴い増加）。
+  # （RULES.md §10）。3件・3件で一致（SH-1B: DP-21 により塩形読み「めとほるみんえんさんえん」を撤去したため 4件→3件）。
 
   # ─────────────────────────────────────────
   # drugResolution.brandToTags: 確定（2026-07-05）
