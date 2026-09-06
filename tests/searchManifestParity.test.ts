@@ -140,9 +140,12 @@ describe('T-1 structured search parity（canonical ⇔ manifest）', () => {
     )
   })
 
-  test('SearchEntry の全 21 フィールドが 1 件残らず一致する', () => {
+  test('SearchEntry の全 22 フィールドが 1 件残らず一致する', () => {
     const keys = Object.keys(canonicalIndex[0]) as Array<keyof (typeof canonicalIndex)[0]>
-    assert.equal(keys.length, 21, `SearchEntry のフィールド数が 21 から変化している: ${keys.length}`)
+    // 2026-09: brandCatalogIngredientMap 追加により 21 → 22（S-2E/S-2F。
+    // H1 内服/点眼のようなモジュール間の一般名前方一致促進ブロックを、
+    // 剤形非依存の有効成分（genericName）で関係スコープ化するために追加）。
+    assert.equal(keys.length, 22, `SearchEntry のフィールド数が 22 から変化している: ${keys.length}`)
 
     const mismatches: string[] = []
     for (const k of keys) {

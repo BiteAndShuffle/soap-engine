@@ -41,7 +41,7 @@ export const SEARCH_MANIFEST_VERSION = '1'
 // 型定義
 // ─────────────────────────────────────────────────────────────
 
-/** brandCatalog から検索に必要な 5 フィールドのみを抽出したもの */
+/** brandCatalog から検索に必要な 6 フィールドのみを抽出したもの */
 export interface ManifestBrandEntry {
   /**
    * 正規表記のブランド名。**存在する場合のみ設定する**（D-S4-3）。
@@ -53,6 +53,13 @@ export interface ManifestBrandEntry {
   displayGenericName?: string
   /** 同一成分グルーピング用キー。未設定時は displayGenericName へフォールバック */
   genericKey?: string
+  /**
+   * 有効成分識別（剤形非依存）。displayGenericName とは異なり剤形の修飾
+   * （例:「点眼液」）を含まない。SearchEntry.brandCatalogIngredientMap の再構築専用
+   * （2026-09 追加）。canonical の値をそのまま保持し、displayGenericName からの
+   * フォールバック・推測・正規化は一切行わない（D-S4-3 と同じ規律）。
+   */
+  genericName?: string
   /** 読み仮名・表記揺れ */
   aliases: string[]
   /** 適応横断ラベル（DP-11） */
@@ -187,6 +194,7 @@ export function toManifestModule(m: ModuleData): ManifestModule {
     if (raw.displayName !== undefined) entry.displayName = raw.displayName
     if (raw.displayGenericName !== undefined) entry.displayGenericName = raw.displayGenericName
     if (raw.genericKey !== undefined) entry.genericKey = raw.genericKey
+    if (raw.genericName !== undefined) entry.genericName = raw.genericName
     if (raw.indicationLabel !== undefined) entry.indicationLabel = raw.indicationLabel
     // handlingTags は配列全体を原順序のまま保持する（D-S4-11。縮約・並べ替えを行わない）
     if (raw.handlingTags !== undefined) entry.handlingTags = raw.handlingTags

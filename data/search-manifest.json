@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "6d0ce8004598cda51a0d08aa224d52dc6d728ff34cae3f99d8016a22a5d7588f",
+  "sourceHash": "3159de061d88d83455a2b86e7b73d0c2d555a315d9b95188edcf0d4d8119214a",
   "moduleCount": 35,
   "scenarioCount": 1060,
   "modules": [
@@ -66,6 +66,7 @@
           ],
           "displayName": "リベルサス",
           "displayGenericName": "セマグルチド",
+          "genericName": "セマグルチド",
           "handlingTags": [
             "ribelsus"
           ]
@@ -168,7 +169,8 @@
             "りらぐるちど"
           ],
           "displayName": "ビクトーザ",
-          "displayGenericName": "リラグルチド"
+          "displayGenericName": "リラグルチド",
+          "genericName": "リラグルチド"
         },
         "バイエッタ": {
           "aliases": [
@@ -178,7 +180,8 @@
             "えきせなちど"
           ],
           "displayName": "バイエッタ",
-          "displayGenericName": "エキセナチド"
+          "displayGenericName": "エキセナチド",
+          "genericName": "エキセナチド"
         },
         "リキスミア": {
           "aliases": [
@@ -188,7 +191,8 @@
             "りきしせなちど"
           ],
           "displayName": "リキスミア",
-          "displayGenericName": "リキシセナチド"
+          "displayGenericName": "リキシセナチド",
+          "genericName": "リキシセナチド"
         },
         "トルリシティ": {
           "aliases": [
@@ -198,7 +202,8 @@
             "でゅらぐるちど"
           ],
           "displayName": "トルリシティ",
-          "displayGenericName": "デュラグルチド"
+          "displayGenericName": "デュラグルチド",
+          "genericName": "デュラグルチド"
         },
         "オゼンピック": {
           "aliases": [
@@ -208,7 +213,8 @@
             "せまぐるちど"
           ],
           "displayName": "オゼンピック",
-          "displayGenericName": "セマグルチド"
+          "displayGenericName": "セマグルチド",
+          "genericName": "セマグルチド"
         }
       },
       "classKey": "glp1ra",
@@ -273,7 +279,8 @@
             "ちるぜぱちど"
           ],
           "displayName": "マンジャロ皮下注",
-          "displayGenericName": "チルゼパチド皮下注"
+          "displayGenericName": "チルゼパチド皮下注",
+          "genericName": "チルゼパチド"
         }
       },
       "classKey": "gip_glp1ra",
@@ -401,6 +408,7 @@
           ],
           "displayName": "アレジオン点眼液",
           "displayGenericName": "エピナスチン点眼液",
+          "genericName": "エピナスチン",
           "handlingTags": [
             "reduced_frequency_option"
           ]
@@ -412,6 +420,7 @@
           ],
           "displayName": "エピナスチン点眼液",
           "displayGenericName": "エピナスチン点眼液",
+          "genericName": "エピナスチン",
           "handlingTags": [
             "reduced_frequency_option"
           ]
@@ -423,6 +432,7 @@
           ],
           "displayName": "ザジテン点眼液",
           "displayGenericName": "ケトチフェン点眼液",
+          "genericName": "ケトチフェン",
           "handlingTags": []
         },
         "ケトチフェン点眼液": {
@@ -432,6 +442,7 @@
           ],
           "displayName": "ケトチフェン点眼液",
           "displayGenericName": "ケトチフェン点眼液",
+          "genericName": "ケトチフェン",
           "handlingTags": []
         },
         "パタノール点眼液": {
@@ -441,6 +452,7 @@
           ],
           "displayName": "パタノール点眼液",
           "displayGenericName": "オロパタジン点眼液",
+          "genericName": "オロパタジン",
           "handlingTags": [
             "light_protection"
           ]
@@ -452,6 +464,7 @@
           ],
           "displayName": "オロパタジン点眼液",
           "displayGenericName": "オロパタジン点眼液",
+          "genericName": "オロパタジン",
           "handlingTags": [
             "light_protection"
           ]
@@ -463,6 +476,7 @@
           ],
           "displayName": "リボスチン点眼液",
           "displayGenericName": "レボカバスチン点眼液",
+          "genericName": "レボカバスチン",
           "handlingTags": [
             "suspension"
           ]
@@ -474,6 +488,7 @@
           ],
           "displayName": "レボカバスチン点眼液",
           "displayGenericName": "レボカバスチン点眼液",
+          "genericName": "レボカバスチン",
           "handlingTags": [
             "suspension"
           ]
@@ -626,6 +641,7 @@
           ],
           "displayName": "アレグラ",
           "displayGenericName": "フェキソフェナジン",
+          "genericName": "フェキソフェナジン",
           "handlingTags": [
             "fexofenadine",
             "fruit_juice_interaction"
@@ -638,6 +654,7 @@
           ],
           "displayName": "クラリチン",
           "displayGenericName": "ロラタジン",
+          "genericName": "ロラタジン",
           "handlingTags": [
             "loratadine"
           ]
@@ -649,6 +666,7 @@
           ],
           "displayName": "ザイザル",
           "displayGenericName": "レボセチリジン",
+          "genericName": "レボセチリジン",
           "handlingTags": [
             "levocetirizine"
           ]
@@ -660,6 +678,7 @@
           ],
           "displayName": "ビラノア",
           "displayGenericName": "ビラスチン",
+          "genericName": "ビラスチン",
           "handlingTags": [
             "bilastine",
             "empty_stomach_required"
@@ -672,6 +691,7 @@
           ],
           "displayName": "デザレックス",
           "displayGenericName": "デスロラタジン",
+          "genericName": "デスロラタジン",
           "handlingTags": [
             "desloratadine"
           ]
@@ -683,6 +703,7 @@
           ],
           "displayName": "アレロック",
           "displayGenericName": "オロパタジン",
+          "genericName": "オロパタジン",
           "handlingTags": [
             "olopatadine"
           ]
@@ -694,6 +715,7 @@
           ],
           "displayName": "タリオン",
           "displayGenericName": "ベポタスチン",
+          "genericName": "ベポタスチン",
           "handlingTags": [
             "bepotastine"
           ]
@@ -705,6 +727,7 @@
           ],
           "displayName": "エバステル",
           "displayGenericName": "エバスチン",
+          "genericName": "エバスチン",
           "handlingTags": [
             "ebastine"
           ]
@@ -716,6 +739,7 @@
           ],
           "displayName": "アレジオン",
           "displayGenericName": "エピナスチン",
+          "genericName": "エピナスチン",
           "handlingTags": [
             "epinastine"
           ]
@@ -727,6 +751,7 @@
           ],
           "displayName": "ルパフィン",
           "displayGenericName": "ルパタジン",
+          "genericName": "ルパタジン",
           "handlingTags": [
             "rupatadine"
           ]
@@ -738,6 +763,7 @@
           ],
           "displayName": "ゼスラン",
           "displayGenericName": "メキタジン",
+          "genericName": "メキタジン",
           "handlingTags": [
             "mequitazine"
           ]
@@ -749,6 +775,7 @@
           ],
           "displayName": "ジルテック",
           "displayGenericName": "セチリジン",
+          "genericName": "セチリジン",
           "handlingTags": [
             "cetirizine"
           ]
@@ -760,6 +787,7 @@
           ],
           "displayName": "アゼプチン",
           "displayGenericName": "アゼラスチン",
+          "genericName": "アゼラスチン",
           "handlingTags": [
             "azelastine"
           ]
@@ -882,6 +910,7 @@
           ],
           "displayName": "ヒルドイドソフト軟膏",
           "displayGenericName": "ヘパリン類似物質油性クリーム",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "ointment",
@@ -902,6 +931,7 @@
           ],
           "displayName": "ヘパリン類似物質油性クリーム",
           "displayGenericName": "ヘパリン類似物質油性クリーム",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "oily_cream",
@@ -997,6 +1027,7 @@
           ],
           "displayName": "ヒルドイドクリーム",
           "displayGenericName": "ヘパリン類似物質クリーム",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "cream",
@@ -1016,6 +1047,7 @@
           ],
           "displayName": "ヘパリン類似物質クリーム",
           "displayGenericName": "ヘパリン類似物質クリーム",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "cream",
@@ -1111,6 +1143,7 @@
           ],
           "displayName": "ヒルドイドローション",
           "displayGenericName": "ヘパリン類似物質ローション",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "lotion",
@@ -1130,6 +1163,7 @@
           ],
           "displayName": "ヘパリン類似物質ローション",
           "displayGenericName": "ヘパリン類似物質ローション",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "lotion",
@@ -1240,6 +1274,7 @@
           ],
           "displayName": "ヒルドイドフォーム",
           "displayGenericName": "ヘパリン類似物質フォーム",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "foam",
@@ -1258,6 +1293,7 @@
           ],
           "displayName": "ヘパリン類似物質外用スプレー",
           "displayGenericName": "ヘパリン類似物質外用スプレー",
+          "genericName": "ヘパリン類似物質",
           "handlingTags": [
             "room_temperature_storage",
             "spray",
@@ -1348,7 +1384,8 @@
             "ぷらんるかすと"
           ],
           "displayName": "オノン",
-          "displayGenericName": "プランルカスト"
+          "displayGenericName": "プランルカスト",
+          "genericName": "プランルカスト"
         },
         "キプレス": {
           "aliases": [
@@ -1356,7 +1393,8 @@
             "もんてるかすと"
           ],
           "displayName": "キプレス",
-          "displayGenericName": "モンテルカスト"
+          "displayGenericName": "モンテルカスト",
+          "genericName": "モンテルカスト"
         },
         "シングレア": {
           "aliases": [
@@ -1364,21 +1402,24 @@
             "もんてるかすと"
           ],
           "displayName": "シングレア",
-          "displayGenericName": "モンテルカスト"
+          "displayGenericName": "モンテルカスト",
+          "genericName": "モンテルカスト"
         },
         "プランルカスト": {
           "aliases": [
             "ぷらんるかすと"
           ],
           "displayName": "プランルカスト",
-          "displayGenericName": "プランルカスト"
+          "displayGenericName": "プランルカスト",
+          "genericName": "プランルカスト"
         },
         "モンテルカスト": {
           "aliases": [
             "もんてるかすと"
           ],
           "displayName": "モンテルカスト",
-          "displayGenericName": "モンテルカスト"
+          "displayGenericName": "モンテルカスト",
+          "genericName": "モンテルカスト"
         }
       },
       "classKey": "leukotriene_receptor_antagonist",
@@ -1526,6 +1567,7 @@
           ],
           "displayName": "ゼペリン点眼液",
           "displayGenericName": "アシタザノラスト点眼液",
+          "genericName": "アシタザノラスト",
           "handlingTags": [
             "room_temperature_storage",
             "solution_eye_drop",
@@ -1543,6 +1585,7 @@
           ],
           "displayName": "アレギサール点眼液",
           "displayGenericName": "ペミロラスト点眼液",
+          "genericName": "ペミロラスト",
           "handlingTags": [
             "room_temperature_storage",
             "solution_eye_drop",
@@ -1558,6 +1601,7 @@
           ],
           "displayName": "ペミラストン点眼液",
           "displayGenericName": "ペミロラスト点眼液",
+          "genericName": "ペミロラスト",
           "handlingTags": [
             "room_temperature_storage",
             "solution_eye_drop",
@@ -1576,6 +1620,7 @@
           "displayName": "リザベン点眼液",
           "displayGenericName": "トラニラスト点眼液",
           "genericKey": "tranilast_ophthalmic",
+          "genericName": "トラニラスト",
           "handlingTags": [
             "light_protection_storage",
             "solution_eye_drop",
@@ -1598,6 +1643,7 @@
           "displayName": "トラメラス点眼液PF",
           "displayGenericName": "トラニラスト点眼液PF",
           "genericKey": "tranilast_ophthalmic_pf",
+          "genericName": "トラニラスト",
           "handlingTags": [
             "light_protection_storage",
             "solution_eye_drop",
@@ -1615,6 +1661,7 @@
           ],
           "displayName": "インタール点眼液",
           "displayGenericName": "クロモグリク酸点眼液",
+          "genericName": "クロモグリク酸",
           "handlingTags": [
             "light_protection_storage",
             "solution_eye_drop",
@@ -1699,7 +1746,8 @@
             "ひと"
           ],
           "displayName": "ノボリンR",
-          "displayGenericName": "インスリンヒト"
+          "displayGenericName": "インスリンヒト",
+          "genericName": "インスリンヒト"
         },
         "ヒューマリンR": {
           "aliases": [
@@ -1711,7 +1759,8 @@
             "ひと"
           ],
           "displayName": "ヒューマリンR",
-          "displayGenericName": "インスリンヒト"
+          "displayGenericName": "インスリンヒト",
+          "genericName": "インスリンヒト"
         }
       },
       "classKey": "insulin_regular",
@@ -1817,7 +1866,8 @@
           ],
           "displayName": "ヒューマログ",
           "displayGenericName": "インスリンリスプロ",
-          "genericKey": "insulin_lispro"
+          "genericKey": "insulin_lispro",
+          "genericName": "インスリンリスプロ"
         },
         "ルムジェブ": {
           "aliases": [
@@ -1828,7 +1878,8 @@
           ],
           "displayName": "ルムジェブ",
           "displayGenericName": "インスリンリスプロ",
-          "genericKey": "insulin_lispro"
+          "genericKey": "insulin_lispro",
+          "genericName": "インスリンリスプロ"
         },
         "ノボラピッド": {
           "aliases": [
@@ -1840,7 +1891,8 @@
           ],
           "displayName": "ノボラピッド",
           "displayGenericName": "インスリンアスパルト",
-          "genericKey": "insulin_aspart"
+          "genericKey": "insulin_aspart",
+          "genericName": "インスリンアスパルト"
         },
         "フィアスプ": {
           "aliases": [
@@ -1851,7 +1903,8 @@
           ],
           "displayName": "フィアスプ",
           "displayGenericName": "インスリンアスパルト",
-          "genericKey": "insulin_aspart"
+          "genericKey": "insulin_aspart",
+          "genericName": "インスリンアスパルト"
         },
         "アピドラ": {
           "aliases": [
@@ -1862,7 +1915,8 @@
           ],
           "displayName": "アピドラ",
           "displayGenericName": "インスリングルリジン",
-          "genericKey": "insulin_glulisine"
+          "genericKey": "insulin_glulisine",
+          "genericName": "インスリングルリジン"
         }
       },
       "classKey": "insulin_rapid_analog",
@@ -1952,7 +2006,8 @@
             "いそふぇん"
           ],
           "displayName": "ノボリンN",
-          "displayGenericName": "イソフェンインスリン"
+          "displayGenericName": "イソフェンインスリン",
+          "genericName": "イソフェンインスリン"
         },
         "ヒューマリンN": {
           "aliases": [
@@ -1966,7 +2021,8 @@
             "いそふぇん"
           ],
           "displayName": "ヒューマリンN",
-          "displayGenericName": "イソフェンインスリン"
+          "displayGenericName": "イソフェンインスリン",
+          "genericName": "イソフェンインスリン"
         }
       },
       "classKey": "insulin_intermediate",
@@ -2100,7 +2156,8 @@
             "ぐらるぎん"
           ],
           "displayName": "ランタス",
-          "displayGenericName": "インスリングラルギン"
+          "displayGenericName": "インスリングラルギン",
+          "genericName": "インスリングラルギン"
         },
         "ランタスXR": {
           "aliases": [
@@ -2110,7 +2167,8 @@
             "ぐらるぎん"
           ],
           "displayName": "ランタスXR",
-          "displayGenericName": "インスリングラルギン"
+          "displayGenericName": "インスリングラルギン",
+          "genericName": "インスリングラルギン"
         },
         "トレシーバ": {
           "aliases": [
@@ -2125,7 +2183,8 @@
             "でぐるでく"
           ],
           "displayName": "トレシーバ",
-          "displayGenericName": "インスリンデグルデク"
+          "displayGenericName": "インスリンデグルデク",
+          "genericName": "インスリンデグルデク"
         },
         "アウィクリ": {
           "aliases": [
@@ -2138,7 +2197,8 @@
             "いこでく"
           ],
           "displayName": "アウィクリ",
-          "displayGenericName": "インスリンイコデク"
+          "displayGenericName": "インスリンイコデク",
+          "genericName": "インスリンイコデク"
         },
         "レベミル": {
           "aliases": [
@@ -2151,7 +2211,8 @@
             "でてみる"
           ],
           "displayName": "レベミル",
-          "displayGenericName": "インスリンデテミル"
+          "displayGenericName": "インスリンデテミル",
+          "genericName": "インスリンデテミル"
         }
       },
       "classKey": "insulin_long_acting",
@@ -2254,7 +2315,8 @@
             "ひと"
           ],
           "displayName": "ノボリン30R",
-          "displayGenericName": "インスリンヒト"
+          "displayGenericName": "インスリンヒト",
+          "genericName": "インスリンヒト"
         },
         "イノレット30R": {
           "aliases": [
@@ -2269,7 +2331,8 @@
             "ひと"
           ],
           "displayName": "イノレット30R",
-          "displayGenericName": "インスリンヒト"
+          "displayGenericName": "インスリンヒト",
+          "genericName": "インスリンヒト"
         },
         "ヒューマリン3/7": {
           "aliases": [
@@ -2281,7 +2344,8 @@
             "ひと"
           ],
           "displayName": "ヒューマリン3/7",
-          "displayGenericName": "インスリンヒト"
+          "displayGenericName": "インスリンヒト",
+          "genericName": "インスリンヒト"
         }
       },
       "classKey": "insulin_mixed_regular_intermediate",
@@ -2357,7 +2421,8 @@
             "りきしせなちど"
           ],
           "displayName": "ソリクア",
-          "displayGenericName": "インスリングラルギン/リキシセナチド"
+          "displayGenericName": "インスリングラルギン/リキシセナチド",
+          "genericName": "インスリングラルギン/リキシセナチド"
         },
         "ゾルトファイ": {
           "aliases": [
@@ -2368,7 +2433,8 @@
             "りらぐるちど"
           ],
           "displayName": "ゾルトファイ",
-          "displayGenericName": "インスリンデグルデク/リラグルチド"
+          "displayGenericName": "インスリンデグルデク/リラグルチド",
+          "genericName": "インスリンデグルデク/リラグルチド"
         }
       },
       "classKey": "insulin_glp1_combination",
@@ -2433,7 +2499,8 @@
             "いんすりんあすぱると",
             "あすぱると"
           ],
-          "displayGenericName": "インスリンデグルデク/インスリンアスパルト"
+          "displayGenericName": "インスリンデグルデク/インスリンアスパルト",
+          "genericName": "インスリンデグルデク/インスリンアスパルト"
         }
       },
       "classKey": "insulin_mixed_rapid_long",
@@ -2569,7 +2636,8 @@
             "あすぱると"
           ],
           "displayName": "ノボラピッド30ミックス",
-          "displayGenericName": "インスリンアスパルト"
+          "displayGenericName": "インスリンアスパルト",
+          "genericName": "インスリンアスパルト"
         },
         "ノボラピッド50ミックス": {
           "aliases": [
@@ -2582,7 +2650,8 @@
             "あすぱると"
           ],
           "displayName": "ノボラピッド50ミックス",
-          "displayGenericName": "インスリンアスパルト"
+          "displayGenericName": "インスリンアスパルト",
+          "genericName": "インスリンアスパルト"
         },
         "ノボラピッド70ミックス": {
           "aliases": [
@@ -2595,7 +2664,8 @@
             "あすぱると"
           ],
           "displayName": "ノボラピッド70ミックス",
-          "displayGenericName": "インスリンアスパルト"
+          "displayGenericName": "インスリンアスパルト",
+          "genericName": "インスリンアスパルト"
         },
         "ヒューマログ25ミックス": {
           "aliases": [
@@ -2608,7 +2678,8 @@
             "りすぷろ"
           ],
           "displayName": "ヒューマログ25ミックス",
-          "displayGenericName": "インスリンリスプロ"
+          "displayGenericName": "インスリンリスプロ",
+          "genericName": "インスリンリスプロ"
         },
         "ヒューマログ50ミックス": {
           "aliases": [
@@ -2621,7 +2692,8 @@
             "りすぷろ"
           ],
           "displayName": "ヒューマログ50ミックス",
-          "displayGenericName": "インスリンリスプロ"
+          "displayGenericName": "インスリンリスプロ",
+          "genericName": "インスリンリスプロ"
         }
       },
       "classKey": "insulin_mixed_rapid_intermediate",
@@ -2728,6 +2800,7 @@
           "displayName": "トラゼンタ",
           "displayGenericName": "リナグリプチン",
           "genericKey": "linagliptin",
+          "genericName": "リナグリプチン",
           "handlingTags": []
         },
         "マリゼブ": {
@@ -2737,6 +2810,7 @@
           "displayName": "マリゼブ",
           "displayGenericName": "オマリグリプチン",
           "genericKey": "omarigliptin",
+          "genericName": "オマリグリプチン",
           "handlingTags": [
             "weekly_dpp4",
             "dpp4_renal_dose_adjustment",
@@ -2750,6 +2824,7 @@
           "displayName": "ザファテック",
           "displayGenericName": "トレラグリプチン",
           "genericKey": "trelagliptin",
+          "genericName": "トレラグリプチン",
           "handlingTags": [
             "weekly_dpp4",
             "dpp4_renal_dose_adjustment",
@@ -2763,6 +2838,7 @@
           "displayName": "スイニー",
           "displayGenericName": "アナグリプチン",
           "genericKey": "anagliptin",
+          "genericName": "アナグリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2775,6 +2851,7 @@
           "displayName": "オングリザ",
           "displayGenericName": "サキサグリプチン",
           "genericKey": "saxagliptin",
+          "genericName": "サキサグリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2787,6 +2864,7 @@
           "displayName": "テネリア",
           "displayGenericName": "テネリグリプチン",
           "genericKey": "teneligliptin",
+          "genericName": "テネリグリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2799,6 +2877,7 @@
           "displayName": "ネシーナ",
           "displayGenericName": "アログリプチン",
           "genericKey": "alogliptin",
+          "genericName": "アログリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2811,6 +2890,7 @@
           "displayName": "エクア",
           "displayGenericName": "ビルダグリプチン",
           "genericKey": "vildagliptin",
+          "genericName": "ビルダグリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2823,6 +2903,7 @@
           "displayName": "ジャヌビア",
           "displayGenericName": "シタグリプチン",
           "genericKey": "sitagliptin",
+          "genericName": "シタグリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2835,6 +2916,7 @@
           "displayName": "グラクティブ",
           "displayGenericName": "シタグリプチン",
           "genericKey": "sitagliptin",
+          "genericName": "シタグリプチン",
           "handlingTags": [
             "dpp4_standard_titration",
             "dpp4_dose_decrease_supported"
@@ -2903,6 +2985,7 @@
           "displayName": "メトグルコ",
           "displayGenericName": "メトホルミン",
           "genericKey": "metformin_mt",
+          "genericName": "メトホルミン塩酸塩",
           "handlingTags": [
             "metformin_high_dose",
             "renal_dose_adjustment"
@@ -2916,6 +2999,7 @@
           "displayName": "メトホルミン",
           "displayGenericName": "メトホルミン",
           "genericKey": "metformin_mt_generic",
+          "genericName": "メトホルミン塩酸塩",
           "handlingTags": [
             "metformin_high_dose",
             "renal_dose_adjustment"
@@ -2928,6 +3012,7 @@
           "displayName": "グリコラン",
           "displayGenericName": "メトホルミン",
           "genericKey": "metformin_legacy",
+          "genericName": "メトホルミン塩酸塩",
           "handlingTags": [
             "metformin_legacy_low_dose",
             "renal_dose_adjustment"
@@ -3007,6 +3092,7 @@
           "displayName": "メトアナ",
           "displayGenericName": "アナグリプチン/メトホルミン",
           "genericKey": "anagliptin_metformin_combo",
+          "genericName": "アナグリプチン/メトホルミン塩酸塩",
           "handlingTags": [
             "renal_dose_adjustment"
           ]
@@ -3019,6 +3105,7 @@
           "displayName": "エクメット",
           "displayGenericName": "ビルダグリプチン/メトホルミン",
           "genericKey": "vildagliptin_metformin_combo",
+          "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
           "handlingTags": [
             "renal_dose_adjustment"
           ]
@@ -3031,6 +3118,7 @@
           "displayName": "イニシンク",
           "displayGenericName": "アログリプチン/メトホルミン",
           "genericKey": "alogliptin_metformin_combo",
+          "genericName": "アログリプチン/メトホルミン塩酸塩",
           "handlingTags": [
             "renal_dose_adjustment"
           ]
@@ -3043,6 +3131,7 @@
           "displayName": "メホビル",
           "displayGenericName": "ビルダグリプチン/メトホルミン",
           "genericKey": "vildagliptin_metformin_combo_generic",
+          "genericName": "ビルダグリプチン/メトホルミン塩酸塩",
           "handlingTags": [
             "renal_dose_adjustment",
             "generic_equivalent"
@@ -3107,6 +3196,7 @@
           "displayName": "アクトス",
           "displayGenericName": "ピオグリタゾン",
           "genericKey": "pioglitazone_actos",
+          "genericName": "ピオグリタゾン塩酸塩",
           "handlingTags": []
         },
         "ピオグリタゾン": {
@@ -3117,6 +3207,7 @@
           "displayName": "ピオグリタゾン",
           "displayGenericName": "ピオグリタゾン",
           "genericKey": "pioglitazone_actos_generic",
+          "genericName": "ピオグリタゾン塩酸塩",
           "handlingTags": []
         }
       },
@@ -3177,6 +3268,7 @@
           "displayName": "リオベル",
           "displayGenericName": "アログリプチン／ピオグリタゾン",
           "genericKey": "alogliptin_pioglitazone_combo",
+          "genericName": "アログリプチン安息香酸塩／ピオグリタゾン塩酸塩",
           "handlingTags": []
         }
       },
@@ -3240,6 +3332,7 @@
           "displayName": "メタクト",
           "displayGenericName": "ピオグリタゾン／メトホルミン",
           "genericKey": "pioglitazone_metformin_combo",
+          "genericName": "ピオグリタゾン塩酸塩／メトホルミン塩酸塩",
           "handlingTags": []
         }
       },
@@ -3307,6 +3400,7 @@
           "displayName": "アマリール",
           "displayGenericName": "グリメピリド",
           "genericKey": "glimepiride",
+          "genericName": "グリメピリド",
           "handlingTags": []
         },
         "オイグルコン": {
@@ -3316,6 +3410,7 @@
           "displayName": "オイグルコン",
           "displayGenericName": "グリベンクラミド",
           "genericKey": "glibenclamide",
+          "genericName": "グリベンクラミド",
           "handlingTags": []
         },
         "グリミクロン": {
@@ -3325,6 +3420,7 @@
           "displayName": "グリミクロン",
           "displayGenericName": "グリクラジド",
           "genericKey": "gliclazide",
+          "genericName": "グリクラジド",
           "handlingTags": []
         }
       },
@@ -3386,6 +3482,7 @@
           "displayName": "ソニアス",
           "displayGenericName": "ピオグリタゾン／グリメピリド",
           "genericKey": "pioglitazone_glimepiride_combo",
+          "genericName": "ピオグリタゾン塩酸塩／グリメピリド",
           "handlingTags": []
         }
       },
@@ -3457,6 +3554,7 @@
           "displayName": "スターシス",
           "displayGenericName": "ナテグリニド",
           "genericKey": "nateglinide",
+          "genericName": "ナテグリニド",
           "handlingTags": []
         },
         "ファスティック": {
@@ -3466,6 +3564,7 @@
           "displayName": "ファスティック",
           "displayGenericName": "ナテグリニド",
           "genericKey": "nateglinide",
+          "genericName": "ナテグリニド",
           "handlingTags": []
         },
         "グルファスト": {
@@ -3475,6 +3574,7 @@
           "displayName": "グルファスト",
           "displayGenericName": "ミチグリニド",
           "genericKey": "mitiglinide",
+          "genericName": "ミチグリニド",
           "handlingTags": []
         },
         "シュアポスト": {
@@ -3484,6 +3584,7 @@
           "displayName": "シュアポスト",
           "displayGenericName": "レパグリニド",
           "genericKey": "repaglinide",
+          "genericName": "レパグリニド",
           "handlingTags": []
         }
       },
@@ -3551,6 +3652,7 @@
           "displayName": "セイブル",
           "displayGenericName": "ミグリトール",
           "genericKey": "miglitol",
+          "genericName": "ミグリトール",
           "handlingTags": []
         },
         "ベイスン": {
@@ -3560,6 +3662,7 @@
           "displayName": "ベイスン",
           "displayGenericName": "ボグリボース",
           "genericKey": "voglibose",
+          "genericName": "ボグリボース",
           "handlingTags": []
         },
         "グルコバイ": {
@@ -3569,6 +3672,7 @@
           "displayName": "グルコバイ",
           "displayGenericName": "アカルボース",
           "genericKey": "acarbose",
+          "genericName": "アカルボース",
           "handlingTags": []
         }
       },
@@ -3630,6 +3734,7 @@
           "displayName": "グルベス",
           "displayGenericName": "ミチグリニド・ボグリボース",
           "genericKey": "mitiglinide_voglibose_combo",
+          "genericName": "ミチグリニドカルシウム水和物・ボグリボース",
           "handlingTags": []
         }
       },
@@ -3687,6 +3792,7 @@
           "displayName": "ツイミーグ",
           "displayGenericName": "イメグリミン",
           "genericKey": "imeglimin",
+          "genericName": "イメグリミン塩酸塩",
           "handlingTags": []
         }
       },
@@ -3742,6 +3848,7 @@
           "displayName": "キネダック",
           "displayGenericName": "エパルレスタット",
           "genericKey": "epalrestat",
+          "genericName": "エパルレスタット",
           "handlingTags": []
         }
       },
@@ -3828,6 +3935,7 @@
           "displayName": "フォシーガ",
           "displayGenericName": "ダパグリフロジン",
           "genericKey": "dapagliflozin",
+          "genericName": "ダパグリフロジン",
           "handlingTags": [
             "dose_adjustment_supported"
           ]
@@ -3839,6 +3947,7 @@
           "displayName": "ジャディアンス",
           "displayGenericName": "エンパグリフロジン",
           "genericKey": "empagliflozin",
+          "genericName": "エンパグリフロジン",
           "handlingTags": [
             "dose_adjustment_supported"
           ]
@@ -3850,6 +3959,7 @@
           "displayName": "カナグル",
           "displayGenericName": "カナグリフロジン",
           "genericKey": "canagliflozin",
+          "genericName": "カナグリフロジン",
           "handlingTags": []
         },
         "スーグラ": {
@@ -3859,6 +3969,7 @@
           "displayName": "スーグラ",
           "displayGenericName": "イプラグリフロジン",
           "genericKey": "ipragliflozin",
+          "genericName": "イプラグリフロジン",
           "handlingTags": [
             "dose_adjustment_supported"
           ]
@@ -3870,6 +3981,7 @@
           "displayName": "ルセフィ",
           "displayGenericName": "ルセオグリフロジン",
           "genericKey": "luseogliflozin",
+          "genericName": "ルセオグリフロジン",
           "handlingTags": [
             "dose_adjustment_supported"
           ]
@@ -3881,6 +3993,7 @@
           "displayName": "デベルザ",
           "displayGenericName": "トホグリフロジン",
           "genericKey": "tofogliflozin",
+          "genericName": "トホグリフロジン",
           "handlingTags": []
         }
       },
@@ -3955,6 +4068,7 @@
           "displayName": "カナリア",
           "displayGenericName": "テネリグリプチン/カナグリフロジン",
           "genericKey": "teneligliptin_canagliflozin_combo",
+          "genericName": "テネリグリプチン/カナグリフロジン",
           "handlingTags": []
         },
         "スージャヌ": {
@@ -3965,6 +4079,7 @@
           "displayName": "スージャヌ",
           "displayGenericName": "シタグリプチン/イプラグリフロジン",
           "genericKey": "sitagliptin_ipragliflozin_combo",
+          "genericName": "シタグリプチン/イプラグリフロジン",
           "handlingTags": []
         },
         "トラディアンス": {
@@ -3975,6 +4090,7 @@
           "displayName": "トラディアンス",
           "displayGenericName": "リナグリプチン/エンパグリフロジン",
           "genericKey": "linagliptin_empagliflozin_combo",
+          "genericName": "リナグリプチン/エンパグリフロジン",
           "handlingTags": [
             "dose_adjustment_supported"
           ]
@@ -4045,6 +4161,7 @@
           "displayName": "フォシーガ",
           "displayGenericName": "ダパグリフロジン",
           "genericKey": "dapagliflozin",
+          "genericName": "ダパグリフロジン",
           "handlingTags": [
             "heart_failure_supported",
             "ckd_supported"
@@ -4057,6 +4174,7 @@
           "displayName": "ジャディアンス",
           "displayGenericName": "エンパグリフロジン",
           "genericKey": "empagliflozin",
+          "genericName": "エンパグリフロジン",
           "handlingTags": [
             "heart_failure_supported",
             "ckd_supported"
@@ -4069,6 +4187,7 @@
           "displayName": "カナグル",
           "displayGenericName": "カナグリフロジン",
           "genericKey": "canagliflozin",
+          "genericName": "カナグリフロジン",
           "handlingTags": [
             "ckd_supported"
           ]

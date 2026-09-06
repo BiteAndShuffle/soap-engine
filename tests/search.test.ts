@@ -757,3 +757,104 @@ describe('⑮ H1点眼: preferOwnNameMatchOverGenericMatch（先発/一般名順
     assert.equal(oralEntry!.resolution?.denotation, 'generic', `経口オロパタジンの一般名候補は generic 見出しであるべき`)
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// 16. H1点眼: 一般名かな読み「途中入力（前方一致）」での剤形間順序の関係スコープ化
+//
+//   88dc9d5 で preferOwnNameMatchOverGenericMatch を有効化した際、促進
+//   （promoteDirectOverGenericMode）の抑制条件が「別モジュールがクエリと
+//   完全に一致する一般名を持つ場合」のみを対象としていたため、一般名かな読みの
+//   「完全な読み」以外の前方一致（例:「おろぱた」＝「オロパタジン」の前方一致）では
+//   抑制が働かず、H1点眼モジュールが内服モジュールより先に促進されてしまう
+//   回帰が生じていた。本ブロックはその回帰の修正を検証する。
+//
+//   修正方式は「別モジュールがクエリの前方一致条件を満たす一般名を持つ」だけでは
+//   不十分とし、そのモジュールが「促進しようとしている自モジュールと同一の
+//   有効成分（genericName、剤形非依存）を扱っている」ことを追加で要求する
+//   （関係スコープ化）。これにより、無関係な薬効クラスのモジュールが偶然
+//   短い読みの前方一致を満たすだけでは促進を抑制しない
+//   （例:「め」に前方一致する「メキタジン」＝H1内服ゼスランは、メトホルミン系
+//   モジュールとは有効成分を共有しないため、メトホルミンの促進を妨げない）。
+// ─────────────────────────────────────────────────────────────
+
+describe('⑯ H1点眼: 一般名前方一致の関係スコープ化（剤形間順序の回帰修正）', () => {
+  test('"オロパタ"（前方一致・剤形指定なし） → 内服オロパタジン系が点眼系より上位', () => {
+    const results = getDrugSuggestions('オロパタ', fullIndex, 8)
+    const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(oralPos >= 0 && eyePos >= 0, '内服・点眼の両候補が存在するはず（削除されていない）')
+    assert.ok(oralPos < eyePos, `内服(${oralPos})が点眼(${eyePos})より上位であるべき: ${JSON.stringify(results.map(r => r.matchedBrandName))}`)
+  })
+
+  test('"エピナス"（前方一致・剤形指定なし） → 内服エピナスチン系が点眼系より上位', () => {
+    const results = getDrugSuggestions('エピナス', fullIndex, 8)
+    const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+    const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(oralPos >= 0 && eyePos >= 0, '内服・点眼の両候補が存在するはず（削除されていない）')
+    assert.ok(oralPos < eyePos, `内服(${oralPos})が点眼(${eyePos})より上位であるべき: ${JSON.stringify(results.map(r => r.matchedBrandName))}`)
+  })
+
+  test('代表的な中間かな読み前方一致（おろ／おろぱた／えぴ／えぴなす）でも同様に内服が上位', () => {
+    for (const q of ['おろ', 'おろぱた', 'えぴ', 'えぴなす']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+      const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+      assert.ok(oralPos >= 0 && eyePos >= 0, `"${q}": 内服・点眼の両候補が存在するはず`)
+      assert.ok(oralPos < eyePos, `"${q}": 内服(${oralPos})が点眼(${eyePos})より上位であるべき`)
+    }
+  })
+
+  test('完全な一般名読み（オロパタジン／エピナスチン）でも既存どおり内服が上位', () => {
+    for (const q of ['オロパタジン', 'エピナスチン']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const oralPos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral')
+      const eyePos = results.findIndex(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+      assert.ok(oralPos >= 0 && eyePos >= 0, `"${q}": 内服・点眼の両候補が存在するはず`)
+      assert.ok(oralPos < eyePos, `"${q}": 内服(${oralPos})が点眼(${eyePos})より上位であるべき`)
+    }
+  })
+
+  test('明示的に点眼を意図したクエリでは、点眼系が正しく先発/一般名の内部順で上位のまま', () => {
+    const cases: Array<{ q: string; generic: string; brand: string }> = [
+      { q: 'えぴなすちんてんがん', generic: 'エピナスチン点眼液', brand: 'アレジオン点眼液' },
+      { q: 'おろぱたじんてんがん', generic: 'オロパタジン点眼液', brand: 'パタノール点眼液' },
+    ]
+    for (const { q, generic, brand } of cases) {
+      const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
+      assert.deepEqual(labels, [generic, brand], `"${q}": 点眼系のみ2件、一般名が先発品より上位であるべき: ${JSON.stringify(labels)}`)
+    }
+  })
+
+  test('無関係な有効成分を持つ別モジュールの前方一致は促進を抑制しない（関係スコープ化の直接検証）', () => {
+    // "め" は H1内服モジュールのゼスラン（有効成分: メキタジン）に前方一致するが、
+    // メキタジンはメトホルミン系モジュールの有効成分と無関係である。
+    // 関係スコープ化された促進抑制ロジックであれば、この無関係な前方一致は
+    // メトホルミンモジュール自身の促進（単剤が配合剤より先に表示される既存契約）を
+    // 妨げてはならない。
+    const results = getDrugSuggestions('めとほる', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.equal(labels[0], 'メトホルミン', `1位はメトホルミンであるべき（関係のないゼスラン/メキタジンの前方一致に妨げられてはならない）: ${JSON.stringify(labels)}`)
+    assert.equal(labels[1], 'メトグルコ', `2位はメトグルコであるべき: ${JSON.stringify(labels)}`)
+  })
+
+  test('メトホルミン/ピオグリタゾンの単剤優先契約は "め"/"ぴおぐり" 単体クエリでも既存どおり維持される', () => {
+    // 塩酸塩読み等の既存クエリだけでなく、短い前方一致クエリ自体でも
+    // 配合剤に妨げられてはならないことを確認する（回帰の直接的な反証）。
+    const pio = getDrugSuggestions('ぴおぐり', fullIndex, 8).map(r => r.drugDisplayLabel)
+    assert.equal(pio[0], 'ピオグリタゾン', `"ぴおぐり": 1位はピオグリタゾンであるべき: ${JSON.stringify(pio)}`)
+    assert.equal(pio[1], 'アクトス', `"ぴおぐり": 2位はアクトスであるべき: ${JSON.stringify(pio)}`)
+
+    // "め" は「ぴおぐり」「めとほる」等とは異なり、単剤ブランド（メトグルコ/メトホルミン）
+    // 自身の前方一致に加えて配合剤側の宣言順が既存の並びを決めており、現行 HEAD でも
+    // 単剤が先頭には来ない（メタクト等の配合剤が先頭）。この関係スコープ化された促進ガードは
+    // 「め」に対して新たな単剤優先契約を課すものではなく、無関係モジュール（H1内服のゼスラン/
+    // メキタジン等）の前方一致による偶発的な割り込みからのみ保護する。したがって既存の
+    // HEAD 挙動をそのまま固定するにとどめる（新しい契約を作らない）。
+    const me = getDrugSuggestions('め', fullIndex, 8).map(r => r.drugDisplayLabel)
+    assert.deepEqual(
+      me,
+      ['メタクト', 'メトアナ', 'メトグルコ', 'メトホルミン', 'エクメット', 'イニシンク', 'ピオグリタゾン／メトホルミン', 'ビルダグリプチン/メトホルミン'],
+      `"め": 既存 HEAD の並びから変化してはならない: ${JSON.stringify(me)}`,
+    )
+  })
+})

@@ -104,6 +104,13 @@ export interface SearchEntry {
    */
   brandCatalogGenericKeyMap: Record<string, string>
   /**
+   * ブランド名 → 有効成分識別（brandCatalog[brand].genericName、剤形非依存）。
+   * displayGenericName とは異なり剤形の修飾（例:「点眼液」）を含まない、成分そのものの
+   * 識別に使う。モジュール間の「同一有効成分を扱っているか」という関係判定専用に用い、
+   * 表示文字列には使わない（表示は brandCatalogGenericMap を使う）。
+   */
+  brandCatalogIngredientMap: Record<string, string>
+  /**
    * 剤形識別トークン（drug.search.formulationSearchTokens の正規化済みリスト）。
    * AND 検索の第2トークン以降でこのリストを優先評価し、剤形による絞り込みを強化する。
    * 未定義モジュールでは空配列となり、既存の scoreEntry にフォールバックする。
@@ -184,6 +191,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
   const brandCatalogAliasMap: Record<string, string[]> = {}
   const brandCatalogGenericMap: Record<string, string> = {}
   const brandCatalogGenericKeyMap: Record<string, string> = {}
+  const brandCatalogIngredientMap: Record<string, string> = {}
   const brandCatalog = drug?.brandCatalog ?? {}
   for (const [brand, entry] of Object.entries(brandCatalog)) {
     const aliases = (entry as { aliases?: string[]; genericName?: string }).aliases ?? []
@@ -196,6 +204,10 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     // グルーピング判定専用キー: genericKey が未設定のモジュールは表示文字列に後方互換フォールバックする
     const resolvedGenericKey = entry.genericKey ?? resolvedGenericName
     if (resolvedGenericKey) brandCatalogGenericKeyMap[brand] = resolvedGenericKey
+    // 有効成分識別（剤形非依存）。displayGenericName とは異なりフォールバックしない
+    // （genericName 自体が未設定のブランドはモジュール間の成分関係判定に参加できない）。
+    const rawIngredient = (entry as { genericName?: string }).genericName
+    if (rawIngredient) brandCatalogIngredientMap[brand] = rawIngredient
   }
 
   // 剤形識別トークン（AND 検索の第2トークン以降で優先評価）
@@ -263,6 +275,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       brandCatalogAliasMap,
       brandCatalogGenericMap,
       brandCatalogGenericKeyMap,
+      brandCatalogIngredientMap,
       formulationTokens,
       preferOwnNameMatchOverGenericMatch,
       suppressRedundantGenericHeaderOnDirectMatch,
@@ -896,26 +909,48 @@ export function getDrugSuggestions(
     lowConfidence: [],
   }
 
-  // 単一トークンのクエリが、いずれかのモジュールの「完全な一般名識別」
-  // （brandCatalogGenericMap 経由の displayGenericName 完全一致）そのものである場合、
-  // そのモジュールIDを記録する。促進（promoteDirectOverGenericMode）は「配合剤の成分名が
-  // たまたま部分一致しただけの弱い候補」を抑制するためのものであり、クエリそのものと
-  // 完全に一致する一般名を持つ別モジュールは弱い候補ではなく同格の正当な候補である
-  // （2026-09 追加。前方一致・部分一致は対象外＝ここでの「完全一致」判定が本質。
-  //   例: "ぴおぐり" に前方一致する "ピオグリタゾン／グリメピリド"（ソニアス側）は
-  //   完全一致ではないため対象にならず、⑧ の既存促進は維持される）。
+  // 単一トークンのクエリが、いずれかのモジュールの一般名識別（brandCatalogGenericMap 経由の
+  // displayGenericName の完全一致、またはその前方一致）に該当する場合、そのモジュールIDと
+  // 一致根拠となった有効成分（brandCatalogIngredientMap 経由の genericName、剤形非依存）を
+  // 記録する。促進（promoteDirectOverGenericMode）は「配合剤の成分名がたまたま部分一致した
+  // だけの弱い候補」を抑制するためのものであり、クエリの完全一致・前方一致いずれかが成立する
+  // 一般名を持つ別モジュールは弱い候補ではなく同格の正当な候補である
+  // （2026-09 追加・2026-09 前方一致に拡張。剤形かな読みの途中入力
+  //   （例:「おろぱた」＝「オロパタジン」の前方一致）でも、剤形間の表示順が
+  //   完全一致時と同じであるべきという要件に対応する）。
+  // ただし促進を抑制してよいのは、その別モジュールが「クエリと無関係な他の薬効クラス」
+  // ではなく、促進しようとしている自モジュール自身が扱う有効成分と同一の成分を扱う
+  // モジュール（剤形違いの姉妹モジュール等）である場合に限る（2026-09 関係スコープ化）。
+  // 例:「め」に前方一致する「メキタジン」（H1内服のゼスラン、抗ヒスタミン薬）は、
+  // メトホルミン系モジュールとは有効成分を共有しない無関係な別クラスの薬剤であり、
+  // これによってメトホルミンの促進を抑制してはならない。一方「おろぱた」に前方一致する
+  // 内服オロパタジン（アレロック）は、点眼オロパタジン（H1点眼）と有効成分
+  // 「オロパタジン」を共有する姉妹モジュールであり、促進を正しく抑制する。
   // 複数トークンのクエリは既にトークン自体に剤形等の追加シグナルを含むため対象外とする。
-  const exactGenericIdentityModules = new Set<string>()
+  const genericPrefixOwnerIngredients = new Map<string, Set<string>>()
+  const moduleIngredients = new Map<string, Set<string>>()
   if (tokens.length === 1) {
     for (const { entry } of scored) {
-      if (exactGenericIdentityModules.has(entry.moduleId)) continue
+      if (!moduleIngredients.has(entry.moduleId)) {
+        const ingredients = new Set<string>()
+        for (const b of entry.brandNames) {
+          const ingredient = entry.brandCatalogIngredientMap[b]
+          if (ingredient !== undefined) ingredients.add(ingredient)
+        }
+        moduleIngredients.set(entry.moduleId, ingredients)
+      }
+      if (genericPrefixOwnerIngredients.has(entry.moduleId)) continue
+      const owned = new Set<string>()
       for (const b of entry.brandNames) {
         const g = entry.brandCatalogGenericMap[b]
-        if (g !== undefined && normalizeText(g) === tokens[0]) {
-          exactGenericIdentityModules.add(entry.moduleId)
-          break
+        if (g === undefined) continue
+        const normG = normalizeText(g)
+        if (normG === tokens[0] || normG.startsWith(tokens[0])) {
+          const ingredient = entry.brandCatalogIngredientMap[b]
+          if (ingredient !== undefined) owned.add(ingredient)
         }
       }
+      if (owned.size > 0) genericPrefixOwnerIngredients.set(entry.moduleId, owned)
     }
   }
 
@@ -923,9 +958,11 @@ export function getDrugSuggestions(
   // が、このクエリで実際に自身のブランド識別による direct 候補を得た場合に true になる。
   // true の場合のみ、最終結合順で [direct/sibling/genericHeader] を [genericMode] より先に処理する
   // （未設定モジュールはこのフラグが立たないため、従来の [genericMode] 優先順を完全維持する）。
-  // ただし、別モジュールがこのクエリを自身の完全な一般名識別として保有している場合
-  // （exactGenericIdentityModules）、その別モジュールは促進で追い抜いてよい弱い候補ではないため、
-  // 自モジュール以外がそこに含まれるときは促進を発動しない（剤形間の既存表示順を維持する）。
+  // ただし、自モジュールと同一の有効成分を扱う別モジュールが、このクエリに該当する
+  // 一般名識別を保有している場合（genericPrefixOwnerIngredients と moduleIngredients の
+  // 積集合が非空）、その別モジュールは促進で追い抜いてよい弱い候補ではないため、
+  // 促進を発動しない（剤形間の既存表示順を維持する）。無関係な有効成分を扱う別モジュールが
+  // 偶然クエリの前方一致を満たすだけでは促進を抑制しない。
   let promoteDirectOverGenericMode = false
 
   for (const { entry } of scored) {
@@ -1287,11 +1324,22 @@ export function getDrugSuggestions(
         matchStrength: entryMatchStrength,
       })
       if (bucket === 'direct' && entry.preferOwnNameMatchOverGenericMatch) {
-        // 自モジュール以外が、このクエリを完全な一般名識別として保有している場合は
-        // 促進を発動しない（上記 exactGenericIdentityModules のコメント参照）。
-        const blockedByOtherModuleGenericIdentity =
-          [...exactGenericIdentityModules].some(mid => mid !== entry.moduleId)
-        if (!blockedByOtherModuleGenericIdentity) promoteDirectOverGenericMode = true
+        // 自モジュールが扱う有効成分と、このクエリに該当する一般名識別を持つ「別モジュール」が
+        // 扱う有効成分に共通するものがあれば促進を発動しない
+        // （上記 genericPrefixOwnerIngredients / moduleIngredients のコメント参照）。
+        const ownIngredients = moduleIngredients.get(entry.moduleId) ?? new Set<string>()
+        let blockedByRelatedModuleGenericIdentity = false
+        for (const [mid, ownedIngredients] of genericPrefixOwnerIngredients) {
+          if (mid === entry.moduleId) continue
+          for (const ingredient of ownedIngredients) {
+            if (ownIngredients.has(ingredient)) {
+              blockedByRelatedModuleGenericIdentity = true
+              break
+            }
+          }
+          if (blockedByRelatedModuleGenericIdentity) break
+        }
+        if (!blockedByRelatedModuleGenericIdentity) promoteDirectOverGenericMode = true
       }
     }
   }
