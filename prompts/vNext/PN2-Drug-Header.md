@@ -46,15 +46,16 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 | フィールド | 責務 |
 |---|---|
 | `displayName` | 商品名 |
-| `genericName` | 正式名称。塩類名・水和物等を含み得る。**通常UIでは参照しない** |
-| `displayGenericName` | 表示用一般名。**必須**。通常UIにおける一般名表示のSSOT。検索候補・パンくず・SOAP本文・`{{drug_subject}}` が参照する |
+| `genericName` | 有効成分同一性を表す、剤形非依存の正規化済み基本成分名（DP-21）。塩類名・水和物等を保持するフィールドではない。**通常UIでは参照しない** |
+| `displayGenericName` | 表示用一般名。**必須**。利用者向け／検索用の一般名表示のSSOT。必要に応じて剤形修飾を含み得る。通常UIにおける一般名表示のSSOT。検索候補・パンくず・SOAP本文・`{{drug_subject}}` が参照する |
 
 **生成時の注意（MUST_STOP 相当）:**
 
+- `genericName` は DP-21 に従い、塩類名・水和物等の技術的修飾語を含まない正規化済み基本成分名で確定すること（`メトホルミン塩酸塩` ではなく `メトホルミン`）。正式名称の忠実性を理由に塩類名・水和物表記を書き加えてはならない。詳細は `docs/JSON_STANDARD.md` JS-A-drug および `docs/DESIGN_PRINCIPLES.md` DP-21 を正本とする
 - `displayGenericName` は全 brand に必須。省略・空文字は不可（ModuleValidator が ERROR として検出する）
 - `genericName` への暗黙フォールバックは禁止。`displayGenericName` は常に独立した値として明示すること
 - 実行時（UI/検索候補生成時）の文字列加工（塩類名の機械的除去等）で `displayGenericName` を代替してはならない。値は bridge で人間が確定したものをそのまま canonical JSON へ転記する
-- `genericName` に塩類名・水和物等の技術的修飾語が含まれるにもかかわらず `displayGenericName` がそれと完全一致する場合は旧コピーパターンであり、PN2 が機械的に補正するのではなく bridge へ差し戻して人間が確定すること
+- `genericName` に塩類名・水和物等の技術的修飾語が混入し、かつ `displayGenericName` がそれと完全一致する場合は旧コピーパターン（塩／水和物再混入）であり、PN2 が機械的に補正するのではなく bridge へ差し戻して人間が確定すること
 
 ### genericKey 生成規則（任意フィールド）
 

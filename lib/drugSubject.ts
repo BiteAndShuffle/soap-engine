@@ -13,7 +13,8 @@
  * 薬剤名解決の優先順:
  *   1. matchedBrandName（サジェストでユーザーが選んだブランド名 = 商品名）
  *   2. drug?.brandNames?.[0] に対応する brandCatalog[...].displayGenericName
- *      （ブランド未確定時。表示用一般名のSSOT。genericName＝正式名称へはフォールバックしない）
+ *      （ブランド未確定時。利用者向け一般名表示のSSOT。genericName（剤形非依存の正規化済み
+ *      有効成分identity。DP-21）へはフォールバックしない）
  *   3. '' → 未解決のまま（{{drug_subject}} を残す）
  */
 
@@ -55,8 +56,9 @@ export function resolveDrugSubject(fields: SoapFields, drugName: string): SoapFi
  * 優先順:
  *   1. matchedBrandName（サジェスト時のブランド選択 = 商品名）
  *   2. drug?.brandNames?.[0] に対応する brandCatalog[...].displayGenericName
- *      （ブランド未確定時。表示用一般名のSSOT）
- *   3. ''（解決不能: スロットを残す。genericName＝正式名称へは暗黙フォールバックしない）
+ *      （ブランド未確定時。利用者向け一般名表示のSSOT。必要に応じて剤形修飾を含み得る）
+ *   3. ''（解決不能: スロットを残す。genericName（剤形非依存の正規化済み有効成分identity。
+ *      DP-21）へは暗黙フォールバックしない）
  */
 export function resolveDrugName(
   drug: Drug | undefined,

@@ -881,7 +881,8 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     activeModuleData.display?.nodeLabelShort ??
     activeModuleData.composition?.nodeLabelShort
   // brandCatalog から表示用一般名を取得
-  // displayGenericName が表示用一般名のSSOT（genericName＝正式名称へはフォールバックしない）
+  // displayGenericName が利用者向け一般名表示のSSOT
+  // （genericName＝剤形非依存の正規化済み有効成分identity[DP-21]へはフォールバックしない）
   const brandCatalogGenericName = resolvedBrand
     ? activeModuleData.drug?.brandCatalog?.[resolvedBrand]?.displayGenericName
     : undefined

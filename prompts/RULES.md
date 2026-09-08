@@ -678,12 +678,12 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 ## 21. genericName / displayGenericName / genericKey 分離原則
 
-`brandCatalog[brand]` の一般名関連フィールドは、正式名称・表示用・判定用で役割を分離する。
+`brandCatalog[brand]` の一般名関連フィールドは、有効成分同一性・表示用・判定用で役割を分離する。
 
 | フィールド | 役割 |
 |---|---|
-| `genericName` | 正式名称。塩類名・水和物等を含み得る。通常UIでは参照しない（専門・監査文脈専用） |
-| `displayGenericName` | 表示専用。通常UI（検索候補・パンくず・SOAP本文・`{{drug_subject}}`）が参照する唯一の一般名。必須。`genericName` への暗黙フォールバック禁止 |
+| `genericName` | 有効成分同一性を表す、剤形非依存の正規化済み基本成分名（DP-21）。塩類名・水和物等を保持するフィールドではない。通常UIでは参照しない（内部識別・監査文脈専用） |
+| `displayGenericName` | 表示専用。通常UI（検索候補・パンくず・SOAP本文・`{{drug_subject}}`）が参照する唯一の一般名。必要に応じて剤形修飾を含み得る。必須。`genericName` への暗黙フォールバック禁止 |
 | `genericKey` | 検索グルーピング判定専用。表示には使わない |
 
 - 「同一成分としてまとめてよいか」の判定は `genericKey` の一致で行い、表示文字列の一致に依存してはならない

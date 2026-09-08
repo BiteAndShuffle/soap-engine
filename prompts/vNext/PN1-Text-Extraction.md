@@ -151,7 +151,7 @@ bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `
 誤: "イメグリミン塩酸塩は、食後血糖を改善する薬です。"
 ```
 
-`drug.genericName` / `brandCatalog.{brand}.genericName`（正式名称。塩類名を含み得る） / `nameAliases` / `search.nameAliases` 等の内部データには影響しない。`brandCatalog.{brand}.displayGenericName`（表示用一般名。常に塩類名を含まない）は本節の対象外であり、PN2-Drug-Header.md の責務に従う。この規則は bridge の S/O/A/P/P_CLOSING 本文の執筆時のみに適用する。
+`drug.genericName` / `brandCatalog.{brand}.genericName`（有効成分同一性を表す、剤形非依存の正規化済み基本成分名。DP-21。塩類名を保持するフィールドではない） / `nameAliases` / `search.nameAliases` 等の内部データには影響しない。`brandCatalog.{brand}.displayGenericName`（表示用一般名。常に塩類名を含まない）は本節の対象外であり、PN2-Drug-Header.md の責務に従う。この規則は bridge の S/O/A/P/P_CLOSING 本文の執筆時のみに適用する。
 
 新規モジュールの bridge 執筆時に適用する。既存モジュールの一括修正は対象外（気づいた時点で個別対応）。
 
