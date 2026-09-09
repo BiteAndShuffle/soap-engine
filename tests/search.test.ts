@@ -513,6 +513,83 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
 })
 
 // ─────────────────────────────────────────────────────────────
+// Search Family Phase 2-A（label fix）: ingredient-level co-brand の
+// sibling 行 uiLabel は、クエリされたブランドの一般名ではなく sibling
+// ブランド自身の displayGenericName を使う。
+//
+// 旧欠陥: 異なる genericKey を持つ co-brand（例: リザベン点眼液 ⇔
+// トラメラス点眼液PF、ヒルドイドフォーム ⇔ ヘパリン類似物質外用スプレー）で、
+// sibling 行の括弧内へクエリ側の一般名を流用し PF/非PF・剤形識別が反転していた。
+// candidate 集合・順序・drugDisplayLabel・resolution.subject は不変で、
+// sibling の uiLabel 括弧内テキストのみを是正する。
+// ─────────────────────────────────────────────────────────────
+describe('Search Family Phase 2-A（label fix）: co-brand sibling は自身の generic identity を表示する', () => {
+  test('"トラメラス"（PF ブランド直接クエリ）→ sibling リザベン点眼液は自身の非PF一般名を表示する', () => {
+    const results = getDrugSuggestions('トラメラス', fullIndex, 8)
+    // 候補集合・順序・drugDisplayLabel は不変（direct → sibling → generic header）
+    assert.deepEqual(
+      results.map(r => r.drugDisplayLabel),
+      ['トラメラス点眼液PF', 'リザベン点眼液', 'トラニラスト点眼液PF'],
+    )
+    // direct 行（クエリされたブランド自身）は PF 一般名のまま
+    assert.equal(results[0].uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
+    // sibling 行は sibling 自身の非PF一般名（クエリ側 "トラニラスト点眼液PF" を流用しない）
+    assert.equal(results[1].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
+    assert.ok(!results[1].uiLabel!.includes('PF'), 'sibling の括弧内へ PF 識別が混入してはならない')
+    // SOAP identity（resolution.subject）は不変
+    assert.equal(results[1].resolution.subject, 'リザベン点眼液')
+    assert.equal(results[1].resolution.denotation, 'brand')
+  })
+
+  test('"リザベン"（非PF ブランド直接クエリ）→ sibling トラメラス点眼液PF は自身のPF一般名を表示する', () => {
+    const results = getDrugSuggestions('リザベン', fullIndex, 8)
+    assert.deepEqual(
+      results.map(r => r.drugDisplayLabel),
+      ['リザベン点眼液', 'トラメラス点眼液PF', 'トラニラスト点眼液'],
+    )
+    assert.equal(results[0].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
+    // sibling 行は sibling 自身のPF一般名（クエリ側 "トラニラスト点眼液" を流用しない）
+    assert.equal(results[1].uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
+    assert.equal(results[1].resolution.subject, 'トラメラス点眼液PF')
+  })
+
+  test('PF / 非PF の一般名識別が sibling 行で反転しない（双方向）', () => {
+    const fromPF = getDrugSuggestions('トラメラス', fullIndex, 8)
+    const fromPlain = getDrugSuggestions('リザベン', fullIndex, 8)
+    const sibFromPF = fromPF.find(r => r.matchedBrandName === 'リザベン点眼液')!
+    const sibFromPlain = fromPlain.find(r => r.matchedBrandName === 'トラメラス点眼液PF')!
+    assert.equal(sibFromPF.uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
+    assert.equal(sibFromPlain.uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
+  })
+
+  test('"ヒルドイドフォーム" ⇔ "ヘパリン類似物質外用スプレー": co-brand sibling は自身の剤形一般名を表示する', () => {
+    const fromFoam = getDrugSuggestions('ヒルドイドフォーム', fullIndex, 8)
+    const foamSib = fromFoam.find(r => r.matchedBrandName === 'ヘパリン類似物質外用スプレー')!
+    assert.equal(foamSib.uiLabel, 'ヘパリン類似物質外用スプレー（ヘパリン類似物質外用スプレー）')
+    assert.ok(!foamSib.uiLabel!.includes('フォーム'), 'sibling の括弧内へクエリ側の剤形「フォーム」が混入してはならない')
+    assert.equal(foamSib.resolution.subject, 'ヘパリン類似物質外用スプレー')
+
+    const fromSpray = getDrugSuggestions('ヘパリン類似物質外用スプレー', fullIndex, 8)
+    const spraySib = fromSpray.find(r => r.matchedBrandName === 'ヒルドイドフォーム')!
+    assert.equal(spraySib.uiLabel, 'ヒルドイドフォーム（ヘパリン類似物質フォーム）')
+    assert.ok(!spraySib.uiLabel!.includes('スプレー'), 'sibling の括弧内へクエリ側の剤形「スプレー」が混入してはならない')
+    assert.equal(spraySib.resolution.subject, 'ヒルドイドフォーム')
+  })
+
+  test('同一 genericKey の sibling（従来から安全な経路）は表示不変', () => {
+    // "とらにらすと"（generic 読み）は genericMode 経路で genericKey 別グループを
+    // それぞれ自身の一般名で表示する（label fix の対象外・凍結）。
+    const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
+    assert.deepEqual(results.map(r => r.uiLabel), [
+      'トラニラスト点眼液',
+      'リザベン点眼液（トラニラスト点眼液）',
+      'トラニラスト点眼液PF',
+      'トラメラス点眼液PF（トラニラスト点眼液PF）',
+    ])
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
 // ⑫ 最終 tie-break: score/priority 同点時は originalIndex ではなく
 //    解決済み表示名の自然な日本語順で並べる
 // ─────────────────────────────────────────────────────────────

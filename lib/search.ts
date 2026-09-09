@@ -1329,9 +1329,19 @@ export function getDrugSuggestions(
               for (const sib of siblings) {
                 if (pushedBrands.has(sib)) continue
                 pushedBrands.add(sib)
+                // co-brand / genericKey-sibling 行の括弧内一般名は、クエリされたブランドの
+                // 一般名（generic）ではなく sibling ブランド自身の displayGenericName を使う。
+                // genericKey が同一の sibling では両者の displayGenericName が一致するため
+                // 表示は変わらないが、genericKey が異なる ingredient-level co-brand
+                // （例: リザベン点眼液 ⇔ トラメラス点眼液PF、ヒルドイドフォーム ⇔
+                // ヘパリン類似物質外用スプレー）では PF/非PF・剤形の識別を sibling 側の
+                // 正しい identity へ解決する（旧: 同一 genericKey 前提のまま新経路へ
+                // クエリ側 generic を流用していた表示専用の欠陥。resolution.subject /
+                // drugDisplayLabel / SOAP 主語には影響しない）。
+                const sibGeneric = entry.brandCatalogGenericMap[sib] ?? generic
                 const sibLabel = useIndicationLabel
-                  ? entry.brandCatalogIndicationLabelMap[sib] || generic
-                  : generic
+                  ? entry.brandCatalogIndicationLabelMap[sib] || sibGeneric
+                  : sibGeneric
                 candidates.push({
                   brand: sib, displayLabel: sib, uiLabel: `${sib}（${sibLabel}）`, bucket: 'sibling',
                   resolution: makeBrandResolution(sib, sib),
