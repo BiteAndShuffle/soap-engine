@@ -270,38 +270,45 @@ describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数
     assert.equal(results[0].isGenericLabel, true)
   })
 
-  test('"あくとす"（正式ブランド名検索）→ アクトス自身に加え、有効成分ピオグリタゾンを含む配合剤へ対称的に到達する（Search Family Phase 1）', () => {
+  test('"あくとす"（正式ブランド名検索）→ アクトス自身・同一module内の同一有効成分co-brand・有効成分ピオグリタゾンを含む配合剤へ対称的に到達する（Search Family Phase 1 + Phase 2-A D1）', () => {
     // Phase 1（配合剤成分展開）により、単剤ブランドの直接一致クエリからも
     // 同一有効成分を含む配合剤ブランドへ到達できるようになった
     // （一般名クエリ側は既存どおりこれらへ到達できていた＝候補集合の対称性）。
+    // Phase 2-A（Owner Decision D1・2026-09）により、同一module内で genericKey が
+    // 意図的に異なる同一有効成分ブランド（ピオグリタゾン＝GE代表名）にも直接クエリから
+    // 到達できるようになった（genericKey は書き換えない。co-brand は
+    // brandCatalogIngredientMap（genericName）の一致でのみ判定する）。
     // 表示順（Phase 2 の責務）は本テストの対象外とし、集合の中身のみを固定する。
     const results = getDrugSuggestions('あくとす', fullIndex, 8)
     const brands = results.map(r => r.matchedBrandName)
     assert.equal(results[0].matchedBrandName, 'アクトス', `1位は先発品ブランド自身であるべき: ${JSON.stringify(brands)}`)
-    for (const combo of ['リオベル', 'メタクト', 'ソニアス']) {
-      assert.ok(brands.includes(combo), `ピオグリタゾンを含む配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    for (const combo of ['ピオグリタゾン', 'リオベル', 'メタクト', 'ソニアス']) {
+      assert.ok(brands.includes(combo), `同一有効成分の co-brand / 配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
     }
-    assert.equal(brands.length, 4, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
+    assert.equal(brands.length, 5, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
   })
 
-  test('"めとぐるこ" → メトグルコ自身に加え、有効成分メトホルミンを含む配合剤へ対称的に到達する（Search Family Phase 1）', () => {
+  test('"めとぐるこ" → メトグルコ自身・同一module内の同一有効成分co-brand・有効成分メトホルミンを含む配合剤へ対称的に到達する（Search Family Phase 1 + Phase 2-A D1）', () => {
+    // Phase 2-A（Owner Decision D1）: メトグルコ/メトホルミン(GE)/グリコランは
+    // 用量帯が異なるため genericKey は意図的に別々のまま（書き換えない）だが、
+    // 同一有効成分（メトホルミン）の co-brand として直接クエリから互いに到達できる。
     const results = getDrugSuggestions('めとぐるこ', fullIndex, 8)
     const brands = results.map(r => r.matchedBrandName)
     assert.equal(results[0].matchedBrandName, 'メトグルコ', `1位は先発品ブランド自身であるべき: ${JSON.stringify(brands)}`)
-    for (const combo of ['メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']) {
-      assert.ok(brands.includes(combo), `メトホルミンを含む配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    for (const combo of ['メトホルミン', 'グリコラン', 'メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']) {
+      assert.ok(brands.includes(combo), `同一有効成分の co-brand / 配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
     }
-    assert.equal(brands.length, 6, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
+    assert.equal(brands.length, 8, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
   })
 
-  test('"ぐりこらん" → グリコラン自身に加え、有効成分メトホルミンを含む配合剤へ対称的に到達する（Search Family Phase 1）', () => {
+  test('"ぐりこらん" → グリコラン自身・同一module内の同一有効成分co-brand・有効成分メトホルミンを含む配合剤へ対称的に到達する（Search Family Phase 1 + Phase 2-A D1）', () => {
     const results = getDrugSuggestions('ぐりこらん', fullIndex, 8)
     const brands = results.map(r => r.matchedBrandName)
     assert.equal(results[0].matchedBrandName, 'グリコラン', `1位は先発品ブランド自身であるべき: ${JSON.stringify(brands)}`)
-    for (const combo of ['メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']) {
-      assert.ok(brands.includes(combo), `メトホルミンを含む配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
+    for (const combo of ['メトグルコ', 'メトホルミン', 'メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']) {
+      assert.ok(brands.includes(combo), `同一有効成分の co-brand / 配合剤 "${combo}" が候補に含まれるべき: ${JSON.stringify(brands)}`)
     }
-    assert.equal(brands.length, 6, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
+    assert.equal(brands.length, 8, `無関係な候補が追加されていないはず: ${JSON.stringify(brands)}`)
   })
 
   test('"ぐらく" → グラクティブが上位、アレグラは含まれない（既存回帰）', () => {
@@ -323,11 +330,16 @@ describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数
     assert.equal(results[3].matchedBrandName, 'ヒルドイドローション')
   })
 
-  test('"もんてるかすと" → 候補順・件数が変化しない', () => {
+  test('"もんてるかすと" → 先頭2件の候補順は変化しない。真の重複見出しはPhase 2-A（D2）で除去される', () => {
+    // 旧実装は module opt-in フラグ未設定のため、ブランド「モンテルカスト」自身の行と
+    // テキストが完全一致する generic header «モンテルカスト» が重複表示されていた
+    // （4件）。Phase 2-A（Owner Decision D2）は見出しの要否を module opt-in ではなく
+    // 実際の表示テキスト重複で判定するため、この真の重複見出しが除去される（3件）。
     const results = getDrugSuggestions('もんてるかすと', fullIndex, 8)
-    assert.equal(results.length, 4)
+    assert.equal(results.length, 3, `真に重複する generic header は除去されるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
     assert.equal(results[0].matchedBrandName, 'キプレス')
     assert.equal(results[1].matchedBrandName, 'シングレア')
+    assert.equal(results[2].matchedBrandName, 'モンテルカスト')
   })
 })
 
@@ -981,5 +993,261 @@ describe('⑰ Search Family Phase 1: 配合剤成分展開による候補集合�
         )
       }
     }
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
+// Search Family Phase 2-A（2026-09）: 意味的ファミリー順序 / co-brand membership /
+// generic header true-duplicate 判定の回帰コーパス。
+//
+// gate: strongSingleIngredientQuery = tokens.length===1 && 最上位 score>=5。
+// このゲートを満たさないクエリ（弱い prefix・複数トークン）は本 Phase の対象外であり、
+// 挙動を一切変更しない（§ 凍結コーパス群で明示的に固定する）。
+// ─────────────────────────────────────────────────────────────
+
+describe('Search Family Phase 2-A: F1（direct 候補が複数モジュールに跨る場合のペア一般名昇格）', () => {
+  test('"アレジオン" → クエリされた経口ファミリー＋そのペア一般名が、剤形違いの点眼ファミリーより先に並ぶ', () => {
+    const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.deepEqual(
+      labels,
+      ['アレジオン', 'エピナスチン', 'アレジオン点眼液', 'エピナスチン点眼液'],
+      `F1: 経口ファミリー＋ペア一般名が点眼ファミリーより先であるべき: ${JSON.stringify(labels)}`,
+    )
+    // 点眼ファミリーは削除されず、集合には残っている（順序のみの修正であること）
+    assert.ok(results.some(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops'))
+  })
+})
+
+describe('Search Family Phase 2-A: F2（genericMode 内は単剤ファミリーが配合剤ファミリーより先）', () => {
+  test('"したぐりぷちん" → シタグリプチン単剤ファミリーが、配合剤（シタグリプチン/イプラグリフロジン）より先に並ぶ', () => {
+    const results = getDrugSuggestions('したぐりぷちん', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.deepEqual(
+      labels,
+      ['シタグリプチン', 'ジャヌビア', 'グラクティブ', 'シタグリプチン/イプラグリフロジン', 'スージャヌ'],
+      `F2: 単剤ファミリーが配合剤ファミリーより先であるべき: ${JSON.stringify(labels)}`,
+    )
+  })
+
+  test('"めとほるみん" / "ぐりめぴりど" / "ぼぐりぼーす" → 既に単剤優先だったクエリは無変更（安定ソートの no-op 確認）', () => {
+    const cases: Array<[string, string[]]> = [
+      ['めとほるみん', ['メトホルミン', 'メトグルコ', 'グリコラン', 'メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メタクト']],
+      ['ぐりめぴりど', ['グリメピリド', 'アマリール', 'ピオグリタゾン／グリメピリド', 'ソニアス']],
+      ['ぼぐりぼーす', ['ボグリボース', 'ベイスン', 'ミチグリニド・ボグリボース', 'グルベス']],
+    ]
+    for (const [q, expected] of cases) {
+      const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
+      assert.deepEqual(labels, expected, `"${q}" は Phase 2-A 前と完全に同一であるべき: ${JSON.stringify(labels)}`)
+    }
+  })
+})
+
+describe('Search Family Phase 2-A: D1（同一 module 内・同一有効成分の co-brand membership）', () => {
+  test('"メトグルコ" → 同一 module 内の同一有効成分ブランド（メトホルミン(GE)・グリコラン）へ直接クエリから到達する', () => {
+    const results = getDrugSuggestions('メトグルコ', fullIndex, 8)
+    const brands = results.map(r => r.matchedBrandName)
+    assert.equal(brands[0], 'メトグルコ')
+    assert.ok(brands.includes('メトホルミン'), `co-brand "メトホルミン" が含まれるべき: ${JSON.stringify(brands)}`)
+    assert.ok(brands.includes('グリコラン'), `co-brand "グリコラン" が含まれるべき: ${JSON.stringify(brands)}`)
+    // genericKey は書き換えていないことの確認（3 ブランドは引き続き別 genericKey のまま）
+    const entry = fullIndex.find(e => e.moduleId === 'dm_biguanide_metformin_oral')!
+    assert.notEqual(entry.brandCatalogGenericKeyMap['メトグルコ'], entry.brandCatalogGenericKeyMap['メトホルミン'])
+    assert.notEqual(entry.brandCatalogGenericKeyMap['メトグルコ'], entry.brandCatalogGenericKeyMap['グリコラン'])
+  })
+
+  test('"アクトス" → 同一 module 内の同一有効成分ブランド（ピオグリタゾン(GE)）へ直接クエリから到達する', () => {
+    const results = getDrugSuggestions('アクトス', fullIndex, 8)
+    const brands = results.map(r => r.matchedBrandName)
+    assert.equal(brands[0], 'アクトス')
+    assert.ok(brands.includes('ピオグリタゾン'), `co-brand "ピオグリタゾン" が含まれるべき: ${JSON.stringify(brands)}`)
+  })
+
+  test('co-brand 展開は同一 module 内に限定される（他 module へは拡張しない）', () => {
+    // エピナスチン（内服・アレジオン）は点眼モジュールの「エピナスチン点眼液」と
+    // 同一有効成分だが、別モジュール（別 search family）であるため co-brand として
+    // sibling 展開されない（direct 候補としては別に到達可能）。
+    const results = getDrugSuggestions('アレジオン', fullIndex, 8)
+    const sibling = results.find(
+      r => r.matchedBrandName === 'エピナスチン点眼液' && r.moduleId === 'allergy_h1_antihistamine_eye_drops',
+    )
+    // 点眼ファミリーは F1 により候補集合には残るが、経口モジュールの co-brand としては
+    // 展開されない（モジュールが分かれたまま到達する）。
+    assert.ok(sibling, '点眼ブランドは別ファミリーとして候補集合に残るべき')
+    assert.equal(
+      results.filter(r => r.moduleId === 'allergy_h1_antihistamine_second_gen_oral').length,
+      2,
+      '経口モジュール側の候補は自ブランド＋自身のペア一般名の2件のみであるべき（点眼ブランドを co-brand として複製しない）',
+    )
+  })
+})
+
+describe('Search Family Phase 2-A: D2（generic header の true-duplicate 判定。module opt-in 非依存）', () => {
+  test('"メトグルコ" / "アクトス" → 一般名テキストは（D1 co-brand 行として）確実に到達可能になる（旧: module opt-in フラグで一律非表示）', () => {
+    // D1 が co-brand「メトホルミン」/「ピオグリタゾン」を brand 行として追加した結果、
+    // 同テキストの単独 generic header はそれ自体が真の重複になるため D2 により正しく
+    // 抑制される（isGenericLabel=false の brand 行として到達する）。
+    // 「一般名テキストが到達不能になる」という旧来の module opt-in 一律抑制の問題が
+    // 解消されていることを検証する（header/brand のどちらの形で表示されるかは問わない）。
+    const metgluco = getDrugSuggestions('メトグルコ', fullIndex, 8)
+    assert.ok(
+      metgluco.some(r => r.drugDisplayLabel === 'メトホルミン'),
+      `メトグルコ: 「メトホルミン」に到達可能であるべき: ${JSON.stringify(metgluco.map(r => r.drugDisplayLabel))}`,
+    )
+    assert.ok(
+      !metgluco.some(r => r.isGenericLabel && r.drugDisplayLabel === 'メトホルミン'),
+      'メトグルコ: co-brand 行が存在するため、同テキストの単独 header は真の重複として抑制されるべき',
+    )
+    const actos = getDrugSuggestions('アクトス', fullIndex, 8)
+    assert.ok(
+      actos.some(r => r.drugDisplayLabel === 'ピオグリタゾン'),
+      `アクトス: 「ピオグリタゾン」に到達可能であるべき: ${JSON.stringify(actos.map(r => r.drugDisplayLabel))}`,
+    )
+  })
+
+  test('"もんてるかすと" → ブランド名とテキストが完全一致する真の重複 header は抑制される', () => {
+    const results = getDrugSuggestions('もんてるかすと', fullIndex, 8)
+    const genericHeaders = results.filter(r => r.isGenericLabel)
+    assert.equal(genericHeaders.length, 0, `真に重複する header は 0 件であるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    assert.ok(results.some(r => r.drugDisplayLabel === 'モンテルカスト' && !r.isGenericLabel), 'ブランド行「モンテルカスト」自体は残るべき')
+  })
+
+  test('H1点眼の direct クエリは、true-duplicate 判定後も視覚的に重複する行を新たに獲得しない', () => {
+    const results = getDrugSuggestions('アレジオン点眼液', fullIndex, 8)
+    const texts = results.map(r => r.drugDisplayLabel)
+    assert.equal(new Set(texts).size, texts.length, `重複表示テキストが存在してはならない: ${JSON.stringify(texts)}`)
+  })
+})
+
+describe('Search Family Phase 2-A: D3（単一成分インスリン family は premix family より先）', () => {
+  test('"いんすりんあすぱると" → 単一成分（ノボラピッド系）が premix（ノボラピッド *ミックス系）より先', () => {
+    const results = getDrugSuggestions('いんすりんあすぱると', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.deepEqual(
+      labels,
+      ['インスリンアスパルト', 'ノボラピッド', 'フィアスプ', 'ノボラピッド30ミックス', 'ノボラピッド50ミックス', 'ノボラピッド70ミックス', 'インスリンデグルデク/インスリンアスパルト', 'ライゾデグ'],
+      `D3: 単一成分 → premix → 配合剤 の順であるべき: ${JSON.stringify(labels)}`,
+    )
+    // generic header は単一成分モジュール（dm_insulin_rapid_analog）由来で生き残る
+    const header = results.find(r => r.isGenericLabel && r.drugDisplayLabel === 'インスリンアスパルト')
+    assert.equal(header?.moduleId, 'dm_insulin_rapid_analog')
+  })
+
+  test('"いんすりんひと" → 単一成分（ノボリンR/ヒューマリンR）が premix（*30R / 3/7）より先', () => {
+    const results = getDrugSuggestions('いんすりんひと', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.deepEqual(
+      labels,
+      ['インスリンヒト', 'ノボリンR', 'ヒューマリンR', 'ノボリン30R', 'イノレット30R', 'ヒューマリン3/7'],
+      `D3: 単一成分 → premix の順であるべき: ${JSON.stringify(labels)}`,
+    )
+  })
+
+  test('"いんすりんりすぷろ" → 単一成分（ヒューマログ/ルムジェブ）が premix（*ミックス）より先', () => {
+    const results = getDrugSuggestions('いんすりんりすぷろ', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.deepEqual(
+      labels,
+      ['インスリンリスプロ', 'ヒューマログ', 'ルムジェブ', 'ヒューマログ25ミックス', 'ヒューマログ50ミックス'],
+      `D3: 単一成分 → premix の順であるべき: ${JSON.stringify(labels)}`,
+    )
+  })
+
+  test('premix 判定は categoryPath 由来であり、候補の SET（Phase 1 対称性）を変えない', () => {
+    // 単一成分/premix の並び替えのみが Phase 2-A の責務であり、
+    // どのブランドが候補になるか（membership）は変更しない。
+    const before = new Set(['インスリンアスパルト', 'ノボラピッド', 'フィアスプ', 'ノボラピッド30ミックス', 'ノボラピッド50ミックス', 'ノボラピッド70ミックス', 'インスリンデグルデク/インスリンアスパルト', 'ライゾデグ'])
+    const after = new Set(getDrugSuggestions('いんすりんあすぱると', fullIndex, 8).map(r => r.drugDisplayLabel))
+    assert.deepEqual(after, before, 'candidate set は不変であるべき（順序のみの変更）')
+  })
+})
+
+describe('Search Family Phase 2-A: D4（oral / injectable semaglutide は別ファミリーのまま。凍結）', () => {
+  test('"せまぐるちど" → 経口・注射の両ファミリーが co-equal に見える（優先順位を発明しない）', () => {
+    const results = getDrugSuggestions('せまぐるちど', fullIndex, 8)
+    const labels = results.map(r => r.drugDisplayLabel)
+    assert.deepEqual(labels, ['セマグルチド', 'リベルサス', 'オゼンピック'], `D4 は本ユニットで変更しない: ${JSON.stringify(labels)}`)
+  })
+
+  test('"リベルサス" / "オゼンピック" → 直接クエリはクエリされた製剤が先頭のまま', () => {
+    const r1 = getDrugSuggestions('リベルサス', fullIndex, 8)
+    assert.equal(r1[0]?.drugDisplayLabel, 'リベルサス')
+    const r2 = getDrugSuggestions('オゼンピック', fullIndex, 8)
+    assert.equal(r2[0]?.drugDisplayLabel, 'オゼンピック')
+  })
+})
+
+describe('Search Family Phase 2-A: D5（oral / ophthalmic 同一有効成分は別ファミリーのまま可視）', () => {
+  test('"えぴなすちん" / "おろぱたじん" → oral・ophthalmic 両ファミリーとも候補集合に残る（凍結）', () => {
+    for (const [q, expected] of [
+      ['えぴなすちん', ['エピナスチン', 'アレジオン', 'エピナスチン点眼液', 'アレジオン点眼液']],
+      ['おろぱたじん', ['オロパタジン', 'アレロック', 'オロパタジン点眼液', 'パタノール点眼液']],
+    ] as const) {
+      const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
+      assert.deepEqual(labels, [...expected], `"${q}" は凍結対象: ${JSON.stringify(labels)}`)
+    }
+  })
+
+  test('"エピナスチン点眼" / "おろぱたじん てんがん" → 明示的な点眼意図は従来どおり点眼のみへ絞り込む（凍結）', () => {
+    const r1 = getDrugSuggestions('エピナスチン点眼', fullIndex, 8)
+    assert.deepEqual(r1.map(r => r.drugDisplayLabel), ['エピナスチン点眼液', 'アレジオン点眼液'])
+    const r2 = getDrugSuggestions('おろぱたじん てんがん', fullIndex, 8)
+    assert.deepEqual(r2.map(r => r.drugDisplayLabel), ['オロパタジン点眼液'])
+  })
+})
+
+describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満は完全凍結', () => {
+  test('単一かな1文字クエリ（え/お/り/め/ほ/あ）は Phase 2-A 前と完全に同一のシーケンスを返す', () => {
+    const expected: Record<string, string[]> = {
+      'え': ['エキセナチド', 'バイエッタ', 'エパルレスタット', 'キネダック', 'エンパグリフロジン', 'エンパグリフロジン', 'リナグリプチン/エンパグリフロジン', 'トラディアンス'],
+      'お': ['オロパタジン', 'アレロック', 'オイグルコン', 'オゼンピック', 'オノン', 'グリベンクラミド', 'セマグルチド', 'プランルカスト'],
+      'り': ['リオベル', 'ビクトーザ', 'リキスミア', 'リザベン点眼液', 'リベルサス', 'アログリプチン／ピオグリタゾン', 'リキシセナチド', 'トラニラスト点眼液'],
+      'め': ['メタクト', 'メトアナ', 'メトグルコ', 'メトホルミン', 'エクメット', 'イニシンク', 'ピオグリタゾン／メトホルミン', 'ビルダグリプチン/メトホルミン'],
+      'ほ': ['フォシーガ', 'メタクト', 'メトアナ', 'メトグルコ', 'アマリール', 'ソニアス'],
+      'あ': ['アウィクリ', 'アクトス', 'ノボラピッド', 'アピドラ', 'アマリール', 'インスリンイコデク', 'インスリングルリジン', 'グリメピリド'],
+    }
+    for (const [q, exp] of Object.entries(expected)) {
+      const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
+      assert.deepEqual(labels, exp, `単一かな "${q}" は凍結対象（score<5）: ${JSON.stringify(labels)}`)
+    }
+  })
+
+  test('スコア閾値未満の prefix クエリ（めと/ぴお/えぴ）は Phase 2-A 前と完全に同一のシーケンスを返す', () => {
+    const expected: Record<string, string[]> = {
+      'めと': ['メトアナ', 'エクメット', 'イニシンク', 'メホビル', 'メトグルコ', 'グリコラン', 'メトホルミン', 'ビルダグリプチン/メトホルミン'],
+      'ぴお': ['ピオグリタゾン', 'アクトス', 'アログリプチン／ピオグリタゾン', 'リオベル', 'ピオグリタゾン／グリメピリド', 'ソニアス', 'ピオグリタゾン／メトホルミン', 'メタクト'],
+      'えぴ': ['エピナスチン', 'アレジオン', 'エピナスチン点眼液', 'アレジオン点眼液'],
+    }
+    for (const [q, exp] of Object.entries(expected)) {
+      const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
+      assert.deepEqual(labels, exp, `prefix クエリ "${q}" は凍結対象（score<5）: ${JSON.stringify(labels)}`)
+    }
+  })
+
+  test('複数トークンクエリ（剤形/route intent）は Phase 2-A の対象外として凍結される', () => {
+    const r1 = getDrugSuggestions('へぱ なんこう', fullIndex, 8)
+    assert.deepEqual(r1.map(r => r.drugDisplayLabel), ['ヘパリン類似物質油性クリーム'])
+    const r2 = getDrugSuggestions('とらにらすと pf', fullIndex, 8)
+    assert.deepEqual(r2.map(r => r.drugDisplayLabel), ['トラニラスト点眼液PF'])
+    assert.deepEqual(r2.map(r => r.matchedBrandName), ['トラメラス点眼液PF'])
+  })
+})
+
+describe('Search Family Phase 2-A: crossModuleIndicationLabel の co-equal 契約は破壊しない（フォシーガ）', () => {
+  test('"フォシーガ" → 糖尿病/心・腎の2モジュールが、F1 の昇格ロジックにより分断されない', () => {
+    const results = getDrugSuggestions('フォシーガ', fullIndex, 8)
+    const uiLabels = results.map(r => r.uiLabel)
+    assert.deepEqual(
+      uiLabels,
+      ['フォシーガ（糖尿病）', 'フォシーガ（心・腎）', 'ダパグリフロジン（糖尿病）', 'ダパグリフロジン（心・腎）'],
+      `crossModuleIndicationLabel の co-equal 表示契約が壊れていないこと: ${JSON.stringify(uiLabels)}`,
+    )
+  })
+})
+
+describe('Search Family Phase 2-A: 直接配合剤クエリは引き続き direct 優先のまま（F2 の対象外）', () => {
+  test('"メタクト" → 配合剤自身への直接クエリは、単剤ファミリーの割り込みを受けない', () => {
+    const results = getDrugSuggestions('メタクト', fullIndex, 8)
+    assert.equal(results[0]?.matchedBrandName, 'メタクト', `配合剤への直接クエリは自身が1位であるべき: ${JSON.stringify(results.map(r => r.matchedBrandName))}`)
   })
 })

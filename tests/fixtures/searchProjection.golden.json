@@ -220,12 +220,28 @@
   ],
   "いんすりんあすぱると": [
     {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ノボラピッド30ミックス",
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ノボラピッド",
       "drugDisplayLabel": "インスリンアスパルト",
       "uiLabel": "インスリンアスパルト",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
       "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ノボラピッド",
+      "drugDisplayLabel": "ノボラピッド",
+      "uiLabel": "ノボラピッド（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "フィアスプ",
+      "drugDisplayLabel": "フィアスプ",
+      "uiLabel": "フィアスプ（インスリンアスパルト）",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
     },
     {
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
@@ -252,22 +268,6 @@
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_rapid_analog",
-      "matchedBrandName": "ノボラピッド",
-      "drugDisplayLabel": "ノボラピッド",
-      "uiLabel": "ノボラピッド（インスリンアスパルト）",
-      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_rapid_analog",
-      "matchedBrandName": "フィアスプ",
-      "drugDisplayLabel": "フィアスプ",
-      "uiLabel": "フィアスプ（インスリンアスパルト）",
-      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
-      "isGenericLabel": null
-    },
-    {
       "moduleId": "dm_insulin_mixed_rapid_long",
       "matchedBrandName": "ライゾデグ",
       "drugDisplayLabel": "インスリンデグルデク/インスリンアスパルト",
@@ -286,28 +286,12 @@
   ],
   "いんすりんりすぷろ": [
     {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ25ミックス",
+      "moduleId": "dm_insulin_rapid_analog",
+      "matchedBrandName": "ヒューマログ",
       "drugDisplayLabel": "インスリンリスプロ",
       "uiLabel": "インスリンリスプロ",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
       "isGenericLabel": true
-    },
-    {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ25ミックス",
-      "drugDisplayLabel": "ヒューマログ25ミックス",
-      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ50ミックス",
-      "drugDisplayLabel": "ヒューマログ50ミックス",
-      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
-      "isGenericLabel": null
     },
     {
       "moduleId": "dm_insulin_rapid_analog",
@@ -323,6 +307,22 @@
       "drugDisplayLabel": "ルムジェブ",
       "uiLabel": "ルムジェブ（インスリンリスプロ）",
       "representativeTemplateId": "dm_insulin_rapid_analog.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "ヒューマログ25ミックス",
+      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ50ミックス",
+      "drugDisplayLabel": "ヒューマログ50ミックス",
+      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
       "isGenericLabel": null
     }
   ],
@@ -420,12 +420,28 @@
   ],
   "いんすりんひと": [
     {
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "matchedBrandName": "ノボリン30R",
+      "moduleId": "dm_insulin_regular",
+      "matchedBrandName": "ノボリンR",
       "drugDisplayLabel": "インスリンヒト",
       "uiLabel": "インスリンヒト",
-      "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
+      "representativeTemplateId": "dm_insulin_regular.initial",
       "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_regular",
+      "matchedBrandName": "ノボリンR",
+      "drugDisplayLabel": "ノボリンR",
+      "uiLabel": "ノボリンR（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_regular.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_regular",
+      "matchedBrandName": "ヒューマリンR",
+      "drugDisplayLabel": "ヒューマリンR",
+      "uiLabel": "ヒューマリンR（インスリンヒト）",
+      "representativeTemplateId": "dm_insulin_regular.initial",
+      "isGenericLabel": null
     },
     {
       "moduleId": "dm_insulin_mixed_regular_intermediate",
@@ -449,22 +465,6 @@
       "drugDisplayLabel": "ヒューマリン3/7",
       "uiLabel": "ヒューマリン3/7（インスリンヒト）",
       "representativeTemplateId": "dm_insulin_mixed_regular_intermediate.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_regular",
-      "matchedBrandName": "ノボリンR",
-      "drugDisplayLabel": "ノボリンR",
-      "uiLabel": "ノボリンR（インスリンヒト）",
-      "representativeTemplateId": "dm_insulin_regular.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_regular",
-      "matchedBrandName": "ヒューマリンR",
-      "drugDisplayLabel": "ヒューマリンR",
-      "uiLabel": "ヒューマリンR（インスリンヒト）",
-      "representativeTemplateId": "dm_insulin_regular.initial",
       "isGenericLabel": null
     }
   ],
@@ -514,27 +514,11 @@
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ25ミックス",
-      "drugDisplayLabel": "ヒューマログ25ミックス",
-      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
-      "isGenericLabel": null
-    },
-    {
       "moduleId": "dm_insulin_rapid_analog",
       "matchedBrandName": "ルムジェブ",
       "drugDisplayLabel": "ルムジェブ",
       "uiLabel": "ルムジェブ（インスリンリスプロ）",
       "representativeTemplateId": "dm_insulin_rapid_analog.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "matchedBrandName": "ヒューマログ50ミックス",
-      "drugDisplayLabel": "ヒューマログ50ミックス",
-      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
-      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
       "isGenericLabel": null
     },
     {
@@ -544,6 +528,22 @@
       "uiLabel": "インスリンリスプロ",
       "representativeTemplateId": "dm_insulin_rapid_analog.initial",
       "isGenericLabel": true
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ25ミックス",
+      "drugDisplayLabel": "ヒューマログ25ミックス",
+      "uiLabel": "ヒューマログ25ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "matchedBrandName": "ヒューマログ50ミックス",
+      "drugDisplayLabel": "ヒューマログ50ミックス",
+      "uiLabel": "ヒューマログ50ミックス（インスリンリスプロ）",
+      "representativeTemplateId": "dm_insulin_mixed_rapid_intermediate.initial",
+      "isGenericLabel": null
     }
   ],
   "ひるどいど": [
@@ -588,20 +588,20 @@
       "isGenericLabel": null
     },
     {
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "matchedBrandName": "ヒルドイドソフト軟膏",
-      "drugDisplayLabel": "ヘパリン類似物質油性クリーム",
-      "uiLabel": "ヘパリン類似物質油性クリーム",
-      "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
-      "isGenericLabel": true
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "matchedBrandName": "ヘパリン類似物質クリーム",
+      "drugDisplayLabel": "ヘパリン類似物質クリーム",
+      "uiLabel": "ヘパリン類似物質クリーム（ヘパリン類似物質クリーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
+      "isGenericLabel": null
     },
     {
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "matchedBrandName": "ヒルドイドクリーム",
-      "drugDisplayLabel": "ヘパリン類似物質クリーム",
-      "uiLabel": "ヘパリン類似物質クリーム",
-      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
-      "isGenericLabel": true
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヘパリン類似物質外用スプレー",
+      "drugDisplayLabel": "ヘパリン類似物質外用スプレー",
+      "uiLabel": "ヘパリン類似物質外用スプレー（ヘパリン類似物質フォーム）",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": null
     },
     {
       "moduleId": "derm_heparinoid_moisturizer_spray",
@@ -622,6 +622,14 @@
       "isGenericLabel": null
     },
     {
+      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+      "matchedBrandName": "アレジオン",
+      "drugDisplayLabel": "エピナスチン",
+      "uiLabel": "エピナスチン",
+      "representativeTemplateId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
+      "isGenericLabel": true
+    },
+    {
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "matchedBrandName": "アレジオン点眼液",
       "drugDisplayLabel": "アレジオン点眼液",
@@ -636,14 +644,6 @@
       "uiLabel": "エピナスチン点眼液（エピナスチン点眼液）",
       "representativeTemplateId": "allergy_h1_antihistamine_eye_drops.initial",
       "isGenericLabel": null
-    },
-    {
-      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
-      "matchedBrandName": "アレジオン",
-      "drugDisplayLabel": "エピナスチン",
-      "uiLabel": "エピナスチン",
-      "representativeTemplateId": "allergy_h1_antihistamine_second_gen_oral.initial_nasal",
-      "isGenericLabel": true
     }
   ],
   "らんたす": [

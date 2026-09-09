@@ -386,7 +386,7 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     assert.deepEqual(missing, [], `historical fixture が参照する module が registry から消えている: ${missing.join(', ')}`)
   })
 
-  test('全 1644 行の projection が fixture と一致する', () => {
+  test('全 1620 行の projection が fixture と一致する', () => {
     // U-CR2: `index`（全体）ではなく `historicalIndex`（fixture が参照する module のみ）で
     // 再計算する。fixture は U-4b / Q-S2 migration 時点の historical regression artifact
     // であり、その後追加された module の結果混入は corpus 成長であって semantic regression
@@ -419,10 +419,18 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     //  みちぐりにどかるしうむすいわぶつ）が撤去され、それらが返していた 18 行が消えた
     //   rows 1662→1644 / brand 1015→1001 / generic 589→586 / module 58→57 /
     //   changedRows 83→82 / gatedChangedRows 58→57。
-    //   reachableChangedRows/Patterns（意図された U-4b delta）と gatedChangedModules の
-    //   構成（20件）は不変。
-    assert.equal(fixture.summary.rows, 1644)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1001, generic: 586, module: 57 })
+    //
+    // Search Family Phase 2-A（2026-09）: D1（co-brand membership）が
+    // メトグルコ/グリコラン/アクトス/リザベン点眼液/トラメラス点眼液PF/ヒルドイドフォーム等の
+    // 直接ブランドクエリへ同一有効成分の co-brand 行を追加し（+行）、D2
+    // （generic header true-duplicate 判定。module opt-in フラグ依存を廃止）が
+    // brand 名と表示テキストが完全一致する真に重複した generic header を除去した（-行）。
+    // 両者の純減により rows 1644→1620 / brand 1001→1024 / generic 586→539 / module 57→57
+    // （module は変化なし）。reachableChangedRows/Patterns（U-4b の意図された delta。
+    // 25行/6パターン）と gatedChangedModules の構成（20件）は Phase 2-A のスコープ外であり不変。
+    // gatedChangedRows は 57→57 で変化なし（対象 20 module のいずれも D1/D2 の対象外）。
+    assert.equal(fixture.summary.rows, 1620)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1024, generic: 539, module: 57 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 57)

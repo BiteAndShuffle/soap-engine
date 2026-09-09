@@ -155,6 +155,14 @@ export interface SearchEntry {
    * （heart_failure_supported / ckd_supported）から動的に導出する。
    */
   brandCatalogIndicationLabelMap: Record<string, string>
+  /**
+   * Search Family Phase 2-A: このモジュールが「混合型（premix）」製剤を表すかどうか。
+   * moduleData.categoryPath に「混合型」が含まれるかのみで判定する（新規データフィールドは
+   * 追加せず、既存の categoryPath 分類をそのまま利用する。dm_insulin_mixed_* 系で true）。
+   * 単一成分インスリンと premix インスリンは同一有効成分でも別 search family として扱う
+   * （Owner Decision D3）ための判定にのみ使用し、表示・dedup には使わない。
+   */
+  isPremixFormulation: boolean
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -250,6 +258,9 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     drugSearch?.matchPolicy?.suppressRedundantGenericHeaderOnDirectMatch ?? false
   const crossModuleIndicationLabel =
     drugSearch?.matchPolicy?.crossModuleIndicationLabel ?? false
+  // Search Family Phase 2-A（Owner Decision D3）: 既存の categoryPath 分類から
+  // premix（混合型）製剤を判定する。新規データフィールドは追加しない。
+  const isPremixFormulation = (moduleData.categoryPath ?? []).includes('混合型')
 
   // 適応ラベル（crossModuleIndicationLabel opt-in モジュールでのみ使用）:
   // categoryPath[0] を既定値とし、heart_failure_supported / ckd_supported の
@@ -307,6 +318,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       suppressRedundantGenericHeaderOnDirectMatch,
       crossModuleIndicationLabel,
       brandCatalogIndicationLabelMap,
+      isPremixFormulation,
     }
   })
 }
@@ -890,6 +902,14 @@ export function getDrugSuggestions(
     a.originalIndex - b.originalIndex,
   )
 
+  // Search Family Phase 2-A: 意味的ファミリー順序（F1/F2/D1/D3）を適用してよい
+  // 「強い単一成分クエリ」かどうかのゲート。単一トークンかつ最上位スコアが
+  // score>=5（alias完全一致以上。suppressCrossModuleSuggestionsOnExactHit と同じ閾値）
+  // の場合のみ true。弱い prefix クエリ（例:「めと」score=4）・複数トークンクエリ
+  // （既に剤形等の追加シグナルを含む）はこのゲートの対象外とし、既存の並び順・
+  // 候補集合を完全に維持する（Owner Decision の適用範囲を厳密に限定する）。
+  const strongSingleIngredientQuery = tokens.length === 1 && (scored[0]?.score ?? 0) >= 5
+
   // Search Family Phase 1（配合剤成分展開・候補集合の対称性）:
   //
   // 有効成分（displayGenericName）→ その成分を含む配合剤ブランド一覧の索引。
@@ -1160,10 +1180,27 @@ export function getDrugSuggestions(
                 })
               }
             } else if (genericName) {
-              // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
-              // このグループ自体が既にブランド候補（brandsInGroup）を持つため、
-              // 同じ成分を示す塩名単独見出し（genericHeader相当）は追加しない。
-              if (!entry.suppressRedundantGenericHeaderOnDirectMatch) {
+              // Search Family Phase 2-A（Owner Decision D2）: 強い単一成分クエリに限り、
+              // 見出しの要否を module の opt-in フラグではなく「実際に表示テキストが
+              // 重複するか」で判定する。判定対象は brandsInGroup（このクエリ自体に
+              // マッチした brand の部分集合）ではなく、同一 genericKey を持つ module 内の
+              // 全 brand（fullGroupMembers）でなければならない。クエリがそのうちの
+              // 一部（例: アレジオン点眼液のみ）にしか一致しない場合でも、同一
+              // genericKey グループに generic-labeled brand（例: エピナスチン点眼液）が
+              // 存在するなら見出しは真の重複であり続けるため。
+              // 一般名表示テキストと文字列として完全一致する brand がグループ内に
+              // 存在する場合のみ、見出しはその brand 行と真に同一表示になるため追加しない。
+              // 存在しない場合（例: メトグルコ/アクトス）は正当な一般名見出しとして必ず
+              // 表示する。弱い/複数トークンクエリでは、この reinterpretation 自体を
+              // 適用せず、既存の module opt-in フラグの挙動を変更前と完全に同一のまま
+              // 維持する（短いかな1文字クエリ等の凍結契約を守るため）。
+              const fullGroupMembers = entry.brandNames.filter(
+                b => entry.brandCatalogGenericKeyMap[b] === key,
+              )
+              const suppressHeader = strongSingleIngredientQuery
+                ? fullGroupMembers.includes(genericName)
+                : entry.suppressRedundantGenericHeaderOnDirectMatch
+              if (!suppressHeader) {
                 candidates.push({
                   brand: brandsInGroup[0],
                   displayLabel: genericName,
@@ -1268,9 +1305,27 @@ export function getDrugSuggestions(
                 brand, displayLabel: brand, uiLabel: `${brand}（${ownLabel}）`, bucket: 'direct',
                 resolution: makeBrandResolution(brand, brand),
               })
-              const siblings = entry.brandNames.filter(
+              const genericKeySiblings = entry.brandNames.filter(
                 b => b !== brand && entry.brandCatalogGenericKeyMap[b] === genericKey,
               )
+              // Search Family Phase 2-A（Owner Decision D1）: genericKey は用量帯・系統等の
+              // 意図的な製品区分であり書き換えない（例: メトグルコ/メトホルミン(GE)/グリコランは
+              // 有効成分が同一でも genericKey が意図的に異なる）。co-brand 関係は同一 module
+              // （entry）内でのみ、剤形非依存の有効成分識別（brandCatalogIngredientMap =
+              // genericName、DP-21正規化済み）が一致する単剤ブランドを対象に成立させる
+              // （モジュールをまたぐ co-brand 拡張はここでは行わない＝§5 の
+              // SEPARATE_SEARCH_FAMILY 境界（経口/点眼・単剤/混合製剤・内服/注射）を
+              // 自動的に尊重する）。弱い/複数トークンクエリでは展開しない。
+              const ownIngredient = entry.brandCatalogIngredientMap[brand]
+              const ingredientCoBrands = strongSingleIngredientQuery && ownIngredient !== undefined
+                ? entry.brandNames.filter(b =>
+                    b !== brand &&
+                    entry.brandCatalogGenericKeyMap[b] !== genericKey &&
+                    entry.brandCatalogIngredientMap[b] === ownIngredient &&
+                    splitGenericComponents(entry.brandCatalogGenericMap[b] ?? '').length === 1,
+                  )
+                : []
+              const siblings = [...genericKeySiblings, ...ingredientCoBrands]
               for (const sib of siblings) {
                 if (pushedBrands.has(sib)) continue
                 pushedBrands.add(sib)
@@ -1309,10 +1364,25 @@ export function getDrugSuggestions(
               bucket: 'genericHeader',
               resolution: makeGenericResolution(entry, trailingGenericKey, trailingGeneric),
             })
-          } else if (trailingGeneric && trailingGenericKey && !entry.suppressRedundantGenericHeaderOnDirectMatch) {
-            // suppressRedundantGenericHeaderOnDirectMatch が有効なモジュールでは、
-            // direct/sibling 候補が既にブランドを提示しているため、同じ成分を示す
-            // 塩名単独の generic header（例:「メトホルミン塩酸塩」）は追加しない。
+          } else if (
+            trailingGeneric && trailingGenericKey &&
+            !(strongSingleIngredientQuery
+              ? pushedBrands.has(trailingGeneric)
+              : entry.suppressRedundantGenericHeaderOnDirectMatch)
+          ) {
+            // Search Family Phase 2-A（Owner Decision D2）: 強い単一成分クエリに限り、
+            // 見出しの要否を module の opt-in フラグではなく実際の表示テキスト重複で
+            // 判定する。この entry について直前までに push 済みの全 brand
+            // （direct・genericKey-sibling・co-brand を含む、orderedHpBrands 全件分の
+            // 累積）の中に、一般名表示テキストと文字列として完全一致する brand が
+            // 既にあれば真の重複として見出しを追加しない（例: H1点眼のアレジオン点眼液→
+            // エピナスチン点眼液のように、sibling 自体が一般名と同名の brand であるケース。
+            // 「trailing」＝最後に処理した brand だけでなく同一クエリで先に処理された
+            // brand も判定対象に含める必要がある）。含まれない場合（例: メトグルコ→
+            // メトホルミン、アクトス→ピオグリタゾン）は正当な一般名見出しとして表示する。
+            // 弱い/複数トークンクエリでは、この reinterpretation 自体を適用せず、既存の
+            // module opt-in フラグの挙動を変更前と完全に同一のまま維持する
+            // （短いかな1文字クエリ等の凍結契約を守るため）。
             candidates.push({
               brand: orderedHpBrands[0],
               displayLabel: trailingGeneric,
@@ -1453,6 +1523,30 @@ export function getDrugSuggestions(
     }
   }
 
+  // Search Family Phase 2-A（F2 / Owner Decision D3）: 強い単一成分クエリに限り、
+  // genericMode バケツ内を「単剤（非premix）→ 単剤（premix）→ 配合剤」の順に安定的に
+  // 並べ替える。genericMode は複数モジュールが同一クエリへ成分名経由で一致した際の
+  // バケツであり、既存のスコア・照合順のみでは「シタグリプチン」で配合剤
+  // （シタグリプチン/イプラグリフロジン）が単剤（シタグリプチン）より先に出る等の
+  // 意味的に誤った順序が生じ得る（F2）。安定ソートのため、既に単剤が先に並んでいる
+  // クエリ（例: めとほるみん・ぐりめぴりど・ぼぐりぼーす）は無変更のまま維持される。
+  // Phase 1 の候補集合（上記 lowConfidence 展開）・genericMode 以外のバケツには
+  // 一切影響しない。
+  if (strongSingleIngredientQuery) {
+    const familyTier = (c: BucketedCandidate): number => {
+      if (c.brand === undefined) return 2
+      const repEntry = representativeEntryByModule.get(c.moduleId)
+      const dgn = repEntry?.brandCatalogGenericMap[c.brand]
+      if (dgn !== undefined && splitGenericComponents(dgn).length >= 2) return 2
+      if (repEntry?.isPremixFormulation) return 1
+      return 0
+    }
+    bucketed.genericMode = bucketed.genericMode
+      .map((c, originalIndex) => ({ c, originalIndex, tier: familyTier(c) }))
+      .sort((a, b) => a.tier - b.tier || a.originalIndex - b.originalIndex)
+      .map(x => x.c)
+  }
+
   // 最終結合は [genericMode] → [direct] → [sibling] → [genericHeader] の順を維持しつつ、
   // ブランド名検索（direct/sibling/genericHeader が使われるケース）では genericHeader に
   // 最低表示枠を確保する。direct+sibling候補が多いクエリ（例: 複数モジュールにまたがる
@@ -1569,9 +1663,43 @@ export function getDrugSuggestions(
   }
 
   const runDirectSiblingAndHeaderSteps = () => {
-    // genericHeader の予約枠を決定する（重複キーを除いた種類数 / 上限3 / 残り枠が上限）
+    // Search Family Phase 2-A（F1 / Owner Decision D5）: 強い単一トークンクエリで、
+    // direct バケツに複数モジュールが混在する場合（例: 経口ブランド名が点眼ブランド名の
+    // 前方一致になる剤形違い衝突。アレジオン/アレジオン点眼液）、先頭モジュール
+    // （sortedDirect[0] のモジュール＝クエリされたファミリー）自身の一般名見出しを、
+    // 他モジュール（剤形違いの別ファミリー）の direct/sibling 行より前へ昇格する。
+    // これにより「クエリされたファミリー＋そのペア一般名」が無関係な別ファミリーより
+    // 後ろに追いやられる問題（F1）を、direct/sibling/genericHeader いずれの候補集合も
+    // 削除・追加せず、並び順のみで解消する。
+    // 単一モジュールしか direct を持たない通常のクエリ（大半のケース）では
+    // directModuleIds.length===1 となり、本ブロックは完全な no-op（既存挙動を変えない）。
+    let headerPool = bucketed.genericHeader
+    let directSiblingList = [...sortedDirect, ...bucketed.sibling]
+    if (strongSingleIngredientQuery) {
+      const directModuleIds = [...new Set(sortedDirect.map(c => c.moduleId))]
+      if (directModuleIds.length > 1) {
+        const topModuleId = directModuleIds[0]
+        // crossModuleIndicationLabel の適応ラベル付き見出し（例: フォシーガ「糖尿病」/
+        // 「心・腎」）は既存の co-equal な複数モジュール表示契約を持つため、昇格対象から
+        // 除外する（isIndicationLabeledHeader は下記で定義済み・同一契約を流用）。
+        const headerIdx = headerPool.findIndex(
+          h => h.moduleId === topModuleId && !isIndicationLabeledHeader(h),
+        )
+        if (headerIdx >= 0) {
+          const promoted = headerPool[headerIdx]
+          headerPool = [...headerPool.slice(0, headerIdx), ...headerPool.slice(headerIdx + 1)]
+          const topRows = directSiblingList.filter(c => c.moduleId === topModuleId)
+          const restRows = directSiblingList.filter(c => c.moduleId !== topModuleId)
+          directSiblingList = [...topRows, promoted, ...restRows]
+        }
+      }
+    }
+
+    // genericHeader の予約枠を決定する（重複キーを除いた種類数 / 上限3 / 残り枠が上限）。
+    // 昇格した見出し（あれば）は headerPool から既に除かれているため、その分の予約は
+    // 発生せず、直後の direct/sibling 予算（directSiblingList 側）で消費される。
     const uniqueHeaderKeys = new Set(
-      bucketed.genericHeader.map(c => c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`),
+      headerPool.map(c => c.dedupKeyOverride ?? `${c.moduleId}:${c.brand ?? '__no_brand__'}`),
     )
     const remaining = Math.max(limit - results.length, 0)
     const reserved = Math.min(uniqueHeaderKeys.size, 3, remaining)
@@ -1579,14 +1707,14 @@ export function getDrugSuggestions(
 
     // direct（ファミリー順にソート済み） → sibling の順で、確保した残り枠まで詰める
     let directSiblingAdded = 0
-    for (const c of [...sortedDirect, ...bucketed.sibling]) {
+    for (const c of directSiblingList) {
       if (directSiblingAdded >= directSiblingBudget) break
       if (pushCandidate(c)) directSiblingAdded++
     }
 
     // genericHeader を予約枠まで詰める（種類の重複は pushCandidate の dedup で自然に防がれる）
     let headerAdded = 0
-    for (const c of bucketed.genericHeader) {
+    for (const c of headerPool) {
       if (headerAdded >= reserved) break
       if (pushCandidate(c)) headerAdded++
     }

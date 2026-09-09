@@ -3,10 +3,10 @@
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 571,
-    "rows": 1644,
+    "rows": 1620,
     "byDenotation": {
-      "brand": 1001,
-      "generic": 586,
+      "brand": 1024,
+      "generic": 539,
       "module": 57
     },
     "changedRows": 82,
@@ -433,6 +433,14 @@
     },
     {
       "query": "あくとす",
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "denotation": "brand",
+      "legacySubject": "ピオグリタゾン",
+      "resolutionSubject": "ピオグリタゾン",
+      "changed": false
+    },
+    {
+      "query": "あくとす",
       "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
       "denotation": "brand",
       "legacySubject": "リオベル",
@@ -753,6 +761,14 @@
     },
     {
       "query": "あれじおん",
+      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+      "denotation": "generic",
+      "legacySubject": "エピナスチン",
+      "resolutionSubject": "エピナスチン",
+      "changed": false
+    },
+    {
+      "query": "あれじおん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
       "legacySubject": "アレジオン点眼液",
@@ -765,14 +781,6 @@
       "denotation": "brand",
       "legacySubject": "エピナスチン点眼液",
       "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "あれじおん",
-      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン",
-      "resolutionSubject": "エピナスチン",
       "changed": false
     },
     {
@@ -1033,22 +1041,6 @@
     },
     {
       "query": "いぷらぐりふろじん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "シタグリプチン/イプラグリフロジン",
-      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "いぷらぐりふろじん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "スージャヌ",
-      "resolutionSubject": "スージャヌ",
-      "changed": false
-    },
-    {
-      "query": "いぷらぐりふろじん",
       "moduleId": "dm_sglt2_oral",
       "denotation": "generic",
       "legacySubject": "イプラグリフロジン",
@@ -1061,6 +1053,22 @@
       "denotation": "brand",
       "legacySubject": "スーグラ",
       "resolutionSubject": "スーグラ",
+      "changed": false
+    },
+    {
+      "query": "いぷらぐりふろじん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "シタグリプチン/イプラグリフロジン",
+      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "いぷらぐりふろじん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -1081,10 +1089,26 @@
     },
     {
       "query": "いんすりんあすぱると",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "generic",
       "legacySubject": "インスリンアスパルト",
       "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "いんすりんあすぱると",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "ノボラピッド",
+      "resolutionSubject": "ノボラピッド",
+      "changed": false
+    },
+    {
+      "query": "いんすりんあすぱると",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
@@ -1109,22 +1133,6 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
-      "changed": false
-    },
-    {
-      "query": "いんすりんあすぱると",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "ノボラピッド",
-      "resolutionSubject": "ノボラピッド",
-      "changed": false
-    },
-    {
-      "query": "いんすりんあすぱると",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
@@ -1552,14 +1560,6 @@
       "changed": false
     },
     {
-      "query": "おのん",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
-      "legacySubject": "プランルカスト",
-      "resolutionSubject": "プランルカスト",
-      "changed": false
-    },
-    {
       "query": "おまりぐりぷちん",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
@@ -1641,22 +1641,6 @@
     },
     {
       "query": "かなぐりふろじん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "テネリグリプチン/カナグリフロジン",
-      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "かなぐりふろじん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "カナリア",
-      "resolutionSubject": "カナリア",
-      "changed": false
-    },
-    {
-      "query": "かなぐりふろじん",
       "moduleId": "dm_sglt2_oral",
       "denotation": "generic",
       "legacySubject": "カナグリフロジン",
@@ -1669,6 +1653,22 @@
       "denotation": "generic",
       "legacySubject": "カナグリフロジン",
       "resolutionSubject": "カナグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "かなぐりふろじん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "テネリグリプチン/カナグリフロジン",
+      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "かなぐりふろじん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
       "changed": false
     },
     {
@@ -1779,14 +1779,6 @@
       "query": "きぷれす",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
-      "changed": false
-    },
-    {
-      "query": "きぷれす",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
       "legacySubject": "モンテルカスト",
       "resolutionSubject": "モンテルカスト",
       "changed": false
@@ -1933,6 +1925,22 @@
       "denotation": "brand",
       "legacySubject": "グリコラン",
       "resolutionSubject": "グリコラン",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "メトグルコ",
+      "resolutionSubject": "メトグルコ",
+      "changed": false
+    },
+    {
+      "query": "ぐりこらん",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "メトホルミン",
+      "resolutionSubject": "メトホルミン",
       "changed": false
     },
     {
@@ -2217,22 +2225,6 @@
     },
     {
       "query": "したぐりぷちん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "シタグリプチン/イプラグリフロジン",
-      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "したぐりぷちん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "スージャヌ",
-      "resolutionSubject": "スージャヌ",
-      "changed": false
-    },
-    {
-      "query": "したぐりぷちん",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
       "legacySubject": "シタグリプチン",
@@ -2253,6 +2245,22 @@
       "denotation": "brand",
       "legacySubject": "グラクティブ",
       "resolutionSubject": "グラクティブ",
+      "changed": false
+    },
+    {
+      "query": "したぐりぷちん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "シタグリプチン/イプラグリフロジン",
+      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "したぐりぷちん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -2291,14 +2299,6 @@
       "query": "しんぐれあ",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
-      "changed": false
-    },
-    {
-      "query": "しんぐれあ",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
       "legacySubject": "モンテルカスト",
       "resolutionSubject": "モンテルカスト",
       "changed": false
@@ -2801,22 +2801,6 @@
     },
     {
       "query": "てねりぐりぷちん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "テネリグリプチン/カナグリフロジン",
-      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "てねりぐりぷちん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "カナリア",
-      "resolutionSubject": "カナリア",
-      "changed": false
-    },
-    {
-      "query": "てねりぐりぷちん",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
       "legacySubject": "テネリグリプチン",
@@ -2829,6 +2813,22 @@
       "denotation": "brand",
       "legacySubject": "テネリア",
       "resolutionSubject": "テネリア",
+      "changed": false
+    },
+    {
+      "query": "てねりぐりぷちん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "テネリグリプチン/カナグリフロジン",
+      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "てねりぐりぷちん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
       "changed": false
     },
     {
@@ -3149,6 +3149,14 @@
       "denotation": "brand",
       "legacySubject": "トラメラス点眼液PF",
       "resolutionSubject": "トラメラス点眼液PF",
+      "changed": false
+    },
+    {
+      "query": "とらめらす",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "リザベン点眼液",
+      "resolutionSubject": "リザベン点眼液",
       "changed": false
     },
     {
@@ -3481,6 +3489,22 @@
     },
     {
       "query": "のぼ",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
+      "changed": false
+    },
+    {
+      "query": "のぼ",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "generic",
+      "legacySubject": "インスリンアスパルト",
+      "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "のぼ",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
       "legacySubject": "ノボラピッド30ミックス",
@@ -3493,30 +3517,6 @@
       "denotation": "brand",
       "legacySubject": "ノボリンN",
       "resolutionSubject": "ノボリンN",
-      "changed": false
-    },
-    {
-      "query": "のぼ",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "brand",
-      "legacySubject": "ノボリンR",
-      "resolutionSubject": "ノボリンR",
-      "changed": false
-    },
-    {
-      "query": "のぼ",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリン30R",
-      "resolutionSubject": "ノボリン30R",
-      "changed": false
-    },
-    {
-      "query": "のぼ",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "generic",
-      "legacySubject": "インスリンアスパルト",
-      "resolutionSubject": "インスリンアスパルト",
       "changed": false
     },
     {
@@ -3536,6 +3536,14 @@
       "changed": false
     },
     {
+      "query": "のぼ",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "brand",
+      "legacySubject": "ノボリンR",
+      "resolutionSubject": "ノボリンR",
+      "changed": false
+    },
+    {
       "query": "のぼみっくす30",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -3689,18 +3697,26 @@
     },
     {
       "query": "のぼら",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
-      "legacySubject": "ノボラピッド30ミックス",
-      "resolutionSubject": "ノボラピッド30ミックス",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
       "query": "のぼら",
       "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "generic",
+      "legacySubject": "インスリンアスパルト",
+      "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "のぼら",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
+      "legacySubject": "ノボラピッド30ミックス",
+      "resolutionSubject": "ノボラピッド30ミックス",
       "changed": false
     },
     {
@@ -3717,14 +3733,6 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
-      "changed": false
-    },
-    {
-      "query": "のぼら",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "generic",
-      "legacySubject": "インスリンアスパルト",
-      "resolutionSubject": "インスリンアスパルト",
       "changed": false
     },
     {
@@ -3745,18 +3753,26 @@
     },
     {
       "query": "のぼらぴ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
-      "legacySubject": "ノボラピッド30ミックス",
-      "resolutionSubject": "ノボラピッド30ミックス",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
       "query": "のぼらぴ",
       "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "generic",
+      "legacySubject": "インスリンアスパルト",
+      "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "のぼらぴ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
+      "legacySubject": "ノボラピッド30ミックス",
+      "resolutionSubject": "ノボラピッド30ミックス",
       "changed": false
     },
     {
@@ -3773,14 +3789,6 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
-      "changed": false
-    },
-    {
-      "query": "のぼらぴ",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "generic",
-      "legacySubject": "インスリンアスパルト",
-      "resolutionSubject": "インスリンアスパルト",
       "changed": false
     },
     {
@@ -3801,18 +3809,26 @@
     },
     {
       "query": "のぼらぴっど",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
-      "legacySubject": "ノボラピッド30ミックス",
-      "resolutionSubject": "ノボラピッド30ミックス",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
       "query": "のぼらぴっど",
       "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "generic",
+      "legacySubject": "インスリンアスパルト",
+      "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "のぼらぴっど",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
+      "legacySubject": "ノボラピッド30ミックス",
+      "resolutionSubject": "ノボラピッド30ミックス",
       "changed": false
     },
     {
@@ -3829,14 +3845,6 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
-      "changed": false
-    },
-    {
-      "query": "のぼらぴっど",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "generic",
-      "legacySubject": "インスリンアスパルト",
-      "resolutionSubject": "インスリンアスパルト",
       "changed": false
     },
     {
@@ -4001,6 +4009,22 @@
     },
     {
       "query": "のぼり",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンN",
+      "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "のぼり",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "ノボリン30R",
@@ -4013,14 +4037,6 @@
       "denotation": "brand",
       "legacySubject": "ノボリンR",
       "resolutionSubject": "ノボリンR",
-      "changed": false
-    },
-    {
-      "query": "のぼり",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンN",
-      "resolutionSubject": "ヒューマリンN",
       "changed": false
     },
     {
@@ -4034,25 +4050,17 @@
     {
       "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリン3/7",
-      "resolutionSubject": "ヒューマリン3/7",
-      "changed": false
-    },
-    {
-      "query": "のぼり",
-      "moduleId": "dm_insulin_intermediate",
       "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
+      "legacySubject": "インスリンヒト",
+      "resolutionSubject": "インスリンヒト",
       "changed": false
     },
     {
       "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "generic",
-      "legacySubject": "インスリンヒト",
-      "resolutionSubject": "インスリンヒト",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリン3/7",
+      "resolutionSubject": "ヒューマリン3/7",
       "changed": false
     },
     {
@@ -4061,6 +4069,22 @@
       "denotation": "brand",
       "legacySubject": "ノボリンN",
       "resolutionSubject": "ノボリンN",
+      "changed": false
+    },
+    {
+      "query": "のぼりん",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンN",
+      "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "のぼりん",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4077,14 +4101,6 @@
       "denotation": "brand",
       "legacySubject": "ノボリン30R",
       "resolutionSubject": "ノボリン30R",
-      "changed": false
-    },
-    {
-      "query": "のぼりん",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンN",
-      "resolutionSubject": "ヒューマリンN",
       "changed": false
     },
     {
@@ -4097,26 +4113,18 @@
     },
     {
       "query": "のぼりん",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "イノレット30R",
-      "resolutionSubject": "イノレット30R",
-      "changed": false
-    },
-    {
-      "query": "のぼりん",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "のぼりん",
       "moduleId": "dm_insulin_regular",
       "denotation": "generic",
       "legacySubject": "インスリンヒト",
       "resolutionSubject": "インスリンヒト",
+      "changed": false
+    },
+    {
+      "query": "のぼりん",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "イノレット30R",
+      "resolutionSubject": "イノレット30R",
       "changed": false
     },
     {
@@ -4497,6 +4505,22 @@
     },
     {
       "query": "ひゅー",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリンN",
+      "resolutionSubject": "ノボリンN",
+      "changed": false
+    },
+    {
+      "query": "ひゅー",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "ひゅー",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -4509,30 +4533,6 @@
       "denotation": "brand",
       "legacySubject": "ヒューマログ",
       "resolutionSubject": "ヒューマログ",
-      "changed": false
-    },
-    {
-      "query": "ひゅー",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリン3/7",
-      "resolutionSubject": "ヒューマリン3/7",
-      "changed": false
-    },
-    {
-      "query": "ひゅー",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ25ミックス",
-      "resolutionSubject": "ヒューマログ25ミックス",
-      "changed": false
-    },
-    {
-      "query": "ひゅー",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4552,11 +4552,35 @@
       "changed": false
     },
     {
+      "query": "ひゅー",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリン3/7",
+      "resolutionSubject": "ヒューマリン3/7",
+      "changed": false
+    },
+    {
       "query": "ひゅーま",
       "moduleId": "dm_insulin_intermediate",
       "denotation": "brand",
       "legacySubject": "ヒューマリンN",
       "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "ひゅーま",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリンN",
+      "resolutionSubject": "ノボリンN",
+      "changed": false
+    },
+    {
+      "query": "ひゅーま",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4573,30 +4597,6 @@
       "denotation": "brand",
       "legacySubject": "ヒューマリン3/7",
       "resolutionSubject": "ヒューマリン3/7",
-      "changed": false
-    },
-    {
-      "query": "ひゅーま",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ",
-      "resolutionSubject": "ヒューマログ",
-      "changed": false
-    },
-    {
-      "query": "ひゅーま",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ25ミックス",
-      "resolutionSubject": "ヒューマログ25ミックス",
-      "changed": false
-    },
-    {
-      "query": "ひゅーま",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4616,27 +4616,19 @@
       "changed": false
     },
     {
+      "query": "ひゅーま",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ",
+      "resolutionSubject": "ヒューマログ",
+      "changed": false
+    },
+    {
       "query": "ひゅーまりん",
       "moduleId": "dm_insulin_intermediate",
       "denotation": "brand",
       "legacySubject": "ヒューマリンN",
       "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンR",
-      "resolutionSubject": "ヒューマリンR",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリン3/7",
-      "resolutionSubject": "ヒューマリン3/7",
       "changed": false
     },
     {
@@ -4649,22 +4641,6 @@
     },
     {
       "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "brand",
-      "legacySubject": "ノボリンR",
-      "resolutionSubject": "ノボリンR",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリン30R",
-      "resolutionSubject": "ノボリン30R",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
       "moduleId": "dm_insulin_intermediate",
       "denotation": "generic",
       "legacySubject": "イソフェンインスリン",
@@ -4674,9 +4650,41 @@
     {
       "query": "ひゅーまりん",
       "moduleId": "dm_insulin_regular",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンR",
+      "resolutionSubject": "ヒューマリンR",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリン3/7",
+      "resolutionSubject": "ヒューマリン3/7",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "brand",
+      "legacySubject": "ノボリンR",
+      "resolutionSubject": "ノボリンR",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_regular",
       "denotation": "generic",
       "legacySubject": "インスリンヒト",
       "resolutionSubject": "インスリンヒト",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリン30R",
+      "resolutionSubject": "ノボリン30R",
       "changed": false
     },
     {
@@ -4865,14 +4873,6 @@
     },
     {
       "query": "ひゅーまろ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ25ミックス",
-      "resolutionSubject": "ヒューマログ25ミックス",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまろ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
       "legacySubject": "ルムジェブ",
@@ -4881,18 +4881,26 @@
     },
     {
       "query": "ひゅーまろ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ50ミックス",
-      "resolutionSubject": "ヒューマログ50ミックス",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまろ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "generic",
       "legacySubject": "インスリンリスプロ",
       "resolutionSubject": "インスリンリスプロ",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまろ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ25ミックス",
+      "resolutionSubject": "ヒューマログ25ミックス",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまろ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ50ミックス",
+      "resolutionSubject": "ヒューマログ50ミックス",
       "changed": false
     },
     {
@@ -4905,14 +4913,6 @@
     },
     {
       "query": "ひゅーまろぐ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ25ミックス",
-      "resolutionSubject": "ヒューマログ25ミックス",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまろぐ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
       "legacySubject": "ルムジェブ",
@@ -4921,14 +4921,6 @@
     },
     {
       "query": "ひゅーまろぐ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ50ミックス",
-      "resolutionSubject": "ヒューマログ50ミックス",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまろぐ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "generic",
       "legacySubject": "インスリンリスプロ",
@@ -4936,6 +4928,22 @@
       "changed": false
     },
     {
+      "query": "ひゅーまろぐ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ25ミックス",
+      "resolutionSubject": "ヒューマログ25ミックス",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまろぐ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ50ミックス",
+      "resolutionSubject": "ヒューマログ50ミックス",
+      "changed": false
+    },
+    {
       "query": "ひゅーまろぐみっくす25",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "generic",
@@ -5002,14 +5010,6 @@
     {
       "query": "ひるくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "ひるくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
       "legacySubject": "ヒルドイドクリーム",
       "resolutionSubject": "ヒルドイドクリーム",
@@ -5057,18 +5057,18 @@
     },
     {
       "query": "ひるど",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質クリーム",
+      "resolutionSubject": "ヘパリン類似物質クリーム",
       "changed": false
     },
     {
       "query": "ひるど",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質外用スプレー",
+      "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
     },
     {
@@ -5121,18 +5121,18 @@
     },
     {
       "query": "ひるどい",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質クリーム",
+      "resolutionSubject": "ヘパリン類似物質クリーム",
       "changed": false
     },
     {
       "query": "ひるどい",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質外用スプレー",
+      "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
     },
     {
@@ -5185,18 +5185,18 @@
     },
     {
       "query": "ひるどいど",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質クリーム",
+      "resolutionSubject": "ヘパリン類似物質クリーム",
       "changed": false
     },
     {
       "query": "ひるどいど",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質外用スプレー",
+      "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
     },
     {
@@ -5221,22 +5221,6 @@
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質クリーム",
       "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "ひるどいどくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "ひるどいどそふとなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -5245,14 +5229,6 @@
       "denotation": "brand",
       "legacySubject": "ヒルドイドソフト軟膏",
       "resolutionSubject": "ヒルドイドソフト軟膏",
-      "changed": false
-    },
-    {
-      "query": "ひるどいどなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -5269,6 +5245,14 @@
       "denotation": "brand",
       "legacySubject": "ヒルドイドフォーム",
       "resolutionSubject": "ヒルドイドフォーム",
+      "changed": false
+    },
+    {
+      "query": "ひるどいどふぉーむ",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質外用スプレー",
+      "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
     },
     {
@@ -5296,22 +5280,6 @@
       "changed": false
     },
     {
-      "query": "ひるどいどろーしょん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "ひるどいなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
       "query": "ひるどいなんこう",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
@@ -5322,25 +5290,9 @@
     {
       "query": "ひるどなんこう",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "ひるどなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヒルドイドソフト軟膏",
       "resolutionSubject": "ヒルドイドソフト軟膏",
-      "changed": false
-    },
-    {
-      "query": "ひるなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -5365,14 +5317,6 @@
       "denotation": "brand",
       "legacySubject": "ヒルドイドフォーム",
       "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "ひるろーしょん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
       "changed": false
     },
     {
@@ -5792,14 +5736,6 @@
       "changed": false
     },
     {
-      "query": "ぷらんるかすと",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
-      "legacySubject": "プランルカスト",
-      "resolutionSubject": "プランルカスト",
-      "changed": false
-    },
-    {
       "query": "へぱ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
@@ -5866,14 +5802,6 @@
     {
       "query": "へぱくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質クリーム",
       "resolutionSubject": "ヘパリン類似物質クリーム",
@@ -5882,25 +5810,9 @@
     {
       "query": "へぱすぷれー",
       "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱすぷれー",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質外用スプレー",
       "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -5925,14 +5837,6 @@
       "denotation": "brand",
       "legacySubject": "ヒルドイドフォーム",
       "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱゆせいくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -6010,14 +5914,6 @@
     {
       "query": "へぱりんくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質クリーム",
       "resolutionSubject": "ヘパリン類似物質クリーム",
@@ -6026,25 +5922,9 @@
     {
       "query": "へぱりんすぷれー",
       "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりんすぷれー",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質外用スプレー",
       "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりんなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -6069,14 +5949,6 @@
       "denotation": "brand",
       "legacySubject": "ヒルドイドフォーム",
       "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんゆせいくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -6218,14 +6090,6 @@
     {
       "query": "へぱりんるいじぶっしつくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質クリーム",
       "resolutionSubject": "ヘパリン類似物質クリーム",
@@ -6234,25 +6098,9 @@
     {
       "query": "へぱりんるいじぶっしつすぷれー",
       "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつすぷれー",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質外用スプレー",
       "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつなんこう",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -6282,25 +6130,9 @@
     {
       "query": "へぱりんるいじぶっしつゆせいくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつゆせいくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質油性クリーム",
       "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつろーしょん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
       "changed": false
     },
     {
@@ -6314,23 +6146,7 @@
     {
       "query": "へぱりんろーしょん",
       "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱりんろーしょん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
       "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱろーしょん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
       "legacySubject": "ヘパリン類似物質ローション",
       "resolutionSubject": "ヘパリン類似物質ローション",
       "changed": false
@@ -6561,22 +6377,6 @@
     },
     {
       "query": "みちぐりにど",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "ミチグリニド・ボグリボース",
-      "resolutionSubject": "ミチグリニド・ボグリボース",
-      "changed": false
-    },
-    {
-      "query": "みちぐりにど",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "グルベス",
-      "resolutionSubject": "グルベス",
-      "changed": false
-    },
-    {
-      "query": "みちぐりにど",
       "moduleId": "dm_glinide_oral",
       "denotation": "generic",
       "legacySubject": "ミチグリニド",
@@ -6589,6 +6389,22 @@
       "denotation": "brand",
       "legacySubject": "グルファスト",
       "resolutionSubject": "グルファスト",
+      "changed": false
+    },
+    {
+      "query": "みちぐりにど",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "ミチグリニド・ボグリボース",
+      "resolutionSubject": "ミチグリニド・ボグリボース",
+      "changed": false
+    },
+    {
+      "query": "みちぐりにど",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
       "changed": false
     },
     {
@@ -6645,6 +6461,22 @@
       "denotation": "brand",
       "legacySubject": "メトグルコ",
       "resolutionSubject": "メトグルコ",
+      "changed": false
+    },
+    {
+      "query": "めとぐるこ",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "メトホルミン",
+      "resolutionSubject": "メトホルミン",
+      "changed": false
+    },
+    {
+      "query": "めとぐるこ",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "グリコラン",
+      "resolutionSubject": "グリコラン",
       "changed": false
     },
     {
@@ -6787,14 +6619,6 @@
       "query": "もんてるかすと",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
-      "changed": false
-    },
-    {
-      "query": "もんてるかすと",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
       "legacySubject": "モンテルカスト",
       "resolutionSubject": "モンテルカスト",
       "changed": false
@@ -7065,22 +6889,6 @@
     },
     {
       "query": "りきしせなちど",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "generic",
-      "legacySubject": "インスリングラルギン/リキシセナチド",
-      "resolutionSubject": "インスリングラルギン/リキシセナチド",
-      "changed": false
-    },
-    {
-      "query": "りきしせなちど",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "brand",
-      "legacySubject": "ソリクア",
-      "resolutionSubject": "ソリクア",
-      "changed": false
-    },
-    {
-      "query": "りきしせなちど",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "generic",
       "legacySubject": "リキシセナチド",
@@ -7093,6 +6901,22 @@
       "denotation": "brand",
       "legacySubject": "リキスミア",
       "resolutionSubject": "リキスミア",
+      "changed": false
+    },
+    {
+      "query": "りきしせなちど",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "generic",
+      "legacySubject": "インスリングラルギン/リキシセナチド",
+      "resolutionSubject": "インスリングラルギン/リキシセナチド",
+      "changed": false
+    },
+    {
+      "query": "りきしせなちど",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -7149,6 +6973,14 @@
       "denotation": "brand",
       "legacySubject": "リザベン点眼液",
       "resolutionSubject": "リザベン点眼液",
+      "changed": false
+    },
+    {
+      "query": "りざべん",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "トラメラス点眼液PF",
+      "resolutionSubject": "トラメラス点眼液PF",
       "changed": false
     },
     {
@@ -7217,22 +7049,6 @@
     },
     {
       "query": "りなぐりぷちん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "リナグリプチン/エンパグリフロジン",
-      "resolutionSubject": "リナグリプチン/エンパグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "りなぐりぷちん",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "トラディアンス",
-      "resolutionSubject": "トラディアンス",
-      "changed": false
-    },
-    {
-      "query": "りなぐりぷちん",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
       "legacySubject": "リナグリプチン",
@@ -7245,6 +7061,22 @@
       "denotation": "brand",
       "legacySubject": "トラゼンタ",
       "resolutionSubject": "トラゼンタ",
+      "changed": false
+    },
+    {
+      "query": "りなぐりぷちん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "リナグリプチン/エンパグリフロジン",
+      "resolutionSubject": "リナグリプチン/エンパグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "りなぐりぷちん",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "トラディアンス",
+      "resolutionSubject": "トラディアンス",
       "changed": false
     },
     {
@@ -7345,22 +7177,6 @@
     },
     {
       "query": "りらぐるちど",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "generic",
-      "legacySubject": "インスリンデグルデク/リラグルチド",
-      "resolutionSubject": "インスリンデグルデク/リラグルチド",
-      "changed": false
-    },
-    {
-      "query": "りらぐるちど",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "brand",
-      "legacySubject": "ゾルトファイ",
-      "resolutionSubject": "ゾルトファイ",
-      "changed": false
-    },
-    {
-      "query": "りらぐるちど",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "generic",
       "legacySubject": "リラグルチド",
@@ -7373,6 +7189,22 @@
       "denotation": "brand",
       "legacySubject": "ビクトーザ",
       "resolutionSubject": "ビクトーザ",
+      "changed": false
+    },
+    {
+      "query": "りらぐるちど",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "generic",
+      "legacySubject": "インスリンデグルデク/リラグルチド",
+      "resolutionSubject": "インスリンデグルデク/リラグルチド",
+      "changed": false
+    },
+    {
+      "query": "りらぐるちど",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
       "changed": false
     },
     {
@@ -7729,6 +7561,14 @@
     },
     {
       "query": "アクトス",
+      "moduleId": "dm_thiazolidinedione_pioglitazone_oral",
+      "denotation": "brand",
+      "legacySubject": "ピオグリタゾン",
+      "resolutionSubject": "ピオグリタゾン",
+      "changed": false
+    },
+    {
+      "query": "アクトス",
       "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
       "denotation": "brand",
       "legacySubject": "リオベル",
@@ -7945,6 +7785,14 @@
     },
     {
       "query": "アレジオン",
+      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
+      "denotation": "generic",
+      "legacySubject": "エピナスチン",
+      "resolutionSubject": "エピナスチン",
+      "changed": false
+    },
+    {
+      "query": "アレジオン",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
       "legacySubject": "アレジオン点眼液",
@@ -7957,14 +7805,6 @@
       "denotation": "brand",
       "legacySubject": "エピナスチン点眼液",
       "resolutionSubject": "エピナスチン点眼液",
-      "changed": false
-    },
-    {
-      "query": "アレジオン",
-      "moduleId": "allergy_h1_antihistamine_second_gen_oral",
-      "denotation": "generic",
-      "legacySubject": "エピナスチン",
-      "resolutionSubject": "エピナスチン",
       "changed": false
     },
     {
@@ -8209,22 +8049,6 @@
     },
     {
       "query": "イプラグリフロジン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "シタグリプチン/イプラグリフロジン",
-      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "イプラグリフロジン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "スージャヌ",
-      "resolutionSubject": "スージャヌ",
-      "changed": false
-    },
-    {
-      "query": "イプラグリフロジン",
       "moduleId": "dm_sglt2_oral",
       "denotation": "generic",
       "legacySubject": "イプラグリフロジン",
@@ -8237,6 +8061,22 @@
       "denotation": "brand",
       "legacySubject": "スーグラ",
       "resolutionSubject": "スーグラ",
+      "changed": false
+    },
+    {
+      "query": "イプラグリフロジン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "シタグリプチン/イプラグリフロジン",
+      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "イプラグリフロジン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -8265,10 +8105,26 @@
     },
     {
       "query": "インスリンアスパルト",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "generic",
       "legacySubject": "インスリンアスパルト",
       "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "インスリンアスパルト",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "ノボラピッド",
+      "resolutionSubject": "ノボラピッド",
+      "changed": false
+    },
+    {
+      "query": "インスリンアスパルト",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
@@ -8293,22 +8149,6 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
-      "changed": false
-    },
-    {
-      "query": "インスリンアスパルト",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "ノボラピッド",
-      "resolutionSubject": "ノボラピッド",
-      "changed": false
-    },
-    {
-      "query": "インスリンアスパルト",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
@@ -8465,10 +8305,26 @@
     },
     {
       "query": "インスリンヒト",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "moduleId": "dm_insulin_regular",
       "denotation": "generic",
       "legacySubject": "インスリンヒト",
       "resolutionSubject": "インスリンヒト",
+      "changed": false
+    },
+    {
+      "query": "インスリンヒト",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "brand",
+      "legacySubject": "ノボリンR",
+      "resolutionSubject": "ノボリンR",
+      "changed": false
+    },
+    {
+      "query": "インスリンヒト",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンR",
+      "resolutionSubject": "ヒューマリンR",
       "changed": false
     },
     {
@@ -8496,43 +8352,11 @@
       "changed": false
     },
     {
-      "query": "インスリンヒト",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "brand",
-      "legacySubject": "ノボリンR",
-      "resolutionSubject": "ノボリンR",
-      "changed": false
-    },
-    {
-      "query": "インスリンヒト",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンR",
-      "resolutionSubject": "ヒューマリンR",
-      "changed": false
-    },
-    {
       "query": "インスリンリスプロ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "generic",
       "legacySubject": "インスリンリスプロ",
       "resolutionSubject": "インスリンリスプロ",
-      "changed": false
-    },
-    {
-      "query": "インスリンリスプロ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ25ミックス",
-      "resolutionSubject": "ヒューマログ25ミックス",
-      "changed": false
-    },
-    {
-      "query": "インスリンリスプロ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ50ミックス",
-      "resolutionSubject": "ヒューマログ50ミックス",
       "changed": false
     },
     {
@@ -8549,6 +8373,22 @@
       "denotation": "brand",
       "legacySubject": "ルムジェブ",
       "resolutionSubject": "ルムジェブ",
+      "changed": false
+    },
+    {
+      "query": "インスリンリスプロ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ25ミックス",
+      "resolutionSubject": "ヒューマログ25ミックス",
+      "changed": false
+    },
+    {
+      "query": "インスリンリスプロ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ50ミックス",
+      "resolutionSubject": "ヒューマログ50ミックス",
       "changed": false
     },
     {
@@ -8832,14 +8672,6 @@
       "changed": false
     },
     {
-      "query": "オノン",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
-      "legacySubject": "プランルカスト",
-      "resolutionSubject": "プランルカスト",
-      "changed": false
-    },
-    {
       "query": "オマリグリプチン",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
@@ -8921,22 +8753,6 @@
     },
     {
       "query": "カナグリフロジン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "テネリグリプチン/カナグリフロジン",
-      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "カナグリフロジン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "カナリア",
-      "resolutionSubject": "カナリア",
-      "changed": false
-    },
-    {
-      "query": "カナグリフロジン",
       "moduleId": "dm_sglt2_oral",
       "denotation": "generic",
       "legacySubject": "カナグリフロジン",
@@ -8949,6 +8765,22 @@
       "denotation": "generic",
       "legacySubject": "カナグリフロジン",
       "resolutionSubject": "カナグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "カナグリフロジン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "テネリグリプチン/カナグリフロジン",
+      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "カナグリフロジン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
       "changed": false
     },
     {
@@ -9059,14 +8891,6 @@
       "query": "キプレス",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
-      "changed": false
-    },
-    {
-      "query": "キプレス",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
       "legacySubject": "モンテルカスト",
       "resolutionSubject": "モンテルカスト",
       "changed": false
@@ -9189,6 +9013,22 @@
       "denotation": "brand",
       "legacySubject": "グリコラン",
       "resolutionSubject": "グリコラン",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "メトグルコ",
+      "resolutionSubject": "メトグルコ",
+      "changed": false
+    },
+    {
+      "query": "グリコラン",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "メトホルミン",
+      "resolutionSubject": "メトホルミン",
       "changed": false
     },
     {
@@ -9505,22 +9345,6 @@
     },
     {
       "query": "シタグリプチン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "シタグリプチン/イプラグリフロジン",
-      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "シタグリプチン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "スージャヌ",
-      "resolutionSubject": "スージャヌ",
-      "changed": false
-    },
-    {
-      "query": "シタグリプチン",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
       "legacySubject": "シタグリプチン",
@@ -9541,6 +9365,22 @@
       "denotation": "brand",
       "legacySubject": "グラクティブ",
       "resolutionSubject": "グラクティブ",
+      "changed": false
+    },
+    {
+      "query": "シタグリプチン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "シタグリプチン/イプラグリフロジン",
+      "resolutionSubject": "シタグリプチン/イプラグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "シタグリプチン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "スージャヌ",
+      "resolutionSubject": "スージャヌ",
       "changed": false
     },
     {
@@ -9579,14 +9419,6 @@
       "query": "シングレア",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
-      "changed": false
-    },
-    {
-      "query": "シングレア",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
       "legacySubject": "モンテルカスト",
       "resolutionSubject": "モンテルカスト",
       "changed": false
@@ -10097,22 +9929,6 @@
     },
     {
       "query": "テネリグリプチン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "テネリグリプチン/カナグリフロジン",
-      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "テネリグリプチン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "カナリア",
-      "resolutionSubject": "カナリア",
-      "changed": false
-    },
-    {
-      "query": "テネリグリプチン",
       "moduleId": "dm_dpp4_oral",
       "denotation": "generic",
       "legacySubject": "テネリグリプチン",
@@ -10125,6 +9941,22 @@
       "denotation": "brand",
       "legacySubject": "テネリア",
       "resolutionSubject": "テネリア",
+      "changed": false
+    },
+    {
+      "query": "テネリグリプチン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "テネリグリプチン/カナグリフロジン",
+      "resolutionSubject": "テネリグリプチン/カナグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "テネリグリプチン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "カナリア",
+      "resolutionSubject": "カナリア",
       "changed": false
     },
     {
@@ -10349,6 +10181,14 @@
       "denotation": "brand",
       "legacySubject": "トラメラス点眼液PF",
       "resolutionSubject": "トラメラス点眼液PF",
+      "changed": false
+    },
+    {
+      "query": "トラメラス点眼液PF",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "リザベン点眼液",
+      "resolutionSubject": "リザベン点眼液",
       "changed": false
     },
     {
@@ -10601,18 +10441,26 @@
     },
     {
       "query": "ノボラピッド",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
-      "legacySubject": "ノボラピッド30ミックス",
-      "resolutionSubject": "ノボラピッド30ミックス",
+      "legacySubject": "フィアスプ",
+      "resolutionSubject": "フィアスプ",
       "changed": false
     },
     {
       "query": "ノボラピッド",
       "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "generic",
+      "legacySubject": "インスリンアスパルト",
+      "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "ノボラピッド",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
+      "legacySubject": "ノボラピッド30ミックス",
+      "resolutionSubject": "ノボラピッド30ミックス",
       "changed": false
     },
     {
@@ -10629,14 +10477,6 @@
       "denotation": "brand",
       "legacySubject": "ノボラピッド70ミックス",
       "resolutionSubject": "ノボラピッド70ミックス",
-      "changed": false
-    },
-    {
-      "query": "ノボラピッド",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "generic",
-      "legacySubject": "インスリンアスパルト",
-      "resolutionSubject": "インスリンアスパルト",
       "changed": false
     },
     {
@@ -10849,6 +10689,22 @@
     },
     {
       "query": "ノボリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンN",
+      "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "ノボリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "ノボリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ノボリンR",
@@ -10865,14 +10721,6 @@
     },
     {
       "query": "ノボリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンN",
-      "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "ノボリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -10881,26 +10729,18 @@
     },
     {
       "query": "ノボリン",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "イノレット30R",
-      "resolutionSubject": "イノレット30R",
-      "changed": false
-    },
-    {
-      "query": "ノボリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "ノボリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "generic",
       "legacySubject": "インスリンヒト",
       "resolutionSubject": "インスリンヒト",
+      "changed": false
+    },
+    {
+      "query": "ノボリン",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "イノレット30R",
+      "resolutionSubject": "イノレット30R",
       "changed": false
     },
     {
@@ -11097,6 +10937,22 @@
     },
     {
       "query": "ヒューマリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリンN",
+      "resolutionSubject": "ノボリンN",
+      "changed": false
+    },
+    {
+      "query": "ヒューマリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "ヒューマリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -11113,14 +10969,6 @@
     },
     {
       "query": "ヒューマリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリンN",
-      "resolutionSubject": "ノボリンN",
-      "changed": false
-    },
-    {
-      "query": "ヒューマリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ノボリンR",
@@ -11129,26 +10977,18 @@
     },
     {
       "query": "ヒューマリン",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリン30R",
-      "resolutionSubject": "ノボリン30R",
-      "changed": false
-    },
-    {
-      "query": "ヒューマリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "ヒューマリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "generic",
       "legacySubject": "インスリンヒト",
       "resolutionSubject": "インスリンヒト",
+      "changed": false
+    },
+    {
+      "query": "ヒューマリン",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリン30R",
+      "resolutionSubject": "ノボリン30R",
       "changed": false
     },
     {
@@ -11241,14 +11081,6 @@
     },
     {
       "query": "ヒューマログ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ25ミックス",
-      "resolutionSubject": "ヒューマログ25ミックス",
-      "changed": false
-    },
-    {
-      "query": "ヒューマログ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "brand",
       "legacySubject": "ルムジェブ",
@@ -11257,18 +11089,26 @@
     },
     {
       "query": "ヒューマログ",
-      "moduleId": "dm_insulin_mixed_rapid_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ50ミックス",
-      "resolutionSubject": "ヒューマログ50ミックス",
-      "changed": false
-    },
-    {
-      "query": "ヒューマログ",
       "moduleId": "dm_insulin_rapid_analog",
       "denotation": "generic",
       "legacySubject": "インスリンリスプロ",
       "resolutionSubject": "インスリンリスプロ",
+      "changed": false
+    },
+    {
+      "query": "ヒューマログ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ25ミックス",
+      "resolutionSubject": "ヒューマログ25ミックス",
+      "changed": false
+    },
+    {
+      "query": "ヒューマログ",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ50ミックス",
+      "resolutionSubject": "ヒューマログ50ミックス",
       "changed": false
     },
     {
@@ -11368,14 +11208,6 @@
       "changed": false
     },
     {
-      "query": "ヒルドイドクリーム",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
       "query": "ヒルドイドソフト軟膏",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
@@ -11392,19 +11224,19 @@
       "changed": false
     },
     {
-      "query": "ヒルドイドソフト軟膏",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "query": "ヒルドイドフォーム",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "brand",
+      "legacySubject": "ヒルドイドフォーム",
+      "resolutionSubject": "ヒルドイドフォーム",
       "changed": false
     },
     {
       "query": "ヒルドイドフォーム",
       "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
-      "legacySubject": "ヒルドイドフォーム",
-      "resolutionSubject": "ヒルドイドフォーム",
+      "legacySubject": "ヘパリン類似物質外用スプレー",
+      "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
     },
     {
@@ -11427,14 +11259,6 @@
       "query": "ヒルドイドローション",
       "moduleId": "derm_heparinoid_moisturizer_lotion",
       "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "ヒルドイドローション",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
       "legacySubject": "ヘパリン類似物質ローション",
       "resolutionSubject": "ヘパリン類似物質ローション",
       "changed": false
@@ -11744,14 +11568,6 @@
       "changed": false
     },
     {
-      "query": "プランルカスト",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
-      "legacySubject": "プランルカスト",
-      "resolutionSubject": "プランルカスト",
-      "changed": false
-    },
-    {
       "query": "ヘパリン類似物質クリーム",
       "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
@@ -11763,14 +11579,6 @@
       "query": "ヘパリン類似物質クリーム",
       "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "ヘパリン類似物質クリーム",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
       "legacySubject": "ヘパリン類似物質クリーム",
       "resolutionSubject": "ヘパリン類似物質クリーム",
       "changed": false
@@ -11816,14 +11624,6 @@
       "changed": false
     },
     {
-      "query": "ヘパリン類似物質ローション",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
       "query": "ヘパリン類似物質外用スプレー",
       "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
@@ -11834,9 +11634,9 @@
     {
       "query": "ヘパリン類似物質外用スプレー",
       "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
+      "denotation": "brand",
+      "legacySubject": "ヒルドイドフォーム",
+      "resolutionSubject": "ヒルドイドフォーム",
       "changed": false
     },
     {
@@ -11851,14 +11651,6 @@
       "query": "ヘパリン類似物質油性クリーム",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "ヘパリン類似物質油性クリーム",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "generic",
       "legacySubject": "ヘパリン類似物質油性クリーム",
       "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
@@ -12113,22 +11905,6 @@
     },
     {
       "query": "ミチグリニド",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "ミチグリニド・ボグリボース",
-      "resolutionSubject": "ミチグリニド・ボグリボース",
-      "changed": false
-    },
-    {
-      "query": "ミチグリニド",
-      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "グルベス",
-      "resolutionSubject": "グルベス",
-      "changed": false
-    },
-    {
-      "query": "ミチグリニド",
       "moduleId": "dm_glinide_oral",
       "denotation": "generic",
       "legacySubject": "ミチグリニド",
@@ -12141,6 +11917,22 @@
       "denotation": "brand",
       "legacySubject": "グルファスト",
       "resolutionSubject": "グルファスト",
+      "changed": false
+    },
+    {
+      "query": "ミチグリニド",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "ミチグリニド・ボグリボース",
+      "resolutionSubject": "ミチグリニド・ボグリボース",
+      "changed": false
+    },
+    {
+      "query": "ミチグリニド",
+      "moduleId": "dm_glinide_alpha_glucosidase_inhibitor_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "グルベス",
+      "resolutionSubject": "グルベス",
       "changed": false
     },
     {
@@ -12197,6 +11989,22 @@
       "denotation": "brand",
       "legacySubject": "メトグルコ",
       "resolutionSubject": "メトグルコ",
+      "changed": false
+    },
+    {
+      "query": "メトグルコ",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "メトホルミン",
+      "resolutionSubject": "メトホルミン",
+      "changed": false
+    },
+    {
+      "query": "メトグルコ",
+      "moduleId": "dm_biguanide_metformin_oral",
+      "denotation": "brand",
+      "legacySubject": "グリコラン",
+      "resolutionSubject": "グリコラン",
       "changed": false
     },
     {
@@ -12339,14 +12147,6 @@
       "query": "モンテルカスト",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
-      "changed": false
-    },
-    {
-      "query": "モンテルカスト",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "generic",
       "legacySubject": "モンテルカスト",
       "resolutionSubject": "モンテルカスト",
       "changed": false
@@ -12545,22 +12345,6 @@
     },
     {
       "query": "リキシセナチド",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "generic",
-      "legacySubject": "インスリングラルギン/リキシセナチド",
-      "resolutionSubject": "インスリングラルギン/リキシセナチド",
-      "changed": false
-    },
-    {
-      "query": "リキシセナチド",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "brand",
-      "legacySubject": "ソリクア",
-      "resolutionSubject": "ソリクア",
-      "changed": false
-    },
-    {
-      "query": "リキシセナチド",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "generic",
       "legacySubject": "リキシセナチド",
@@ -12573,6 +12357,22 @@
       "denotation": "brand",
       "legacySubject": "リキスミア",
       "resolutionSubject": "リキスミア",
+      "changed": false
+    },
+    {
+      "query": "リキシセナチド",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "generic",
+      "legacySubject": "インスリングラルギン/リキシセナチド",
+      "resolutionSubject": "インスリングラルギン/リキシセナチド",
+      "changed": false
+    },
+    {
+      "query": "リキシセナチド",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ソリクア",
+      "resolutionSubject": "ソリクア",
       "changed": false
     },
     {
@@ -12610,25 +12410,17 @@
     {
       "query": "リザベン点眼液",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "トラメラス点眼液PF",
+      "resolutionSubject": "トラメラス点眼液PF",
+      "changed": false
+    },
+    {
+      "query": "リザベン点眼液",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "generic",
       "legacySubject": "トラニラスト点眼液",
       "resolutionSubject": "トラニラスト点眼液",
-      "changed": false
-    },
-    {
-      "query": "リナグリプチン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "generic",
-      "legacySubject": "リナグリプチン/エンパグリフロジン",
-      "resolutionSubject": "リナグリプチン/エンパグリフロジン",
-      "changed": false
-    },
-    {
-      "query": "リナグリプチン",
-      "moduleId": "dm_dpp4_sglt2_combination_oral",
-      "denotation": "brand",
-      "legacySubject": "トラディアンス",
-      "resolutionSubject": "トラディアンス",
       "changed": false
     },
     {
@@ -12645,6 +12437,22 @@
       "denotation": "brand",
       "legacySubject": "トラゼンタ",
       "resolutionSubject": "トラゼンタ",
+      "changed": false
+    },
+    {
+      "query": "リナグリプチン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "generic",
+      "legacySubject": "リナグリプチン/エンパグリフロジン",
+      "resolutionSubject": "リナグリプチン/エンパグリフロジン",
+      "changed": false
+    },
+    {
+      "query": "リナグリプチン",
+      "moduleId": "dm_dpp4_sglt2_combination_oral",
+      "denotation": "brand",
+      "legacySubject": "トラディアンス",
+      "resolutionSubject": "トラディアンス",
       "changed": false
     },
     {
@@ -12697,22 +12505,6 @@
     },
     {
       "query": "リラグルチド",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "generic",
-      "legacySubject": "インスリンデグルデク/リラグルチド",
-      "resolutionSubject": "インスリンデグルデク/リラグルチド",
-      "changed": false
-    },
-    {
-      "query": "リラグルチド",
-      "moduleId": "dm_insulin_glp1_combination",
-      "denotation": "brand",
-      "legacySubject": "ゾルトファイ",
-      "resolutionSubject": "ゾルトファイ",
-      "changed": false
-    },
-    {
-      "query": "リラグルチド",
       "moduleId": "dm_glp1ra_injection",
       "denotation": "generic",
       "legacySubject": "リラグルチド",
@@ -12725,6 +12517,22 @@
       "denotation": "brand",
       "legacySubject": "ビクトーザ",
       "resolutionSubject": "ビクトーザ",
+      "changed": false
+    },
+    {
+      "query": "リラグルチド",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "generic",
+      "legacySubject": "インスリンデグルデク/リラグルチド",
+      "resolutionSubject": "インスリンデグルデク/リラグルチド",
+      "changed": false
+    },
+    {
+      "query": "リラグルチド",
+      "moduleId": "dm_insulin_glp1_combination",
+      "denotation": "brand",
+      "legacySubject": "ゾルトファイ",
+      "resolutionSubject": "ゾルトファイ",
       "changed": false
     },
     {

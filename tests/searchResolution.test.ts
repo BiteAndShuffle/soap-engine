@@ -201,8 +201,15 @@ describe('T-U2-7 generic resolution は authoritative な単一 brandKey を持�
   test('generic header 候補は matchedBrandName を持っていても generic として扱われる', () => {
     // 既存の generic header は group 先頭 brand を matchedBrandName に持つ。
     // これは authoritative な brand ではないため、resolution 側で generic と表明される必要がある。
+    // Search Family Phase 2-A（Owner Decision D3）: 単一成分インスリンと premix インスリンは
+    // 別 search family として扱われ、同一テキストの generic header は単一成分側
+    // （dm_insulin_rapid_analog）が優先して生き残る（dedup）。以前は premix 側
+    // （dm_insulin_mixed_rapid_intermediate）の header が生き残っていたが、これは
+    // D3 が意図的に変更した部分であり、resolution.denotation='generic' という
+    // 本テストの主張対象（authoritative brand を持たないこと）はどちらのモジュール由来でも
+    // 変わらない。
     const hit = getDrugSuggestions('いんすりんあすぱると', index, 8)
-      .find(r => r.isGenericLabel === true && r.moduleId === 'dm_insulin_mixed_rapid_intermediate')
+      .find(r => r.isGenericLabel === true && r.moduleId === 'dm_insulin_rapid_analog')
     assert.ok(hit, 'generic header 候補が見つからない')
     assert.notEqual(hit!.matchedBrandName, undefined, '既存 field は代表 brand を持つ（U-2 で変更しない）')
     assert.equal(hit!.resolution.denotation, 'generic', '代表 brand を authoritative とみなしてはならない')
