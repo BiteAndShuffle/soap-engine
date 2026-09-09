@@ -1,8 +1,8 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "5e552b6a9c3ae1e235b7e322b63552234a3613cca67b4bb089a906a7bb3d3f70",
+  "sourceHash": "e2fd26395201796e375d428883a0cb7d7e33488c12720c1bb394073293aca431",
   "moduleCount": 35,
-  "scenarioCount": 1060,
+  "scenarioCount": 1061,
   "modules": [
     {
       "moduleId": "dm_glp1ra_semaglutide_oral",
@@ -6005,6 +6005,24 @@
       "globalId": "allergy_h1_antihistamine_eye_drops.frequency_decrease_low_perceived_effect",
       "id": "frequency_decrease_low_perceived_effect",
       "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 回数減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "globalId": "allergy_h1_antihistamine_eye_drops.strength_decrease_low_perceived_effect",
+      "id": "strength_decrease_low_perceived_effect",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（効果実感乏しい）",
       "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",

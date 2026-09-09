@@ -876,6 +876,49 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
       })
     })
 
+    // H1点眼 濃度減チェイン修復（bridges/allergy_h1_antihistamine_eye_drops.md 2026-09 reconciliation）:
+    //   strength_decrease_low_perceived_effect を新規追加し、直接の frequency sibling である
+    //   frequency_decrease_low_perceived_effect を bridge（medical-content SSOT）に合わせて再同期した。
+    //   ここでは canonical 側の存在・タグ・到達不能性・bridge 文言一致のみを検証する
+    //   （L-2: lifestyle_guidance_* の O フィールド差異は本ユニットの対象外・意図的未修正）。
+    describe('H1点眼 濃度減（効果実感乏しい）チェイン: strength_decrease_low_perceived_effect 追加 / frequency sibling 再同期', () => {
+      const h1Eye = h1EyeData as unknown as ModuleData
+      const scenarios = h1Eye.scenarios ?? []
+      const strengthNew = scenarios.find(s => s.id === 'strength_decrease_low_perceived_effect')
+      const frequencySibling = scenarios.find(s => s.id === 'frequency_decrease_low_perceived_effect')
+
+      test('strength_decrease_low_perceived_effect が canonical に存在し、type/color/requiredTags が bridge Header と一致する', () => {
+        assert.ok(strengthNew, 'strength_decrease_low_perceived_effect が scenarios に存在しない')
+        assert.equal(strengthNew!.scenarioType, 'treatment_adjustment')
+        assert.equal(strengthNew!.scenarioColor, 'green')
+        assert.deepEqual(strengthNew!.scenarioRequiredTags, ['concentration_variant'])
+      })
+
+      test('strength_decrease_low_perceived_effect の S/O/A/P が bridge本文と {{drug_subject}} 置換後に一致する', () => {
+        assert.ok(strengthNew, 'strength_decrease_low_perceived_effect が見つからない')
+        assert.equal(strengthNew!.S, '{{drug_subject}}は、効果の実感が乏しく使用継続に不安があるため、より効果が穏やかなものへ変更して継続することとなった。')
+        assert.equal(strengthNew!.O, '{{drug_subject}}　低濃度製剤へ変更')
+        assert.equal(strengthNew!.A, '{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ、低濃度製剤へ変更して治療継続となった。\n製剤変更後は、症状や使用状況について確認を要する。')
+        assert.equal(strengthNew!.P, '{{drug_subject}}は、変更された製剤で継続してください。\n症状や使用感に変化がある場合はご相談ください。')
+      })
+
+      test('frequency_decrease_low_perceived_effect（direct sibling）が bridge SSOT に再同期されている（L-1）', () => {
+        assert.ok(frequencySibling, 'frequency_decrease_low_perceived_effect が見つからない')
+        assert.equal(frequencySibling!.S, '{{drug_subject}}は、効果の実感が乏しく使用継続に不安があるため、点眼回数を減らして継続することとなった。')
+        assert.equal(frequencySibling!.A, '{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ、点眼回数を減らして治療継続となった。\n点眼回数変更後は、症状や使用状況について確認を要する。')
+        assert.equal(frequencySibling!.P, '{{drug_subject}}は、変更された点眼回数で継続してください。\n症状や使用感に変化がある場合はご相談ください。')
+      })
+
+      test('concentration_variant は現行8製剤のどの brandCatalog エントリも持たず、新規シナリオは現行製品では到達不能のままである（shared-chassis: 意図的非表示）', () => {
+        const brandEntries = Object.values(h1Eye.drug?.brandCatalog ?? {})
+        assert.ok(brandEntries.length > 0, 'brandCatalog が空')
+        assert.ok(
+          brandEntries.every(b => !(b.handlingTags ?? []).includes('concentration_variant')),
+          `現行製品のいずれかが concentration_variant を保持している: ${JSON.stringify(brandEntries.map(b => ({ name: b.displayName, tags: b.handlingTags })))}`,
+        )
+      })
+    })
+
     // H1点眼: Express Mode は PN5 仕様どおり無効状態であることの確認（上記の brandCatalog 解決テストとは別責務）。
     // enabled: false により候補が空になることは FAIL ではなく仕様どおりの PASS。
     describe('H1点眼: Express Mode は PN5 仕様どおり全件 enabled: false（候補には出現しない）', () => {

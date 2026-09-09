@@ -1503,10 +1503,10 @@
         "symptomCodes": [],
         "symptoms": []
       },
-      "S": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
+      "S": "{{drug_subject}}は、効果の実感が乏しく使用継続に不安があるため、点眼回数を減らして継続することとなった。",
       "O": "{{drug_subject}}　点眼回数減",
-      "A": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。\n点眼回数の変更後は、症状や使用感の変化について確認を要する。",
-      "P": "{{drug_subject}}は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。",
+      "A": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ、点眼回数を減らして治療継続となった。\n点眼回数変更後は、症状や使用状況について確認を要する。",
+      "P": "{{drug_subject}}は、変更された点眼回数で継続してください。\n症状や使用感に変化がある場合はご相談ください。",
       "mergePolicy": {
         "S": {
           "domain": "allergy",
@@ -1540,7 +1540,7 @@
       "SStructured": [
         {
           "id": "s_1",
-          "text": "{{drug_subject}}は、効果の実感が乏しく、使用継続に不安があるため点眼回数が減った。",
+          "text": "{{drug_subject}}は、効果の実感が乏しく使用継続に不安があるため、点眼回数を減らして継続することとなった。",
           "role": "dose_adjustment_reason",
           "transform": "moderate",
           "safety": "low",
@@ -1551,7 +1551,7 @@
       "AStructured": [
         {
           "id": "a_1",
-          "text": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ点眼回数が減った。",
+          "text": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ、点眼回数を減らして治療継続となった。",
           "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
@@ -1560,7 +1560,7 @@
         },
         {
           "id": "a_2",
-          "text": "点眼回数の変更後は、症状や使用感の変化について確認を要する。",
+          "text": "点眼回数変更後は、症状や使用状況について確認を要する。",
           "role": "treatment_assessment",
           "transform": "moderate",
           "safety": "low",
@@ -1571,10 +1571,19 @@
       "PStructured": [
         {
           "id": "p_1",
-          "text": "{{drug_subject}}は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。",
-          "role": "dose_adjustment_guidance",
+          "text": "{{drug_subject}}は、変更された点眼回数で継続してください。",
+          "role": "administration_guidance",
           "transform": "minimal",
-          "safety": "medium",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状や使用感に変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
           "lockTerms": [
             "ご相談ください"
           ],
@@ -1585,6 +1594,122 @@
       "counselingTags": [],
       "workflowTags": [],
       "scenarioColor": "blue"
+    },
+    {
+      "id": "strength_decrease_low_perceived_effect",
+      "globalId": "allergy_h1_antihistamine_eye_drops.strength_decrease_low_perceived_effect",
+      "title": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（効果実感乏しい）",
+      "scenarioType": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "situationFilter": [
+        "general"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "sComposition": {
+        "intent": "dose_decrease",
+        "template": "status_based",
+        "symptomCodes": [],
+        "symptoms": []
+      },
+      "S": "{{drug_subject}}は、効果の実感が乏しく使用継続に不安があるため、より効果が穏やかなものへ変更して継続することとなった。",
+      "O": "{{drug_subject}}　低濃度製剤へ変更",
+      "A": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ、低濃度製剤へ変更して治療継続となった。\n製剤変更後は、症状や使用状況について確認を要する。",
+      "P": "{{drug_subject}}は、変更された製剤で継続してください。\n症状や使用感に変化がある場合はご相談ください。",
+      "mergePolicy": {
+        "S": {
+          "domain": "allergy",
+          "behavior": "replace",
+          "groupKey": "allergy_dose_adjustment",
+          "mergeLevel": "clinical_domain",
+          "sectionRole": "subjective"
+        },
+        "O": {
+          "behavior": "append",
+          "mergeLevel": "section_line",
+          "sectionRole": "objective"
+        },
+        "A": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "sectionRole": "assessment"
+        },
+        "P": {
+          "behavior": "append",
+          "mergeLevel": "section_block",
+          "closingBehavior": "dedupe_or_last",
+          "sectionRole": "plan"
+        }
+      },
+      "followupRef": "default_followup",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "SStructured": [
+        {
+          "id": "s_1",
+          "text": "{{drug_subject}}は、効果の実感が乏しく使用継続に不安があるため、より効果が穏やかなものへ変更して継続することとなった。",
+          "role": "dose_adjustment_reason",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "AStructured": [
+        {
+          "id": "a_1",
+          "text": "{{drug_subject}}は、効果実感の乏しさと使用継続への不安を踏まえ、低濃度製剤へ変更して治療継続となった。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "a_2",
+          "text": "製剤変更後は、症状や使用状況について確認を要する。",
+          "role": "treatment_assessment",
+          "transform": "moderate",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        }
+      ],
+      "PStructured": [
+        {
+          "id": "p_1",
+          "text": "{{drug_subject}}は、変更された製剤で継続してください。",
+          "role": "administration_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [],
+          "notes": null
+        },
+        {
+          "id": "p_2",
+          "text": "症状や使用感に変化がある場合はご相談ください。",
+          "role": "side_effect_guidance",
+          "transform": "minimal",
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
+          "notes": null
+        }
+      ],
+      "clinicalTags": [],
+      "counselingTags": [],
+      "workflowTags": [],
+      "scenarioRequiredTags": [
+        "concentration_variant"
+      ],
+      "scenarioColor": "green"
     },
     {
       "id": "frequency_decrease_due_to_other_med_adjustment",

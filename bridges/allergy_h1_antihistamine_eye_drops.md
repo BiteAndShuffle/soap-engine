@@ -320,12 +320,12 @@ template:
     #   低温保存関連の指示を要しないため、両タグとも付与しない。
     #
     # concentration_variant についての運用メモ（CHECK・未解決）:
-    #   本来、通常の濃度増減4件（strength_increase/decrease系）と、
+    #   本来、通常の濃度増減5件（strength_increase/decrease系）と、
     #   刺激感を理由とする濃度減1件（se_strength_decreased_due_to_irritation）は
     #   実務上の意味が異なり、区別すべきである。
     #   ただし ScenarioItem/AddonItem には scenarioRequiredTags / requiredTags 以外の
     #   表示制御フィールドが存在せず（lib/types.ts確認済み）、
-    #   タグ未定義=常時表示という既存仕様上、この5件を非表示のまま保持するには
+    #   タグ未定義=常時表示という既存仕様上、この6件を非表示のまま保持するには
     #   何らかのタグへの参照が必須。新規タグの発明は禁止されているため、
     #   両者を暫定的に同一タグ（concentration_variant）に留めている。
     #   se_strength_decreased_due_to_irritation の対象製剤が将来確定した時点で、
@@ -442,12 +442,13 @@ scenarioRequiredTags:
   # 切替時のみこのシナリオを使用し、切替後の継続・副作用・CP・終了等は
   # ベース薬剤（アレジオン／エピナスチン）の通常シナリオをそのまま使用する。
   switch_to_sustained_formulation_reduced_frequency: ["reduced_frequency_option"]
-  # 通常の濃度増減4件。現行8製剤はいずれもconcentration_variantを持たないため非表示。
+  # 通常の濃度増減5件。現行8製剤はいずれもconcentration_variantを持たないため非表示。
   strength_increase_low_perceived_effect: ["concentration_variant"]
   strength_increase_due_to_other_med_adjustment: ["concentration_variant"]
   strength_decrease_improved: ["concentration_variant"]
+  strength_decrease_low_perceived_effect: ["concentration_variant"]
   strength_decrease_due_to_other_med_adjustment: ["concentration_variant"]
-  # 刺激感等を理由とする濃度減。上記4件とは実務上の意味が異なるが、対象製剤未確定のため
+  # 刺激感等を理由とする濃度減。上記5件とは実務上の意味が異なるが、対象製剤未確定のため
   # 暫定的に同タグで非表示を維持（詳細はtemplate.handlingTagsのCHECKメモを参照）。
   se_strength_decreased_due_to_irritation: ["concentration_variant"]
 addonRequiredTags:
@@ -842,6 +843,23 @@ A
 点眼回数変更後は、症状や使用状況について確認を要する。
 P
 ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、変更された点眼回数で継続してください。
+症状や使用感に変化がある場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_low_perceived_effect｜title=ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬 濃度減（効果実感乏しい）｜scenarioColor=green】
+S
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果の実感が乏しく使用継続に不安があるため、より効果が穏やかなものへ変更して継続することとなった。
+O
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬　低濃度製剤へ変更
+A
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、効果実感の乏しさと使用継続への不安を踏まえ、低濃度製剤へ変更して治療継続となった。
+製剤変更後は、症状や使用状況について確認を要する。
+P
+ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬は、変更された製剤で継続してください。
 症状や使用感に変化がある場合はご相談ください。
 P_CLOSING
 次回、引き続き使用できているか、副作用の有無を確認。
