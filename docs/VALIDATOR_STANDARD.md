@@ -194,7 +194,7 @@ build/runtime を停止させる致命的問題。
 | 23 | `SCENARIO_ID_DUPLICATE` | Structural | `scenarios[].id` のモジュール内一意性 |
 | 24 | `SCENARIO_GLOBALID_DUPLICATE` | Structural | `scenarios[].globalId` のモジュール内一意性 |
 | 25 | `SIDE_EFFECT_PRESENCE_INVALID` | Design Rule | `scenarios[].sideEffectPresence` が有効 7 値（`not_applicable` / `absent_or_not_observed` / `present_mild` / `present_moderate` / `present_change` / `present_dose_decrease` / `present_stop`）以外 |
-| 32 | `SCENARIO_REQUIRED_TAG_UNREACHABLE` | Reference | `scenarios[].scenarioRequiredTags` → `brandCatalog[].handlingTags`（いずれかの brand が保持していること）。`addons.items[].requiredTags` の到達可能性チェック（check 15、WARNING）とは独立。タグ typo によるシナリオのサイレント非表示を防ぐため ERROR |
+| 32 | `SCENARIO_REQUIRED_TAG_UNREACHABLE` | Reference | `scenarios[].scenarioRequiredTags` → `brandCatalog[].handlingTags`（いずれかの brand が保持していること）。**条件付き severity**（`addons.items[].requiredTags` の到達可能性チェック・check 15 とは独立したチェックだが判定条件は共通）: タグが `template.reservedHandlingTags` に宣言されていれば意図的な latent shared-chassis 構造として WARNING、宣言されていなければタグ typo によるシナリオのサイレント非表示を防ぐため ERROR（詳細は §3-C・`prompts/RULES.md` §27） |
 | 33 | `DISPLAY_GENERIC_NAME_MISSING` | Structural | `brandCatalog[brand].displayGenericName` の存在。通常UIが参照する表示用一般名のSSOTであり、欠落を許すと `genericName`（DP-21により塩類名を含まない正規化済み基本成分名）への暗黙フォールバックが復活しうるため ERROR |
 | 34 | `DISPLAY_GENERIC_NAME_EMPTY` | Structural | `brandCatalog[brand].displayGenericName` が空文字・空白のみでないこと |
 | 35 | `DISPLAY_GENERIC_NAME_SALT_COPY` | Design Rule | `genericName` は DP-21 により塩類名・水和物等を含まないことが正しいが、混入した場合に `displayGenericName` へそのままコピーされていないかを検出する予防ガード（`genericName` が塩類名・水和物等の技術的修飾語を含み、かつ `displayGenericName` と完全一致＝旧アンチパターン／将来の塩・水和物再混入の検出用） |
@@ -213,7 +213,7 @@ build は継続するが、コンソールに出力される問題。
 | 11 | `FOLLOWUP_SCOPE_VIOLATION` | Design Rule | `defaults.followup*` に医療判断語を含む |
 | 12 | `SCENARIO_PRIORITY_INVALID` 他 | Structural | `priority`/`exclusiveGroup`/`combinable` の型 |
 | 14 | `FOLLOWUP_REF_MISSING` | Structural | `followupProfiles` 存在時に `followupRef` が未設定 |
-| 15 | `ADDON_REQUIRED_TAG_UNREACHABLE` | Reference | `addon.requiredTags` のタグが `brandCatalog.handlingTags` で到達不能 |
+| 15 | `ADDON_REQUIRED_TAG_UNREACHABLE` | Reference | `addon.requiredTags` のタグが `brandCatalog.handlingTags` で到達不能。**条件付き severity**（check 32 と判定条件は共通）: タグが `template.reservedHandlingTags` に宣言されていれば WARNING（意図的な latent shared-chassis 構造）、宣言されていなければタグ typo・設定漏れによるサイレント非表示を防ぐため ERROR（本表は WARNING 側の代表掲載。詳細は §3-C・`prompts/RULES.md` §27） |
 | 16 | `STRUCTURED_TEXT_MISMATCH` | Structural | `*Structured` 連結と S/A/P 本文の不一致 |
 | 26 | `SCOMPOSITION_TEMPLATE_NONSTANDARD` | Design Rule | `sComposition.template` が `symptom_based` / `status_based` 以外の推測生成値（`adjustment_based` / `adherence_based` / `continuation_based` / `outcome_based` 等） |
 | 27 | `SCOMPOSITION_NONSTANDARD_KEY` | Design Rule | `sComposition` に禁止キーが存在（`adjustmentCodes` / `adherenceCodes` / `outcomeCodes` / `severity`）|
@@ -223,6 +223,39 @@ build は継続するが、コンソールに出力される問題。
 | 31 | — | — | PStructured.role 禁止語彙は check 29 の `STRUCTURED_ROLE_FORBIDDEN` で統合処理 |
 
 **WARNING は Design Rule を Validator に持ち込む唯一の方法**。ただし WARNING は最終判断ではなく「P3/人間レビューへの情報提供」として位置づける。
+
+### 3-C. `template.reservedHandlingTags` による条件付き severity（check 15 / 32）
+
+`SCENARIO_REQUIRED_TAG_UNREACHABLE`（check 32）と `ADDON_REQUIRED_TAG_UNREACHABLE`（check 15）は、
+`scenarios[].scenarioRequiredTags` / `addons.items[].requiredTags` が参照するタグを、現行
+`drug.brandCatalog` のどのエントリも保持していない場合に検出される。両 check は独立したチェックだが、
+判定条件（下記）は共通であり、**scenario 側・addon 側で対称**である。
+
+```
+requiredTag を持つ brandCatalog エントリが存在しない
+  かつ template.reservedHandlingTags に宣言されている → WARNING
+  かつ template.reservedHandlingTags に宣言されていない → ERROR
+```
+
+**`reservedHandlingTags` が存在する理由**: 現行の `brandCatalog` には存在しないが、将来の製品・製品バリエーション追加時に到達可能になる想定で意図的に保持している scenario/addon 構造（latent shared-chassis structure）を、タグ typo・設定漏れによる到達不能と区別するためである。宣言なしの到達不能は ERROR（タグ typo・設定漏れによるシナリオ／ADDON のサイレントな非表示事故を防ぐ）、宣言ありの到達不能は WARNING（意図的な保持）として扱う。
+
+**意図されたライフサイクル**:
+1. scenario/addon 構造が bridge/canonical に存在する
+2. その構造の requiredTag が定義されている
+3. 現行製品はいずれも当該タグを持たないため `template.reservedHandlingTags` に宣言し、Validator は ERROR ではなく WARNING を出す
+4. 後日、確認済みの具体的な製品が当該 `handlingTag` を受け取った時点で、その scenario/addon は到達可能になる。`reservedHandlingTags` からは当該タグを外す（宣言を放置しない）
+
+これは死んだデータではなく、意図された shared-chassis アーキテクチャである。ただし
+**`reservedHandlingTags` はそれ自体が runtime の可視性ゲートではない**。実際の表示可否は、
+`brandCatalog.handlingTags` × `scenarioRequiredTags` / `addonRequiredTags` の一致によって runtime が
+判定する（§1「保証しないこと」参照）。`reservedHandlingTags` は Validator 向けの意図宣言に過ぎない。
+
+補助チェック（いずれも WARNING）:
+- `RESERVED_TAG_UNUSED`（check 33）: `reservedHandlingTags` に宣言されているが、どの scenario/addon の requiredTags にも一度も使用されていない予約タグ
+- `RESERVED_TAG_REACHABLE`（check 34）: 宣言されているタグが既にいずれかの `brandCatalog[].handlingTags` に存在する（宣言が陳腐化している可能性）
+
+実例・詳細な用途/禁止事項は `prompts/RULES.md` §27 を正本とする。既知の意図的 WARNING クラスタは
+Appendix B を参照。
 
 ---
 
@@ -417,7 +450,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `SCENARIO_COMBINABLE_INVALID` | WARN | Structural |
 | `BRAND_CATALOG_MISMATCH` | ERROR | Reference |
 | `FOLLOWUP_REF_MISSING` | WARN | Structural |
-| `ADDON_REQUIRED_TAG_UNREACHABLE` | WARN | Reference |
+| `ADDON_REQUIRED_TAG_UNREACHABLE` | WARN／ERROR（条件付き。§3-C） | Reference |
 | `STRUCTURED_TEXT_MISMATCH` | WARN | Structural |
 | `EXPRESS_MODE_MISSING_FIELD` | ERROR | Structural |
 | `EXPRESS_MODE_REF_BROKEN` | ERROR | Reference |
@@ -434,7 +467,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `SCOMPOSITION_INTENT_FORBIDDEN` | WARN | Design Rule |
 | `STRUCTURED_ROLE_FORBIDDEN` | WARN | Design Rule |
 | `ROLE_MAPPING_NOTE_PRESENT` | WARN | Design Rule |
-| `SCENARIO_REQUIRED_TAG_UNREACHABLE` | ERROR | Reference |
+| `SCENARIO_REQUIRED_TAG_UNREACHABLE` | ERROR／WARN（条件付き。§3-C） | Reference |
 | `DISPLAY_GENERIC_NAME_MISSING` | ERROR | Structural |
 | `DISPLAY_GENERIC_NAME_EMPTY` | ERROR | Structural |
 | `DISPLAY_GENERIC_NAME_SALT_COPY` | ERROR | Design Rule |
@@ -499,3 +532,25 @@ Validator が検出するが、意図的に残存させている WARNING の台�
 | **status** | `INTENTIONAL_KEEP` |
 | **理由** | `avoid_cold_storage` は「低温保存が必要」（`cold_storage`）の**否定ではなく**、独立した陽性の運用 capability（低温保存を避けるべき製品向けの guidance）である（2026-09 Owner Decision）。現行8製剤はいずれも該当せず、`template.reservedHandlingTags` に宣言済みの予約タグとして保持する。 |
 | **対応方針** | 削除しない。低温保存を避けるべき製品が module へ追加された時点で該当ブランドへ `avoid_cold_storage` を付与し、自然解消する。`cold_storage` の否定として扱う実装（negation logic）は導入しないこと。 |
+
+### KW-005
+
+| 項目 | 内容 |
+|---|---|
+| **errorCode** | `SCENARIO_REQUIRED_TAG_UNREACHABLE` |
+| **module** | `allergy_h1_antihistamine_eye_drops` |
+| **対象** | `scenarios["strength_increase_low_perceived_effect"]` / `scenarios["strength_increase_due_to_other_med_adjustment"]` / `scenarios["strength_decrease_improved"]` / `scenarios["strength_decrease_low_perceived_effect"]` / `scenarios["strength_decrease_due_to_other_med_adjustment"]` / `scenarios["se_strength_decreased_due_to_irritation"]`（いずれも `.scenarioRequiredTags["concentration_variant"]`。通常の濃度増減5件＋刺激感を理由とする濃度減1件、計6件） |
+| **status** | `INTENTIONAL_KEEP` |
+| **理由** | `concentration_variant` は現行8製剤のどの `brandCatalog` エントリも持たない latent shared-chassis 構造の required tag であり、`template.reservedHandlingTags` に宣言済みである（§3-C）。将来、濃度違い製剤が module へ追加された時点で到達可能になる想定で、対象6シナリオを非表示のまま保持している。 |
+| **対応方針** | 削除しない。濃度違い製剤が確定した時点で該当ブランドへ `concentration_variant` を付与し、自然解消する。`se_strength_decreased_due_to_irritation` は他5件（通常の濃度増減）と実務上の意味が異なるが、対象製剤が未確定である間は暫定的に同一タグで非表示を維持する（`bridges/allergy_h1_antihistamine_eye_drops.md` template.handlingTags の CHECK メモ参照）。 |
+
+### KW-006
+
+| 項目 | 内容 |
+|---|---|
+| **errorCode** | `SCENARIO_REQUIRED_TAG_UNREACHABLE` |
+| **module** | `allergy_h1_antihistamine_eye_drops` |
+| **対象** | `scenarios["lifestyle_guidance_storage_cold"].scenarioRequiredTags["cold_storage"]` / `scenarios["lifestyle_guidance_storage_cold_before_opening"].scenarioRequiredTags["cold_storage_before_opening"]` |
+| **status** | `INTENTIONAL_KEEP` |
+| **理由** | KW-001 が登録する addon 側（`addon_eye_drop_storage_cold` 等）と同一の latent shared-chassis 構造の scenario 側カウンターパート。`cold_storage` / `cold_storage_before_opening` は現行8製剤のいずれも保持せず、`template.reservedHandlingTags` に宣言済みである（§3-C）。 |
+| **対応方針** | 削除しない。冷所保存点眼薬 module 追加時に `cold_storage` ブランドが登録されることで自然解消する（KW-001 と同一の解消条件）。 |

@@ -859,19 +859,20 @@ Addon の表示順は、コード側の固定順ではなく bridge / canonical 
 
 `scenarios[].scenarioRequiredTags` / `addons.items[].requiredTags` が参照するタグを、
 現行 `drug.brandCatalog` のどのエントリも保持していない場合、`lib/moduleValidator.ts` は
-デフォルトで ERROR（`SCENARIO_REQUIRED_TAG_UNREACHABLE`）または WARNING
-（`ADDON_REQUIRED_TAG_UNREACHABLE`）として検出する。これはタグの typo・設定漏れによる
-シナリオ／ADDON のサイレントな非表示事故を防ぐための仕組みである。
+デフォルトで ERROR（scenario 側は `SCENARIO_REQUIRED_TAG_UNREACHABLE`、addon 側は
+`ADDON_REQUIRED_TAG_UNREACHABLE`。**両者は対称であり、いずれもデフォルトは ERROR**）として
+検出する。これはタグの typo・設定漏れによるシナリオ／ADDON のサイレントな非表示事故を防ぐ
+ための仕組みである。
 
 **例外（2026-07-24 導入）**: `template.reservedHandlingTags`（`string[]`）にタグを明示宣言した
 場合に限り、そのタグを参照する到達不能な scenarioRequiredTags / addon.requiredTags は
 ERROR ではなく WARNING として扱われる。
 
-**判定ルール:**
+**判定ルール（scenario 側・addon 側で対称）:**
 ```
 requiredTag を持つ brandCatalog エントリが存在しない
   かつ reservedHandlingTags に宣言されている → WARNING
-  かつ reservedHandlingTags に宣言されていない → ERROR（scenario 側） / WARNING（addon 側、従来仕様）
+  かつ reservedHandlingTags に宣言されていない → ERROR
 ```
 
 **reservedHandlingTags の用途（限定的）:**
