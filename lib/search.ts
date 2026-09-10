@@ -1211,24 +1211,25 @@ export function getDrugSuggestions(
               }
             } else if (genericName) {
               // Search Family Phase 2-A（Owner Decision D2）: 強い単一成分クエリに限り、
-              // 見出しの要否を module の opt-in フラグではなく「実際に表示テキストが
-              // 重複するか」で判定する。判定対象は brandsInGroup（このクエリ自体に
-              // マッチした brand の部分集合）ではなく、同一 genericKey を持つ module 内の
-              // 全 brand（fullGroupMembers）でなければならない。クエリがそのうちの
-              // 一部（例: アレジオン点眼液のみ）にしか一致しない場合でも、同一
-              // genericKey グループに generic-labeled brand（例: エピナスチン点眼液）が
-              // 存在するなら見出しは真の重複であり続けるため。
-              // 一般名表示テキストと文字列として完全一致する brand がグループ内に
-              // 存在する場合のみ、見出しはその brand 行と真に同一表示になるため追加しない。
-              // 存在しない場合（例: メトグルコ/アクトス）は正当な一般名見出しとして必ず
-              // 表示する。弱い/複数トークンクエリでは、この reinterpretation 自体を
-              // 適用せず、既存の module opt-in フラグの挙動を変更前と完全に同一のまま
-              // 維持する（短いかな1文字クエリ等の凍結契約を守るため）。
-              const fullGroupMembers = entry.brandNames.filter(
-                b => entry.brandCatalogGenericKeyMap[b] === key,
-              )
+              // 見出しの要否を module の opt-in フラグではなく「このクエリで実際に
+              // 表示テキストが重複するか」で判定する。判定対象は「この group について
+              // 実際に emit されるブランド行」＝ brandsInGroup（クエリにマッチした
+              // brand の部分集合）でなければならない。genericMode 経路は
+              // brandsInGroup のみをブランド行として emit し、genericKey sibling を
+              // 展開しないため、fullGroupMembers（同一 genericKey の全 brand）で
+              // 判定すると、一般名と同名の GE ブランドが group には存在するが
+              // このクエリでは emit されない場合に見出しが誤って抑制され、一般名
+              // テキストが結果から消える（J-1: derm_heparinoid_moisturizer_*）。
+              // brand 名検索経路の suppress 判定（pushedBrands.has(...) ＝実際に
+              // push 済みの brand 名）と同一のセマンティクスに揃える。
+              // 一般名表示テキストと文字列一致する brand がこのクエリで emit される
+              // 場合のみ、見出しはその brand 行と真に同一表示になるため追加しない。
+              // emit されない場合（例: メトグルコ/アクトス／J-1 の GE 剤）は正当な
+              // 一般名見出しとして必ず表示する。弱い/複数トークンクエリでは、この
+              // reinterpretation 自体を適用せず、既存の module opt-in フラグの挙動を
+              // 変更前と完全に同一のまま維持する（短いかな1文字クエリ等の凍結契約を守る）。
               const suppressHeader = strongSingleIngredientQuery
-                ? fullGroupMembers.includes(genericName)
+                ? brandsInGroup.includes(genericName)
                 : entry.suppressRedundantGenericHeaderOnDirectMatch
               if (!suppressHeader) {
                 candidates.push({

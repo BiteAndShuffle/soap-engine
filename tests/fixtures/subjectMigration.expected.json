@@ -3,10 +3,10 @@
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 571,
-    "rows": 1620,
+    "rows": 1633,
     "byDenotation": {
       "brand": 1024,
-      "generic": 539,
+      "generic": 552,
       "module": 57
     },
     "changedRows": 82,
@@ -779,6 +779,14 @@
       "query": "あれじおん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
+      "legacySubject": "エピナスチン点眼液",
+      "resolutionSubject": "エピナスチン点眼液",
+      "changed": false
+    },
+    {
+      "query": "あれじおんてんがん",
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "denotation": "generic",
       "legacySubject": "エピナスチン点眼液",
       "resolutionSubject": "エピナスチン点眼液",
       "changed": false
@@ -2195,6 +2203,14 @@
       "query": "ざじてん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
+      "legacySubject": "ケトチフェン点眼液",
+      "resolutionSubject": "ケトチフェン点眼液",
+      "changed": false
+    },
+    {
+      "query": "ざじてんてんがん",
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "denotation": "generic",
       "legacySubject": "ケトチフェン点眼液",
       "resolutionSubject": "ケトチフェン点眼液",
       "changed": false
@@ -4378,6 +4394,14 @@
     {
       "query": "ぱたのーるてんがん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "denotation": "generic",
+      "legacySubject": "オロパタジン点眼液",
+      "resolutionSubject": "オロパタジン点眼液",
+      "changed": false
+    },
+    {
+      "query": "ぱたのーるてんがん",
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
       "legacySubject": "パタノール点眼液",
       "resolutionSubject": "パタノール点眼液",
@@ -5010,6 +5034,14 @@
     {
       "query": "ひるくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質クリーム",
+      "resolutionSubject": "ヘパリン類似物質クリーム",
+      "changed": false
+    },
+    {
+      "query": "ひるくりーむ",
+      "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
       "legacySubject": "ヒルドイドクリーム",
       "resolutionSubject": "ヒルドイドクリーム",
@@ -5226,9 +5258,25 @@
     {
       "query": "ひるどいどそふとなんこう",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "changed": false
+    },
+    {
+      "query": "ひるどいどそふとなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヒルドイドソフト軟膏",
       "resolutionSubject": "ヒルドイドソフト軟膏",
+      "changed": false
+    },
+    {
+      "query": "ひるどいどなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -5282,6 +5330,14 @@
     {
       "query": "ひるどいなんこう",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "changed": false
+    },
+    {
+      "query": "ひるどいなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヒルドイドソフト軟膏",
       "resolutionSubject": "ヒルドイドソフト軟膏",
@@ -5290,9 +5346,25 @@
     {
       "query": "ひるどなんこう",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "changed": false
+    },
+    {
+      "query": "ひるどなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヒルドイドソフト軟膏",
       "resolutionSubject": "ヒルドイドソフト軟膏",
+      "changed": false
+    },
+    {
+      "query": "ひるなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -5317,6 +5389,14 @@
       "denotation": "brand",
       "legacySubject": "ヒルドイドフォーム",
       "resolutionSubject": "ヒルドイドフォーム",
+      "changed": false
+    },
+    {
+      "query": "ひるろーしょん",
+      "moduleId": "derm_heparinoid_moisturizer_lotion",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質ローション",
+      "resolutionSubject": "ヘパリン類似物質ローション",
       "changed": false
     },
     {
@@ -5818,6 +5898,14 @@
     {
       "query": "へぱなんこう",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
+      "changed": false
+    },
+    {
+      "query": "へぱなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヒルドイドソフト軟膏",
       "resolutionSubject": "ヒルドイドソフト軟膏",
@@ -5925,6 +6013,14 @@
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質外用スプレー",
       "resolutionSubject": "ヘパリン類似物質外用スプレー",
+      "changed": false
+    },
+    {
+      "query": "へぱりんなんこう",
+      "moduleId": "derm_heparinoid_moisturizer_ointment",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質油性クリーム",
+      "resolutionSubject": "ヘパリン類似物質油性クリーム",
       "changed": false
     },
     {
@@ -7163,6 +7259,14 @@
       "query": "りぼすちん",
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "brand",
+      "legacySubject": "レボカバスチン点眼液",
+      "resolutionSubject": "レボカバスチン点眼液",
+      "changed": false
+    },
+    {
+      "query": "りぼすちんてんがん",
+      "moduleId": "allergy_h1_antihistamine_eye_drops",
+      "denotation": "generic",
       "legacySubject": "レボカバスチン点眼液",
       "resolutionSubject": "レボカバスチン点眼液",
       "changed": false

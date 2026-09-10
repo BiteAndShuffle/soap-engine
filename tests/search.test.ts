@@ -1194,6 +1194,89 @@ describe('Search Family Phase 2-A: D2（generic header の true-duplicate 判定
     const texts = results.map(r => r.drugDisplayLabel)
     assert.equal(new Set(texts).size, texts.length, `重複表示テキストが存在してはならない: ${JSON.stringify(texts)}`)
   })
+
+  // Finding J-1: strong-query genericMode の見出し抑制は「同一 genericKey group に
+  // 一般名と同名の brand が存在するか」ではなく「このクエリで実際に emit される
+  // brand に一般名と同名のものがあるか」で判定する（brand 名検索経路の
+  // pushedBrands.has(...) と同一セマンティクス）。genericMode は brandsInGroup のみを
+  // emit し genericKey sibling を展開しないため、存在判定では GE ブランド名が
+  // 一般名と一致する module（derm_heparinoid_moisturizer_{ointment,cream,lotion} /
+  // allergy_h1_antihistamine_eye_drops）で正当な一般名テキストが結果から消えていた。
+  test('"へぱなんこう"（GE 剤が group に存在するがこのクエリでは emit されない）→ 正当な一般名見出しが復活する', () => {
+    const results = getDrugSuggestions('へぱなんこう', fullIndex, 8)
+    const header = results.find(r => r.isGenericLabel && r.drugDisplayLabel === 'ヘパリン類似物質油性クリーム')
+    assert.ok(
+      header,
+      `へぱなんこう: 一般名見出し「ヘパリン類似物質油性クリーム」が到達可能であるべき: ${JSON.stringify(results.map(r => [r.drugDisplayLabel, r.isGenericLabel]))}`,
+    )
+    // 見出しの SOAP 主語は一般名そのもの（denotation=generic）
+    assert.equal(header!.resolution.denotation, 'generic')
+    assert.equal(header!.resolution.subject, 'ヘパリン類似物質油性クリーム')
+    // 先発（このクエリで emit される唯一の brand）行も従来どおり残る。SOAP 主語は先発名のまま。
+    const brand = results.find(r => r.matchedBrandName === 'ヒルドイドソフト軟膏' && !r.isGenericLabel)
+    assert.ok(brand, 'ヒルドイドソフト軟膏の brand 行が残るべき')
+    assert.equal(brand!.resolution.subject, 'ヒルドイドソフト軟膏')
+  })
+
+  test('"ひるくりーむ" / "ひるろーしょん" / "あれじおんてんがん" も同様に正当な一般名見出しが復活する', () => {
+    for (const [q, gen] of [
+      ['ひるくりーむ', 'ヘパリン類似物質クリーム'],
+      ['ひるろーしょん', 'ヘパリン類似物質ローション'],
+      ['あれじおんてんがん', 'エピナスチン点眼液'],
+    ] as const) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      assert.ok(
+        results.some(r => r.isGenericLabel && r.drugDisplayLabel === gen && r.resolution.subject === gen),
+        `"${q}": 一般名見出し「${gen}」が到達可能であるべき: ${JSON.stringify(results.map(r => [r.drugDisplayLabel, r.isGenericLabel]))}`,
+      )
+    }
+  })
+
+  test('genericMode 見出し抑制は「実際に emit される brand」に依存し、group 全体の存在では抑制しない', () => {
+    // "へぱなんこう" は ヒルドイドソフト軟膏 のみを emit する（ヘパリン類似物質油性クリーム
+    // brand 行は emit されない）。したがって同名の一般名見出しは真の重複ではなく、
+    // 抑制してはならない。
+    const results = getDrugSuggestions('へぱなんこう', fullIndex, 8)
+    const emittedBrandNames = results.filter(r => !r.isGenericLabel).map(r => r.matchedBrandName)
+    assert.ok(
+      !emittedBrandNames.includes('ヘパリン類似物質油性クリーム'),
+      `このクエリでは GE ブランド行は emit されないはず: ${JSON.stringify(emittedBrandNames)}`,
+    )
+    assert.ok(
+      results.some(r => r.isGenericLabel && r.drugDisplayLabel === 'ヘパリン類似物質油性クリーム'),
+      '同名 brand が emit されないため、一般名見出しは抑制されずに表示されるべき',
+    )
+  })
+
+  test('真の重複（実際に emit される同名 brand がある）ケースでは genericMode 見出しは引き続き抑制される', () => {
+    // "もんてるかすと" → モンテルカスト（brand 名＝一般名テキスト）が実際に emit されるため、
+    // 同テキストの単独 header は真の重複として抑制される（Finding J-1 修正後も不変）。
+    const results = getDrugSuggestions('もんてるかすと', fullIndex, 8)
+    assert.equal(results.filter(r => r.isGenericLabel).length, 0, `真の重複 header は 0 件であるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    assert.ok(results.some(r => r.drugDisplayLabel === 'モンテルカスト' && !r.isGenericLabel), 'brand 行「モンテルカスト」は残るべき')
+    // "えぴなすちん"（一般名読み。エピナスチン点眼液 brand が emit される）でも
+    // 真の重複見出しは付かない。
+    const epi = getDrugSuggestions('えぴなすちん', fullIndex, 8)
+    const h1 = epi.filter(r => r.moduleId === 'allergy_h1_antihistamine_eye_drops')
+    assert.ok(
+      h1.some(r => r.matchedBrandName === 'エピナスチン点眼液' && !r.isGenericLabel),
+      'エピナスチン点眼液 brand 行が emit されるべき',
+    )
+    assert.ok(
+      !h1.some(r => r.isGenericLabel && r.drugDisplayLabel === 'エピナスチン点眼液'),
+      '同名 brand が emit されるため、重複する一般名見出しは付かないべき',
+    )
+  })
+
+  test('"へぱ なんこう"（frozen 複数トークンクエリ）は byte 単位で不変', () => {
+    // J-1 対象は "へぱなんこう"（単一トークン）。"へぱ なんこう"（スペース区切り）は
+    // 別のクエリ形状であり、既存の frozen 契約どおり ヘパリン類似物質油性クリーム 1件のみ。
+    const results = getDrugSuggestions('へぱ なんこう', fullIndex, 8)
+    assert.deepEqual(
+      results.map(r => ({ d: r.drugDisplayLabel, g: r.isGenericLabel ?? false, u: r.uiLabel, s: r.resolution.subject })),
+      [{ d: 'ヘパリン類似物質油性クリーム', g: false, u: undefined, s: 'ヘパリン類似物質油性クリーム' }],
+    )
+  })
 })
 
 describe('Search Family Phase 2-A: D3（単一成分インスリン family は premix family より先）', () => {

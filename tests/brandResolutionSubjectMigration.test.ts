@@ -386,7 +386,7 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     assert.deepEqual(missing, [], `historical fixture が参照する module が registry から消えている: ${missing.join(', ')}`)
   })
 
-  test('全 1620 行の projection が fixture と一致する', () => {
+  test('全 1633 行の projection が fixture と一致する', () => {
     // U-CR2: `index`（全体）ではなく `historicalIndex`（fixture が参照する module のみ）で
     // 再計算する。fixture は U-4b / Q-S2 migration 時点の historical regression artifact
     // であり、その後追加された module の結果混入は corpus 成長であって semantic regression
@@ -429,8 +429,21 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     // （module は変化なし）。reachableChangedRows/Patterns（U-4b の意図された delta。
     // 25行/6パターン）と gatedChangedModules の構成（20件）は Phase 2-A のスコープ外であり不変。
     // gatedChangedRows は 57→57 で変化なし（対象 20 module のいずれも D1/D2 の対象外）。
-    assert.equal(fixture.summary.rows, 1620)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1024, generic: 539, module: 57 })
+    //
+    // Search Family Phase 2-A（D2 genericMode 過抑制修正・Finding J-1）: strong-query
+    // genericMode の見出し抑制判定を「同一 genericKey group の全 brand（fullGroupMembers）」
+    // ではなく「このクエリで実際に emit される brand（brandsInGroup）」基準へ揃えた。
+    // これにより、一般名と同名の GE ブランドが group には存在するがクエリでは emit されない
+    // 13 クエリ形式（derm_heparinoid_moisturizer_{ointment,cream,lotion} の
+    // へぱなんこう / ひるくりーむ / ひるろーしょん 等、および
+    // allergy_h1_antihistamine_eye_drops の あれじおんてんがん / ざじてんてんがん /
+    // ぱたのーるてんがん / りぼすちんてんがん）で、正当な一般名見出し（denotation='generic'、
+    // legacySubject === resolutionSubject、changed=false）が復活する（+13 行、削除 0、
+    // 並び替え 0、SOAP subject 変化 0）。rows 1620→1633 / generic 539→552 の純増のみ。
+    // reachableChangedRows/Patterns・gatedChangedRows/Modules・changedRows（意味的 delta）は
+    // 完全に不変。
+    assert.equal(fixture.summary.rows, 1633)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1024, generic: 552, module: 57 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 57)
