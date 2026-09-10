@@ -1239,6 +1239,96 @@ describe('Search Family Phase 2-A: D3（単一成分インスリン family は p
   })
 })
 
+// ─────────────────────────────────────────────────────────────
+// Search Family Phase 2-A（strong-query ambiguity guard）:
+// 意味的ファミリー挙動（F1/F2/D1/D2/D3）は「単一トークン AND 最上位スコア>=5
+// AND 高精度一致が解決する単剤の有効成分識別がちょうど1種」のときだけ発動する。
+// 高スコアの登録エイリアスでも複数成分へ強一致するもの（インスリンの
+// のぼ / ひゅー / ひゅーま / のぼりん / ひゅーまりん）は Owner Decision
+// （MULTI_INGREDIENT_STRONG_ALIAS）により発動させず、pre-Phase-2-A 挙動へ戻す。
+// ─────────────────────────────────────────────────────────────
+describe('Search Family Phase 2-A: 多成分に強一致する登録エイリアスは意味的ファミリーを発動しない', () => {
+  /** 候補 row の matchedBrandName を剤形非依存の有効成分識別（brandCatalogIngredientMap）へ写像する */
+  const ingredientsOf = (rows: ReturnType<typeof getDrugSuggestions>): Set<string> => {
+    const out = new Set<string>()
+    for (const r of rows) {
+      if (r.matchedBrandName === undefined) continue
+      const entry = fullIndex.find(e => e.moduleId === r.moduleId)
+      const ing = entry?.brandCatalogIngredientMap[r.matchedBrandName]
+      if (ing !== undefined) out.add(ing)
+    }
+    return out
+  }
+
+  for (const q of ['のぼ', 'ひゅー', 'ひゅーま', 'のぼりん', 'ひゅーまりん']) {
+    test(`"${q}" は複数の有効成分へ強一致する（＝クエリが1成分を一意に指していない）`, () => {
+      const rows = getDrugSuggestions(q, fullIndex, 8)
+      assert.ok(
+        ingredientsOf(rows).size >= 2,
+        `"${q}" は2種以上の有効成分を解決するはず: ${JSON.stringify([...ingredientsOf(rows)])}`,
+      )
+    })
+
+    test(`"${q}" は意味的ファミリー挙動を発動しない（pre-Phase-2-A のバケツ順＝brand 行群 → generic header 群）`, () => {
+      const rows = getDrugSuggestions(q, fullIndex, 8)
+      // F2 の genericMode 内リオーダーが OFF なら、generic header は brand 行より後にまとまる
+      // （Phase 2-A ではファミリー単位で header が brand 直後へ差し込まれる）。
+      const firstHeader = rows.findIndex(r => r.isGenericLabel === true)
+      const lastBrand = rows.map(r => r.isGenericLabel === true).lastIndexOf(false)
+      if (firstHeader !== -1) {
+        assert.ok(
+          firstHeader > lastBrand,
+          `"${q}": generic header は全 brand 行より後に来るべき（Phase 2-A の割り込みが無効）: ${JSON.stringify(rows.map(r => [r.drugDisplayLabel, r.isGenericLabel]))}`,
+        )
+      }
+    })
+  }
+
+  test('"のぼ" → D1 co-brand 展開が OFF（クエリに直接一致しない co-brand-only 兄弟 "フィアスプ" を合成しない）', () => {
+    const rows = getDrugSuggestions('のぼ', fullIndex, 8)
+    // フィアスプ は "のぼ" に名称/alias/一般名で一致せず、Phase 2-A D1 の
+    // ingredientCoBrands 展開でしか到達しない。ゲートが正しく OFF なら現れない。
+    assert.ok(
+      !rows.some(r => r.matchedBrandName === 'フィアスプ'),
+      `"のぼ": co-brand-only の "フィアスプ" は多成分クエリでは合成されないはず: ${JSON.stringify(rows.map(r => r.matchedBrandName))}`,
+    )
+  })
+
+  test('"のぼ" / "ひゅー" → pre-Phase-2-A（841127f）シーケンスへ戻っている', () => {
+    assert.deepEqual(
+      getDrugSuggestions('のぼ', fullIndex, 8).map(r => r.drugDisplayLabel),
+      ['ノボラピッド', 'ノボラピッド30ミックス', 'ノボリンN', 'ノボリンR', 'ノボリン30R', 'インスリンアスパルト', 'イソフェンインスリン', 'インスリンヒト'],
+    )
+    assert.deepEqual(
+      getDrugSuggestions('ひゅー', fullIndex, 8).map(r => r.drugDisplayLabel),
+      ['ヒューマリンN', 'ヒューマリンR', 'ヒューマログ', 'ヒューマリン3/7', 'ヒューマログ25ミックス', 'イソフェンインスリン', 'インスリンヒト', 'インスリンリスプロ'],
+    )
+  })
+
+  test('曖昧でない強い単一成分クエリは Phase 2-A を発動し続ける（D1 / F2 / D3）', () => {
+    // D1: メトグルコ → 同一 module 内・同一有効成分の co-brand が展開される
+    const metgluco = getDrugSuggestions('メトグルコ', fullIndex, 8).map(r => r.matchedBrandName)
+    assert.ok(metgluco.includes('メトホルミン') && metgluco.includes('グリコラン'),
+      `メトグルコ: D1 co-brand が生きているべき: ${JSON.stringify(metgluco)}`)
+    // F2: したぐりぷちん → 単剤ファミリーが配合剤より先
+    assert.deepEqual(
+      getDrugSuggestions('したぐりぷちん', fullIndex, 8).map(r => r.drugDisplayLabel),
+      ['シタグリプチン', 'ジャヌビア', 'グラクティブ', 'シタグリプチン/イプラグリフロジン', 'スージャヌ'],
+    )
+    // D3: いんすりんあすぱると（一意な単剤一般名読み）→ 単一成分 → premix → 配合剤
+    assert.deepEqual(
+      getDrugSuggestions('いんすりんあすぱると', fullIndex, 8).map(r => r.drugDisplayLabel),
+      ['インスリンアスパルト', 'ノボラピッド', 'フィアスプ', 'ノボラピッド30ミックス', 'ノボラピッド50ミックス', 'ノボラピッド70ミックス', 'インスリンデグルデク/インスリンアスパルト', 'ライゾデグ'],
+    )
+  })
+
+  test('3297e4d の co-brand uiLabel fix は不変（トラメラス → sibling は自身の非PF一般名）', () => {
+    const rows = getDrugSuggestions('トラメラス', fullIndex, 8)
+    const sib = rows.find(r => r.matchedBrandName === 'リザベン点眼液')!
+    assert.equal(sib.uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
+  })
+})
+
 describe('Search Family Phase 2-A: D4（oral / injectable semaglutide は別ファミリーのまま。凍結）', () => {
   test('"せまぐるちど" → 経口・注射の両ファミリーが co-equal に見える（優先順位を発明しない）', () => {
     const results = getDrugSuggestions('せまぐるちど', fullIndex, 8)

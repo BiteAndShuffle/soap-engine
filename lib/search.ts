@@ -902,13 +902,43 @@ export function getDrugSuggestions(
     a.originalIndex - b.originalIndex,
   )
 
-  // Search Family Phase 2-A: 意味的ファミリー順序（F1/F2/D1/D3）を適用してよい
-  // 「強い単一成分クエリ」かどうかのゲート。単一トークンかつ最上位スコアが
-  // score>=5（alias完全一致以上。suppressCrossModuleSuggestionsOnExactHit と同じ閾値）
-  // の場合のみ true。弱い prefix クエリ（例:「めと」score=4）・複数トークンクエリ
-  // （既に剤形等の追加シグナルを含む）はこのゲートの対象外とし、既存の並び順・
-  // 候補集合を完全に維持する（Owner Decision の適用範囲を厳密に限定する）。
-  const strongSingleIngredientQuery = tokens.length === 1 && (scored[0]?.score ?? 0) >= 5
+  // Search Family Phase 2-A: 意味的ファミリー順序（F1/F2/D1/D3）/ co-brand 展開 /
+  // true-duplicate header 判定を適用してよい「強い単一成分クエリ」かどうかのゲート。
+  //
+  //   単一トークン
+  //   AND 最上位スコア >= 5（alias 完全一致以上。suppressCrossModuleSuggestionsOnExactHit と同じ閾値）
+  //   AND 高精度一致（resolveAllHighPrecisionBrands）が解決する「単剤の有効成分識別」がちょうど 1 種
+  //
+  // 3 番目の条件は Owner Decision（MULTI_INGREDIENT_STRONG_ALIAS）による。高スコアで
+  // 登録されているエイリアスでも、複数の有効成分へ同時に強一致するもの
+  // （例: インスリンの「のぼ」→ インスリンヒト / イソフェンインスリン / インスリンアスパルト、
+  //  「ひゅー」→ インスリンヒト / イソフェンインスリン / インスリンリスプロ）は
+  // クエリが 1 つの成分を一意に指していないため、意味的ファミリー挙動を発動してはならない。
+  // 判定は既存パイプライン（scoreEntry の結果 / resolveAllHighPrecisionBrands /
+  // brandCatalogIngredientMap / splitGenericComponents）のみから決定論的に導出し、
+  // 新規スキーマも薬剤名・モジュール個別の例外リストも一切導入しない。
+  // 配合剤ブランドは「単剤の有効成分識別」ではないため計数対象から除外する
+  // （displayGenericName が GENERIC_COMPONENT_SEPARATORS で 2 要素以上に分解できるもの。
+  //  D1 の ingredientCoBrands フィルタと同一の判定基準）。これにより一般名読みクエリが
+  // 配合剤ブランドへ generic 前方一致するだけのケース（例:「したぐりぷちん」→
+  // シタグリプチン/イプラグリフロジン）で誤って多成分と判定されることを防ぐ。
+  const strongQueryBase = tokens.length === 1 && (scored[0]?.score ?? 0) >= 5
+  const strongSingleAgentIngredients = new Set<string>()
+  if (strongQueryBase) {
+    const seenGateModules = new Set<string>()
+    for (const { entry, score } of scored) {
+      if (score < 5 || seenGateModules.has(entry.moduleId)) continue
+      seenGateModules.add(entry.moduleId)
+      for (const { brand } of resolveAllHighPrecisionBrands(entry, tokens[0])) {
+        const ingredient = entry.brandCatalogIngredientMap[brand]
+        if (ingredient === undefined) continue
+        const dgn = entry.brandCatalogGenericMap[brand]
+        if (dgn === undefined || splitGenericComponents(dgn).length !== 1) continue
+        strongSingleAgentIngredients.add(ingredient)
+      }
+    }
+  }
+  const strongSingleIngredientQuery = strongQueryBase && strongSingleAgentIngredients.size === 1
 
   // Search Family Phase 1（配合剤成分展開・候補集合の対称性）:
   //

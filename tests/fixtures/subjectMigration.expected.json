@@ -3489,22 +3489,6 @@
     },
     {
       "query": "のぼ",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "フィアスプ",
-      "resolutionSubject": "フィアスプ",
-      "changed": false
-    },
-    {
-      "query": "のぼ",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "generic",
-      "legacySubject": "インスリンアスパルト",
-      "resolutionSubject": "インスリンアスパルト",
-      "changed": false
-    },
-    {
-      "query": "のぼ",
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
       "denotation": "brand",
       "legacySubject": "ノボラピッド30ミックス",
@@ -3521,6 +3505,30 @@
     },
     {
       "query": "のぼ",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "brand",
+      "legacySubject": "ノボリンR",
+      "resolutionSubject": "ノボリンR",
+      "changed": false
+    },
+    {
+      "query": "のぼ",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリン30R",
+      "resolutionSubject": "ノボリン30R",
+      "changed": false
+    },
+    {
+      "query": "のぼ",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "generic",
+      "legacySubject": "インスリンアスパルト",
+      "resolutionSubject": "インスリンアスパルト",
+      "changed": false
+    },
+    {
+      "query": "のぼ",
       "moduleId": "dm_insulin_intermediate",
       "denotation": "generic",
       "legacySubject": "イソフェンインスリン",
@@ -3533,14 +3541,6 @@
       "denotation": "generic",
       "legacySubject": "インスリンヒト",
       "resolutionSubject": "インスリンヒト",
-      "changed": false
-    },
-    {
-      "query": "のぼ",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "brand",
-      "legacySubject": "ノボリンR",
-      "resolutionSubject": "ノボリンR",
       "changed": false
     },
     {
@@ -4073,22 +4073,6 @@
     },
     {
       "query": "のぼりん",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンN",
-      "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "のぼりん",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "のぼりん",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ノボリンR",
@@ -4105,6 +4089,14 @@
     },
     {
       "query": "のぼりん",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンN",
+      "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "のぼりん",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -4113,18 +4105,26 @@
     },
     {
       "query": "のぼりん",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "generic",
-      "legacySubject": "インスリンヒト",
-      "resolutionSubject": "インスリンヒト",
-      "changed": false
-    },
-    {
-      "query": "のぼりん",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "イノレット30R",
       "resolutionSubject": "イノレット30R",
+      "changed": false
+    },
+    {
+      "query": "のぼりん",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "のぼりん",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "generic",
+      "legacySubject": "インスリンヒト",
+      "resolutionSubject": "インスリンヒト",
       "changed": false
     },
     {
@@ -4505,22 +4505,6 @@
     },
     {
       "query": "ひゅー",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリンN",
-      "resolutionSubject": "ノボリンN",
-      "changed": false
-    },
-    {
-      "query": "ひゅー",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "ひゅー",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -4533,6 +4517,30 @@
       "denotation": "brand",
       "legacySubject": "ヒューマログ",
       "resolutionSubject": "ヒューマログ",
+      "changed": false
+    },
+    {
+      "query": "ひゅー",
+      "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリン3/7",
+      "resolutionSubject": "ヒューマリン3/7",
+      "changed": false
+    },
+    {
+      "query": "ひゅー",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ25ミックス",
+      "resolutionSubject": "ヒューマログ25ミックス",
+      "changed": false
+    },
+    {
+      "query": "ひゅー",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4552,35 +4560,11 @@
       "changed": false
     },
     {
-      "query": "ひゅー",
-      "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリン3/7",
-      "resolutionSubject": "ヒューマリン3/7",
-      "changed": false
-    },
-    {
       "query": "ひゅーま",
       "moduleId": "dm_insulin_intermediate",
       "denotation": "brand",
       "legacySubject": "ヒューマリンN",
       "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "ひゅーま",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリンN",
-      "resolutionSubject": "ノボリンN",
-      "changed": false
-    },
-    {
-      "query": "ひゅーま",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4597,6 +4581,30 @@
       "denotation": "brand",
       "legacySubject": "ヒューマリン3/7",
       "resolutionSubject": "ヒューマリン3/7",
+      "changed": false
+    },
+    {
+      "query": "ひゅーま",
+      "moduleId": "dm_insulin_rapid_analog",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ",
+      "resolutionSubject": "ヒューマログ",
+      "changed": false
+    },
+    {
+      "query": "ひゅーま",
+      "moduleId": "dm_insulin_mixed_rapid_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマログ25ミックス",
+      "resolutionSubject": "ヒューマログ25ミックス",
+      "changed": false
+    },
+    {
+      "query": "ひゅーま",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4616,35 +4624,11 @@
       "changed": false
     },
     {
-      "query": "ひゅーま",
-      "moduleId": "dm_insulin_rapid_analog",
-      "denotation": "brand",
-      "legacySubject": "ヒューマログ",
-      "resolutionSubject": "ヒューマログ",
-      "changed": false
-    },
-    {
       "query": "ひゅーまりん",
       "moduleId": "dm_insulin_intermediate",
       "denotation": "brand",
       "legacySubject": "ヒューマリンN",
       "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリンN",
-      "resolutionSubject": "ノボリンN",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
@@ -4661,6 +4645,14 @@
       "denotation": "brand",
       "legacySubject": "ヒューマリン3/7",
       "resolutionSubject": "ヒューマリン3/7",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリンN",
+      "resolutionSubject": "ノボリンN",
       "changed": false
     },
     {
@@ -4673,18 +4665,26 @@
     },
     {
       "query": "ひゅーまりん",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "generic",
-      "legacySubject": "インスリンヒト",
-      "resolutionSubject": "インスリンヒト",
-      "changed": false
-    },
-    {
-      "query": "ひゅーまりん",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "ノボリン30R",
       "resolutionSubject": "ノボリン30R",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "ひゅーまりん",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "generic",
+      "legacySubject": "インスリンヒト",
+      "resolutionSubject": "インスリンヒト",
       "changed": false
     },
     {
@@ -10689,22 +10689,6 @@
     },
     {
       "query": "ノボリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンN",
-      "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "ノボリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "ノボリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ノボリンR",
@@ -10721,6 +10705,14 @@
     },
     {
       "query": "ノボリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンN",
+      "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "ノボリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -10729,18 +10721,26 @@
     },
     {
       "query": "ノボリン",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "generic",
-      "legacySubject": "インスリンヒト",
-      "resolutionSubject": "インスリンヒト",
-      "changed": false
-    },
-    {
-      "query": "ノボリン",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "イノレット30R",
       "resolutionSubject": "イノレット30R",
+      "changed": false
+    },
+    {
+      "query": "ノボリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "ノボリン",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "generic",
+      "legacySubject": "インスリンヒト",
+      "resolutionSubject": "インスリンヒト",
       "changed": false
     },
     {
@@ -10937,22 +10937,6 @@
     },
     {
       "query": "ヒューマリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ノボリンN",
-      "resolutionSubject": "ノボリンN",
-      "changed": false
-    },
-    {
-      "query": "ヒューマリン",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "ヒューマリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ヒューマリンR",
@@ -10969,6 +10953,14 @@
     },
     {
       "query": "ヒューマリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ノボリンN",
+      "resolutionSubject": "ノボリンN",
+      "changed": false
+    },
+    {
+      "query": "ヒューマリン",
       "moduleId": "dm_insulin_regular",
       "denotation": "brand",
       "legacySubject": "ノボリンR",
@@ -10977,18 +10969,26 @@
     },
     {
       "query": "ヒューマリン",
-      "moduleId": "dm_insulin_regular",
-      "denotation": "generic",
-      "legacySubject": "インスリンヒト",
-      "resolutionSubject": "インスリンヒト",
-      "changed": false
-    },
-    {
-      "query": "ヒューマリン",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "ノボリン30R",
       "resolutionSubject": "ノボリン30R",
+      "changed": false
+    },
+    {
+      "query": "ヒューマリン",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "generic",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
+      "changed": false
+    },
+    {
+      "query": "ヒューマリン",
+      "moduleId": "dm_insulin_regular",
+      "denotation": "generic",
+      "legacySubject": "インスリンヒト",
+      "resolutionSubject": "インスリンヒト",
       "changed": false
     },
     {
