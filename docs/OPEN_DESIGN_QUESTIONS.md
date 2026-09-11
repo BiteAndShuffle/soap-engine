@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-08-13
+最終更新: 2026-09-12（2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -24,6 +24,10 @@ SOAP Engine — 設計保留事項
 | Q-S1 | 一般名検索が module 単位 `exactAlias` 命中時に `brandNames[0]` へ縮退する検索ロジック | 🟡 中 | brandCatalog.aliases への一般名フルストリング拡張、または `lib/search.ts` 横断修正の要否を判断する時 |
 | Q-S2 | module 到達後の brand-level resolution / fallback safety（lowConfidence bucket の意味論混在） | **✅ CLOSED**（2026-08-13） | **完了**。U-1〜U-7 + Runtime Preview + U-8 再評価により correctness / safety を達成。**削除せず historical record として保持する**（設計判断と closure 根拠を将来再構成できるようにするため） |
 | Q-UX1 | short-prefix 検索時の limit 内候補配分・ranking（F-S3-1） | 🟢 低 | 表示枠拡張または bucket 別最低保証の要否を判断する時 |
+| Q-S3 | 1〜2文字 bare 薬剤名クエリの順位安定性最適化（OD-DRUG-PREFIX-BOUNDARY-1 の best-effort 帯。Q-UX1 とは別軸） | 🟢 低 | 薬剤データが大幅に増えた時。現状は `docs/DESIGN_PRINCIPLES.md` DP-18 の 2026-09 追補（OD-DRUG-PREFIX-BOUNDARY-1）により best-effort として凍結中 |
+| Q-R1 | 剤形／投与経路／部位 intent アーキテクチャ（secondary clinical token の一般化） | 🟡 中 | 点眼以外の複数剤形領域が増え、個別対応が積み上がった時 |
+| Q-R2 | route-label 表示（例:「オゼンピック注」）の一般化方針 | 🟢 低 | 複数剤形・複数経路を持つ module が増え、表示ラベルの個別対応が積み上がった時 |
+| Q-R3 | Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性） | 🟢 低（凍結範囲は DP-20 が既に定義済み） | `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節の凍結解除を Owner が判断した時 |
 | Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
 優先度の凡例:
@@ -512,6 +516,9 @@ F-RAPID-1（Rapid の式形。挙動差 0 件を実測）/ F-EXP-1（Express の
 
 Q-S1・Q-S2 が「クエリに対して意味的に正しい module／brand へ到達・確定できるか」（correctness／semantic resolution）を保証対象とするのに対し、本論点は「複数の正しい候補が存在する状況で、限られた表示枠内にどう優先順位をつけて見せるか」（ranking／presentation／UX）を保証対象とする。DP-09 の一般名検索到達性原則には違反しない（到達性そのものは損なわれていない）。両者は責務が異なるため統合しない。
 
+**Q-S3 との違い（2026-09 追記）**
+本論点は「表示枠 8 件のうち、どの bucket にどれだけ配分するか」という**枠配分**を扱う。Q-S3 は「1〜2文字クエリという特定の長さ帯において、同一 bucket 内の順位そのものが安定しているか」という**帯別の順位安定性**を扱い、対象範囲が異なる（Q-S3 は `OD-DRUG-PREFIX-BOUNDARY-1` が定める長さ帯の話であり、bucket 配分の話ではない）。両者を混同しないこと。
+
 **現状**
 実測件数・具体的な脱落 prefix の一覧は `docs/reviews/BRAND_RESOLUTION_SAFETY_FINDINGS_2026-08-09.md` を参照（時点付きのため本節では保持しない）。完全な一般名検索では脱落が発生しないことは確認済みで、事象は short-prefix 検索に限定される。
 
@@ -534,6 +541,79 @@ Runtime確認・実機横断確認（`docs/IMPLEMENTATION_CHECKLIST.md`）でこ
 
 **現時点の扱い**
 選択肢C（現状維持）。DP-09違反ではなくranking/UX品質issueとして記録し、Deferredのまま維持する。
+
+---
+
+## Q-S3: 1〜2文字 bare 薬剤名クエリの順位安定性最適化
+
+**論点**
+`docs/DESIGN_PRINCIPLES.md` DP-18 の 2026-09 追補（Owner Decision OD-DRUG-PREFIX-BOUNDARY-1）は、bare な薬剤名クエリ（単一トークン、secondary clinical token を伴わないもの）のうち正規化長 1〜2 文字の帯を best-effort（順位安定性を保証しない）として明示的に切り分けた。本論点は、その best-effort 帯の順位を将来どこまで最適化するか（あるいはしないか）を追跡する。
+
+**Q-UX1 との違い（本節を新設した理由）**
+Q-UX1 は `limit=8` の**表示枠配分**（bucket 別最低保証の要否）を扱う。本論点は表示枠配分とは独立に、**1〜2文字という長さ帯そのものにおける同一クエリの順位安定性**（例: G5 の `gateFloor` が 3 文字未満で 5 のまま据え置かれることの副作用で、2文字クエリの並びがデータ追加のたびに変動しうること）を扱う。両者は原因も対象も異なるため統合しない。混同を避けるため、以後どちらかの論点を扱う操作者は両節を必ず併読すること。
+
+**現状**
+2026-09 の G5／曖昧性ガード実装（`lib/search.ts` の `gateFloor`）により、3文字以上の bare クエリは意味的ファミリー順序（F1/F2/D1/D2/D3）が発動し順位が安定する。1〜2文字クエリは `gateFloor=5` のまま据え置かれており、意味的ファミリー順序が発動しない場合がある。これは `tests/search.test.ts` の凍結テーブル（「お」等の1文字クエリ）と `tests/searchG5PrefixGate.test.ts` G5-B が回帰対象として固定している既知の挙動であり、correctness／到達性の欠陥ではない（DP-09 は満たされている）。
+
+**推奨判断タイミング**
+薬剤データ（module・brand・alias）が大幅に増え、1〜2文字クエリでの体感順位不安定さが実務上の支障として確認された時点。
+
+**現時点の扱い**
+現状維持（Deferred）。OD-DRUG-PREFIX-BOUNDARY-1 によりこの帯は best-effort として設計上確定しているため、correctness blocker としては扱わない。
+
+---
+
+## Q-R1: 剤形／投与経路／部位 intent アーキテクチャ
+
+**論点**
+現状、剤形・投与経路・部位の intent 解決は `formulationSearchTokens`（DP-05）や DP-18 の「剤形intentを含むクエリでのみ該当剤形の module を優先する」個別ロジック（`lib/search.ts` の `brandCatalogIngredientMap` による有効成分一致スコープ化）など、事例ごとに個別実装されている。複数剤形領域（点眼・軟膏・貼付・吸入等）が今後増えた場合、この個別対応を一般化した intent アーキテクチャとして再設計すべきかどうかは未検討である。
+
+**現状**
+本項目は 2026-09 検索ユニットの完了報告により新設された。具体的な選択肢の検討・実装コスト試算はまだ行っていない（本節はその検討を先取りして決定しない）。既存の個別事例は `docs/DESIGN_PRINCIPLES.md` DP-05・DP-18 を参照。
+
+**重要な留意点（現在の「あれじ てん」「あれじ がん」の挙動について。2026-09 監査で確認）**
+これらのクエリが現在期待どおりの候補を返すのは、剤形／部位を認識した意図的な metadata 挙動ではない。`formulationSearchTokens` を持つのは derm_heparinoid 系 4 module のみであり、H1点眼系にはこのフィールドが存在しない。「てん」「がん」は `scoreSecondaryToken()` の alias 部分一致（score 2。`alias.includes(q)`）という**フォールバック経路**でたまたま一致しているにすぎず、意図された剤形／部位ルーティングではない。本項目の一般化検討にあたっては、この現状挙動をそのまま設計として採用しない。
+
+**前提条件（2026-09 監査で確認）: 検索トークンの bridge⇔JSON parity 未整備**
+本項目に着手する時点で、`drug.search.commonSearchTokens` / `formulationSearchTokens` の bridge ⇔ canonical JSON 一致は**機械的に検証されていない**。PN2（`prompts/vNext/PN2-Drug-Header.md`）は bridge 記載値のみをそのまま転記する明示的コピー規則（推測生成禁止・順序保持・bridge 未記載は omit）を定めているが、その遵守を検証する parity 監査は存在しない。`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` はこれとは別物であり、alias 系フィールドへの JSON 内混入のみを検出する（bridge との一致は対象外。`prompts/RULES.md` §4 が「監査未整備」と明記済み）。現在この 2 フィールドを持つのは derm_heparinoid 系 4 module のみで実測乖離は 0 件だが、剤形／経路／部位 intent を他領域へ一般化する前に、または同時に、決定論的な parity 監査を追加する必要がある（監査は bridge の記載値と canonical JSON を機械的に突合するのみとし、臨床語彙の推論・正規化は行わない）。本項目は実装しない。将来ユニットの前提条件として記録するのみ。
+
+**推奨判断タイミング**
+点眼以外の複数剤形領域（例: 軟膏・貼付・吸入）が追加され、剤形横断クエリの個別対応が複数モジュールにまたがって積み上がった時点。
+
+**現時点の扱い**
+現状維持（Deferred）。既存の個別実装（DP-05／DP-18）は correctness を満たしており、一般化は緊急性を持たない。
+
+---
+
+## Q-R2: route-label 表示の一般化方針
+
+**論点**
+候補表示に剤形・投与経路の装飾ラベル（例:「オゼンピック注」の「注」）を付与する場合の一般化された命名規則が未整理である。`uiLabel`（`drugDisplayLabel` とは意図的に分離された表示専用チャネル。`lib/search.ts`）はそのための**器として利用可能**だが、**route／剤形の装飾は現時点で一切実装されていない**（2026-09 監査で確認。現行の `uiLabel` 合成はすべて「ブランド名（一般名）」または適応ラベル装飾であり、投与経路・剤形の装飾語を付与する経路は存在しない）。
+
+**現状**
+本項目は 2026-09 検索ユニットの完了報告により新設された。具体的な選択肢の検討は行っていない。`uiLabel` と `drugDisplayLabel`（{{drug_subject}} 解決用の意味的な値）を混在させない設計方針自体は既に確立しており（`lib/search.ts` のコメントを参照）、route-label を将来実装する際の器としては適切だが、実装そのものは未着手である。
+
+**推奨判断タイミング**
+複数剤形・複数投与経路を持つ module が増え、route-label の個別対応が積み上がった時点。
+
+**現時点の扱い**
+現状維持（Deferred）。表示品質issueであり、correctness blocker ではない。
+
+---
+
+## Q-R3: Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性）
+
+**論点**
+配合剤候補の表示順・挿入位置の最適化、および家族単位（brand family）での完全な集合対称性は、`docs/DESIGN_PRINCIPLES.md` DP-20 が「適用しないこと（Phase 2として明示的に凍結）」として既に凍結範囲を定義済みである。commit history 上ではこの範囲を `Phase 2-B` と呼んでいる。本項目は、その凍結解除を将来いつ判断するかを本表からも追跡できるようにするための pointer である。
+
+**現状**
+凍結範囲の定義・用語対応（`Phase 2-B` / DP-21 の `SF-2A` 表記との関係）は DP-20 の 2026-09 追記が正本である。本節では選択肢を独自に列挙しない（DP-20 が既に凍結の理由と範囲を定めているため、ここでの重複記載は避ける）。
+
+**推奨判断タイミング**
+DP-20「適用しないこと」節が凍結する内容について、Owner が凍結解除（着手）を判断した時点。
+
+**現時点の扱い**
+現状維持（Deferred）。DP-20 の凍結を継続する。
 
 ---
 

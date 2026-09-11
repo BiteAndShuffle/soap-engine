@@ -8,7 +8,7 @@ SOAP Engine の設計根拠・例外許容条件・禁止事項を永続化し�
 設計判断の参照順序:
   このドキュメント → JSON_STANDARD.md → OPEN_DESIGN_QUESTIONS.md → bridge 原稿 → canonical JSON
 
-最終更新: 2026-07-26
+最終更新: 2026-09-12（DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記）
 
 ---
 
@@ -636,6 +636,30 @@ DP-09（一般名検索到達性原則）— 上記「DP-09との責務境界」
 **詳細経緯**
 cross-module tie-break の具体的挙動（`resolveSortLabel()` の実装詳細等、実装から機械的に確認できる事実）は本原則へ複製しない。個別 module の適用状況・残存する未解決ケースは `docs/OPEN_DESIGN_QUESTIONS.md` Q-S2 を参照。
 
+**Owner Decision（2026-09、OD-DRUG-PREFIX-BOUNDARY-1）: bare 薬剤名クエリの length band 原則**
+
+bare な薬剤名クエリ（単一トークンであり、剤形・部位等の secondary clinical token を伴わないもの。例:「もん」）について、正規化文字数によって厳格性の水準を分ける。
+
+- **3文字以上**: 主要な実務検索帯（primary practical search band）である。検索順序・ファミリー解決（generic／originator 関係）・曖昧性安全性は厳格な UX 要件として扱う
+- **1〜2文字**: best-effort 検索である。詳細な順位の安定性は保証しない
+- 1〜2文字クエリで目的の薬剤が見つからない場合、3文字以上の入力を促すことは許容される
+
+本原則が扱うのは bare な薬剤名クエリの長さ帯のみである。剤形・部位等の secondary clinical token を伴うクエリ（例:「あれじ てん」の第2トークン「てん」）の挙動は本原則の対象外であり、独立した未解決アーキテクチャ課題として扱う（`docs/OPEN_DESIGN_QUESTIONS.md` を参照）。第2トークン以降は `lib/search.ts` の `scoreSecondaryToken()` が評価し、`gateFloor`／`strongQueryBase`（下記）は `tokens.length === 1` を前提とするため、そもそも判定対象にならない。
+
+**G5（2026-09）: 意味的ファミリーゲート gateFloor の結合原則**
+
+`strongSingleIngredientQuery`（Search Family Phase 2-A の発動条件。用語対応は DP-20「適用しないこと」節の 2026-09 追記を参照）の活性化フロアは次のとおり結合されている（`lib/search.ts` の `gateFloor`）。
+
+- 単一トークンかつ正規化長 3 文字以上のクエリに限り floor=4（alias 前方一致以上。完全一致は score 5）まで緩和する。G5 の主眼はこの非完全一致の 3+ 文字プレフィックス（例:「あれじ」「したぐ」「リナグリ」）にゲートを開くことにあり、floor=4 を「完全一致以上」と読むと G5 の意図そのものを取り違える
+- 3文字未満のクエリは floor=5（alias 完全一致以上）を維持する。既存の高精度 2 文字 `prefixAliases`（あぴ／おぜ／せま／とる／とれ／ばい／ひと／びく／ふぃ／らん／りき／るむ／りべ／れべ の14件）が持つ完全一致特権を守るためである
+- 活性化フロア（`strongQueryBase`）と曖昧性走査フロア（`seenGateModules` ループ）は同一の `gateFloor` を共有しなければならない。曖昧性走査だけを緩めると、本来ブロックすべき多成分エイリアスを見逃す
+
+回帰は `tests/searchG5PrefixGate.test.ts` が合成 module により構造的に固定する。Owner-rejected literal 述語（`tokens.length===1 && tokens[0].length>=3 && score>=4`。3文字未満クエリを長さのみで無条件ゲート不成立にする）は、当時の全既存テストをコーパス差分ゼロで通過しており、出力ベースの回帰テストでは検出不能な盲点だった。
+
+**曖昧性ガード（MULTI_INGREDIENT_STRONG_ALIAS）: 単一有効成分への一意解決**
+
+意味的ファミリー挙動（F1／F2／D1／D2／D3）は、`gateFloor` 以上のスコアで一致した alias が**単一の有効成分**（単剤の `brandCatalogIngredientMap` 由来。配合剤は計数対象外）へ一意に解決する場合にのみ発動する。複数の単剤有効成分へ同時に強一致する alias（例: インスリンの「のぼ」→ インスリンヒト／イソフェンインスリン／インスリンアスパルト）は、クエリが1つの成分を一意に指していないため発動しない。実装は `lib/search.ts` の `strongSingleAgentIngredients` / `strongSingleIngredientQuery`。唯一の Owner 承認済み非活性化事例は「のぼり」（候補の行集合・モジュール集合・SOAP主語集合は完全に保持され、並び順のみが変化する。`tests/searchG5PrefixGate.test.ts` G5-D で固定）。
+
 ---
 
 ## DP-19: Rapid 入力支援境界原則（Rapid Input-Assist Boundary Principle）
@@ -708,6 +732,9 @@ Rapid（S先頭文ボタン / ADDON ボタン等の右パネル簡易操作）�
 - 配合剤候補の表示順・挿入位置の最適化
 - 単剤側・配合剤側どちらを先に見せるかの並び替え
 - 家族単位（brand family）での完全な集合対称性（`suppressRedundantGenericHeaderOnDirectMatch` 等、本原則が触れないフラグ群）
+
+**用語対応（2026-09 追記）**
+本節が凍結する範囲（配合剤候補の表示順・挿入位置最適化・家族単位での完全な集合対称性）は、commit history 上でのみ `Phase 2-B` と呼ばれてきた（Repository の living SSOT には本節まで未登録だった）。同じ範囲を DP-21 は `SF-2A`（Search Family Phase 2）として言及している——`SF-2A` は本節と同一の凍結範囲を指す表記であり、`lib/search.ts` のコード comment が呼ぶ、既に実装済みの `Search Family Phase 2-A`（gate／family 順序ロジック。DP-18 の 2026-09 追補「OD-DRUG-PREFIX-BOUNDARY-1」「G5」を参照）とは**別物**である。以後、`Phase 2-B` および DP-21 の `SF-2A` はいずれも本節への pointer として読み替える。新しい正式名称は導入せず、命名の再設計も行わない。
 
 **関連原則**
 - DP-09（一般名検索到達性原則）— `displayGenericName` を検索解決に用いる先例。本原則は「単剤 brand の解決」から「単剤成分を含む配合剤への展開」へ対象を拡張したもの

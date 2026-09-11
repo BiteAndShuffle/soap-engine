@@ -1,7 +1,7 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.6
-> **Last Updated:** 2026-08-16
+> **Version:** 2.7
+> **Last Updated:** 2026-09-12（検索エンジンユニット完了の反映のみ。Current Phase / Roadmap 自体は無変更）
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
 > **Current Focus:** local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
 
@@ -136,7 +136,7 @@ Gate Review（2026-08-16）の結果 —— **G1 blocker 0 件 ／ 開始前 rem
 
 | 対象 | 理由 |
 |---|---|
-| U-6 / Q-UX1（検索 UX） | correctness blocker ではない。再開 Trigger は `prompts/vNext/HANDOFF.md` §6 / `docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1 |
+| U-6 / Q-UX1・Q-S3・Q-R1・Q-R2・Q-R3（検索 UX・残バックログ） | correctness blocker ではない。2026-09 に G5 prefix gate／曖昧性ガード／DP-18 leukotriene alignment は完了済み（**本 Unit は Module Expansion スコープの外側**であり、上記③ Module Expansion = GO の対象外）。残作業の詳細は `prompts/vNext/HANDOFF.md` §6「検索ユニット（2026-09 完了）」および `docs/DESIGN_PRINCIPLES.md` DP-18／DP-20、`docs/OPEN_DESIGN_QUESTIONS.md` Q-UX1／Q-S3／Q-R1／Q-R2／Q-R3 を参照。本ファイルは詳細を複製しない |
 | `EXPORT_STATIC` の Lifecycle 昇格 | 実測（`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`）は完了したが、昇格判断自体は意図的に別 Unit として保留中（Owner Decision）。判定材料は揃った状態で待機 |
 | SaaS 向け実装（entitlement / 配信境界 / 認証の全面置換） | Phase 3〜4。設計の検討経緯は `docs/reviews/f1/`（historical evidence） |
 

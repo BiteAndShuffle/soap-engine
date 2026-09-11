@@ -681,6 +681,38 @@ vNext には対応する明示的なチェック項目がない。
 
 新規モジュール（DPP4 等）を作成する際は、上記 DP-09 と PN2-Drug-Header.md の brandCatalog alias 心得を確認してください。
 
+## 検索ユニット（2026-09 完了）— G5 prefix gate / 曖昧性ガード / DP-18 leukotriene alignment
+
+**この節は歴史的観測（historical observation）である。** 「最後に確認した時点の状態」を記録するものであり、
+現在の Repository の恒常的事実ではない。現在の実装・テスト・監査結果は都度 `npx tsc --noEmit` /
+`npm test` / `npm run audit` / `npm run test:multi-drug` の実行結果を正本とすること。
+
+**最後に確認した deployed / remote 状態**
+
+```
+commit  54e77297fabbd518ba9391576e60fd44b0bd4132
+subject fix: align leukotriene search name precedence
+branch  feat/nlp-input-panel-and-new-schema
+```
+
+この commit を含む一連の検索ユニット（`ee99cd1` 〜 `54e7729`）で完了した事項:
+
+- **G5: 意味的ファミリーゲート `gateFloor` の 3 文字プレフィックス拡張** — 単一トークン・正規化長 3 文字以上のクエリに限り活性化フロアを 4 まで緩和し、2 文字以下は既存の 5 を維持。活性化フロアと曖昧性走査フロアの結合を必須化。設計判断の正本は `docs/DESIGN_PRINCIPLES.md` DP-18（2026-09 追補）。回帰は `tests/searchG5PrefixGate.test.ts`
+- **曖昧性ガード（MULTI_INGREDIENT_STRONG_ALIAS）の結合** — 意味的ファミリー挙動は、gateFloor 以上で一致した alias が単一有効成分（単剤のみ。配合剤は計数対象外）へ一意に解決する場合にのみ発動するよう明確化。唯一の Owner 承認済み例外は「のぼり」
+- **D2: genericMode 側の重複ヘッダー抑制の過抑制修正**（`5c11012`。G5 に**先行**する） — ヘッダー抑制の判定を「grouping に存在するか」から「このクエリで実際に emit された brand と同名か」（`brandsInGroup.includes(genericName)`）へ変更。抑制が過剰に働いていた 13 クエリを是正（heparinoid 9 クエリ形／3 モジュール + H1点眼 4 ブランド読み = 13）。この時点で既にゲート適格だったクエリの是正であり、G5 によって到達可能になったものではない。**後続の G5（`8ba93c2`）がゲートを拡張したことで、この是正済み D2 判定が適用される母集団が広がり**、冗長な一般名見出しは 114 → 11 クエリへ減少した（`8ba93c2` 実測）
+- **Montelukast / Pranlukast の DP-18 alignment** — `allergy_leukotriene_receptor_antagonist_oral` のデータのみを修正（`lib/search.ts` 無変更）。先発品（キプレス/シングレア/オノン）から借用していたペア一般名読みの alias を撤去し、`preferOwnNameMatchOverGenericMatch` を有効化
+- **Owner Decision OD-DRUG-PREFIX-BOUNDARY-1 の確定** — bare 薬剤名クエリについて、正規化長 3 文字以上を厳格な UX 要件の帯、1〜2 文字を best-effort の帯として明示的に切り分けた。secondary clinical token（例:「あれじ てん」の第2トークン）には適用されない別軸の話であることも同時に確定。設計判断の正本は `docs/DESIGN_PRINCIPLES.md` DP-18（2026-09 追補）
+
+**残存する検索バックログ（未着手・4件）**
+
+いずれも本節にのみ一覧を置く。個別の再開 Trigger・詳細は各正本（`docs/DESIGN_PRINCIPLES.md` /
+`docs/OPEN_DESIGN_QUESTIONS.md`）を参照し、本節では複製しない。
+
+1. **剤形／投与経路／部位 intent アーキテクチャ**（例:「あれじ てん」「あれじ がん」、将来の眼軟膏系の lexical path）— `docs/OPEN_DESIGN_QUESTIONS.md` Q-R1
+2. **route-label 表示の一般化方針**（例:「オゼンピック注」の装飾ラベル命名規則）— `docs/OPEN_DESIGN_QUESTIONS.md` Q-R2
+3. **Phase 2-B display dedup**（配合剤候補の表示順・家族単位対称性。commit history 上の呼称。DP-21 の `SF-2A` も同一範囲を指す）— 凍結範囲の正本は `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節（2026-09 用語対応追記あり）。追跡は `docs/OPEN_DESIGN_QUESTIONS.md` Q-R3
+4. **1〜2文字 bare 薬剤名クエリの順位安定性最適化**（OD-DRUG-PREFIX-BOUNDARY-1 の best-effort 帯。Q-UX1 とは別軸であり統合しない）— `docs/OPEN_DESIGN_QUESTIONS.md` Q-S3
+
 ## 多剤合成テスト（`npm run test:multi-drug`）— 正式回帰テストとして運用
 
 **なぜ正式化したか**  
