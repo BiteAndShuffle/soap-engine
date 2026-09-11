@@ -906,7 +906,10 @@ export function getDrugSuggestions(
   // true-duplicate header 判定を適用してよい「強い単一成分クエリ」かどうかのゲート。
   //
   //   単一トークン
-  //   AND 最上位スコア >= 5（alias 完全一致以上。suppressCrossModuleSuggestionsOnExactHit と同じ閾値）
+  //   AND 最上位スコア >= gateFloor（alias 完全一致以上。既定 5。
+  //        正規化長 3 文字以上のクエリに限り 4 まで緩和する。G5（Owner Decision）。
+  //        3 文字未満のクエリは既存どおり 5 のまま — 2 文字の登録済み prefixAliases
+  //        （例:「びく」「おぜ」等）による既存の強一致挙動を変えないための下限維持）
   //   AND 高精度一致（resolveAllHighPrecisionBrands）が解決する「単剤の有効成分識別」がちょうど 1 種
   //
   // 3 番目の条件は Owner Decision（MULTI_INGREDIENT_STRONG_ALIAS）による。高スコアで
@@ -922,12 +925,19 @@ export function getDrugSuggestions(
   //  D1 の ingredientCoBrands フィルタと同一の判定基準）。これにより一般名読みクエリが
   // 配合剤ブランドへ generic 前方一致するだけのケース（例:「したぐりぷちん」→
   // シタグリプチン/イプラグリフロジン）で誤って多成分と判定されることを防ぐ。
-  const strongQueryBase = tokens.length === 1 && (scored[0]?.score ?? 0) >= 5
+  //
+  // gateFloor はアクティベーション判定（strongQueryBase）と曖昧性走査
+  // （下の seenGateModules ループ）の両方で共有する。曖昧性走査のスコア下限を
+  // アクティベーション下限より緩くしてはならない（走査対象が gate 自体より
+  // 弱くなり、本来ブロックすべき多成分エイリアスを見逃す）。片方だけを
+  // 変更しないこと。
+  const gateFloor = tokens.length === 1 && tokens[0].length >= 3 ? 4 : 5
+  const strongQueryBase = tokens.length === 1 && (scored[0]?.score ?? 0) >= gateFloor
   const strongSingleAgentIngredients = new Set<string>()
   if (strongQueryBase) {
     const seenGateModules = new Set<string>()
     for (const { entry, score } of scored) {
-      if (score < 5 || seenGateModules.has(entry.moduleId)) continue
+      if (score < gateFloor || seenGateModules.has(entry.moduleId)) continue
       seenGateModules.add(entry.moduleId)
       for (const { brand } of resolveAllHighPrecisionBrands(entry, tokens[0])) {
         const ingredient = entry.brandCatalogIngredientMap[brand]

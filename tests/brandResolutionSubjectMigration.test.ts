@@ -442,8 +442,21 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     // 並び替え 0、SOAP subject 変化 0）。rows 1620→1633 / generic 539→552 の純増のみ。
     // reachableChangedRows/Patterns・gatedChangedRows/Modules・changedRows（意味的 delta）は
     // 完全に不変。
-    assert.equal(fixture.summary.rows, 1633)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1024, generic: 552, module: 57 })
+    //
+    // Search Family G5（2026-09・単一トークン正規化長 3 文字以上への意味的ファミリー
+    // ゲート拡張）: strongSingleIngredientQuery のスコア下限を、正規化長 3 文字以上の
+    // クエリに限り 5→4 へ緩和（gateFloor。2 文字以下は従来どおり 5 のまま — 既存の
+    // 高精度 2 文字 prefixAliases の挙動は不変）。ゲートが新たに開いたクエリで D2
+    // （true-duplicate generic header 抑制）が働き、`へぱりん` / `へぱりんるいじ` /
+    // `へぱりんるいじぶっしつ` の冗長な generic header 行が除去された（-4 行）。
+    // `のぼり` はゲートが新たに ingredient ambiguity（インスリンヒト /
+    // イソフェンインスリン）を検出して OFF になり、既存候補の並び替えのみ
+    // （行数増減 0、subject 消失 0）。rows 1633→1629 / brand 1024→1026 /
+    // generic 552→546 / module 57→57（module は変化なし）。
+    // reachableChangedRows/Patterns・gatedChangedRows/Modules・changedRows（意味的 delta）は
+    // 完全に不変（本 unit は candidate 生成・genericKey・display label を一切変更しない）。
+    assert.equal(fixture.summary.rows, 1629)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1026, generic: 546, module: 57 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 57)

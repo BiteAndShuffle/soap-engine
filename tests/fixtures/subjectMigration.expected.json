@@ -3,10 +3,10 @@
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 571,
-    "rows": 1633,
+    "rows": 1629,
     "byDenotation": {
-      "brand": 1024,
-      "generic": 552,
+      "brand": 1026,
+      "generic": 546,
       "module": 57
     },
     "changedRows": 82,
@@ -4025,22 +4025,6 @@
     },
     {
       "query": "のぼり",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリンN",
-      "resolutionSubject": "ヒューマリンN",
-      "changed": false
-    },
-    {
-      "query": "のぼり",
-      "moduleId": "dm_insulin_intermediate",
-      "denotation": "generic",
-      "legacySubject": "イソフェンインスリン",
-      "resolutionSubject": "イソフェンインスリン",
-      "changed": false
-    },
-    {
-      "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "ノボリン30R",
@@ -4057,6 +4041,14 @@
     },
     {
       "query": "のぼり",
+      "moduleId": "dm_insulin_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリンN",
+      "resolutionSubject": "ヒューマリンN",
+      "changed": false
+    },
+    {
+      "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
       "denotation": "brand",
       "legacySubject": "イノレット30R",
@@ -4066,17 +4058,25 @@
     {
       "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
+      "denotation": "brand",
+      "legacySubject": "ヒューマリン3/7",
+      "resolutionSubject": "ヒューマリン3/7",
+      "changed": false
+    },
+    {
+      "query": "のぼり",
+      "moduleId": "dm_insulin_intermediate",
       "denotation": "generic",
-      "legacySubject": "インスリンヒト",
-      "resolutionSubject": "インスリンヒト",
+      "legacySubject": "イソフェンインスリン",
+      "resolutionSubject": "イソフェンインスリン",
       "changed": false
     },
     {
       "query": "のぼり",
       "moduleId": "dm_insulin_mixed_regular_intermediate",
-      "denotation": "brand",
-      "legacySubject": "ヒューマリン3/7",
-      "resolutionSubject": "ヒューマリン3/7",
+      "denotation": "generic",
+      "legacySubject": "インスリンヒト",
+      "resolutionSubject": "インスリンヒト",
       "changed": false
     },
     {
@@ -5969,6 +5969,22 @@
     },
     {
       "query": "へぱりん",
+      "moduleId": "derm_heparinoid_moisturizer_cream",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質クリーム",
+      "resolutionSubject": "ヘパリン類似物質クリーム",
+      "changed": false
+    },
+    {
+      "query": "へぱりん",
+      "moduleId": "derm_heparinoid_moisturizer_lotion",
+      "denotation": "brand",
+      "legacySubject": "ヘパリン類似物質ローション",
+      "resolutionSubject": "ヘパリン類似物質ローション",
+      "changed": false
+    },
+    {
+      "query": "へぱりん",
       "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質外用スプレー",
@@ -5977,26 +5993,10 @@
     },
     {
       "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
       "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
+      "legacySubject": "ヘパリン類似物質フォーム",
+      "resolutionSubject": "ヘパリン類似物質フォーム",
       "changed": false
     },
     {
@@ -6066,6 +6066,14 @@
     {
       "query": "へぱりんるいじ",
       "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質フォーム",
+      "resolutionSubject": "ヘパリン類似物質フォーム",
+      "changed": false
+    },
+    {
+      "query": "へぱりんるいじ",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
       "denotation": "brand",
       "legacySubject": "ヒルドイドフォーム",
       "resolutionSubject": "ヒルドイドフォーム",
@@ -6096,35 +6104,19 @@
       "changed": false
     },
     {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質フォーム",
-      "resolutionSubject": "ヘパリン類似物質フォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
       "query": "へぱりんるいじぶっしつ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質クリーム",
       "resolutionSubject": "ヘパリン類似物質クリーム",
+      "changed": false
+    },
+    {
+      "query": "へぱりんるいじぶっしつ",
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "denotation": "generic",
+      "legacySubject": "ヘパリン類似物質フォーム",
+      "resolutionSubject": "ヘパリン類似物質フォーム",
       "changed": false
     },
     {
@@ -6157,30 +6149,6 @@
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質油性クリーム",
       "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質フォーム",
-      "resolutionSubject": "ヘパリン類似物質フォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
     },
     {

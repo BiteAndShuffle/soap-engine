@@ -338,6 +338,14 @@
     {
       "moduleId": "derm_heparinoid_moisturizer_spray",
       "matchedBrandName": "ヒルドイドフォーム",
+      "drugDisplayLabel": "ヘパリン類似物質フォーム",
+      "uiLabel": "ヘパリン類似物質フォーム",
+      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
+      "isGenericLabel": true
+    },
+    {
+      "moduleId": "derm_heparinoid_moisturizer_spray",
+      "matchedBrandName": "ヒルドイドフォーム",
       "drugDisplayLabel": "ヒルドイドフォーム",
       "uiLabel": "ヒルドイドフォーム（ヘパリン類似物質フォーム）",
       "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
@@ -366,30 +374,6 @@
       "uiLabel": "ヘパリン類似物質油性クリーム（ヘパリン類似物質油性クリーム）",
       "representativeTemplateId": "derm_heparinoid_moisturizer_ointment.initial_dryness",
       "isGenericLabel": null
-    },
-    {
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "matchedBrandName": "ヘパリン類似物質クリーム",
-      "drugDisplayLabel": "ヘパリン類似物質クリーム",
-      "uiLabel": "ヘパリン類似物質クリーム",
-      "representativeTemplateId": "derm_heparinoid_moisturizer_cream.initial_dryness",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "matchedBrandName": "ヒルドイドフォーム",
-      "drugDisplayLabel": "ヘパリン類似物質フォーム",
-      "uiLabel": "ヘパリン類似物質フォーム",
-      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "matchedBrandName": "ヘパリン類似物質外用スプレー",
-      "drugDisplayLabel": "ヘパリン類似物質外用スプレー",
-      "uiLabel": "ヘパリン類似物質外用スプレー",
-      "representativeTemplateId": "derm_heparinoid_moisturizer_spray.initial_dryness",
-      "isGenericLabel": true
     }
   ],
   "せまぐるちど": [
