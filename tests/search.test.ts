@@ -330,16 +330,23 @@ describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数
     assert.equal(results[3].matchedBrandName, 'ヒルドイドローション')
   })
 
-  test('"もんてるかすと" → 先頭2件の候補順は変化しない。真の重複見出しはPhase 2-A（D2）で除去される', () => {
+  test('"もんてるかすと" → 一般名ブランドが先頭、真の重複見出しはPhase 2-A（D2）で除去される', () => {
     // 旧実装は module opt-in フラグ未設定のため、ブランド「モンテルカスト」自身の行と
     // テキストが完全一致する generic header «モンテルカスト» が重複表示されていた
     // （4件）。Phase 2-A（Owner Decision D2）は見出しの要否を module opt-in ではなく
     // 実際の表示テキスト重複で判定するため、この真の重複見出しが除去される（3件）。
+    //
+    // 2026-09 モンテルカスト/プランルカスト データ整合（preferOwnNameMatchOverGenericMatch
+    // 有効化 + 先発品 alias からペア一般名読みの複製を撤去・DP-18）により、
+    // 一般名検索では一般名ブランド自身が先頭となる（先発品は温存されたまま後続）。
     const results = getDrugSuggestions('もんてるかすと', fullIndex, 8)
-    assert.equal(results.length, 3, `真に重複する generic header は除去されるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
-    assert.equal(results[0].matchedBrandName, 'キプレス')
-    assert.equal(results[1].matchedBrandName, 'シングレア')
-    assert.equal(results[2].matchedBrandName, 'モンテルカスト')
+    assert.equal(results.length, 3, `候補行数は不変であるべき: ${JSON.stringify(results.map(r => r.drugDisplayLabel))}`)
+    assert.equal(results[0].matchedBrandName, 'モンテルカスト', '一般名クエリでは一般名ブランドが先頭であるべき')
+    assert.deepEqual(
+      new Set(results.map(r => r.matchedBrandName)),
+      new Set(['モンテルカスト', 'キプレス', 'シングレア']),
+      '3つのブランド識別はすべて温存されているべき',
+    )
   })
 })
 
@@ -995,6 +1002,63 @@ describe('⑯ H1点眼: 一般名前方一致の関係スコープ化（剤形�
 //   Phase 2 の責務であり、本ブロックでは一切固定しない（membership のみを検証）。
 // ─────────────────────────────────────────────────────────────
 
+// ─────────────────────────────────────────────────────────────
+// 18. ロイコトリエン受容体拮抗薬（モンテルカスト/プランルカスト）:
+//     preferOwnNameMatchOverGenericMatch（先発/一般名順位）
+//
+//   2026-09 データ整合（Montelukast/Pranlukast DP-18 alignment）:
+//   先発品（キプレス/シングレア/オノン）の alias からペアの一般名読み
+//   （もんてるかすと/ぷらんるかすと）の複製を撤去し、
+//   drug.search.matchPolicy.preferOwnNameMatchOverGenericMatch を有効化した
+//   （dm_biguanide_metformin_oral 等と同一の既存 flag・既存意味論。DP-18）。
+//
+//   Owner Decision OD-DRUG-PREFIX-BOUNDARY-1: 3文字以上の一般名クエリでは
+//   generic/GE family が先発品より先行することが厳格な UX 要件である。
+//   1–2文字クエリの詳細順位は best-effort であり、本ブロックの対象外
+//   （該当する短いクエリの回帰は search.test.ts の凍結テーブルで別途記録する）。
+// ─────────────────────────────────────────────────────────────
+
+describe('⑱ ロイコトリエン受容体拮抗薬: preferOwnNameMatchOverGenericMatch（先発/一般名順位）', () => {
+  test('モンテルカスト一般名クエリ（3文字以上）→ モンテルカストが先頭、キプレス/シングレアは温存される', () => {
+    for (const q of ['もんてる', 'もんてるかすと']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const labels = results.map(r => r.matchedBrandName)
+      assert.equal(labels[0], 'モンテルカスト', `"${q}": 一般名クエリでは一般名ブランドが先頭であるべき: ${JSON.stringify(labels)}`)
+      assert.deepEqual(
+        new Set(labels), new Set(['モンテルカスト', 'キプレス', 'シングレア']),
+        `"${q}": 3ブランドの識別はすべて温存されているべき: ${JSON.stringify(labels)}`,
+      )
+    }
+  })
+
+  test('プランルカスト一般名クエリ（3文字以上）→ プランルカストが先頭、オノンは温存される', () => {
+    for (const q of ['ぷらんる', 'ぷらんるかすと']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      const labels = results.map(r => r.matchedBrandName)
+      assert.equal(labels[0], 'プランルカスト', `"${q}": 一般名クエリでは一般名ブランドが先頭であるべき: ${JSON.stringify(labels)}`)
+      assert.deepEqual(
+        new Set(labels), new Set(['プランルカスト', 'オノン']),
+        `"${q}": 2ブランドの識別はすべて温存されているべき: ${JSON.stringify(labels)}`,
+      )
+    }
+  })
+
+  test('先発品を狙ったクエリはそれぞれ自身が先頭のまま（brand対称性）', () => {
+    const pairs: Array<[string, string]> = [
+      ['きぷれす', 'キプレス'],
+      ['しんぐれあ', 'シングレア'],
+      ['おのん', 'オノン'],
+    ]
+    for (const [q, brand] of pairs) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      assert.equal(
+        results[0]?.matchedBrandName, brand,
+        `"${q}": ${brand} が先頭であるべき: ${JSON.stringify(results.map(r => r.matchedBrandName))}`,
+      )
+    }
+  })
+})
+
 describe('⑰ Search Family Phase 1: 配合剤成分展開による候補集合の対称性', () => {
   test('"トラゼンタ" → 配合剤トラディアンス（リナグリプチン/エンパグリフロジン）を含む', () => {
     const results = getDrugSuggestions('トラゼンタ', fullIndex, 8)
@@ -1450,7 +1514,13 @@ describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満
   test('単一かな1文字クエリ（え/お/り/め/ほ/あ）は Phase 2-A 前と完全に同一のシーケンスを返す', () => {
     const expected: Record<string, string[]> = {
       'え': ['エキセナチド', 'バイエッタ', 'エパルレスタット', 'キネダック', 'エンパグリフロジン', 'エンパグリフロジン', 'リナグリプチン/エンパグリフロジン', 'トラディアンス'],
-      'お': ['オロパタジン', 'アレロック', 'オイグルコン', 'オゼンピック', 'オノン', 'グリベンクラミド', 'セマグルチド', 'プランルカスト'],
+      // 'お' のみ 2026-09 モンテルカスト/プランルカスト データ整合
+      // （preferOwnNameMatchOverGenericMatch 有効化）の副作用として値が変化する。
+      // OD-DRUG-PREFIX-BOUNDARY-1（Owner Decision）により、1–2文字クエリの
+      // 詳細な順位は best-effort であり厳密な凍結対象ではない。ここでは
+      // 新しい実際の出力を記録するのみで、識別喪失・不安全な誤解決・
+      // 到達不能化がないことは別途 §モンテルカスト/プランルカスト のテストで検証する。
+      'お': ['オイグルコン', 'オゼンピック', 'オノン', 'オロパタジン点眼液', 'マリゼブ', 'グリベンクラミド', 'セマグルチド', 'プランルカスト'],
       'り': ['リオベル', 'ビクトーザ', 'リキスミア', 'リザベン点眼液', 'リベルサス', 'アログリプチン／ピオグリタゾン', 'リキシセナチド', 'トラニラスト点眼液'],
       'め': ['メタクト', 'メトアナ', 'メトグルコ', 'メトホルミン', 'エクメット', 'イニシンク', 'ピオグリタゾン／メトホルミン', 'ビルダグリプチン/メトホルミン'],
       'ほ': ['フォシーガ', 'メタクト', 'メトアナ', 'メトグルコ', 'アマリール', 'ソニアス'],

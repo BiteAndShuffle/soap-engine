@@ -64,6 +64,12 @@ drug:
       preferExactAlias: true
       allowPrefixMatch: true
       suppressCrossModuleSuggestionsOnExactHit: true
+      # 2026-09 追加（モンテルカスト/プランルカスト 先発/一般名検索順位修正）:
+      # direct候補内でブランド自身の正式名/alias一致（tier1）をgenericName経由の
+      # 一致（tier2）より優先する（dm_biguanide_metformin_oral 等と同一の既存flag・
+      # 既存意味論）。本フラグの効果を得るには、各先発品エントリの aliases が
+      # ペアの一般名読みを借用していないこと（DP-18）が前提となる。
+      preferOwnNameMatchOverGenericMatch: true
   nameAliases:
     - "おのん"
     - "ぷらんるかすと"
@@ -79,30 +85,24 @@ drug:
       displayGenericName: "プランルカスト"
       aliases:
         - "おのん"
-        - "ぷらんるかすと"
       normalizedAliases:
         - "おのん"
-        - "ぷらんるかすと"
     キプレス:
       displayName: "キプレス"
       genericName: "モンテルカスト"
       displayGenericName: "モンテルカスト"
       aliases:
         - "きぷれす"
-        - "もんてるかすと"
       normalizedAliases:
         - "きぷれす"
-        - "もんてるかすと"
     シングレア:
       displayName: "シングレア"
       genericName: "モンテルカスト"
       displayGenericName: "モンテルカスト"
       aliases:
         - "しんぐれあ"
-        - "もんてるかすと"
       normalizedAliases:
         - "しんぐれあ"
-        - "もんてるかすと"
     プランルカスト:
       displayName: "プランルカスト"
       genericName: "プランルカスト"

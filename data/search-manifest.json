@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "e2fd26395201796e375d428883a0cb7d7e33488c12720c1bb394073293aca431",
+  "sourceHash": "c524dc8330188a0d53bd7494139619a097212557706db8762c836acd153163dd",
   "moduleCount": 35,
   "scenarioCount": 1061,
   "modules": [
@@ -1373,15 +1373,15 @@
         "matchPolicy": {
           "preferExactAlias": true,
           "allowPrefixMatch": true,
-          "suppressCrossModuleSuggestionsOnExactHit": true
+          "suppressCrossModuleSuggestionsOnExactHit": true,
+          "preferOwnNameMatchOverGenericMatch": true
         },
         "primaryDisplayName": "ロイコトリエン受容体拮抗薬"
       },
       "brandCatalog": {
         "オノン": {
           "aliases": [
-            "おのん",
-            "ぷらんるかすと"
+            "おのん"
           ],
           "displayName": "オノン",
           "displayGenericName": "プランルカスト",
@@ -1389,8 +1389,7 @@
         },
         "キプレス": {
           "aliases": [
-            "きぷれす",
-            "もんてるかすと"
+            "きぷれす"
           ],
           "displayName": "キプレス",
           "displayGenericName": "モンテルカスト",
@@ -1398,8 +1397,7 @@
         },
         "シングレア": {
           "aliases": [
-            "しんぐれあ",
-            "もんてるかすと"
+            "しんぐれあ"
           ],
           "displayName": "シングレア",
           "displayGenericName": "モンテルカスト",

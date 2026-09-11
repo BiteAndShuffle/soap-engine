@@ -5803,16 +5803,16 @@
       "query": "ぷらんるかすと",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "オノン",
-      "resolutionSubject": "オノン",
+      "legacySubject": "プランルカスト",
+      "resolutionSubject": "プランルカスト",
       "changed": false
     },
     {
       "query": "ぷらんるかすと",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "プランルカスト",
-      "resolutionSubject": "プランルカスト",
+      "legacySubject": "オノン",
+      "resolutionSubject": "オノン",
       "changed": false
     },
     {
@@ -6667,6 +6667,14 @@
       "query": "もんてるかすと",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
+      "legacySubject": "モンテルカスト",
+      "resolutionSubject": "モンテルカスト",
+      "changed": false
+    },
+    {
+      "query": "もんてるかすと",
+      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
+      "denotation": "brand",
       "legacySubject": "キプレス",
       "resolutionSubject": "キプレス",
       "changed": false
@@ -6677,14 +6685,6 @@
       "denotation": "brand",
       "legacySubject": "シングレア",
       "resolutionSubject": "シングレア",
-      "changed": false
-    },
-    {
-      "query": "もんてるかすと",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
       "changed": false
     },
     {
@@ -11627,16 +11627,16 @@
       "query": "プランルカスト",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "オノン",
-      "resolutionSubject": "オノン",
+      "legacySubject": "プランルカスト",
+      "resolutionSubject": "プランルカスト",
       "changed": false
     },
     {
       "query": "プランルカスト",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
-      "legacySubject": "プランルカスト",
-      "resolutionSubject": "プランルカスト",
+      "legacySubject": "オノン",
+      "resolutionSubject": "オノン",
       "changed": false
     },
     {
@@ -12203,6 +12203,14 @@
       "query": "モンテルカスト",
       "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
       "denotation": "brand",
+      "legacySubject": "モンテルカスト",
+      "resolutionSubject": "モンテルカスト",
+      "changed": false
+    },
+    {
+      "query": "モンテルカスト",
+      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
+      "denotation": "brand",
       "legacySubject": "キプレス",
       "resolutionSubject": "キプレス",
       "changed": false
@@ -12213,14 +12221,6 @@
       "denotation": "brand",
       "legacySubject": "シングレア",
       "resolutionSubject": "シングレア",
-      "changed": false
-    },
-    {
-      "query": "モンテルカスト",
-      "moduleId": "allergy_leukotriene_receptor_antagonist_oral",
-      "denotation": "brand",
-      "legacySubject": "モンテルカスト",
-      "resolutionSubject": "モンテルカスト",
       "changed": false
     },
     {

@@ -117,7 +117,8 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "preferOwnNameMatchOverGenericMatch": true
       }
     },
     "brandCatalog": {
@@ -126,12 +127,10 @@
         "genericName": "プランルカスト",
         "displayGenericName": "プランルカスト",
         "aliases": [
-          "おのん",
-          "ぷらんるかすと"
+          "おのん"
         ],
         "normalizedAliases": [
-          "おのん",
-          "ぷらんるかすと"
+          "おのん"
         ]
       },
       "キプレス": {
@@ -139,12 +138,10 @@
         "genericName": "モンテルカスト",
         "displayGenericName": "モンテルカスト",
         "aliases": [
-          "きぷれす",
-          "もんてるかすと"
+          "きぷれす"
         ],
         "normalizedAliases": [
-          "きぷれす",
-          "もんてるかすと"
+          "きぷれす"
         ]
       },
       "シングレア": {
@@ -152,12 +149,10 @@
         "genericName": "モンテルカスト",
         "displayGenericName": "モンテルカスト",
         "aliases": [
-          "しんぐれあ",
-          "もんてるかすと"
+          "しんぐれあ"
         ],
         "normalizedAliases": [
-          "しんぐれあ",
-          "もんてるかすと"
+          "しんぐれあ"
         ]
       },
       "プランルカスト": {
