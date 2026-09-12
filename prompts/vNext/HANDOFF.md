@@ -660,8 +660,7 @@ AddonPanel の表示ラベル改善（`adherence` を含む）も別タスク。
 
 | ファイル | 理由 |
 |---|---|
-| `.claude/settings.local.json` | Claude Code 自動更新。コミット対象外 |
-| `bridges/dm_gip_glp1ra_tirzepatide_injection.md.bak` | .bak ファイル。不要なら手動削除可 |
+| `.claude/settings.local.json` | Claude Code 自動更新の権限設定。2026-09 baseline cleanup（commit `1c8504a`）で untrack 化済み。`.gitignore` の既存ルールにより ignored。ローカルには存在するが `git status` には現れない |
 | `.claude/launch.json` | 意図的な local-only の dev サーバー起動定義（`npm run dev` / port 3000）。Claude Code 専用設定であり product/runtime state ではない。追跡不要・untracked のまま維持してよい |
 
 ## GAP-01: vNext に CROSS_MODULE_DERIVATION_CHECK が存在しない
@@ -713,6 +712,39 @@ branch  feat/nlp-input-panel-and-new-schema
 2. **route-label 表示の一般化方針**（例:「オゼンピック注」の装飾ラベル命名規則）— `docs/OPEN_DESIGN_QUESTIONS.md` Q-R2
 3. **Phase 2-B display dedup**（配合剤候補の表示順・家族単位対称性。commit history 上の呼称。DP-21 の `SF-2A` も同一範囲を指す）— 凍結範囲の正本は `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節（2026-09 用語対応追記あり）。追跡は `docs/OPEN_DESIGN_QUESTIONS.md` Q-R3
 4. **1〜2文字 bare 薬剤名クエリの順位安定性最適化**（OD-DRUG-PREFIX-BOUNDARY-1 の best-effort 帯。Q-UX1 とは別軸であり統合しない）— `docs/OPEN_DESIGN_QUESTIONS.md` Q-S3
+
+## 検索フェーズ closure チェックポイント（2026-09）
+
+**本節も歴史的観測（historical observation）である。** 現在の Repository の恒久的事実ではない。新しいチャット・新しい担当者は、着手前に branch / HEAD / tracking / fresh remote / ahead-behind / working tree、および関連する検証コマンド（`npx tsc --noEmit` / `npm test` / `npm run audit` / `npm run test:multi-drug`）の実行結果を必ず再測定すること。
+
+**最後に確認した local / tracking / fresh remote 状態**
+
+```
+commit  1c8504ad6d04188fe024ed7ad36ffe941a0d4fa1
+subject chore: clean local claude baseline state
+branch  feat/nlp-input-panel-and-new-schema
+ahead/behind（当時の origin 比較）: 0 / 0
+```
+
+上記の検索ユニット（`54e7729` まで）に加え、以下も完了済み:
+
+- **living-SSOT ドキュメント更新**（commit `ee2204e`）— G5 gateFloor 結合原則・曖昧性ガード（MULTI_INGREDIENT_STRONG_ALIAS）・D2 是正・DP-18 leukotriene alignment・Owner Decision OD-DRUG-PREFIX-BOUNDARY-1 を `docs/DESIGN_PRINCIPLES.md`（DP-18 追補・DP-20 用語対応）・`docs/OPEN_DESIGN_QUESTIONS.md`（Q-S3／Q-R1／Q-R2／Q-R3 新設）・本ファイル本節へ正式記録した。独立読込監査 → 事実訂正（causality・score 意味論・uiLabel 現状・typo の4件）→ 再監査を経て `READY_FOR_SEARCH_DOC_PUSH` 判定・push 済み
+- **検索トークン pipeline 監査**（documentation-only。実装追加なし）— `commonSearchTokens` / `formulationSearchTokens` の bridge⇔canonical JSON parity は機械監査未整備であることを確認した（`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` は JSON 内混入検出のみで parity 監査ではない）。現状は derm_heparinoid 系 4 module のみが対象で、実測乖離は 0 件。**本検索フェーズを塞ぐものではない**が、将来の剤形／投与経路／部位 intent アーキテクチャに着手する前、またはそれと同時に、決定論的な parity 監査の追加が前提条件として記録されている（正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-R1。本節では複製しない）
+- **local baseline cleanup**（commit `1c8504a`）— `.claude/settings.local.json` を untrack 化（`.gitignore` の既存ルールが有効化。ローカルの権限設定は保持したまま復元なし）。`bridges/dm_gip_glp1ra_tirzepatide_injection.md.bak`（未追跡ファイル）を削除 — Owner が唯一の未コミットシナリオ `se_dose_decrease_due_to_injection_site_reaction` をレビューし不採用と判断したため（注射部位反応には独立した減量シナリオではなく手技／部位調整・経過観察・中止・変更で対応する方針）。`.claude/launch.json` は意図的な local-only dev サーバー設定として untracked のまま維持
+
+**現在の検索フェーズは完了した。残りの検索関連トピックは意図的に将来ユニットへ defer されたものである**（「検索が恒久的に完了した」という意味ではない。上記「残存する検索バックログ」4件は引き続き有効であり、本節はそれを縮小・拡大しない）。
+
+**Owner Decision の正本（複製しない）**: OD-DRUG-PREFIX-BOUNDARY-1（bare 薬剤名クエリにおける正規化長 3 文字以上の厳格帯 / 1〜2文字 best-effort 帯。ordering・family 解決・generic/originator 関係・曖昧性安全性は 3+ 文字帯でのみ厳格 UX 要件）の正本は `docs/DESIGN_PRINCIPLES.md` DP-18（2026-09 追補）である。
+
+**皮膚科 / KW-002 について（restart note のみ。新規実装判断なし）**: `docs/VALIDATOR_STANDARD.md` Appendix B KW-002（heparinoid 系 `SEARCH_TOKEN_ALIAS_POLLUTION` の module 一覧・理由記載のずれ）は `PENDING_VALIDATOR_STANDARD_KW002_DOC_DRIFT` として未修正のまま残っている。Owner は今後の方向性として、次の薬効領域は既定どおり点眼領域を継続し、皮膚科系は個別パッチではなく将来ユニットで同一品質基準に基づき包括的に再構築する意向を示した。**これは `docs/OPEN_DESIGN_QUESTIONS.md` E-7 を確定させる正式 Owner Decision ではなく、E-7 は引き続き OPEN のままである。** KW-002 の是正は緊急ではなく、皮膚科再構築ユニットの着手時にまとめて扱ってよい。`docs/VALIDATOR_STANDARD.md` 自体は本コミットで変更しない。
+
+**次のチャット・次の担当者への再開手順**
+
+1. Repository が唯一の正本である。本ファイル（本節を含む）は index であり、現在の事実そのものではない
+2. 作業着手前に、branch / HEAD / tracking / fresh remote / ahead-behind / working tree、および直近の `npm test` 等の検証結果を必ず再測定すること
+3. 現在の検索フェーズは、上記「最後に確認した」チェックポイントの時点でクローズされている
+4. 上記「残存する検索バックログ」4件は、次のユニットとして明示的に選択されない限り再開しない
+5. 次の主要タスクは検索と無関係である可能性がある（本節は次のタスクを推測・指定しない）
 
 ## 多剤合成テスト（`npm run test:multi-drug`）— 正式回帰テストとして運用
 
