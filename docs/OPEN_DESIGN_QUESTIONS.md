@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-12（2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-13（Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -28,6 +28,7 @@ SOAP Engine — 設計保留事項
 | Q-R1 | 剤形／投与経路／部位 intent アーキテクチャ（secondary clinical token の一般化） | 🟡 中 | 点眼以外の複数剤形領域が増え、個別対応が積み上がった時 |
 | Q-R2 | route-label 表示（例:「オゼンピック注」）の一般化方針 | 🟢 低 | 複数剤形・複数経路を持つ module が増え、表示ラベルの個別対応が積み上がった時 |
 | Q-R3 | Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性） | 🟢 低（凍結範囲は DP-20 が既に定義済み） | `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節の凍結解除を Owner が判断した時 |
+| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation による検証 | 🟡 中 | H1点眼での Human 評価（単一node/複数node合成/scenario切替/Rapid ON-OFF/SOAP可読性）が完了し、一般化の可否を判断する時 |
 | Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
 優先度の凡例:
@@ -614,6 +615,42 @@ DP-20「適用しないこと」節が凍結する内容について、Owner が
 
 **現時点の扱い**
 現状維持（Deferred）。DP-20 の凍結を継続する。
+
+---
+
+## Q-RAPID1: Rapid transition taxonomy の6種化（Reference Model・検証中）
+
+**論点**
+現行 Rapid は前回との関係性（relation）5種（`new_addition` / `med_changed` / `dose_increased` / `dose_decreased` / `continued_do`）× 状態（condition）4種の組み合わせで S先頭文を生成する。Owner は、これを次の6系統へ整理する候補を検討している。
+
+1. Do（継続）
+2. 追加
+3. 変更
+4. 削除（前回の処方整理。DP-19 OD-RAPID-SCOPE-1 が意味境界を定義済み）
+5. 増
+6. 減
+
+**現状**
+本項目はまだ Repository 上の確定仕様ではない。Owner は、まず H1 ヒスタミン H1 受容体拮抗薬点眼（`allergy_h1_antihistamine_eye_drops`）を Reference Implementation として先行実装し、実際のアプリ上で
+
+- 単一 node
+- 複数 node 合成
+- scenario 切替
+- Rapid ON/OFF
+- SOAP 全体の読みやすさ（第1文と第2文の距離感を含む）
+
+を Human が操作・評価したうえで、他 module・他剤形への一般化可否を判断する方針である。この6系統・4状態という骨格候補、および sentence realization の具体的な実現方式（DP-12 OD-COMPLIANCE-REALIZATION-1 が触れる regimen-level / drug-specific の使い分けを含む）は、いずれも Reference Implementation による検証結果を踏まえて確定させる。
+
+**関連原則**
+- DP-19（Rapid 入力支援境界原則）・OD-RAPID-SCOPE-1 — 「削除」が中止操作ではないという意味境界は本項目に先行して確定済み。本項目が確定させるのはあくまで taxonomy の具体形（何種類のボタンを持つか）である
+- DP-12・OD-COMPLIANCE-REALIZATION-1 — コンプライアンス評価単位と realization の使い分けの原則は確定済み。本項目が確定させるのは具体的な文言・実装方式である
+- DP-13（段階的実装原則）・DP-16（実物評価前の仕様固定回避の原則）— 実物評価によって判断基準が得られるまで最終仕様を固定しないという既存の姿勢を、本項目の taxonomy 検証へ適用したもの
+
+**推奨判断タイミング**
+H1点眼 Reference Implementation に対する Human 評価（上記5観点）が完了した時。
+
+**現時点の扱い**
+検証中（Under Validation）。現行の5 relation × 4 condition taxonomy はそのまま稼働を継続する。本項目の6系統は確定仕様として扱わない。
 
 ---
 
