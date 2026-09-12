@@ -662,6 +662,7 @@ AddonPanel の表示ラベル改善（`adherence` を含む）も別タスク。
 |---|---|
 | `.claude/settings.local.json` | Claude Code 自動更新。コミット対象外 |
 | `bridges/dm_gip_glp1ra_tirzepatide_injection.md.bak` | .bak ファイル。不要なら手動削除可 |
+| `.claude/launch.json` | 意図的な local-only の dev サーバー起動定義（`npm run dev` / port 3000）。Claude Code 専用設定であり product/runtime state ではない。追跡不要・untracked のまま維持してよい |
 
 ## GAP-01: vNext に CROSS_MODULE_DERIVATION_CHECK が存在しない
 
