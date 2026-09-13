@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-13（Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-14（Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -28,7 +28,7 @@ SOAP Engine — 設計保留事項
 | Q-R1 | 剤形／投与経路／部位 intent アーキテクチャ（secondary clinical token の一般化） | 🟡 中 | 点眼以外の複数剤形領域が増え、個別対応が積み上がった時 |
 | Q-R2 | route-label 表示（例:「オゼンピック注」）の一般化方針 | 🟢 低 | 複数剤形・複数経路を持つ module が増え、表示ラベルの個別対応が積み上がった時 |
 | Q-R3 | Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性） | 🟢 低（凍結範囲は DP-20 が既に定義済み） | `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節の凍結解除を Owner が判断した時 |
-| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation による検証 | 🟡 中 | H1点眼での Human 評価（単一node/複数node合成/scenario切替/Rapid ON-OFF/SOAP可読性）が完了し、一般化の可否を判断する時 |
+| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 限定3 module multi-module pilot（点眼/内服/注射）による検証 | 🟡 中 | 限定3 module pilotでの Human 評価（単一node/複数node合成/scenario切替/Rapid ON-OFF/SOAP可読性・剤形横断の semantic parity）が完了し、全module一般化の可否を判断する時。**現時点では未完了・Owner判断待ち** |
 | Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
 優先度の凡例:
@@ -648,6 +648,8 @@ DP-20「適用しないこと」節が凍結する内容について、Owner が
 
 **Owner Decision（2026-09、OD-RAPID-H1-PILOT-1）: H1 Reference Implementation 実装可否**
 
+> **[Historical / 一部 Superseded]** 本 Decision のうち「1. H1限定境界」節が課す条件（allowlist は H1点眼1 moduleのみ・検証期間中に対象moduleを追加しない）は、H1 pilot の Human Review 通過を受けて後続の **OD-RAPID-MULTI-PILOT-1**（本節末尾）により更新された。本 Decision 自体は改変せず、当時の判断記録としてそのまま保持する。現在有効な allowlist 境界・条件は OD-RAPID-MULTI-PILOT-1 を正とする。「2. H1内の適用範囲」「3. Do × stable = Default」の2点は変更なく現在も有効。
+
 以下3点を Owner Decision として確定する。
 
 **1. H1限定境界**
@@ -687,7 +689,94 @@ Do × stable の生成文が Default S と同一であっても、Rapid state �
 H1点眼 Reference Implementation に対する Human 評価（上記5観点）が完了した時（6系統taxonomyの全module一般化の可否について）。
 
 **現時点の扱い**
-H1 Reference Implementation の実装可否は OD-RAPID-H1-PILOT-1 により確定し、実装へ進めてよい。ただし6系統 taxonomy の全module一般化は引き続き検証中（Under Validation）であり、本 Decision はそれを確定するものではない。H1点眼以外の module では現行の5 relation × 4 condition taxonomy がそのまま稼働を継続する。
+H1 Reference Implementation の実装可否は OD-RAPID-H1-PILOT-1 により確定し、実装へ進めてよい。ただし6系統 taxonomy の全module一般化は引き続き検証中（Under Validation）であり、本 Decision はそれを確定するものではない。**（2026-09-14現在: 「H1点眼以外の module」という記述は OD-RAPID-MULTI-PILOT-1 により pilot allowlist 自体が3 moduleへ拡張されたため、当時の記述として保持する。現在の非対象module範囲は OD-RAPID-MULTI-PILOT-1 を参照。）**
+
+---
+
+**Owner Decision（2026-09、OD-RAPID-MULTI-PILOT-1）: 限定 multi-module pilot（3 module）への拡張**
+
+OD-RAPID-H1-PILOT-1 の「1. H1限定境界」で確定した H1点眼1 module限定の allowlist を、H1 pilot の Human Review 通過を受けて次の3 module限定へ拡張する。以下を Owner Decision として確定する。
+
+**A. Under Validationの継続**
+
+Rapid v2（6 transition taxonomy）は、本 Decision 後も引き続き **Under Validation** である。3 module pilotの通過は、taxonomy そのものの最終確定を意味しない。
+
+**B. Pilot allowlistの拡張**
+
+Rapid v2 pilot対象 allowlistは、現時点で次の3 module限定とする。
+
+1. `allergy_h1_antihistamine_eye_drops`（点眼。H1 Reference Implementation）
+2. `dm_dpp4_oral`（内服。トラゼンタ等）
+3. `dm_insulin_rapid_analog`（注射。ノボラピッド等）
+
+allowlistは `lib/rapidV2.ts` の中央判定点（`RAPID_V2_MODULE_IDS`）へ引き続き閉じ込める。H1専用/module専用の分岐を各所へ散在させないというOD-RAPID-H1-PILOT-1の運用条件は、3 moduleへ拡張後も変更なく維持する。
+
+**C. Global promotionではない**
+
+本 Decisionは、Rapid v2を全moduleへ有効化する決定ではない。3 module限定 pilotの拡張であり、global rolloutの承認ではない。
+
+**D. 4件目以降の追加は個別Owner判断を要する**
+
+pilot期間中、上記3 module以外への allowlist追加は、本項目（Q-RAPID1）の再判断を経ない限り行わない。
+
+**E. 非対象moduleでの既存Rapidの継続**
+
+上記3 module以外の全moduleでは、既存の5 relation（`new_addition`/`med_changed`/`dose_increased`/`dose_decreased`/`continued_do`）× 4 condition taxonomy（legacy Rapid）がそのまま稼働を継続する。`display.adjustmentExpression` を含む既存挙動・既存 eligibility 判定は変更されない。
+
+**F. 拡張の目的**
+
+H1（点眼）で確立した Reference Modelが、剤形の異なる
+
+- 点眼（ophthalmic）
+- 内服（oral）
+- 注射（injection）
+
+の3剤形へ、semantic driftなく一般化できるかを検証することが本 pilot拡張の目的である。3 moduleは意図的にこの3剤形を代表するよう選定されている。
+
+**G. Pilot限定の administration-verb realization**
+
+3 module pilotでは、Rapid v2のDo（`continued_do`）drug-specific realizationに限り、pilot限定の中央 administration-verb 対応表を用いる。現在の対応:
+
+- `dm_dpp4_oral` → 服用
+- 点眼（H1）・注射（rapid insulin） → 現行pilotの既定値
+
+これは **pilot限定の realizationロジックであり、確定した投与経路（route）アーキテクチャではない**。canonical JSONへ新規route fieldは追加していない。bridgeのroute migrationも行っていない。将来の剤形横断アーキテクチャ（Q-R1 剤形／投与経路intent アーキテクチャを含む）を本項目が先取りして解決するものではない。
+
+**H. `regimen_reduced`の意味論（再確認・変更なし）**
+
+`regimen_reduced`（前回、処方整理）の意味論は DP-19 OD-RAPID-SCOPE-1 が確定済みであり、3 module pilotへの拡張によっても変更しない。
+
+`regimen_reduced` は「現在表示中の薬剤が中止された」ことを意味しない。「前回の処方変更時点で処方全体が整理され、今回はその後の患者の臨床状態を評価している」ことを意味する。削除された薬剤の識別情報は意図的に保持・推測しない。
+
+3 module pilotでの承認済み基本文言（drug-specific / regimen-level 双方で薬剤名を含まない）:
+
+- 前回の処方整理後も症状は落ち着いている。
+- 前回の処方整理後も症状は変わりない。
+- 前回の処方整理後、症状は良くなってきた。
+- 前回の処方整理後も症状の改善は乏しい。
+
+module固有の臨床内容へ展開すること（例: 剤形別に異なる意味論を持たせること）は本 Decisionの範囲外であり、行っていない。
+
+**I. Severity gateの継続**
+
+3 module pilotは、既存の Rapid eligibility 判定（`isScenarioSReplacementCapable`。severity分岐のある副作用scenarioを構造的にnon-capableとするgateを含む）にそのまま依拠する。本拡張により severity専用の新規ロジックは追加していない。全scenarioがRapid v2対象になるわけではない点は変更なく維持する。
+
+**J. H1 Reference Modelの位置づけ**
+
+H1点眼は引き続き Rapid v2の最初のReference Modelである。内服・注射は、このReference Modelが剤形横断で一般化するかを検証するために追加された。H1の既存semantics（6 transition順・4 outcome・Do×stable=Default・OFF byte復元・scenario/register切替契約）は、内服・注射への拡張のために弱められていない。本pilotはアーキテクチャの一般化可否を検証するものであり、H1 Reference Model自体を再設計するものではない。
+
+**K. Global promotionは未解決のまま**
+
+3 module pilotの通過は、以下のいずれも許可しない。
+
+- 全moduleでのRapid v2有効化
+- legacy Rapid（5 relation × 4 condition）の削除
+- 全module `adjustmentExpression` のmigration
+- グローバルなroute/剤形アーキテクチャの導入
+- Persona設計への変更
+- persistence設計への変更
+
+Rapid v2taxonomyの全module一般化（Q-RAPID1本体の論点）は、引き続き **Under Validation / Owner判断待ち** のままとする。本 Decisionはこれを解決しない。
 
 ---
 
