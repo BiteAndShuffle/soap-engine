@@ -39,7 +39,7 @@ import { derivePersonaGuard } from '../lib/personaGuard'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../lib/applyPersona'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import type { RapidState } from '../lib/rapidState'
-import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
+import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from '../lib/rapidV2'
 import {
   type SRelation,
   type SCondition,
@@ -229,7 +229,7 @@ describe('D. non-null RapidState が deriveNodeBlockCore → SOAP まで反映�
         // v2 module は v1 の5 relation も v2 の完成文テーブルで実現するため、oracle を
         // rapidProfileOf で分岐する（production の withRapidFirstSentence と同一の分岐）。
         const expectedFirst = rapidProfileOf(mod) === 'v2'
-          ? buildV2FirstSentence(relation, rapid!.currentOutcome, registerOf(sc), DRUG)
+          ? buildV2FirstSentence(relation, rapid!.currentOutcome, registerOf(sc), DRUG, verbOf(mod))
           : buildResolvedSFirstSentence(
               relation, rapid!.currentOutcome, DRUG, mod.display?.adjustmentExpression,
             )

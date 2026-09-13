@@ -41,7 +41,7 @@ import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '.
 import { mergeBlocks } from '../lib/buildSoap'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { nextRapidStateOnScenarioChange, type RapidState } from '../lib/rapidState'
-import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
+import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from '../lib/rapidV2'
 import {
   type SRelation,
   type SCondition,
@@ -277,7 +277,7 @@ describe('C. scenario 遷移で node.rapid が正しく計算される（product
       // 成立してしまう）。nonCap（遷移先 scenario）の register で判定する。
       const wouldBeRapidFirst = firstSentenceOf(
         rapidProfileOf(mod) === 'v2'
-          ? buildV2FirstSentence(raRelation, RAPID_A!.currentOutcome, registerOf(nonCap), DRUG)
+          ? buildV2FirstSentence(raRelation, RAPID_A!.currentOutcome, registerOf(nonCap), DRUG, verbOf(mod))
           : buildResolvedSFirstSentence(raRelation, RAPID_A!.currentOutcome, DRUG, mod.display?.adjustmentExpression),
       )
       assert.notEqual(

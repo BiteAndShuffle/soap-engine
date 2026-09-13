@@ -3,7 +3,11 @@
  *
  * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1。
  *
- * 対象は H1点眼（`allergy_h1_antihistamine_eye_drops`）1 module 限定の pilot 実装。
+ * 対象は H1点眼（`allergy_h1_antihistamine_eye_drops`）の Reference Implementation
+ * （Reference Baseline）。H1 pilot の Human 評価通過後に allowlist へ追加された
+ * 内服（`dm_dpp4_oral`）・注射（`dm_insulin_rapid_analog`）の pilot固有契約
+ * （route verb 差分・severity gate 等）は `tests/rapidV2MultiModulePilot.test.ts`
+ * が別途固定する（本ファイルの H1 契約を弱めない・重複させない）。
  * v1（`lib/rapidSentence.ts` / `SRelation` 5値）は本ファイルの対象外であり、
  * v1 の既存契約は `tests/rapidStateUnit1.test.ts` 等が引き続き固定する。
  *
@@ -102,11 +106,13 @@ describe('A. v2 sentence table（48文 exact string match）', () => {
       improved:     `前回から${DRUG}に変更となり症状は良くなってきた。`,
       not_improved: `前回から${DRUG}に変更となったが症状の改善は乏しい。`,
     },
+    // 限定 multi-module pilotで、drug-specific realization でも薬剤名を入れない
+    // よう確定（§6）。regimen register と文面が一致する（DRUG を含まない）。
     regimen_reduced: {
-      stable:       `前回の処方整理後も${DRUG}で症状は落ち着いている。`,
-      unchanged:    `前回の処方整理後も${DRUG}で症状は変わりない。`,
-      improved:     `前回の処方整理後も${DRUG}で症状は良くなってきた。`,
-      not_improved: `前回の処方整理後も${DRUG}で症状の改善は乏しい。`,
+      stable:       `前回の処方整理後も症状は落ち着いている。`,
+      unchanged:    `前回の処方整理後も症状は変わりない。`,
+      improved:     `前回の処方整理後、症状は良くなってきた。`,
+      not_improved: `前回の処方整理後も症状の改善は乏しい。`,
     },
     dose_increased: {
       stable:       `前回から${DRUG}が増量となり症状は落ち着いている。`,
@@ -367,15 +373,21 @@ describe('C. scenario 切替時の Rapid state 保持と realization 切替', ()
 // D. allowlist — H1点眼だけが v2。1件だけ。散在 if の不在。
 // ═══════════════════════════════════════════════════════════════
 
-describe('D. allowlist は H1点眼 1 module のみ（中央判定点に閉じ込め）', () => {
+describe('D. allowlist は限定 multi-module pilot 対象3 module のみ（中央判定点に閉じ込め）', () => {
   test('H1点眼（点眼）は v2、H1内服（oral）は v1', () => {
     assert.equal(rapidProfileOf(H1_MOD), 'v2')
     assert.equal(rapidProfileOf(H1_ORAL_MOD), 'v1')
   })
 
-  test('corpus 35 module 中、v2 は H1点眼の1件だけ', () => {
-    const v2Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v2').map(m => m.moduleId)
-    assert.deepEqual(v2Modules, [H1_MODULE_ID])
+  // H1 pilot の Human 評価通過後、内服（dm_dpp4_oral）・注射（dm_insulin_rapid_analog）
+  // を追加した限定 multi-module pilot（tests/rapidV2MultiModulePilot.test.ts が本体）。
+  // ここでは「H1 pilot が締める allowlist の総枠」が3件で固定されていることのみ確認する。
+  test('corpus 35 module 中、v2 は3 module だけ（H1点眼・dm_dpp4_oral・dm_insulin_rapid_analog）', () => {
+    const v2Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v2').map(m => m.moduleId).sort()
+    assert.deepEqual(
+      v2Modules,
+      ['allergy_h1_antihistamine_eye_drops', 'dm_dpp4_oral', 'dm_insulin_rapid_analog'].sort(),
+    )
   })
 
   test('DashboardClient.tsx / ThirdPanel.tsx に H1 moduleId の直書きが無い（allowlist は lib/rapidV2.ts に閉じている）', () => {
@@ -426,7 +438,7 @@ describe('E. Remove（前回、処方整理 / regimen_reduced）', () => {
   test('H1 v2 では選択可能（deriveRawFields が正しく反映する）', () => {
     const sc = h1Scenario('se_irritation_none')
     const derived = deriveRawFields(sc, H1_MOD, [], { previousEvent: 'regimen_reduced', currentOutcome: 'stable' }, DRUG)
-    assert.equal(derived.S.split('\n')[0], `前回の処方整理後も${DRUG}で症状は落ち着いている。`)
+    assert.equal(derived.S.split('\n')[0], `前回の処方整理後も症状は落ち着いている。`)
   })
 
   // 「v1 module では regimen_reduced が選択不能」という契約は、本ファイル内の他2箇所が
@@ -437,14 +449,16 @@ describe('E. Remove（前回、処方整理 / regimen_reduced）', () => {
   //     early return が存在する」: production の write guard 式自体の source contract
   // 両者を組み合わせれば「oral H1 で regimen_reduced が拒否される」ことが導かれる。
 
-  test('regimen_reduced の realization は削除薬名を一切参照しない（drugName / register いずれの引数にも削除薬情報を持たない）', () => {
+  test('regimen_reduced の realization は削除薬名も現在薬の薬剤名も一切参照しない（drugName / register いずれの引数にも薬剤名情報を持たない）', () => {
     // buildV2FirstSentence のシグネチャ自体が「削除された薬剤」を表す引数を持たない
-    // ことを型レベルで保証しているため、ここでは実行結果に前回削除薬の痕跡が
-    // 含まれないことのみ確認する。
+    // ことを型レベルで保証している。限定 multi-module pilotで、drug register でも
+    // 薬剤名を入れないことを確定した（§6）ため、drug/regimen いずれの結果にも
+    // DRUG が含まれないことを確認する。
     const drug = buildV2FirstSentence('regimen_reduced', 'stable', 'drug', DRUG)
     const regimen = buildV2FirstSentence('regimen_reduced', 'stable', 'regimen', DRUG)
-    assert.equal(drug, `前回の処方整理後も${DRUG}で症状は落ち着いている。`)
+    assert.equal(drug, '前回の処方整理後も症状は落ち着いている。')
     assert.equal(regimen, '前回の処方整理後も症状は落ち着いている。')
+    assert.ok(!drug.includes(DRUG), 'drug register の処方整理に薬剤名が混入している')
   })
 
   test('UI ラベルは「処方整理」であり「削除」「中止」を含まない（現在薬の中止と誤認させない）', () => {

@@ -51,7 +51,7 @@ import {
   buildResolvedSFirstSentence,
   replaceSFirstSentence,
 } from './rapidSentence'
-import { rapidProfileOf, registerOf, buildV2FirstSentence } from './rapidV2'
+import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from './rapidV2'
 
 /**
  * buildNodeFields の結果へ Rapid 先頭文を重ねる（rapid === null なら素通し）。
@@ -63,10 +63,11 @@ import { rapidProfileOf, registerOf, buildV2FirstSentence } from './rapidV2'
  * buildNodeFields は本関数 1 回の derive あたり deriveRawFields / deriveNodeBlockCore
  * それぞれで 1 回だけ呼ばれる（呼び出し側の責務）。本関数自体は buildNodeFields を呼ばない。
  *
- * ## Rapid v2（H1 Reference Implementation）の分岐点
+ * ## Rapid v2（H1 Reference Implementation → 限定 multi-module pilot）の分岐点
  *
  * `rapidProfileOf(mod)` が唯一の v1/v2 判定点である（Q-RAPID1 /
- * OD-RAPID-H1-PILOT-1）。H1点眼以外の module は常に 'v1' を返し、
+ * OD-RAPID-H1-PILOT-1）。pilot対象3 module（H1点眼・`dm_dpp4_oral`・
+ * `dm_insulin_rapid_analog`）以外の module は常に 'v1' を返し、
  * 本関数の挙動は変更前と byte-identical になる。
  *
  * `rapid.previousEvent === 'regimen_reduced'` は型ガードとして機能し、
@@ -75,6 +76,9 @@ import { rapidProfileOf, registerOf, buildV2FirstSentence } from './rapidV2'
  * 不正な値を渡すコードは型検査で弾かれる）。`regimen_reduced` は
  * `lib/rapidV2.ts` の allowlist で保護された module でのみ state に入り得る
  * （書き込みガードは DashboardClient.tsx 側にある）。
+ *
+ * `verbOf(mod)` は Do（continued_do）の drug-specific realization にのみ影響する
+ * route verb（使用/服用）を返す（§5 route verb 差分。pilot限定の中央設定）。
  */
 function withRapidFirstSentence(
   fields: SoapFields,
@@ -91,13 +95,13 @@ function withRapidFirstSentence(
   // 残余（シナリオ固有の観察文）と ADDON 本文は先頭文の後ろにあるため保持される。
   // O / A / P は Rapid の対象外（Rapid は S 欄のみを変更する）。
   const newFirst = previousEvent === 'regimen_reduced'
-    // H1 v2 限定の6件目（前回、処方整理）。v1 には存在しないため v1 分岐へは進めない。
-    ? buildV2FirstSentence('regimen_reduced', currentOutcome, registerOf(scenario), drugName)
+    // v2 限定の6件目（前回、処方整理）。v1 には存在しないため v1 分岐へは進めない。
+    ? buildV2FirstSentence('regimen_reduced', currentOutcome, registerOf(scenario), drugName, verbOf(mod))
     : rapidProfileOf(mod) === 'v2'
-      // v2 module（H1点眼）は v1 の5 relation も v2 の完成文テーブルで実現する
+      // v2 module は v1 の5 relation も v2 の完成文テーブルで実現する
       // （display.adjustmentExpression は参照しない。「増量」「減量」まで抽象化する
       // Owner Decision による）。
-      ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(scenario), drugName)
+      ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(scenario), drugName, verbOf(mod))
       // v1 module（既存挙動。byte-identical）
       : buildResolvedSFirstSentence(
           previousEvent,

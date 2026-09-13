@@ -1,20 +1,23 @@
 /**
- * rapidV2.ts — Rapid v2（H1 Reference Implementation）専用ロジック
+ * rapidV2.ts — Rapid v2（H1 Reference Implementation → 限定 multi-module pilot）専用ロジック
  *
  * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1。
  *
  * ## 位置づけ（重要）
  *
- * 本ファイルは H1点眼（`allergy_h1_antihistamine_eye_drops`）1 module 限定の
- * pilot 実装である。**Rapid v1（`lib/rapidSentence.ts`）は一切変更しない。**
+ * 本ファイルは、H1点眼（`allergy_h1_antihistamine_eye_drops`）の Reference
+ * Implementation を基準点として維持したまま、内服1 module（`dm_dpp4_oral`）・
+ * 注射1 module（`dm_insulin_rapid_analog`）を追加した **3 module 限定**の pilot
+ * 実装である（H1 pilot Human 評価通過後の限定 multi-module pilot。global 化の
+ * 決定ではない）。**Rapid v1（`lib/rapidSentence.ts`）は一切変更しない。**
  * v1 の5 relation（`new_addition` / `med_changed` / `dose_increased` /
  * `dose_decreased` / `continued_do`）× 4 condition の taxonomy・文言・test契約は
  * 本ファイルの追加によって一切影響を受けない。
  *
- * H1専用の分岐は本ファイルの `RAPID_V2_MODULE_IDS` allowlist の1点に閉じ込める。
- * 呼び出し側（deriveNodeFields.ts / DashboardClient.tsx / ThirdPanel.tsx）は
- * `rapidProfileOf(mod)` を通じてのみ v1/v2 を判定し、module ID を直接分岐条件に
- * 使わない。
+ * pilot対象module専用の分岐は本ファイルの `RAPID_V2_MODULE_IDS` allowlist の
+ * 1点に閉じ込める。呼び出し側（deriveNodeFields.ts / DashboardClient.tsx /
+ * ThirdPanel.tsx）は `rapidProfileOf(mod)` を通じてのみ v1/v2 を判定し、
+ * module ID を直接分岐条件に使わない。
  *
  * ## 6 transition taxonomy（v2 のみ。v1 の5 relation を再利用 + 1件追加）
  *
@@ -33,19 +36,27 @@
  *
  * DP-19 の設計方針（Rapid は処方差分の完全再現機能ではない）に従い、
  * prefix + suffix の汎用文法へ無理に押し込まず、Owner Decision で確定した
- * 完成文をそのままテーブルとして保持する（H1 pilot 限定の明示的な選択。
+ * 完成文をそのままテーブルとして保持する（pilot 限定の明示的な選択。
  * 将来の全 module 一般化時にどう再設計するかは Q-RAPID1 の検証結果を待つ）。
  *
  * realization は scenario の評価単位で決定論的に分岐する
  * （DP-12 OD-COMPLIANCE-REALIZATION-1）:
  *   - `scenario.scenarioType === 'adherence'` → regimen-level（薬剤名を含めない）
- *   - それ以外（H1 では副作用確認 scenario）      → drug-specific（薬剤名を含む）
+ *   - それ以外（副作用確認 scenario）             → drug-specific（薬剤名を含む）
  * 新しい canonical field は追加しない。既存の `scenarioType` のみで判定する。
  *
- * `display.adjustmentExpression`（H1 の「点眼回数が増えた/減った」）は
+ * `display.adjustmentExpression`（例: H1 の「点眼回数が増えた/減った」）は
  * v2 では参照しない（増量/減量まで抽象化する Owner Decision）。bridge / canonical /
  * v1 の挙動・audit は変更しない — v2 の realization 関数が単にこの field を
  * 引数に取らないことで「参照しない」を構造的に保証する。
+ *
+ * ## route verb 差分（限定 multi-module pilot で追加。§5）
+ *
+ * Do transition の drug-specific realization だけが動詞（使用/服用）を含む。
+ * 他5 transition（追加/変更/処方整理/増量/減量）は元々動詞を含まない文型のため
+ * 無関係。verb は `RAPID_V2_VERB_BY_MODULE`（本ファイル内の1点）で
+ * moduleId → verb を決定論的に引く。**canonical / bridge へ
+ * `administrationVerb` 等の新 field は追加しない**（pilot 限定の中央設定）。
  */
 
 import type { ModuleData, Scenario } from './types'
@@ -57,18 +68,42 @@ export type RapidProfile = 'v1' | 'v2'
 /**
  * Rapid v2 pilot の対象 module allowlist。
  *
- * OD-RAPID-H1-PILOT-1 の条件: 検証期間中は H1点眼 1件のみ。
+ * H1 pilot（Human 評価通過）に続き、内服（`dm_dpp4_oral`）・注射
+ * （`dm_insulin_rapid_analog`）を追加した限定 multi-module pilot。
  * moduleId の prefix 一致・categoryPath からの推測は行わない
- * （oral H1 等の巻き込みを防ぐため、Set による完全一致のみを判定に使う）。
- * 他 module を追加する場合は Q-RAPID1 の再判断を要する。
+ * （decoy moduleId の巻き込みを防ぐため、Set による完全一致のみを判定に使う）。
+ * pilot期間中は本3 module固定。他 module を追加する場合は Q-RAPID1 の
+ * 再判断を要する。
  */
 const RAPID_V2_MODULE_IDS: ReadonlySet<string> = new Set([
   'allergy_h1_antihistamine_eye_drops',
+  'dm_dpp4_oral',
+  'dm_insulin_rapid_analog',
 ])
 
 /** module が Rapid v1 / v2 のどちらの realization を使うかを返す（唯一の判定点）。 */
 export function rapidProfileOf(mod: ModuleData): RapidProfile {
   return RAPID_V2_MODULE_IDS.has(mod.moduleId) ? 'v2' : 'v1'
+}
+
+/** Do transition の drug-specific realization に使う動詞（pilot限定・2値）。 */
+export type Verb = '使用' | '服用'
+
+/**
+ * pilot限定の中央 verb 設定（moduleId → verb）。未登録 module は既定値 '使用'。
+ *
+ * H1点眼・ノボラピッド（注射）は Default S でも「使用」を用いており明示登録は
+ * 不要（既定値のまま）。トラゼンタ（内服）のみ Default S が「服用」であり、
+ * Rapid realization もそれに合わせる。canonical の `{{drug_subject}}を服用して…`
+ * （bridge由来の Default S）と齟齬が出ないようにするための pilot限定の対応表。
+ */
+const RAPID_V2_VERB_BY_MODULE: ReadonlyMap<string, Verb> = new Map([
+  ['dm_dpp4_oral', '服用'],
+])
+
+/** module の Do transition 用 verb を返す（唯一の判定点）。 */
+export function verbOf(mod: ModuleData): Verb {
+  return RAPID_V2_VERB_BY_MODULE.get(mod.moduleId) ?? '使用'
 }
 
 /**
@@ -110,19 +145,35 @@ export function registerOf(scenario: Scenario): Register {
 }
 
 type SentenceTable = Record<RapidTransitionV2, Record<SCondition, string>>
-type DrugSentenceTable = Record<RapidTransitionV2, Record<SCondition, (drug: string) => string>>
+/** continued_do（Do）は動詞（使用/服用）で表が分かれるため、他5 transitionとは別の型・別テーブルで持つ。 */
+type NonDoTransition = Exclude<RapidTransitionV2, 'continued_do'>
+type DrugSentenceTable = Record<NonDoTransition, Record<SCondition, (drug: string) => string>>
 
 /**
- * drug-specific realization（副作用確認 scenario 等）。
- * Owner Decision で確定した完成文をそのまま保持する（prefix+suffix合成をしない）。
+ * Do（continued_do）の drug-specific realization。動詞（使用/服用）で表が分かれる
+ * 唯一の transition（§5 route verb 差分）。他5 transitionは動詞を含まない文型のため
+ * verb分岐が不要（DRUG_SENTENCES 側にまとめる）。
  */
-const DRUG_SENTENCES: DrugSentenceTable = {
-  continued_do: {
+const DO_SENTENCES_BY_VERB: Record<Verb, Record<SCondition, (drug: string) => string>> = {
+  使用: {
     stable:       d => `${d}を使用して症状は落ち着いている。`,
     unchanged:    d => `${d}を使用して症状は変わりない。`,
     improved:     d => `${d}を使用して症状は良くなってきた。`,
     not_improved: d => `${d}を使用しているが症状の改善は乏しい。`,
   },
+  服用: {
+    stable:       d => `${d}を服用して症状は落ち着いている。`,
+    unchanged:    d => `${d}を服用して症状は変わりない。`,
+    improved:     d => `${d}を服用して症状は良くなってきた。`,
+    not_improved: d => `${d}を服用しているが症状の改善は乏しい。`,
+  },
+}
+
+/**
+ * drug-specific realization（副作用確認 scenario 等。continued_do 以外の5 transition）。
+ * Owner Decision で確定した完成文をそのまま保持する（prefix+suffix合成をしない）。
+ */
+const DRUG_SENTENCES: DrugSentenceTable = {
   new_addition: {
     stable:       d => `前回から${d}が追加となり症状は落ち着いている。`,
     unchanged:    d => `前回から${d}が追加となり症状は変わりない。`,
@@ -135,11 +186,17 @@ const DRUG_SENTENCES: DrugSentenceTable = {
     improved:     d => `前回から${d}に変更となり症状は良くなってきた。`,
     not_improved: d => `前回から${d}に変更となったが症状の改善は乏しい。`,
   },
+  // 処方整理は drug-specific realization でも薬剤名を入れない（限定 multi-module
+  // pilotで確定。§6・DP-19 OD-RAPID-SCOPE-1）。「前回、処方整理」は現在表示中の
+  // 薬剤が削除されたという意味ではなく前回処方全体の整理後の評価であるため、
+  // 特定の1剤名を主語に立てると「その薬が整理された」と誤読され得る。
+  // register（drug/regimen）に関わらず同一文になる（REGIMEN_SENTENCES.regimen_reduced
+  // と文面が一致するのは意図的な結果であり、値の重複ではない）。
   regimen_reduced: {
-    stable:       d => `前回の処方整理後も${d}で症状は落ち着いている。`,
-    unchanged:    d => `前回の処方整理後も${d}で症状は変わりない。`,
-    improved:     d => `前回の処方整理後も${d}で症状は良くなってきた。`,
-    not_improved: d => `前回の処方整理後も${d}で症状の改善は乏しい。`,
+    stable:       () => `前回の処方整理後も症状は落ち着いている。`,
+    unchanged:    () => `前回の処方整理後も症状は変わりない。`,
+    improved:     () => `前回の処方整理後、症状は良くなってきた。`,
+    not_improved: () => `前回の処方整理後も症状の改善は乏しい。`,
   },
   dose_increased: {
     stable:       d => `前回から${d}が増量となり症状は落ち着いている。`,
@@ -201,17 +258,25 @@ const REGIMEN_SENTENCES: SentenceTable = {
 /**
  * v2 の S先頭文を生成する（テーブル参照のみ。prefix+suffix合成をしない）。
  *
- * `register === 'regimen'` のとき drugName は使用しない（薬剤名を Rapid 文へ
- * 入れない）。`register === 'drug'` で drugName が空の場合は v1 の generic
- * fallback（「薬」）と同じ考え方で暗黙の主語を補う（新しい fallback 設計は
- * 行わない）。
+ * `register === 'regimen'` のとき drugName・verb は使用しない（薬剤名を Rapid 文へ
+ * 入れない。§7: compliance は route verb を薬剤別に変えない）。
+ * `register === 'drug'` で drugName が空の場合は v1 の generic fallback（「薬」）と
+ * 同じ考え方で暗黙の主語を補う（新しい fallback 設計は行わない）。
+ *
+ * `verb` は continued_do（Do）の drug-specific realization にのみ影響する
+ * （§5 route verb 差分。他5 transitionは動詞を含まない文型のため無関係）。
+ * 省略時は '使用'（H1・ノボラピッド等、既定値で正しい module の呼び出し側で
+ * 明示指定を省略できるようにするための default であり、新たな fallback 設計では
+ * ない — `verbOf(mod)` が唯一の決定点である）。
  */
 export function buildV2FirstSentence(
   transition: RapidTransitionV2,
   outcome: SCondition,
   register: Register,
   drugName: string | undefined,
+  verb: Verb = '使用',
 ): string {
   if (register === 'regimen') return REGIMEN_SENTENCES[transition][outcome]
+  if (transition === 'continued_do') return DO_SENTENCES_BY_VERB[verb][outcome](drugName || '薬')
   return DRUG_SENTENCES[transition][outcome](drugName || '薬')
 }

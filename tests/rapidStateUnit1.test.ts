@@ -53,11 +53,12 @@ import {
   buildResolvedSFirstSentence,
   replaceSFirstSentence,
   restoreScenarioFirstSentence,
+  firstSentenceOf,
   S_RELATION_LABELS,
   S_CONDITION_LABELS,
 } from '../lib/rapidSentence'
 import { deriveRawFields } from '../lib/deriveNodeFields'
-import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
+import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from '../lib/rapidV2'
 import { rebuildPrimary, PRIMARY_NODE_ID } from '../lib/primaryNode'
 import { applyPersonaToFieldsWithGuard } from '../lib/applyPersona'
 import type { ComposeNode } from '../lib/types'
@@ -127,7 +128,7 @@ function expectedFirstSentenceOf(
   mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition,
 ): string {
   return rapidProfileOf(mod) === 'v2'
-    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), DRUG)
+    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), DRUG, verbOf(mod))
     : buildResolvedSFirstSentence(previousEvent, currentOutcome, DRUG, mod.display?.adjustmentExpression)
 }
 
@@ -223,7 +224,7 @@ describe('2. Rapid A を ON にすると S 先頭文が置換される', () => {
     let checked = 0
     for (const { mod, sc } of capableScenarios()) {
       const pristine = buildNodeFields(sc, mod, [], DRUG).fields
-      const profile = rapidProfileOf(mod)
+      const pristineFirst = firstSentenceOf(pristine.S)
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
           const rapid = { previousEvent, currentOutcome }
@@ -233,13 +234,14 @@ describe('2. Rapid A を ON にすると S 先頭文が置換される', () => {
             applied.startsWith(expectedFirst),
             `${mod.moduleId}/${sc.id}: Rapid 適用後の先頭文が一致しない`,
           )
-          // Rapid v2（H1 pilot）の Do×stable は Default と同一文になることを
+          // Rapid v2（pilot）の Do×stable は Default と同一文になることがあることを
           // Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
-          // v1 module・v2 の他組合せでは従来どおり notEqual を維持する。
-          const isV2DoStableCollision =
-            profile === 'v2' && previousEvent === 'continued_do' && currentOutcome === 'stable'
-          if (isV2DoStableCollision) {
-            assert.equal(applied, pristine.S, `${mod.moduleId}/${sc.id}: v2 Do×stable は Default と一致するはず（OD-RAPID-H1-PILOT-1）`)
+          // 「衝突するかどうか」は module 固有（pristine の第1文と期待文が実際に
+          // 一致するか）で決まるため 'v2 && continued_do && stable' と決め打ちに
+          // しない（多module pilotで検証: dm_dpp4_oral の cp_good は regimen
+          // realization が固定「使用」・bridge Default が「服用」のため衝突しない）。
+          if (expectedFirst === pristineFirst) {
+            assert.equal(applied, pristine.S, `${mod.moduleId}/${sc.id}: 期待文が Default 第1文と一致する場合は S 全体も一致するはず`)
           } else {
             assert.notEqual(applied, pristine.S, `${mod.moduleId}/${sc.id}: S が変化していない`)
           }

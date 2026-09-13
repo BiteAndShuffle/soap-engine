@@ -31,10 +31,11 @@ import {
   type SRelation,
   type SCondition,
   buildResolvedSFirstSentence,
+  firstSentenceOf,
   S_RELATION_LABELS,
   S_CONDITION_LABELS,
 } from '../lib/rapidSentence'
-import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
+import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from '../lib/rapidV2'
 
 const SECTIONS: SoapKey[] = ['S', 'O', 'A', 'P']
 const DRUG = '本剤'
@@ -96,15 +97,17 @@ function assertRapidAxesCoverProduction(): void {
  * rapidProfileOf / buildV2FirstSentence / buildResolvedSFirstSentence を
  * そのまま組み合わせるのみ。RAPID-V2-20）。
  *
- * H1点眼（Rapid v2 pilot。Q-RAPID1 / OD-RAPID-H1-PILOT-1）は v1 の5 relation も
+ * pilot対象module（H1点眼・`dm_dpp4_oral`・`dm_insulin_rapid_analog`。Q-RAPID1 /
+ * OD-RAPID-H1-PILOT-1 → 限定 multi-module pilot）は v1 の5 relation も
  * v2 の完成文テーブルで実現するため、v1 module と同じ oracle をそのまま corpus
- * 全体へ適用することはできない。
+ * 全体へ適用することはできない。`verbOf(mod)` は Do（continued_do）の
+ * drug-specific realization にのみ影響する（§5 route verb 差分）。
  */
 function expectedFirstSentenceOf(
   mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition, drugName: string,
 ): string {
   return rapidProfileOf(mod) === 'v2'
-    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), drugName)
+    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), drugName, verbOf(mod))
     : buildResolvedSFirstSentence(previousEvent, currentOutcome, drugName, mod.display?.adjustmentExpression)
 }
 
@@ -200,7 +203,7 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
     let checked = 0
     for (const { mod, sc } of capableScenarios()) {
       const base = buildNodeFields(sc, mod, [], DRUG).fields
-      const profile = rapidProfileOf(mod)
+      const pristineFirst = firstSentenceOf(base.S)
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
           const rapid: RapidState = { previousEvent, currentOutcome }
@@ -212,17 +215,20 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
               `${mod.moduleId}/${sc.id}: Rapid は ${sec} を変更してはならない`,
             )
           }
-          // Rapid v2（H1 pilot）の Do×stable は Default と同一文になることを
-          // Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
+          // Rapid v2（pilot）の Do×stable は Default と同一文になることがある
+          // ことを Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
           // null と Do×stable は semantic state として別だが、生成される文が
           // 偶然一致してもよい（「ON なら必ず S が変わる」は本質要件ではない）。
-          // v1 module・v2 の他組合せでは従来どおり notEqual を維持する。
-          const isV2DoStableCollision =
-            profile === 'v2' && previousEvent === 'continued_do' && currentOutcome === 'stable'
-          if (isV2DoStableCollision) {
+          // 「衝突するかどうか」は module 固有（pristine の第1文と production の
+          // 期待文が実際に一致するか）で決まるため、'v2 && continued_do && stable'
+          // という決め打ちにはしない（多module pilotで検証: dm_dpp4_oral の
+          // cp_good は regimen realization が固定「使用」・bridge Default が
+          // 「服用」のため、H1・dm_insulin_rapid_analog とは異なり衝突しない）。
+          const expectedFirst = expectedFirstSentenceOf(mod, sc, previousEvent, currentOutcome, DRUG)
+          if (expectedFirst === pristineFirst) {
             assert.equal(
               derived.S, base.S,
-              `${mod.moduleId}/${sc.id}: v2 Do×stable は Default と一致するはず（OD-RAPID-H1-PILOT-1）`,
+              `${mod.moduleId}/${sc.id}: 期待文が Default 第1文と一致する場合は S 全体も一致するはず`,
             )
           } else {
             assert.notEqual(
