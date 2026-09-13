@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-13（Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-13（Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -646,11 +646,48 @@ DP-20「適用しないこと」節が凍結する内容について、Owner が
 - DP-12・OD-COMPLIANCE-REALIZATION-1 — コンプライアンス評価単位と realization の使い分けの原則は確定済み。本項目が確定させるのは具体的な文言・実装方式である
 - DP-13（段階的実装原則）・DP-16（実物評価前の仕様固定回避の原則）— 実物評価によって判断基準が得られるまで最終仕様を固定しないという既存の姿勢を、本項目の taxonomy 検証へ適用したもの
 
+**Owner Decision（2026-09、OD-RAPID-H1-PILOT-1）: H1 Reference Implementation 実装可否**
+
+以下3点を Owner Decision として確定する。
+
+**1. H1限定境界**
+
+H1点眼 `allergy_h1_antihistamine_eye_drops` のみ、中央 allowlist によって Rapid v2 Reference Implementation 対象とする。
+
+これは本項目（Q-RAPID1）の検証期間に限る期限付き例外である。旧体系 `prompts/P0-C.md` §17 PROHIBITED_APP_LOGIC「特定module専用分岐を作らない」に対する、prototype限定の例外として Owner が承認する。
+
+条件:
+- allowlist 対象は H1点眼 1 module のみ
+- 検証期間中に対象 module を追加しない
+- 本項目（Q-RAPID1）を CLOSE する前に Human Review する
+- 他 module へ展開する場合は、全体標準化または canonical 化の要否を再判断する
+- H1専用の分岐を各所へ散在させず、中央判定関数（allowlist を参照する単一の判定点）へ閉じ込める
+
+**2. H1内の適用範囲**
+
+H1点眼 module 内で Rapid を利用できる6 scenario（副作用なし系5 scenario + `cp_good`）すべてを v2 対象とする。scenario 単位で v1/v2 を混在させない。
+
+scenario 切替時は既存どおり Rapid state を保持し（`nextRapidStateOnScenarioChange` の Rapid可→Rapid可の既存規則をそのまま適用）、scenario の評価単位に応じて drug-specific / regimen-level realization を決定論的に切り替える（DP-12 OD-COMPLIANCE-REALIZATION-1 が確定した評価単位の原則の適用）。
+
+**3. Do × stable = Default**
+
+許容する。Rapid は「押したら必ず本文が変わる機能」ではなく、前回→今回の semantic state を選択する機能である。`null` と `Do × stable` は意味上別状態として保持する。
+
+Do × stable の生成文が Default S と同一であっても、Rapid state が non-null であり、そのstateに対応する文が適用されていれば正常とする。
+
+したがって、「Rapid ON なら必ず S が Default と異なる」という test contract は本質要件とは扱わない。v2 では、「ON 後の S が選択 state に対応する期待文と一致する」ことを test contract とする。OFF 時に Default へ byte 単位で復元する既存契約は維持する。
+
+**Status**
+
+この3点を Owner Decision として確定したため、本項目（Q-RAPID1）の H1 Reference Implementation は実装へ進めてよい。
+
+ただし、6 transition taxonomy そのものの全 module 一般化は引き続き Under Validation とし、H1 prototype の Human 評価後に判断する。
+
 **推奨判断タイミング**
-H1点眼 Reference Implementation に対する Human 評価（上記5観点）が完了した時。
+H1点眼 Reference Implementation に対する Human 評価（上記5観点）が完了した時（6系統taxonomyの全module一般化の可否について）。
 
 **現時点の扱い**
-検証中（Under Validation）。現行の5 relation × 4 condition taxonomy はそのまま稼働を継続する。本項目の6系統は確定仕様として扱わない。
+H1 Reference Implementation の実装可否は OD-RAPID-H1-PILOT-1 により確定し、実装へ進めてよい。ただし6系統 taxonomy の全module一般化は引き続き検証中（Under Validation）であり、本 Decision はそれを確定するものではない。H1点眼以外の module では現行の5 relation × 4 condition taxonomy がそのまま稼働を継続する。
 
 ---
 
