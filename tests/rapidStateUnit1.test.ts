@@ -57,6 +57,7 @@ import {
   S_CONDITION_LABELS,
 } from '../lib/rapidSentence'
 import { deriveRawFields } from '../lib/deriveNodeFields'
+import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
 import { rebuildPrimary, PRIMARY_NODE_ID } from '../lib/primaryNode'
 import { applyPersonaToFieldsWithGuard } from '../lib/applyPersona'
 import type { ComposeNode } from '../lib/types'
@@ -110,16 +111,40 @@ function assertRapidAxesCoverProduction(): void {
   )
 }
 
-/** production と同じ順で Rapid を S へ適用する（handleSToggle / useEffect と同一手順） */
-function applyRapid(s: string, mod: ModuleData, rapid: NonNullable<RapidState>): string {
+/**
+ * production の withRapidFirstSentence（lib/deriveNodeFields.ts）と同一の分岐で
+ * 「期待される Rapid 先頭文」を計算する（mirror 実装ではなく、production の
+ * rapidProfileOf / buildV2FirstSentence / buildResolvedSFirstSentence を
+ * そのまま組み合わせるのみ。RAPID-V2-20）。
+ *
+ * corpus には H1点眼（Rapid v2 pilot。Q-RAPID1 / OD-RAPID-H1-PILOT-1）が含まれる。
+ * v2 module は v1 の5 relation も v2 の完成文テーブルで実現するため、v1 の
+ * buildResolvedSFirstSentence をそのまま oracle にすると H1 について
+ * production と無関係な自己一致になる（v1 文 vs v1 文の比較）。本 helper で
+ * 分岐することで、H1 を含む corpus 全体で実際の production 挙動と照合する。
+ */
+function expectedFirstSentenceOf(
+  mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition,
+): string {
+  return rapidProfileOf(mod) === 'v2'
+    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), DRUG)
+    : buildResolvedSFirstSentence(previousEvent, currentOutcome, DRUG, mod.display?.adjustmentExpression)
+}
+
+/**
+ * production と同じ順で Rapid を S へ適用する（handleSToggle / useEffect と同一手順）。
+ * 先頭文の生成自体は expectedFirstSentenceOf（profile-aware）に委譲する。
+ *
+ * 本ファイルの RELATIONS は v1 の5値のみ（Rapid v2 限定の 'regimen_reduced' は含まない）。
+ * RapidState.previousEvent は型上 'regimen_reduced' を許容するが、本ファイルの呼び出しからは
+ * 到達しない。narrow のための assertion のみ。
+ */
+function applyRapid(s: string, mod: ModuleData, sc: Scenario, rapid: NonNullable<RapidState>): string {
+  const relation = rapid.previousEvent
+  if (relation === 'regimen_reduced') throw new Error('rapidStateUnit1.test.ts は v1（regimen_reduced 非対応）専用')
   return replaceSFirstSentence(
     s,
-    buildResolvedSFirstSentence(
-      rapid.previousEvent,
-      rapid.currentOutcome,
-      DRUG,
-      mod.display?.adjustmentExpression,
-    ),
+    expectedFirstSentenceOf(mod, sc, relation, rapid.currentOutcome),
   )
 }
 
@@ -198,18 +223,26 @@ describe('2. Rapid A を ON にすると S 先頭文が置換される', () => {
     let checked = 0
     for (const { mod, sc } of capableScenarios()) {
       const pristine = buildNodeFields(sc, mod, [], DRUG).fields
+      const profile = rapidProfileOf(mod)
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
           const rapid = { previousEvent, currentOutcome }
-          const applied = applyRapid(pristine.S, mod, rapid)
-          const expectedFirst = buildResolvedSFirstSentence(
-            previousEvent, currentOutcome, DRUG, mod.display?.adjustmentExpression,
-          )
+          const applied = applyRapid(pristine.S, mod, sc, rapid)
+          const expectedFirst = expectedFirstSentenceOf(mod, sc, previousEvent, currentOutcome)
           assert.ok(
             applied.startsWith(expectedFirst),
             `${mod.moduleId}/${sc.id}: Rapid 適用後の先頭文が一致しない`,
           )
-          assert.notEqual(applied, pristine.S, `${mod.moduleId}/${sc.id}: S が変化していない`)
+          // Rapid v2（H1 pilot）の Do×stable は Default と同一文になることを
+          // Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
+          // v1 module・v2 の他組合せでは従来どおり notEqual を維持する。
+          const isV2DoStableCollision =
+            profile === 'v2' && previousEvent === 'continued_do' && currentOutcome === 'stable'
+          if (isV2DoStableCollision) {
+            assert.equal(applied, pristine.S, `${mod.moduleId}/${sc.id}: v2 Do×stable は Default と一致するはず（OD-RAPID-H1-PILOT-1）`)
+          } else {
+            assert.notEqual(applied, pristine.S, `${mod.moduleId}/${sc.id}: S が変化していない`)
+          }
           checked++
         }
       }
@@ -230,7 +263,7 @@ describe('3. Rapid A 再クリック → null + S 完全復元（RAPID-V2-05）'
       const pristine = buildNodeFields(sc, mod, [], DRUG).fields
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
-          const applied = applyRapid(pristine.S, mod, { previousEvent, currentOutcome })
+          const applied = applyRapid(pristine.S, mod, sc, { previousEvent, currentOutcome })
           const restored = restoreScenarioFirstSentence(applied, pristine.S)
           assert.equal(
             restored, pristine.S,
@@ -262,11 +295,9 @@ describe('4. Rapid A → Rapid B は置換される（残骸を残さない）',
       const pristine = buildNodeFields(sc, mod, [], DRUG).fields
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
-          const a = applyRapid(pristine.S, mod, { previousEvent, currentOutcome })
-          const b = applyRapid(a, mod, { previousEvent: 'med_changed', currentOutcome: 'improved' })
-          const expectedB = buildResolvedSFirstSentence(
-            'med_changed', 'improved', DRUG, mod.display?.adjustmentExpression,
-          )
+          const a = applyRapid(pristine.S, mod, sc, { previousEvent, currentOutcome })
+          const b = applyRapid(a, mod, sc, { previousEvent: 'med_changed', currentOutcome: 'improved' })
+          const expectedB = expectedFirstSentenceOf(mod, sc, 'med_changed', 'improved')
           assert.ok(b.startsWith(expectedB), `${mod.moduleId}/${sc.id}: A→B 置換に失敗`)
           assert.equal(
             restoreScenarioFirstSentence(b, pristine.S), pristine.S,
@@ -334,10 +365,8 @@ describe('5b. capable → capable では新 scenario の S へ再適用される
 
       // 新 scenario の pristine S を基点に再適用する（useEffect と同一手順）
       const pristineTo = buildNodeFields(to, mod, [], DRUG).fields
-      const reapplied = applyRapid(pristineTo.S, mod, carried!)
-      const expectedFirst = buildResolvedSFirstSentence(
-        'dose_increased', 'unchanged', DRUG, mod.display?.adjustmentExpression,
-      )
+      const reapplied = applyRapid(pristineTo.S, mod, to, carried!)
+      const expectedFirst = expectedFirstSentenceOf(mod, to, 'dose_increased', 'unchanged')
 
       assert.ok(
         reapplied.startsWith(expectedFirst),
@@ -438,7 +467,7 @@ describe('8. Rapid OFF で ADDON テキストは保持される（RAPID-V2-09）
         if (withAddon.S === pristine.S) continue  // この scenario には S へ落ちない
 
         // Rapid ON（raw は ADDON 込み）→ OFF
-        const applied = applyRapid(withAddon.S, mod, {
+        const applied = applyRapid(withAddon.S, mod, sc, {
           previousEvent: 'new_addition', currentOutcome: 'stable',
         })
         const restored = restoreScenarioFirstSentence(applied, pristine.S)

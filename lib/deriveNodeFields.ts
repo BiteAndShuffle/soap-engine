@@ -50,8 +50,8 @@ import { derivePersonaGuard } from './personaGuard'
 import {
   buildResolvedSFirstSentence,
   replaceSFirstSentence,
-  type AdjustmentExpression,
 } from './rapidSentence'
+import { rapidProfileOf, registerOf, buildV2FirstSentence } from './rapidV2'
 
 /**
  * buildNodeFields の結果へ Rapid 先頭文を重ねる（rapid === null なら素通し）。
@@ -62,30 +62,51 @@ import {
  *
  * buildNodeFields は本関数 1 回の derive あたり deriveRawFields / deriveNodeBlockCore
  * それぞれで 1 回だけ呼ばれる（呼び出し側の責務）。本関数自体は buildNodeFields を呼ばない。
+ *
+ * ## Rapid v2（H1 Reference Implementation）の分岐点
+ *
+ * `rapidProfileOf(mod)` が唯一の v1/v2 判定点である（Q-RAPID1 /
+ * OD-RAPID-H1-PILOT-1）。H1点眼以外の module は常に 'v1' を返し、
+ * 本関数の挙動は変更前と byte-identical になる。
+ *
+ * `rapid.previousEvent === 'regimen_reduced'` は型ガードとして機能し、
+ * false 分岐では TypeScript が previousEvent を v1 の `SRelation` へ絞り込む
+ * （v1 の `buildResolvedSFirstSentence` は `SRelation` のみを受け取るため、
+ * 不正な値を渡すコードは型検査で弾かれる）。`regimen_reduced` は
+ * `lib/rapidV2.ts` の allowlist で保護された module でのみ state に入り得る
+ * （書き込みガードは DashboardClient.tsx 側にある）。
  */
 function withRapidFirstSentence(
   fields: SoapFields,
   rapid: RapidState,
-  adjustmentExpression: AdjustmentExpression | undefined,
+  mod: ModuleData,
+  scenario: Scenario,
   drugName: string,
 ): SoapFields {
   // Rapid 未選択（RAPID-V2-03 の null）— scenario 本来の S をそのまま使う
   if (rapid === null) return fields
+  const { previousEvent, currentOutcome } = rapid
+
   // Rapid 選択中 — S の先頭文のみ差し替える。
   // 残余（シナリオ固有の観察文）と ADDON 本文は先頭文の後ろにあるため保持される。
   // O / A / P は Rapid の対象外（Rapid は S 欄のみを変更する）。
-  return {
-    ...fields,
-    S: replaceSFirstSentence(
-      fields.S,
-      buildResolvedSFirstSentence(
-        rapid.previousEvent,
-        rapid.currentOutcome,
-        drugName,
-        adjustmentExpression,
-      ),
-    ),
-  }
+  const newFirst = previousEvent === 'regimen_reduced'
+    // H1 v2 限定の6件目（前回、処方整理）。v1 には存在しないため v1 分岐へは進めない。
+    ? buildV2FirstSentence('regimen_reduced', currentOutcome, registerOf(scenario), drugName)
+    : rapidProfileOf(mod) === 'v2'
+      // v2 module（H1点眼）は v1 の5 relation も v2 の完成文テーブルで実現する
+      // （display.adjustmentExpression は参照しない。「増量」「減量」まで抽象化する
+      // Owner Decision による）。
+      ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(scenario), drugName)
+      // v1 module（既存挙動。byte-identical）
+      : buildResolvedSFirstSentence(
+          previousEvent,
+          currentOutcome,
+          drugName,
+          mod.display?.adjustmentExpression,
+        )
+
+  return { ...fields, S: replaceSFirstSentence(fields.S, newFirst) }
 }
 
 /**
@@ -115,7 +136,7 @@ export function deriveRawFields(
   const { fields } = buildNodeFields(scenario, mod, addonIds, drugName)
 
   // 2〜3. Rapid 先頭文を重ねる（rapid === null なら素通し）
-  return withRapidFirstSentence(fields, rapid, mod.display?.adjustmentExpression, drugName)
+  return withRapidFirstSentence(fields, rapid, mod, scenario, drugName)
 }
 
 /**
@@ -190,7 +211,7 @@ export function deriveNodeBlockCore(
     buildNodeFields(scenario, mod, addonIds, drugName)   // ← 1 操作あたり 1 回のみ
   return {
     templateLabel:   scenario.title,
-    rawFields:       withRapidFirstSentence(fields, rapid, mod.display?.adjustmentExpression, drugName),
+    rawFields:       withRapidFirstSentence(fields, rapid, mod, scenario, drugName),
     guard:           derivePersonaGuard(scenario, mod.template?.urgentFlag),
     symptomCodes:    scenario.sComposition?.symptomCodes,
     closingText,

@@ -39,6 +39,7 @@ import { derivePersonaGuard } from '../lib/personaGuard'
 import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '../lib/applyPersona'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import type { RapidState } from '../lib/rapidState'
+import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
 import {
   type SRelation,
   type SCondition,
@@ -220,9 +221,18 @@ describe('D. non-null RapidState が deriveNodeBlockCore → SOAP まで反映�
     for (const { mod, sc } of capableScenarios().slice(0, 40)) {
       for (const rapid of SAMPLE_RAPID_STATES.slice(0, 4)) {
         const core = deriveNodeBlockCore(sc, mod, [], rapid, DRUG)
-        const expectedFirst = buildResolvedSFirstSentence(
-          rapid!.previousEvent, rapid!.currentOutcome, DRUG, mod.display?.adjustmentExpression,
-        )
+        // 本ファイルの SAMPLE_RAPID_STATES は v1（RELATIONS = 5値の SRelation）由来のみ
+        // （Rapid v2 の 'regimen_reduced' は含まない）。narrow のための assertion のみ。
+        const relation = rapid!.previousEvent
+        if (relation === 'regimen_reduced') throw new Error('nodeSnapshotUnit3A.test.ts は v1 専用')
+        // corpus には H1点眼（Rapid v2 pilot。Q-RAPID1 / OD-RAPID-H1-PILOT-1）が含まれる。
+        // v2 module は v1 の5 relation も v2 の完成文テーブルで実現するため、oracle を
+        // rapidProfileOf で分岐する（production の withRapidFirstSentence と同一の分岐）。
+        const expectedFirst = rapidProfileOf(mod) === 'v2'
+          ? buildV2FirstSentence(relation, rapid!.currentOutcome, registerOf(sc), DRUG)
+          : buildResolvedSFirstSentence(
+              relation, rapid!.currentOutcome, DRUG, mod.display?.adjustmentExpression,
+            )
         assert.equal(
           firstSentenceOf(core.rawFields.S), firstSentenceOf(expectedFirst),
           `S 先頭文が Rapid 解決文と一致しない: module=${mod.moduleId} scenario=${sc.id}`,

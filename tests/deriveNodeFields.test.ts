@@ -34,6 +34,7 @@ import {
   S_RELATION_LABELS,
   S_CONDITION_LABELS,
 } from '../lib/rapidSentence'
+import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
 
 const SECTIONS: SoapKey[] = ['S', 'O', 'A', 'P']
 const DRUG = '本剤'
@@ -87,6 +88,24 @@ function assertRapidAxesCoverProduction(): void {
     [...CONDITIONS].sort(), Object.keys(S_CONDITION_LABELS).sort(),
     'CONDITIONS が production の SCondition 全値（S_CONDITION_LABELS）を網羅していない',
   )
+}
+
+/**
+ * production の withRapidFirstSentence（lib/deriveNodeFields.ts）と同一の分岐で
+ * 「期待される Rapid 先頭文」を計算する（mirror 実装ではなく、production の
+ * rapidProfileOf / buildV2FirstSentence / buildResolvedSFirstSentence を
+ * そのまま組み合わせるのみ。RAPID-V2-20）。
+ *
+ * H1点眼（Rapid v2 pilot。Q-RAPID1 / OD-RAPID-H1-PILOT-1）は v1 の5 relation も
+ * v2 の完成文テーブルで実現するため、v1 module と同じ oracle をそのまま corpus
+ * 全体へ適用することはできない。
+ */
+function expectedFirstSentenceOf(
+  mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition, drugName: string,
+): string {
+  return rapidProfileOf(mod) === 'v2'
+    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), drugName)
+    : buildResolvedSFirstSentence(previousEvent, currentOutcome, drugName, mod.display?.adjustmentExpression)
 }
 
 /**
@@ -181,6 +200,7 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
     let checked = 0
     for (const { mod, sc } of capableScenarios()) {
       const base = buildNodeFields(sc, mod, [], DRUG).fields
+      const profile = rapidProfileOf(mod)
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
           const rapid: RapidState = { previousEvent, currentOutcome }
@@ -192,10 +212,24 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
               `${mod.moduleId}/${sc.id}: Rapid は ${sec} を変更してはならない`,
             )
           }
-          assert.notEqual(
-            derived.S, base.S,
-            `${mod.moduleId}/${sc.id}: Rapid 適用で S が変化するはず`,
-          )
+          // Rapid v2（H1 pilot）の Do×stable は Default と同一文になることを
+          // Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
+          // null と Do×stable は semantic state として別だが、生成される文が
+          // 偶然一致してもよい（「ON なら必ず S が変わる」は本質要件ではない）。
+          // v1 module・v2 の他組合せでは従来どおり notEqual を維持する。
+          const isV2DoStableCollision =
+            profile === 'v2' && previousEvent === 'continued_do' && currentOutcome === 'stable'
+          if (isV2DoStableCollision) {
+            assert.equal(
+              derived.S, base.S,
+              `${mod.moduleId}/${sc.id}: v2 Do×stable は Default と一致するはず（OD-RAPID-H1-PILOT-1）`,
+            )
+          } else {
+            assert.notEqual(
+              derived.S, base.S,
+              `${mod.moduleId}/${sc.id}: Rapid 適用で S が変化するはず`,
+            )
+          }
           checked++
         }
       }
@@ -207,16 +241,14 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
     )
   })
 
-  test('S の先頭文は buildResolvedSFirstSentence の出力と一致する', () => {
+  test('S の先頭文は production の profile 判定（rapidProfileOf）に従った生成結果と一致する', () => {
     for (const { mod, sc } of capableScenarios()) {
       for (const previousEvent of RELATIONS) {
         for (const currentOutcome of CONDITIONS) {
           const derived = deriveRawFields(
             sc, mod, [], { previousEvent, currentOutcome }, DRUG,
           )
-          const expectedFirst = buildResolvedSFirstSentence(
-            previousEvent, currentOutcome, DRUG, mod.display?.adjustmentExpression,
-          )
+          const expectedFirst = expectedFirstSentenceOf(mod, sc, previousEvent, currentOutcome, DRUG)
           assert.ok(
             derived.S.startsWith(expectedFirst),
             `${mod.moduleId}/${sc.id} (${previousEvent}/${currentOutcome}): ` +

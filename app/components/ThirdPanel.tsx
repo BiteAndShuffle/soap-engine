@@ -5,8 +5,9 @@ import type { MenuGroup } from '../../lib/menuGroups'
 import type { DrugSuggestionItem } from '../../lib/search'
 import type { Scenario, ModuleData } from '../../lib/types'
 import type { SRelation, SCondition } from '../../lib/rapidSentence'
-import type { RapidState } from '../../lib/rapidState'
+import type { RapidState, RapidTransitionV2 } from '../../lib/rapidState'
 import { isSReplacementEligible } from '../../lib/isSReplacementEligible'
+import { RAPID_V2_TRANSITIONS, RAPID_V2_OUTCOMES, type RapidProfile } from '../../lib/rapidV2'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
@@ -329,7 +330,16 @@ interface ThirdPanelProps {
    * `{ continued_do, stable }` とは別状態として扱うこと。
    */
   rapidState: RapidState
-  onSAction: (relation: SRelation, condition: SCondition) => void
+  onSAction: (relation: RapidTransitionV2, condition: SCondition) => void
+  /**
+   * Rapid v1 / v2 の realization profile（`lib/rapidV2.ts` の `rapidProfileOf` が
+   * 唯一の判定点。H1点眼 Reference Implementation 限定。Q-RAPID1 / OD-RAPID-H1-PILOT-1）。
+   * 省略時は 'v1'（既存挙動。v1 module では本 prop を渡さなくても現状のまま動く）。
+   * 'v2' のときのみ6 section（Do/追加/変更/処方整理/増量/減量）を表示し、
+   * `menuGroupLabelOverrides` は適用しない（scope外。既存の primary/secondary
+   * ラベル不整合の修正も本 pilot の対象外）。
+   */
+  rapidProfile?: RapidProfile
   /** 合成薬剤追加検索クエリ */
   composeSearchValue?: string
   onComposeSearchChange?: (v: string) => void
@@ -356,7 +366,9 @@ interface ThirdPanelProps {
   /**
    * MenuGroup 表示ラベルのオーバーライド（モジュール単位）。
    * display.menuGroupLabels から渡される。
-   * S先頭文ボタンの「前回、増量」「前回、減量」ラベルに反映する。
+   * S先頭文ボタンの「前回、増量」「前回、減量」ラベルに反映する（v1 のみ）。
+   * Rapid v2（rapidProfile === 'v2'）では適用しない。v2 は固定ラベル
+   * （RAPID_V2_TRANSITIONS）を使う。
    */
   menuGroupLabelOverrides?: Record<string, string>
   /**
@@ -381,6 +393,7 @@ export default function ThirdPanel({
   activeScenario,
   rapidState,
   onSAction,
+  rapidProfile = 'v1',
   composeSearchValue = '',
   onComposeSearchChange,
   composeDrugSuggestions = [],
@@ -821,32 +834,64 @@ export default function ThirdPanel({
         {showSButtons && (
           <div className={s.thirdPanelStickyBottom}>
             <div className={s.sActionHeading}>S 先頭文</div>
-            {resolvedSections.map(sec => (
-              <div key={sec.relation} className={s.sActionSection}>
-                <div className={s.sActionSectionLabel}>{sec.label}</div>
-                <div className={s.sActionBtnGrid}>
-                  {STATUSES.map(st => {
-                    // RAPID-V2-03: rapidState === null（未選択）ではどのボタンも点灯しない。
-                    // 旧実装は sRelation/sCondition の初期値が continued_do/stable であったため、
-                    // 未選択状態でも「前回、Do × 体調落ち着いている」が点灯していた。
-                    const isActive =
-                      rapidState !== null &&
-                      rapidState.previousEvent === sec.relation &&
-                      rapidState.currentOutcome === st.condition
-                    return (
-                      <button
-                        key={st.condition}
-                        className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
-                        onClick={() => onSAction(sec.relation, st.condition)}
-                        aria-pressed={isActive}
-                      >
-                        {st.label}
-                      </button>
-                    )
-                  })}
+            {rapidProfile === 'v2' ? (
+              // ── Rapid v2（H1 Reference Implementation。Q-RAPID1 / OD-RAPID-H1-PILOT-1）──
+              // 6 section（Do/追加/変更/処方整理/増量/減量）× 4 outcome。
+              // menuGroupLabelOverrides は適用しない（v1 の primary/secondary ラベル
+              // 不整合の修正は本 pilot の scope 外。§12）。
+              RAPID_V2_TRANSITIONS.map(sec => (
+                <div key={sec.value} className={s.sActionSection}>
+                  <div className={s.sActionSectionLabel}>{sec.label}</div>
+                  <div className={s.sActionBtnGrid}>
+                    {RAPID_V2_OUTCOMES.map(st => {
+                      // RAPID-V2-03: rapidState === null（未選択）ではどのボタンも点灯しない。
+                      const isActive =
+                        rapidState !== null &&
+                        rapidState.previousEvent === sec.value &&
+                        rapidState.currentOutcome === st.value
+                      return (
+                        <button
+                          key={st.value}
+                          className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
+                          onClick={() => onSAction(sec.value, st.value)}
+                          aria-pressed={isActive}
+                        >
+                          {st.label}
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              // ── Rapid v1（既存挙動。変更なし）──
+              resolvedSections.map(sec => (
+                <div key={sec.relation} className={s.sActionSection}>
+                  <div className={s.sActionSectionLabel}>{sec.label}</div>
+                  <div className={s.sActionBtnGrid}>
+                    {STATUSES.map(st => {
+                      // RAPID-V2-03: rapidState === null（未選択）ではどのボタンも点灯しない。
+                      // 旧実装は sRelation/sCondition の初期値が continued_do/stable であったため、
+                      // 未選択状態でも「前回、Do × 体調落ち着いている」が点灯していた。
+                      const isActive =
+                        rapidState !== null &&
+                        rapidState.previousEvent === sec.relation &&
+                        rapidState.currentOutcome === st.condition
+                      return (
+                        <button
+                          key={st.condition}
+                          className={[s.sActionBtn, isActive ? s.sActionBtnActive : ''].join(' ')}
+                          onClick={() => onSAction(sec.relation, st.condition)}
+                          aria-pressed={isActive}
+                        >
+                          {st.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

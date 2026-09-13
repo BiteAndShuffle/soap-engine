@@ -41,6 +41,7 @@ import { applyPersonaToFieldsWithGuard, PERSONA_LABELS, type PersonaId } from '.
 import { mergeBlocks } from '../lib/buildSoap'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { nextRapidStateOnScenarioChange, type RapidState } from '../lib/rapidState'
+import { rapidProfileOf, registerOf, buildV2FirstSentence } from '../lib/rapidV2'
 import {
   type SRelation,
   type SCondition,
@@ -265,8 +266,19 @@ describe('C. scenario 遷移で node.rapid が正しく計算される（product
       // ケースなので null になり、rawFields の S が Rapid 適用前の scenario 本来の
       // 文（先頭文に Rapid 解決文が含まれない）であることまで検証する。
       assert.equal(updated.rapid, null)
+      // RAPID_A は本ファイルの SAMPLE_RAPID_STATES（v1 = 5値の SRelation）由来のみ
+      // （Rapid v2 の 'regimen_reduced' は含まない）。narrow のための assertion のみ。
+      const raRelation = RAPID_A!.previousEvent
+      if (raRelation === 'regimen_reduced') throw new Error('nodeRapidOwnershipUnit3B.test.ts は v1 専用')
+      // corpus には H1点眼（Rapid v2 pilot）が含まれる。「もし漏れていたら」の仮説値
+      // （wouldBeRapidFirst）は、実際に漏れた場合に production が生成する値と同じ
+      // 分岐（rapidProfileOf）で計算しないと、v2 module について何も検出できない
+      // 比較になる（v1 文 vs 実際の pristine 文の比較になり、常に notEqual が
+      // 成立してしまう）。nonCap（遷移先 scenario）の register で判定する。
       const wouldBeRapidFirst = firstSentenceOf(
-        buildResolvedSFirstSentence(RAPID_A!.previousEvent, RAPID_A!.currentOutcome, DRUG, mod.display?.adjustmentExpression),
+        rapidProfileOf(mod) === 'v2'
+          ? buildV2FirstSentence(raRelation, RAPID_A!.currentOutcome, registerOf(nonCap), DRUG)
+          : buildResolvedSFirstSentence(raRelation, RAPID_A!.currentOutcome, DRUG, mod.display?.adjustmentExpression),
       )
       assert.notEqual(
         firstSentenceOf(updated.block.rawFields!.S), wouldBeRapidFirst,

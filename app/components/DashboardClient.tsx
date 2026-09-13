@@ -43,9 +43,11 @@ import {
 } from '../../lib/rapidSentence'
 import {
   type RapidState,
+  type RapidTransitionV2,
   isSameRapid,
   nextRapidStateOnScenarioChange,
 } from '../../lib/rapidState'
+import { rapidProfileOf } from '../../lib/rapidV2'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
 import { PRIMARY_NODE_ID, rebuildPrimary, rebuildNode } from '../../lib/primaryNode'
 import ComposeNodeBar from './ComposeNodeBar'
@@ -1568,7 +1570,13 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ノード編集中は1剤目の S を変更しない（ノード側に S トグルは現時点では非対応）
   // ─────────────────────────────────────────────────────────────
 
-  const handleSToggle = useCallback((relation: SRelation, condition: SCondition) => {
+  const handleSToggle = useCallback((relation: RapidTransitionV2, condition: SCondition) => {
+    // Rapid v2 write guard（Q-RAPID1 / OD-RAPID-H1-PILOT-1）:
+    // 'regimen_reduced'（前回、処方整理）は H1点眼 Reference Implementation 限定の6件目の値であり、
+    // rapidProfileOf(targetModule) が 'v2' を返す module（allowlist は lib/rapidV2.ts の1点）でのみ
+    // 許可する。ThirdPanel は 'v2' でない限り当該ボタンを描画しないため通常は到達しないが、
+    // v1 module の state を汚染しないよう防御的に no-op にする（新しい state を作らない）。
+    if (relation === 'regimen_reduced' && rapidProfileOf(targetModule) !== 'v2') return
     const nodeId = editingNodeIdRef.current
 
     if (nodeId !== null) {
@@ -1653,10 +1661,16 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       setPrimaryNode(p => {
         if (rapidBase !== null) {
           // 【D-4C-8】NLP dead path。fields のみ差し替え rawFields を更新しない現行契約を維持する
-          //   （dead-path migration debt として許容）。
-          const updated = replaceSFirstSentence(rapidBase.S,
-            buildResolvedSFirstSentence(relation, condition, drugName, mod.display?.adjustmentExpression))
-          return { ...p, rapid: nextRapid, block: { ...p.block, fields: { ...rapidBase, S: updated } } }
+          //   （dead-path migration debt として許容）。v1 の buildResolvedSFirstSentence は
+          //   SRelation（v1の5値）のみを受け取るため、v2限定の 'regimen_reduced' はこの分岐を
+          //   通さず下へ素通りする（rapidBase は現行 UI から常に null であり、この経路自体が
+          //   production 到達不能。'regimen_reduced' × NLP という到達不能な組合せに新しい
+          //   意味論を設計しない — 下の rebuildPrimary 経路が rapidProfileOf 経由で正しく処理する）。
+          if (relation !== 'regimen_reduced') {
+            const updated = replaceSFirstSentence(rapidBase.S,
+              buildResolvedSFirstSentence(relation, condition, drugName, mod.display?.adjustmentExpression))
+            return { ...p, rapid: nextRapid, block: { ...p.block, fields: { ...rapidBase, S: updated } } }
+          }
         }
         if (sc) return rebuildPrimary({ node: p, mod, scenario: sc, addonIds: currentAddonIds,
           rapid: nextRapid, drugName, drugLabel: label, baseDomain: bDomain,
@@ -1665,7 +1679,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       })
       setEditedSOAP(null)
     })
-  }, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, allModules, moduleData, confirmDiscard])
+  }, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, allModules, moduleData, confirmDiscard, targetModule])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect【Express 操作】
@@ -2073,6 +2087,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             activeScenario={addonTargetScenario}
             rapidState={(activeNode ?? primaryNode).rapid}
             onSAction={handleSToggle}
+            rapidProfile={rapidProfileOf(targetModule)}
             composeSearchValue={composeSearch}
             onComposeSearchChange={setComposeSearch}
             composeDrugSuggestions={composeDrugSuggestions}

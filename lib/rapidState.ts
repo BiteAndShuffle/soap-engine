@@ -23,22 +23,42 @@
 import type { SRelation, SCondition } from './rapidSentence'
 
 /**
+ * Rapid v1 の previousEvent 軸（5種）に、Rapid v2（H1 Reference Implementation。
+ * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1）が
+ * 追加する6件目の semantic を加えた型。
+ *
+ * `regimen_reduced`（前回、処方整理）: 前回処方から薬剤が外れた後の、現在時点での
+ * 継続薬の評価を表す。現在表示中の薬剤を中止する意味ではない
+ * （`docs/DESIGN_PRINCIPLES.md` DP-19 OD-RAPID-SCOPE-1 が意味境界を確定済み）。
+ * 削除された薬剤名・削除薬リストは保持しない。
+ *
+ * この6件目の値は `lib/rapidV2.ts` の allowlist（H1点眼 1 module 限定）でのみ
+ * 選択可能である。v1 の5 relation・文言・taxonomy（本ファイル・rapidSentence.ts）は
+ * 一切変更していない。
+ */
+export type RapidTransitionV2 = SRelation | 'regimen_reduced'
+
+/**
  * Rapid の選択状態。
  *   null      — Rapid 未選択（scenario 本来の S をそのまま使う）
  *   non-null  — previousEvent × currentOutcome が選択済み。SOAP へ反映されていること
  *
- * 軸は previousEvent 5種 × currentOutcome 4種を維持する（RAPID-V2-02）。
- * 軸の追加・選択肢の追加は禁止。
+ * v1 の軸は previousEvent 5種 × currentOutcome 4種を維持する（RAPID-V2-02）。
+ * v1 の5値・4値そのものへの追加・削除は禁止。
+ *
+ * previousEvent の型は `RapidTransitionV2`（v1の5値 + H1 pilot 限定の
+ * `regimen_reduced`）である。H1点眼以外の module では `regimen_reduced` は
+ * 到達不能（`lib/rapidV2.ts` の allowlist と、書き込み経路のガードにより保証）。
  */
 export type RapidState = {
-  previousEvent:  SRelation
+  previousEvent:  RapidTransitionV2
   currentOutcome: SCondition
 } | null
 
 /** 同一の Rapid 選択かどうか（toggle-off 判定に使う） */
 export function isSameRapid(
   a: RapidState,
-  previousEvent: SRelation,
+  previousEvent: RapidTransitionV2,
   currentOutcome: SCondition,
 ): boolean {
   return a !== null &&
