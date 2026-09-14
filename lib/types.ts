@@ -681,6 +681,13 @@ export interface MergedBlock {
    * rawFields と常にセットで保存すること。
    */
   guard?: import('./personaGuard').PersonaGuard
+  /**
+   * Rapid v2 composition 用の scenario 由来 snapshot（OD-RAPID-COMPOSITION-1）。
+   * block の module が Rapid v2 profile かつ scenario が Rapid-capable のときだけ
+   * deriveNodeBlockCore が書く（scenario の register）。それ以外の block はこの key を持たない。
+   * transition / outcome は block に持たず、合成時に node.rapid から導出する（stale 回避）。
+   */
+  rapidV2Register?: 'drug' | 'regimen'
 }
 
 // ─────────────────────────────────────────────────────────────

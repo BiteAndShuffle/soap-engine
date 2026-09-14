@@ -290,13 +290,14 @@ describe('C. drug-specific 6×4 = 24文 exact match（トラゼンタ・ノボ�
 // ═══════════════════════════════════════════════════════════════
 
 describe('D. adherence（cp_good）regimen-level realization', () => {
-  const REGIMEN_EXPECTED: Record<RapidTransitionV2, Record<SCondition, string>> = {
-    continued_do: {
-      stable:       '薬を使用して症状は落ち着いている。',
-      unchanged:    '薬を使用して症状は変わりない。',
-      improved:     '薬を使用して症状は良くなってきた。',
-      not_improved: '薬を使用しているが症状の改善は乏しい。',
-    },
+  // Do の regimen-level 文は drug.route 由来の動詞で realize する（OD-RAPID-ROUTE-VERB-1）。
+  const regimenDoExpected = (verb: '使用' | '服用'): Record<SCondition, string> => ({
+    stable:       `薬を${verb}して症状は落ち着いている。`,
+    unchanged:    `薬を${verb}して症状は変わりない。`,
+    improved:     `薬を${verb}して症状は良くなってきた。`,
+    not_improved: `薬を${verb}しているが症状の改善は乏しい。`,
+  })
+  const REGIMEN_EXPECTED: Record<Exclude<RapidTransitionV2, 'continued_do'>, Record<SCondition, string>> = {
     new_addition: {
       stable:       '前回の薬剤追加後も症状は落ち着いている。',
       unchanged:    '前回の薬剤追加後も症状は変わりない。',
@@ -329,12 +330,13 @@ describe('D. adherence（cp_good）regimen-level realization', () => {
     },
   }
 
-  test('トラゼンタ・ノボラピッドとも cp_good は H1 と同一の regimen-level 24文（route verb を分岐させない。§7）', () => {
-    for (const [mod, drug] of [[TRAZENTA_MOD, TRAZENTA_DRUG], [NOVORAPID_MOD, NOVORAPID_DRUG]] as const) {
+  test('トラゼンタ（服用）・ノボラピッド（使用）とも cp_good は regimen-level 24文。Do のみ drug.route 由来の動詞（OD-RAPID-ROUTE-VERB-1）', () => {
+    for (const [mod, drug, verb] of [[TRAZENTA_MOD, TRAZENTA_DRUG, '服用'], [NOVORAPID_MOD, NOVORAPID_DRUG, '使用']] as const) {
       assert.equal(registerOf(scenarioOf(mod, 'cp_good')), 'regimen')
       for (const t of TRANSITIONS) for (const c of CONDITIONS) {
         const actual = buildV2FirstSentence(t, c, 'regimen', drug, verbOf(mod))
-        assert.equal(actual, REGIMEN_EXPECTED[t][c], `${mod.moduleId} ${t}/${c}`)
+        const expected = t === 'continued_do' ? regimenDoExpected(verb)[c] : REGIMEN_EXPECTED[t][c]
+        assert.equal(actual, expected, `${mod.moduleId} ${t}/${c}`)
         assert.ok(!actual.includes(drug), `${mod.moduleId}: regimen 文に薬剤名が混入: ${actual}`)
       }
     }
@@ -345,7 +347,7 @@ describe('D. adherence（cp_good）regimen-level realization', () => {
       scenarioOf(TRAZENTA_MOD, 'cp_good'), TRAZENTA_MOD, [],
       { previousEvent: 'continued_do', currentOutcome: 'unchanged' }, TRAZENTA_DRUG,
     )
-    assert.equal(derived.S.split('\n')[0], '薬を使用して症状は変わりない。')
+    assert.equal(derived.S.split('\n')[0], '薬を服用して症状は変わりない。')
     assert.ok(!derived.S.split('\n')[0].includes(TRAZENTA_DRUG))
   })
 })

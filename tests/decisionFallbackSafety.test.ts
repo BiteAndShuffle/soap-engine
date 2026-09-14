@@ -6,7 +6,8 @@
  *   （predicate === ''）は、統合可能な decision group として扱う根拠がない。
  *   したがって共有 predicate bucket へ入れず、独立 entry として入力順を保持する。
  *
- * 対象実装: lib/buildSoap.ts buildS() ③ decision セクション（predicateKey 算出のみ）。
+ * 対象実装: lib/buildSoap.ts buildNarrativeS()（旧 buildS。OD-RAPID-COMPOSITION-1 で改名）
+ *   ③ decision セクション（predicateKey 算出のみ）。
  * 本テストは production export（mergeBlocks 経由）のみを使い、buildS の mirror
  * 実装は作らない（buildS は非 export のため mergeBlocks が唯一の入口）。
  *
@@ -17,7 +18,7 @@
 
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import { mergeBlocks } from '../lib/buildSoap'
+import { mergeBlocks, type ComposableBlock } from '../lib/buildSoap'
 import { deriveNodeBlockCore } from '../lib/deriveNodeFields'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { resolveDrugName } from '../lib/drugSubject'
@@ -284,9 +285,56 @@ describe('Layer B: corpus invariant', () => {
     assert.ok(found > 0, 'no genuine multi-subject decision merge found in corpus (B1/B2 may be vacuous)')
   })
 
-  test('B4: lib/buildSoap.ts は Rapid を参照しない（Requirement 8: fallback safety は Rapid 固有条件ではない）', () => {
+  // B4 / B4b（後継。OD-RAPID-COMPOSITION-1 Unit 付随判断）:
+  //   旧 B4「lib/buildSoap.ts 全体に /rapid/i が無い」は、Rapid v2 composition を buildSoap の
+  //   composition layer（buildS dispatch / realizeRapidV2S）で扱う Owner Decision と両立しなく
+  //   なった。Requirement 8 の安全意図（decision fallback 経路は Rapid 固有条件を持たない）を、
+  //   source contract（B4）と出力 contract（B4b）の2点でより正確に保存する。
+  test('B4: buildNarrativeS（decision fallback 経路を含む）は Rapid を参照せず、Rapid v2 entry を受け取らない（Requirement 8）', () => {
     const src = readFileSync(new URL('../lib/buildSoap.ts', import.meta.url), 'utf-8')
-    assert.equal(/rapid/i.test(src), false, 'lib/buildSoap.ts が Rapid 概念を参照している（本 rule は Rapid 非依存でなければならない）')
+    const start = src.indexOf('\nfunction buildNarrativeS(')
+    assert.notEqual(start, -1, 'buildNarrativeS の定義が見つからない')
+    const body = src.slice(start, src.indexOf('\n}\n', start) + 2)
+    assert.ok(
+      body.includes("const predicateKey = predicate === '' ? subjectKey : normalizeAdminVerbForKey(predicate)"),
+      'decision fallback の predicateKey 算出が buildNarrativeS 内に無い（抽出範囲が不正）',
+    )
+    assert.equal(/rapid/i.test(body), false, 'buildNarrativeS が Rapid 概念を参照している（本 rule は Rapid 非依存でなければならない）')
+    // buildNarrativeS の呼び出しは buildS dispatch の1箇所のみで、Rapid v2 entry を除外して渡す
+    assert.equal((src.match(/\bbuildNarrativeS\(/g) ?? []).length, 2, 'buildNarrativeS の出現が「定義 + 呼び出し1箇所」ではない')
+    assert.ok(src.includes('buildNarrativeS(sEntries.filter(e => !e.rapidV2))'), 'buildNarrativeS へ Rapid v2 entry を除外せずに渡している')
+  })
+
+  test('B4b: Rapid v2 block の有無・位置は decision fallback grouping の結果を変えない（Requirement 8）', () => {
+    const FB1 = '前回からセマグルチドに変更となり、落ち着いている。'
+    const FB2 = '前回からリラグルチドに変更となり、落ち着いている。'
+    const NF1 = 'リナグリプチンは、効果不十分のため増量となった。'
+    const NF2 = 'メトホルミンは、効果不十分のため増量となった。'
+    // decision に分類され得る文面をあえて使う（text-derived bucketing に参加すれば結果が変わる）
+    const V2_TEXT = '前回からトラゼンタに変更となり症状は落ち着いている。\n便秘は認めない。'
+    const v2Block = (): ComposableBlock => ({
+      ...synthBlock(V2_TEXT),
+      rapidV2: { transition: 'med_changed', outcome: 'stable', regimenLevel: false },
+    })
+    const merge = (blocks: ComposableBlock[]): SoapFields => {
+      const [f, ...r] = blocks
+      return mergeBlocks(r, f.fields, f.templateLabel, f.closingText, undefined, f.groupKey, f.clinicalDomain, f.rapidV2)
+    }
+    const inputs = [[FB1, FB2], [FB1, FB1], [FB1, FB2, FB1], [NF1, NF2], [FB1, NF1, FB2], [NF1, FB1, NF2]]
+    let checked = 0, bucketedDiffers = 0
+    for (const texts of inputs) {
+      const narrative = mergeSynth(texts.map(t => synthBlock(t))).S
+      for (let pos = 0; pos <= texts.length; pos++) {
+        const plain = texts.map(t => synthBlock(t))
+        const withV2 = [...plain.slice(0, pos), v2Block(), ...plain.slice(pos)]
+        assert.equal(merge(withV2).S, `${narrative}\n${V2_TEXT}`, `${JSON.stringify(texts)} pos=${pos}`)
+        const asPlain = [...plain.slice(0, pos), synthBlock(V2_TEXT), ...plain.slice(pos)]
+        if (mergeSynth(asPlain).S !== `${narrative}\n${V2_TEXT}`) bucketedDiffers++
+        checked++
+      }
+    }
+    assert.ok(checked > 0)
+    assert.ok(bucketedDiffers > 0, '同じ文面を非 Rapid block として渡しても結果が変わらない（B4b が vacuous）')
   })
 
   test('B5: corpus上、fallback の subjectKey と非fallback の predicateKey が衝突しない', () => {

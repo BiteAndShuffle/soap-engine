@@ -474,6 +474,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `BRAND_DISPLAY_NAME_MISMATCH` | ERROR | Structural |
 | `RESERVED_TAG_UNUSED` | WARN | Design Rule |
 | `RESERVED_TAG_REACHABLE` | WARN | Design Rule |
+| `RAPID_CAPABLE_S_CONTRACT` | WARN | Design Rule |
 
 ### CrossModuleValidator（lib/crossModuleValidator.ts）
 

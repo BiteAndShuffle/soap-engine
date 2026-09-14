@@ -35,6 +35,7 @@ import type { BrandResolution } from '../lib/brandResolution'
 import {
   rapidProfileOf,
   registerOf,
+  verbOf,
   buildV2FirstSentence,
   RAPID_V2_TRANSITIONS,
   RAPID_V2_OUTCOMES,
@@ -170,7 +171,7 @@ describe('A. v2 sentence table（48文 exact string match）', () => {
   test('drug-specific 6×4 = 24文が exact に一致する', () => {
     let checked = 0
     for (const t of TRANSITIONS) for (const c of CONDITIONS) {
-      assert.equal(buildV2FirstSentence(t, c, 'drug', DRUG), DRUG_EXPECTED[t][c], `${t}/${c}`)
+      assert.equal(buildV2FirstSentence(t, c, 'drug', DRUG, verbOf(H1_MOD)), DRUG_EXPECTED[t][c], `${t}/${c}`)
       checked++
     }
     assert.equal(checked, 24)
@@ -179,7 +180,7 @@ describe('A. v2 sentence table（48文 exact string match）', () => {
   test('regimen-level 6×4 = 24文が exact に一致する（薬剤名を含まない）', () => {
     let checked = 0
     for (const t of TRANSITIONS) for (const c of CONDITIONS) {
-      const actual = buildV2FirstSentence(t, c, 'regimen', DRUG)
+      const actual = buildV2FirstSentence(t, c, 'regimen', DRUG, verbOf(H1_MOD))
       assert.equal(actual, REGIMEN_EXPECTED[t][c], `${t}/${c}`)
       assert.ok(!actual.includes(DRUG), `regimen realization に薬剤名が混入している: ${t}/${c}`)
       checked++
@@ -190,7 +191,7 @@ describe('A. v2 sentence table（48文 exact string match）', () => {
   test('全48文がちょうど1個の「。」で終わる（one-sentence invariant）', () => {
     for (const t of TRANSITIONS) for (const c of CONDITIONS) {
       for (const register of ['drug', 'regimen'] as const) {
-        const s = buildV2FirstSentence(t, c, register, DRUG)
+        const s = buildV2FirstSentence(t, c, register, DRUG, verbOf(H1_MOD))
         assert.equal((s.match(/。/g) ?? []).length, 1, `${register}/${t}/${c}: 「。」が1個ではない: ${s}`)
       }
     }
@@ -211,7 +212,7 @@ describe('B. H1 の6 scenario で第1文のみ変更・残余は byte 保持さ�
         const derived = deriveRawFields(sc, H1_MOD, [], { previousEvent: t, currentOutcome: c }, DRUG)
         const derivedSecondLine = derived.S.split('\n').slice(1).join('\n')
         assert.equal(derivedSecondLine, secondLine, `${id} ${t}/${c}: 第2文以降が変化した`)
-        assert.equal(derived.S.split('\n')[0], buildV2FirstSentence(t, c, 'drug', DRUG), `${id} ${t}/${c}: 第1文不一致`)
+        assert.equal(derived.S.split('\n')[0], buildV2FirstSentence(t, c, 'drug', DRUG, verbOf(H1_MOD)), `${id} ${t}/${c}: 第1文不一致`)
       }
     }
   })
@@ -223,7 +224,7 @@ describe('B. H1 の6 scenario で第1文のみ変更・残余は byte 保持さ�
     for (const t of TRANSITIONS) for (const c of CONDITIONS) {
       const derived = deriveRawFields(sc, H1_MOD, [], { previousEvent: t, currentOutcome: c }, DRUG)
       assert.equal(derived.S.split('\n').slice(1).join('\n'), secondLine, `cp_good ${t}/${c}`)
-      assert.equal(derived.S.split('\n')[0], buildV2FirstSentence(t, c, 'regimen', DRUG), `cp_good ${t}/${c}: 第1文不一致`)
+      assert.equal(derived.S.split('\n')[0], buildV2FirstSentence(t, c, 'regimen', DRUG, verbOf(H1_MOD)), `cp_good ${t}/${c}: 第1文不一致`)
     }
   })
 
@@ -328,7 +329,7 @@ describe('C. scenario 切替時の Rapid state 保持と realization 切替', ()
     assert.deepEqual(next, rapid)
     assert.equal(registerOf(to), 'drug')
     const reapplied = deriveRawFields(to, H1_MOD, [], next, DRUG)
-    assert.equal(reapplied.S.split('\n')[0], buildV2FirstSentence('dose_increased', 'unchanged', 'drug', DRUG))
+    assert.equal(reapplied.S.split('\n')[0], buildV2FirstSentence('dose_increased', 'unchanged', 'drug', DRUG, verbOf(H1_MOD)))
   })
 
   test('side_effect → cp_good: state 保持・register が drug から regimen へ切り替わる', () => {
@@ -341,7 +342,7 @@ describe('C. scenario 切替時の Rapid state 保持と realization 切替', ()
     assert.deepEqual(next, rapid)
     assert.equal(registerOf(to), 'regimen')
     const reapplied = deriveRawFields(to, H1_MOD, [], next, DRUG)
-    const expected = buildV2FirstSentence('regimen_reduced', 'improved', 'regimen', DRUG)
+    const expected = buildV2FirstSentence('regimen_reduced', 'improved', 'regimen', DRUG, verbOf(H1_MOD))
     assert.equal(reapplied.S.split('\n')[0], expected)
     assert.ok(!expected.includes(DRUG))
   })
@@ -355,7 +356,7 @@ describe('C. scenario 切替時の Rapid state 保持と realization 切替', ()
     )
     assert.deepEqual(next, rapid)
     const reapplied = deriveRawFields(to, H1_MOD, [], next, DRUG)
-    assert.equal(reapplied.S.split('\n')[0], buildV2FirstSentence('med_changed', 'stable', 'drug', DRUG))
+    assert.equal(reapplied.S.split('\n')[0], buildV2FirstSentence('med_changed', 'stable', 'drug', DRUG, verbOf(H1_MOD)))
   })
 
   test('capable → non-capable: state は null になる', () => {
@@ -454,8 +455,8 @@ describe('E. Remove（前回、処方整理 / regimen_reduced）', () => {
     // ことを型レベルで保証している。限定 multi-module pilotで、drug register でも
     // 薬剤名を入れないことを確定した（§6）ため、drug/regimen いずれの結果にも
     // DRUG が含まれないことを確認する。
-    const drug = buildV2FirstSentence('regimen_reduced', 'stable', 'drug', DRUG)
-    const regimen = buildV2FirstSentence('regimen_reduced', 'stable', 'regimen', DRUG)
+    const drug = buildV2FirstSentence('regimen_reduced', 'stable', 'drug', DRUG, verbOf(H1_MOD))
+    const regimen = buildV2FirstSentence('regimen_reduced', 'stable', 'regimen', DRUG, verbOf(H1_MOD))
     assert.equal(drug, '前回の処方整理後も症状は落ち着いている。')
     assert.equal(regimen, '前回の処方整理後も症状は落ち着いている。')
     assert.ok(!drug.includes(DRUG), 'drug register の処方整理に薬剤名が混入している')

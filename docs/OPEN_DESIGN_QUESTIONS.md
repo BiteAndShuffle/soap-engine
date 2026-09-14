@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-14（Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-14（Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -735,6 +735,8 @@ H1（点眼）で確立した Reference Modelが、剤形の異なる
 
 **G. Pilot限定の administration-verb realization**
 
+> **[Historical / Superseded]** 本節の pilot 限定 moduleId→verb 対応表は、後続の **OD-RAPID-ROUTE-VERB-1**（本節末尾）により、既存 canonical `drug.route` から動詞を deterministic に解決する方式へ置き換えられた。本節は当時の判断記録として改変せず保持する。現在有効な動詞の解決規則は OD-RAPID-ROUTE-VERB-1 を正とする。
+
 3 module pilotでは、Rapid v2のDo（`continued_do`）drug-specific realizationに限り、pilot限定の中央 administration-verb 対応表を用いる。現在の対応:
 
 - `dm_dpp4_oral` → 服用
@@ -777,6 +779,58 @@ H1点眼は引き続き Rapid v2の最初のReference Modelである。内服・
 - persistence設計への変更
 
 Rapid v2taxonomyの全module一般化（Q-RAPID1本体の論点）は、引き続き **Under Validation / Owner判断待ち** のままとする。本 Decisionはこれを解決しない。
+
+---
+
+**Owner Decision（2026-09、OD-RAPID-ROUTE-VERB-1）: Do realization の動詞を canonical `drug.route` から解決する**
+
+Rapid v2 の Do（`continued_do`）realization に使用する administration verb は、既存 canonical `drug.route` から deterministic に解決する。
+
+現在の Rapid v2 pilot では次のとおりとする。
+
+- `oral` → `服用`
+- それ以外の現在サポート対象 route → `使用`
+
+この route-derived verb は、drug-specific register・regimen-level register の両方に適用する。
+
+- 新しい `administrationVerb` field は追加しない
+- canonical / bridge schema は変更しない
+- route metadata architecture の再設計は行わない
+
+本 Decision は、OD-RAPID-MULTI-PILOT-1 §G にある pilot 限定 moduleId→verb 対応を置き換える（§G は Historical / Superseded として保持する）。
+
+**OD-RAPID-MULTI-PILOT-1 §K との関係**: §K の「グローバルな route / 剤形アーキテクチャを導入しない」契約は維持する。本 Decision の `drug.route` 利用は、既存 canonical field を Rapid v2 pilot の realization に deterministic に利用するだけであり、新しい global route architecture の導入とは扱わない。
+
+---
+
+**Owner Decision（2026-09、OD-RAPID-COMPOSITION-1）: Rapid v2 multi-node S composition**
+
+Rapid v2 S composition について以下を採用する。
+
+1. Rapid v2 block は text-derived reason / observation / decision / other bucketing に参加させない。
+2. 同一 clinicalDomain 内では、Rapid v2 block は stable node order を保持する。
+3. 同一 domain に Rapid v2 と non-Rapid が混在する場合、non-Rapid block を既存 contract どおり先に realize し、その後に Rapid v2 block を stable node order で realize する。
+4. non-Rapid の既存 bucketing contract は変更しない。
+5. legacy Rapid v1 は今回変更しない。
+6. regimen-level Rapid 第1文を共有できるのは、次がすべて一致する場合だけとする。
+   - same clinicalDomain
+   - same groupKey
+   - same transition
+   - same outcome
+   - regimen-level realization
+7. drug-specific Rapid sentence は、文面が同一でも node-specific のままとし共有しない。
+8. shared regimen sentence が非連続 node に存在しても、node を移動して隣接させない。stable node order を優先し、最初の shared sentence だけを出力し、後続 node では shared 第1文だけを抑制する。
+9. 各 node の remainder / addon は、その node の stable position に保持する。
+10. shared regimen context 内で remainder も完全一致する場合に限り、remainder を1回だけ realize してよい。これは regimen-level semantic sharing 内部だけの限定 rule であり、generic S line dedupe へ一般化しない。
+11. 既存の non-Rapid / generic full-block exact dedupe は今回変更しない。
+12. transition taxonomy / outcome taxonomy / RapidState / eligibility / canonical JSON / bridge / O・A・P / scenario medical content は変更しない。
+
+**Unit 付随判断（Unit「Rapid v2 composition + realization hardening」に限定）**
+
+- **`rapidV2Register` の付与範囲**: composition 用の scenario register snapshot（`MergedBlock.rapidV2Register`）は、Rapid v2 pilot module かつ Rapid-capable scenario の block にだけ付与する。Rapid を使用できない scenario に将来用 metadata を持たせない。
+- **Decision grouping fallback safety の後継 contract**: 旧 source contract「`lib/buildSoap.ts` 全体に Rapid 参照が無い」（`tests/decisionFallbackSafety.test.ts` B4）は本 Decision と両立しないため、元の安全意図を保存する後継 contract へ置き換える。後継 contract は、legacy / non-Rapid の `buildNarrativeS`（decision fallback 経路を含む）を Rapid-aware にしないこと、decision fallback 経路に Rapid-specific な条件分岐を入れないこと、非 Rapid / legacy v1 の既存出力契約を維持することを検証する。Rapid v2 realization を `lib/buildSoap.ts` の外へ移す必要はなく、composition layer に置いてよい。
+- **Unit 3A parity contract**: `tests/nodeSnapshotUnit3A.test.ts` T-3A の oracle は、上記 `rapidV2Register` の追加だけを明示的な許容差分とする後継 contract へ更新する。非 Rapid-v2 / 非 capable 経路は従来 output と完全一致とし、それ以外の field 差分は 0 とする。
+- **`RAPID_CAPABLE_S_CONTRACT` validator の scope**: 対象は Rapid v2 pilot allowlist 内の Rapid-capable scenario に限定し、corpus 全体へは有効化しない。2026-09-14 の実測では全 35 module の Rapid-capable 170 scenario（うち pilot 3 module 内は 15 scenario）で契約違反 0 件であったが、これは将来の global promotion 判断の evidence として記録するにとどめ、runtime / validator contract を今 global 化する根拠にはしない。validator scope は Rapid v2 の global promotion 判断時に改めて判断する。
 
 ---
 

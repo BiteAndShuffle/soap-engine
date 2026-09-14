@@ -70,9 +70,15 @@
  *   34)  template.reservedHandlingTags の各タグが、いずれかの brandCatalog[].handlingTags に
  *        既に存在していないこと（WARNING）。既にブランドが保持しているタグを予約タグとして
  *        宣言する必要はなく、宣言が古くなっている可能性を示す
+ *   （番号なし）Rapid v2 pilot module（rapidProfileOf === 'v2'）の Rapid-capable scenario の
+ *        authored S が、Rapid v2 の第1文置換・multi-node 合成の
+ *        前提（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
+ *        2行目以降に残余あり）を満たすこと（WARNING / Design Rule。RAPID_CAPABLE_S_CONTRACT）
  */
 
 import type { ModuleData, Scenario } from './types'
+import { isScenarioSReplacementCapable } from './isSReplacementEligible'
+import { rapidProfileOf, registerOf, verbForRoute } from './rapidV2'
 
 // ─────────────────────────────────────────────────────────────
 // エラー型
@@ -123,6 +129,7 @@ export type ModuleValidationErrorCode =
   | 'DISPLAY_GENERIC_NAME_SALT_COPY'  // genericName が塩類名を含み、displayGenericName と完全一致（旧コピーパターン）（ERROR）
   | 'RESERVED_TAG_UNUSED'             // template.reservedHandlingTags のタグが scenario/addon の requiredTags で一度も使用されていない（警告）
   | 'RESERVED_TAG_REACHABLE'          // template.reservedHandlingTags のタグが既にいずれかの brandCatalog[].handlingTags に存在する（警告）
+  | 'RAPID_CAPABLE_S_CONTRACT'        // Rapid-capable scenario の authored S が Rapid v2 の第1文置換前提（1行目・主語・drug.route 由来動詞・残余行）を満たさない（警告）
 
 export interface ModuleValidationError {
   code: ModuleValidationErrorCode
@@ -1117,6 +1124,30 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
           code: 'SIDE_EFFECT_PRESENCE_INVALID',
           detail: `scenarios["${scId}"].sideEffectPresence = "${sep}" は有効値ではありません（有効値: ${[...VALID_SIDE_EFFECT_PRESENCE].join(' / ')}）`,
           isWarning: false,
+        })
+      }
+    }
+  }
+
+  // Rapid-capable scenario の authored S 契約（WARNING / Design Rule。OD-RAPID-ROUTE-VERB-1 / OD-RAPID-COMPOSITION-1）
+  //   Rapid v2 は S の第1文を置換し、2行目以降を Node 固有の残余として合成する。その前提となる
+  //   authored 形（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
+  //   2行目以降に残余あり）を確認する。表現の一致を求める Design Rule のため ERROR にしない
+  //   （docs/VALIDATOR_STANDARD.md §2・§5）。
+  //   対象は Rapid v2 pilot allowlist 内の module に限定する（corpus 全体へは有効化しない。
+  //   scope は global promotion 判断時に改めて判断する）。
+  if (Array.isArray(scenarios) && rapidProfileOf(obj as unknown as ModuleData) === 'v2') {
+    const rapidVerb = verbForRoute((obj?.drug as Record<string, unknown> | undefined)?.route as string | undefined)
+    for (const sc of scenarios as Scenario[]) {
+      if (!isScenarioSReplacementCapable(sc)) continue
+      const subject = registerOf(sc) === 'regimen' ? '薬' : '{{drug_subject}}'
+      const expectedFirst = `${subject}を${rapidVerb}して症状は落ち着いている。`
+      const lines = String(sc.S ?? '').split('\n')
+      if (lines[0] !== expectedFirst || lines.slice(1).join('').trim() === '') {
+        errors.push({
+          code: 'RAPID_CAPABLE_S_CONTRACT',
+          detail: `scenarios["${String(sc.id ?? '(unknown)')}"] は Rapid-capable ですが、S の1行目が "${expectedFirst}" ではない、または2行目以降の残余がありません（実際の1行目: "${lines[0]}"）`,
+          isWarning: true,
         })
       }
     }

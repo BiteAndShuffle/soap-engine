@@ -101,7 +101,8 @@ function assertRapidAxesCoverProduction(): void {
  * OD-RAPID-H1-PILOT-1 → 限定 multi-module pilot）は v1 の5 relation も
  * v2 の完成文テーブルで実現するため、v1 module と同じ oracle をそのまま corpus
  * 全体へ適用することはできない。`verbOf(mod)` は Do（continued_do）の
- * drug-specific realization にのみ影響する（§5 route verb 差分）。
+ * realization（drug-specific / regimen-level の双方）の動詞を canonical `drug.route` から
+ * 解決する（OD-RAPID-ROUTE-VERB-1）。
  */
 function expectedFirstSentenceOf(
   mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition, drugName: string,

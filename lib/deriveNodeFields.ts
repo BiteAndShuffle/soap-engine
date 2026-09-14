@@ -52,6 +52,7 @@ import {
   replaceSFirstSentence,
 } from './rapidSentence'
 import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from './rapidV2'
+import { isScenarioSReplacementCapable } from './isSReplacementEligible'
 
 /**
  * buildNodeFields の結果へ Rapid 先頭文を重ねる（rapid === null なら素通し）。
@@ -77,8 +78,8 @@ import { rapidProfileOf, registerOf, verbOf, buildV2FirstSentence } from './rapi
  * `lib/rapidV2.ts` の allowlist で保護された module でのみ state に入り得る
  * （書き込みガードは DashboardClient.tsx 側にある）。
  *
- * `verbOf(mod)` は Do（continued_do）の drug-specific realization にのみ影響する
- * route verb（使用/服用）を返す（§5 route verb 差分。pilot限定の中央設定）。
+ * `verbOf(mod)` は Do（continued_do）の realization（drug-specific / regimen-level の双方）に
+ * 用いる動詞（使用/服用）を canonical `drug.route` から返す（OD-RAPID-ROUTE-VERB-1）。
  */
 function withRapidFirstSentence(
   fields: SoapFields,
@@ -167,6 +168,8 @@ export type NodeBlockCore = {
   closingBehavior: 'dedupe_or_last' | 'append_all' | undefined
   groupKey:        string | undefined
   clinicalDomain:  string | undefined
+  /** Rapid v2 pilot module かつ Rapid-capable scenario のときだけ存在する scenario の register（OD-RAPID-COMPOSITION-1） */
+  rapidV2Register?: 'drug' | 'regimen'
 }
 
 // MergedBlock 側のフィールドが増減した場合に tsc で検出するための drift guard。
@@ -222,5 +225,8 @@ export function deriveNodeBlockCore(
     closingBehavior,
     groupKey,
     clinicalDomain,
+    ...(rapidProfileOf(mod) === 'v2' && isScenarioSReplacementCapable(scenario)
+      ? { rapidV2Register: registerOf(scenario) }
+      : {}),
   }
 }

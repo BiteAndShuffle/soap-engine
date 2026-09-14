@@ -1,7 +1,8 @@
 /**
  * rapidV2.ts — Rapid v2（H1 Reference Implementation → 限定 multi-module pilot）専用ロジック
  *
- * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1。
+ * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1・
+ * OD-RAPID-MULTI-PILOT-1・OD-RAPID-ROUTE-VERB-1・OD-RAPID-COMPOSITION-1。
  *
  * ## 位置づけ（重要）
  *
@@ -50,23 +51,29 @@
  * v1 の挙動・audit は変更しない — v2 の realization 関数が単にこの field を
  * 引数に取らないことで「参照しない」を構造的に保証する。
  *
- * ## route verb 差分（限定 multi-module pilot で追加。§5）
+ * ## Do の動詞（OD-RAPID-ROUTE-VERB-1）
  *
- * Do transition の drug-specific realization だけが動詞（使用/服用）を含む。
- * 他5 transition（追加/変更/処方整理/増量/減量）は元々動詞を含まない文型のため
- * 無関係。verb は `RAPID_V2_VERB_BY_MODULE`（本ファイル内の1点）で
- * moduleId → verb を決定論的に引く。**canonical / bridge へ
- * `administrationVerb` 等の新 field は追加しない**（pilot 限定の中央設定）。
+ * Do（`continued_do`）の realization だけが動詞（使用/服用）を含む（他5 transition は
+ * 動詞を含まない文型）。動詞は既存 canonical `drug.route` から `verbForRoute` で
+ * 決定論的に解決する（`oral` → 服用、それ以外の現行 route → 使用）。drug-register /
+ * regimen-register の双方で同じ動詞を用いる。route / administration metadata の
+ * 新設・再設計ではない（`administrationVerb` 等の新 field は追加しない）。
+ *
+ * ## multi-node S 合成（OD-RAPID-COMPOSITION-1）
+ *
+ * `rapidV2CompositionOf` が合成時に node から semantic state を導出し、`lib/buildSoap.ts`
+ * の S 合成がそれを使って Rapid v2 block を text-derived bucketing から除外する
+ * （stable node order・regimen-level 第1文の限定的共有化）。
  */
 
-import type { ModuleData, Scenario } from './types'
+import type { ComposeNode, ModuleData, Scenario } from './types'
 import type { SCondition } from './rapidSentence'
 import type { RapidTransitionV2 } from './rapidState'
 
 export type RapidProfile = 'v1' | 'v2'
 
 /**
- * Rapid v2 pilot の対象 module allowlist。
+ * Rapid v2 pilot の対象 module allowlist（OD-RAPID-MULTI-PILOT-1）。
  *
  * H1 pilot（Human 評価通過）に続き、内服（`dm_dpp4_oral`）・注射
  * （`dm_insulin_rapid_analog`）を追加した限定 multi-module pilot。
@@ -86,24 +93,20 @@ export function rapidProfileOf(mod: ModuleData): RapidProfile {
   return RAPID_V2_MODULE_IDS.has(mod.moduleId) ? 'v2' : 'v1'
 }
 
-/** Do transition の drug-specific realization に使う動詞（pilot限定・2値）。 */
+/** Do transition の realization に使う動詞（2値）。 */
 export type Verb = '使用' | '服用'
 
 /**
- * pilot限定の中央 verb 設定（moduleId → verb）。未登録 module は既定値 '使用'。
- *
- * H1点眼・ノボラピッド（注射）は Default S でも「使用」を用いており明示登録は
- * 不要（既定値のまま）。トラゼンタ（内服）のみ Default S が「服用」であり、
- * Rapid realization もそれに合わせる。canonical の `{{drug_subject}}を服用して…`
- * （bridge由来の Default S）と齟齬が出ないようにするための pilot限定の対応表。
+ * canonical `drug.route` から Do の動詞を決定論的に解決する（OD-RAPID-ROUTE-VERB-1）。
+ * `oral` → 服用、それ以外の現行 route（injection / ophthalmic / topical）→ 使用。
  */
-const RAPID_V2_VERB_BY_MODULE: ReadonlyMap<string, Verb> = new Map([
-  ['dm_dpp4_oral', '服用'],
-])
+export function verbForRoute(route: string | undefined): Verb {
+  return route === 'oral' ? '服用' : '使用'
+}
 
-/** module の Do transition 用 verb を返す（唯一の判定点）。 */
+/** module の Do 用動詞を返す（唯一の判定点）。 */
 export function verbOf(mod: ModuleData): Verb {
-  return RAPID_V2_VERB_BY_MODULE.get(mod.moduleId) ?? '使用'
+  return verbForRoute(mod.drug?.route)
 }
 
 /**
@@ -144,17 +147,16 @@ export function registerOf(scenario: Scenario): Register {
   return scenario.scenarioType === 'adherence' ? 'regimen' : 'drug'
 }
 
-type SentenceTable = Record<RapidTransitionV2, Record<SCondition, string>>
 /** continued_do（Do）は動詞（使用/服用）で表が分かれるため、他5 transitionとは別の型・別テーブルで持つ。 */
 type NonDoTransition = Exclude<RapidTransitionV2, 'continued_do'>
 type DrugSentenceTable = Record<NonDoTransition, Record<SCondition, (drug: string) => string>>
+type RegimenSentenceTable = Record<NonDoTransition, Record<SCondition, string>>
 
 /**
- * Do（continued_do）の drug-specific realization。動詞（使用/服用）で表が分かれる
- * 唯一の transition（§5 route verb 差分）。他5 transitionは動詞を含まない文型のため
- * verb分岐が不要（DRUG_SENTENCES 側にまとめる）。
+ * Do（continued_do）の realization。動詞（使用/服用）で表が分かれる唯一の transition。
+ * drug register では drugName、regimen register では「薬」を主語にして同じ表を使う。
  */
-const DO_SENTENCES_BY_VERB: Record<Verb, Record<SCondition, (drug: string) => string>> = {
+const DO_SENTENCES_BY_VERB: Record<Verb, Record<SCondition, (subject: string) => string>> = {
   使用: {
     stable:       d => `${d}を使用して症状は落ち着いている。`,
     unchanged:    d => `${d}を使用して症状は変わりない。`,
@@ -213,16 +215,11 @@ const DRUG_SENTENCES: DrugSentenceTable = {
 }
 
 /**
- * regimen-level realization（`cp_good` 等の adherence scenario）。
+ * regimen-level realization（`cp_good` 等の adherence scenario。continued_do 以外の5 transition）。
  * 薬剤名を含めない（コンプライアンスは処方全体・服薬行動全体を評価するため）。
+ * Do は DO_SENTENCES_BY_VERB を主語「薬」で使う。
  */
-const REGIMEN_SENTENCES: SentenceTable = {
-  continued_do: {
-    stable:       '薬を使用して症状は落ち着いている。',
-    unchanged:    '薬を使用して症状は変わりない。',
-    improved:     '薬を使用して症状は良くなってきた。',
-    not_improved: '薬を使用しているが症状の改善は乏しい。',
-  },
+const REGIMEN_SENTENCES: RegimenSentenceTable = {
   new_addition: {
     stable:       '前回の薬剤追加後も症状は落ち着いている。',
     unchanged:    '前回の薬剤追加後も症状は変わりない。',
@@ -258,25 +255,47 @@ const REGIMEN_SENTENCES: SentenceTable = {
 /**
  * v2 の S先頭文を生成する（テーブル参照のみ。prefix+suffix合成をしない）。
  *
- * `register === 'regimen'` のとき drugName・verb は使用しない（薬剤名を Rapid 文へ
- * 入れない。§7: compliance は route verb を薬剤別に変えない）。
- * `register === 'drug'` で drugName が空の場合は v1 の generic fallback（「薬」）と
- * 同じ考え方で暗黙の主語を補う（新しい fallback 設計は行わない）。
- *
- * `verb` は continued_do（Do）の drug-specific realization にのみ影響する
- * （§5 route verb 差分。他5 transitionは動詞を含まない文型のため無関係）。
- * 省略時は '使用'（H1・ノボラピッド等、既定値で正しい module の呼び出し側で
- * 明示指定を省略できるようにするための default であり、新たな fallback 設計では
- * ない — `verbOf(mod)` が唯一の決定点である）。
+ * - Do は `verb`（`verbOf(mod)` が canonical `drug.route` から解決）で realize する。
+ *   regimen register では主語を「薬」、drug register では drugName を主語にする。
+ * - Do 以外の `register === 'regimen'` は薬剤名を含まない regimen-level 文を返す。
+ * - `register === 'drug'` で drugName が空の場合は v1 の generic fallback（「薬」）と
+ *   同じ考え方で暗黙の主語を補う（新しい fallback 設計は行わない）。
  */
 export function buildV2FirstSentence(
   transition: RapidTransitionV2,
   outcome: SCondition,
   register: Register,
   drugName: string | undefined,
-  verb: Verb = '使用',
+  verb: Verb,
 ): string {
+  if (transition === 'continued_do') {
+    return DO_SENTENCES_BY_VERB[verb][outcome](register === 'regimen' ? '薬' : (drugName || '薬'))
+  }
   if (register === 'regimen') return REGIMEN_SENTENCES[transition][outcome]
-  if (transition === 'continued_do') return DO_SENTENCES_BY_VERB[verb][outcome](drugName || '薬')
   return DRUG_SENTENCES[transition][outcome](drugName || '薬')
+}
+
+/**
+ * multi-node S 合成用の Rapid v2 semantic state（OD-RAPID-COMPOSITION-1）。
+ * 合成時に `rapidV2CompositionOf` が node から導出する。永続化しない。
+ */
+export type RapidV2Composition = {
+  transition: RapidTransitionV2
+  outcome: SCondition
+  /** regimen-level realization（regimen register、または regimen_reduced）か */
+  regimenLevel: boolean
+}
+
+/**
+ * node を S 合成へ渡す時点で Rapid v2 composition state を導出する。
+ *
+ * `block.rapidV2Register`（rebuild 時に v2 module の Rapid-capable scenario でのみ書かれる scenario 由来の値）と
+ * `node.rapid`（live state）が揃うときだけ返す。rapid は block ではなく node から読むため、
+ * block を spread したまま rapid だけを null にする経路でも stale にならない。
+ */
+export function rapidV2CompositionOf(node: ComposeNode): RapidV2Composition | undefined {
+  const register = node.block.rapidV2Register
+  if (register === undefined || node.rapid === null) return undefined
+  const { previousEvent: transition, currentOutcome: outcome } = node.rapid
+  return { transition, outcome, regimenLevel: register === 'regimen' || transition === 'regimen_reduced' }
 }

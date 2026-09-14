@@ -47,7 +47,7 @@ import {
   isSameRapid,
   nextRapidStateOnScenarioChange,
 } from '../../lib/rapidState'
-import { rapidProfileOf } from '../../lib/rapidV2'
+import { rapidProfileOf, rapidV2CompositionOf } from '../../lib/rapidV2'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
 import { PRIMARY_NODE_ID, rebuildPrimary, rebuildNode } from '../../lib/primaryNode'
 import ComposeNodeBar from './ComposeNodeBar'
@@ -144,13 +144,14 @@ function computeDisplayFields(
   const confirmedNodes = composeNodes.filter(n => n.scenarioId !== '' && n.scenarioId != null)
   if (confirmedNodes.length === 0) return { ...primaryNode.block.fields }
   return mergeBlocks(
-    confirmedNodes.map(n => n.block),
+    confirmedNodes.map(n => ({ ...n.block, rapidV2: rapidV2CompositionOf(n) })),
     primaryNode.block.fields,
     primaryNode.block.templateLabel,
     primaryNode.block.closingText,
     undefined,           // currentDomain（旧引数: 未使用のまま維持）
     primaryNode.block.groupKey,
     primaryNode.block.clinicalDomain,
+    rapidV2CompositionOf(primaryNode),
   )
 }
 

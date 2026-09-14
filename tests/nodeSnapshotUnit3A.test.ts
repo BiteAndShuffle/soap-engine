@@ -8,7 +8,10 @@
  * 本ファイルは Unit 3A が守る契約を検証する:
  *   1. parity — 旧経路（buildNodeFields + derivePersonaGuard + scenario から直接組み立てた
  *      block メタデータ）と新 helper（deriveNodeBlockCore）が、NodeBlockCore の 8 フィールド
- *      全体で deepStrictEqual に一致する（behavior change = 0）
+ *      全体で deepStrictEqual に一致する（behavior change = 0）。
+ *      後継（OD-RAPID-COMPOSITION-1 Unit 付随判断）: Rapid v2 pilot module かつ Rapid-capable
+ *      scenario のときだけ rapidV2Register（= registerOf(scenario)）1 key の追加を明示的に許容し、
+ *      それ以外の経路・field は旧経路と完全一致を要求する
  *   2. deriveRawFields との同値 — body factoring（withRapidFirstSentence）が
  *      deriveRawFields を壊していないこと
  *   3. D-2 invariant — non-null RapidState を production helper（deriveNodeBlockCore）へ
@@ -119,35 +122,57 @@ function assertFieldsEqual(a: SoapFields, b: SoapFields, msg: string): void {
 // A. parity — 旧経路と deriveNodeBlockCore の Node snapshot 全体比較
 // ═══════════════════════════════════════════════════════════════
 
-describe('A. deriveNodeBlockCore は旧 secondary Node 経路と 8 フィールド全体で一致する', () => {
+/**
+ * 旧経路 oracle に、承認済みの差分だけを明示的に加えた期待値
+ * （OD-RAPID-COMPOSITION-1 Unit 付随判断。T-3A 後継 contract）。
+ *
+ * 許容する差分は「Rapid v2 pilot module かつ Rapid-capable scenario のときの
+ * rapidV2Register（= production registerOf(scenario)）1 key の追加」のみ。
+ * それ以外（非 Rapid-v2 module・非 capable scenario）は旧経路 oracle そのもの。
+ * deepStrictEqual で比較するため、許容 key 以外の field 差分・key の過不足は検出される。
+ */
+function expectedNodeBlockCore(
+  sc: Scenario, mod: ModuleData, addonIds: string[], drugName: string,
+): { expected: NodeBlockCore; allowedDiff: boolean } {
+  const old = oldPathNodeBlockCore(sc, mod, addonIds, drugName)
+  const allowedDiff = rapidProfileOf(mod) === 'v2' && isScenarioSReplacementCapable(sc)
+  return { expected: allowedDiff ? { ...old, rapidV2Register: registerOf(sc) } : old, allowedDiff }
+}
+
+describe('A. deriveNodeBlockCore は旧 secondary Node 経路と 8 フィールド全体で一致する（承認済み差分: Rapid v2 capable scenario の rapidV2Register のみ）', () => {
   test('T-3A-1: 全モジュール × 全 scenario × addon なし（rapid=null）', () => {
-    let checked = 0
+    let exact = 0, allowed = 0, v2NonCapable = 0
     for (const { mod, sc } of allScenarios()) {
       const actual = deriveNodeBlockCore(sc, mod, [], null, DRUG)
-      const expected = oldPathNodeBlockCore(sc, mod, [], DRUG)
+      const { expected, allowedDiff } = expectedNodeBlockCore(sc, mod, [], DRUG)
       assert.deepEqual(
         actual, expected,
         `mismatch: module=${mod.moduleId} scenario=${sc.id}`,
       )
-      checked++
+      if (allowedDiff) allowed++
+      else { exact++; if (rapidProfileOf(mod) === 'v2') v2NonCapable++ }
     }
-    assert.ok(checked > 0, 'scenario が 1 件も見つからなかった')
+    assert.ok(exact > 0, '旧経路と完全一致すべき scenario が 1 件も見つからなかった')
+    assert.ok(allowed > 0, '許容差分の対象（Rapid v2 capable scenario）が 1 件も見つからなかった')
+    assert.ok(v2NonCapable > 0, 'Rapid v2 pilot module の非 capable scenario が無い（付与範囲限定の検証が vacuous）')
   })
 
   test('T-3A-2: addon あり（各 scenario の addon キーを最大 2 件選択）でも一致する', () => {
-    let checked = 0
+    let exact = 0, allowed = 0
     for (const { mod, sc } of allScenarios()) {
       const addonIds = addonKeysOf(sc).slice(0, 2)
       if (addonIds.length === 0) continue
       const actual = deriveNodeBlockCore(sc, mod, addonIds, null, DRUG)
-      const expected = oldPathNodeBlockCore(sc, mod, addonIds, DRUG)
+      const { expected, allowedDiff } = expectedNodeBlockCore(sc, mod, addonIds, DRUG)
       assert.deepEqual(
         actual, expected,
         `mismatch: module=${mod.moduleId} scenario=${sc.id} addonIds=${addonIds.join(',')}`,
       )
-      checked++
+      if (allowedDiff) allowed++
+      else exact++
     }
-    assert.ok(checked > 0, 'addon を持つ scenario が 1 件も見つからなかった')
+    assert.ok(exact > 0, 'addon を持ち旧経路と完全一致すべき scenario が 1 件も見つからなかった')
+    assert.ok(allowed > 0, 'addon を持つ Rapid v2 capable scenario が 1 件も見つからなかった')
   })
 })
 

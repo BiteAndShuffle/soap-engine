@@ -1,5 +1,6 @@
 import type { Scenario, SoapFields, SoapKey, MergedBlock, AddonsData, ModuleData, ChipColor } from './types'
 import { resolveDrugSubject } from './drugSubject'
+import type { RapidV2Composition } from './rapidV2'
 
 // ─────────────────────────────────────────────────────────────
 // buildS 用エントリ型（S 欄の合成メタデータ付きテキスト）
@@ -11,7 +12,12 @@ interface SEntry {
   groupKey?: string
   /** composition.clinicalDomain スナップショット */
   clinicalDomain?: string
+  /** Rapid v2 composition state（OD-RAPID-COMPOSITION-1）。非 Rapid / legacy Rapid v1 block は undefined */
+  rapidV2?: RapidV2Composition
 }
+
+/** 合成入力 block。Rapid v2 composition state は合成時にのみ付与する（永続化しない） */
+export type ComposableBlock = MergedBlock & { rapidV2?: RapidV2Composition }
 
 // ─────────────────────────────────────────────────────────────
 // SOAP フィールド構築（新スキーマ: Scenario）
@@ -590,7 +596,7 @@ function normalizeAdminVerbForKey(text: string): string {
  *   - reason は最初に出現した統合グループの順を保持する
  *   - observation / decision / other は reason の後
  */
-function buildS(sEntries: SEntry[]): string {
+function buildNarrativeS(sEntries: SEntry[]): string {
   if (sEntries.length === 0) return ''
 
   // ① reason: groupKey × body 単位で主語統合する
@@ -867,6 +873,57 @@ function buildS(sEntries: SEntry[]): string {
   return result.join('\n')
 }
 
+/**
+ * 同一 clinicalDomain group の S を合成する（OD-RAPID-COMPOSITION-1）。
+ *
+ * Rapid v2 composition state を持たない entry（非 Rapid block・legacy Rapid v1 block）は
+ * 従来どおり buildNarrativeS の bucketing で realize する。Rapid v2 entry は text-derived
+ * bucketing に参加させず、その realize 結果の後ろへ stable node order で realize する。
+ */
+function buildS(sEntries: SEntry[]): string {
+  const narrative = buildNarrativeS(sEntries.filter(e => !e.rapidV2))
+  const rapidV2 = realizeRapidV2S(sEntries.filter(e => e.rapidV2))
+  return [narrative, rapidV2].filter(s => s !== '').join('\n')
+}
+
+/**
+ * Rapid v2 entry を stable node order（入力順）で realize する（OD-RAPID-COMPOSITION-1）。
+ *
+ * - drug-specific（regimenLevel=false）の entry は Node 単位でそのまま出力する（統合しない）。
+ * - regimen-level の第1文は、同一 groupKey × transition × outcome（clinicalDomain は group 単位）
+ *   の中で最初に現れた Node の位置で1回だけ realize し、後続 Node では第1文のみ抑制する。
+ *   後続 Node の remainder / addon S lines はその Node の位置に残す（隣接化のための移動はしない）。
+ * - 同一 shared group 内で remainder まで完全一致する後続 Node は1回にまとめる
+ *   （この dedupe は shared group 内に限定し、汎用の S line dedupe にしない）。
+ * - 第1文の文面が先行 Node と異なる場合（例: route 由来動詞の異なる Do）や groupKey 未設定の
+ *   entry は共有化しない。
+ */
+function realizeRapidV2S(entries: SEntry[]): string {
+  const shared = new Map<string, { first: string; remainders: Set<string> }>()
+  const out: string[] = []
+  for (const entry of entries) {
+    const text = entry.text.trim()
+    const state = entry.rapidV2!
+    const dot = text.indexOf('。')
+    const first = dot === -1 ? text : text.slice(0, dot + 1)
+    const remainder = dot === -1 ? '' : text.slice(dot + 1).replace(/^[\n\r\s]+/, '')
+    if (!state.regimenLevel || !entry.groupKey) { out.push(text); continue }
+
+    const key = `${entry.groupKey} ${state.transition} ${state.outcome}`
+    const group = shared.get(key)
+    if (!group) {
+      shared.set(key, { first, remainders: new Set([remainder]) })
+      out.push(text)
+      continue
+    }
+    if (group.first !== first) { out.push(text); continue }
+    if (group.remainders.has(remainder)) continue
+    group.remainders.add(remainder)
+    out.push(remainder)
+  }
+  return out.join('\n')
+}
+
 // ─────────────────────────────────────────────────────────────
 // P欄 合成
 // ─────────────────────────────────────────────────────────────
@@ -998,20 +1055,21 @@ function buildP(
  * currentClinicalDomain: 1剤目モジュールの composition.clinicalDomain（S合成のドメイン分離に使用）
  */
 export function mergeBlocks(
-  blocks: MergedBlock[],
+  blocks: ComposableBlock[],
   currentFields: SoapFields,
   currentLabel: string,
   currentClosingText?: string,
   currentDomain?: string,
   currentGroupKey?: string,
   currentClinicalDomain?: string,
+  currentRapidV2?: RapidV2Composition,
 ): SoapFields {
   const keys: SoapKey[] = ['S', 'O', 'A', 'P']
   const result: SoapFields = { S: '', O: '', A: '', P: '' }
 
   // currentFields（1剤目ベース）を先頭、blocks（2剤目以降）をその後に並べる
   // → 操作順（先に確定した薬剤が上）でSOAPが出力される
-  const all: Array<MergedBlock & { isCurrent?: boolean }> = [
+  const all: Array<ComposableBlock & { isCurrent?: boolean }> = [
     {
       id: 'current',
       templateLabel: currentLabel,
@@ -1020,6 +1078,7 @@ export function mergeBlocks(
       domain: currentDomain,
       groupKey: currentGroupKey,
       clinicalDomain: currentClinicalDomain,
+      rapidV2: currentRapidV2,
     },
     ...blocks,
   ]
@@ -1048,6 +1107,7 @@ export function mergeBlocks(
           text,
           groupKey: block.groupKey,
           clinicalDomain: block.clinicalDomain,
+          rapidV2: block.rapidV2,
         })
       }
 
