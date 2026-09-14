@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-14（Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-14（Q-RAPID1 へ Unit「Rapid v2 composition + realization hardening」の Human UI確認由来の Known UX observation（UX-1: Rapid未選択node表示順ズレ／UX-2: 同一module複数追加時のchip識別性。いずれも現時点では blocker ではなく実運用後に再評価）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -831,6 +831,26 @@ Rapid v2 S composition について以下を採用する。
 - **Decision grouping fallback safety の後継 contract**: 旧 source contract「`lib/buildSoap.ts` 全体に Rapid 参照が無い」（`tests/decisionFallbackSafety.test.ts` B4）は本 Decision と両立しないため、元の安全意図を保存する後継 contract へ置き換える。後継 contract は、legacy / non-Rapid の `buildNarrativeS`（decision fallback 経路を含む）を Rapid-aware にしないこと、decision fallback 経路に Rapid-specific な条件分岐を入れないこと、非 Rapid / legacy v1 の既存出力契約を維持することを検証する。Rapid v2 realization を `lib/buildSoap.ts` の外へ移す必要はなく、composition layer に置いてよい。
 - **Unit 3A parity contract**: `tests/nodeSnapshotUnit3A.test.ts` T-3A の oracle は、上記 `rapidV2Register` の追加だけを明示的な許容差分とする後継 contract へ更新する。非 Rapid-v2 / 非 capable 経路は従来 output と完全一致とし、それ以外の field 差分は 0 とする。
 - **`RAPID_CAPABLE_S_CONTRACT` validator の scope**: 対象は Rapid v2 pilot allowlist 内の Rapid-capable scenario に限定し、corpus 全体へは有効化しない。2026-09-14 の実測では全 35 module の Rapid-capable 170 scenario（うち pilot 3 module 内は 15 scenario）で契約違反 0 件であったが、これは将来の global promotion 判断の evidence として記録するにとどめ、runtime / validator contract を今 global 化する根拠にはしない。validator scope は Rapid v2 の global promotion 判断時に改めて判断する。
+
+**Known UX observation（2026-09-14。Unit「Rapid v2 composition + realization hardening」の Human UI確認〔port 3100〕で観測。ソースコード上の contract ではなく UI 上の観察記録であり、Rapid v2 の global promotion 判断とは独立に扱う）**
+
+3 module pilot の Human UI 確認で、以下 2 点を UX 観察として記録する。**いずれも現時点では blocker ではない。** 一方は OD-RAPID-COMPOSITION-1 が確定した挙動どおりの表示上の帰結、もう一方は pilot 対象が 3 module に限定されていることに起因する可能性があり、いずれも実運用開始後に実害の有無を見てから再評価する。
+
+**UX-1: Rapid 未選択 node が一時的に前へ出る表示上のズレ**
+
+node bar 上では A→B の順で node が並んでいても、A が Rapid v2 選択済み・B が Rapid 未選択の間は、OD-RAPID-COMPOSITION-1 の 3（non-Rapid block を先に realize し、その後に Rapid v2 block を stable node order で realize する）により、S 欄では一時的に B→A の順に見えることがある。B で Rapid を選択すると stable node order に戻る。
+
+現時点では OD-RAPID-COMPOSITION-1 が確定した挙動どおりであり、regression ではない。実運用開始後に、この一時的な表示順ズレが認知負荷や違和感として実害になるかを見てから、対応の要否・優先度を判断する。
+
+**UX-2: 同一 module 複数追加時の node chip 識別性**
+
+同じ module を compose へ複数回追加すると、node chip の表示ラベルが同一になり、位置と編集中マーク以外では見分けにくい。
+
+現状は pilot 対象が 3 module に限定されており、Human 確認で同一 module を重ねて検証した際に目立った可能性がある。実運用での同一 module 複数追加の頻度と、実際の識別困難さの実害を見てから、対応の要否・優先度を判断する。
+
+**Status**
+
+いずれも今回 Unit の scope 外であり blocker ではない。speculative な解決策・優先度・実装時期は未確定のまま記録するにとどめる。Rapid v2 の global promotion 判断とは切り離して扱う。
 
 ---
 
