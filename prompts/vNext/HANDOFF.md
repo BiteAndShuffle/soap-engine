@@ -989,7 +989,7 @@ local/static deployment の技術成立性・end-to-end 業務利用経路（電
 
 | ID | 内容 | 現状 |
 |---|---|---|
-| FAC-10 | Rapid / ADDON 操作が file:// 環境で動作するか | NOT YET VERIFIED |
+| FAC-10 | Rapid / ADDON 操作が file:// 環境で動作するか | **VERIFIED（2026-09-17）** |
 | FAC-13 | reload 後も正常に再表示されるか | NOT YET VERIFIED |
 | FAC-14 | console fatal error が 0 件か | NOT YET VERIFIED |
 | FAC-15 | Windows 実機の file:// 上で外部ネットワーク通信が 0 件か（コード上は外部通信処理自体が存在しないことを別途確認済み） | NOT YET VERIFIED |
@@ -1014,11 +1014,23 @@ DevTools Console で確認した範囲に赤い error なしを確認した。**
 status は引き続き NOT YET VERIFIED のまま維持する**。今回の確認は補足観察として記録するにとどめ、
 正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §5 に置く。
 
-**2026-09-17 追記（Rapid v2 global promotion）**: Owner Decision OD-RAPID-GLOBAL-1 により Rapid v2 は全 module の
+**2026-09-17 追記（Rapid v2 global promotion。[Historical / Superseded] 直後の「FAC-10 VERIFIED」により本段落の
+NOT YET VERIFIED 記述は解消済み）**: Owner Decision OD-RAPID-GLOBAL-1 により Rapid v2 は全 module の
 既定 profile となった（一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ）。**global promotion の
 実装完了は業務配布可能を意味しない。** global promotion 後の正式 static build を Windows company PC（または同等の
-制約環境）の file:// で確認するまで、上表の FAC-10 は NOT YET VERIFIED のまま業務配布前の release gate として残る
+制約環境）の file:// で確認するまで、FAC-10 は NOT YET VERIFIED のまま業務配布前の release gate として残る
 （正本: `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-GLOBAL-1 §6）。
+
+**FAC-10 VERIFIED（2026-09-17・Owner 実機確認）**: Rapid v2 global promotion commit `4238d88` を祖先に含む
+post-promotion cleanup 後の最新 clean HEAD `65b056c049f9b2e7d479f0d19f71033e1f2a3780` から生成した正式
+static build（`npm run build:static`。working tree は tracked 部分 clean、BUILD バッジが `65b056c` と一致することを
+build 直後に確認済み）を、Windows company PC 相当環境の file:// で Owner が実機確認した。既定 v2 module・一時除外
+module（`allergy_chemical_mediator_release_inhibitor_eye_drops`。旧 Rapid UI のまま v2 の6 transition UI になって
+いないことを画面で確認）・multi-node 合成・ADDON・SOAP 更新を含む主要操作を確認し、DevTools Console にも
+明確な赤い runtime error は見当たらなかった。**上表の FAC-10 status を VERIFIED とする。**
+
+FAC-13（reload 再表示）・FAC-14（console fatal error 0 件の悉皆確認）・FAC-15（外部ネットワーク通信 0 の実機確認）は
+今回の確認範囲に含まれず、引き続き NOT YET VERIFIED のまま上表のとおり保持する。
 
 ---
 

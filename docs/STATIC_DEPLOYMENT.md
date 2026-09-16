@@ -79,12 +79,12 @@ Owner による実機確認（`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATIO
 - 多剤を含む SOAP 生成
 - Express（先発 / GE）操作
 - Clipboard コピー（Notepad・実際の電子薬歴の入力欄への貼り付け）
+- Rapid / ADDON 操作（2026-09-17・FAC-10 VERIFIED。commit `65b056c` の正式 static build を Windows company PC 相当環境の file:// で実機確認。検証記録は `prompts/vNext/HANDOFF.md` §6）
 
 **現時点で未確認の項目**（NOT YET VERIFIED。追跡は `prompts/vNext/HANDOFF.md` §6）:
 
-- Rapid / ADDON 操作
 - reload 後の再表示
-- console fatal error の有無
+- console fatal error の有無（Rapid / ADDON 操作中に明確な赤エラーがないことは FAC-10 で確認済みだが、悉皆確認ではない）
 - 対象端末上での外部ネットワーク通信 0 の実機確認（コード上は外部通信処理自体が存在しないことを確認済み）
 
 ## 7. この deployment model の技術的前提
