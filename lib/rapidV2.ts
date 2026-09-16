@@ -1,24 +1,26 @@
 /**
- * rapidV2.ts — Rapid v2（H1 Reference Implementation → 限定 multi-module pilot）専用ロジック
+ * rapidV2.ts — Rapid v2（6 transition taxonomy）の profile 判定・realization・合成 state
  *
  * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1・
- * OD-RAPID-MULTI-PILOT-1・OD-RAPID-ROUTE-VERB-1・OD-RAPID-COMPOSITION-1。
+ * OD-RAPID-MULTI-PILOT-1・OD-RAPID-ROUTE-VERB-1・OD-RAPID-COMPOSITION-1・
+ * OD-RAPID-READINESS-1・OD-RAPID-GLOBAL-1。
  *
  * ## 位置づけ（重要）
  *
- * 本ファイルは、H1点眼（`allergy_h1_antihistamine_eye_drops`）の Reference
- * Implementation を基準点として維持したまま、内服1 module（`dm_dpp4_oral`）・
- * 注射1 module（`dm_insulin_rapid_analog`）を追加した **3 module 限定**の pilot
- * 実装である（H1 pilot Human 評価通過後の限定 multi-module pilot。global 化の
- * 決定ではない）。**Rapid v1（`lib/rapidSentence.ts`）は一切変更しない。**
- * v1 の5 relation（`new_addition` / `med_changed` / `dose_increased` /
- * `dose_decreased` / `continued_do`）× 4 condition の taxonomy・文言・test契約は
- * 本ファイルの追加によって一切影響を受けない。
+ * H1点眼（`allergy_h1_antihistamine_eye_drops`）の Reference Implementation →
+ * 3 module pilot → 6 module pilot（Human Review CLOSE）を経て、OD-RAPID-GLOBAL-1 により
+ * **Rapid v2 は全 module の既定 profile** となった（global promotion）。
+ * 明示的な一時除外（`RAPID_V1_TEMPORARY_EXCLUSIONS`）に登録された module だけが
+ * legacy Rapid v1 を使う。
  *
- * pilot対象module専用の分岐は本ファイルの `RAPID_V2_MODULE_IDS` allowlist の
- * 1点に閉じ込める。呼び出し側（deriveNodeFields.ts / DashboardClient.tsx /
- * ThirdPanel.tsx）は `rapidProfileOf(mod)` を通じてのみ v1/v2 を判定し、
- * module ID を直接分岐条件に使わない。
+ * **Rapid v1（`lib/rapidSentence.ts`）は削除しない。** 一時除外 module の realization と、
+ * global promotion の rollback 経路（`RAPID_DEFAULT_PROFILE` を `'v1'` へ戻す）として残す。
+ * v1 の5 relation × 4 condition の taxonomy・文言・test契約は本ファイルによって変更されない。
+ * v1 の Lifecycle 分類は `docs/DEVELOPMENT_STANDARD.md` §10.5 Classification Pending。
+ *
+ * v1/v2 の分岐は本ファイルの `rapidProfileOf` の1点に閉じ込める。呼び出し側
+ * （deriveNodeFields.ts / DashboardClient.tsx / ThirdPanel.tsx / moduleValidator.ts）は
+ * `rapidProfileOf(mod)` を通じてのみ v1/v2 を判定し、module ID を直接分岐条件に使わない。
  *
  * ## 6 transition taxonomy（v2 のみ。v1 の5 relation を再利用 + 1件追加）
  *
@@ -37,8 +39,13 @@
  *
  * DP-19 の設計方針（Rapid は処方差分の完全再現機能ではない）に従い、
  * prefix + suffix の汎用文法へ無理に押し込まず、Owner Decision で確定した
- * 完成文をそのままテーブルとして保持する（pilot 限定の明示的な選択。
- * 将来の全 module 一般化時にどう再設計するかは Q-RAPID1 の検証結果を待つ）。
+ * 完成文をそのままテーブルとして保持する（3 module / 6 module pilot の Human Review を経て
+ * global promotion でも同じ方式を維持した明示的な選択）。
+ *
+ * 文型は現在の bridge authored 表現（「〜して症状は落ち着いている。」）を前提とする。
+ * 「症状」以外の評価 subject を持つ Rapid-capable scenario が現れた場合の realization は
+ * 未決定（OD-RAPID-READINESS-1 §1 PENDING）であり、`tests/rapidCapableSubjectTripwire.test.ts`
+ * が review trigger として検出する。
  *
  * realization は scenario の評価単位で決定論的に分岐する
  * （DP-12 OD-COMPLIANCE-REALIZATION-1）:
@@ -73,42 +80,34 @@ import type { RapidTransitionV2 } from './rapidState'
 export type RapidProfile = 'v1' | 'v2'
 
 /**
- * Rapid v2 pilot の対象 module allowlist（OD-RAPID-MULTI-PILOT-1 → OD-RAPID-READINESS-1 §3）。
+ * Rapid の既定 profile（OD-RAPID-GLOBAL-1）。
  *
- * H1 pilot（Human 評価通過）に続き、内服（`dm_dpp4_oral`）・注射
- * （`dm_insulin_rapid_analog`）を追加した限定 multi-module pilot（3 module）に対し、
- * OD-RAPID-READINESS-1 §3 で承認された追加 pilot 3 module
- * （外用 `derm_heparinoid_moisturizer_ointment` / 心腎 `cardiorenal_sglt2_oral` /
- * 配合剤 `dm_dpp4_biguanide_combination_oral`）を加えた **6 module 限定**の pilot である
- * （global promotion ではない。Rapid v2 は引き続き Under Validation）。
- *
- * moduleId の prefix 一致・categoryPath・route・clinicalDomain からの推測は行わない
- * （decoy moduleId の巻き込みを防ぐため、Set による完全一致のみを判定に使う）。
- * pilot期間中は本6 module固定。他 module を追加する場合は Q-RAPID1 の
- * 再判断を要する。
- *
- * 追加 pilot で評価する軸（OD-RAPID-READINESS-1 §3）:
- *   - 外用: `display.adjustmentExpression`（使用回数が増えた／減った）が v2 realization では
- *     参照されず「増量／減量」へ抽象化されること自体を pilot 評価対象とする（§4 の Owner 条件）。
- *     canonical の `adjustmentExpression` の値は変更しない
- *   - 心腎: 現在 bridge に存在する「症状」表現のままで実務上許容できるか
- *     （clinical subject generalization の検証ではない。同 §1 で PENDING）
- *   - 配合剤: 配合剤名を drug-specific 主語として使うこと、追加／変更／増量表現
+ * 一時除外に登録されていない全 module（新規 module を含む）はこの profile を使う。
+ * global promotion を rollback する場合はこの値を `'v1'` へ戻す（v1 realization は削除していない）。
  */
-const RAPID_V2_MODULE_IDS: ReadonlySet<string> = new Set([
-  // 既存 3 module（OD-RAPID-MULTI-PILOT-1 §B）
-  'allergy_h1_antihistamine_eye_drops',
-  'dm_dpp4_oral',
-  'dm_insulin_rapid_analog',
-  // 追加 3 module（OD-RAPID-READINESS-1 §3）
-  'derm_heparinoid_moisturizer_ointment',
-  'cardiorenal_sglt2_oral',
-  'dm_dpp4_biguanide_combination_oral',
+const RAPID_DEFAULT_PROFILE: RapidProfile = 'v2'
+
+/**
+ * Rapid v2 global promotion からの**一時除外**（v1 を使う module。OD-RAPID-GLOBAL-1）。
+ *
+ * moduleId の完全一致のみで判定する（prefix・categoryPath・route・clinicalDomain からの推測はしない）。
+ * **永久除外ではない。** 登録・解除は Owner Decision を要し、理由と解除条件を併記する。
+ *
+ * - `allergy_chemical_mediator_release_inhibitor_eye_drops`: Owner が module の全面再構築を予定しているため。
+ *   再構築後の bridge / canonical を基準に Rapid v2 の適用を再判断する（OD-RAPID-READINESS-1 §6 から継続）
+ */
+const RAPID_V1_TEMPORARY_EXCLUSIONS: ReadonlySet<string> = new Set([
+  'allergy_chemical_mediator_release_inhibitor_eye_drops',
 ])
 
-/** module が Rapid v1 / v2 のどちらの realization を使うかを返す（唯一の判定点）。 */
+/**
+ * module が Rapid v1 / v2 のどちらの realization を使うかを返す（唯一の判定点）。
+ *
+ * runtime（deriveNodeFields / DashboardClient / ThirdPanel）と `RAPID_CAPABLE_S_CONTRACT` validator の
+ * scope はいずれも本関数を SSOT とし、自動的に同期する。
+ */
 export function rapidProfileOf(mod: ModuleData): RapidProfile {
-  return RAPID_V2_MODULE_IDS.has(mod.moduleId) ? 'v2' : 'v1'
+  return RAPID_V1_TEMPORARY_EXCLUSIONS.has(mod.moduleId) ? 'v1' : RAPID_DEFAULT_PROFILE
 }
 
 /** Do transition の realization に使う動詞（2値）。 */
@@ -207,7 +206,7 @@ const DRUG_SENTENCES: DrugSentenceTable = {
     not_improved: d => `前回から${d}に変更となったが症状の改善は乏しい。`,
   },
   // 処方整理は drug-specific realization でも薬剤名を入れない（限定 multi-module
-  // pilotで確定。§6・DP-19 OD-RAPID-SCOPE-1）。「前回、処方整理」は現在表示中の
+  // pilot で確定し global promotion でも維持。§6・DP-19 OD-RAPID-SCOPE-1）。「前回、処方整理」は現在表示中の
   // 薬剤が削除されたという意味ではなく前回処方全体の整理後の評価であるため、
   // 特定の1剤名を主語に立てると「その薬が整理された」と誤読され得る。
   // register（drug/regimen）に関わらず同一文になる（REGIMEN_SENTENCES.regimen_reduced

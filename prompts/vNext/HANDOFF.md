@@ -1014,6 +1014,12 @@ DevTools Console で確認した範囲に赤い error なしを確認した。**
 status は引き続き NOT YET VERIFIED のまま維持する**。今回の確認は補足観察として記録するにとどめ、
 正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §5 に置く。
 
+**2026-09-17 追記（Rapid v2 global promotion）**: Owner Decision OD-RAPID-GLOBAL-1 により Rapid v2 は全 module の
+既定 profile となった（一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ）。**global promotion の
+実装完了は業務配布可能を意味しない。** global promotion 後の正式 static build を Windows company PC（または同等の
+制約環境）の file:// で確認するまで、上表の FAC-10 は NOT YET VERIFIED のまま業務配布前の release gate として残る
+（正本: `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-GLOBAL-1 §6）。
+
 ---
 
 # 7. 絶対に守るルール

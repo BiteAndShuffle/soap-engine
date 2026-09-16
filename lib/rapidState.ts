@@ -23,8 +23,8 @@
 import type { SRelation, SCondition } from './rapidSentence'
 
 /**
- * Rapid v1 の previousEvent 軸（5種）に、Rapid v2（H1 Reference Implementation。
- * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1）が
+ * Rapid v1 の previousEvent 軸（5種）に、Rapid v2（H1 Reference Implementation を起点に
+ * global promotion。`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / OD-RAPID-H1-PILOT-1・OD-RAPID-GLOBAL-1）が
  * 追加する6件目の semantic を加えた型。
  *
  * `regimen_reduced`（前回、処方整理）: 前回処方から薬剤が外れた後の、現在時点での
@@ -32,8 +32,8 @@ import type { SRelation, SCondition } from './rapidSentence'
  * （`docs/DESIGN_PRINCIPLES.md` DP-19 OD-RAPID-SCOPE-1 が意味境界を確定済み）。
  * 削除された薬剤名・削除薬リストは保持しない。
  *
- * この6件目の値は `lib/rapidV2.ts` の allowlist（H1点眼 1 module 限定）でのみ
- * 選択可能である。v1 の5 relation・文言・taxonomy（本ファイル・rapidSentence.ts）は
+ * この6件目の値は `lib/rapidV2.ts` の `rapidProfileOf` が 'v2' を返す module でのみ
+ * 選択可能である（既定は v2。一時除外 module は v1）。v1 の5 relation・文言・taxonomy（本ファイル・rapidSentence.ts）は
  * 一切変更していない。
  */
 export type RapidTransitionV2 = SRelation | 'regimen_reduced'
@@ -46,9 +46,9 @@ export type RapidTransitionV2 = SRelation | 'regimen_reduced'
  * v1 の軸は previousEvent 5種 × currentOutcome 4種を維持する（RAPID-V2-02）。
  * v1 の5値・4値そのものへの追加・削除は禁止。
  *
- * previousEvent の型は `RapidTransitionV2`（v1の5値 + H1 pilot 限定の
- * `regimen_reduced`）である。H1点眼以外の module では `regimen_reduced` は
- * 到達不能（`lib/rapidV2.ts` の allowlist と、書き込み経路のガードにより保証）。
+ * previousEvent の型は `RapidTransitionV2`（v1の5値 + Rapid v2 限定の
+ * `regimen_reduced`）である。v1 profile の module では `regimen_reduced` は
+ * 到達不能（`lib/rapidV2.ts` の `rapidProfileOf` と、書き込み経路のガードにより保証）。
  */
 export type RapidState = {
   previousEvent:  RapidTransitionV2

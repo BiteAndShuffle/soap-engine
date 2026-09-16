@@ -38,7 +38,7 @@ import assert from 'node:assert/strict'
 import type { SoapFields, ModuleData, Scenario } from '../lib/types'
 import { buildNodeFields } from '../lib/buildSoap'
 import { deriveRawFields } from '../lib/deriveNodeFields'
-import { buildResolvedSFirstSentence } from '../lib/rapidSentence'
+import { buildV2FirstSentence, registerOf, verbOf } from '../lib/rapidV2'
 import { applyPersonaToFieldsWithGuard, type PersonaId } from '../lib/applyPersona'
 import { derivePersonaGuard, type PersonaGuard } from '../lib/personaGuard'
 import oralData from '../data/modules/dm_glp1ra_semaglutide_oral.json' assert { type: 'json' }
@@ -169,16 +169,18 @@ describe('④ Rapid S先頭文変更 → persona ON/OFF で S先頭文が維持�
 
     // production の derive をそのまま使う（RAPID-V2-20）。
     // handleSToggle の Rapid ON 分岐と同一の deriveRawFields 呼び出し。
+    // 本 module は Rapid v2 global promotion（OD-RAPID-GLOBAL-1）により v2 profile のため、
+    // 期待文は v2 realization から得る（本テストの主題は Rapid 後の先頭文が persona で保持されること）。
     const raw = deriveRawFields(
       scenario, oral, [], { previousEvent: 'new_addition', currentOutcome: 'stable' }, DRUG_NAME,
     )
-    const NEW_FIRST = buildResolvedSFirstSentence('new_addition', 'stable', DRUG_NAME)
+    const NEW_FIRST = buildV2FirstSentence('new_addition', 'stable', registerOf(scenario), DRUG_NAME, verbOf(oral))
     assert.ok(raw.S.startsWith(NEW_FIRST), '前提: raw の S 先頭文が更新されている')
 
     const onDisplay = derivePrimaryDisplayFields(raw, true, 'concise', guard)
     assert.ok(onDisplay.S.includes(DRUG_NAME), 'persona ON でも薬剤名（固有名詞）は保持される')
     assert.ok(
-      onDisplay.S.startsWith('前回から新しく') || onDisplay.S.includes('使用して'),
+      onDisplay.S.startsWith(`前回から${DRUG_NAME}が追加となり`),
       'persona ON でも S 先頭文の変更（新規追加パターン）が保持される',
     )
 

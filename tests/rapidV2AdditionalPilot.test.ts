@@ -5,13 +5,14 @@
  *
  * OD-RAPID-MULTI-PILOT-1 §B の3 module（H1点眼・トラゼンタ・ノボラピッド）に対し、
  * OD-RAPID-READINESS-1 §3 で承認された追加 pilot 3 module を加えた 6 module 限定 pilot の、
- * **追加 3 module 側の契約**を固定する（global promotion ではない）。
+ * **追加 3 module 側の契約**を固定する（本ファイル作成時点では global promotion ではなかった。
+ * その後 OD-RAPID-GLOBAL-1 で global promotion。profile 分布は `tests/rapidV2GlobalPromotion.test.ts`）。
  *
  *   - `derm_heparinoid_moisturizer_ointment`（topical / dermatology）
  *   - `cardiorenal_sglt2_oral`（oral / cardiorenal）
  *   - `dm_dpp4_biguanide_combination_oral`（oral / diabetes・配合剤）
  *
- * allowlist の exact set 契約は `tests/rapidV2MultiModulePilot.test.ts` A が持つ（本ファイルでは重複させない）。
+ * profile 分布（既定 v2・一時除外 exact set）の契約は `tests/rapidV2GlobalPromotion.test.ts` が持つ（本ファイルでは重複させない）。
  * H1 の Reference Baseline 契約は `tests/rapidV2H1Pilot.test.ts` が持つ。
  *
  * 本ファイルが固定するもの:
@@ -23,8 +24,8 @@
  *   D. 第1文のみ変更・残余 byte 保持・O/A/P/closing 不変・OFF byte 復元
  *   E. severity gate（severity 分岐 scenario は Rapid-capable ではない）
  *   F. multi-node 合成（cross-domain は regimen 文を共有しない／同一 domain は共有する）
- *   G. `RAPID_CAPABLE_S_CONTRACT` validator が追加 3 module でも 0 件
- *   H. 非 pilot module の Rapid 出力が v1 realization と一致し続けること（allowlist 拡張の非侵襲性）
+ *   G. `RAPID_CAPABLE_S_CONTRACT` validator が追加 3 module でも 0 件（scope は runtime v2 profile と同期）
+ *   H. v1 profile module（一時除外）の Rapid 出力が v1 realization と一致し続けること
  *
  * production 関数を直接 import する。mirror 実装は作らない（RAPID-V2-20 の踏襲）。
  *
@@ -108,7 +109,7 @@ const derive = (mod: ModuleData, sc: Scenario, rapid: RapidState, drug: string) 
 // ═══════════════════════════════════════════════════════════════
 
 describe('0. 追加 pilot 3 module の profile / capable / severity 実測', () => {
-  test('3 module とも v2（allowlist 追加済み）', () => {
+  test('3 module とも v2（pilot 検証済み。global promotion 後も v2）', () => {
     assert.equal(rapidProfileOf(DERM), 'v2')
     assert.equal(rapidProfileOf(CARDIORENAL), 'v2')
     assert.equal(rapidProfileOf(COMBINATION), 'v2')
@@ -307,13 +308,13 @@ describe('C. 外用の adjustmentExpression は v2 realization で参照され�
     }
   })
 
-  test('AE を持つ v1 module（点眼以外の外用ではない既存 module）は引き続き AE を使う（回帰確認）', () => {
-    const v1 = byId('dm_glp1ra_semaglutide_oral')
+  test('AE を持つ v1 profile module（一時除外）は引き続き AE を使う（回帰確認）', () => {
+    const v1 = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
     assert.equal(rapidProfileOf(v1), 'v1')
     const ae = v1.display?.adjustmentExpression
     assert.ok(ae)
     const sc = v1.scenarios.find(isScenarioSReplacementCapable)!
-    assert.ok(derive(v1, sc, R('dose_increased', 'stable'), 'リベルサス').S.includes(ae!.increasePast))
+    assert.ok(derive(v1, sc, R('dose_increased', 'stable'), 'ゼペリン点眼液').S.includes(ae!.increasePast))
   })
 })
 
@@ -450,7 +451,7 @@ describe('F. multi-node 合成: cross-domain は共有せず、同一 domain は
 })
 
 // ═══════════════════════════════════════════════════════════════
-// G. validator scope は allowlist へ追従するだけ
+// G. validator scope は runtime の Rapid v2 profile と同期する（OD-RAPID-GLOBAL-1）
 // ═══════════════════════════════════════════════════════════════
 
 describe('G. RAPID_CAPABLE_S_CONTRACT', () => {
@@ -460,11 +461,11 @@ describe('G. RAPID_CAPABLE_S_CONTRACT', () => {
     for (const mod of [DERM, CARDIORENAL, COMBINATION]) assert.deepEqual(contractErrors(mod), [], mod.moduleId)
   })
 
-  test('現行 corpus の全 module で検出 0 件（allowlist 追従のみ。global 化していない）', () => {
+  test('現行 corpus の全 module で検出 0 件（global promotion 後の v2 profile 全体が対象）', () => {
     for (const m of ALL_MODULES) assert.deepEqual(contractErrors(m), [], m.moduleId)
   })
 
-  test('非 pilot module は引き続き validator 対象外', () => {
+  test('v1 profile module（一時除外）は validator 対象外', () => {
     const v1 = ALL_MODULES.find(m => rapidProfileOf(m) === 'v1')!
     const clone = structuredClone(v1)
     const sc = clone.scenarios.find(isScenarioSReplacementCapable)!
@@ -474,10 +475,10 @@ describe('G. RAPID_CAPABLE_S_CONTRACT', () => {
 })
 
 // ═══════════════════════════════════════════════════════════════
-// H. 非 pilot module への非侵襲性
+// H. v1 profile module（一時除外）の v1 realization 維持
 // ═══════════════════════════════════════════════════════════════
 
-describe('H. 非 pilot module の Rapid 出力は v1 realization と一致し続ける', () => {
+describe('H. v1 profile module（一時除外）の Rapid 出力は v1 realization と一致し続ける', () => {
   test('全 v1 module × capable scenario × 5 relation × 4 outcome の第1文が v1 関数の出力と一致', () => {
     let checked = 0
     for (const mod of ALL_MODULES) {
@@ -494,6 +495,6 @@ describe('H. 非 pilot module の Rapid 出力は v1 realization と一致し続
         }
       }
     }
-    assert.ok(checked > 0, '非 pilot module の組合せを1件も検証していない')
+    assert.ok(checked > 0, 'v1 profile module の組合せを1件も検証していない')
   })
 })

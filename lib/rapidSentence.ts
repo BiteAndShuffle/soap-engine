@@ -12,6 +12,12 @@
  *
  * 本ファイルは React にも CSS にも依存しない純関数のみを持つ。
  * SoapEditor.tsx は後方互換のため本ファイルを re-export する。
+ *
+ * **Lifecycle（2026-09-17）**: Rapid v2 global promotion（Q-RAPID1 OD-RAPID-GLOBAL-1）後、
+ * 本ファイルの v1 realization（`buildSFirstSentence` / `buildResolvedSFirstSentence`）は既定経路ではなく、
+ * 一時除外 module と rollback 経路でのみ使われる。**削除・変更しない。**
+ * 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 Classification Pending GG-4（Legacy と確定していない）。
+ * v2 と共有する型・関数（`SCondition` / `SRelation` / `replaceSFirstSentence` 等）は GG-4 の対象外。
  */
 
 // ─────────────────────────────────────────────────────────────

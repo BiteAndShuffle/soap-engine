@@ -6,7 +6,8 @@
  * H1点眼（Reference Implementation。Human 評価通過）に続き、内服1 module
  * （`dm_dpp4_oral`。トラゼンタ = リナグリプチン）・注射1 module
  * （`dm_insulin_rapid_analog`。ノボラピッド = インスリンアスパルト）を追加した
- * 限定 multi-module pilot（3 module固定）の契約を固定する。
+ * 限定 multi-module pilot（3 module）の契約を固定する（その後 6 module pilot を経て
+ * OD-RAPID-GLOBAL-1 で global promotion。profile 分布は `tests/rapidV2GlobalPromotion.test.ts`）。
  *
  * H1 の Reference Baseline 契約自体は `tests/rapidV2H1Pilot.test.ts` が引き続き
  * 固定する（本ファイルでは重複させない）。本ファイルが新規に固定するのは:
@@ -14,7 +15,7 @@
  *   - severity gate — severity 分岐のある side_effect scenario が
  *     Rapid-capable と判定されないことの実測固定（第1文置換による
  *     clinical information 欠落の構造的な回避）
- *   - 2 module 追加後も allowlist が3 module に閉じていること
+ *   - pilot 検証済み module が global promotion 後も v2 であること
  *   - 3module間の multi-node 合成での state 独立性
  *
  * production 関数を直接 import する。mirror 実装は作らない（RAPID-V2-20 の踏襲）。
@@ -121,16 +122,18 @@ describe('0. トラゼンタ（dm_dpp4_oral）・ノボラピッド（dm_insulin
 })
 
 // ═══════════════════════════════════════════════════════════════
-// A. pilot allowlist は Owner 承認済みの exact set（6 module）
+// A. pilot 6 module は global promotion 後も v2（profile 分布の本体契約は GlobalPromotion test）
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Owner 承認済みの Rapid v2 pilot allowlist（exact set）。
+ * 6-module pilot（Human Review CLOSE）で検証された module（exact set）。
  *   既存3 module: OD-RAPID-MULTI-PILOT-1 §B
  *   追加3 module: OD-RAPID-READINESS-1 §3（外用 / 心腎 / 配合剤）
- * **件数だけを固定しない。** 承認外の module が混入した場合も FAIL させる。
+ * global promotion（OD-RAPID-GLOBAL-1）後は allowlist ではなく、既定 v2 の中で
+ * pilot 検証済みの Reference 群として扱う。profile 分布（一時除外の exact set・その他全 module が v2）の
+ * 契約本体は `tests/rapidV2GlobalPromotion.test.ts` が持つ。
  */
-const OWNER_APPROVED_RAPID_V2_MODULE_IDS = [
+const PILOT_VALIDATED_RAPID_V2_MODULE_IDS = [
   H1_MODULE_ID,
   TRAZENTA_MODULE_ID,
   NOVORAPID_MODULE_ID,
@@ -139,27 +142,20 @@ const OWNER_APPROVED_RAPID_V2_MODULE_IDS = [
   'dm_dpp4_biguanide_combination_oral',
 ] as const
 
-describe('A. pilot allowlist は Owner 承認済みの 6 module と完全一致する', () => {
-  test('承認済み 6 module はすべて v2 である', () => {
-    for (const moduleId of OWNER_APPROVED_RAPID_V2_MODULE_IDS) {
+/** Rapid v2 global promotion からの一時除外 module（OD-RAPID-GLOBAL-1。v1 profile の実例） */
+const V1_EXCLUDED_MODULE_ID = 'allergy_chemical_mediator_release_inhibitor_eye_drops'
+
+describe('A. pilot 検証済み 6 module は global promotion 後も v2 である', () => {
+  test('pilot 検証済み 6 module はすべて corpus に存在し v2 である', () => {
+    for (const moduleId of PILOT_VALIDATED_RAPID_V2_MODULE_IDS) {
       const mod = ALL_MODULES.find(m => m.moduleId === moduleId)
-      assert.ok(mod, `承認済み module ${moduleId} が corpus に存在しない`)
+      assert.ok(mod, `pilot 検証済み module ${moduleId} が corpus に存在しない`)
       assert.equal(rapidProfileOf(mod!), 'v2', `${moduleId} が v2 になっていない`)
     }
   })
 
-  test('承認外の module はすべて v1 のまま', () => {
-    const others = ALL_MODULES.filter(m => !OWNER_APPROVED_RAPID_V2_MODULE_IDS.includes(m.moduleId as never))
-    assert.ok(others.length > 0)
-    for (const mod of others) {
-      assert.equal(rapidProfileOf(mod), 'v1', `${mod.moduleId} が v1 でなくなっている（allowlist 逸脱）`)
-    }
-  })
-
-  test('v2 集合は承認済み exact set と一致し、ちょうど 6 module（件数合わせの別module混入も FAIL）', () => {
-    const v2Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v2').map(m => m.moduleId).sort()
-    assert.deepEqual(v2Modules, [...OWNER_APPROVED_RAPID_V2_MODULE_IDS].sort())
-    assert.equal(v2Modules.length, 6)
+  test('pilot 検証済み 6 module はいずれも一時除外に含まれない', () => {
+    assert.equal(PILOT_VALIDATED_RAPID_V2_MODULE_IDS.includes(V1_EXCLUDED_MODULE_ID as never), false)
   })
 })
 
@@ -516,10 +512,10 @@ describe('G. module / scenario 切替時の Rapid state 契約（3 module間）'
     assert.deepEqual(next, rapid)
   })
 
-  test('v2 module（トラゼンタ）→ v1 module: capable→capable でも register/verb は production の rapidProfileOf 判定で切り替わる', () => {
-    const GLP_MOD = ALL_MODULES.find(m => m.moduleId === 'dm_glp1ra_semaglutide_oral')!
-    const GLP_SC = GLP_MOD.scenarios.find(isScenarioSReplacementCapable)!
-    assert.equal(rapidProfileOf(GLP_MOD), 'v1')
+  test('v2 module（トラゼンタ）→ v1 module（一時除外）: capable→capable でも register/verb は production の rapidProfileOf 判定で切り替わる', () => {
+    const V1_MOD = ALL_MODULES.find(m => m.moduleId === V1_EXCLUDED_MODULE_ID)!
+    const V1_SC = V1_MOD.scenarios.find(isScenarioSReplacementCapable)!
+    assert.equal(rapidProfileOf(V1_MOD), 'v1')
 
     const trazentaDerived = deriveRawFields(
       scenarioOf(TRAZENTA_MOD, 'se_hypo_none'), TRAZENTA_MOD, [],
@@ -527,11 +523,11 @@ describe('G. module / scenario 切替時の Rapid state 契約（3 module間）'
     )
     assert.equal(trazentaDerived.S.split('\n')[0], `${TRAZENTA_DRUG}を服用して症状は落ち着いている。`)
 
-    const glpDerived = deriveRawFields(
-      GLP_SC, GLP_MOD, [],
-      { previousEvent: 'continued_do', currentOutcome: 'stable' }, 'リベルサス',
+    const v1Derived = deriveRawFields(
+      V1_SC, V1_MOD, [],
+      { previousEvent: 'continued_do', currentOutcome: 'stable' }, 'ゼペリン点眼液',
     )
-    assert.ok(glpDerived.S.split('\n')[0].includes('引き続き使用して'), 'v1 module の realization が v2 化していない（回帰）')
+    assert.ok(v1Derived.S.split('\n')[0].includes('引き続き使用して'), 'v1 module の realization が v2 化していない（回帰）')
   })
 
   test('capable → non-capable: state は null になる（module に依らない既存契約）', () => {

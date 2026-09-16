@@ -1,7 +1,7 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.7
-> **Last Updated:** 2026-09-12（検索エンジンユニット完了の反映のみ。Current Phase / Roadmap 自体は無変更）
+> **Version:** 2.8
+> **Last Updated:** 2026-09-17（§5 Rapid 行へ Rapid v2 global promotion〔OD-RAPID-GLOBAL-1〕の反映のみ。Current Phase / Roadmap 自体は無変更）
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
 > **Current Focus:** local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
 
@@ -249,7 +249,7 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 
 | 用語 | 意味 | 注意 |
 |---|---|---|
-| **Rapid** | 右パネル簡易操作（S先頭文・状態ボタン） | NLP生成ではない。単剤フラグ（副作用なし/CP良好）は2026-07-25（P2-F1）にdead code整理済み |
+| **Rapid** | 右パネル簡易操作（S先頭文・状態ボタン） | NLP生成ではない。単剤フラグ（副作用なし/CP良好）は2026-07-25（P2-F1）にdead code整理済み。S先頭文は **Rapid v2 が既定**（2026-09-17 global promotion。一時除外 module のみ legacy Rapid v1）。profile 区分は `docs/feature-glossary.md` §Rapid、判断記録は `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 |
 | **ADDON** | S/A/P への追加文操作 | P closing の前に挿入。closing は最後に1回のみ残す |
 | **Express** | 中央パネル高速薬剤選択フロー | |
 | **NLP生成** | 自然言語入力 → シナリオ推定（将来機能） | 現在UI未接続 |

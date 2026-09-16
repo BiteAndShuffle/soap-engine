@@ -49,6 +49,10 @@ const H1 = byId('allergy_h1_antihistamine_eye_drops')
 const TZ = byId('dm_dpp4_oral')
 const NR = byId('dm_insulin_rapid_analog')
 const GLP = byId('dm_glp1ra_semaglutide_oral')
+/** Rapid v2 global promotion からの一時除外 module（OD-RAPID-GLOBAL-1。legacy Rapid v1 profile の実例） */
+const V1X = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
+/** V1X と同一 clinicalDomain（allergy）の既定 v2 module。非 Rapid block の比較相手に使う */
+const H1_ORAL = byId('allergy_h1_antihistamine_second_gen_oral')
 
 function scenarioOf(mod: ModuleData, id: string): Scenario {
   const sc = mod.scenarios.find(s => s.id === id)
@@ -262,20 +266,24 @@ describe('E. 非 Rapid block・legacy Rapid v1 block の既存 bucketing は変�
     assert.deepEqual(lines(compose(v2, [plain]).S), [...lines(plain.block.fields.S), ...lines(v2.block.fields.S)])
   })
 
-  test('legacy Rapid v1 block は既存の text-derived bucketing に従う（変更対象外）', () => {
-    const plain = node('a', TZ, scenarioOf(TZ, 'se_hypo_none'), null, 'トラゼンタ')
-    const v1 = node('b', GLP, glpSc, R('med_changed', 'stable'), 'リベルサス')
+  test('legacy Rapid v1 block（一時除外 module）は既存の text-derived bucketing に従う（変更対象外）', () => {
+    const plain = node('a', H1_ORAL, H1_ORAL.scenarios.find(isScenarioSReplacementCapable)!, null, 'アレロック')
+    const v1 = node('b', V1X, V1X.scenarios.find(isScenarioSReplacementCapable)!, R('med_changed', 'stable'), 'ゼペリン点眼液')
+    assert.equal(rapidProfileOf(V1X), 'v1')
+    assert.equal(plain.block.clinicalDomain, v1.block.clinicalDomain, '前提: 同一 clinicalDomain で比較する')
     assert.equal(rapidV2CompositionOf(v1), undefined)
     assert.equal(compose(plain, [v1]).S, composeWithoutRapidV2(plain, [v1]).S)
     assert.ok(compose(plain, [v1]).S.startsWith(lines(v1.block.fields.S)[0]), 'legacy decision bucketing が失われている')
   })
 
-  test('非 pilot module 同士の合成は Rapid v2 state を渡さない合成と byte 一致（v1 Rapid 全組合せ + Rapid OFF）', () => {
-    const others = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v1' && m.composition?.clinicalDomain === 'diabetes').slice(0, 4)
+  test('v1 profile module（一時除外）同士の合成は Rapid v2 state を渡さない合成と byte 一致（v1 Rapid 全組合せ + Rapid OFF）', () => {
+    // global promotion 後の v1 profile は一時除外 module のみ。同一 module の異なる capable scenario 同士も対象にする
+    const v1Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v1')
     let checked = 0
-    for (const pm of others) for (const qm of others) {
-      if (pm === qm) continue
-      const ps = pm.scenarios.find(isScenarioSReplacementCapable)!, qs = qm.scenarios.find(isScenarioSReplacementCapable)!
+    for (const pm of v1Modules) for (const qm of v1Modules) {
+      const pCaps = pm.scenarios.filter(isScenarioSReplacementCapable), qCaps = qm.scenarios.filter(isScenarioSReplacementCapable)
+      const ps = pCaps[0], qs = pm === qm ? qCaps[1] : qCaps[0]
+      if (!ps || !qs) continue
       for (const rapid of [null, ...T5.map(t => R(t, 'stable'))]) {
         const p = node('p', pm, ps, rapid, 'A薬'), q = node('q', qm, qs, rapid, 'B薬')
         assert.deepEqual(compose(p, [q]), composeWithoutRapidV2(p, [q]), `${pm.moduleId} + ${qm.moduleId} ${JSON.stringify(rapid)}`)
@@ -317,8 +325,8 @@ describe('F. rapidV2CompositionOf は node.rapid と block.rapidV2Register が�
     assert.equal(rapidV2CompositionOf({ ...on, rapid: null }), undefined)
   })
 
-  test('非 v2 module の block は rapidV2Register を持たず、rapid があっても undefined', () => {
-    const v1 = node('a', GLP, GLP.scenarios.find(isScenarioSReplacementCapable)!, R('med_changed', 'stable'), 'リベルサス')
+  test('非 v2 module（一時除外）の block は rapidV2Register を持たず、rapid があっても undefined', () => {
+    const v1 = node('a', V1X, V1X.scenarios.find(isScenarioSReplacementCapable)!, R('med_changed', 'stable'), 'ゼペリン点眼液')
     assert.equal('rapidV2Register' in v1.block, false)
     assert.equal(rapidV2CompositionOf(v1), undefined)
   })
@@ -385,8 +393,8 @@ describe('H. RAPID_CAPABLE_S_CONTRACT', () => {
     assert.equal(contractErrors(withScenarioS('cp_good', '{{drug_subject}}を服用して症状は落ち着いている。\n飲み忘れなく服用している。')).length, 1)
   })
 
-  test('Rapid v2 pilot 外 module は対象外（validator scope は pilot allowlist 内に限定）', () => {
-    const clone = structuredClone(GLP)
+  test('v1 profile module（一時除外）は対象外（validator scope は runtime の v2 profile と同期。OD-RAPID-GLOBAL-1）', () => {
+    const clone = structuredClone(V1X)
     const sc = clone.scenarios.find(isScenarioSReplacementCapable)!
     sc.S = '任意の文。'
     assert.equal(rapidProfileOf(clone), 'v1')

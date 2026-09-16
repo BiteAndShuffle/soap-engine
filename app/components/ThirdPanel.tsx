@@ -333,11 +333,11 @@ interface ThirdPanelProps {
   onSAction: (relation: RapidTransitionV2, condition: SCondition) => void
   /**
    * Rapid v1 / v2 の realization profile（`lib/rapidV2.ts` の `rapidProfileOf` が
-   * 唯一の判定点。H1点眼 Reference Implementation 限定。Q-RAPID1 / OD-RAPID-H1-PILOT-1）。
-   * 省略時は 'v1'（既存挙動。v1 module では本 prop を渡さなくても現状のまま動く）。
+   * 唯一の判定点。既定は 'v2'。一時除外 module のみ 'v1'。Q-RAPID1 / OD-RAPID-GLOBAL-1）。
+   * 省略時は 'v1'（prop 未指定時の後方互換。production の DashboardClient は常に指定する）。
    * 'v2' のときのみ6 section（Do/追加/変更/処方整理/増量/減量）を表示し、
-   * `menuGroupLabelOverrides` は適用しない（scope外。既存の primary/secondary
-   * ラベル不整合の修正も本 pilot の対象外）。
+   * `menuGroupLabelOverrides` は適用しない（v2 は固定ラベル。既存の primary/secondary
+   * ラベル不整合の修正は scope 外）。
    */
   rapidProfile?: RapidProfile
   /** 合成薬剤追加検索クエリ */
@@ -835,10 +835,10 @@ export default function ThirdPanel({
           <div className={s.thirdPanelStickyBottom}>
             <div className={s.sActionHeading}>S 先頭文</div>
             {rapidProfile === 'v2' ? (
-              // ── Rapid v2（H1 Reference Implementation。Q-RAPID1 / OD-RAPID-H1-PILOT-1）──
+              // ── Rapid v2（既定 profile。Q-RAPID1 / OD-RAPID-GLOBAL-1）──
               // 6 section（Do/追加/変更/処方整理/増量/減量）× 4 outcome。
               // menuGroupLabelOverrides は適用しない（v1 の primary/secondary ラベル
-              // 不整合の修正は本 pilot の scope 外。§12）。
+              // 不整合の修正は scope 外。§12）。
               RAPID_V2_TRANSITIONS.map(sec => (
                 <div key={sec.value} className={s.sActionSection}>
                   <div className={s.sActionSectionLabel}>{sec.label}</div>
@@ -864,7 +864,7 @@ export default function ThirdPanel({
                 </div>
               ))
             ) : (
-              // ── Rapid v1（既存挙動。変更なし）──
+              // ── Rapid v1（一時除外 module・rollback 用。既存挙動。変更なし）──
               resolvedSections.map(sec => (
                 <div key={sec.relation} className={s.sActionSection}>
                   <div className={s.sActionSectionLabel}>{sec.label}</div>

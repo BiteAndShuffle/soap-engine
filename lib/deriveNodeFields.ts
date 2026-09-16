@@ -64,18 +64,17 @@ import { isScenarioSReplacementCapable } from './isSReplacementEligible'
  * buildNodeFields は本関数 1 回の derive あたり deriveRawFields / deriveNodeBlockCore
  * それぞれで 1 回だけ呼ばれる（呼び出し側の責務）。本関数自体は buildNodeFields を呼ばない。
  *
- * ## Rapid v2（H1 Reference Implementation → 限定 multi-module pilot）の分岐点
+ * ## Rapid v1 / v2 の分岐点
  *
- * `rapidProfileOf(mod)` が唯一の v1/v2 判定点である（Q-RAPID1 /
- * OD-RAPID-H1-PILOT-1）。pilot対象3 module（H1点眼・`dm_dpp4_oral`・
- * `dm_insulin_rapid_analog`）以外の module は常に 'v1' を返し、
- * 本関数の挙動は変更前と byte-identical になる。
+ * `rapidProfileOf(mod)` が唯一の v1/v2 判定点である（Q-RAPID1 / OD-RAPID-GLOBAL-1）。
+ * 既定は 'v2'（global promotion）で、`lib/rapidV2.ts` の一時除外に登録された module だけが
+ * 'v1' を返す。v1 分岐（`buildResolvedSFirstSentence`）は一時除外と rollback 用に残す。
  *
  * `rapid.previousEvent === 'regimen_reduced'` は型ガードとして機能し、
  * false 分岐では TypeScript が previousEvent を v1 の `SRelation` へ絞り込む
  * （v1 の `buildResolvedSFirstSentence` は `SRelation` のみを受け取るため、
  * 不正な値を渡すコードは型検査で弾かれる）。`regimen_reduced` は
- * `lib/rapidV2.ts` の allowlist で保護された module でのみ state に入り得る
+ * `rapidProfileOf(mod) === 'v2'` の module でのみ state に入り得る
  * （書き込みガードは DashboardClient.tsx 側にある）。
  *
  * `verbOf(mod)` は Do（continued_do）の realization（drug-specific / regimen-level の双方）に
@@ -168,7 +167,7 @@ export type NodeBlockCore = {
   closingBehavior: 'dedupe_or_last' | 'append_all' | undefined
   groupKey:        string | undefined
   clinicalDomain:  string | undefined
-  /** Rapid v2 pilot module かつ Rapid-capable scenario のときだけ存在する scenario の register（OD-RAPID-COMPOSITION-1） */
+  /** Rapid v2 profile の module かつ Rapid-capable scenario のときだけ存在する scenario の register（OD-RAPID-COMPOSITION-1） */
   rapidV2Register?: 'drug' | 'regimen'
 }
 

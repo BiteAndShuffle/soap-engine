@@ -52,6 +52,17 @@ Claude が次回コードを読む際に Rapid / Express / NLP を混同しな�
 2026-07-25（P2-F1）に整理・削除された。歴史的経緯・発生背景は
 `docs/reviews/PHASE2_STAGE1_R1_REVIEW_2026-07-25.md` の Lessons Learned を参照。
 
+**S先頭文の realization profile（2026-09-17・`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-GLOBAL-1）:**
+
+| profile | 対象 | S先頭文ボタン |
+|---|---|---|
+| **Rapid v2**（既定） | 一時除外以外の全 module（新規 module を含む） | 前回（Do / 追加 / 変更 / 処方整理 / 増量 / 減量）× 今回（落ち着いている / 変わりない / 良くなってきた / 改善乏しい） |
+| **legacy Rapid v1** | 一時除外 module のみ（現在 `allergy_chemical_mediator_release_inhibitor_eye_drops`）。global promotion の rollback 経路 | 前回（新薬追加 / 薬変更 / 増量 / 減量 / Do）× 体調4状態 |
+
+- profile の判定点は `lib/rapidV2.ts` の `rapidProfileOf` の1点のみ（module ID を他所で分岐条件に使わない）
+- Rapid v2 は「前回→今回」の semantic state を選ぶ機能であり、処方差分の完全再現ではない（`docs/DESIGN_PRINCIPLES.md` DP-19）。「処方整理」は現在表示中の薬剤の中止を意味しない（OD-RAPID-SCOPE-1）
+- legacy Rapid v1 の Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4（Classification Pending）
+
 **重要な制約:**
 - Rapid 操作中は `buildNodeFields` を呼ばない。シナリオ再構築は行わない。
 - `primaryBaseFieldsRef.current` を常にベースとして使用する。

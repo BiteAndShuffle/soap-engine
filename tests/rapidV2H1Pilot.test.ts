@@ -8,6 +8,8 @@
  * 内服（`dm_dpp4_oral`）・注射（`dm_insulin_rapid_analog`）の pilot固有契約
  * （route verb 差分・severity gate 等）は `tests/rapidV2MultiModulePilot.test.ts`
  * が別途固定する（本ファイルの H1 契約を弱めない・重複させない）。
+ * global promotion（OD-RAPID-GLOBAL-1）後の profile 分布契約は `tests/rapidV2GlobalPromotion.test.ts`
+ * が持つ。v1 profile の実例が必要な箇所では一時除外 module を使う。
  * v1（`lib/rapidSentence.ts` / `SRelation` 5値）は本ファイルの対象外であり、
  * v1 の既存契約は `tests/rapidStateUnit1.test.ts` 等が引き続き固定する。
  *
@@ -49,20 +51,13 @@ const H1_MOD = ALL_MODULES.find(m => m.moduleId === H1_MODULE_ID)!
 const H1_ORAL_MOD = ALL_MODULES.find(m => m.moduleId === H1_ORAL_MODULE_ID)!
 
 /**
- * Owner 承認済みの Rapid v2 pilot allowlist（exact set）。
- *   既存3 module: OD-RAPID-MULTI-PILOT-1 §B
- *   追加3 module: OD-RAPID-READINESS-1 §3（外用 / 心腎 / 配合剤）
- * **件数だけを固定しない。** 承認外の module が混入した場合も FAIL させる。
- * 追加 3 module 側の契約本体は `tests/rapidV2AdditionalPilot.test.ts` が持つ。
+ * Rapid v2 global promotion からの一時除外 module（OD-RAPID-GLOBAL-1。v1 profile）。
+ * profile 分布の契約本体（exact set・既定 v2）は `tests/rapidV2GlobalPromotion.test.ts` が持つ。
+ * 本ファイルでは H1 契約の中で「v1 profile の module」の実例として使う。
  */
-const OWNER_APPROVED_RAPID_V2_MODULE_IDS = [
-  H1_MODULE_ID,
-  'dm_dpp4_oral',
-  'dm_insulin_rapid_analog',
-  'derm_heparinoid_moisturizer_ointment',
-  'cardiorenal_sglt2_oral',
-  'dm_dpp4_biguanide_combination_oral',
-] as const
+const V1_EXCLUDED_MODULE_ID = 'allergy_chemical_mediator_release_inhibitor_eye_drops'
+const V1_EXCLUDED_MOD = ALL_MODULES.find(m => m.moduleId === V1_EXCLUDED_MODULE_ID)!
+const V1_EXCLUDED_DRUG = 'ゼペリン点眼液'
 
 const H1_SIDE_EFFECT_SCENARIO_IDS = [
   'se_irritation_none',
@@ -387,25 +382,18 @@ describe('C. scenario 切替時の Rapid state 保持と realization 切替', ()
 })
 
 // ═══════════════════════════════════════════════════════════════
-// D. allowlist — H1点眼だけが v2。1件だけ。散在 if の不在。
+// D. profile 判定 — 既定 v2・一時除外のみ v1。散在 if の不在。
 // ═══════════════════════════════════════════════════════════════
 
-describe('D. allowlist は Owner 承認済みの pilot 6 module のみ（中央判定点に閉じ込め）', () => {
-  test('H1点眼（点眼）は v2、H1内服（oral）は v1', () => {
+describe('D. profile 判定は中央判定点に閉じ込められている（既定 v2 + 一時除外。OD-RAPID-GLOBAL-1）', () => {
+  // H1 Reference Implementation → 3 / 6 module pilot を経て global promotion された。
+  // profile 分布（一時除外の exact set・その他全 module が v2）の契約本体は
+  // tests/rapidV2GlobalPromotion.test.ts が持つ。ここでは H1 Reference Model が
+  // global promotion 後も v2 であり、同一成分系の別 module も既定 v2 になることを確認する。
+  test('H1点眼（点眼）は v2、H1内服（oral）も既定で v2、一時除外 module は v1', () => {
     assert.equal(rapidProfileOf(H1_MOD), 'v2')
-    assert.equal(rapidProfileOf(H1_ORAL_MOD), 'v1')
-  })
-
-  // H1 pilot の Human 評価通過後、内服（dm_dpp4_oral）・注射（dm_insulin_rapid_analog）を
-  // 追加した限定 multi-module pilot（OD-RAPID-MULTI-PILOT-1 §B）に、追加 pilot 3 module
-  // （OD-RAPID-READINESS-1 §3）を加えた 6 module。本体契約は
-  // tests/rapidV2MultiModulePilot.test.ts A ／ tests/rapidV2AdditionalPilot.test.ts が持つ。
-  // ここでは「H1 pilot が締める allowlist の総枠」が Owner 承認済みの exact set で
-  // 固定されていることを確認する（件数だけを合わせた別 module の混入も FAIL させる）。
-  test('v2 は Owner 承認済みの 6 module と完全一致する（件数合わせの混入も検出）', () => {
-    const v2Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v2').map(m => m.moduleId).sort()
-    assert.deepEqual(v2Modules, [...OWNER_APPROVED_RAPID_V2_MODULE_IDS].sort())
-    assert.equal(v2Modules.length, 6)
+    assert.equal(rapidProfileOf(H1_ORAL_MOD), 'v2')
+    assert.equal(rapidProfileOf(V1_EXCLUDED_MOD), 'v1')
   })
 
   test('DashboardClient.tsx / ThirdPanel.tsx に H1 moduleId の直書きが無い（allowlist は lib/rapidV2.ts に閉じている）', () => {
@@ -414,9 +402,12 @@ describe('D. allowlist は Owner 承認済みの pilot 6 module のみ（中央�
   })
 
   test('rapidProfileOf は module.moduleId の完全一致で判定する（prefix一致ではない）', () => {
-    // 'allergy_h1_antihistamine_eye_drops' で始まる架空 moduleId は v1 のままであること
-    const decoy: ModuleData = { ...H1_MOD, moduleId: 'allergy_h1_antihistamine_eye_drops_decoy' }
-    assert.equal(rapidProfileOf(decoy), 'v1')
+    // 一時除外 moduleId で始まる架空 moduleId は除外されず既定 v2 になること
+    const decoy: ModuleData = { ...V1_EXCLUDED_MOD, moduleId: `${V1_EXCLUDED_MODULE_ID}_decoy` }
+    assert.equal(rapidProfileOf(decoy), 'v2')
+    // H1 の中身を持っていても moduleId が一時除外と完全一致すれば v1 になること（判定は moduleId のみ）
+    const excludedId: ModuleData = { ...H1_MOD, moduleId: V1_EXCLUDED_MODULE_ID }
+    assert.equal(rapidProfileOf(excludedId), 'v1')
   })
 })
 
@@ -462,10 +453,10 @@ describe('E. Remove（前回、処方整理 / regimen_reduced）', () => {
   // 「v1 module では regimen_reduced が選択不能」という契約は、本ファイル内の他2箇所が
   // 分担して固定している（ここで同じ条件式を test 側にも再記述すると、production の
   // 条件式が変わった場合に test 側だけ古いまま両方 green になり得る重複を生む）。
-  //   - Group D「H1点眼（点眼）は v2、H1内服（oral）は v1」: rapidProfileOf の module 判定そのもの
+  //   - Group D「H1点眼（点眼）は v2、…一時除外 module は v1」: rapidProfileOf の module 判定そのもの
   //   - Group I「handleSToggle 冒頭に regimen_reduced × rapidProfileOf(targetModule)!=='v2' の
   //     early return が存在する」: production の write guard 式自体の source contract
-  // 両者を組み合わせれば「oral H1 で regimen_reduced が拒否される」ことが導かれる。
+  // 両者を組み合わせれば「v1 profile の module（一時除外）で regimen_reduced が拒否される」ことが導かれる。
 
   test('regimen_reduced の realization は削除薬名も現在薬の薬剤名も一切参照しない（drugName / register いずれの引数にも薬剤名情報を持たない）', () => {
     // buildV2FirstSentence のシグネチャ自体が「削除された薬剤」を表す引数を持たない
@@ -510,12 +501,12 @@ describe('F. adjustmentExpression は v2 で参照されない', () => {
     })
   })
 
-  test('v1 module は既存どおり adjustmentExpression を使用する（回帰確認）', () => {
-    const mod = ALL_MODULES.find(m => m.moduleId === 'dm_glp1ra_semaglutide_oral')!
+  test('v1 profile の module（一時除外）は既存どおり adjustmentExpression を使用する（回帰確認）', () => {
+    const mod = V1_EXCLUDED_MOD
     const sc = mod.scenarios.find(isScenarioSReplacementCapable)!
     const ae = mod.display?.adjustmentExpression
-    assert.ok(ae, 'dm_glp1ra_semaglutide_oral に adjustmentExpression が存在する前提が崩れている')
-    const derived = deriveRawFields(sc, mod, [], { previousEvent: 'dose_increased', currentOutcome: 'stable' }, 'リベルサス')
+    assert.ok(ae, `${V1_EXCLUDED_MODULE_ID} に adjustmentExpression が存在する前提が崩れている`)
+    const derived = deriveRawFields(sc, mod, [], { previousEvent: 'dose_increased', currentOutcome: 'stable' }, V1_EXCLUDED_DRUG)
     assert.ok(derived.S.includes(ae!.increasePast), 'v1 module で AE が使われなくなっている（回帰）')
   })
 })
@@ -593,8 +584,7 @@ function mergeTwoNodes(primary: ComposeNode, secondary: ComposeNode): SoapFields
 }
 
 describe('H. multi-node（H1 v2 と v1 の混在を含む）', () => {
-  const GLP_MOD = ALL_MODULES.find(m => m.moduleId === 'dm_glp1ra_semaglutide_oral')!
-  const GLP_SC = GLP_MOD.scenarios.find(isScenarioSReplacementCapable)!
+  const V1_SC = V1_EXCLUDED_MOD.scenarios.find(isScenarioSReplacementCapable)!
 
   test('H1 v2 + H1 v2: state が独立している', () => {
     const a = makeNode('a', H1_MOD, h1Scenario('se_irritation_none'), { previousEvent: 'new_addition', currentOutcome: 'stable' }, 'パタノール点眼液')
@@ -604,13 +594,13 @@ describe('H. multi-node（H1 v2 と v1 の混在を含む）', () => {
     assert.deepEqual(b.rapid, { previousEvent: 'regimen_reduced', currentOutcome: 'not_improved' })
   })
 
-  test('H1 v2 + v1 module: state が独立している', () => {
+  test('H1 v2 + v1 module（一時除外）: state が独立している', () => {
     const a = makeNode('a', H1_MOD, h1Scenario('cp_good'), { previousEvent: 'regimen_reduced', currentOutcome: 'stable' }, DRUG)
-    const b = makeNode('b', GLP_MOD, GLP_SC, { previousEvent: 'dose_increased', currentOutcome: 'stable' }, 'リベルサス')
+    const b = makeNode('b', V1_EXCLUDED_MOD, V1_SC, { previousEvent: 'dose_increased', currentOutcome: 'stable' }, V1_EXCLUDED_DRUG)
     assert.deepEqual(a.rapid, { previousEvent: 'regimen_reduced', currentOutcome: 'stable' })
     assert.deepEqual(b.rapid, { previousEvent: 'dose_increased', currentOutcome: 'stable' })
-    assert.ok(b.block.fields.S.includes('リベルサス'), 'v1 module の realization が v2 化していない（回帰）')
-    assert.ok(!b.block.fields.S.includes('前回からリベルサスが増量となり症状は'), 'v1 module に v2 の文言が混入している')
+    assert.ok(b.block.fields.S.includes(V1_EXCLUDED_DRUG), 'v1 module の realization が v2 化していない（回帰）')
+    assert.ok(!b.block.fields.S.includes(`前回から${V1_EXCLUDED_DRUG}が増量となり症状は`), 'v1 module に v2 の文言が混入している')
   })
 
   test('scenario 変更が他 node へ波及しない', () => {

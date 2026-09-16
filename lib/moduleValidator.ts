@@ -70,7 +70,7 @@
  *   34)  template.reservedHandlingTags の各タグが、いずれかの brandCatalog[].handlingTags に
  *        既に存在していないこと（WARNING）。既にブランドが保持しているタグを予約タグとして
  *        宣言する必要はなく、宣言が古くなっている可能性を示す
- *   （番号なし）Rapid v2 pilot module（rapidProfileOf === 'v2'）の Rapid-capable scenario の
+ *   （番号なし）Rapid v2 profile の module（rapidProfileOf === 'v2'）の Rapid-capable scenario の
  *        authored S が、Rapid v2 の第1文置換・multi-node 合成の
  *        前提（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
  *        2行目以降に残余あり）を満たすこと（WARNING / Design Rule。RAPID_CAPABLE_S_CONTRACT）
@@ -1134,8 +1134,9 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   //   authored 形（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
   //   2行目以降に残余あり）を確認する。表現の一致を求める Design Rule のため ERROR にしない
   //   （docs/VALIDATOR_STANDARD.md §2・§5）。
-  //   対象は Rapid v2 pilot allowlist 内の module に限定する（corpus 全体へは有効化しない。
-  //   scope は global promotion 判断時に改めて判断する）。
+  //   scope は runtime の Rapid v2 profile（rapidProfileOf === 'v2'）と自動同期する（OD-RAPID-GLOBAL-1）。
+  //   validator 専用の判定は持たない。一時除外 module（v1）は対象外。v1 / v2 を問わない
+  //   第1文 subject の監視は tests/rapidCapableSubjectTripwire.test.ts が担う。
   if (Array.isArray(scenarios) && rapidProfileOf(obj as unknown as ModuleData) === 'v2') {
     const rapidVerb = verbForRoute((obj?.drug as Record<string, unknown> | undefined)?.route as string | undefined)
     for (const sc of scenarios as Scenario[]) {

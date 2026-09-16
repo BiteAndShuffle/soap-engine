@@ -1572,9 +1572,9 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
   // ─────────────────────────────────────────────────────────────
 
   const handleSToggle = useCallback((relation: RapidTransitionV2, condition: SCondition) => {
-    // Rapid v2 write guard（Q-RAPID1 / OD-RAPID-H1-PILOT-1）:
-    // 'regimen_reduced'（前回、処方整理）は H1点眼 Reference Implementation 限定の6件目の値であり、
-    // rapidProfileOf(targetModule) が 'v2' を返す module（allowlist は lib/rapidV2.ts の1点）でのみ
+    // Rapid v2 write guard（Q-RAPID1 / OD-RAPID-H1-PILOT-1 / OD-RAPID-GLOBAL-1）:
+    // 'regimen_reduced'（前回、処方整理）は Rapid v2 限定の6件目の値であり、
+    // rapidProfileOf(targetModule) が 'v2' を返す module（判定は lib/rapidV2.ts の1点）でのみ
     // 許可する。ThirdPanel は 'v2' でない限り当該ボタンを描画しないため通常は到達しないが、
     // v1 module の state を汚染しないよう防御的に no-op にする（新しい state を作らない）。
     if (relation === 'regimen_reduced' && rapidProfileOf(targetModule) !== 'v2') return
