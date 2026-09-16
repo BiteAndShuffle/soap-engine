@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "c524dc8330188a0d53bd7494139619a097212557706db8762c836acd153163dd",
+  "sourceHash": "7860ab3f105dd56c8b333236628bc6e0c466a13a52fdfa161ae9818cb9d6e18a",
   "moduleCount": 35,
   "scenarioCount": 1061,
   "modules": [
@@ -2696,7 +2696,7 @@
       },
       "classKey": "insulin_mixed_rapid_intermediate",
       "nodeKey": "insulin_mixed_rapid_intermediate_injection",
-      "clinicalDomain": "diabetes_mellitus",
+      "clinicalDomain": "diabetes",
       "displayTitle": "混合型インスリン製剤（超速効型＋中間型）",
       "displaySubtitle": "混合型インスリン製剤（超速効型＋中間型）"
     },

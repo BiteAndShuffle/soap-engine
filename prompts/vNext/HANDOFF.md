@@ -926,9 +926,11 @@ M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当�
 | `genericDisplayName` の必須性 | `JSON_STANDARD` と `lib/types.ts` の記述が不一致。Owner Decision を要する |
 | L-1 AddonPanel GROUP_LABELS | 未登録グループのラベルが英語のまま表示される（本節冒頭の項を参照） |
 
-## `composition.clinicalDomain` 値の揺れ（`diabetes` / `diabetes_mellitus`）— Rapid 本体とは別 Finding（2026-09-15）
+## `composition.clinicalDomain` 値の揺れ（`diabetes` / `diabetes_mellitus`）— Rapid 本体とは別 Finding（2026-09-15 観測・2026-09-17 解消）
 
 Unit「Rapid v2 global promotion readiness review」で観測した。**Rapid v2 の Finding ではなく、canonical data の domain 値の Finding として扱う。**
+
+**状態: 解消（2026-09-17・Unit A「diabetes domain metadata consistency」・Owner Decision A1）。** 解消記録は本節末尾。以下の実測は観測時点の記録として保持する。
 
 **実測（2026-09-15・HEAD `428d754`）**
 
@@ -947,6 +949,35 @@ Unit「Rapid v2 global promotion readiness review」で観測した。**Rapid v2
 **現状**: 意図的な domain 分離か、data / schema 生成上の不整合かは**未確定**。**推測で修正しない。Rapid v2 pilot 実装と一緒に修正しない。**
 
 **再開 Trigger**: Rapid v2 の global promotion 判断の前（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §7）。別 Unit で確定する。
+
+**解消記録（2026-09-17・HEAD `c47f39e` 上の Unit A。Owner Decision A1）**
+
+- **root cause**: 2 module とも commit `e650858`（2026-06-29）の**新規作成時点**で値が入った。生成規則（`prompts/vNext/PN2-Drug-Header.md` composition フォールバック / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` mergePolicy テンプレート）は 2 日前の `df876b2`（2026-06-27）で導入済みであり、施行済み規則からの逸脱である。同 commit で追加された `dm_insulin_mixed_regular_intermediate` は規則どおり全 field `diabetes`。bridge はいずれも `composition:` セクション・domain 値を持たないため PN2 フォールバックの適用対象。意図的な domain 分離を示す記録は Repository に存在しない。validator / audit / PN7 に domain 値の検査項目がなく検出されなかった
+- **正しい値（Fact）**: bridge `composition:` 不在 → `composition.domain` = `categoryPath[0]`「糖尿病」→ `diabetes`、`clinicalDomain` / `sMergeDomain` = `domain` と同値。`drug.clinicalDomain` は生成規則・`lib/types.ts` のいずれにも存在しない非標準キー
+- **修正（canonical）**:
+
+| module | field | before | after |
+|---|---|---|---|
+| `dm_insulin_mixed_rapid_intermediate` | `composition.domain` | （キーなし） | `diabetes` |
+| `dm_insulin_mixed_rapid_intermediate` | `composition.clinicalDomain` | `diabetes_mellitus` | `diabetes` |
+| `dm_insulin_mixed_rapid_intermediate` | `composition.sMergeDomain` | `diabetes_mellitus` | `diabetes` |
+| `dm_insulin_mixed_rapid_long` | `composition.sMergeDomain` | `diabetes_mellitus` | `diabetes` |
+| `dm_insulin_mixed_rapid_long` | `drug.clinicalDomain` | `diabetes_mellitus` | （削除） |
+
+- **派生物**: `data/search-manifest.json` を正規手順（`npm run generate:search-manifest`）で再生成（intermediate の `clinicalDomain` と `sourceHash` のみ変化）。他の fixture は domain 値を含まず変化なし
+- **runtime 影響（実測）**: S 合成に効くのは intermediate の `composition.clinicalDomain` のみ。Rapid OFF で intermediate cp_good ＋ `dm_insulin_rapid_analog` cp_good を合成すると S 4 行 → 2 行（同一 domain として集約）となり、兄弟 module `dm_insulin_mixed_regular_intermediate` ＋ `dm_insulin_rapid_analog` と同一の出力になった。`composition.domain`（`block.domain`）・`sMergeDomain`・`drug.clinicalDomain` は runtime 未参照
+- **scope 外（修正していない）**: rapid_long の `scenarios[].clinicalTags` / `tagCatalog.clinicalTags` の `diabetes_mellitus`（タグ語彙であり domain metadata ではない）／intermediate の `priority`・`nodeLabelShort` 欠落・`drugClassLabel` 保持／derm 4 module の `sMergeDomain` = `dermatology_topical`（`domain` と不一致。PN2 フォールバック表とのずれとして観察のみ）／rapid_long の mergePolicy 旧 schema（下記別 Finding）
+
+## `dm_insulin_mixed_rapid_long` の `scenarios[].mergePolicy` 旧 schema drift（2026-09-17）
+
+Unit A「diabetes domain metadata consistency」の調査で観測した。**domain metadata consistency とは別種の schema drift として扱う。**
+
+- **対象**: `dm_insulin_mixed_rapid_long` の **全 31 scenario**
+- **現状**: `mergePolicy` が S / O / A / P とも旧形。S は `{ groupKey, situationFilter }`、O / A / P は `{ groupKey }` のみ（`S.situationFilter` は scenario 直下の `situationFilter` と全件同値）
+- **PN3B 現行形との不一致**: `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` のテンプレートは S = `{ domain, behavior, groupKey, mergeLevel, sectionRole }`、O / A = `{ behavior, mergeLevel, sectionRole }`、P = `{ behavior, mergeLevel, closingBehavior, sectionRole }`。`S.domain` / `behavior` / `mergeLevel` / `sectionRole` / `P.closingBehavior` が欠落し、S / O / A / P に非標準キーがある。糖尿病領域の他 25 module は現行形
+- **runtime**: 現 runtime が読むのは `mergePolicy.S.groupKey`（存在する）と `mergePolicy.P.closingBehavior` のみ。後者は未定義時に `dedupe_or_last` へ fallback する（`lib/buildSoap.ts`）ため、**現在は fallback により現行形と同等の結果**である
+- **位置づけ**: 将来の schema cleanup / migration 候補。**現時点では blocker ではない**
+- **未確定**: solution・priority・実施時期は未確定
 
 ## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
 

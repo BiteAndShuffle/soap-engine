@@ -16,7 +16,6 @@
       "あすぱると"
     ],
     "route": "injection",
-    "clinicalDomain": "diabetes_mellitus",
     "search": {
       "primaryDisplayName": "混合型インスリン製剤（超速効型＋持効型）",
       "exactAliases": [
@@ -83,7 +82,7 @@
   },
   "composition": {
     "clinicalDomain": "diabetes",
-    "sMergeDomain": "diabetes_mellitus",
+    "sMergeDomain": "diabetes",
     "nodeKey": "insulin_mixed_rapid_long_injection",
     "nodeLabelLong": "混合型インスリン製剤（超速効型＋持効型）",
     "classKey": "insulin_mixed_rapid_long",

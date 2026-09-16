@@ -8,8 +8,9 @@
     "超速効型＋中間型"
   ],
   "composition": {
-    "clinicalDomain": "diabetes_mellitus",
-    "sMergeDomain": "diabetes_mellitus",
+    "domain": "diabetes",
+    "clinicalDomain": "diabetes",
+    "sMergeDomain": "diabetes",
     "drugClassLabel": "混合型インスリン製剤（超速効型＋中間型）",
     "nodeKey": "insulin_mixed_rapid_intermediate_injection",
     "nodeLabelLong": "混合型インスリン製剤（超速効型＋中間型）",
