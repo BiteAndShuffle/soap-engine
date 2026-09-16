@@ -48,6 +48,22 @@ const DRUG = 'アレジオン点眼液'
 const H1_MOD = ALL_MODULES.find(m => m.moduleId === H1_MODULE_ID)!
 const H1_ORAL_MOD = ALL_MODULES.find(m => m.moduleId === H1_ORAL_MODULE_ID)!
 
+/**
+ * Owner 承認済みの Rapid v2 pilot allowlist（exact set）。
+ *   既存3 module: OD-RAPID-MULTI-PILOT-1 §B
+ *   追加3 module: OD-RAPID-READINESS-1 §3（外用 / 心腎 / 配合剤）
+ * **件数だけを固定しない。** 承認外の module が混入した場合も FAIL させる。
+ * 追加 3 module 側の契約本体は `tests/rapidV2AdditionalPilot.test.ts` が持つ。
+ */
+const OWNER_APPROVED_RAPID_V2_MODULE_IDS = [
+  H1_MODULE_ID,
+  'dm_dpp4_oral',
+  'dm_insulin_rapid_analog',
+  'derm_heparinoid_moisturizer_ointment',
+  'cardiorenal_sglt2_oral',
+  'dm_dpp4_biguanide_combination_oral',
+] as const
+
 const H1_SIDE_EFFECT_SCENARIO_IDS = [
   'se_irritation_none',
   'se_foreign_body_sensation_none',
@@ -374,21 +390,22 @@ describe('C. scenario 切替時の Rapid state 保持と realization 切替', ()
 // D. allowlist — H1点眼だけが v2。1件だけ。散在 if の不在。
 // ═══════════════════════════════════════════════════════════════
 
-describe('D. allowlist は限定 multi-module pilot 対象3 module のみ（中央判定点に閉じ込め）', () => {
+describe('D. allowlist は Owner 承認済みの pilot 6 module のみ（中央判定点に閉じ込め）', () => {
   test('H1点眼（点眼）は v2、H1内服（oral）は v1', () => {
     assert.equal(rapidProfileOf(H1_MOD), 'v2')
     assert.equal(rapidProfileOf(H1_ORAL_MOD), 'v1')
   })
 
-  // H1 pilot の Human 評価通過後、内服（dm_dpp4_oral）・注射（dm_insulin_rapid_analog）
-  // を追加した限定 multi-module pilot（tests/rapidV2MultiModulePilot.test.ts が本体）。
-  // ここでは「H1 pilot が締める allowlist の総枠」が3件で固定されていることのみ確認する。
-  test('corpus 35 module 中、v2 は3 module だけ（H1点眼・dm_dpp4_oral・dm_insulin_rapid_analog）', () => {
+  // H1 pilot の Human 評価通過後、内服（dm_dpp4_oral）・注射（dm_insulin_rapid_analog）を
+  // 追加した限定 multi-module pilot（OD-RAPID-MULTI-PILOT-1 §B）に、追加 pilot 3 module
+  // （OD-RAPID-READINESS-1 §3）を加えた 6 module。本体契約は
+  // tests/rapidV2MultiModulePilot.test.ts A ／ tests/rapidV2AdditionalPilot.test.ts が持つ。
+  // ここでは「H1 pilot が締める allowlist の総枠」が Owner 承認済みの exact set で
+  // 固定されていることを確認する（件数だけを合わせた別 module の混入も FAIL させる）。
+  test('v2 は Owner 承認済みの 6 module と完全一致する（件数合わせの混入も検出）', () => {
     const v2Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v2').map(m => m.moduleId).sort()
-    assert.deepEqual(
-      v2Modules,
-      ['allergy_h1_antihistamine_eye_drops', 'dm_dpp4_oral', 'dm_insulin_rapid_analog'].sort(),
-    )
+    assert.deepEqual(v2Modules, [...OWNER_APPROVED_RAPID_V2_MODULE_IDS].sort())
+    assert.equal(v2Modules.length, 6)
   })
 
   test('DashboardClient.tsx / ThirdPanel.tsx に H1 moduleId の直書きが無い（allowlist は lib/rapidV2.ts に閉じている）', () => {

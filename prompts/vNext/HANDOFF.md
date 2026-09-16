@@ -926,6 +926,28 @@ M-3（全 module 配信）は F-1 で帯域評価が更新され Phase 5 相当�
 | `genericDisplayName` の必須性 | `JSON_STANDARD` と `lib/types.ts` の記述が不一致。Owner Decision を要する |
 | L-1 AddonPanel GROUP_LABELS | 未登録グループのラベルが英語のまま表示される（本節冒頭の項を参照） |
 
+## `composition.clinicalDomain` 値の揺れ（`diabetes` / `diabetes_mellitus`）— Rapid 本体とは別 Finding（2026-09-15）
+
+Unit「Rapid v2 global promotion readiness review」で観測した。**Rapid v2 の Finding ではなく、canonical data の domain 値の Finding として扱う。**
+
+**実測（2026-09-15・HEAD `428d754`）**
+
+| module | `composition.domain` | `composition.clinicalDomain` | `composition.sMergeDomain` | `drug.clinicalDomain`（標準外の位置） |
+|---|---|---|---|---|
+| `dm_insulin_mixed_rapid_intermediate` | （キーなし） | `diabetes_mellitus` | `diabetes_mellitus` | （キーなし） |
+| `dm_insulin_mixed_rapid_long` | `diabetes` | `diabetes` | `diabetes_mellitus` | `diabetes_mellitus` |
+
+上記以外の糖尿病 module の値は `data/modules/*.json` を走査して取得する（本ファイルは一覧を保持しない）。
+
+- 導入: commit `e650858`（2026-06-29、insulin mix 系 module の追加・再構成）。bridge にはいずれの domain 値も記載がない
+- `prompts/vNext/PN2-Drug-Header.md` の bridge `composition:` 不在時フォールバックは、`composition.domain` を `categoryPath[0]` から導出し（`"糖尿病"` → `"diabetes"`）、`clinicalDomain` / `sMergeDomain` を `domain` と同値とする
+- validator / audit / PN7 に `clinicalDomain` の値の整合を検査する項目はない。値の意図を記録した文書もない
+- **runtime 影響（実測）**: `lib/buildSoap.ts` の `mergeBlocks` は S 合成を `clinicalDomain` 単位でグループ化する。Rapid OFF で cp_good 同士を2剤合成すると、`dm_insulin_mixed_regular_intermediate`（`diabetes`）＋ `dm_insulin_rapid_analog` では同一 block が1回に集約される（S 2行）一方、`dm_insulin_mixed_rapid_intermediate`（`diabetes_mellitus`）＋ `dm_insulin_rapid_analog` では集約されない（S 4行）
+
+**現状**: 意図的な domain 分離か、data / schema 生成上の不整合かは**未確定**。**推測で修正しない。Rapid v2 pilot 実装と一緒に修正しない。**
+
+**再開 Trigger**: Rapid v2 の global promotion 判断の前（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §7）。別 Unit で確定する。
+
 ## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
 
 `docs/STATIC_DEPLOYMENT.md`（living SSOT）・`docs/reviews/PHASE1_STATIC_DEPLOYMENT_VERIFICATION_2026-08-15.md`
@@ -945,6 +967,21 @@ local/static deployment の技術成立性・end-to-end 業務利用経路（電
 `file://` artifact に触れる機会があった時点。correctness / safety blocker ではないため、
 単独でこの確認のためだけに Unit を立てる必要はない。確認できた項目は
 `docs/STATIC_DEPLOYMENT.md` §6 の該当行と本節を同一作業内で更新し、本節から除去する。
+
+**FAC-10 と Rapid v2 の関係（2026-09-15・Owner Decision）**: FAC-10 は Rapid v2 global promotion の設計判断の
+blocker ではないが、**global promotion 後の Rapid v2 を業務用配布（file://）へ出す前の必須条件**とする。
+Rapid v2 追加 pilot の Human UI 評価を file:// 静的配布版で行える場合は、その機会に確認する。file:// で問題が
+見つかった場合は global promotion とは分けて release / deployment issue として扱う
+（正本: `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §5）。
+
+**2026-09-17 追記**: Rapid v2 6-module pilot の Human Review で、`428d754` を base とした未commit 6-module pilot
+static build（`commit 428d754 そのものの配布物`ではない）を file:// で開き、Rapid v2 UI表示・Rapid選択による
+SOAP更新・scenario操作・multi-node・ADDON・S/O/A/P表示が動作し、実機操作中に明確な runtime 異常なし・
+DevTools Console で確認した範囲に赤い error なしを確認した。**ただし、この確認は上表の FAC-10 の再開 Trigger
+（Windows company PC または同等の制約環境での確認）を満たすものではない**（確認環境が Windows company PC で
+あるという記録がない／build が commit 相当ではなく未commit working tree である）。したがって**上表の FAC-10
+status は引き続き NOT YET VERIFIED のまま維持する**。今回の確認は補足観察として記録するにとどめ、
+正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §5 に置く。
 
 ---
 

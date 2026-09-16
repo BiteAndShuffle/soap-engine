@@ -121,27 +121,45 @@ describe('0. トラゼンタ（dm_dpp4_oral）・ノボラピッド（dm_insulin
 })
 
 // ═══════════════════════════════════════════════════════════════
-// A. pilot allowlist は 3 module 固定
+// A. pilot allowlist は Owner 承認済みの exact set（6 module）
 // ═══════════════════════════════════════════════════════════════
 
-describe('A. pilot allowlist は3 module固定（H1点眼・トラゼンタ・ノボラピッド）', () => {
-  test('3 module すべて v2、無関係 module は v1 のまま', () => {
-    assert.equal(rapidProfileOf(H1_MOD), 'v2')
-    assert.equal(rapidProfileOf(TRAZENTA_MOD), 'v2')
-    assert.equal(rapidProfileOf(NOVORAPID_MOD), 'v2')
+/**
+ * Owner 承認済みの Rapid v2 pilot allowlist（exact set）。
+ *   既存3 module: OD-RAPID-MULTI-PILOT-1 §B
+ *   追加3 module: OD-RAPID-READINESS-1 §3（外用 / 心腎 / 配合剤）
+ * **件数だけを固定しない。** 承認外の module が混入した場合も FAIL させる。
+ */
+const OWNER_APPROVED_RAPID_V2_MODULE_IDS = [
+  H1_MODULE_ID,
+  TRAZENTA_MODULE_ID,
+  NOVORAPID_MODULE_ID,
+  'derm_heparinoid_moisturizer_ointment',
+  'cardiorenal_sglt2_oral',
+  'dm_dpp4_biguanide_combination_oral',
+] as const
 
-    const someOtherModules = ALL_MODULES.filter(m =>
-      ![H1_MODULE_ID, TRAZENTA_MODULE_ID, NOVORAPID_MODULE_ID].includes(m.moduleId),
-    )
-    assert.ok(someOtherModules.length > 0)
-    for (const mod of someOtherModules) {
+describe('A. pilot allowlist は Owner 承認済みの 6 module と完全一致する', () => {
+  test('承認済み 6 module はすべて v2 である', () => {
+    for (const moduleId of OWNER_APPROVED_RAPID_V2_MODULE_IDS) {
+      const mod = ALL_MODULES.find(m => m.moduleId === moduleId)
+      assert.ok(mod, `承認済み module ${moduleId} が corpus に存在しない`)
+      assert.equal(rapidProfileOf(mod!), 'v2', `${moduleId} が v2 になっていない`)
+    }
+  })
+
+  test('承認外の module はすべて v1 のまま', () => {
+    const others = ALL_MODULES.filter(m => !OWNER_APPROVED_RAPID_V2_MODULE_IDS.includes(m.moduleId as never))
+    assert.ok(others.length > 0)
+    for (const mod of others) {
       assert.equal(rapidProfileOf(mod), 'v1', `${mod.moduleId} が v1 でなくなっている（allowlist 逸脱）`)
     }
   })
 
-  test('corpus 35 module 中、v2 はちょうど3 module（他module追加なし）', () => {
+  test('v2 集合は承認済み exact set と一致し、ちょうど 6 module（件数合わせの別module混入も FAIL）', () => {
     const v2Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v2').map(m => m.moduleId).sort()
-    assert.deepEqual(v2Modules, [H1_MODULE_ID, TRAZENTA_MODULE_ID, NOVORAPID_MODULE_ID].sort())
+    assert.deepEqual(v2Modules, [...OWNER_APPROVED_RAPID_V2_MODULE_IDS].sort())
+    assert.equal(v2Modules.length, 6)
   })
 })
 
