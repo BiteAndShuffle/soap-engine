@@ -270,7 +270,7 @@ describe('C. scenario 遷移で node.rapid が正しく計算される（product
       // （Rapid v2 の 'regimen_reduced' は含まない）。narrow のための assertion のみ。
       const raRelation = RAPID_A!.previousEvent
       if (raRelation === 'regimen_reduced') throw new Error('nodeRapidOwnershipUnit3B.test.ts は v1 専用')
-      // corpus には H1点眼（Rapid v2 pilot）が含まれる。「もし漏れていたら」の仮説値
+      // corpus には Rapid v2 profile の module が含まれる（OD-RAPID-GLOBAL-1）。「もし漏れていたら」の仮説値
       // （wouldBeRapidFirst）は、実際に漏れた場合に production が生成する値と同じ
       // 分岐（rapidProfileOf）で計算しないと、v2 module について何も検出できない
       // 比較になる（v1 文 vs 実際の pristine 文の比較になり、常に notEqual が

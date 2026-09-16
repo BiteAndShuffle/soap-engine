@@ -118,11 +118,11 @@ function assertRapidAxesCoverProduction(): void {
  * rapidProfileOf / buildV2FirstSentence / buildResolvedSFirstSentence を
  * そのまま組み合わせるのみ。RAPID-V2-20）。
  *
- * corpus には H1点眼（Rapid v2 pilot。Q-RAPID1 / OD-RAPID-H1-PILOT-1）が含まれる。
- * v2 module は v1 の5 relation も v2 の完成文テーブルで実現するため、v1 の
- * buildResolvedSFirstSentence をそのまま oracle にすると H1 について
+ * corpus の大半は Rapid v2 profile の module である（global promotion 後は一時除外以外の全 module。
+ * Q-RAPID1 / OD-RAPID-GLOBAL-1）。v2 module は v1 の5 relation も v2 の完成文テーブルで実現するため、
+ * v1 の buildResolvedSFirstSentence をそのまま oracle にすると v2 module について
  * production と無関係な自己一致になる（v1 文 vs v1 文の比較）。本 helper で
- * 分岐することで、H1 を含む corpus 全体で実際の production 挙動と照合する。
+ * 分岐することで、v1 / v2 両 profile を含む corpus 全体で実際の production 挙動と照合する。
  */
 function expectedFirstSentenceOf(
   mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition,
@@ -234,12 +234,12 @@ describe('2. Rapid A を ON にすると S 先頭文が置換される', () => {
             applied.startsWith(expectedFirst),
             `${mod.moduleId}/${sc.id}: Rapid 適用後の先頭文が一致しない`,
           )
-          // Rapid v2（pilot）の Do×stable は Default と同一文になることがあることを
+          // Rapid v2 の Do×stable は Default と同一文になることがあることを
           // Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
           // 「衝突するかどうか」は module 固有（pristine の第1文と期待文が実際に
           // 一致するか）で決まるため 'v2 && continued_do && stable' と決め打ちに
-          // しない（多module pilotで検証: dm_dpp4_oral の cp_good は regimen
-          // realization が固定「使用」・bridge Default が「服用」のため衝突しない）。
+          // しない（multi-module pilot で導入した方針。衝突の有無は module の authored
+          // 第1文と route 由来動詞〔OD-RAPID-ROUTE-VERB-1〕の組合せで決まる）。
           if (expectedFirst === pristineFirst) {
             assert.equal(applied, pristine.S, `${mod.moduleId}/${sc.id}: 期待文が Default 第1文と一致する場合は S 全体も一致するはず`)
           } else {

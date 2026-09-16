@@ -817,8 +817,12 @@ export interface ModuleData {
      */
     menuGroupLabels?: Record<string, string>
     /**
-     * dose_increased / dose_decreased の S先頭文生成に使う動詞句。
+     * dose_increased / dose_decreased の S先頭文生成に使う動詞句（legacy Rapid v1 の realization 専用）。
      * menuGroupLabels はメニュー表示用、adjustmentExpression は文生成専用として役割を分離する。
+     *
+     * Rapid v2（既定 profile。Q-RAPID1 OD-RAPID-GLOBAL-1）はこの field を参照しない（「増量」「減量」へ抽象化）。
+     * 参照するのは v1 profile の module（一時除外）と rollback 経路のみ。bridge 由来の preservation field として
+     * canonical 値は保持する（v1 経路の Lifecycle 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。
      *
      * increasePast — dose_increased 時に使う過去形表現（例: "点眼回数が増えた"）
      * decreasePast — dose_decreased 時に使う過去形表現（例: "点眼回数が減った"）

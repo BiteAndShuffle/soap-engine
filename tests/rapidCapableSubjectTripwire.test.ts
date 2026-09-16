@@ -19,8 +19,9 @@
  *
  *   - 現在の文型を永久仕様として固定する test ではない（未知の semantic form の検出器）
  *   - runtime guard ではない（eligibility / runtime behavior は変更しない。B3 は不採用）
- *   - `RAPID_CAPABLE_S_CONTRACT` validator の global 化ではない
- *     （validator scope は pilot allowlist 内のまま。B2 は global promotion 時に判断）
+ *   - `RAPID_CAPABLE_S_CONTRACT` validator ではない
+ *     （validator の scope は runtime の Rapid v2 profile と自動同期し、v1 profile〔一時除外〕は対象外。
+ *      OD-RAPID-GLOBAL-1 §3。本テストは v1 / v2 を問わず第1文 subject を監視する）
  *
  * ── 現在承認されている契約 ───────────────────────────────────────────
  *

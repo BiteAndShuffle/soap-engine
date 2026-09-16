@@ -11,8 +11,8 @@
  *     でのみ1回に realize され、各 Node の remainder / addon S lines は Node 位置に残る
  *   - drug-specific 文は統合しない
  *   - Do の動詞は canonical drug.route から決定論的に解決する
- *   - capable-S authoring contract validator（WARNING。Rapid v2 pilot allowlist 内の Rapid-capable scenario に限定）
- *   - rapidV2Register は Rapid v2 pilot module かつ Rapid-capable scenario の block にだけ付与される
+ *   - capable-S authoring contract validator（WARNING。runtime の Rapid v2 profile の module の Rapid-capable scenario が対象。OD-RAPID-GLOBAL-1）
+ *   - rapidV2Register は Rapid v2 profile の module かつ Rapid-capable scenario の block にだけ付与される
  *
  * production 関数を直接 import する（RAPID-V2-20）。compose() は DashboardClient の
  * computeDisplayFields と同一の引数構成で mergeBlocks を呼ぶ（source contract で固定）。
@@ -293,7 +293,7 @@ describe('E. 非 Rapid block・legacy Rapid v1 block の既存 bucketing は変�
     assert.ok(checked > 0)
   })
 
-  test('O / A / P は Rapid v2 state の有無で変化しない（pilot 組合せ）', () => {
+  test('O / A / P は Rapid v2 state の有無で変化しない（トラゼンタ + ノボラピッド）', () => {
     for (const [t, c] of [['regimen_reduced', 'stable'], ['med_changed', 'improved'], ['continued_do', 'not_improved']] as const) {
       const a = node('a', TZ, scenarioOf(TZ, 'se_constipation_none'), R(t, c), 'トラゼンタ')
       const b = node('b', NR, scenarioOf(NR, 'se_injection_site_induration_none'), R('regimen_reduced', 'stable'), 'ノボラピッド')

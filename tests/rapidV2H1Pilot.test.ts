@@ -4,7 +4,7 @@
  * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 / Owner Decision OD-RAPID-H1-PILOT-1。
  *
  * 対象は H1点眼（`allergy_h1_antihistamine_eye_drops`）の Reference Implementation
- * （Reference Baseline）。H1 pilot の Human 評価通過後に allowlist へ追加された
+ * （Reference Baseline）。H1 pilot の Human 評価通過後に当時の pilot allowlist へ追加された
  * 内服（`dm_dpp4_oral`）・注射（`dm_insulin_rapid_analog`）の pilot固有契約
  * （route verb 差分・severity gate 等）は `tests/rapidV2MultiModulePilot.test.ts`
  * が別途固定する（本ファイルの H1 契約を弱めない・重複させない）。
@@ -396,7 +396,7 @@ describe('D. profile 判定は中央判定点に閉じ込められている（�
     assert.equal(rapidProfileOf(V1_EXCLUDED_MOD), 'v1')
   })
 
-  test('DashboardClient.tsx / ThirdPanel.tsx に H1 moduleId の直書きが無い（allowlist は lib/rapidV2.ts に閉じている）', () => {
+  test('DashboardClient.tsx / ThirdPanel.tsx に H1 moduleId の直書きが無い（profile 判定は lib/rapidV2.ts の rapidProfileOf に閉じている）', () => {
     assert.equal(src.includes(H1_MODULE_ID), false, 'DashboardClient.tsx に H1 moduleId が直書きされている')
     assert.equal(thirdPanelSrc.includes(H1_MODULE_ID), false, 'ThirdPanel.tsx に H1 moduleId が直書きされている')
   })

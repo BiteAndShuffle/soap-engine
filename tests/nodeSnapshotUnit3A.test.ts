@@ -9,7 +9,7 @@
  *   1. parity — 旧経路（buildNodeFields + derivePersonaGuard + scenario から直接組み立てた
  *      block メタデータ）と新 helper（deriveNodeBlockCore）が、NodeBlockCore の 8 フィールド
  *      全体で deepStrictEqual に一致する（behavior change = 0）。
- *      後継（OD-RAPID-COMPOSITION-1 Unit 付随判断）: Rapid v2 pilot module かつ Rapid-capable
+ *      後継（OD-RAPID-COMPOSITION-1 Unit 付随判断。OD-RAPID-GLOBAL-1 後）: Rapid v2 profile の module かつ Rapid-capable
  *      scenario のときだけ rapidV2Register（= registerOf(scenario)）1 key の追加を明示的に許容し、
  *      それ以外の経路・field は旧経路と完全一致を要求する
  *   2. deriveRawFields との同値 — body factoring（withRapidFirstSentence）が
@@ -126,7 +126,7 @@ function assertFieldsEqual(a: SoapFields, b: SoapFields, msg: string): void {
  * 旧経路 oracle に、承認済みの差分だけを明示的に加えた期待値
  * （OD-RAPID-COMPOSITION-1 Unit 付随判断。T-3A 後継 contract）。
  *
- * 許容する差分は「Rapid v2 pilot module かつ Rapid-capable scenario のときの
+ * 許容する差分は「Rapid v2 profile の module かつ Rapid-capable scenario のときの
  * rapidV2Register（= production registerOf(scenario)）1 key の追加」のみ。
  * それ以外（非 Rapid-v2 module・非 capable scenario）は旧経路 oracle そのもの。
  * deepStrictEqual で比較するため、許容 key 以外の field 差分・key の過不足は検出される。
@@ -154,7 +154,7 @@ describe('A. deriveNodeBlockCore は旧 secondary Node 経路と 8 フィール�
     }
     assert.ok(exact > 0, '旧経路と完全一致すべき scenario が 1 件も見つからなかった')
     assert.ok(allowed > 0, '許容差分の対象（Rapid v2 capable scenario）が 1 件も見つからなかった')
-    assert.ok(v2NonCapable > 0, 'Rapid v2 pilot module の非 capable scenario が無い（付与範囲限定の検証が vacuous）')
+    assert.ok(v2NonCapable > 0, 'Rapid v2 profile の module の非 capable scenario が無い（付与範囲限定の検証が vacuous）')
   })
 
   test('T-3A-2: addon あり（各 scenario の addon キーを最大 2 件選択）でも一致する', () => {
@@ -250,7 +250,7 @@ describe('D. non-null RapidState が deriveNodeBlockCore → SOAP まで反映�
         // （Rapid v2 の 'regimen_reduced' は含まない）。narrow のための assertion のみ。
         const relation = rapid!.previousEvent
         if (relation === 'regimen_reduced') throw new Error('nodeSnapshotUnit3A.test.ts は v1 専用')
-        // corpus には H1点眼（Rapid v2 pilot。Q-RAPID1 / OD-RAPID-H1-PILOT-1）が含まれる。
+        // corpus には Rapid v2 profile の module が含まれる（Q-RAPID1 / OD-RAPID-GLOBAL-1）。
         // v2 module は v1 の5 relation も v2 の完成文テーブルで実現するため、oracle を
         // rapidProfileOf で分岐する（production の withRapidFirstSentence と同一の分岐）。
         const expectedFirst = rapidProfileOf(mod) === 'v2'

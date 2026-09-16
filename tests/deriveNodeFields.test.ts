@@ -97,10 +97,9 @@ function assertRapidAxesCoverProduction(): void {
  * rapidProfileOf / buildV2FirstSentence / buildResolvedSFirstSentence を
  * そのまま組み合わせるのみ。RAPID-V2-20）。
  *
- * pilot対象module（H1点眼・`dm_dpp4_oral`・`dm_insulin_rapid_analog`。Q-RAPID1 /
- * OD-RAPID-H1-PILOT-1 → 限定 multi-module pilot）は v1 の5 relation も
- * v2 の完成文テーブルで実現するため、v1 module と同じ oracle をそのまま corpus
- * 全体へ適用することはできない。`verbOf(mod)` は Do（continued_do）の
+ * Rapid v2 profile の module（global promotion 後は一時除外以外の全 module。Q-RAPID1 /
+ * OD-RAPID-GLOBAL-1）は v1 の5 relation も v2 の完成文テーブルで実現するため、
+ * v1 の oracle をそのまま corpus 全体へ適用することはできない。`verbOf(mod)` は Do（continued_do）の
  * realization（drug-specific / regimen-level の双方）の動詞を canonical `drug.route` から
  * 解決する（OD-RAPID-ROUTE-VERB-1）。
  */
@@ -216,15 +215,14 @@ describe('B. rapid 非 null では S 先頭文のみが変化する', () => {
               `${mod.moduleId}/${sc.id}: Rapid は ${sec} を変更してはならない`,
             )
           }
-          // Rapid v2（pilot）の Do×stable は Default と同一文になることがある
+          // Rapid v2 の Do×stable は Default と同一文になることがある
           // ことを Owner Decision（OD-RAPID-H1-PILOT-1 #3）が明示的に許容している。
           // null と Do×stable は semantic state として別だが、生成される文が
           // 偶然一致してもよい（「ON なら必ず S が変わる」は本質要件ではない）。
           // 「衝突するかどうか」は module 固有（pristine の第1文と production の
           // 期待文が実際に一致するか）で決まるため、'v2 && continued_do && stable'
-          // という決め打ちにはしない（多module pilotで検証: dm_dpp4_oral の
-          // cp_good は regimen realization が固定「使用」・bridge Default が
-          // 「服用」のため、H1・dm_insulin_rapid_analog とは異なり衝突しない）。
+          // という決め打ちにはしない（multi-module pilot で導入した方針。衝突の有無は
+          // module の authored 第1文と route 由来動詞〔OD-RAPID-ROUTE-VERB-1〕の組合せで決まる）。
           const expectedFirst = expectedFirstSentenceOf(mod, sc, previousEvent, currentOutcome, DRUG)
           if (expectedFirst === pristineFirst) {
             assert.equal(

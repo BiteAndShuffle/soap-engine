@@ -383,7 +383,7 @@ sickday シナリオの `situationFilter` は `["sickday"]` のみ。`"general"`
 
 根拠: dm_glp1ra_injection / dm_insulin_rapid_analog で3シナリオ全て確認済み。dm_gip_glp1ra_tirzepatide_injection は se_injection_site_induration_none / se_hypo_none は確認済み。
 
-> ⚠️ **CHECK-TP01（既存 JSON 不整合）**: `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` シナリオに `thirdPanelSPlacement` キーが存在しない。本ルールに従い次回 audit 時に追加が必要。
+> ✅ **CHECK-TP01（RESOLVED）**: `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` シナリオに `thirdPanelSPlacement` キーが存在しない、という不整合は commit `895ac38`（2026-06-27）で解消済み（本注記を追加した `df876b2` の直後）。2026-09-17 の実測で、注射薬 10 module すべての `cp_good` に本ルールの固定値が存在することを確認した。
 
 ---
 
@@ -616,7 +616,7 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | CHECK-T01 | **RESOLVED** | P0-B.md の変換表に `side_effect_guidance → "counseling"` と記載されていたが `"sideEffects"` が正しい（詳細な経緯は本ファイル §5 の CHECK-T01 注記を参照） | prompts/P0-B.md | Step 1.5 で修正済み。以後 P0-B.md 該当行は `"sideEffects"` のまま維持されている（2026-07-21 現況確認済み） |
 | CHECK-G01 | OPEN | `"adherence"` group が JSON_STANDARD.md に有効値として定義されているが AddonPanel.tsx GROUP_LABELS にラベル未登録（下記詳細参照） | app/components/AddonPanel.tsx / docs/JSON_STANDARD.md | GROUP_LABELS に日本語ラベルを定義するか要判断 |
 | CHECK-G02 | **administration_guidance分は RESOLVED（2026-07-24）／ lifestyle_guidance分は OPEN** | `"administration_guidance"` / `"lifestyle_guidance"` が実 JSON の group 値として使用されているが JSON_STANDARD.md / GROUP_LABELS にラベル未登録（下記詳細参照） | allergy / derm 系 data/modules/*.json | administration_guidance: type→group変換表へ `→ "counseling"` を追加し新規moduleでの標準変換を確定済み（§5参照）。lifestyle_guidance分・既存ファイルのmigration要否は別途判断のまま |
-| CHECK-TP01 | OPEN | `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` に `thirdPanelSPlacement` キーが存在しない（Section 14 ルール違反） | data/modules/dm_gip_glp1ra_tirzepatide_injection.json | 次回 audit 時に thirdPanelSPlacement 固定値を追加する |
+| CHECK-TP01 | **RESOLVED** | `dm_gip_glp1ra_tirzepatide_injection.json` の `cp_good` に `thirdPanelSPlacement` キーが存在しない（Section 14 ルール違反） | data/modules/dm_gip_glp1ra_tirzepatide_injection.json | commit `895ac38`（2026-06-27）で固定値を追加済み。2026-09-17 実測で注射薬 10 module すべての `cp_good` に存在することを確認 |
 | CHECK-O01 | **RESOLVED** | `dm_glp1ra_semaglutide_oral`（全28シナリオ）・`dm_glp1ra_injection`（全34シナリオ）の O フィールドが `{{drug_subject}}` ではなく薬効分類名固定（`GLP-1受容体作動薬(内服)`/`(注射)`）になっていた（Section 16 O フィールドルール違反）。旧体系生成時からの既存欠陥で、2026-07 の多剤合成テストで発見 | data/modules/dm_glp1ra_semaglutide_oral.json / data/modules/dm_glp1ra_injection.json | 2026-07 修正済み（状態語は保持したまま `{{drug_subject}}` へ置換）。新規 module では Section 16 を厳守すること |
 
 ---

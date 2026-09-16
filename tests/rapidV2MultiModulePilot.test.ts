@@ -491,7 +491,7 @@ describe('F. severity gate: severity 分岐のある side_effect scenario は Ra
 // G. module switching / state — H1 ⇄ トラゼンタ ⇄ ノボラピッド、v2→v1、reset契約
 // ═══════════════════════════════════════════════════════════════
 
-describe('G. module / scenario 切替時の Rapid state 契約（3 module間）', () => {
+describe('G. module / scenario 切替時の Rapid state 契約（H1・トラゼンタ・ノボラピッドと v1 profile module）', () => {
   test('H1 v2 → トラゼンタ v2: capable→capable で state を保持する（scenario 切替関数は module を見ない）', () => {
     const rapid: RapidState = { previousEvent: 'dose_increased', currentOutcome: 'unchanged' }
     const next = nextRapidStateOnScenarioChange(

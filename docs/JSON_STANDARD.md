@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-08-17
+最終更新: 2026-09-17（JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
 
 ---
 
@@ -403,8 +403,10 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 
 | フィールド | 現在の対象 |
 |---|---|
-| `display.menuGroupLabels` | allergy_eye_drops / derm 3系 / GLP-1 2系 |
-| `display.adjustmentExpression` | 同上 |
+| `display.menuGroupLabels` | 33 module（`cardiorenal_sglt2_oral` / `dm_dpp4_sglt2_combination_oral` を除く全 module。2026-09-17 実測） |
+| `display.adjustmentExpression` | 19 module（allergy 系 4 / derm_heparinoid 系 4 / GLP-1・GIP/GLP-1 注射・内服 3 / インスリン系 8。2026-09-17 実測） |
+
+> 実測値は `data/modules/*.json` の当該 key の有無である。両 field の生成は `prompts/vNext/PN2-Drug-Header.md`「`display.adjustmentExpression` の保持」「`display.menuGroupLabels` の保持」（bridge 明示時の preservation）に従い、増量・減量シナリオの有無だけでは決まらない（例: `dm_dpp4_sglt2_combination_oral` は増量・減量シナリオを持つが bridge が沈黙しており、いずれの field も持たない）。本節の見出し（JS-B の条件付き必須としての分類）と PN2 の生成規則との整合は未確認であり、本更新では Requirement Class の再分類を行っていない。
 
 ### 剤形横断ナビゲーションを持つ module
 

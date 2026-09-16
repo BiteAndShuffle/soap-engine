@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-17（Q-RAPID1 へ Owner Decision OD-RAPID-GLOBAL-1〔Rapid v2 global promotion。既定 v2 ＋ 明示的な一時除外（chemical mediator 点眼のみ）・`RAPID_CAPABLE_S_CONTRACT` の scope を runtime profile へ自動同期・legacy Rapid v1 は rollback 経路として保持し `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4 へ公告・adjustmentExpression / composition / clinical subject は不変〕と実装状況を追記。§8 前提 4 は充足。FAC-10 は業務配布前の release gate として未完了のまま。一覧表の Q-RAPID1 行を同期。同日先行: Q-RAPID1 OD-RAPID-READINESS-1 §7・§8-3 へ Unit A「diabetes domain metadata consistency」の解消を記録: `diabetes` / `diabetes_mellitus` の domain metadata を PN2 生成規則どおり `diabetes` へ整合〔解消記録・mergePolicy 旧 schema drift の別 Finding は `prompts/vNext/HANDOFF.md` §6〕。§8 前提 3 は充足、4〔validator scope の同期判断〕は global promotion 実装時に実施。global promotion は引き続き未実装。一覧表の Q-RAPID1 行を同期。同日先行: 6-module Rapid v2 pilot の Human Review 結果を Q-RAPID1 §3・§4 へ記録し、pilot の Human Review を CLOSE。§3 の topical/cardiorenal/combination 評価軸と mixed-route cp_good、§4 の4観点（scenario切替/OFF復帰/SOAP可読性/剤形横断）、composition 境界（cross-domain 非共有/同一 domain 共有）をすべて実施し blocker 0件。mixed-route realization と composition 横断最適化は Owner 判断により runtime を変更せず、§9・§10 に Known observation / deferred として記録（再開 Trigger は module 開発が一周する少し前・十分な実 SOAP 例が揃った段階。priority / solution /実装時期は未確定）。FAC-10 は今回の file:// 確認（`428d754` base + 未commit 6-module pilot static build。Windows company PC 相当環境ではない）では元定義の再開 Trigger を満たさず、`prompts/vNext/HANDOFF.md` の FAC-10 status は NOT YET VERIFIED のまま維持（同ファイルへ 2026-09-17 追記）。§8 の global promotion 前提1・2は充足、3・4は未充足のまま — **pilot の Human Review は CLOSE だが、global promotion は未承認**。一覧表の Q-RAPID1 行を同期。2026-09-16: Q-RAPID1 §1 へ Owner 確認を追記: bridge authored 表現が「症状」を評価対象としている間は現行 Rapid v2 表現を許容し、bridge 表現が「症状」以外へ変わった時点を再開 Trigger とする方針を確定（単純な名詞置換は不採用、現在の pilot の global promotion 判断の blocker ではない）。同日、§3 へ `cardiorenal_sglt2_oral` の Human Review 結果（現行「症状」表現は実務上許容。clinical subject generalization を承認する判断ではない）を追記し、残り module / 観点 / FAC-10 は未実施のまま明記。同日: Q-RAPID1 §3 へ追加 pilot allowlist の実装状況を追記: `lib/rapidV2.ts` の `RAPID_V2_MODULE_IDS` を Owner 承認済みの exact 6 module へ拡張〔既存3 ＋ 外用・心腎・配合剤の3〕。production 変更は central allowlist のみで、eligibility / composition / route verb / RapidState / canonical / bridge / `adjustmentExpression` 値は不変。validator は allowlist 追従のみで global 化せず。file:// での Human Review と commit / push は未実施。一覧表の Q-RAPID1 行を同期。2026-09-15: Q-RAPID1 へ Owner Decision OD-RAPID-READINESS-1 を追記: Unit「Rapid v2 global promotion readiness review」の結果として、global promotion を行わず追加 pilot を1回挟む方針・clinical subject generalization の PENDING 化・future-subject tripwire（`tests/rapidCapableSubjectTripwire.test.ts`）の承認・追加 pilot 3 module の承認〔allowlist 未実装〕・既存3 module Human 評価の補完方針・FAC-10 の位置づけ・chemical mediator 点眼の追加 pilot 除外・clinicalDomain 値の揺れの別 Finding 化を確定。一覧表の Q-RAPID1 行を同期。2026-09-14: Q-RAPID1 へ Unit「Rapid v2 composition + realization hardening」の Human UI確認由来の Known UX observation（UX-1: Rapid未選択node表示順ズレ／UX-2: 同一module複数追加時のchip識別性。いずれも現時点では blocker ではなく実運用後に再評価）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-17（Unit「Rapid v2 post-promotion cleanup」: Q-RAPID1 の見出しと「現状」を global promotion 後の Current State へ更新し、OD-RAPID-H1-PILOT-1 Status 節・OD-RAPID-MULTI-PILOT-1・OD-RAPID-COMPOSITION-1 Unit 付随判断・OD-RAPID-READINESS-1 へ Historical / Superseded 表示を追加〔本文は改変なし〕。OD-RAPID-READINESS-1 §3 の commit / push 記述へ後続追記。同日先行: Q-RAPID1 へ Owner Decision OD-RAPID-GLOBAL-1〔Rapid v2 global promotion。既定 v2 ＋ 明示的な一時除外（chemical mediator 点眼のみ）・`RAPID_CAPABLE_S_CONTRACT` の scope を runtime profile へ自動同期・legacy Rapid v1 は rollback 経路として保持し `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4 へ公告・adjustmentExpression / composition / clinical subject は不変〕と実装状況を追記。§8 前提 4 は充足。FAC-10 は業務配布前の release gate として未完了のまま。一覧表の Q-RAPID1 行を同期。同日先行: Q-RAPID1 OD-RAPID-READINESS-1 §7・§8-3 へ Unit A「diabetes domain metadata consistency」の解消を記録: `diabetes` / `diabetes_mellitus` の domain metadata を PN2 生成規則どおり `diabetes` へ整合〔解消記録・mergePolicy 旧 schema drift の別 Finding は `prompts/vNext/HANDOFF.md` §6〕。§8 前提 3 は充足、4〔validator scope の同期判断〕は global promotion 実装時に実施。global promotion は引き続き未実装。一覧表の Q-RAPID1 行を同期。同日先行: 6-module Rapid v2 pilot の Human Review 結果を Q-RAPID1 §3・§4 へ記録し、pilot の Human Review を CLOSE。§3 の topical/cardiorenal/combination 評価軸と mixed-route cp_good、§4 の4観点（scenario切替/OFF復帰/SOAP可読性/剤形横断）、composition 境界（cross-domain 非共有/同一 domain 共有）をすべて実施し blocker 0件。mixed-route realization と composition 横断最適化は Owner 判断により runtime を変更せず、§9・§10 に Known observation / deferred として記録（再開 Trigger は module 開発が一周する少し前・十分な実 SOAP 例が揃った段階。priority / solution /実装時期は未確定）。FAC-10 は今回の file:// 確認（`428d754` base + 未commit 6-module pilot static build。Windows company PC 相当環境ではない）では元定義の再開 Trigger を満たさず、`prompts/vNext/HANDOFF.md` の FAC-10 status は NOT YET VERIFIED のまま維持（同ファイルへ 2026-09-17 追記）。§8 の global promotion 前提1・2は充足、3・4は未充足のまま — **pilot の Human Review は CLOSE だが、global promotion は未承認**。一覧表の Q-RAPID1 行を同期。2026-09-16: Q-RAPID1 §1 へ Owner 確認を追記: bridge authored 表現が「症状」を評価対象としている間は現行 Rapid v2 表現を許容し、bridge 表現が「症状」以外へ変わった時点を再開 Trigger とする方針を確定（単純な名詞置換は不採用、現在の pilot の global promotion 判断の blocker ではない）。同日、§3 へ `cardiorenal_sglt2_oral` の Human Review 結果（現行「症状」表現は実務上許容。clinical subject generalization を承認する判断ではない）を追記し、残り module / 観点 / FAC-10 は未実施のまま明記。同日: Q-RAPID1 §3 へ追加 pilot allowlist の実装状況を追記: `lib/rapidV2.ts` の `RAPID_V2_MODULE_IDS` を Owner 承認済みの exact 6 module へ拡張〔既存3 ＋ 外用・心腎・配合剤の3〕。production 変更は central allowlist のみで、eligibility / composition / route verb / RapidState / canonical / bridge / `adjustmentExpression` 値は不変。validator は allowlist 追従のみで global 化せず。file:// での Human Review と commit / push は未実施。一覧表の Q-RAPID1 行を同期。2026-09-15: Q-RAPID1 へ Owner Decision OD-RAPID-READINESS-1 を追記: Unit「Rapid v2 global promotion readiness review」の結果として、global promotion を行わず追加 pilot を1回挟む方針・clinical subject generalization の PENDING 化・future-subject tripwire（`tests/rapidCapableSubjectTripwire.test.ts`）の承認・追加 pilot 3 module の承認〔allowlist 未実装〕・既存3 module Human 評価の補完方針・FAC-10 の位置づけ・chemical mediator 点眼の追加 pilot 除外・clinicalDomain 値の揺れの別 Finding 化を確定。一覧表の Q-RAPID1 行を同期。2026-09-14: Q-RAPID1 へ Unit「Rapid v2 composition + realization hardening」の Human UI確認由来の Known UX observation（UX-1: Rapid未選択node表示順ズレ／UX-2: 同一module複数追加時のchip識別性。いずれも現時点では blocker ではなく実運用後に再評価）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -618,7 +618,7 @@ DP-20「適用しないこと」節が凍結する内容について、Owner が
 
 ---
 
-## Q-RAPID1: Rapid transition taxonomy の6種化（Reference Model・検証中）
+## Q-RAPID1: Rapid transition taxonomy の6種化（2026-09-17 global promotion 済み・残論点あり）
 
 **論点**
 現行 Rapid は前回との関係性（relation）5種（`new_addition` / `med_changed` / `dose_increased` / `dose_decreased` / `continued_do`）× 状態（condition）4種の組み合わせで S先頭文を生成する。Owner は、これを次の6系統へ整理する候補を検討している。
@@ -630,7 +630,18 @@ DP-20「適用しないこと」節が凍結する内容について、Owner が
 5. 増
 6. 減
 
-**現状**
+**現状（2026-09-17・Current State）**
+
+Rapid v2（6 transition × 4 outcome）は Owner Decision **OD-RAPID-GLOBAL-1**（本項目末尾）により **全 module の既定 profile** として確定・実装済みである（commit `4238d88`）。
+
+- profile 判定: `lib/rapidV2.ts` の `rapidProfileOf`（既定 v2 ＋ 明示的な一時除外）。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ
+- `RAPID_CAPABLE_S_CONTRACT` validator の scope は runtime の v2 profile と自動同期（WARNING / Design Rule）。future-subject tripwire は v1 / v2 を問わず全 Rapid-capable scenario を監視する
+- legacy Rapid v1 は一時除外 module と rollback 経路として保持（`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）
+- 未確定の残論点: 一時除外の解除判断 / clinical subject generalization（OD-RAPID-READINESS-1 §1 PENDING）/ legacy Rapid v1 の Lifecycle 確定 / composition 横断 review（同 §9・§10）。FAC-10 は業務配布前の release gate として未完了
+
+以下の本文（「論点」後段の検証方針、および各 Owner Decision）は、H1 Reference Implementation → 3 module pilot → 6 module pilot → global promotion の**判断経緯の記録**である。各 Decision の冒頭に表示した Historical / Superseded 注記のとおり、現在の仕様は本節と OD-RAPID-GLOBAL-1 を正とする。
+
+**検証開始時の記述（2026-09-13 時点。Historical）**
 本項目はまだ Repository 上の確定仕様ではない。Owner は、まず H1 ヒスタミン H1 受容体拮抗薬点眼（`allergy_h1_antihistamine_eye_drops`）を Reference Implementation として先行実装し、実際のアプリ上で
 
 - 単一 node
@@ -679,6 +690,8 @@ Do × stable の生成文が Default S と同一であっても、Rapid state �
 
 したがって、「Rapid ON なら必ず S が Default と異なる」という test contract は本質要件とは扱わない。v2 では、「ON 後の S が選択 state に対応する期待文と一致する」ことを test contract とする。OFF 時に Default へ byte 単位で復元する既存契約は維持する。
 
+> **[Historical / Superseded]** 以下の「Status」「推奨判断タイミング」「現時点の扱い」は 2026-09-13 時点の状態記述である。「6 transition taxonomy の全 module 一般化は Under Validation」とする部分は **OD-RAPID-GLOBAL-1（2026-09-17）により superseded**（Rapid v2 は全 module の既定 profile）。
+
 **Status**
 
 この3点を Owner Decision として確定したため、本項目（Q-RAPID1）の H1 Reference Implementation は実装へ進めてよい。
@@ -694,6 +707,8 @@ H1 Reference Implementation の実装可否は OD-RAPID-H1-PILOT-1 により確�
 ---
 
 **Owner Decision（2026-09、OD-RAPID-MULTI-PILOT-1）: 限定 multi-module pilot（3 module）への拡張**
+
+> **[Historical / 一部 Superseded]** 本 Decision のうち §A（Under Validation の継続）・§B（3 module allowlist）・§C（global promotion ではない）・§D（allowlist 追加の個別判断）・§E（非対象 module は legacy Rapid）・§K のうち「全 module での Rapid v2 有効化」を未許可とする部分は、**OD-RAPID-READINESS-1 §3（6 module 化）を経て OD-RAPID-GLOBAL-1（2026-09-17）により superseded**。現在は既定 v2 ＋ 一時除外であり、allowlist は廃止された。§K のうち legacy Rapid v1 の削除・`adjustmentExpression` の migration・グローバルな route / 剤形アーキテクチャの導入・Persona / persistence の変更を行わない部分は、OD-RAPID-GLOBAL-1 §1・§4・§5 でも維持されている。§F・§H・§I・§J は変更なく有効。§G は下記の注記のとおり OD-RAPID-ROUTE-VERB-1 により superseded。本文は当時の判断記録として改変しない。
 
 OD-RAPID-H1-PILOT-1 の「1. H1限定境界」で確定した H1点眼1 module限定の allowlist を、H1 pilot の Human Review 通過を受けて次の3 module限定へ拡張する。以下を Owner Decision として確定する。
 
@@ -827,6 +842,8 @@ Rapid v2 S composition について以下を採用する。
 
 **Unit 付随判断（Unit「Rapid v2 composition + realization hardening」に限定）**
 
+> **[Historical / 一部 Superseded]** 下記のうち「`rapidV2Register` の付与範囲」の「Rapid v2 pilot module」、および「`RAPID_CAPABLE_S_CONTRACT` validator の scope」を pilot allowlist 内に限定する部分は、**OD-RAPID-GLOBAL-1（2026-09-17）により superseded**。現在はいずれも runtime の Rapid v2 profile（`rapidProfileOf(mod) === 'v2'`。既定 v2 ＋ 一時除外）が対象である。Rapid-capable でない scenario に `rapidV2Register` を持たせないこと、Decision grouping fallback safety・Unit 3A parity の後継 contract は変更なく有効。本文は当時の判断記録として改変しない。
+
 - **`rapidV2Register` の付与範囲**: composition 用の scenario register snapshot（`MergedBlock.rapidV2Register`）は、Rapid v2 pilot module かつ Rapid-capable scenario の block にだけ付与する。Rapid を使用できない scenario に将来用 metadata を持たせない。
 - **Decision grouping fallback safety の後継 contract**: 旧 source contract「`lib/buildSoap.ts` 全体に Rapid 参照が無い」（`tests/decisionFallbackSafety.test.ts` B4）は本 Decision と両立しないため、元の安全意図を保存する後継 contract へ置き換える。後継 contract は、legacy / non-Rapid の `buildNarrativeS`（decision fallback 経路を含む）を Rapid-aware にしないこと、decision fallback 経路に Rapid-specific な条件分岐を入れないこと、非 Rapid / legacy v1 の既存出力契約を維持することを検証する。Rapid v2 realization を `lib/buildSoap.ts` の外へ移す必要はなく、composition layer に置いてよい。
 - **Unit 3A parity contract**: `tests/nodeSnapshotUnit3A.test.ts` T-3A の oracle は、上記 `rapidV2Register` の追加だけを明示的な許容差分とする後継 contract へ更新する。非 Rapid-v2 / 非 capable 経路は従来 output と完全一致とし、それ以外の field 差分は 0 とする。
@@ -855,6 +872,8 @@ node bar 上では A→B の順で node が並んでいても、A が Rapid v2 �
 ---
 
 **Owner Decision（2026-09-15、OD-RAPID-READINESS-1）: Rapid v2 global promotion readiness review 由来の決定**
+
+> **[Historical / 一部 Superseded]** 本 Decision 冒頭の「global promotion を現時点では行わない」「Rapid v2 は引き続き Under Validation」、§2 B2（validator scope を pilot allowlist 内に限定したまま保留）、§3「実装状況」の allowlist 記述、§8 末尾・§11 の「global promotion は未承認」「legacy Rapid v1 の扱い・allowlist の判定単位は未解決」とする状態記述は、**OD-RAPID-GLOBAL-1（2026-09-17）により superseded**（B2 は同 §3、v1 の扱いは同 §4、判定単位は同 §1 で決着）。§1（clinical subject PENDING と許容条件）・§2 B1（future-subject tripwire）・B3・§5（FAC-10）・§7（clinicalDomain Finding。2026-09-17 解消済み）・§9・§10（Known observation / deferred）は現在も有効。§6（chemical mediator 点眼の除外）は OD-RAPID-GLOBAL-1 §2 の一時除外として継続。本文は当時の判断記録として改変しない。
 
 Unit「Rapid v2 global promotion readiness review」（HEAD `428d754` 時点の Repository 実測に基づくレビュー）の結果、Owner は **global promotion を現時点では行わず、追加 pilot を1回挟む**方針とし、以下を確定する。**本 Decision は global promotion の承認ではない。** OD-RAPID-MULTI-PILOT-1 §K の未許可事項はすべて維持し、Rapid v2 は引き続き Under Validation である。
 
@@ -898,7 +917,7 @@ OD-RAPID-MULTI-PILOT-1 §D（pilot 期間中の allowlist 追加は本項目の�
 - allowlist の exact set 契約: `tests/rapidV2MultiModulePilot.test.ts` A ／ `tests/rapidV2H1Pilot.test.ts` D（**件数だけでなく Owner 承認済み集合との完全一致**を固定し、件数合わせの別 module 混入も FAIL させる）
 - 追加3 module 側の契約: `tests/rapidV2AdditionalPilot.test.ts`（drug-specific 24文・regimen 24文・topical の使用回数表現が v2 に出ないこと・残余 byte 保持・OFF byte 復元・severity gate・cross-domain / 同一 domain の合成・非 pilot module が v1 realization と一致し続けること）
 - 実測（2026-09-16）: 追加3 module の Rapid-capable scenario は 外用5 / 心腎4 / 配合剤8。非 pilot module の 2,760 組合せで v1 realization と差分 0 件。`RAPID_CAPABLE_S_CONTRACT` は corpus 全 module で 0 件
-- **Human Review（file:// 静的配布版。上記 4 の不足観点と §3 の評価軸）は完了した（2026-09-17）。** FAC-10 は下記 5 のとおり原定義に対する gap が残るため、本 Human Review をもって FAC-10 が完了したとは扱わない。**commit / push は本 Decision の記録後も Owner の明示指示があるまで行わない。**
+- **Human Review（file:// 静的配布版。上記 4 の不足観点と §3 の評価軸）は完了した（2026-09-17）。** FAC-10 は下記 5 のとおり原定義に対する gap が残るため、本 Human Review をもって FAC-10 が完了したとは扱わない。**commit / push は本 Decision の記録後も Owner の明示指示があるまで行わない。**（後続追記 2026-09-17: Owner の指示により commit `c47f39e` として commit / push 済み。当時の記述として保持する）
 
 **Human Review 結果（2026-09-17・file:// 静的配布版。`428d754` を base とした未commit 6-module pilot static build。`commit 428d754 そのものの配布物`ではない）**
 
