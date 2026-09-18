@@ -15,7 +15,6 @@
     "domain": "dermatology",
     "priority": "chronic",
     "clinicalDomain": "dermatology",
-    "searchDomain": "dermatology_topical",
     "classKey": "heparinoid_moisturizer_spray",
     "sMergeDomain": "dermatology_topical",
     "sMergePolicy": {

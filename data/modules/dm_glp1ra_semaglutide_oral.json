@@ -19,7 +19,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "GLP1内服",
     "nodeLabelLong": "GLP-1受容体作動薬（内服）",

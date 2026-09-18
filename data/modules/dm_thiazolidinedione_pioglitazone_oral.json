@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "TZD",
     "nodeLabelLong": "チアゾリジン系糖尿病薬（内服）",

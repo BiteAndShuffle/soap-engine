@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "α-GI",
     "nodeLabelLong": "α-グルコシダーゼ阻害薬（内服）",

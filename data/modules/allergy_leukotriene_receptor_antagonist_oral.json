@@ -19,7 +19,6 @@
     "domain": "allergy",
     "priority": "chronic",
     "clinicalDomain": "allergy",
-    "searchDomain": "allergy",
     "sMergeDomain": "allergy",
     "nodeLabelShort": "抗ロイコトリエン内服",
     "nodeLabelLong": "ロイコトリエン受容体拮抗薬（内服）",

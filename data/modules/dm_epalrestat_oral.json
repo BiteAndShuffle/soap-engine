@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "エパルレスタット",
     "nodeLabelLong": "アルドース還元酵素阻害薬（内服）",

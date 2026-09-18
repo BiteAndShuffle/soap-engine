@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "SU",
     "nodeLabelLong": "スルホニルウレア系経口血糖降下剤（内服）",

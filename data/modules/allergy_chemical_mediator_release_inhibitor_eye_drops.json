@@ -15,7 +15,6 @@
     "domain": "allergy",
     "priority": "chronic",
     "clinicalDomain": "allergy",
-    "searchDomain": "allergy",
     "sMergeDomain": "allergy",
     "classKey": "chemical_mediator_release_inhibitor",
     "groupKeyRegistry": [

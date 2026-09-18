@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "DPP4/TZD配合剤",
     "nodeLabelLong": "DPP-4阻害薬／チアゾリジン系糖尿病薬配合剤（内服）",

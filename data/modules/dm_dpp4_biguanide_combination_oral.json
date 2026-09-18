@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "DPP4/BG配合剤",
     "nodeLabelLong": "DPP-4阻害薬／ビグアナイド配合剤（内服）",

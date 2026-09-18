@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "TZD/BG配合剤",
     "nodeLabelLong": "チアゾリジン系糖尿病薬／ビグアナイド配合剤（内服）",

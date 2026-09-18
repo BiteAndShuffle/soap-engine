@@ -20,7 +20,6 @@
     "domain": "allergy",
     "priority": "chronic",
     "clinicalDomain": "allergy",
-    "searchDomain": "allergy",
     "sMergeDomain": "allergy",
     "nodeLabelShort": "抗ヒスタミン薬",
     "nodeLabelLong": "第二世代抗ヒスタミン薬（内服）",

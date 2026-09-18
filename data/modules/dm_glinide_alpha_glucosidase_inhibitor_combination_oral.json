@@ -10,7 +10,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "グリニド/α-GI配合剤",
     "nodeLabelLong": "グリニド系経口血糖降下剤／α-グルコシダーゼ阻害薬配合剤（内服）",

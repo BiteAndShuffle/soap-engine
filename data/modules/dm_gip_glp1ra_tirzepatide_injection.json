@@ -14,7 +14,6 @@
     "domain": "diabetes",
     "priority": "chronic",
     "clinicalDomain": "diabetes",
-    "searchDomain": "diabetes",
     "sMergeDomain": "diabetes",
     "nodeLabelShort": "GIP/GLP1注射",
     "nodeLabelLong": "GIP/GLP-1受容体作動薬（注射）",
