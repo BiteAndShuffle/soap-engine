@@ -428,7 +428,13 @@ scenarioEngine:
 # （｜scenarioRequiredTags=[...]｜。他モジュールでの例: dm_dpp4_oral）ではなく、
 # 本Headerに正式な構造データ（id → tags のマップ）として定義し、canonical JSON生成時に
 # 各scenario/addonのフィールドへ機械的に反映する正本とする。
-# 記載のないscenario/addonは常時表示（タグ条件なし）とする。
+# 記載のないscenario/addonは常時表示候補（タグ条件なし）とする。
+#
+# これらのタグは「表示するか」を決めるものであり、「データを保持するか」を決めるものではない。
+# 現行製品のhandlingTagsでは到達できないscenario/addonであっても、共通シャーシの
+# capability としてbridge本文・canonical JSONの双方に保持する（下記 concentration_variant 系が該当）。
+# 「現行製品では非表示だから」を理由にSCENARIO/ADDON本体を削除しないこと。
+# 削除してよいのは、その指導内容自体が本moduleの責務でなくなった場合に限る。
 # ─────────────────────────────────────────
 scenarioRequiredTags:
   lifestyle_guidance_suspension_shake: ["suspension"]
@@ -464,12 +470,27 @@ addonRequiredTags:
   addon_eye_drop_avoid_cold_storage: ["avoid_cold_storage"]
   addon_eye_drop_single_dose_mini: ["single_use_container"]
   addon_eye_drop_preservative_free_pf: ["preservative_free"]
-# 次の2件のADDONのみ、
-# handlingTags・addonRequiredTags は設定せず、
-# 全点眼薬で常時表示する。
-# 対象:
+# 上記 addonRequiredTags に記載のないADDONは、handlingTags による自動gateを行わない
+# （＝全製品で常時表示候補とし、実施するかは薬剤師が選択する）。
+# 次の3件は本文中に製剤性質を示す語を含むため、後から誤ってgateされやすい。
+# いずれも意図的にgateしていないため、handlingTags / addonRequiredTags を追加しないこと。
+#
 # - addon_eye_drop_interval_after_suspension_5min
 # - addon_eye_drop_interval_after_suspension_10min
+#   本module自身が懸濁製剤である場合に限った指導ではない。併用する「他の」点眼薬が懸濁性で
+#   ある場合の使用順・点眼間隔を扱う内容であり、条件は自剤ではなく併用薬の性質にある。
+#   したがって自剤の brandCatalog.handlingTags を根拠とする suspension gate を設定しない。
+#   設定すると、非懸濁6製剤（アレジオン／エピナスチン／ザジテン／ケトチフェン／
+#   パタノール／オロパタジン）で必要な併用間隔指導が失われる。
+#   本文に「懸濁」の語があることを理由に suspension を付与しないこと。
+#
+# - addon_eye_drop_contact_lens_remove_before_use
+#   コンタクトレンズ装用時に点眼できるかは、製品・製剤・レンズ種別・添付文書によって異なり、
+#   実際に交付される製品は薬局の採用品・在庫にも依存する。このため runtime の自動判定として
+#   設計せず、薬剤師が交付製品・レンズ種別・添付文書を確認したうえで選択する Human judgment に
+#   委ねる。addonRequiredTags を設定せず、新規 handlingTag も作成しない。
+#   常時表示候補であることは「全製品で必ずレンズを外す」という医学的主張ではなく、
+#   「選択肢として常に提示する」という意味である。
 #
 constitution:
   purpose: "このテンプレートは自然言語シナリオ原稿をJSONへ橋渡しするための軽量構造定義である。"

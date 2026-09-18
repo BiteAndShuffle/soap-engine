@@ -18,17 +18,6 @@
     "nodeLabelLong": "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬",
     "nodeKey": "h1_antihistamine_ophthalmic",
     "classKey": "h1_antihistamine",
-    "defaultSMergeLevel": "clinical_domain",
-    "canonicalSource": {
-      "nodeIdentity": "composition",
-      "displayProjection": "display",
-      "scenarioMergePolicy": "scenarios[].mergePolicy"
-    },
-    "domainPolicy": {
-      "clinicalDomainUnit": "disease_area",
-      "sMergeDomainUnit": "disease_area",
-      "defaultSGrouping": "clinical_domain"
-    },
     "groupKeyRegistry": [
       "allergy_dose_adjustment",
       "side_effect_monitoring",
@@ -42,10 +31,6 @@
       "unit": "clinical_domain",
       "conflictStrategy": "separate_by_domain",
       "withinDomainStrategy": "groupKey_based_semantic_merge"
-    },
-    "nodeIdentityPolicy": {
-      "source": "composition",
-      "overrideAllowed": false
     }
   },
   "drug": {
