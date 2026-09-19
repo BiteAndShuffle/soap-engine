@@ -403,7 +403,7 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
   })
 
-  test('WARNING の総数が baseline（39 件）から変化していない', () => {
+  test('WARNING の総数が baseline（35 件）から変化していない', () => {
     // 2026-09: allergy_h1_antihistamine_eye_drops へ strength_decrease_low_perceived_effect
     // （scenarioRequiredTags: ["concentration_variant"]）を追加したことに伴い、
     // 同一クラスタの既存4件（strength_increase/decrease系）と同型の
@@ -420,12 +420,20 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     // 点眼共通シャーシ原則（Owner Decision 2026-09-17）に基づき「現行収載製品では到達不能だが
     // 将来製品用として意図的に保持する capability」として保持している（ERROR ではなく WARNING）。
     // 他 module の内訳は不変（H1 14 / heparinoid 4 / dpp4 4 = 22）。
+    //
+    // 2026-09（prefixAliases 撤去）: 39→35。
+    // deprecated かつ runtime 非参照であった drug.search.prefixAliases を schema / bridge /
+    // canonical から撤去した結果、heparinoid 4 module の SEARCH_TOKEN_ALIAS_POLLUTION
+    // （commonSearchTokens が prefixAliases へ混入）4 件が、混入先フィールドの消滅により
+    // 0 件となった。commonSearchTokens の値自体は変更していない。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 12 / SCENARIO_REQUIRED_TAG_UNREACHABLE 19 /
+    //       ADDON_SCOPE_VIOLATION 4 = 35。
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      39,
+      35,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })

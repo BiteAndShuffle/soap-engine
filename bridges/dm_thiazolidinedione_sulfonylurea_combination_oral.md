@@ -90,7 +90,7 @@ drug:
   #     に確立済みの読みを流用
   #   - ぐりめぴりど（グリメピリド）は dm_sulfonylurea_oral.drug.search.nameAliases
   #     から同様に流用
-  #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #   - 上記3件はいずれも module 単位の nameAliases に追加する。
   #     第1成分（ぴおぐりたぞん）は displayGenericName "ピオグリタゾン／グリメピリド"
   #     の前方一致で resolveAllHighPrecisionBrands() から解決できるため、
   #     brandCatalog[brand].aliases への複製は不要（DP-09）。
@@ -108,10 +108,6 @@ drug:
     exactAliases:
       - "ソニアス"
 
-    prefixAliases:
-      - "そにあす"
-      - "ぴおぐりたぞん"
-      - "ぐりめぴりど"
 
     nameAliases:
       - "そにあす"

@@ -93,7 +93,7 @@ drug:
   #     存在する場合はそれを流用する」に従う。新規推測ではない）
   #   - めとほるみん / めとほるみんえんさんえん（メトホルミン／メトホルミン塩酸塩）は
   #     dm_biguanide_metformin_oral.drug.search.nameAliases から同様に流用
-  #   - 上記5件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #   - 上記5件はいずれも module 単位の nameAliases に追加する。
   #     第1成分（あなぐりぷちん／びるだぐりぷちん／あろぐりぷちん）は各brandの
   #     displayGenericName の前方一致で resolveAllHighPrecisionBrands() から解決
   #     できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
@@ -121,15 +121,6 @@ drug:
       - "イニシンク"
       - "メホビル"
 
-    prefixAliases:
-      - "めとあな"
-      - "えくめっと"
-      - "いにしんく"
-      - "めほびる"
-      - "あなぐりぷちん"
-      - "びるだぐりぷちん"
-      - "あろぐりぷちん"
-      - "めとほるみん"
 
     nameAliases:
       - "めとあな"

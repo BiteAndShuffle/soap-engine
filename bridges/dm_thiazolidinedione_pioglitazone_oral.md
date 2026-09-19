@@ -65,7 +65,7 @@ drug:
   # search セクション（確定・2026-07-05）
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
-  # 成分名の基本読み「ぴおぐりたぞん」は module 単位の prefixAliases/nameAliases に加え、
+  # 成分名の基本読み「ぴおぐりたぞん」は module 単位の nameAliases に加え、
   # brandCatalog.ピオグリタゾン.aliases/normalizedAliases にも登録する。
   #
   # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
@@ -89,9 +89,6 @@ drug:
       - "アクトス"
       - "ピオグリタゾン"
 
-    prefixAliases:
-      - "あくとす"
-      - "ぴおぐりたぞん"
 
     nameAliases:
       - "あくとす"

@@ -113,7 +113,7 @@ drug:
   #   3ブランドはいずれも互いに異なる成分を持つ単剤構成であり、
   #   displayGenericName が resolveAllHighPrecisionBrands で解決されるため
   #   （DP-09）、成分名読みを brandCatalog[brand].aliases へ複製する必要はない。
-  #   成分名読みは module 単位の prefixAliases/nameAliases にのみ追加する。
+  #   成分名読みは module 単位の nameAliases にのみ追加する。
   #
   # primaryDisplayName は用途区分を含めた "SGLT2阻害薬（心不全・腎疾患）" とする
   # （上記ヘッダー冒頭「primaryDisplayName の分離方針」参照。dm_sglt2_oral 側の
@@ -126,13 +126,6 @@ drug:
       - "ジャディアンス"
       - "カナグル"
 
-    prefixAliases:
-      - "ふぉしーが"
-      - "じゃでぃあんす"
-      - "かなぐる"
-      - "だぱぐりふろじん"
-      - "えんぱぐりふろじん"
-      - "かなぐりふろじん"
 
     nameAliases:
       - "ふぉしーが"

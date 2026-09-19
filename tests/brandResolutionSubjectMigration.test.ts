@@ -386,7 +386,7 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     assert.deepEqual(missing, [], `historical fixture が参照する module が registry から消えている: ${missing.join(', ')}`)
   })
 
-  test('全 1608 行の projection が fixture と一致する', () => {
+  test('全 1580 行の projection が fixture と一致する', () => {
     // U-CR2: `index`（全体）ではなく `historicalIndex`（fixture が参照する module のみ）で
     // 再計算する。fixture は U-4b / Q-S2 migration 時点の historical regression artifact
     // であり、その後追加された module の結果混入は corpus 成長であって semantic regression
@@ -475,8 +475,21 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     // rows 1602→1608 / brand 1037→1040 / generic 508→511 / module 57→57。
     // U-4b の意味論的 delta は完全に不変: reachableChangedRows 25 / Patterns 6 /
     // gatedChangedRows 57 / gatedChangedModules 20、denotation='brand' の delta 0 件。
-    assert.equal(fixture.summary.rows, 1608)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1040, generic: 511, module: 57 })
+    //
+    // prefixAliases 撤去（2026-09。Legacy search field cleanup）: deprecated かつ runtime
+    // 非参照であった drug.search.prefixAliases を schema / bridge / canonical から撤去した。
+    // 本 fixture のクエリ母集団は exactAliases / nameAliases / prefixAliases / keywords /
+    // brandNames / brandCatalog 由来であるため、prefixAliases にしか存在しなかった 4 クエリ
+    // （へぱ / へぱりん / へぱりんるいじ / へぱりんるいじぶっしつ。いずれも
+    //  SEARCH_TOKEN_ALIAS_POLLUTION として検出されていた commonSearchTokens の混入値）が
+    // 母集団から外れ、それらが返していた 28 行が消えた。
+    // rows 1608→1580 / brand 1040→1018 / generic 511→505 / module 57→57。
+    // 消えたクエリ 4 件・追加 0 件・既存クエリの行内容変化 0 件（実測）。検索挙動は不変で
+    // あることを 1,656 クエリの before/after 比較で確認済み（差分 0）。
+    // U-4b の意味論的 delta は完全に不変: reachableChangedRows 25 / Patterns 6 /
+    // gatedChangedRows 57 / gatedChangedModules 20、denotation='brand' の delta 0 件。
+    assert.equal(fixture.summary.rows, 1580)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1018, generic: 505, module: 57 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 57)

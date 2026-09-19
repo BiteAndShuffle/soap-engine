@@ -758,7 +758,7 @@ bare な薬剤名クエリ（単一トークンであり、剤形・部位等の
 `strongSingleIngredientQuery`（Search Family Phase 2-A の発動条件。用語対応は DP-20「適用しないこと」節の 2026-09 追記を参照）の活性化フロアは次のとおり結合されている（`lib/search.ts` の `gateFloor`）。
 
 - 単一トークンかつ正規化長 3 文字以上のクエリに限り floor=4（alias 前方一致以上。完全一致は score 5）まで緩和する。G5 の主眼はこの非完全一致の 3+ 文字プレフィックス（例:「あれじ」「したぐ」「リナグリ」）にゲートを開くことにあり、floor=4 を「完全一致以上」と読むと G5 の意図そのものを取り違える
-- 3文字未満のクエリは floor=5（alias 完全一致以上）を維持する。既存の高精度 2 文字 `prefixAliases`（あぴ／おぜ／せま／とる／とれ／ばい／ひと／びく／ふぃ／らん／りき／るむ／りべ／れべ の14件）が持つ完全一致特権を守るためである
+- 3文字未満のクエリは floor=5（alias 完全一致以上）を維持する。既存の高精度 2 文字 `nameAliases`（あぴ／おぜ／せま／とる／とれ／ばい／ひと／びく／ふぃ／らん／りき／るむ／りべ／れべ の14件）が持つ完全一致特権を守るためである（`scoreEntry()` の `aliasTokens` 経由で score 5 に到達する。2026-09 の `prefixAliases` 撤去以前は同じ 14 件が `prefixAliases` にも重複記載されていたが、runtime が参照していたのは一貫して `nameAliases` 側である）
 - 活性化フロア（`strongQueryBase`）と曖昧性走査フロア（`seenGateModules` ループ）は同一の `gateFloor` を共有しなければならない。曖昧性走査だけを緩めると、本来ブロックすべき多成分エイリアスを見逃す
 
 回帰は `tests/searchG5PrefixGate.test.ts` が合成 module により構造的に固定する。Owner-rejected literal 述語（`tokens.length===1 && tokens[0].length>=3 && score>=4`。3文字未満クエリを長さのみで無条件ゲート不成立にする）は、当時の全既存テストをコーパス差分ゼロで通過しており、出力ベースの回帰テストでは検出不能な盲点だった。

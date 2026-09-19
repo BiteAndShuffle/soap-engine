@@ -99,7 +99,7 @@ drug:
   #   カナグリフロジン／イプラグリフロジン／ルセオグリフロジン／トホグリフロジン）
   #   を持つ単剤構成であり、displayGenericName が resolveAllHighPrecisionBrands で
   #   解決されるため（DP-09）、成分名読みを brandCatalog[brand].aliases へ
-  #   複製する必要はない。成分名読みは module 単位の prefixAliases/nameAliases
+  #   複製する必要はない。成分名読みは module 単位の nameAliases
   #   にのみ追加する。
   #
   # primaryDisplayName はクラス名（"SGLT2阻害薬"）のみとし、用途区分（糖尿病）は
@@ -118,19 +118,6 @@ drug:
       - "ルセフィ"
       - "デベルザ"
 
-    prefixAliases:
-      - "ふぉしーが"
-      - "じゃでぃあんす"
-      - "かなぐる"
-      - "すーぐら"
-      - "るせふぃ"
-      - "でべるざ"
-      - "だぱぐりふろじん"
-      - "えんぱぐりふろじん"
-      - "かなぐりふろじん"
-      - "いぷらぐりふろじん"
-      - "るせおぐりふろじん"
-      - "とほぐりふろじん"
 
     nameAliases:
       - "ふぉしーが"

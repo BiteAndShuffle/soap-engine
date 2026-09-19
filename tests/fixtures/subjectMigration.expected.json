@@ -2,11 +2,11 @@
   "_comment": "U-4b expected semantic delta。scripts/generate-subject-migration-fixture.ts で生成する。手で編集しない。",
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
-    "queries": 564,
-    "rows": 1608,
+    "queries": 560,
+    "rows": 1580,
     "byDenotation": {
-      "brand": 1040,
-      "generic": 511,
+      "brand": 1018,
+      "generic": 505,
       "module": 57
     },
     "changedRows": 82,
@@ -5624,70 +5624,6 @@
       "changed": false
     },
     {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドクリーム",
-      "resolutionSubject": "ヒルドイドクリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドローション",
-      "resolutionSubject": "ヒルドイドローション",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドフォーム",
-      "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドソフト軟膏",
-      "resolutionSubject": "ヒルドイドソフト軟膏",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
       "query": "へぱくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
@@ -5744,70 +5680,6 @@
       "changed": false
     },
     {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドクリーム",
-      "resolutionSubject": "ヒルドイドクリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドローション",
-      "resolutionSubject": "ヒルドイドローション",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドフォーム",
-      "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドソフト軟膏",
-      "resolutionSubject": "ヒルドイドソフト軟膏",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりん",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質フォーム",
-      "resolutionSubject": "ヘパリン類似物質フォーム",
-      "changed": false
-    },
-    {
       "query": "へぱりんくりーむ",
       "moduleId": "derm_heparinoid_moisturizer_cream",
       "denotation": "brand",
@@ -5857,102 +5729,6 @@
     },
     {
       "query": "へぱりんゆせいくりーむ",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質フォーム",
-      "resolutionSubject": "ヘパリン類似物質フォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドフォーム",
-      "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじ",
-      "moduleId": "derm_heparinoid_moisturizer_ointment",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質油性クリーム",
-      "resolutionSubject": "ヘパリン類似物質油性クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_cream",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質クリーム",
-      "resolutionSubject": "ヘパリン類似物質クリーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "generic",
-      "legacySubject": "ヘパリン類似物質フォーム",
-      "resolutionSubject": "ヘパリン類似物質フォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヒルドイドフォーム",
-      "resolutionSubject": "ヒルドイドフォーム",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_spray",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質外用スプレー",
-      "resolutionSubject": "ヘパリン類似物質外用スプレー",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
-      "moduleId": "derm_heparinoid_moisturizer_lotion",
-      "denotation": "brand",
-      "legacySubject": "ヘパリン類似物質ローション",
-      "resolutionSubject": "ヘパリン類似物質ローション",
-      "changed": false
-    },
-    {
-      "query": "へぱりんるいじぶっしつ",
       "moduleId": "derm_heparinoid_moisturizer_ointment",
       "denotation": "brand",
       "legacySubject": "ヘパリン類似物質油性クリーム",

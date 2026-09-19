@@ -552,8 +552,6 @@ Y（addonsRef）と同じ構造の監査を、alias系フィールドに適用�
 2. 出力された不整合はすべて bridge⇔JSON の同期漏れとして扱う
 3. 修正方針は RULES.md §23 に従う（機械的にどちらかを勝たせず、
    内容を確認したうえでbridge/JSONいずれを直すか判断する）
-4. drug.search.prefixAliases は runtime から参照されない情報的フィールドのため、
-   本チェックの対象外とする（moduleValidator の別チェックで形式のみ確認する）
 ```
 
 ---

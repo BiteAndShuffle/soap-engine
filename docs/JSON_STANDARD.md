@@ -139,7 +139,6 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 |---|---|---|
 | `primaryDisplayName` | string | — |
 | `exactAliases` | array | — |
-| `prefixAliases` | array | — |
 | `nameAliases` | array | `drug.nameAliases` と完全一致 |
 | `keywords` | array | — |
 | `priority` | number | — |

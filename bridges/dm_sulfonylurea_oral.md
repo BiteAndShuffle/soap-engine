@@ -80,7 +80,7 @@ drug:
   #   を持つ単剤3ブランドであり、displayGenericName が resolveAllHighPrecisionBrands
   #   で解決されるため、成分名読みを brandCatalog[brand].aliases へ複製する必要はない
   #   （dm_dpp4_oral のトラゼンタ〜グラクティブと同型の判断）。
-  #   成分名読みは module 単位の prefixAliases/nameAliases にのみ追加する。
+  #   成分名読みは module 単位の nameAliases にのみ追加する。
   search:
     primaryDisplayName: "スルホニルウレア系経口血糖降下剤"
 
@@ -89,13 +89,6 @@ drug:
       - "オイグルコン"
       - "グリミクロン"
 
-    prefixAliases:
-      - "あまりーる"
-      - "おいぐるこん"
-      - "ぐりみくろん"
-      - "ぐりめぴりど"
-      - "ぐりべんくらみど"
-      - "ぐりくらじど"
 
     nameAliases:
       - "あまりーる"

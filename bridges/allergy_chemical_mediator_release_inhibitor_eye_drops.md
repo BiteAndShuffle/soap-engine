@@ -27,8 +27,8 @@
 #             drug.search.exactAliases（17→19）/ drug.search.nameAliases（16→17）/
 #             drug.nameAliases（16→17）、および本コメントと末尾 ZEP-1 記述の更新。
 #   非変更:   SCENARIOS_START〜SCENARIOS_END 本文（1 文字も変更しない）/ brandCatalog /
-#             aliasToBrand / prefixAliases / brandNames / handlingTags /
-#             scenarioRequiredTags / addonRequiredTags / STATUS 行。
+#             aliasToBrand / prefixAliases（当時存在。後述の経緯を参照）/ brandNames /
+#             handlingTags / scenarioRequiredTags / addonRequiredTags / STATUS 行。
 #   amendment 前の SCENARIOS 本文（`=======SCENARIOS_START=======` 〜
 #   `=======SCENARIOS_END=======` を含む行範囲）:
 #       SHA-256: a07693c36d6e46355b6361a2b587377befc19d216eb2a70f7960230951ac4785
@@ -37,11 +37,20 @@
 #       固定 commit: 5731724（refactor: rebuild chemical mediator module and remediate PN8）
 #   amendment 後も上記 SHA-256 / byte 数が一致することを機械確認すること。
 #
-#   prefixAliases を変更しない理由: `drug.search.prefixAliases` は lib/types.ts で
-#   `@deprecated` であり、lib/search.ts の buildSearchIndex からは参照されない
-#   （検索到達性には寄与しない）。本 amendment 後に prefixAliases(16) と
-#   nameAliases(17) の件数が非対称になるのは、current runtime semantics と
-#   deprecated 状態に基づく**意図的な結果**であり、同期漏れではない。
+#   prefixAliases を変更しない理由（**2026-09-19 の amendment 実施時点の記録**）:
+#   当時 `drug.search.prefixAliases` は Header に存在していたが、lib/types.ts で
+#   `@deprecated` であり、lib/search.ts の buildSearchIndex からは参照されなかった
+#   （検索到達性には寄与しない）。そのため本 amendment では変更対象外とし、amendment 後に
+#   prefixAliases(16) と nameAliases(17) の件数が非対称になることを、current runtime
+#   semantics と deprecated 状態に基づく**意図的な結果**（同期漏れではない）として扱った。
+#
+#   【その後の経緯（2026-09-20 追記）】
+#   `drug.search.prefixAliases` は legacy search field cleanup により schema / 全 bridge /
+#   全 canonical から撤去された。本 bridge の prefixAliases ブロックもこのとき削除されている。
+#   したがって上記の「件数の非対称」は現存しない。**上記段落は amendment 実施時点の判断記録
+#   として保持しており、撤去後の状態を述べたものではない。** 撤去は本 amendment とは別の
+#   Unit であり、amendment の変更範囲（Header の alias 3 フィールド）を事後に変更するもの
+#   ではない。
 #
 # 記載方針:
 #   - 本Headerの構造データ（YAML部分）には、Repository 上の正本・現行標準・SCENARIOS本文・
@@ -163,33 +172,16 @@ drug:
       # brand-level generic identity（DP-09・Owner-approved amendment 2026-09-19）
       - "アシタザノラスト"
       - "アシタザノラスト点眼液"
-    # prefixAliases / nameAliases: brandNames 順に各エントリの aliases を連結したもの（H1 点眼 bridge と同じ構成）。
+    # nameAliases: brandNames 順に各エントリの aliases を連結したもの（H1 点眼 bridge と同じ構成）。
+    # （2026-09-19 の amendment 時点では同構成の prefixAliases も併存していたが、同フィールドは
+    #   2026-09-20 の legacy search field cleanup で撤去された。Header 冒頭の amendment 記載を参照。）
     #
-    # prefixAliases は lib/types.ts で @deprecated、buildSearchIndex 非参照のため
-    # amendment 対象外とする（件数の非対称は意図的。Header 冒頭の amendment 記載を参照）。
     # nameAliases には brand-level generic identity の読み「あしたざのらすと」を追加する。
     # 剤形修飾を含むかな読み「あしたざのらすとてんがん」は**追加しない**（DP-09）:
     # 対応する一般名製品エントリが brandCatalog に存在しないため、当該読みで到達しても
     # brand へ解決できず unresolved 候補（resolution.denotation='module' / subject=null）に
     # なる。剤形修飾かな読みは一般名製品エントリが存在する場合にのみ、その entry 自身の
     # aliases として登録する（H1 点眼の「えぴなすちんてんがん」等がその形）。
-    prefixAliases:
-      - "ぜぺりんてんがん"
-      - "ぜぺりん"
-      - "あれぎさーるてんがん"
-      - "あれぎさーる"
-      - "ぺみらすとんてんがん"
-      - "ぺみらすとん"
-      - "ぺみろらすとてんがん"
-      - "ぺみろらすと"
-      - "りざべんてんがん"
-      - "りざべん"
-      - "とらにらすとてんがん"
-      - "とらにらすと"
-      - "とらめらすてんがん"
-      - "とらめらす"
-      - "くろもぐりくさんてんがん"
-      - "くろもぐりくさん"
     nameAliases:
       - "ぜぺりんてんがん"
       - "ぜぺりん"

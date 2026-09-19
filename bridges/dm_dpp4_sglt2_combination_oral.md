@@ -112,7 +112,7 @@ drug:
   #   - かなぐりふろじん（カナグリフロジン）／いぷらぐりふろじん（イプラグリフロジン）／
   #     えんぱぐりふろじん（エンパグリフロジン）は bridges/dm_sglt2_oral.md の
   #     drug.search.nameAliases に確立済みの読みを流用
-  #   - 上記6件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #   - 上記6件はいずれも module 単位の nameAliases に追加する。
   #     第1成分（てねりぐりぷちん／したぐりぷちん／りなぐりぷちん）は各brandの
   #     displayGenericName の前方一致で resolveAllHighPrecisionBrands() から解決
   #     できるため、brandCatalog[brand].aliases への複製は不要（DP-09）。
@@ -132,16 +132,6 @@ drug:
       - "スージャヌ"
       - "トラディアンス"
 
-    prefixAliases:
-      - "かなりあ"
-      - "すーじゃぬ"
-      - "とらでぃあんす"
-      - "てねりぐりぷちん"
-      - "かなぐりふろじん"
-      - "したぐりぷちん"
-      - "いぷらぐりふろじん"
-      - "りなぐりぷちん"
-      - "えんぱぐりふろじん"
 
     nameAliases:
       - "かなりあ"

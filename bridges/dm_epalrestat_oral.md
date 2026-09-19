@@ -67,16 +67,13 @@ drug:
   #
   # 成分名読みの扱い（既存単剤モジュールと同型の判断）:
   #   単一ブランド（キネダック）のみのため、成分名読みを brandCatalog.aliases へ
-  #   複製する必要はない。module 単位の prefixAliases/nameAliases にのみ追加する。
+  #   複製する必要はない。module 単位の nameAliases にのみ追加する。
   search:
     primaryDisplayName: "アルドース還元酵素阻害薬"
 
     exactAliases:
       - "キネダック"
 
-    prefixAliases:
-      - "きねだっく"
-      - "えぱるれすたっと"
 
     nameAliases:
       - "きねだっく"

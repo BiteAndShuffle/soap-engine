@@ -508,9 +508,9 @@ Validator が検出するが、意図的に残存させている WARNING の台�
 | **errorCode** | `SEARCH_TOKEN_ALIAS_POLLUTION` |
 | **module** | `derm_heparinoid_moisturizer_cream` / `derm_heparinoid_moisturizer_lotion` / `derm_heparinoid_moisturizer_ointment` / `derm_heparinoid_moisturizer_spray` / `allergy_h1_antihistamine_eye_drops` |
 | **対象** | `drug.search.commonSearchTokens` が `prefixAliases` に混入している状態 |
-| **status** | `INTENTIONAL_KEEP` |
-| **理由** | DP-05（heparinoid 剤形検索分離原則）に基づく剤形分割検索の実装過程で生じた既知の重複。検索 runtime 側の dedupe 対応が完了するまでは、トークンを削除すると分割検索（例:「へぱ なんこう」）が機能しなくなる可能性がある。 |
-| **対応方針** | 削除しない。search ロジック側の dedupe 対応時に併せて解消する。新規 module では `prompts/vNext/PN2-Drug-Header.md`「drug.search 検索トークンの生成規則」に従い、alias 系フィールドへ展開しないこと。 |
+| **status** | `RESOLVED`（2026-09。混入先フィールド `drug.search.prefixAliases` の撤去により消滅） |
+| **理由** | DP-05（heparinoid 剤形検索分離原則）に基づく剤形分割検索の実装過程で生じた既知の重複。 |
+| **対応方針** | `drug.search.prefixAliases` は runtime から参照されない deprecated フィールドであり、2026-09 に schema・bridge・canonical から撤去した（commit `5330dd8` で runtime 参照が廃止済み）。混入先そのものが存在しなくなったため本 WARNING は 0 件となった（実測: 全 module WARNING 39 → 35）。**`commonSearchTokens` の値自体は変更していない**（撤去は混入先の削除であり、トークンの削除ではない）。分割検索（例:「へぱ なんこう」）の到達性は `nameAliases` の前方一致で従来どおり成立する。新規 module では `prompts/vNext/PN2-Drug-Header.md`「drug.search 検索トークンの生成規則」に従い、alias 系フィールドへ展開しないこと。 |
 
 ### KW-003
 

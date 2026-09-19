@@ -33,7 +33,7 @@ function buildQueries(): string[] {
   const qs = new Set<string>()
   for (const m of ALL_MODULES) {
     const s = (m.drug as { search?: Record<string, unknown> } | undefined)?.search ?? {}
-    for (const k of ['exactAliases', 'nameAliases', 'prefixAliases', 'keywords']) {
+    for (const k of ['exactAliases', 'nameAliases', 'keywords']) {
       for (const a of ((s[k] as string[] | undefined) ?? [])) qs.add(String(a))
     }
     if (s.primaryDisplayName) qs.add(String(s.primaryDisplayName))

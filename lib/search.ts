@@ -7,7 +7,7 @@
  *   7) drug.search.exactAliases 完全一致（suppressCrossModuleSuggestionsOnExactHit 発動）
  *   6) drug.search.primaryDisplayName 完全一致
  *   5) 薬剤名エイリアス（nameAliases + brandNames）完全一致
- *   4) 薬剤名エイリアス（nameAliases + brandNames）前方一致（JSON prefixAliases 不要）
+ *   4) 薬剤名エイリアス（nameAliases + brandNames）前方一致（実行時に自動導出。JSON へ前方一致形を列挙しない）
  *   2) タイトル前方一致 / エイリアス部分一致
  *   1) コーパス（keywords・一般語）部分一致
  *   0) マッチなし
@@ -908,7 +908,7 @@ export function getDrugSuggestions(
   //   単一トークン
   //   AND 最上位スコア >= gateFloor（alias 完全一致以上。既定 5。
   //        正規化長 3 文字以上のクエリに限り 4 まで緩和する。G5（Owner Decision）。
-  //        3 文字未満のクエリは既存どおり 5 のまま — 2 文字の登録済み prefixAliases
+  //        3 文字未満のクエリは既存どおり 5 のまま — 2 文字の登録済み nameAliases
   //        （例:「びく」「おぜ」等）による既存の強一致挙動を変えないための下限維持）
   //   AND 高精度一致（resolveAllHighPrecisionBrands）が解決する「単剤の有効成分識別」がちょうど 1 種
   //

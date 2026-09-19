@@ -412,8 +412,6 @@ export interface DrugSearch {
   primaryDisplayName: string
   priority: number
   exactAliases: string[]
-  /** @deprecated JSON への記載不要。nameAliases / brandNames から前方一致を自動生成。 */
-  prefixAliases?: string[]
   nameAliases?: string[]
   keywords: string[]
   matchPolicy: DrugSearchMatchPolicy

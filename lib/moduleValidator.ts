@@ -571,7 +571,6 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   // 3b) drug.search.formulationSearchTokens / commonSearchTokens が alias 系フィールドに混入していないか（警告）
   const tokenAliasTargets: Array<{ fieldName: string; values: string[] }> = [
     { fieldName: 'drug.search.exactAliases', values: (drugSearch?.exactAliases as string[] | undefined) ?? [] },
-    { fieldName: 'drug.search.prefixAliases', values: (drugSearch?.prefixAliases as string[] | undefined) ?? [] },
     { fieldName: 'drug.search.nameAliases', values: searchNameAliases ?? [] },
   ]
   const formulationSearchTokens = drugSearch?.formulationSearchTokens as string[] | undefined

@@ -31,8 +31,6 @@ if (!Array.isArray(moduleData?.scenarios) || moduleData.scenarios.length === 0)
 if (drugSearch) {
   if (!Array.isArray(drugSearch.exactAliases))
     validationErrors.push('drug.search.exactAliases が配列でない')
-  if (!Array.isArray(drugSearch.prefixAliases))
-    validationErrors.push('drug.search.prefixAliases が配列でない')
 }
 
 console.log(

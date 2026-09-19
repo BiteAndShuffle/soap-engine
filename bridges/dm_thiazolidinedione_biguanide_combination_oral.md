@@ -88,7 +88,7 @@ drug:
   #   - めとほるみん（メトホルミン）/ めとほるみんえんさんえん
   #     （メトホルミン塩酸塩）は dm_biguanide_metformin_oral.drug.search.nameAliases
   #     から同様に流用
-  #   - 上記4件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #   - 上記4件はいずれも module 単位の nameAliases に追加する。
   #     第1成分（ぴおぐりたぞん）は displayGenericName "ピオグリタゾン／メトホルミン"
   #     の前方一致で resolveAllHighPrecisionBrands() から解決できるため、
   #     brandCatalog[brand].aliases への複製は不要（DP-09）。
@@ -109,10 +109,6 @@ drug:
     exactAliases:
       - "メタクト"
 
-    prefixAliases:
-      - "めたくと"
-      - "ぴおぐりたぞん"
-      - "めとほるみん"
 
     nameAliases:
       - "めたくと"

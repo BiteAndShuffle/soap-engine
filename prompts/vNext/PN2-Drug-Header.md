@@ -148,7 +148,7 @@ DP-09 Generic Identity Search Principle の対象は `brandCatalog[*].genericNam
 - bridge に明示された値のみを、記載順のまま転記する
 - **bridge に記載がないフィールドは omit する**（空配列 `[]` を生成しない。PENDING にもしない）。剤形が 1 種類しかない薬剤では `formulationSearchTokens` は不要であり、欠落は正常な状態である（DP-05）
 - bridge 未明示のトークンを推測生成しない（`prompts/RULES.md` §2 PROHIBITED_UNIVERSAL）
-- **alias 系フィールドへ展開しない。** 具体的には `brandCatalog.{brand}.aliases` / `normalizedAliases` / `aliasToBrand` / `drug.nameAliases` / `drug.search.nameAliases` / `drug.search.exactAliases` / `drug.search.prefixAliases` のいずれにも、これらのトークンを複写・追加してはならない（`prompts/RULES.md` §3 ERROR 条件。`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` が WARNING として検出する）
+- **alias 系フィールドへ展開しない。** 具体的には `brandCatalog.{brand}.aliases` / `normalizedAliases` / `aliasToBrand` / `drug.nameAliases` / `drug.search.nameAliases` / `drug.search.exactAliases` のいずれにも、これらのトークンを複写・追加してはならない（`prompts/RULES.md` §3 ERROR 条件。`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` が WARNING として検出する）
 - 検索トークンは alias ではない。分割検索（例:「へぱ なんこう」）は bridge 側で大量の alias を列挙するのではなく、本トークンと検索エンジン側の AND prefix match で吸収する設計である（DP-05）
 
 **MUST_STOP 相当:**

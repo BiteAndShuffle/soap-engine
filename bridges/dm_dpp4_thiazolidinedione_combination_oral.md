@@ -97,7 +97,7 @@ drug:
   #     推測生成せず追加しない（PENDING扱いとはせず、単に module 単位 nameAliases への
   #     追加を見送る。塩非表記の「あろぐりぷちん」で検索到達性は確保されるため
   #     機能上の欠落ではない）
-  #   - 上記3件はいずれも module 単位の prefixAliases/nameAliases に追加する。
+  #   - 上記3件はいずれも module 単位の nameAliases に追加する。
   #     第1成分（あろぐりぷちん）は displayGenericName "アログリプチン／ピオグリタゾン"
   #     の前方一致で resolveAllHighPrecisionBrands() から解決できるため、
   #     brandCatalog[brand].aliases への複製は不要（DP-09）。
@@ -113,10 +113,6 @@ drug:
     exactAliases:
       - "リオベル"
 
-    prefixAliases:
-      - "りおべる"
-      - "あろぐりぷちん"
-      - "ぴおぐりたぞん"
 
     nameAliases:
       - "りおべる"

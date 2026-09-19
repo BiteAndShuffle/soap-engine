@@ -65,7 +65,7 @@ drug:
   # search セクション: 確定（2026-07-05）
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし）。
-  # 成分名の基本読み「めとほるみん」は module 単位の prefixAliases/nameAliases に加え、
+  # 成分名の基本読み「めとほるみん」は module 単位の nameAliases に加え、
   # brandCatalog.メトホルミン.aliases/normalizedAliases にも登録する。
   #
   # 【SH-1B（DP-21・Owner D-2）による変更（2026-09）】
@@ -90,10 +90,6 @@ drug:
       - "メトホルミン"
       - "グリコラン"
 
-    prefixAliases:
-      - "めとぐるこ"
-      - "めとほるみん"
-      - "ぐりこらん"
 
     nameAliases:
       - "めとぐるこ"
@@ -300,6 +296,10 @@ display:
 #    module 単位のみに追加する（DPP4と同型）。理由: ブランド「メトホルミン」自体が
 #    存在するため、成分名読みを複数ブランドへ複製すると aliasToBrand の解決先が
 #    曖昧になる（ユーザー確定・2026-07-05）。
+#    ※ 本項は 2026-07-05 時点の確定記録である。当該塩形読みはその後 SH-1B（DP-21・
+#      Owner D-2）で全 alias 面から撤去され、`drug.search.prefixAliases` 自体も
+#      2026-09 の legacy search field cleanup で撤去された。現行の格納先は
+#      drug.search.nameAliases / drug.nameAliases である。
 # 9. グリコランの増量・減量シナリオの扱い → 全ブランド共通（scenarioRequiredTagsなし）
 #    として確定。理由: グリコランも通常500mgから開始し最大750mgまで増量可能であり、
 #    本モジュールのSOAPシナリオは具体的なmg数を扱わないため。metformin_legacy_low_dose

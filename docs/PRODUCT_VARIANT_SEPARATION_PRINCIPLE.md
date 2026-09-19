@@ -129,7 +129,7 @@ SOAP本文（S/O/A/P）を書き分ける必要があるか？
 以下は本原則違反として扱う。
 
 - 製品バリエーション名（LX、ミニ、BF 等）を `drug.brandNames` / `brandCatalog` へ独立エントリとして追加する
-- 製品バリエーション名を検索候補（`exactAliases` / `prefixAliases` / `nameAliases`）に追加する
+- 製品バリエーション名を検索候補（`exactAliases` / `nameAliases`）に追加する
 - 製品バリエーション専用の SCENARIO・ADDON を新規作成する（切替イベント自体を表すシナリオを除く）
 - `{{drug_subject}}` が製品バリエーション名に展開されることを前提にした実装
 - 製品バリエーションごとに Bridge ファイル・canonical JSON ファイルを複製する
@@ -166,7 +166,7 @@ SOAP本文（S/O/A/P）を書き分ける必要があるか？
 1. **判断基準の適用**: そのバリエーションは SOAP本文（S/O/A/P）を書き分ける必要があるか（§4）。
    - YES → 新しい Bridge 候補として別途検討する（本チェックリストの対象外）。
    - NO → 以下のチェックリストを続ける。
-2. **検索候補への追加禁止**: バリエーション名を `drug.search.exactAliases` / `prefixAliases` / `nameAliases` / `drug.nameAliases` に追加していないか。
+2. **検索候補への追加禁止**: バリエーション名を `drug.search.exactAliases` / `drug.search.nameAliases` / `drug.nameAliases` に追加していないか。
 3. **brandCatalog への追加禁止**: バリエーション名を `drug.brandNames` / `brandCatalog` の独立エントリとして追加していないか。
 4. **aliasToBrand への追加禁止**: バリエーション名の読みを `aliasToBrand` に追加していないか。
 5. **SOAP主語の一貫性**: `{{drug_subject}}` がバリエーション名に展開されることを前提にした本文・ADDONを作成していないか。ベース薬剤名で一貫しているか。

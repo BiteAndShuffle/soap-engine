@@ -62,7 +62,7 @@ drug:
   # search セクション: alias確定（2026-07-05）
   # ─────────────────────────────────────────
   # ブランド名読みは kataToHira による機械的なひらがな変換のみ（推測なし、normalizeText()で導出確認済み）。
-  # 成分名読みは module 単位の prefixAliases/nameAliases にのみ追加し、
+  # 成分名読みは module 単位の nameAliases にのみ追加し、
   # brandCatalog[brand].aliases への複製は行わない
   # （DP-09: displayGenericName が resolveAllHighPrecisionBrands で既に解決されるため、
   #   単剤ブランドの成分名フルネームは brandCatalog.aliases への複製が不要。
@@ -83,26 +83,6 @@ drug:
       - "ジャヌビア"
       - "グラクティブ"
 
-    prefixAliases:
-      - "とらぜんた"
-      - "まりぜぶ"
-      - "ざふぁてっく"
-      - "すいにー"
-      - "おんぐりざ"
-      - "てねりあ"
-      - "ねしーな"
-      - "えくあ"
-      - "じゃぬびあ"
-      - "ぐらくてぃぶ"
-      - "りなぐりぷちん"
-      - "おまりぐりぷちん"
-      - "とれらぐりぷちん"
-      - "あなぐりぷちん"
-      - "さきさぐりぷちん"
-      - "てねりぐりぷちん"
-      - "あろぐりぷちん"
-      - "びるだぐりぷちん"
-      - "したぐりぷちん"
 
     nameAliases:
       - "とらぜんた"
@@ -436,6 +416,10 @@ display:
 # 2. drug.search.exactAliases 以外の prefixAliases / nameAliases / brandCatalog.aliases
 #    の具体的な読み仮名 → 2026-07-05 確定済み（ブランド名読み10件 + 成分名読み9件、
 #    normalizeText() による機械的導出のみ、推測なし）
+#    ※ 本項の `prefixAliases` は確定当時（2026-07-05）に存在したフィールドである。
+#      同フィールドは deprecated を経て 2026-09 の legacy search field cleanup で
+#      schema / bridge / canonical から撤去された。読み仮名の値自体は nameAliases 側に
+#      同一内容で存在しており、本確定の内容は失われていない。
 # 3. drugResolution.brandToTags の具体的なタグ設計 → 2026-07-05 確定済み
 #    （["dpp4_oral", {genericKeyと同一の成分タグ}] の2件で統一。
 #    handlingTags 用タグ（weekly_dpp4 等）とは分離）

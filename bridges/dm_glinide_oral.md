@@ -82,7 +82,7 @@ drug:
   # 成分名読みの扱い（dm_dpp4_oral / dm_sulfonylurea_oral と同型の判断）:
   #   各ブランドの displayGenericName が resolveAllHighPrecisionBrands で
   #   解決されるため、成分名読みを brandCatalog[brand].aliases へ複製する必要はない。
-  #   成分名読みは module 単位の prefixAliases/nameAliases にのみ追加する。
+  #   成分名読みは module 単位の nameAliases にのみ追加する。
   search:
     primaryDisplayName: "グリニド系経口血糖降下剤"
 
@@ -92,14 +92,6 @@ drug:
       - "グルファスト"
       - "シュアポスト"
 
-    prefixAliases:
-      - "すたーしす"
-      - "ふぁすてぃっく"
-      - "ぐるふぁすと"
-      - "しゅあぽすと"
-      - "なてぐりにど"
-      - "みちぐりにど"
-      - "れぱぐりにど"
 
     nameAliases:
       - "すたーしす"
