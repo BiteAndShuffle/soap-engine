@@ -44,10 +44,10 @@
  *
  * ── severity ─────────────────────────────────────────────
  *
- * GENERIC_NAME_UNREACHABLE は CHECK として報告する（exit 0 を維持）。既存データに
- * 未充足が残る段階で build を止めないための暫定 severity であり、データ補完の完了後に
- * FAIL へ昇格させる。
- * DISPLAY_GENERIC_NAME_SEPARATOR_UNKNOWN は FAIL とする（下記）。
+ * GENERIC_NAME_UNREACHABLE は FAIL として報告する（検出時は非0終了）。新設時は暫定的に
+ * CHECK（exit 0 維持）であったが、当時の未到達データ解消後に FAIL へ昇格済みである
+ * （docs/VALIDATOR_STANDARD.md §6 / docs/OPEN_DESIGN_QUESTIONS.md Q-S1 残課題3）。
+ * DISPLAY_GENERIC_NAME_SEPARATOR_UNKNOWN も FAIL とする（下記）。
  *
  * ── 成分区切り ────────────────────────────────────────────
  *

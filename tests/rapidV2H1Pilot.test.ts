@@ -501,13 +501,22 @@ describe('F. adjustmentExpression は v2 で参照されない', () => {
     })
   })
 
-  test('v1 profile の module（一時除外）は既存どおり adjustmentExpression を使用する（回帰確認）', () => {
-    const mod = V1_EXCLUDED_MOD
+  test('v1 profile の module は adjustmentExpression を持つ場合それを使用する（回帰確認）', () => {
+    // 2026-09: 一時除外 module（chemical mediator）の再構築により、canonical から
+    // display.adjustmentExpression が消えた（bridge の D4 が PENDING であり、
+    // PN2 契約「bridge に記載がない場合は canonical 側にも生成しない」に従うため）。
+    // 現行 corpus に「v1 profile かつ AE を持つ module」は存在しないため、canonical へ
+    // AE を追加する（= bridge に根拠のない値を canonical へ持ち込む）代わりに、
+    // v1 profile module を deep clone して AE を注入し、v1 realization が AE を
+    // 読み続けていることだけを検証する（moduleValidator.test.ts の合成データ方式に倣う）。
+    const ae = { increasePast: '点眼回数が増えた', decreasePast: '点眼回数が減った' }
+    const mod: ModuleData = JSON.parse(JSON.stringify(V1_EXCLUDED_MOD))
+    assert.equal(mod.display?.adjustmentExpression, undefined, 'canonical に AE が復活している（PN2 契約違反）')
+    mod.display = { ...mod.display!, adjustmentExpression: ae }
+    assert.equal(rapidProfileOf(mod), 'v1', 'clone が v1 profile として判定されていない')
     const sc = mod.scenarios.find(isScenarioSReplacementCapable)!
-    const ae = mod.display?.adjustmentExpression
-    assert.ok(ae, `${V1_EXCLUDED_MODULE_ID} に adjustmentExpression が存在する前提が崩れている`)
     const derived = deriveRawFields(sc, mod, [], { previousEvent: 'dose_increased', currentOutcome: 'stable' }, V1_EXCLUDED_DRUG)
-    assert.ok(derived.S.includes(ae!.increasePast), 'v1 module で AE が使われなくなっている（回帰）')
+    assert.ok(derived.S.includes(ae.increasePast), 'v1 module で AE が使われなくなっている（回帰）')
   })
 })
 

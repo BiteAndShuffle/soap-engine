@@ -120,15 +120,22 @@ describe('④ カタカナ／ひらがな正規化', () => {
 // ─────────────────────────────────────────────────────────────
 
 describe('⑤ 一般名検索（genericMode）の既存構造維持', () => {
-  test('"とらにらすと" → リザベン/トラメラスPF の genericKey 別グループが維持される', () => {
+  test('"とらにらすと" → 同一成分の全ブランドが候補へ展開される', () => {
+    // 2026-09 chemical mediator rebuild（Owner-approved bridge）:
+    //   - PF 製剤は独立ブランドではなく handlingTag `preservative_free` で表現する（D-5 / D-11）
+    //     ため「トラメラス点眼液PF」は「トラメラス点眼液」になった
+    //   - 一般名系エントリ「トラニラスト点眼液」が収載ブランドとして追加された
+    // この結果、旧「genericKey 別グループ（非PF / PF）」は単一グループへ統合された。
+    // genericMode の本質（一般名読みで同一成分の全ブランドが展開される）は不変。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
     const brands = results.map(r => r.matchedBrandName)
-    assert.ok(brands.includes('リザベン点眼液'), 'リザベン点眼液が候補に含まれるべき')
-    assert.ok(brands.includes('トラメラス点眼液PF'), 'トラメラス点眼液PFが候補に含まれるべき')
-    // 一般名検索であり、ブランド名検索（direct）ではないことを確認
+    assert.deepEqual(brands, ['リザベン点眼液', 'トラニラスト点眼液', 'トラメラス点眼液'])
+    // 一般名見出し "トラニラスト点眼液" は実在ブランド名と表示が完全一致するため、
+    // D2（true-duplicate generic header 抑制）により見出し行は出ない（engine 挙動は不変）。
+    // 見出しが出る genericMode の回帰は同 describe の "いんすりんりすぷろ" および ⑭ が担う。
     assert.ok(
-      results.some(r => r.isGenericLabel),
-      '一般名見出し候補（isGenericLabel）が含まれるべき',
+      !results.some(r => r.isGenericLabel),
+      '真に重複する一般名見出しは抑制されるべき',
     )
   })
 
@@ -257,10 +264,13 @@ describe('⑧ ピオグリタゾン系: preferOwnNameMatchOverGenericMatch / sup
 
 describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数が変化しないこと）', () => {
   test('"とらにらすと" → 既存のgenericMode構造を維持', () => {
+    // 2026-09 chemical mediator rebuild: 候補は 4→3 件（PF 独立ブランドの廃止と
+    // 一般名系エントリ収載による true-duplicate 見出しの抑制）。crossModuleIndicationLabel
+    // 未 opt-in であること自体は不変であり、本 describe が守る回帰対象も不変。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
-    assert.equal(results.length, 4)
-    assert.equal(results[0].drugDisplayLabel, 'トラニラスト点眼液')
-    assert.equal(results[0].isGenericLabel, true)
+    assert.equal(results.length, 3)
+    assert.equal(results[0].drugDisplayLabel, 'リザベン点眼液')
+    assert.equal(results.some(r => r.isGenericLabel), false)
   })
 
   test('"いんすりんりすぷろ" → 既存のgenericMode構造を維持', () => {
@@ -511,11 +521,10 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
 
   test('crossModuleIndicationLabel 未設定モジュール（トラニラスト点眼液系）の候補構成は従来どおり', () => {
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
-    assert.equal(results.length, 4)
-    assert.equal(results[0].uiLabel, 'トラニラスト点眼液')
-    assert.equal(results[1].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
-    assert.equal(results[2].uiLabel, 'トラニラスト点眼液PF')
-    assert.equal(results[3].uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
+    assert.equal(results.length, 3)
+    assert.equal(results[0].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
+    assert.equal(results[1].uiLabel, 'トラニラスト点眼液（トラニラスト点眼液）')
+    assert.equal(results[2].uiLabel, 'トラメラス点眼液（トラニラスト点眼液）')
   })
 })
 
@@ -524,49 +533,48 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
 // sibling 行 uiLabel は、クエリされたブランドの一般名ではなく sibling
 // ブランド自身の displayGenericName を使う。
 //
-// 旧欠陥: 異なる genericKey を持つ co-brand（例: リザベン点眼液 ⇔
-// トラメラス点眼液PF、ヒルドイドフォーム ⇔ ヘパリン類似物質外用スプレー）で、
-// sibling 行の括弧内へクエリ側の一般名を流用し PF/非PF・剤形識別が反転していた。
+// 旧欠陥: 異なる genericKey を持つ co-brand（例: ヒルドイドフォーム ⇔
+// ヘパリン類似物質外用スプレー）で、sibling 行の括弧内へクエリ側の一般名を流用し
+// 剤形識別が反転していた。
 // candidate 集合・順序・drugDisplayLabel・resolution.subject は不変で、
 // sibling の uiLabel 括弧内テキストのみを是正する。
+//
+// 2026-09 chemical mediator rebuild: 旧 vehicle であった
+// 「リザベン点眼液 ⇔ トラメラス点眼液PF」（非PF / PF で generic identity が異なる co-brand）は、
+// Owner-approved bridge で PF が独立ブランドではなく handlingTag `preservative_free` に
+// なった（D-5 / D-11）ため消滅した。現行 corpus で generic identity の異なる co-brand は
+// heparinoid（フォーム ⇔ スプレー）のみであり、label fix 本体の回帰はそちらが担う。
+// chemical mediator 側は「同一 generic identity の co-brand で PF 表記が復活しないこと」を
+// 固定する（旧 vehicle の再導入に対する回帰ガード）。
 // ─────────────────────────────────────────────────────────────
 describe('Search Family Phase 2-A（label fix）: co-brand sibling は自身の generic identity を表示する', () => {
-  test('"トラメラス"（PF ブランド直接クエリ）→ sibling リザベン点眼液は自身の非PF一般名を表示する', () => {
+  test('"トラメラス" → co-brand sibling は各自の generic identity を表示し PF 表記は現れない', () => {
     const results = getDrugSuggestions('トラメラス', fullIndex, 8)
-    // 候補集合・順序・drugDisplayLabel は不変（direct → sibling → generic header）
+    // 候補集合・順序・drugDisplayLabel（direct → sibling）
     assert.deepEqual(
       results.map(r => r.drugDisplayLabel),
-      ['トラメラス点眼液PF', 'リザベン点眼液', 'トラニラスト点眼液PF'],
+      ['トラメラス点眼液', 'リザベン点眼液', 'トラニラスト点眼液'],
     )
-    // direct 行（クエリされたブランド自身）は PF 一般名のまま
-    assert.equal(results[0].uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
-    // sibling 行は sibling 自身の非PF一般名（クエリ側 "トラニラスト点眼液PF" を流用しない）
+    assert.equal(results[0].uiLabel, 'トラメラス点眼液（トラニラスト点眼液）')
     assert.equal(results[1].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
-    assert.ok(!results[1].uiLabel!.includes('PF'), 'sibling の括弧内へ PF 識別が混入してはならない')
-    // SOAP identity（resolution.subject）は不変
+    assert.ok(
+      results.every(r => !r.uiLabel!.includes('PF')),
+      'PF は handlingTag であり表示ラベルへ現れてはならない',
+    )
+    // SOAP identity（resolution.subject）は sibling 自身のブランド名
     assert.equal(results[1].resolution.subject, 'リザベン点眼液')
     assert.equal(results[1].resolution.denotation, 'brand')
   })
 
-  test('"リザベン"（非PF ブランド直接クエリ）→ sibling トラメラス点眼液PF は自身のPF一般名を表示する', () => {
+  test('"リザベン" → 逆方向でも sibling は自身のブランド identity を保つ', () => {
     const results = getDrugSuggestions('リザベン', fullIndex, 8)
     assert.deepEqual(
       results.map(r => r.drugDisplayLabel),
-      ['リザベン点眼液', 'トラメラス点眼液PF', 'トラニラスト点眼液'],
+      ['リザベン点眼液', 'トラニラスト点眼液', 'トラメラス点眼液'],
     )
     assert.equal(results[0].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
-    // sibling 行は sibling 自身のPF一般名（クエリ側 "トラニラスト点眼液" を流用しない）
-    assert.equal(results[1].uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
-    assert.equal(results[1].resolution.subject, 'トラメラス点眼液PF')
-  })
-
-  test('PF / 非PF の一般名識別が sibling 行で反転しない（双方向）', () => {
-    const fromPF = getDrugSuggestions('トラメラス', fullIndex, 8)
-    const fromPlain = getDrugSuggestions('リザベン', fullIndex, 8)
-    const sibFromPF = fromPF.find(r => r.matchedBrandName === 'リザベン点眼液')!
-    const sibFromPlain = fromPlain.find(r => r.matchedBrandName === 'トラメラス点眼液PF')!
-    assert.equal(sibFromPF.uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
-    assert.equal(sibFromPlain.uiLabel, 'トラメラス点眼液PF（トラニラスト点眼液PF）')
+    assert.equal(results[2].uiLabel, 'トラメラス点眼液（トラニラスト点眼液）')
+    assert.equal(results[2].resolution.subject, 'トラメラス点眼液')
   })
 
   test('"ヒルドイドフォーム" ⇔ "ヘパリン類似物質外用スプレー": co-brand sibling は自身の剤形一般名を表示する', () => {
@@ -584,14 +592,14 @@ describe('Search Family Phase 2-A（label fix）: co-brand sibling は自身の 
   })
 
   test('同一 genericKey の sibling（従来から安全な経路）は表示不変', () => {
-    // "とらにらすと"（generic 読み）は genericMode 経路で genericKey 別グループを
-    // それぞれ自身の一般名で表示する（label fix の対象外・凍結）。
+    // "とらにらすと"（generic 読み）は genericMode 経路で、各ブランドを自身の
+    // 一般名で表示する（label fix の対象外・凍結）。2026-09 rebuild により
+    // グループは単一化し、候補は 4→3 件になった。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
     assert.deepEqual(results.map(r => r.uiLabel), [
-      'トラニラスト点眼液',
       'リザベン点眼液（トラニラスト点眼液）',
-      'トラニラスト点眼液PF',
-      'トラメラス点眼液PF（トラニラスト点眼液PF）',
+      'トラニラスト点眼液（トラニラスト点眼液）',
+      'トラメラス点眼液（トラニラスト点眼液）',
     ])
   })
 })
@@ -716,7 +724,11 @@ describe('⑬ 最終tie-break: score同点だった35module横断ケースへの
 
 describe('⑭ genericMode 表示枠制御', () => {
   test('N-1: 枠に余裕がある場合は従来どおり一般名見出しが先頭に来る', () => {
-    for (const q of ['とらにらすと', 'いんすりんりすぷろ']) {
+    // 2026-09 chemical mediator rebuild: vehicle だった "とらにらすと" は、一般名系
+    // エントリ収載により見出しが true-duplicate となり D2 で抑制されるようになったため
+    // 本 test の対象から外し、別の一般名読みクエリ "せまぐるちど" を vehicle に加える
+    // （枠に余裕がある場合の見出し先頭維持という invariant 自体は不変）。
+    for (const q of ['いんすりんりすぷろ', 'せまぐるちど']) {
       const results = getDrugSuggestions(q, fullIndex, 8)
       assert.ok(results.length > 0, `"${q}": 候補が0件になってはならない`)
       assert.equal(
@@ -1547,9 +1559,11 @@ describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満
   test('複数トークンクエリ（剤形/route intent）は Phase 2-A の対象外として凍結される', () => {
     const r1 = getDrugSuggestions('へぱ なんこう', fullIndex, 8)
     assert.deepEqual(r1.map(r => r.drugDisplayLabel), ['ヘパリン類似物質油性クリーム'])
+    // 2026-09 chemical mediator rebuild: PF は独立ブランド／alias ではなく handlingTag
+    // `preservative_free` になった（D-5 / D-11）ため、"pf" トークンを含むクエリは
+    // 到達しない。クエリ自体は凍結対象として残し、PF alias の再導入を検出できるようにする。
     const r2 = getDrugSuggestions('とらにらすと pf', fullIndex, 8)
-    assert.deepEqual(r2.map(r => r.drugDisplayLabel), ['トラニラスト点眼液PF'])
-    assert.deepEqual(r2.map(r => r.matchedBrandName), ['トラメラス点眼液PF'])
+    assert.deepEqual(r2.map(r => r.drugDisplayLabel), [])
   })
 })
 

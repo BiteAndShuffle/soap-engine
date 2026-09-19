@@ -403,19 +403,29 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
   })
 
-  test('WARNING の総数が baseline（22 件）から変化していない', () => {
+  test('WARNING の総数が baseline（39 件）から変化していない', () => {
     // 2026-09: allergy_h1_antihistamine_eye_drops へ strength_decrease_low_perceived_effect
     // （scenarioRequiredTags: ["concentration_variant"]）を追加したことに伴い、
     // 同一クラスタの既存4件（strength_increase/decrease系）と同型の
     // SCENARIO_REQUIRED_TAG_UNREACHABLE WARNING が1件増加（21→22）。
     // concentration_variant は template.reservedHandlingTags に宣言済みのため ERROR ではなく
     // WARNING（意図的な非表示）。現行8製剤はいずれも concentration_variant を持たない。
+    //
+    // 2026-09（chemical mediator rebuild）: 22→39。
+    // allergy_chemical_mediator_release_inhibitor_eye_drops の再構築により、同 module 由来の
+    // WARNING が 0→17 件（ADDON_REQUIRED_TAG_UNREACHABLE 6 / SCENARIO_REQUIRED_TAG_UNREACHABLE 11）
+    // 純増した。17 件はすべて template.reservedHandlingTags に宣言済みのタグ
+    // （suspension / cold_storage / cold_storage_before_opening / single_use_container /
+    //  concentration_variant / reduced_frequency_option）を要求する scenario / addon であり、
+    // 点眼共通シャーシ原則（Owner Decision 2026-09-17）に基づき「現行収載製品では到達不能だが
+    // 将来製品用として意図的に保持する capability」として保持している（ERROR ではなく WARNING）。
+    // 他 module の内訳は不変（H1 14 / heparinoid 4 / dpp4 4 = 22）。
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      22,
+      39,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })

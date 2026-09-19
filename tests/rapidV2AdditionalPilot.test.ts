@@ -308,13 +308,20 @@ describe('C. 外用の adjustmentExpression は v2 realization で参照され�
     }
   })
 
-  test('AE を持つ v1 profile module（一時除外）は引き続き AE を使う（回帰確認）', () => {
-    const v1 = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
+  test('v1 profile module は AE を持つ場合引き続き AE を使う（回帰確認）', () => {
+    // 2026-09: 一時除外 module（chemical mediator）の再構築で canonical から
+    // display.adjustmentExpression が消えた（bridge D4 が PENDING。PN2 契約
+    // 「bridge に記載がない場合は canonical 側にも生成しない」）。現行 corpus に
+    // 「v1 profile かつ AE を持つ module」は存在しないため、canonical へ AE を
+    // 追加せず、clone へ AE を注入して v1 realization 側の参照契約のみを固定する。
+    const src = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
+    assert.equal(src.display?.adjustmentExpression, undefined, 'canonical に AE が復活している（PN2 契約違反）')
+    const ae = { increasePast: '使用回数が増えた', decreasePast: '使用回数が減った' }
+    const v1: ModuleData = JSON.parse(JSON.stringify(src))
+    v1.display = { ...v1.display!, adjustmentExpression: ae }
     assert.equal(rapidProfileOf(v1), 'v1')
-    const ae = v1.display?.adjustmentExpression
-    assert.ok(ae)
     const sc = v1.scenarios.find(isScenarioSReplacementCapable)!
-    assert.ok(derive(v1, sc, R('dose_increased', 'stable'), 'ゼペリン点眼液').S.includes(ae!.increasePast))
+    assert.ok(derive(v1, sc, R('dose_increased', 'stable'), 'ゼペリン点眼液').S.includes(ae.increasePast))
   })
 })
 

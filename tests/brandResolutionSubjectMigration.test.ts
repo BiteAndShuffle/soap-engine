@@ -386,7 +386,7 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     assert.deepEqual(missing, [], `historical fixture が参照する module が registry から消えている: ${missing.join(', ')}`)
   })
 
-  test('全 1633 行の projection が fixture と一致する', () => {
+  test('全 1602 行の projection が fixture と一致する', () => {
     // U-CR2: `index`（全体）ではなく `historicalIndex`（fixture が参照する module のみ）で
     // 再計算する。fixture は U-4b / Q-S2 migration 時点の historical regression artifact
     // であり、その後追加された module の結果混入は corpus 成長であって semantic regression
@@ -455,8 +455,18 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     // generic 552→546 / module 57→57（module は変化なし）。
     // reachableChangedRows/Patterns・gatedChangedRows/Modules・changedRows（意味的 delta）は
     // 完全に不変（本 unit は candidate 生成・genericKey・display label を一切変更しない）。
-    assert.equal(fixture.summary.rows, 1629)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1026, generic: 546, module: 57 })
+    //
+    // chemical mediator rebuild（2026-09）: Owner-approved bridge の収載構成変更により
+    // 同 module の brand 集合が入れ替わった（インタール点眼液を非収載化 / PF 製剤を独立
+    // brand から handlingTag `preservative_free` へ移行 / 一般名系エントリ
+    // ペミロラスト点眼液・トラニラスト点眼液を追加）。これによりクエリ母集団と候補行が
+    // 変化した。rows 1629→1602 / brand 1026→1037 / generic 546→508 / module 57→57。
+    // generic の純減は、一般名系 brand の追加により generic header が brand 表示と
+    // 完全一致する true-duplicate となり D2 が抑制したことによる（engine 挙動は不変）。
+    // U-4b の意味論的 delta は完全に不変: reachableChangedRows 25 / Patterns 6 /
+    // gatedChangedRows 57 / gatedChangedModules 20、denotation='brand' の delta 0 件。
+    assert.equal(fixture.summary.rows, 1602)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1037, generic: 508, module: 57 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
     assert.equal(fixture.summary.gatedChangedRows, 57)

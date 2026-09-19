@@ -1317,14 +1317,5 @@
     }
   ],
   "りべるさす ないふく": [],
-  "とらにらすと pf": [
-    {
-      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "matchedBrandName": "トラメラス点眼液PF",
-      "drugDisplayLabel": "トラニラスト点眼液PF",
-      "uiLabel": null,
-      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
-      "isGenericLabel": null
-    }
-  ]
+  "とらにらすと pf": []
 }

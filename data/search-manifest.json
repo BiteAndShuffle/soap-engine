@@ -1,8 +1,8 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "7860ab3f105dd56c8b333236628bc6e0c466a13a52fdfa161ae9818cb9d6e18a",
+  "sourceHash": "58a1f5f60fe9fa2c61ed248754fff77ab382c642b1ff62ed620a55abea7555ba",
   "moduleCount": 35,
-  "scenarioCount": 1061,
+  "scenarioCount": 1070,
   "modules": [
     {
       "moduleId": "dm_glp1ra_semaglutide_oral",
@@ -1439,35 +1439,27 @@
         "ゼペリン点眼液",
         "アレギサール点眼液",
         "ペミラストン点眼液",
+        "ペミロラスト点眼液",
         "リザベン点眼液",
-        "トラメラス点眼液PF",
-        "インタール点眼液"
+        "トラニラスト点眼液",
+        "トラメラス点眼液",
+        "クロモグリク酸点眼液"
       ],
       "nameAliases": [
         "ぜぺりんてんがん",
         "ぜぺりん",
-        "あしたざのらすとてんがん",
-        "あしたざのらすと",
         "あれぎさーるてんがん",
         "あれぎさーる",
-        "ぺみろらすとてんがん",
-        "ぺみろらすと",
         "ぺみらすとんてんがん",
         "ぺみらすとん",
+        "ぺみろらすとてんがん",
+        "ぺみろらすと",
         "りざべんてんがん",
         "りざべん",
         "とらにらすとてんがん",
         "とらにらすと",
-        "とらにらすとpf",
-        "とらにらすとてんがんpf",
-        "とらにらすとぴーえふ",
-        "とらにらすとてんがんぴーえふ",
-        "とらめらすてんがんぴーえふ",
-        "とらめらすぴーえふ",
         "とらめらすてんがん",
         "とらめらす",
-        "いんたーるてんがん",
-        "いんたーる",
         "くろもぐりくさんてんがん",
         "くろもぐりくさん"
       ],
@@ -1492,59 +1484,45 @@
           "ゼペリン点眼液",
           "アレギサール点眼液",
           "ペミラストン点眼液",
-          "リザベン点眼液",
-          "トラメラス点眼液PF",
-          "インタール点眼液",
-          "アシタザノラスト点眼液",
           "ペミロラスト点眼液",
+          "リザベン点眼液",
           "トラニラスト点眼液",
+          "トラメラス点眼液",
           "クロモグリク酸点眼液",
-          "アシタザノラスト",
+          "ゼペリン",
+          "アレギサール",
+          "ペミラストン",
           "ペミロラスト",
+          "リザベン",
           "トラニラスト",
+          "トラメラス",
           "クロモグリク酸",
-          "トラニラスト点眼液PF",
-          "トラニラストPF"
+          "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬"
         ],
         "nameAliases": [
           "ぜぺりんてんがん",
           "ぜぺりん",
-          "あしたざのらすとてんがん",
-          "あしたざのらすと",
           "あれぎさーるてんがん",
           "あれぎさーる",
-          "ぺみろらすとてんがん",
-          "ぺみろらすと",
           "ぺみらすとんてんがん",
           "ぺみらすとん",
+          "ぺみろらすとてんがん",
+          "ぺみろらすと",
           "りざべんてんがん",
           "りざべん",
           "とらにらすとてんがん",
           "とらにらすと",
-          "とらにらすとpf",
-          "とらにらすとてんがんpf",
-          "とらにらすとぴーえふ",
-          "とらにらすとてんがんぴーえふ",
-          "とらめらすてんがんぴーえふ",
-          "とらめらすぴーえふ",
           "とらめらすてんがん",
           "とらめらす",
-          "いんたーるてんがん",
-          "いんたーる",
           "くろもぐりくさんてんがん",
           "くろもぐりくさん"
         ],
         "keywords": [
-          "花粉症",
-          "アレルギー性結膜炎",
+          "アレルギー",
+          "抗アレルギー点眼薬",
           "目のかゆみ",
-          "目の充血",
-          "涙目",
-          "点眼",
-          "目薬",
-          "化学伝達物質",
-          "ケミカルメディエーター",
-          "遊離抑制"
+          "充血",
+          "点眼"
         ],
         "formulationSearchTokens": [],
         "priority": 5,
@@ -1559,38 +1537,22 @@
         "ゼペリン点眼液": {
           "aliases": [
             "ぜぺりんてんがん",
-            "ぜぺりん",
-            "あしたざのらすとてんがん",
-            "あしたざのらすと"
+            "ぜぺりん"
           ],
           "displayName": "ゼペリン点眼液",
           "displayGenericName": "アシタザノラスト点眼液",
           "genericName": "アシタザノラスト",
-          "handlingTags": [
-            "room_temperature_storage",
-            "solution_eye_drop",
-            "contact_lens_caution",
-            "contact_lens_remove_before_use",
-            "bak_status_contains_bak"
-          ]
+          "handlingTags": []
         },
         "アレギサール点眼液": {
           "aliases": [
             "あれぎさーるてんがん",
-            "あれぎさーる",
-            "ぺみろらすとてんがん",
-            "ぺみろらすと"
+            "あれぎさーる"
           ],
           "displayName": "アレギサール点眼液",
           "displayGenericName": "ペミロラスト点眼液",
           "genericName": "ペミロラスト",
-          "handlingTags": [
-            "room_temperature_storage",
-            "solution_eye_drop",
-            "contact_lens_caution",
-            "contact_lens_remove_before_use",
-            "bak_status_contains_bak"
-          ]
+          "handlingTags": []
         },
         "ペミラストン点眼液": {
           "aliases": [
@@ -1600,72 +1562,69 @@
           "displayName": "ペミラストン点眼液",
           "displayGenericName": "ペミロラスト点眼液",
           "genericName": "ペミロラスト",
-          "handlingTags": [
-            "room_temperature_storage",
-            "solution_eye_drop",
-            "contact_lens_caution",
-            "contact_lens_remove_before_use",
-            "bak_status_contains_bak"
-          ]
+          "handlingTags": []
+        },
+        "ペミロラスト点眼液": {
+          "aliases": [
+            "ぺみろらすとてんがん",
+            "ぺみろらすと"
+          ],
+          "displayName": "ペミロラスト点眼液",
+          "displayGenericName": "ペミロラスト点眼液",
+          "genericName": "ペミロラスト",
+          "handlingTags": []
         },
         "リザベン点眼液": {
           "aliases": [
             "りざべんてんがん",
-            "りざべん",
-            "とらにらすとてんがん",
-            "とらにらすと"
+            "りざべん"
           ],
           "displayName": "リザベン点眼液",
           "displayGenericName": "トラニラスト点眼液",
-          "genericKey": "tranilast_ophthalmic",
           "genericName": "トラニラスト",
           "handlingTags": [
-            "light_protection_storage",
-            "solution_eye_drop",
-            "contact_lens_caution",
-            "contact_lens_remove_before_use",
-            "bak_status_contains_bak"
+            "light_protection",
+            "avoid_cold_storage"
           ]
         },
-        "トラメラス点眼液PF": {
+        "トラニラスト点眼液": {
           "aliases": [
-            "とらめらすてんがんぴーえふ",
-            "とらめらすぴーえふ",
-            "とらめらすてんがん",
-            "とらめらす",
-            "とらにらすとてんがんぴーえふ",
-            "とらにらすとぴーえふ",
-            "とらにらすとてんがんpf",
-            "とらにらすとpf"
+            "とらにらすとてんがん",
+            "とらにらすと"
           ],
-          "displayName": "トラメラス点眼液PF",
-          "displayGenericName": "トラニラスト点眼液PF",
-          "genericKey": "tranilast_ophthalmic_pf",
+          "displayName": "トラニラスト点眼液",
+          "displayGenericName": "トラニラスト点眼液",
           "genericName": "トラニラスト",
           "handlingTags": [
-            "light_protection_storage",
-            "solution_eye_drop",
-            "contact_lens_caution",
-            "contact_lens_caution_product_specific",
-            "bak_status_bak_free"
+            "light_protection",
+            "avoid_cold_storage"
           ]
         },
-        "インタール点眼液": {
+        "トラメラス点眼液": {
           "aliases": [
-            "いんたーるてんがん",
-            "いんたーる",
+            "とらめらすてんがん",
+            "とらめらす"
+          ],
+          "displayName": "トラメラス点眼液",
+          "displayGenericName": "トラニラスト点眼液",
+          "genericName": "トラニラスト",
+          "handlingTags": [
+            "light_protection",
+            "avoid_cold_storage",
+            "preservative_free"
+          ]
+        },
+        "クロモグリク酸点眼液": {
+          "aliases": [
             "くろもぐりくさんてんがん",
             "くろもぐりくさん"
           ],
-          "displayName": "インタール点眼液",
+          "displayName": "クロモグリク酸点眼液",
           "displayGenericName": "クロモグリク酸点眼液",
           "genericName": "クロモグリク酸",
           "handlingTags": [
-            "light_protection_storage",
-            "solution_eye_drop",
-            "contact_lens_caution",
-            "contact_lens_remove_before_use",
-            "bak_status_contains_bak"
+            "light_protection",
+            "preservative_free"
           ]
         }
       },
@@ -1673,7 +1632,15 @@
       "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
       "clinicalDomain": "allergy",
       "displayTitle": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
-      "displaySubtitle": "アレルギー性結膜炎・目のかゆみに対する点眼治療"
+      "displaySubtitle": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬（点眼）",
+      "reservedHandlingTags": [
+        "concentration_variant",
+        "cold_storage",
+        "cold_storage_before_opening",
+        "suspension",
+        "single_use_container",
+        "reduced_frequency_option"
+      ]
     },
     {
       "moduleId": "dm_insulin_regular",
@@ -9736,14 +9703,14 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
       "id": "initial",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 初回",
-      "scenarioGroup": "treatment_start",
+      "scenarioGroup": "start_or_change",
       "scenarioTags": [
-        "treatment_start"
+        "treatment_start",
+        "start_or_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "drug_effect_explanation",
-        "side_effect_attention"
+        "drug_effect_explanation"
       ],
       "sCompositionIntent": "new_addition"
     },
@@ -9752,15 +9719,14 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.restart",
       "id": "restart",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 再開",
-      "scenarioGroup": "treatment_start",
+      "scenarioGroup": "start_or_change",
       "scenarioTags": [
         "treatment_start",
-        "restart"
+        "start_or_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "drug_effect_explanation",
-        "side_effect_attention"
+        "drug_effect_explanation"
       ],
       "sCompositionIntent": "restart"
     },
@@ -9769,27 +9735,26 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.external_start",
       "id": "external_start",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 他所開始",
-      "scenarioGroup": "treatment_start",
+      "scenarioGroup": "start_or_change",
       "scenarioTags": [
         "treatment_start",
-        "external_start"
+        "start_or_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "drug_effect_explanation",
-        "side_effect_attention"
+        "drug_effect_explanation"
       ],
       "sCompositionIntent": "external_continuation"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_increase_low_perceived_effect",
-      "id": "dose_increase_low_perceived_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.frequency_increase_low_perceived_effect",
+      "id": "frequency_increase_low_perceived_effect",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数増（効果実感乏しい）",
-      "scenarioGroup": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",
-        "increase"
+        "dose_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -9799,13 +9764,29 @@
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_increase_due_to_other_med_adjustment",
-      "id": "dose_increase_due_to_other_med_adjustment",
-      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数増（他剤との調整）",
-      "scenarioGroup": "treatment_adjustment",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.strength_increase_low_perceived_effect",
+      "id": "strength_increase_low_perceived_effect",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 濃度増（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",
-        "increase"
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.frequency_increase_due_to_other_med_adjustment",
+      "id": "frequency_increase_due_to_other_med_adjustment",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -9816,13 +9797,30 @@
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_decrease_improved",
-      "id": "dose_decrease_improved",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.strength_increase_due_to_other_med_adjustment",
+      "id": "strength_increase_due_to_other_med_adjustment",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 濃度増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation",
+        "concomitant_drug_attention"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.frequency_decrease_improved",
+      "id": "frequency_decrease_improved",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（症状改善）",
-      "scenarioGroup": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",
-        "decrease"
+        "dose_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -9832,13 +9830,29 @@
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_decrease_low_perceived_effect",
-      "id": "dose_decrease_low_perceived_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.strength_decrease_improved",
+      "id": "strength_decrease_improved",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 濃度減（症状改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.frequency_decrease_low_perceived_effect",
+      "id": "frequency_decrease_low_perceived_effect",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（効果実感乏しい）",
-      "scenarioGroup": "treatment_adjustment",
+      "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",
-        "decrease"
+        "dose_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -9848,13 +9862,29 @@
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.dose_decrease_due_to_other_med_adjustment",
-      "id": "dose_decrease_due_to_other_med_adjustment",
-      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（他剤との調整）",
-      "scenarioGroup": "treatment_adjustment",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.strength_decrease_low_perceived_effect",
+      "id": "strength_decrease_low_perceived_effect",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 濃度減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
       "scenarioTags": [
         "treatment_adjustment",
-        "decrease"
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.frequency_decrease_due_to_other_med_adjustment",
+      "id": "frequency_decrease_due_to_other_med_adjustment",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 回数減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -9865,18 +9895,51 @@
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.strength_decrease_due_to_other_med_adjustment",
+      "id": "strength_decrease_due_to_other_med_adjustment",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 濃度減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "concomitant_drug_attention"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "id": "switch_to_sustained_formulation_reduced_frequency",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 持続型製剤へ変更（点眼回数減）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_irritation_none",
       "id": "se_irritation_none",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（刺激感）",
-      "scenarioGroup": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "irritation",
-        "absent"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -9885,15 +9948,15 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_foreign_body_sensation_none",
       "id": "se_foreign_body_sensation_none",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（異物感）",
-      "scenarioGroup": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "foreign_body_sensation",
-        "absent"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -9902,15 +9965,15 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_pruritus_none",
       "id": "se_pruritus_none",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（掻痒感）",
-      "scenarioGroup": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "pruritus",
-        "absent"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -9919,15 +9982,32 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_eye_redness_none",
       "id": "se_eye_redness_none",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（充血）",
-      "scenarioGroup": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "eye_redness",
-        "absent"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_eye_discharge_none",
+      "id": "se_eye_discharge_none",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 副作用なし（目やに）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -9939,6 +10019,7 @@
       "scenarioGroup": "adherence_good",
       "scenarioTags": [
         "adherence",
+        "adherence_good",
         "good"
       ],
       "sideEffectPresence": "not_applicable",
@@ -9955,14 +10036,13 @@
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
-        "poor",
-        "missed_doses"
+        "adherence_poor"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
         "adherence_support"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -9972,14 +10052,14 @@
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
-        "poor",
-        "self_adjust"
+        "adherence_poor"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "adherence_support"
+        "adherence_support",
+        "urgent_consult_advice"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -9989,14 +10069,14 @@
       "scenarioGroup": "adherence_poor",
       "scenarioTags": [
         "adherence",
-        "poor",
-        "visit_delay"
+        "adherence_poor"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "adherence_support"
+        "adherence_support",
+        "urgent_consult_advice"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -10010,9 +10090,9 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "usage_guidance"
+        "administration_instruction"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -10026,9 +10106,9 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "usage_guidance"
+        "administration_instruction"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -10038,7 +10118,7 @@
       "scenarioGroup": "end_improved",
       "scenarioTags": [
         "treatment_end",
-        "improved"
+        "end_improved"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -10054,7 +10134,7 @@
       "scenarioGroup": "end_insufficient_effect",
       "scenarioTags": [
         "treatment_end",
-        "insufficient_effect"
+        "end_insufficient_effect"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -10070,7 +10150,7 @@
       "scenarioGroup": "end_ineffective",
       "scenarioTags": [
         "treatment_end",
-        "ineffective"
+        "end_ineffective"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
@@ -10080,66 +10160,86 @@
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_mild_continue",
-      "id": "se_mild_continue",
-      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE継続（軽症）",
-      "scenarioGroup": "side_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_ocular_irritation_mild_continue",
+      "id": "se_ocular_irritation_mild_continue",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE継続（軽症 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "mild_continue"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "present_mild",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
       ],
-      "sCompositionIntent": "side_effect_check"
+      "sCompositionIntent": "side_effect_present"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_moderate_consider_dr",
-      "id": "se_moderate_consider_dr",
-      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE継続（中等度）",
-      "scenarioGroup": "side_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_ocular_irritation_moderate_consider_dr",
+      "id": "se_ocular_irritation_moderate_consider_dr",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE継続（中等度 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "moderate_consider_dr"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "present_moderate",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "urgent_consult_advice"
       ],
-      "sCompositionIntent": "side_effect_check"
+      "sCompositionIntent": "side_effect_present"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_change_due_to_irritation",
       "id": "se_change_due_to_irritation",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE変更（刺激感）",
-      "scenarioGroup": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "change"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "present_change",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
       ],
-      "sCompositionIntent": "treatment_end"
+      "sCompositionIntent": "side_effect_present"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_dose_decrease_due_to_irritation",
-      "id": "se_dose_decrease_due_to_irritation",
-      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE減量（刺激感）",
-      "scenarioGroup": "side_effect",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_frequency_reduced_due_to_irritation",
+      "id": "se_frequency_reduced_due_to_irritation",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE回数減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "decrease",
-        "dose_decrease"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "present_dose_decrease",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_strength_decreased_due_to_irritation",
+      "id": "se_strength_decreased_due_to_irritation",
+      "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE濃度減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
       ],
       "sCompositionIntent": "dose_decrease"
     },
@@ -10148,113 +10248,81 @@
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.se_stop_due_to_irritation",
       "id": "se_stop_due_to_irritation",
       "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬 SE中止（刺激感）",
-      "scenarioGroup": "side_effect",
+      "scenarioGroup": "side_effect_monitoring",
       "scenarioTags": [
         "side_effect",
-        "stop"
+        "side_effect_monitoring"
       ],
       "sideEffectPresence": "present_stop",
       "intentTags": [
-        "side_effect_attention"
+        "side_effect_attention",
+        "followup_monitoring"
       ],
-      "sCompositionIntent": "treatment_end"
+      "sCompositionIntent": "stop"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_tip_contamination",
       "id": "lifestyle_guidance_tip_contamination",
-      "title": "使用方法説明（接触使用）",
+      "title": "点眼方法説明（容器先端の接触）",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
         "lifestyle_guidance",
-        "tip"
+        "lifestyle_guidance"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "administration_instruction"
+        "lifestyle_guidance"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_interval",
       "id": "lifestyle_guidance_interval",
-      "title": "使用方法説明（間隔不十分）",
+      "title": "点眼方法説明（間隔不十分）",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
         "lifestyle_guidance",
-        "interval"
+        "lifestyle_guidance"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "administration_instruction"
+        "lifestyle_guidance"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_after_opening_expiry",
       "id": "lifestyle_guidance_after_opening_expiry",
-      "title": "使用方法説明（開封後一ヶ月以上使用）",
+      "title": "点眼方法説明（開封後1ヶ月以上使用）",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
         "lifestyle_guidance",
-        "opening"
+        "lifestyle_guidance"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "administration_instruction"
+        "lifestyle_guidance"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_suspension_shake",
       "id": "lifestyle_guidance_suspension_shake",
-      "title": "使用方法説明（懸濁不十分）",
+      "title": "点眼方法説明（懸濁不十分）",
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
         "lifestyle_guidance",
-        "suspension"
+        "lifestyle_guidance"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "administration_instruction"
+        "lifestyle_guidance"
       ],
-      "sCompositionIntent": "continue"
-    },
-    {
-      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_light_protection",
-      "id": "lifestyle_guidance_storage_light_protection",
-      "title": "保管方法説明（遮光不十分）",
-      "scenarioGroup": "lifestyle_guidance",
-      "scenarioTags": [
-        "lifestyle_guidance",
-        "storage"
-      ],
-      "sideEffectPresence": "not_applicable",
-      "intentTags": [
-        "administration_instruction"
-      ],
-      "sCompositionIntent": "continue"
-    },
-    {
-      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_cold",
-      "id": "lifestyle_guidance_storage_cold",
-      "title": "保管方法説明（冷所保存不十分）",
-      "scenarioGroup": "lifestyle_guidance",
-      "scenarioTags": [
-        "lifestyle_guidance",
-        "storage",
-        "cold"
-      ],
-      "sideEffectPresence": "not_applicable",
-      "intentTags": [
-        "administration_instruction"
-      ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -10264,15 +10332,61 @@
       "scenarioGroup": "lifestyle_guidance",
       "scenarioTags": [
         "lifestyle_guidance",
-        "suspension",
-        "storage",
-        "upright"
+        "lifestyle_guidance"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "administration_instruction"
+        "lifestyle_guidance"
       ],
-      "sCompositionIntent": "continue"
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_light_protection",
+      "id": "lifestyle_guidance_storage_light_protection",
+      "title": "保管方法説明（遮光不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_cold",
+      "id": "lifestyle_guidance_storage_cold",
+      "title": "保管方法説明（冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "globalId": "allergy_chemical_mediator_release_inhibitor_eye_drops.lifestyle_guidance_storage_cold_before_opening",
+      "id": "lifestyle_guidance_storage_cold_before_opening",
+      "title": "保管方法説明（未開封時のみ冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
     },
     {
       "moduleId": "dm_insulin_regular",
