@@ -54,7 +54,8 @@ composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関�
 
 ### risks セクション
 
-モジュールの臨床特性（低血糖リスク・腎機能・高齢者等）に基づき、primary / secondary / conditional を設定する。
+`risks` の生成規則は 2 分岐のみである。**インスリン注射系は下記の標準テンプレート、それ以外は固定 empty。**
+この 2 つ以外の生成規則は存在しない。
 
 `conditional` は必ず新形式を使用する。旧形式 `{ "condition": "...", "risk": "..." }` は使用しない。
 
@@ -88,7 +89,33 @@ dm_insulin_rapid_analog.json の risks 実績値（確認済み）に基づく�
 変更がない場合はこのまま使用する。
 
 **インスリン注射系以外のモジュール:**
-モジュールの臨床特性から適切な primary / secondary / conditional を設定する。
+
+**現行 contract では、non-insulin module の `risks` は常に固定 empty である。** 以下をそのまま生成する。
+
+```json
+"risks": {
+  "primary": [],
+  "secondary": [],
+  "conditional": []
+}
+```
+
+- **structured Bridge risk contract は現時点で存在しない。** bridge 35 件のいずれも、構造化された
+  risk 宣言ブロック・risk identifier・primary / secondary 分類を保持していない
+- **non-insulin 向けの model_managed risk contract も存在しない。** インスリン注射系の標準テンプレート
+  （上記）は insulin 分岐に限定された唯一の model_managed 規定であり、non-insulin へは適用しない
+- したがって、この固定値を上書きできる有効な override 経路は**現時点で 1 つも存在しない**
+- 次のいずれからも risk identifier・primary / secondary 分類を**推測・導出・転記してはならない**
+  （bridge 自由文を「構造化根拠」と解釈することを含め、一切認めない）:
+  - bridge の自由記述（コメント行・S / O / A / P 本文・リスクに言及する散文のすべて）
+  - scenario ID（`se_*` 等）／ `scenarioTags` ／ `intentTags` ／ `tagCatalog`
+  - 他モジュール（同一領域・同一剤形・同一 classKey のものを含む）
+  - Reference Implementation / Golden module と呼ばれるモジュール
+  - 既存 canonical JSON（`prompts/RULES.md` §2「既存 canonical JSON の値を対象 module へ無断流用しない」）
+- **改訂条件**: structured Bridge risk contract または Owner-approved の non-insulin model_managed
+  contract が正式導入された場合のみ、本規則を改訂する。それまでは例外を作らない
+
+検証: `tests/risksContract.test.ts`（T-R-1）
 
 ### searchConfig セクション
 
@@ -220,8 +247,11 @@ bridge に記述がない場合は以下のデフォルト値で生成する:
 PN5 完了後、以下を報告する:
 - 保存先
 - expressModes のエントリ数（ブランド数）
+- risks に適用した分岐（`insulin` / `non-insulin` のいずれか）
 - risks.primary / secondary 件数
 - risks.conditional 件数
+  ※ 分岐が `non-insulin` の場合、3 件数はすべて `0` でなければならない。
+    `0 / 0 / 0` 以外を報告する状態は本 Phase の責務違反であり、PN6 へ渡さず修正する
 - addons.orderPresets が `{}` であることの確認
 - persona が生成済みであることの確認
 
