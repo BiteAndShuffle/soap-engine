@@ -679,7 +679,7 @@ vNext には対応する明示的なチェック項目がない。
 - Tier 分類・残課題の詳細経緯: `docs/OPEN_DESIGN_QUESTIONS.md` Q-S1
 - O field 修正の記録: `prompts/RULES.md` CHECK-O01
 
-新規モジュール（DPP4 等）を作成する際は、上記 DP-09 と PN2-Drug-Header.md の brandCatalog alias 心得を確認してください。
+新規モジュール（DPP4 等）を作成する際は、上記 DP-09 と PN2-Drug-Header.md の「alias の責務境界（brand identity / generic identity / 薬効クラス名）」を確認してください。
 
 ## 検索ユニット（2026-09 完了）— G5 prefix gate / 曖昧性ガード / DP-18 leukotriene alignment
 

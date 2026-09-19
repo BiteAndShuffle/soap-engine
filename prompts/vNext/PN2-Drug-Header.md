@@ -49,6 +49,10 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 | `genericName` | 有効成分同一性を表す、剤形非依存の正規化済み基本成分名（DP-21）。塩類名・水和物等を保持するフィールドではない。**通常UIでは参照しない** |
 | `displayGenericName` | 表示用一般名。**必須**。利用者向け／検索用の一般名表示のSSOT。必要に応じて剤形修飾を含み得る。通常UIにおける一般名表示のSSOT。検索候補・パンくず・SOAP本文・`{{drug_subject}}` が参照する |
 
+本表は `brandCatalog` エントリ内のフィールドのみを対象とする。top-level の `drug.genericName` は
+**薬効クラス名**であり（`display.subtitle` の生成元。後述）、本表の `genericName` とは別概念である。
+両者の責務境界は後述「alias の責務境界」C を参照する。
+
 **生成時の注意（MUST_STOP 相当）:**
 
 - `genericName` は DP-21 に従い、塩類名・水和物等の技術的修飾語を含まない正規化済み基本成分名で確定すること（`メトホルミン塩酸塩` ではなく `メトホルミン`）。正式名称の忠実性を理由に塩類名・水和物表記を書き加えてはならない。詳細は `docs/JSON_STANDARD.md` JS-A-drug および `docs/DESIGN_PRINCIPLES.md` DP-21 を正本とする
@@ -68,15 +72,64 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 - 同一 `genericKey` を持つブランド同士は検索候補で同一成分グループとして展開されるため、臨床的に別グループとして扱うべき場合は必ずキーを分けること
 - 配合剤には単剤の `genericKey` を流用せず、専用の単一文字列キーを割り当てること（例: `insulin_degludec_aspart_combo`）。単剤・配合剤間のクロス検索は現時点で非対応
 
-### brandCatalog alias 生成時の心得（一般名検索到達性）
+### alias の責務境界（brand identity / generic identity / 薬効クラス名）
 
-← `docs/DESIGN_PRINCIPLES.md` DP-09（一般名検索到達性原則）
+← `docs/DESIGN_PRINCIPLES.md` DP-09（一般名検索到達性原則）/ DP-18（alias複製境界とown-name優先原則）
 
-一般名（成分名）検索で当該 brand に到達できるよう、`brandCatalog.{brand}.aliases` に一般名の読みを含めることが望ましい。
+alias 系フィールドには**性質の異なる 3 つの概念**が流れ込む。PN2 はそれぞれの格納先の境界を定め、
+一般名検索そのものの挙動は DP-09 を正本として参照する（DP-09 の内容を本節へ複製しない）。
+
+#### A. brand identity alias（`brandCatalog.{brand}.aliases` の責務）
+
+`brandCatalog.{brand}.aliases` には、**その brand／製品自身を指す**別名のみを置く。具体的には:
+
+- 正式名の表記揺れ（全角半角・記号・送り仮名等）
+- 確立済みのかな読み・音写
+- 実務で通用する略称
+- 同一 brand を指す製品名バリアント
+
+検索カバレッジを広げる目的で alias を推測生成・捏造しない。
+
+#### B. brand-level generic identity（`brandCatalog[*].genericName` / `brandCatalog[*].displayGenericName`）
+
+一般名（成分名）による検索到達性は **DP-09 の所管**であり、PN2 はその格納先の境界のみを定める。
+
+- 通常の**単一成分 brand** では、generic identity の到達性は **module 単位の alias**
+  （`drug.search.exactAliases` / `drug.search.nameAliases` / `drug.nameAliases`）で表現する
+- **一般名検索を成立させる目的で、generic identity を `brandCatalog.{brand}.aliases` /
+  `normalizedAliases` / `aliasToBrand` へ複製しない。** 単一成分 brand では
+  `resolveAllHighPrecisionBrands()` の tier2 が `displayGenericName` 照合で当該 brand を
+  解決するため、この複製は冗長であり、かつ「その一般名はその商品の別名である」という
+  誤った意味を canonical へ固定する（DP-09 / DP-18）
+- 到達性のために、実在しない一般名製品を `brandCatalog` へ作成しない（DP-09）
+
+**本境界の対象外（既存の 2 条項。新設の例外ではない）:**
+
+- **DP-09 配合剤条項** — brand-level generic identity が複数成分から構成され、tier2 の
+  generic identity resolution のみでは個々の構成成分名から当該 brand へ解決できない場合は、
+  構成成分の読みを当該 brand の `brandCatalog.{brand}.aliases` に保持してよい（`aliasToBrand` は
+  RULES.md §10 / §23 の既存同期契約に従う）。これは到達性のための複製ではなく、
+  成分名から brand を解決する唯一の経路である
+- **DP-18 の generic-labeled brand** — 一般名をそのまま brand 名として持つエントリ
+  （例: `エピナスチン点眼液`）の `aliases` は、その brand **自身の identity**（＝上記 A）であり、
+  branded product へ複製された generic reachability ではない
+
+判定の指針: 「その読みは**その brand 自身を指すか**（A・許容）」か、
+「generic reachability を branded product 側へ**複製したものか**（B・不可）」かで区別する。
+
+#### C. top-level `drug.genericName`（薬効クラス名。B とは別概念）
+
+本 Repository の top-level `drug.genericName` は**薬効クラス名**であり
+（例: `"ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬"`）、
+上記 B の brand-level generic identity とは**値空間も責務も異なる**。
+DP-09 Generic Identity Search Principle の対象は `brandCatalog[*].genericName` /
+`brandCatalog[*].displayGenericName` のみであり、top-level `drug.genericName` は対象外である。
+両者を同一視して alias を生成してはならない。
+
+#### 共通ルール（A / B いずれにも適用）
 
 - 新規 alias を推測生成しない（RULES.md §2 PROHIBITED_UNIVERSAL）
-- 既に確立済みの読みが同系統モジュールに存在する場合はそれを流用する（例: `ぐらるぎん` / `でぐるでく` は `dm_insulin_long_acting`、`あすぱると` は `dm_insulin_mixed_rapid_intermediate` で確立済み）
-- 配合剤は構成成分ごとに読みを個別登録し、どちらの成分名からでも到達できるようにする
+- 既に確立済みの読みが同系統モジュールに存在する場合はそれを流用する（例: `ぐらるぎん` / `でぐるでく` は `dm_insulin_long_acting`、`あすぱると` は `dm_insulin_mixed_rapid_intermediate` で確立済み）。流用先は上記 A / B の境界に従って決める
 - alias 追加の要否自体は人間判断（`docs/VALIDATOR_STANDARD.md` §5「exactAliases の網羅性は設計判断」）であり、機械的な網羅性チェックは行わない
 
 ### drug.search 検索トークンの生成規則（commonSearchTokens / formulationSearchTokens）

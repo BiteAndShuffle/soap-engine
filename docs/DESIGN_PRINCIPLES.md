@@ -337,18 +337,43 @@ preset は実運用で確定した ADDON の組み合わせを固定するもの
    具体的には `drug.search.exactAliases` / `drug.search.nameAliases` / `drug.nameAliases`。
    `lib/search.ts` の module ゲート（`scoreEntry()`）のスコアリング対象に
    `displayGenericName` は含まれないため、module へ到達させるにはこれらの alias が必要である。
+   これは **module への到達性**（reachability）についての規定であり、到達した後の
+   brand 帰属（下記 4・配合剤条項）を代替するものではない。
 3. **検索到達性を担保する目的で、実在しない一般名製品・GE 製品を `brandCatalog` へ作成しない。**
    `brandCatalog` は marketed product の正本であり、検索の都合で架空のエントリを追加してはならない。
 4. **generic identity から current marketed product への解決は、既存の tier2
    （`resolveAllHighPrecisionBrands()` の priority 5/6・`displayGenericName` 照合）が担う。**
    新しい resolution 機構を追加しない。これは「その一般名製品が販売されている」ことを意味せず、
    drug identity から現在収載されている製品へ解決しているにすぎない。
-5. **generic identity を brand-scoped alias へ複製しない。**
+5. **検索到達性を得る目的だけで、generic identity を brand-scoped alias へ複製しない。**
+   単一成分の brand（`displayGenericName` が単一の有効成分を表すもの）について、
    `brandCatalog[brand].aliases` / `normalizedAliases` / `drug.aliasToBrand` へ generic identity を
    書き込まない（下記「不採用とした方針」および DP-18 の複製境界）。`aliasToBrand` のキー集合は
    全 brand の `normalizedAliases` の和集合でなければならない（RULES.md §10）ため、
    generic identity をここへ入れることは「その一般名は当該ブランドの商品別名である」という
    誤った意味を canonical へ固定することになる。
+   単一成分 brand では上記 4 の tier2 が当該 brand を解決できるため、この複製は冗長でもある。
+
+   **本規定の対象外（既存の 2 条項。いずれも新設の例外ではない）:**
+
+   - **配合剤条項（上記「方針」3 点目）**: 配合剤等、brand-level generic identity が複数成分から
+     構成され、tier2 の generic identity resolution のみでは個々の構成成分名から当該 brand へ
+     解決できない場合は、DP-09 配合剤条項に従い、構成成分の読みを当該 brand の brand-scoped
+     alias に保持してよい。`aliasToBrand` は必要に応じて既存の同期契約（RULES.md §10 / §23）に従う。
+     これは「検索到達性のための複製」ではなく、**成分名から brand を解決する唯一の経路**であり、
+     欠けると unresolved 候補（`denotation='module'` / `subject=null`）が生じる。
+     （実装ノート: 現行の `resolveAllHighPrecisionBrands()` tier2 は `displayGenericName` 全体に対する
+     完全一致／前方一致で判定するため、`"A/B"` 形式の第2成分名は一致しない。成分の分解は
+     `splitGenericComponents()` / `GENERIC_COMPONENT_SEPARATORS` が担う。本条項の根拠は
+     「個々の構成成分名から当該 brand へ解決できるか」という意味論であり、特定の定数や
+     実装の詳細に依存して判断しない。）
+   - **DP-18 の generic-labeled brand**: 一般名をそのまま brand 名として持つエントリ
+     （例: `エピナスチン点眼液` / `トラニラスト点眼液`）の `aliases` は、**その brand 自身の
+     identity alias** であって、branded product へ複製された generic reachability ではない。
+     DP-18 はこの読みを当該エントリにのみ登録することを定めており、本規定はそれを禁じない。
+
+   判定の指針: 「この読みは**その brand 自身を指しているか**」（= identity・許容）か、
+   「generic reachability を branded product 側へ**複製したもの**か」（= 本規定が禁じるもの）かで区別する。
 6. **対応する一般名製品エントリが `brandCatalog` に存在しない場合、剤形修飾を含むかな読み
    （例: 「あしたざのらすと**てんがん**」）を module-level alias として追加しない。**
    当該読みでは `displayGenericName` の前方一致が成立せず brand へ解決できないため、
@@ -364,6 +389,7 @@ preset は実運用で確定した ADDON の組み合わせを固定するもの
 
 **不採用とした方針**
 `brandCatalog[brand].aliases` へ一般名のフルストリングを brand ごとに複製する方式は、50〜300+ module 規模の量産局面で bridge / JSON 双方への複製作業が線形に増え保守負荷が高すぎるため不採用とした。複製漏れは実際に発見されており（無関係な brand が代表候補として誤表示される事例）、データ複製に依存しない現方針の採用理由となっている。
+ここで不採用としたのは「**到達性を得る手段として一律に複製する**」方式である。上記「方針」3 点目の配合剤条項（成分名から brand を解決する唯一の経路である場合）と、DP-18 の generic-labeled brand 自身の identity alias は、この不採用方針の対象ではない（上記 5 の「本規定の対象外」を参照）。
 
 「一般名では module へ到達するが特定 brand へは解決しない」方式（module 到達のみ）も不採用とする。
 `deriveUnresolvedResolution()` は multi-brand module に対して `denotation='module'` / `subject=null` を返すため、
