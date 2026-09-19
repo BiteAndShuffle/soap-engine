@@ -293,26 +293,99 @@ preset は実運用で確定した ADDON の組み合わせを固定するもの
 
 **目的**
 ユーザーが一般名（成分名）で検索した場合、その成分に属する全ブランドへ到達できるようにする。
+この到達性は、当該一般名に対応する一般名製品・GE 製品が現在発売されているかどうかと**独立に**保持する。
+
+**用語定義（先に読むこと）**
+
+本原則が扱う「generic identity」は **brand-level generic identity**、すなわち
+`brandCatalog[brand].genericName` と `brandCatalog[brand].displayGenericName` の 2 フィールドのみを指す。
+
+**top-level の `drug.genericName` は本原則の対象外である。** 本 Repository における
+`drug.genericName` は薬効**クラス**名（例: `"ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬"`、
+`"ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"`）であり、有効成分の identity ではない。
+両者は値空間も責務も異なるため、本原則の適用にあたって混同してはならない。
+以下、本節で「generic identity」と書いた場合は常に brand-level generic identity
+（`brandCatalog[*].genericName` / `brandCatalog[*].displayGenericName`）を意味する。
+
+| 対象か | フィールド | 意味 |
+|---|---|---|
+| ❌ 対象外 | `drug.genericName`（top-level） | 薬効クラス名。有効成分 identity ではない |
+| ✅ 対象 | `brandCatalog[brand].genericName` | 剤形非依存の有効成分 identity（DP-21 により塩類名を含まない） |
+| ✅ 対象 | `brandCatalog[brand].displayGenericName` | 表示用一般名の SSOT。必要に応じ剤形修飾を含む |
 
 **適用範囲**
-複数 brand を持つ全 module（単剤・配合剤とも）
+複数 brand を持つ全 module（単剤・配合剤とも）。
+**対応する一般名製品エントリが `brandCatalog` に存在しない場合（GE 未発売・GE 販売中止・
+先発のみ収載）も含む。**
 
 **方針**
 - `brandCatalog[brand].displayGenericName` を検索解決に活用する。`lib/search.ts` の `resolveAllHighPrecisionBrands()` がクエリと各 brand の `displayGenericName`（正規化形）を照合し、一致した brand を検索候補として抽出する
 - `genericKey` によるグルーピング判断（RULES.md §21）とは役割を分離する。`displayGenericName` はクエリとの一致判定のみに使い、「どの brand を束ねるか」の判断には使わない
 - 配合剤（例: ソリクア＝インスリングラルギン／リキシセナチド）は、構成成分ごとの読みを個別に登録し、単剤側（例: ランタス）からも配合剤側（例: ソリクア）からも、どちらの成分名で検索しても到達できるようにする
 
+**方針: Generic Identity Search Principle（2026-09-19 Owner Decision による明文化）**
+
+本項は新原則の追加ではなく、DP-09 が当初から内包していた「generic reachability」の責務を
+明文化したものである（corpus 実測: 一般名製品エントリを持たない 74 brand が既に本方式で運用されている）。
+
+1. **brand-level generic identity（`brandCatalog[*].genericName` / `brandCatalog[*].displayGenericName`）の
+   検索到達性は、対応する一般名製品・GE 製品の発売有無と独立に保持する。**
+   GE 未発売・GE 販売中止・先発販売中止のいずれの局面でも、generic identity は薬剤 identity として
+   検索可能でよい。日本の医薬品市場では一般名処方が実務として存在し、GE の発売・販売中止のたびに
+   検索 identity を増減させる運用は保守コストが高く、かつ一般名処方に対応できない。
+2. **generic reachability は module-level search aliases で表現する。**
+   具体的には `drug.search.exactAliases` / `drug.search.nameAliases` / `drug.nameAliases`。
+   `lib/search.ts` の module ゲート（`scoreEntry()`）のスコアリング対象に
+   `displayGenericName` は含まれないため、module へ到達させるにはこれらの alias が必要である。
+3. **検索到達性を担保する目的で、実在しない一般名製品・GE 製品を `brandCatalog` へ作成しない。**
+   `brandCatalog` は marketed product の正本であり、検索の都合で架空のエントリを追加してはならない。
+4. **generic identity から current marketed product への解決は、既存の tier2
+   （`resolveAllHighPrecisionBrands()` の priority 5/6・`displayGenericName` 照合）が担う。**
+   新しい resolution 機構を追加しない。これは「その一般名製品が販売されている」ことを意味せず、
+   drug identity から現在収載されている製品へ解決しているにすぎない。
+5. **generic identity を brand-scoped alias へ複製しない。**
+   `brandCatalog[brand].aliases` / `normalizedAliases` / `drug.aliasToBrand` へ generic identity を
+   書き込まない（下記「不採用とした方針」および DP-18 の複製境界）。`aliasToBrand` のキー集合は
+   全 brand の `normalizedAliases` の和集合でなければならない（RULES.md §10）ため、
+   generic identity をここへ入れることは「その一般名は当該ブランドの商品別名である」という
+   誤った意味を canonical へ固定することになる。
+6. **対応する一般名製品エントリが `brandCatalog` に存在しない場合、剤形修飾を含むかな読み
+   （例: 「あしたざのらすと**てんがん**」）を module-level alias として追加しない。**
+   当該読みでは `displayGenericName` の前方一致が成立せず brand へ解決できないため、
+   unresolved 候補（`resolution.denotation = 'module'` / `subject = null`）が発生し、
+   SOAP 主語が空になる。剤形修飾かな読みは、一般名製品エントリが存在する場合にのみ
+   **その entry 自身の `aliases`** として登録する（例: H1 点眼の「えぴなすちんてんがん」は
+   `エピナスチン点眼液` エントリの alias であり、`アレジオン点眼液` の alias ではない）。
+7. **marketed product の lifecycle と generic search identity の lifecycle は別責務として扱う。**
+   GE 発売時は `brandCatalog` / `brandNames` へ製品を追加するだけでよく、generic alias は変更しない
+   （追加された製品は tier2 経由で自動的に候補へ加わり、重複する generic header は既存の
+   true-duplicate 抑制で消える）。GE 販売中止時は製品エントリのみを削除し、generic alias は残す。
+   両者を同一作業として扱わない。
+
 **不採用とした方針**
 `brandCatalog[brand].aliases` へ一般名のフルストリングを brand ごとに複製する方式は、50〜300+ module 規模の量産局面で bridge / JSON 双方への複製作業が線形に増え保守負荷が高すぎるため不採用とした。複製漏れは実際に発見されており（無関係な brand が代表候補として誤表示される事例）、データ複製に依存しない現方針の採用理由となっている。
+
+「一般名では module へ到達するが特定 brand へは解決しない」方式（module 到達のみ）も不採用とする。
+`deriveUnresolvedResolution()` は multi-brand module に対して `denotation='module'` / `subject=null` を返すため、
+SOAP 主語が空の候補が生まれる。これは Q-S1 Tier2 として実際に発生した不具合であり、
+`scripts/audit-generic-name-reachability.ts` はその再発防止のために存在する。
 
 **採用理由**
 `displayGenericName` は JS-A-drug（`docs/JSON_STANDARD.md`）で全 brand 必須のフィールドであり、bridge 記載時点で既に人間レビュー済みである。新たな alias データを追加生成せず、既存の正本データを検索にも活用することで、bridge への追記なしに全 module へ適用される。
 
+**関連原則**
+- DP-18（alias複製境界とown-name優先原則）— DP-09 は「一般名検索で **module へ到達できるか**」（reachability）を扱い、DP-18 は「到達した後に**どの brand へ帰属させるか**」と「alias をどこまで複製してよいか」を扱う。Generic Identity Search Principle は前者に属する
+- DP-21（塩／水和物正規化）— `brandCatalog[brand].genericName` の正規化規則。本原則が扱う identity 値そのものの表記規則を定める
+
 **関連フィールド**
-`brandCatalog[brand].displayGenericName` / `genericKey`（RULES.md §21）/ `lib/search.ts` の `resolveAllHighPrecisionBrands()`
+`brandCatalog[brand].genericName` / `brandCatalog[brand].displayGenericName` / `genericKey`（RULES.md §21）/ `drug.search.exactAliases` / `drug.search.nameAliases` / `drug.nameAliases` / `lib/search.ts` の `resolveAllHighPrecisionBrands()`
+（**`drug.genericName`（top-level）は薬効クラス名であり本原則の関連フィールドではない**）
 
 **詳細経緯**
 Tier 分類・残課題（cross-module 欠落・genericKey 命名不統一等）は `docs/OPEN_DESIGN_QUESTIONS.md` Q-S1 を参照。
+Generic Identity Search Principle（上記 1〜7）の明文化経緯は、ZEP-1 Design Review（2026-09-19 Owner Decision D-1〜D-7）による。
+適用事例は `bridges/allergy_chemical_mediator_release_inhibitor_eye_drops.md` の Owner-approved amendment（ゼペリン点眼液／アシタザノラスト）、
+corpus 先例は `dm_dpp4_oral`（トラゼンタ／リナグリプチン）・`dm_glp1ra_injection`（ビクトーザ／リラグルチド）を参照。
 
 ---
 

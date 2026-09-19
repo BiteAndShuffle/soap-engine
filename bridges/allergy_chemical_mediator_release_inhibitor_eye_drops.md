@@ -13,6 +13,36 @@
 # Owner Final Review 完了・凍結宣言により FROZEN_FOR_PN1 へ遷移した（2026-09-18。prompts/RULES.md §24）。
 # 凍結時点で freeze blocker 0 件。SCENARIOS本文・header 値は凍結時に変更していない（STATUS 行と本コメントのみ更新）。
 #
+# ─────────────────────────────────────────────────────────────
+# Owner-approved amendment（2026-09-19）
+# ─────────────────────────────────────────────────────────────
+#   種別:   Owner-approved Header amendment（状態遷移ではない）。
+#           STATUS は `FROZEN_FOR_PN1` のまま維持する。prompts/RULES.md §24 は STATUS 値を
+#           4 種に固定しており "amendment" 状態を持たない。また §24 の header 変更制限は
+#           「状態遷移を伴う変更」に対する制約であり、本 amendment は遷移を伴わない。
+#           STATUS の変更は Owner が明示的に遷移を指示した場合のみ行う（§24）。
+#   根拠:   Generic Identity Search Principle（docs/DESIGN_PRINCIPLES.md DP-09 へ追記）
+#           に基づく Owner Decision（2026-09-19。ZEP-1 Design Review D-1〜D-6）。
+#   変更範囲: **Header の alias 3 フィールドのみ**
+#             drug.search.exactAliases（17→19）/ drug.search.nameAliases（16→17）/
+#             drug.nameAliases（16→17）、および本コメントと末尾 ZEP-1 記述の更新。
+#   非変更:   SCENARIOS_START〜SCENARIOS_END 本文（1 文字も変更しない）/ brandCatalog /
+#             aliasToBrand / prefixAliases / brandNames / handlingTags /
+#             scenarioRequiredTags / addonRequiredTags / STATUS 行。
+#   amendment 前の SCENARIOS 本文（`=======SCENARIOS_START=======` 〜
+#   `=======SCENARIOS_END=======` を含む行範囲）:
+#       SHA-256: a07693c36d6e46355b6361a2b587377befc19d216eb2a70f7960230951ac4785
+#       byte   : 46567
+#       行数   : 932
+#       固定 commit: 5731724（refactor: rebuild chemical mediator module and remediate PN8）
+#   amendment 後も上記 SHA-256 / byte 数が一致することを機械確認すること。
+#
+#   prefixAliases を変更しない理由: `drug.search.prefixAliases` は lib/types.ts で
+#   `@deprecated` であり、lib/search.ts の buildSearchIndex からは参照されない
+#   （検索到達性には寄与しない）。本 amendment 後に prefixAliases(16) と
+#   nameAliases(17) の件数が非対称になるのは、current runtime semantics と
+#   deprecated 状態に基づく**意図的な結果**であり、同期漏れではない。
+#
 # 記載方針:
 #   - 本Headerの構造データ（YAML部分）には、Repository 上の正本・現行標準・SCENARIOS本文・
 #     Owner Decision から確定できる値のみを置く。未確定の値を "PENDING" 等の仮文字列・空配列・
@@ -101,8 +131,17 @@ drug:
     - "contact_lens_caution"
   search:
     primaryDisplayName: "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬"
-    # exactAliases: 収載製品の正式表示名、剤形 suffix なしの入力alias、薬効分類名。
+    # exactAliases: 収載製品の正式表示名、剤形 suffix なしの入力alias、薬効分類名、
+    # および brand-level generic identity（DP-09 Generic Identity Search Principle）。
     # 製品 variation 名（PF 等）は含めない（PRODUCT_VARIANT_SEPARATION_PRINCIPLE §5.3）。
+    #
+    # 「アシタザノラスト」「アシタザノラスト点眼液」は Owner-approved amendment（2026-09-19）で
+    # 追加した brand-level generic identity である（brandCatalog["ゼペリン点眼液"].genericName /
+    # .displayGenericName）。ゼペリン点眼液は先発のみ収載で対応する一般名製品が存在しないが、
+    # DP-09 により generic identity の検索到達性は一般名製品・GE 製品の発売有無と独立に保持する。
+    # **これらは製品の収載を意味しない。** brandCatalog へ一般名製品エントリは作らず
+    # （D-8 / 7-1 を維持）、current marketed product（ゼペリン点眼液）への解決は
+    # lib/search.ts resolveAllHighPrecisionBrands() の tier2（displayGenericName 照合）が担う。
     exactAliases:
       - "ゼペリン点眼液"
       - "アレギサール点眼液"
@@ -121,7 +160,19 @@ drug:
       - "トラメラス"
       - "クロモグリク酸"
       - "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬"
+      # brand-level generic identity（DP-09・Owner-approved amendment 2026-09-19）
+      - "アシタザノラスト"
+      - "アシタザノラスト点眼液"
     # prefixAliases / nameAliases: brandNames 順に各エントリの aliases を連結したもの（H1 点眼 bridge と同じ構成）。
+    #
+    # prefixAliases は lib/types.ts で @deprecated、buildSearchIndex 非参照のため
+    # amendment 対象外とする（件数の非対称は意図的。Header 冒頭の amendment 記載を参照）。
+    # nameAliases には brand-level generic identity の読み「あしたざのらすと」を追加する。
+    # 剤形修飾を含むかな読み「あしたざのらすとてんがん」は**追加しない**（DP-09）:
+    # 対応する一般名製品エントリが brandCatalog に存在しないため、当該読みで到達しても
+    # brand へ解決できず unresolved 候補（resolution.denotation='module' / subject=null）に
+    # なる。剤形修飾かな読みは一般名製品エントリが存在する場合にのみ、その entry 自身の
+    # aliases として登録する（H1 点眼の「えぴなすちんてんがん」等がその形）。
     prefixAliases:
       - "ぜぺりんてんがん"
       - "ぜぺりん"
@@ -156,6 +207,8 @@ drug:
       - "とらめらす"
       - "くろもぐりくさんてんがん"
       - "くろもぐりくさん"
+      # brand-level generic identity の読み（DP-09・Owner-approved amendment 2026-09-19）
+      - "あしたざのらすと"
     # keywords: 本 module の SCENARIOS本文（眼のかゆみ・充血・アレルギー症状）と categoryPath に現れる語のみ。
     keywords:
       - "アレルギー"
@@ -188,6 +241,8 @@ drug:
     - "とらめらす"
     - "くろもぐりくさんてんがん"
     - "くろもぐりくさん"
+    # brand-level generic identity の読み（DP-09・Owner-approved amendment 2026-09-19）
+    - "あしたざのらすと"
   # ─────────────────────────────────────────
   # brandCatalog
   #   - 一般名系エントリの displayGenericName は、Owner 提供の一般名表記（エントリ名）そのもの。
@@ -619,6 +674,19 @@ constitution:
 #   本挙動は本 module 固有ではなく現行 corpus 共通である（例: リベルサス→[セマグルチド]、
 #   ビクトーザ→[リラグルチド]。いずれも当該一般名の brandCatalog エントリを持たない）。
 #
+#   【2026-09-19 Owner-approved amendment による更新】
+#   上記のうち**一般名読みからの到達性（reachability）のみ**が変更された。DP-09 Generic Identity
+#   Search Principle に基づき brand-level generic identity を module-level alias へ登録したため、
+#   amendment 後の実測は次のとおり:
+#     q="あしたざのらすと" / "アシタザノラスト" / "アシタザノラスト点眼液"
+#       → [アシタザノラスト点眼液]（見出し候補）と [ゼペリン点眼液（アシタザノラスト点眼液）] の2件
+#     q="あしたざのらすとてんがん" → 0 件（剤形修飾かな読みは登録しないため。DP-09）
+#     q="ぜぺりん" → amendment 前と同一（2件。変化なし）
+#   これは corpus 先例（q="りなぐりぷちん" → [リナグリプチン] + [トラゼンタ（リナグリプチン）]）と
+#   同一の挙動であり、brandCatalog へ一般名製品エントリを追加していない点も先例と同じである。
+#   **generic header を selectable candidate として表示するかどうかという UI 側の論点は、
+#   本 amendment では一切変更しておらず、下記のとおり別 Unit のまま残る。**
+#
 #   **Owner Decision（2026-09-18）**: 今回の rebuild では現行 corpus 共通の genericHeader 挙動を変更せず、
 #   本挙動を bridge freeze の blocker としない。ただしこれは最終的な望ましい UX として承認するものではない。
 #   displayGenericName と「実在する検索可能な一般名製品エントリ」を区別し、販売されていない一般名製品を
@@ -626,6 +694,9 @@ constitution:
 #   search UX / genericHeader contract の課題として**別 Unit** で扱う（lib/search.ts の genericHeader 生成条件・
 #   BrandResolution・DP-18・既存 module への影響を横断的に設計レビューする）。
 #   本 module では module 固有の分岐・新規 canonical field・新規 hidden flag 等を追加しない。
+#   （2026-09-19 amendment 後も本 Owner Decision は有効。amendment は reachability のみを扱い、
+#    genericHeader UI 問題は別 Unit として維持する。module 固有の分岐・新規 field・hidden flag は
+#    amendment でも一切追加していない。)
 #
 # 【凍結前に判断が望ましいが、現行契約上は freeze blocker ではない事項】
 # PENDING-S2. matchPolicy の preferOwnNameMatchOverGenericMatch / suppressRedundantGenericHeaderOnDirectMatch

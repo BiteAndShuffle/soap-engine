@@ -1585,3 +1585,134 @@ describe('Search Family Phase 2-A: 直接配合剤クエリは引き続き direc
     assert.equal(results[0]?.matchedBrandName, 'メタクト', `配合剤への直接クエリは自身が1位であるべき: ${JSON.stringify(results.map(r => r.matchedBrandName))}`)
   })
 })
+
+// ─────────────────────────────────────────────────────────────
+// DP-09 Generic Identity Search Principle
+//
+// brand-level generic identity（brandCatalog[*].genericName /
+// brandCatalog[*].displayGenericName）の検索到達性は、対応する一般名製品・GE 製品の
+// 発売有無と独立に保持される。top-level の drug.genericName（薬効クラス名）は対象外。
+//
+// 本 describe は chemical mediator 固有の例外を固定するものではなく、DP-09 の
+// 一般原則を検証する。そのため「一般名製品エントリを持たない brand」を corpus から
+// 機械的に列挙し、原則が corpus 全体で成立していることを確認したうえで、
+// 代表ケース（ゼペリン／アシタザノラスト、トラゼンタ／リナグリプチン、
+// ビクトーザ／リラグルチド）を個別に固定する。
+// ─────────────────────────────────────────────────────────────
+
+describe('DP-09 Generic Identity Search Principle', () => {
+  /** brandCatalog に「displayGenericName と同名の brand エントリ」を持たない brand を列挙する */
+  function brandsWithoutGenericProductEntry(): Array<{ moduleId: string; brand: string; dgn: string }> {
+    const out: Array<{ moduleId: string; brand: string; dgn: string }> = []
+    for (const m of ALL_MODULES) {
+      const bc = (m.drug?.brandCatalog ?? {}) as Record<string, { displayGenericName?: string }>
+      for (const [brand, e] of Object.entries(bc)) {
+        const dgn = e.displayGenericName
+        if (!dgn) continue
+        if (Object.prototype.hasOwnProperty.call(bc, dgn)) continue // 一般名製品エントリが実在する
+        if (splitGenericComponents(dgn).length > 1) continue        // 配合剤は成分単位で別途到達する
+        out.push({ moduleId: m.moduleId, brand, dgn })
+      }
+    }
+    return out
+  }
+
+  test('原則 1/2: 一般名製品エントリを持たない単剤 brand でも、generic identity から module へ到達できる', () => {
+    const targets = brandsWithoutGenericProductEntry()
+    assert.ok(targets.length >= 60, `検証母集団が想定より小さい: ${targets.length} 件`)
+    const unreachable = targets.filter(({ moduleId, dgn }) =>
+      getDrugSuggestions(dgn, fullIndex, 8).every(r => r.moduleId !== moduleId),
+    )
+    assert.deepEqual(
+      unreachable.map(t => `${t.moduleId}/${t.brand}(${t.dgn})`),
+      [],
+      'generic identity から module へ到達できない brand が存在する（DP-09 違反）',
+    )
+  })
+
+  test('原則 3: 検索到達性のために存在しない一般名製品を brandCatalog へ作っていない', () => {
+    // ゼペリン点眼液は先発のみ収載（bridge D-8 / 7-1）。到達性は alias で担保し、
+    // brandCatalog へ「アシタザノラスト点眼液」エントリを作ってはならない。
+    const chem = ALL_MODULES.find(m => m.moduleId === 'allergy_chemical_mediator_release_inhibitor_eye_drops')!
+    const bc = chem.drug!.brandCatalog!
+    assert.ok(!('アシタザノラスト点眼液' in bc), '存在しない一般名製品が brandCatalog へ追加されている')
+    assert.ok(!('アシタザノラスト' in bc), '存在しない一般名製品が brandCatalog へ追加されている')
+    assert.equal(Object.keys(bc).length, 8, 'brandCatalog の収載製品数が変わっている')
+    assert.equal(bc['ゼペリン点眼液'].displayGenericName, 'アシタザノラスト点眼液')
+    assert.equal(bc['ゼペリン点眼液'].genericName, 'アシタザノラスト')
+  })
+
+  test('原則 4: generic identity は current marketed product（ゼペリン点眼液）へ解決される', () => {
+    for (const q of ['あしたざのらすと', 'アシタザノラスト', 'アシタザノラスト点眼液']) {
+      const results = getDrugSuggestions(q, fullIndex, 8)
+      assert.equal(results.length, 2, `"${q}": ${JSON.stringify(results.map(r => r.uiLabel))}`)
+
+      const header = results.find(r => r.isGenericLabel)
+      assert.ok(header, `"${q}": 一般名見出し候補が見つからない`)
+      assert.equal(header!.uiLabel, 'アシタザノラスト点眼液')
+      assert.equal(header!.resolution.denotation, 'generic')
+
+      const brandRow = results.find(r => !r.isGenericLabel)
+      assert.ok(brandRow, `"${q}": brand 候補が見つからない`)
+      assert.equal(brandRow!.matchedBrandName, 'ゼペリン点眼液')
+      assert.equal(brandRow!.resolution.denotation, 'brand')
+      assert.equal(brandRow!.resolution.subject, 'ゼペリン点眼液')
+      assert.equal(brandRow!.uiLabel, 'ゼペリン点眼液（アシタザノラスト点眼液）')
+    }
+  })
+
+  test('原則 5: generic identity が brand-scoped alias / aliasToBrand へ複製されていない', () => {
+    const chem = ALL_MODULES.find(m => m.moduleId === 'allergy_chemical_mediator_release_inhibitor_eye_drops')!
+    const drug = chem.drug as unknown as {
+      aliasToBrand?: Record<string, string>
+      brandCatalog: Record<string, { aliases?: string[]; normalizedAliases?: string[] }>
+    }
+    const zep = drug.brandCatalog['ゼペリン点眼液']
+    assert.deepEqual(zep.aliases, ['ぜぺりんてんがん', 'ぜぺりん'], 'brand-scoped alias へ generic identity が複製されている')
+    assert.deepEqual(zep.normalizedAliases, ['ぜぺりんてんがん', 'ぜぺりん'])
+    assert.ok(
+      !Object.keys(drug.aliasToBrand ?? {}).some(k => k.includes('あしたざのらすと')),
+      'aliasToBrand へ generic identity が混入している（RULES.md §10 / DP-18）',
+    )
+  })
+
+  test('原則 6: 一般名製品エントリがない場合、剤形修飾かな読みは到達しない（unresolved 候補を作らない）', () => {
+    assert.deepEqual(getDrugSuggestions('あしたざのらすとてんがん', fullIndex, 8), [])
+    // 一般名製品エントリが実在する H1 点眼では、剤形修飾かな読みが当該 entry の alias として機能する
+    const h1 = getDrugSuggestions('えぴなすちんてんがん', fullIndex, 8)
+    assert.ok(h1.length > 0, 'H1 点眼の剤形修飾かな読みが到達しなくなっている')
+    assert.ok(
+      h1.every(r => r.resolution.denotation !== 'module'),
+      `unresolved 候補が発生している: ${JSON.stringify(h1.map(r => r.resolution.denotation))}`,
+    )
+  })
+
+  test('corpus precedent: 同一原則が GE 未発売 module でも成立している（トラゼンタ / ビクトーザ）', () => {
+    const cases: Array<[string, string, string, string]> = [
+      // query, moduleId, 期待 generic header, 期待 brand
+      ['りなぐりぷちん', 'dm_dpp4_oral', 'リナグリプチン', 'トラゼンタ'],
+      ['リナグリプチン', 'dm_dpp4_oral', 'リナグリプチン', 'トラゼンタ'],
+      ['りらぐるちど', 'dm_glp1ra_injection', 'リラグルチド', 'ビクトーザ'],
+    ]
+    for (const [q, moduleId, genericLabel, brand] of cases) {
+      const rows = getDrugSuggestions(q, fullIndex, 8).filter(r => r.moduleId === moduleId)
+      const header = rows.find(r => r.isGenericLabel)
+      const brandRow = rows.find(r => !r.isGenericLabel)
+      assert.ok(header, `"${q}": ${moduleId} の一般名見出しが見つからない`)
+      assert.equal(header!.drugDisplayLabel, genericLabel)
+      assert.ok(brandRow, `"${q}": ${moduleId} の brand 候補が見つからない`)
+      assert.equal(brandRow!.matchedBrandName, brand)
+      assert.equal(brandRow!.resolution.subject, brand)
+      // 到達性は alias で担保されており、brandCatalog に一般名製品エントリは存在しない
+      const bc = ALL_MODULES.find(m => m.moduleId === moduleId)!.drug!.brandCatalog!
+      assert.ok(!(genericLabel in bc), `${moduleId}: 一般名製品エントリが作られている`)
+    }
+  })
+
+  test('drug.genericName（top-level・薬効クラス名）は本原則の identity ではない', () => {
+    // Sonnet 等が top-level drug.genericName を generic identity と取り違えないための固定。
+    const chem = ALL_MODULES.find(m => m.moduleId === 'allergy_chemical_mediator_release_inhibitor_eye_drops')!
+    assert.equal(chem.drug!.genericName, 'ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬')
+    assert.notEqual(chem.drug!.genericName, chem.drug!.brandCatalog!['ゼペリン点眼液'].genericName)
+  })
+})

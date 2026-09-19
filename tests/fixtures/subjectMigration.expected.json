@@ -2,11 +2,11 @@
   "_comment": "U-4b expected semantic delta。scripts/generate-subject-migration-fixture.ts で生成する。手で編集しない。",
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
-    "queries": 561,
-    "rows": 1602,
+    "queries": 564,
+    "rows": 1608,
     "byDenotation": {
-      "brand": 1037,
-      "generic": 508,
+      "brand": 1040,
+      "generic": 511,
       "module": 57
     },
     "changedRows": 82,
@@ -461,6 +461,22 @@
       "denotation": "brand",
       "legacySubject": "ソニアス",
       "resolutionSubject": "ソニアス",
+      "changed": false
+    },
+    {
+      "query": "あしたざのらすと",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "generic",
+      "legacySubject": "アシタザノラスト点眼液",
+      "resolutionSubject": "アシタザノラスト点眼液",
+      "changed": false
+    },
+    {
+      "query": "あしたざのらすと",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "ゼペリン点眼液",
+      "resolutionSubject": "ゼペリン点眼液",
       "changed": false
     },
     {
@@ -7445,6 +7461,38 @@
       "denotation": "brand",
       "legacySubject": "ソニアス",
       "resolutionSubject": "ソニアス",
+      "changed": false
+    },
+    {
+      "query": "アシタザノラスト",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "generic",
+      "legacySubject": "アシタザノラスト点眼液",
+      "resolutionSubject": "アシタザノラスト点眼液",
+      "changed": false
+    },
+    {
+      "query": "アシタザノラスト",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "ゼペリン点眼液",
+      "resolutionSubject": "ゼペリン点眼液",
+      "changed": false
+    },
+    {
+      "query": "アシタザノラスト点眼液",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "generic",
+      "legacySubject": "アシタザノラスト点眼液",
+      "resolutionSubject": "アシタザノラスト点眼液",
+      "changed": false
+    },
+    {
+      "query": "アシタザノラスト点眼液",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "ゼペリン点眼液",
+      "resolutionSubject": "ゼペリン点眼液",
       "changed": false
     },
     {
