@@ -7,7 +7,9 @@
  * （2026-09-20 確定）より前に生成された canonical JSON のうち、**insulin 分岐に該当せず、
  * かつ `risks` が空でない** module を、2026-09-20 時点の実測値として固定したもの。
  *
- * 現在値: 23 module（35 module 中）。
+ * 現在値: 22 module（35 module 中）。
+ * （初回凍結時は 23 module。2026-09-20 の Unit「insulin mixed rapid/long 構造修復」で
+ *   `dm_insulin_mixed_rapid_long` を remediation し、本表から除去した。）
  *
  * ── 本 fixture が表さないもの（重要）────────────────────────────────
  *
@@ -16,7 +18,7 @@
  *   - 正当な値として承認すること     ではない
  *   - legacy defect と認定すること   でもない
  *
- * 収載 23 module の risk 値（`primary` + `secondary` 計 142 token）は bridge に機械的
+ * 収載 22 module の risk 値（`primary` + `secondary` 計 142 token）は bridge に機械的
  * traceability を持たない〔実測: risk token 33 種のうち bridge に文字列として出現するのは
  * 4 種のみで、いずれも scenario ID としての出現であり risk 宣言ではない〕。この historical
  * corpus の remediation は Owner Decision OD-3（2026-09-20）により別 Unit へ送られており、
@@ -67,14 +69,16 @@ export interface PreRuleRisksBaselineRow {
 }
 
 /**
- * 2026-09-20 実測。insulin 分岐（`drug.drugClass` が `INSULIN_*`）に該当する 7 module は
- * 固定 empty 契約の対象外であるため本表には収載しない。
+ * 2026-09-20 実測。insulin 分岐（`drug.drugClass` のいずれかの要素が `INSULIN_*`）に該当する
+ * 8 module は固定 empty 契約の対象外であるため本表には収載しない。
  *
- * `dm_insulin_mixed_rapid_long` が収載されているのは、同 module の `drug.drugClass` が
- * 小文字 `insulin_mixed_rapid_long` であり insulin 分岐の判定に合致しないためである
- * （`prompts/vNext/HANDOFF.md` §6 D-2）。同 module の `risks` は `primary` / `secondary` を
- * 欠き `urgentFlag` / `urgentCriteria` を保持する構造不正の状態にあるが、clinical content を
- * 含むため Owner Decision OD-7 により別 Unit へ送られている（同 §6 D-1）。
+ * `dm_insulin_mixed_rapid_long` は 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」で
+ * 本表から除去した。同 module は `drug.drugClass` / `dosageForms` / `drugSpecificTags` の
+ * transfer defect（bridge 宣言値が canonical へ転記されていなかった）を修復した結果 insulin
+ * 分岐へ移り、`risks` は固定 empty へ正規化された。insulin テンプレート適合の判断は Human
+ * clinical review へ defer されており、`tests/risksContract.test.ts` の
+ * `INSULIN_RISKS_REVIEW_PENDING_MODULES` が暫定状態を保持する（本表の grandfather とは
+ * 別種の措置であり、同一 module が双方に属することはない）。
  */
 export const PRE_RULE_RISKS_BASELINE: PreRuleRisksBaselineRow[] = [
   { moduleId: 'allergy_h1_antihistamine_eye_drops', primary: 1, secondary: 4, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
@@ -94,7 +98,6 @@ export const PRE_RULE_RISKS_BASELINE: PreRuleRisksBaselineRow[] = [
   { moduleId: 'dm_glp1ra_injection', primary: 4, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_glp1ra_semaglutide_oral', primary: 4, secondary: 1, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_imeglimin_oral', primary: 1, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_insulin_mixed_rapid_long', primary: null, secondary: null, conditional: 1, keys: ['urgentFlag', 'urgentCriteria', 'conditional'] },
   { moduleId: 'dm_sglt2_oral', primary: 3, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_sulfonylurea_oral', primary: 1, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_thiazolidinedione_biguanide_combination_oral', primary: 4, secondary: 4, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },

@@ -1,7 +1,13 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「PN5 non-insulin risks contract remediation」: PN5 §risks の non-insulin 分岐を
+最終更新: 2026-09-20（Unit「insulin mixed rapid/long 構造修復」: `dm_insulin_mixed_rapid_long` の
+`drug.drugClass` / `dosageForms` / `drugSpecificTags` を bridge 逐語値どおり復元し（transfer defect）、
+`risks` を固定 empty へ正規化、`data/search-manifest.json` を再生成。insulin テンプレート適合と
+`template.urgentCriteria` の扱いは Human Review Pending として `INSULIN_RISKS_REVIEW_PENDING_MODULES` が保持。
+§6 の D-2 誤記〔「drugClass が小文字」→ 正しくは ABSENT〕を訂正し、D-7〜D-10 を追加。bridge / PN5 /
+validator / `lib/types.ts` / runtime は無変更。
+同日先行: Unit「PN5 non-insulin risks contract remediation」: PN5 §risks の non-insulin 分岐を
 固定 empty 契約へ改訂し（override 経路は存在しない・bridge 自由文や scenario ID 等からの推測／導出／転記を禁止）、
 §3 PN5 節へ追随。別 Unit 送りとなった D-1〜D-6 を §6 へ登録。canonical JSON / bridge / insulin risk values /
 `lib/types.ts` / validator / runtime は無変更。`risks` の Lifecycle 位置づけは
@@ -990,26 +996,48 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **位置づけ**: 将来の schema cleanup / migration 候補。**現時点では blocker ではない**
 - **未確定**: solution・priority・実施時期は未確定
 
-## `risks` contract remediation の別 Unit 送り事項（D-1〜D-6・2026-09-20）
+## `risks` contract remediation の別 Unit 送り事項（D-1〜D-10・2026-09-20）
 
-Unit「PN5 non-insulin risks contract remediation」の Owner Decision により、本 Unit では扱わず別 Unit へ
-送った事項。**同 Unit で実施したのは PN5 §risks の生成契約（non-insulin = 固定 empty）・`tests/risksContract.test.ts`
-の新設・`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5 の公告のみ**であり、canonical JSON / bridge / insulin risk
-values / `lib/types.ts` / validator / runtime は無変更である。
+2026-09-20 の 2 つの Unit の Owner Decision により、別 Unit へ送った事項。
+
+- Unit 1「PN5 non-insulin risks contract remediation」: PN5 §risks の生成契約（non-insulin = 固定 empty）・
+  `tests/risksContract.test.ts` の新設・`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5 の公告を実施。
+  canonical JSON / bridge / insulin risk values / `lib/types.ts` / validator / runtime は無変更
+- Unit 2「insulin mixed rapid/long 構造修復」: `dm_insulin_mixed_rapid_long` の `drug` サブフィールド
+  transfer defect 修復・`risks` の固定 empty 正規化・`data/search-manifest.json` 再生成・D-2 誤記訂正を実施。
+  bridge / PN5 / validator / `lib/types.ts` / runtime は無変更
 
 `risks` 自体の Lifecycle 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5（Classification Pending）。
 
-- **D-1: `dm_insulin_mixed_rapid_long.risks` の構造不正**
-  - `risks` のキーが `urgentFlag` / `urgentCriteria` / `conditional` であり、**JS-A が要求する `primary` / `secondary` が存在しない**（corpus 唯一）
-  - `urgentFlag` / `urgentCriteria` は `template` 側のフィールド名。同 module の `template` にも同名フィールドが実在する
-  - `conditional[].risk` が snake_case identifier ではなく日本語 prose（`"重症低血糖リスク上昇"`。corpus 唯一）
-  - `conditional[].rule.whenAny` が患者状態トークンではなく **scenario ID**（`dose_increase_low_perceived_effect` 等）。他 34 module は `concomitant_sglt2`
-  - **clinical content（`urgentCriteria` の文言）を含むため Human Review 必須。** 本 Unit では変更しない（Owner Decision OD-7）
+- **D-1: `dm_insulin_mixed_rapid_long.risks` の構造不正** — **2026-09-20 に構造部分を解消済み。臨床部分は Human Review Pending**
+  - 旧状態: `risks` のキーが `urgentFlag` / `urgentCriteria` / `conditional` であり、JS-A が要求する `primary` / `secondary` が存在しなかった（corpus 唯一）。`conditional[].risk` は日本語 prose（`"重症低血糖リスク上昇"`）、`conditional[].rule.whenAny` は患者状態トークンではなく **scenario ID**（他 22 件はすべて `concomitant_sglt2`）。いずれも初出 commit `e650858`（2026-06-29）からの birth defect であり、同一 commit の兄弟 4 module は PN5 insulin テンプレート値で正常に生成されていた
+  - 実測: これらの臨床 semantics は bridge に根拠がない（`bridges/dm_insulin_mixed_rapid_long.md` に「意識消失」「けいれん」「重症低血糖」の出現は **0 件**）
+  - 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」（Owner Decision OD-M3 / OD-M4）で、出自を Repository で裏付けられない semantics を除去し `{"primary": [], "secondary": [], "conditional": []}` へ正規化した。**これは「臨床的にリスクがない」という判断ではなく、provenance を裏付けられない値を canonical から除去する情報規律上の措置である**
+  - **残る Human Review Pending 事項**（別 Unit）: ① 本 module へ PN5 insulin 標準テンプレートを適用するか（OD-M6） ② `意識消失・けいれんを伴う重症低血糖` を `template.urgentCriteria` の正規型（`{seekUrgentCareIf, contactPrescriberIf}`）へ移すか、破棄するか（OD-M5）
   - 同 module には別種の drift も既記録（上記「`scenarios[].mergePolicy` 旧 schema drift」）。**両者は別 Finding**
-- **D-2: 同 module の `drug.drugClass` が小文字**（`insulin_mixed_rapid_long`）
-  - PN5 §risks の insulin 分岐条件「drugClass に `INSULIN_*` を含む」に文字列として合致しない
-  - `tests/risksContract.test.ts` の insulin predicate（`/^INSULIN_/`）にも合致せず、同 module は non-insulin 側へ落ちる。ただし pre-rule baseline 収載のため固定 empty 検査の対象外であり、現状 FAIL しない
-  - D-1 の Unit で predicate ごと再判断する
+- **D-2: 同 module の `drug` サブフィールド transfer defect** — **2026-09-20 に解消済み**
+  - > ⚠️ **訂正（2026-09-20）**: 本項目は当初「`drug.drugClass` が小文字（`insulin_mixed_rapid_long`）」と記録していたが、これは**誤りであった**（commit `7b9e5ea`）。正しくは **`drug.drugClass` は ABSENT（キー自体が存在しない）** であり、小文字の `insulin_mixed_rapid_long` は `composition.classKey` の値で、これは全 35 module で小文字が正しい設計値である（`docs/JSON_STANDARD.md` JS-A-composition）。誤った historical fact を残さないため、ここで訂正する。
+  - 実測された defect: `drug.drugClass` / `drug.dosageForms` / `drug.drugSpecificTags` の 3 フィールドが、**bridge が逐語宣言しているにもかかわらず canonical に存在しなかった**（3 フィールドとも欠落は corpus で本 module 1 件のみ）。初出 commit `e650858` からの birth defect で、同一 commit の兄弟 4 module は 3 フィールドとも正常
+  - 影響: `drug.drugClass` と `drug.drugSpecificTags` は `lib/search.ts` の検索コーパスと `data/search-manifest.json` へ投影される。修復前は latin クエリ `insulin` で insulin 8 module 中 7 件しかヒットせず、**本 module のみ到達不能**だった（`drug.dosageForms` は runtime 未参照のため影響なし）
+  - 2026-09-20 の Unit で bridge 逐語値どおり復元し（Owner Decision OD-M1）、`data/search-manifest.json` を正規 generator で再生成した（OD-M2）。latin `insulin` の到達は 8/8 へ回復
+  - 復元により本 module は PN5 §risks の insulin 分岐へ移ったが、テンプレート適用は D-1 の Human Review Pending 事項として defer している（下記 D-7）
+- **D-7: `dm_insulin_mixed_rapid_long` の insulin risks semantic は Human Review Pending**
+  - **現状の要約**: 構造 / provenance defect（D-1 の shape・D-2 の transfer loss）は**修復済み**。ただし insulin risks semantic は Human Review Pending であり、**current PN5 insulin テンプレートへの適合を意図的に defer している**
+  - 機械的保持: `tests/risksContract.test.ts` の `INSULIN_RISKS_REVIEW_PENDING_MODULES`（現在の membership は本 module 1 件のみ）。T-R-4d〜T-R-4g が ① membership が 1 件であること ② pending module が insulin 分岐に属すること ③ pending 中の risks が固定 empty であること ④ pre-rule baseline と重複しないこと を固定する
+  - **本集合は insulin risks の一般契約を緩めるものではない。** 列挙された module に限った temporary contract deferral であり、**集合への追加は通常の baseline 更新として扱わず Owner Decision を要する**
+  - **解消条件**: dedicated Human Review Unit で OD-M5（urgentCriteria の扱い）と OD-M6（insulin テンプレート適用の可否）を確定し、**同 Unit 内で本 module を `INSULIN_RISKS_REVIEW_PENDING_MODULES` から削除する**（削除後は T-R-4c「risks 非空」が適用される）
+- **D-8: `allergy_h1_antihistamine_second_gen_oral` の `drug.drugClass` が bridge と不一致**
+  - bridge: `["H1_ANTIHISTAMINE_SECOND_GEN"]` ⇔ canonical: `["H1_antihistamine_2nd_gen"]`（大文字小文字と token 自体の両方が異なる）
+  - 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」の調査中に発覚。bridge ⇔ canonical の `drug.drugClass` 一致は 35 module 中 33 件で成立しており、不一致は本件と `dm_insulin_mixed_rapid_long`（D-2・解消済み）の 2 件のみだった
+  - `drug.drugClass` は検索コーパスと search-manifest へ投影されるため、canonical 側の値が検索到達性を決める。どちらを正とするかは未判断
+  - **本 Unit では修正しない**（Owner Decision OD-M8）。別 Unit で bridge / canonical どちらを正とするかを確定する
+- **D-9: `drug.drugClass` の bridge 保持義務・parity 監査が未整備**
+  - `drug.drugClass` は 35/35 の bridge が宣言しているが、`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS に列挙されておらず、validator（`moduleValidator.ts` / `crossModuleValidator.ts` とも参照 0 件）にも `npm run audit` の 6 系統にも検査が存在しない。D-2 / D-8 がいずれも検出されないまま commit された原因
+  - **本 Unit では RULES §4 へ広げない**（Owner Decision OD-M9）。再発防止 contract は別 Unit とする
+- **D-10: `dm_insulin_mixed_rapid_long` の `template.urgentFlag` / `urgentCriteria` の型不整合**
+  - `template.urgentFlag: true` でありながら `template.urgentCriteria: []`。正規型は `EmergencyCriteria`（`{seekUrgentCareIf, contactPrescriberIf}`。他 5 module が保持）であり、空配列はこれを満たさない
+  - `dm_insulin_mixed_rapid_intermediate` にも同種の型逸脱がある（`urgentFlag: false` + `urgentCriteria: []`）
+  - **本 Unit では変更しない**（Owner Decision OD-M7）。別 Unit へ送る
 - **D-3: `ModuleRisks.secondary` type drift**
   - `lib/types.ts` の `ModuleRisks` が `primary` / `conditional` のみを宣言し、`secondary` を持たない。一方 canonical JSON は 34/35 が `secondary` を保持し、`docs/JSON_STANDARD.md` JS-A の表も `primary` / `secondary` / `conditional` を規定している。**drift の向きは型側の追随漏れ**
   - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、この drift と D-1 のキー不正はいずれも `tsc` では検出できない
@@ -1018,8 +1046,8 @@ values / `lib/types.ts` / validator / runtime は無変更である。
   - `risks` は JS-A（全 module 必須）だが、`lib/moduleValidator.ts` の必須検査は `MISSING_PERSONA` 等に限られ、`risks` は対象外。D-1 が `npm run build` / `npm test` を通過している直接原因
   - `tests/risksContract.test.ts` T-R-1 はキー集合も検査するため**新規 module での同型再発は防がれる**が、既存 1 件は baseline 収載のため検出対象外
   - 本 Unit では validator を変更しない（Owner Decision OD-8）
-- **D-5: 既存 non-insulin 23 module の risk 値は遡及対象外**
-  - `tests/fixtures/risksPreRuleBaseline.ts` に収載した 23 module の risk 値（`primary` + `secondary` 計 142 token）は、**bridge に機械的 traceability を持たない**〔実測: risk token 33 種のうち bridge に文字列として出現するのは 4 種のみで、いずれも scenario ID としての出現であり risk 宣言ではない〕
+- **D-5: 既存 non-insulin 22 module の risk 値は遡及対象外**
+  - `tests/fixtures/risksPreRuleBaseline.ts` に収載した 22 module の risk 値（`primary` + `secondary` 計 142 token）は、**bridge に機械的 traceability を持たない**〔実測: risk token 33 種のうち bridge に文字列として出現するのは 4 種のみで、いずれも scenario ID としての出現であり risk 宣言ではない〕
   - historical corpus remediation は別 Unit（Owner Decision OD-3）。baseline 収載は正当性の承認でも legacy defect の認定でもない
 - **D-6: 意味定義・語彙・field 存廃の未確定**
   - `risks.primary` と `risks.secondary` を分ける意味基準は Repository に定義が存在しない。**PENDING のまま**（Owner Decision OD-4）

@@ -6,6 +6,9 @@
     "brandNames": [
       "ライゾデグ"
     ],
+    "drugClass": [
+      "INSULIN_MIXED_RAPID_LONG"
+    ],
     "nameAliases": [
       "らいぞでぐ",
       "らいぞ",
@@ -16,6 +19,13 @@
       "あすぱると"
     ],
     "route": "injection",
+    "dosageForms": [
+      "injection"
+    ],
+    "drugSpecificTags": [
+      "insulin_mixed_rapid_long",
+      "insulin_injection"
+    ],
     "search": {
       "primaryDisplayName": "混合型インスリン製剤（超速効型＋持効型）",
       "exactAliases": [
@@ -123,20 +133,9 @@
     }
   },
   "risks": {
-    "urgentFlag": true,
-    "urgentCriteria": "意識消失・けいれんを伴う重症低血糖",
-    "conditional": [
-      {
-        "risk": "重症低血糖リスク上昇",
-        "rule": {
-          "whenAny": [
-            "dose_increase_low_perceived_effect",
-            "dose_increase_no_lab_improvement",
-            "dose_increase_due_to_other_med_adjustment"
-          ]
-        }
-      }
-    ]
+    "primary": [],
+    "secondary": [],
+    "conditional": []
   },
   "searchConfig": {
     "primaryDisplayName": "混合型インスリン製剤（超速効型＋持効型）",
