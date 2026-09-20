@@ -120,7 +120,7 @@ display:
 
   drugGeneric: "混合型インスリン製剤（超速効型＋持効型）"
 
-  nodeLabelShort: "混合型INS（超速効/持効）"
+  nodeLabelShort: "混合型INS（超速/持効）"
 
   nodeLabelLong: "混合型インスリン製剤（超速効型＋持効型）"
 

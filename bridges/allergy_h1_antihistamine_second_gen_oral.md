@@ -8,7 +8,7 @@ categoryPath:
   - "第二世代抗ヒスタミン薬"
   - "内服"
 drug:
-  genericName: "第二世代H1受容体拮抗薬"
+  genericName: "第二世代ヒスタミンH1受容体拮抗薬"
   brandNames:
     - "ビラノア"
     - "アレジオン"
@@ -299,7 +299,7 @@ template:
 display:
   title: "第二世代抗ヒスタミン薬（内服）"
   subtitle: "アレルギー症状に対する内服治療"
-  drugClassLabel: "第二世代抗ヒスタミン薬"
+  drugClassLabel: "第二世代ヒスタミンH1受容体拮抗薬"
   drugGeneric: "第二世代H1受容体拮抗薬"
   nodeLabelShort: "抗ヒスタミン内服"
   nodeLabelLong: "第二世代抗ヒスタミン薬（内服）"
