@@ -1,7 +1,16 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「D-9 drugClass preservation / parity contract」:
+最終更新: 2026-09-21（Unit「D-15a display.subtitle legacy remediation」:
+`allergy_h1_antihistamine_second_gen_oral` と `dm_insulin_mixed_rapid_long` の canonical
+`display.subtitle` を bridge 宣言値へ修正し、`data/search-manifest.json` を正規 generator で再生成
+（差分は `sourceHash` と `displaySubtitle` 2 箇所の計 3 行）。**新しい表示生成規則は作らず、PN2
+「display.subtitle の確定ルール」の既存契約を適用した legacy data drift の解消**である（OD-D15-1）。
+事後 parity は bridge 宣言 18/18 逐語一致・bridge 沈黙 17/17 fallback 適合・canonical 全 35/35 contract 適合。
+query regression 差分 0。§6 の D-15 を親 Finding（**OPEN 維持**）+ 子 Unit D-15a〜D-15e へ分割し、
+**D-15a のみ完了化**（D-15b〜D-15e は未着手・OD-D15-8）。subtitle を `prompts/RULES.md` §4 preservation
+対象へ昇格させず、audit / validator / test も新設していない（OD-D15-7）。bridge / PN2 / RULES / `lib/` は無変更。
+同日先行: Unit「D-9 drugClass preservation / parity contract」:
 `drug.drugClass` を bridge-owned value として contract 化した（OD-D9-1）。`prompts/RULES.md` §4 へ
 「Drug header identifier」を新規登録し、既に運用されていた `display.adjustmentExpression` /
 `display.menuGroupLabels` の §4 未登録も documentation-contract repair として同時是正（OD-D9-3 / OD-D9-6）。
@@ -1168,21 +1177,35 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 参考〔実測〕: メトホルミン含有 2 module については、メトグルコ錠電子添文が示す SGLT2 併用時の懸念（脱水→乳酸アシドーシス）は**自 module の `lactic_acidosis_risk`（primary）が既に覆っている**
   - addon は bridge 由来のため、被覆の補完には bridge 改訂＝ Owner の臨床判断が必要。**本 Unit では変更しない**（OD-N4）。SSOT 宣言と併せて別 Unit へ送る
   - 関連: `clinicalTags: sglt2_inhibitor` を持つのは corpus で 1 module のみで、同じ addon を持つ他 19 module は tagCatalog に持たない（clinicalTags drift）
-- **D-15: bridge ⇔ canonical の header / display divergence（D-8 調査由来・記録のみ）**
-  - 〔2026-09-20 実測〕D-8 の read-only investigation で、`drug.drugClass` 以外にも bridge 宣言値と canonical が一致しない箇所が **8 件**あることが判明した。**本項目は調査対象を失わないための記録であり、remediation には着手していない**（Owner Decision OD-D8-4）
-  - **8 件を同一原因・同一 remediation とみなしてはならない。** 医療・表示内容／構造 projection／生成規則依存候補が混在しており、正本の所在は項目ごとに異なる。**現時点でどちらの値が正しいかは判断していない**
-  - 対象 module: `allergy_h1_antihistamine_second_gen_oral`（6 件）
-    - `drug.genericName` — bridge「第二世代H1受容体拮抗薬」⇔ canonical「第二世代ヒスタミンH1受容体拮抗薬」。**医療・表示内容**であり Human Review 対象
-    - `drug.drugSpecificTags` — bridge `["antihistamine", "second_generation", "allergy", "oral"]` ⇔ canonical `["h1_antihistamine_oral", "second_gen_antihistamine"]`。検索コーパスへ投影される identifier 群であり、件数・語彙とも異なる
-    - `display.subtitle` — bridge「アレルギー症状に対する内服治療」⇔ canonical「アレグラ・クラリチン・ザイザル・ビラノア 他」。**生成規則依存候補**（`prompts/vNext/PN2-Drug-Header.md` に `display.subtitle` 確定ルールが存在するため、canonical 側が正規の生成結果である可能性がある）
-    - `display.drugClassLabel` — bridge「第二世代抗ヒスタミン薬」⇔ canonical「第二世代ヒスタミンH1受容体拮抗薬」。**医療・表示内容**。`drug.genericName` と同一文言の問題であり、切り離して判断できない
-    - `display.nodeLabelShort` — bridge「抗ヒスタミン内服」⇔ canonical「抗ヒスタミン薬」。表示ラベル
-    - `display.nodeKey` — bridge `antihistamine_second_gen_oral` ⇔ canonical `h1_antihistamine_oral`。**構造 projection**（canonical 側は `composition.nodeKey` と一致しており、projection 規則が優先している可能性がある）
-  - 対象 module: `dm_insulin_mixed_rapid_long`（2 件）
-    - `display.subtitle` — bridge「混合型インスリン製剤（超速効型＋持効型）」⇔ canonical「ライゾデグ」。上記 subtitle と同型の**生成規則依存候補**
-    - `display.nodeLabelShort` — bridge「混合型INS（超速効/持効）」⇔ canonical「混合型インスリン（超速効+持効）」。表示ラベル
-  - 〔2026-09-20 実測〕`display.title` / `display.nodeLabelLong` / `drug.route` / `drug.dosageForms` は 35/35 一致。`drug.drugClass` は D-8 の remediation により 35/35 一致
-  - 本項目は D-9（`drug.drugClass` の保持義務・parity 監査の未整備）とは別 Finding である。ただし parity 監査の対象範囲を決める際の入力になる
+- **D-15（親 Finding・OPEN）: bridge ⇔ canonical の header / display divergence（D-8 調査由来）**
+  - 〔2026-09-20 実測〕D-8 の read-only investigation で、`drug.drugClass` 以外にも bridge 宣言値と canonical が一致しない箇所が **8 件**あることが判明した。2026-09-21 の read-only investigation で corpus 全 35 module × 11 field を再実測し、**8 件すべてが現存・新規 divergence なし**であることを確認したうえで、Owner Decision OD-D15-8 により**子 Unit D-15a〜D-15e へ分割**した
+  - **8 件を同一原因・同一 remediation とみなしてはならない。** 医療・表示内容／検索 identifier／構造 projection／既存生成規則の適用対象が混在しており、正本の所在は項目ごとに異なる
+  - **本親 Finding は全子 Unit が完了するまで closed にしない。** 現在 **D-15a のみ完了**、D-15b〜D-15e は未着手
+  - 〔2026-09-21 実測・調査で判明した構造事実〕
+    - canonical では `drug.genericName == display.drugClassLabel` が **35/35** で成立する（undocumented だが例外なし）。bridge 側で両方を宣言する 19 module のうち 18 は同値で、**不一致は H1 oral の bridge のみ**。したがってこの 2 field は切り離して決められない
+    - `display.title` / `subtitle` / `drugClassLabel` は bridge の **16〜17 module が宣言していない**。これら 3 field は「全 bridge が宣言する preservation field」ではない（`genericName` / `drugSpecificTags` / `nodeLabelShort` / `nodeLabelLong` / `nodeKey` は 35/35 宣言）
+    - canonical `display.nodeKey == composition.nodeKey` は **35/35**（`docs/JSON_STANDARD.md` JS-A-display の明文規則）。bridge `display.nodeKey == canonical composition.nodeKey` は 34/35 で、例外は H1 oral のみ
+    - `display.nodeLabelShort` は insulin family 7/8 が略記「◯◯INS」、allergy family が剤形付き。**いずれも bridge 値の方が family 規約に沿う**
+    - 対象 8 件は bridge / canonical とも **birth value のまま一度も変更されていない**
+  - **子 Unit**
+    - **D-15a: `display.subtitle` legacy remediation — 2026-09-21 に完了**（下記）
+    - **D-15b: `display.nodeKey` contract investigation — 未着手**。Owner Decision OD-D15-2 により、Option A/B/C を選ばず **bounded read-only Unit として分離**した。理由: canonical 内部の `display.nodeKey == composition.nodeKey` は 35/35 成立する一方、H1 oral の current canonical nodeKey（`h1_antihistamine_oral`）は JS-A の `{classKey}_{route}` / `{classKey}_{formulationType}` のどちらにも該当せず（classKey は `h1_antihistamine_2nd_gen`）、bridge mismatch だけを見て片側へ寄せると別の nodeKey contract 問題を固定しかねない。次回調査項目: ① JS-A nodeKey 規則の正確な適用範囲 ② H1 oral nodeKey の birth / history ③ runtime consumer ④ `composition.classKey` との独立性 ⑤ nodeKey 変更時の影響範囲
+    - **D-15c: `drug.drugSpecificTags` preservation / parity — 未着手**。Option A（bridge-owned preservation）を採る方向で、H1 oral canonical を bridge 宣言値へ合わせる。ただし **vocabulary SSOT を新設しない・要素数規則を作らない・他 34 module へ正規化を波及させない・D-9 の drugClass contract を無批判にコピーしない**。実装前に drugSpecificTags 専用の最小 contract / audit 設計を提示する。〔実測〕bridge 値へ寄せると query `allergy` の到達が 1 件増え、**既存到達性の損失は 0**（許容済み）
+    - **D-15d: `drug.genericName` + `display.drugClassLabel` Human Review — 未着手**。3 候補（canonical「第二世代ヒスタミンH1受容体拮抗薬」／ bridge generic「第二世代H1受容体拮抗薬」／ bridge label「第二世代抗ヒスタミン薬」）のいずれを正式表示語とするかは **AI では確定しない**。architecture 上は canonical で成立している `drug.genericName == display.drugClassLabel` の同値関係を維持する方向とする。正式文言確定後に bridge / canonical のどちらを改訂するかを決める
+    - **D-15e: `display.nodeLabelShort` Human Review — 未着手**。H1 oral（bridge「抗ヒスタミン内服」⇔ canonical「抗ヒスタミン薬」）と `dm_insulin_mixed_rapid_long`（bridge「混合型INS（超速効/持効）」⇔ canonical「混合型インスリン（超速効+持効）」）の 2 件。**bridge 値の方が family naming に整合する**という実測を判断材料として保持するが、UI 表示文言のため現時点では修正しない
+  - **preservation contract の現状**（Owner Decision OD-D15-7）: `display.subtitle` は既存の PN2 確定ルールのみで運用し、`prompts/RULES.md` §4 へ昇格させない。`genericName` / `drugClassLabel` / `nodeLabelShort` / `nodeKey` / `drugSpecificTags` にも**新しい preservation contract をまだ課さない**（`drugSpecificTags` は D-15c で別途設計）
+  - 〔2026-09-21 実測〕`display.title` / `display.nodeLabelLong` / `drug.route` / `drug.dosageForms` は 35/35 一致。`drug.drugClass` は D-8 の remediation と D-9 の contract により 35/35 一致
+- **D-15a: `display.subtitle` の legacy data drift — 2026-09-21 に解消済み**
+  - **解消前の状態〔historical〕**: `allergy_h1_antihistamine_second_gen_oral` の canonical が「アレグラ・クラリチン・ザイザル・ビラノア 他」（ブランド名列挙）、`dm_insulin_mixed_rapid_long` の canonical が「ライゾデグ」（ブランド名）で、いずれも bridge 宣言値と異なっていた
+  - 2026-09-21 の Unit「D-15a display.subtitle legacy remediation」で、canonical 2 値を **bridge 宣言値へ修正**した（Owner Decision OD-D15-1）: H1 oral →「アレルギー症状に対する内服治療」／ mixed insulin →「混合型インスリン製剤（超速効型＋持効型）」
+  - **新しい表示生成規則は作っていない。** `prompts/vNext/PN2-Drug-Header.md`「`display.subtitle` の確定ルール（推測生成禁止）」の**既存契約をそのまま適用した**もので、同ルールは ① bridge に明記があればその値をそのまま使用 ② bridge 沈黙時は `{drug.genericName}（{routeLabel}）` の固定 fallback ③ **ブランド名の列挙・同系統 module の模倣は creative build として禁止** を定めている
+  - **legacy data drift と判断した実測**: bridge が沈黙している 17 module の canonical subtitle は **17/17 が fallback 式に完全一致**しており、規則は corpus 全体で守られていた。逸脱は当該 2 件のみで、いずれも規則制定前の birth value（H1 oral: canonical `625ac7e` 2026-05-23 ／ mixed insulin: canonical・bridge とも同一 commit `e650858` 2026-06-29）であり、両側とも一度も変更されていない。また 2 件とも family 規約（insulin 7/8 がクラス表記、allergy family が治療対象の記述）から外れた唯一の module だった
+  - **事後 parity**: bridge 宣言 18 module → canonical 逐語一致 **18/18**、bridge 沈黙 17 module → fallback 適合 **17/17**、canonical subtitle 全 35 件の PN2 contract 適合 **35/35**。D-15 の残存 divergence は **8 件 → 6 件**
+  - `data/search-manifest.json` は `npm run generate:search-manifest` で正規再生成した（差分は `sourceHash` と `displaySubtitle` 2 箇所の計 3 行のみ。手編集していない）
+  - **検索到達性の変化なし。** 16 query（ブランド名・日本語・latin）で修正前後を実測し**差分 0 件**。旧 subtitle のブランド名トークンは `brandNames` / alias 経由で既に到達可能であったため、失った到達はない
+  - 副作用の確認〔実測〕: mixed insulin は修正後 `title` / `subtitle` / `drugClassLabel` / `nodeLabelLong` が同値になるが、PN2 はこれを明示的に許容しており先例 `dm_insulin_rapid_analog` が 4 field 同値で実在する。また subtitle の module 間重複は既存実績がある（heparinoid 4 件・SGLT2 2 件）ため、H1 oral と leukotriene が同一 subtitle になることも逸脱ではない
+  - **contract は追加していない**（OD-D15-7）: `prompts/RULES.md` §4 への昇格・audit・validator check・regression test のいずれも新設していない。bridge / PN2 / RULES / `lib/` / `app/` / `docs/` / `tests/` / `scripts/` は無変更
+  - 軽微 cleanup 候補: `lib/search.ts` の 2 箇所のコメント（L42 / L211）は、ゴースト一致問題の実例として H1 oral の**旧** subtitle「アレグラ・クラリチン・ザイザル・ビラノア 他」を引用しており、本 Unit 後は実在データ例として陳腐化する。**`SEPARATOR_PATTERN` の設計理由そのものは有効**であり search behavior にも影響しないため、本 Unit では `lib/**` を無変更のまま維持した（Owner Decision）。`tests/risksContract.test.ts` の D-3 JSDoc・PN7「## 参照」の `prompts/RULES.md §4` 重複 2 行とあわせ、**documentation / comment cleanup Unit へまとめる候補**とする
 
 ## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
 

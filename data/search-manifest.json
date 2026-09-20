@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "a1bc8d5b1714295f690a47632bf1181b22b9ad8084fec6453a8fc43aa08f0a23",
+  "sourceHash": "c86dac1a88fc9dfd0847250620348e38ef20749b31d26cb0d3f444a2ebfcbd68",
   "moduleCount": 35,
   "scenarioCount": 1070,
   "modules": [
@@ -797,7 +797,7 @@
       "nodeKey": "h1_antihistamine_oral",
       "clinicalDomain": "allergy",
       "displayTitle": "第二世代抗ヒスタミン薬（内服）",
-      "displaySubtitle": "アレグラ・クラリチン・ザイザル・ビラノア 他"
+      "displaySubtitle": "アレルギー症状に対する内服治療"
     },
     {
       "moduleId": "derm_heparinoid_moisturizer_ointment",
@@ -2481,7 +2481,7 @@
       "nodeKey": "insulin_mixed_rapid_long_injection",
       "clinicalDomain": "diabetes",
       "displayTitle": "混合型インスリン製剤（超速効型＋持効型）",
-      "displaySubtitle": "ライゾデグ"
+      "displaySubtitle": "混合型インスリン製剤（超速効型＋持効型）"
     },
     {
       "moduleId": "dm_insulin_mixed_rapid_intermediate",
