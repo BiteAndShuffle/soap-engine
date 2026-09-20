@@ -9,7 +9,7 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 - **preservation 対象の完全リストは本ファイル §4 が正本**（保持対象と vNext 実効機構の対応表を含む）
 - **bridge→canonical JSON変換規則は、`prompts/vNext/PN1-Text-Extraction.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN3A-Scenario-Classification.md` / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` / `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md` / `prompts/vNext/PN5-Non-Scenario.md` / 本ファイル §5 に工程別に分担して定義される**
 
-最終更新: 2026-09-20（§4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
+最終更新: 2026-09-21（§4 へ `drug.drugSpecificTags`〔Drug header search metadata〕を新規登録。2026-09-20: §4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
 
 ---
 
@@ -171,6 +171,7 @@ bridge → canonical JSON の変換において完全保持しなければなら
 | **Drug header identifier** | `drug.drugClass`（bridge 宣言値を件数・順序・表記とも変えずに保持。canonical 側での正規化・改名・推測生成を禁止） | PN2「`drug.drugClass` の保持」・PN7 item AK ／ `scripts/audit-drugclass-bridge-chain.ts` ／ `tests/drugClassBridgeParity.test.ts` |
 | **Display（文生成用）** | `display.adjustmentExpression`（`increasePast` / `decreasePast`） | PN2「`display.adjustmentExpression` の保持」・PN7 item AI ／ `scripts/audit-adjustment-expression-bridge-chain.ts` ／ `tests/adjustmentExpressionBridgeParity.test.ts` |
 | **Display（UI ラベル）** | `display.menuGroupLabels` | PN2「`display.menuGroupLabels` の保持」・PN7 item AJ ／ `scripts/audit-menu-group-labels-bridge-chain.ts` ／ `tests/menuGroupLabelsBridgeParity.test.ts` |
+| **Drug header search metadata** | `drug.drugSpecificTags`（bridge 宣言値を件数・順序・表記とも変えずに保持。canonical 側での正規化・並べ替え・重複除去・token の追加削除を禁止） | PN2「`drug.drugSpecificTags` の保持」・PN7 item AL ／ `scripts/audit-drug-specific-tags-bridge-chain.ts` ／ `tests/drugSpecificTagsBridgeParity.test.ts` |
 
 **display 2 行（`display.adjustmentExpression` / `display.menuGroupLabels`）について**
 
@@ -179,6 +180,10 @@ bridge → canonical JSON の変換において完全保持しなければなら
 **`drug.drugClass` 行について**
 
 本行は D-9（2026-09-20）で新規に確立した preservation contract である。bridge 宣言値の逐語保持を要求し、bridge 側の authoring 規約（`^[A-Z0-9]+(?:_[A-Z0-9]+)*$`）違反は canonical 側で正規化せず PN2 が PENDING で停止する。**bridge が `drug.drugClass` について沈黙している場合の canonical 側の扱い（requiredness）は本節の対象外**であり、別 Owner Decision として未確定である（`prompts/vNext/HANDOFF.md` §6 D-9 参照）。
+
+**`drug.drugSpecificTags` 行について**
+
+本行は bridge 宣言値の**逐語保持のみ**を要求する（D-15c・2026-09-21）。**token の語彙を規定する SSOT は存在せず、本行も新設しない。** corpus 内で他 module に出現しない孤立 token であっても、bridge が宣言していれば canonical はそのまま保持する（語彙の妥当性は canonical 側で判定しない）。**要素数の規則・重複 token / 空配列の扱い・token の表記形式はいずれも本節で規定しない**（必要が生じた時点で別 Owner Decision とする）。bridge が `drug.drugSpecificTags` について沈黙している場合の canonical 側の扱い（requiredness）も本節の対象外である。
 
 **監査未整備 3 系統の扱い**
 

@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "c86dac1a88fc9dfd0847250620348e38ef20749b31d26cb0d3f444a2ebfcbd68",
+  "sourceHash": "2fc304290d2d4fdba92c3ab99b448b0cf876614852ca8476799b2e086a51666a",
   "moduleCount": 35,
   "scenarioCount": 1070,
   "modules": [
@@ -563,8 +563,10 @@
         "H1_ANTIHISTAMINE_SECOND_GEN"
       ],
       "drugSpecificTags": [
-        "h1_antihistamine_oral",
-        "second_gen_antihistamine"
+        "antihistamine",
+        "second_generation",
+        "allergy",
+        "oral"
       ],
       "search": {
         "exactAliases": [

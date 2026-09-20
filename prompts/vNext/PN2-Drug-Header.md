@@ -63,6 +63,28 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
 
 機械検証は `scripts/audit-drugclass-bridge-chain.ts`（PN7 item AK）。
 
+**`drug.drugSpecificTags` の保持（必須・明示 preservation 対象）:**
+
+本フィールドは bridge Header 由来の **preservation field** であり、derived metadata ではない
+（`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS「Drug header search metadata」）。
+
+- bridge Header の `drug.drugSpecificTags` に宣言された token 配列を、**件数・順序・表記のいずれも
+  変えず** canonical の `drug.drugSpecificTags` へ **exact preservation** で転記する
+- **禁止**: 並べ替え（sorting）／重複除去（dedupe）／大文字小文字の変換／単数・複数形の統一／
+  compound ⇔ atomic token の書き換え（例: `antihistamine` ⇔ `h1_antihistamine_oral`）／
+  token の追加／token の削除／sibling module の値の流用
+- 以下から値を推測・導出してはならない: `moduleId` / `drug.route` / `drug.drugClass` /
+  `composition.classKey` / `composition.nodeKey` / `categoryPath` / `display.*` / 既存 canonical の前例
+- **語彙の正しさを canonical 側で判定しない。** 既存 module に存在しない token であっても、
+  bridge が宣言していればそのまま転記する（token 語彙の SSOT は存在しない）
+- **要素数は規定しない。** 現行 corpus が 1〜11 要素であることを理由に、特定の要素数を前提とした
+  処理・省略を行わない
+- bridge 配列に重複 token が含まれる場合も、**canonical 側で黙って除去しない**（そのまま転記する）
+- bridge が `drug.drugSpecificTags` について沈黙している場合の canonical 側の扱いは本規則の対象外
+  である（requiredness は別 Owner Decision であり未確定。沈黙を理由に値を補完しない）
+
+機械検証は `scripts/audit-drug-specific-tags-bridge-chain.ts`（PN7 item AL）。
+
 ### brandCatalog 表示名フィールドの責務（displayName / genericName / displayGenericName）
 
 ← docs/JSON_STANDARD.md JS-A-drug「brandCatalog エントリのスキーマ」（正本）
@@ -419,5 +441,6 @@ PN2 完了後、以下を報告する:
 - 整合確認結果（nameAliases一致 / aliases一致 / aliasToBrand網羅）
 - display.adjustmentExpression を転記したか（bridge 記載の有無。記載ありの場合は転記した exact value）
 - drug.drugClass を転記したか（bridge 宣言値の exact value。UPPER_SNAKE authoring 規約への適合可否を含む）
+- drug.drugSpecificTags を転記したか（bridge 宣言値の exact value。件数・順序を含む）
 
 次工程: PN3A（Scenario Classification）

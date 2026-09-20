@@ -836,6 +836,54 @@ bridge に drugClass: が存在するが、値ブロックを contract 形式で
 
 ---
 
+### AL. drug.drugSpecificTags Bridge Parity（drugSpecificTags 保持確認）
+
+← PN2-Drug-Header.md「`drug.drugSpecificTags` の保持（必須・明示 preservation 対象）」/
+  RULES.md §4 MANDATORY_PRESERVATION_TARGETS「Drug header search metadata」
+
+AI / AJ / AK と同じ構造の監査を、`drug.drugSpecificTags` に適用する。詳細な機械比較は
+`scripts/audit-drug-specific-tags-bridge-chain.ts` に委譲し、本チェックでは対象範囲と判定基準の
+みを定義する（PN7 自体にパーサ実装を重複させない）。
+
+対象は `drug.drugSpecificTags` のみ。`drug.drugClass`（AK が担当）/ `drug.search.*` /
+`tagCatalog` の各 `*Tags` は別フィールド・別 consumer であり本チェックの scope に含まれない。
+これらとの cross-field equality は課さない。
+
+```
+対象: drug.drugSpecificTags のみ
+
+bridge Header が drug.drugSpecificTags を宣言している場合:
+  canonical の drug.drugSpecificTags が存在すること
+    欠落 → FAIL（DRUG_SPECIFIC_TAGS_MISSING_IN_CANONICAL）
+  canonical 配列が bridge 配列と逐語一致すること（件数・順序・表記。大文字小文字の差も不一致）
+    不一致 → FAIL（DRUG_SPECIFIC_TAGS_VALUE_MISMATCH）
+    ※ set equality ではない。canonical 側での並べ替え・重複除去・正規化は禁止
+
+bridge が存在し、かつ drug.drugSpecificTags について沈黙している場合:
+  → NOT_CHECKED（canonical の有無・値を判定しない）
+  ※ reverse invariant は課さない。requiredness / absence semantics は本項目の対象外
+
+bridge ファイル自体が存在しない場合:
+  → CHECK（BRIDGE_NOT_FOUND）。bridge existence contract は未確定のため FAIL にしない
+
+bridge に drugSpecificTags: が存在するが、値ブロックを contract 形式で parse できない場合:
+  → FAIL（DRUG_SPECIFIC_TAGS_BRIDGE_PARSE_ERROR）
+
+本項目が判定しないもの（新しい issue code を作らない）:
+  - token の語彙（corpus に存在しない孤立 token でも正常）
+  - token の表記形式（現行 corpus は lowercase snake_case だが contract ではない）
+  - 重複 token / 空配列（bridge の宣言をそのまま比較対象とする）
+  - 要素数（現行 corpus は 1〜11 要素）
+
+`drugSpecificTags:` の直後に値が 0 件の場合は PRESENT + 空配列として扱う
+（AK の drugClass が同状態を PARSE_ERROR とするのとは意図的に異なる field-specific contract）。
+
+1. npx tsx scripts/audit-drug-specific-tags-bridge-chain.ts を実行する
+2. 出力された FAIL はすべて bridge⇔canonical preservation 違反として扱う
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -958,10 +1006,10 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 
 ## 監査項目の採番について（欠番注記）
 
-本ファイルの標準監査項目は **A〜AK の全 35 項目**である。以下の点に注意すること。
+本ファイルの標準監査項目は **A〜AL の全 36 項目**である。以下の点に注意すること。
 
 - **Q と X は欠番**である。項目記号は再採番せず、欠番を許容する
-- **項目 O は末尾に配置されている**（現在は `### AK.` の後）。アルファベット順ではないが、これは意図された現状であり、
+- **項目 O は末尾に配置されている**（現在は `### AL.` の後）。アルファベット順ではないが、これは意図された現状であり、
   監査時に読み飛ばしてはならない。大規模 JSON の分割 Read で末尾を省略すると **O が欠落する**
 - **AC〜AG は 2026-08 追加**（uiGroup / requiredTags / scenarioRequiredTags / template.handlingTags /
   template.reservedHandlingTags の bridge ⇔ canonical parity 監査。既存 A〜AB の番号・判定内容は変更していない）
@@ -971,6 +1019,8 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
   bridge ⇔ canonical preservation 監査。いずれも機械比較を専用 audit スクリプトへ委譲する）
 - **AK は 2026-09 追加**（D-9。`drug.drugClass` の bridge ⇔ canonical preservation 監査と
   bridge 側 UPPER_SNAKE authoring 規約。AI / AJ と同一構造）
+- **AL は 2026-09 追加**（D-15c。`drug.drugSpecificTags` の bridge ⇔ canonical 逐語保持監査。
+  multi-element 配列のため順序込みで比較する。語彙・表記形式・重複・空配列は判定しない）
 - **項目数の記載は AI / AJ 追加時に追随していなかった**（「A〜AH の全 32 項目」のまま実測 34 項目）。
   AK の追加と同一の変更契機で「A〜AK の全 35 項目」へ是正した
 - 監査項目を数える際は `grep -cE "^### [A-Z]{1,2}\. "` を用いる。`grep -c "^### "` は
@@ -986,7 +1036,7 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 - 報告のみ行う
 - FAIL を PENDING に格下げしない
 - FAIL の根拠を曖昧にしない
-- **A〜AK の標準監査項目（全 35 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
+- **A〜AL の標準監査項目（全 36 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
 
 ---
 

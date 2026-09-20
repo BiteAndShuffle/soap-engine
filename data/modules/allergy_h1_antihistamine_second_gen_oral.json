@@ -80,8 +80,10 @@
       "tablet"
     ],
     "drugSpecificTags": [
-      "h1_antihistamine_oral",
-      "second_gen_antihistamine"
+      "antihistamine",
+      "second_generation",
+      "allergy",
+      "oral"
     ],
     "search": {
       "primaryDisplayName": "第二世代抗ヒスタミン薬",
