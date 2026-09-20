@@ -1,7 +1,18 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「D-8 drugClass canonical mismatch remediation」:
+最終更新: 2026-09-20（Unit「D-9 drugClass preservation / parity contract」:
+`drug.drugClass` を bridge-owned value として contract 化した（OD-D9-1）。`prompts/RULES.md` §4 へ
+「Drug header identifier」を新規登録し、既に運用されていた `display.adjustmentExpression` /
+`display.menuGroupLabels` の §4 未登録も documentation-contract repair として同時是正（OD-D9-3 / OD-D9-6）。
+PN2 へ exact preservation + UPPER_SNAKE authoring 規約（規約外は PENDING 停止）を追加し、
+`scripts/audit-drugclass-bridge-chain.ts`（`npm run audit` 6 → 7 本）・`tests/drugClassBridgeParity.test.ts`・
+PN7 item AK を新設（OD-D9-2 / OD-D9-4）。**audit invariant は片方向**で、bridge 沈黙時は NOT_CHECKED。
+bridge ファイル不在は CHECK、`drugClass:` はあるが parse 不能な場合のみ FAIL。requiredness は別 Decision の
+まま未着手（OD-D9-5）。PN7 の採番注記を「A〜AH の全 32 項目」→「A〜AK の全 35 項目」へ是正（OD-D9-8）。
+canonical / bridge / manifest / `lib/` / validator は無変更（データ差分ゼロ）。D-15 / GG-5 / `risks` /
+`tests/risksContract.test.ts` の D-3 JSDoc は非対象。
+同日先行: Unit「D-8 drugClass canonical mismatch remediation」:
 `allergy_h1_antihistamine_second_gen_oral` の canonical `drug.drugClass` を bridge 逐語値
 `["H1_ANTIHISTAMINE_SECOND_GEN"]` へ修正し、`data/search-manifest.json` を正規 generator で
 再生成（差分は `sourceHash` と当該値の 2 箇所のみ）。**identifier normalization / bridge ⇔ canonical
@@ -1090,9 +1101,21 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - `composition.classKey`（`h1_antihistamine_2nd_gen`）は**変更していない**。`classKey` は `drugClass` から導出されるフィールドではなく（`lower(drugClass) === classKey` の成立は 25/35）、当該 bridge は `classKey` を宣言していない
   - 命名規約（`drug.drugClass` の UPPER_SNAKE。corpus 実測では 35/35 だが明文規定は Repository に存在しない）の明文化と再発防止 contract は **D-9 へ送った**（Owner Decision OD-D8-3）。本 Unit では `prompts/RULES.md` / `docs/JSON_STANDARD.md` / validator / audit / tests を変更していない
   - 同一 module および他 module で発見された他の bridge ⇔ canonical 差分は **D-15 が保持する**（Owner Decision OD-D8-4）
-- **D-9: `drug.drugClass` の bridge 保持義務・parity 監査が未整備**
-  - `drug.drugClass` は 35/35 の bridge が宣言しているが、`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS に列挙されておらず、validator（`moduleValidator.ts` / `crossModuleValidator.ts` とも参照 0 件）にも `npm run audit` の 6 系統にも検査が存在しない。D-2 / D-8 がいずれも検出されないまま commit された原因
-  - **本 Unit では RULES §4 へ広げない**（Owner Decision OD-M9）。再発防止 contract は別 Unit とする
+- **D-9: `drug.drugClass` の bridge 保持義務・parity 監査が未整備 — 2026-09-20 に解消済み**
+  - **解消前の状態〔historical〕**: `drug.drugClass` は 35/35 の bridge が宣言しているが、`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS に列挙されておらず、validator（`moduleValidator.ts` / `crossModuleValidator.ts` とも参照 0 件）にも `npm run audit` の 6 系統にも検査が存在しなかった。D-2 / D-8 がいずれも検出されないまま commit された原因
+  - 2026-09-20 の Unit「D-9 drugClass preservation / parity contract」で解消した（Owner Decision OD-D9-1〜OD-D9-8）
+  - **authority model（OD-D9-1）**: `drug.drugClass` は **bridge-owned value**。canonical は bridge 宣言値を逐語保持し、canonical 側での推測・正規化・改名を禁止する
+  - **naming（OD-D9-2）**: **bridge authoring 規約**として各宣言値は `^[A-Z0-9]+(?:_[A-Z0-9]+)*$`（UPPER_SNAKE）。PN2 は規約外を自動修正せず **PENDING で停止**する。canonical 側に独立した normalize 規則は持たせない。**配列要素数 1 は contract 化していない**（現行 corpus が全件 1 要素であることを前提にした判定を行わない）
+  - **preservation（OD-D9-3）**: `prompts/RULES.md` §4 へ新カテゴリ「Drug header identifier」として登録した。あわせて、既に PN2 + audit + test で mandatory preservation として運用されていながら §4 へ未登録だった `display.adjustmentExpression` / `display.menuGroupLabels` の 2 件を同時に登録した。**後者は新しい保持義務の追加ではなく、実態を正本へ反映する documentation-contract repair**であり、判定基準・挙動を変更していない。これにより PN7 item AI が参照していた RULES §4 の dangling pointer も解消した（OD-D9-6）
+  - **enforcement（OD-D9-4）**: PN2 の preservation 条項 + `scripts/audit-drugclass-bridge-chain.ts`（`npm run audit` へ登録。6 → 7 本）+ `tests/drugClassBridgeParity.test.ts`（synthetic fixture による検出感度の regression test）+ PN7 item **AK**。**`moduleValidator` / `crossModuleValidator` には入れていない**（`docs/VALIDATOR_STANDARD.md` §5「A の値は B の値と一致すべき」型のルールは Validator に入れない）
+  - **audit invariant は片方向である。** bridge が宣言している場合にのみ ① canonical の存在 ② 逐語一致（要素数・順序・表記。大文字小文字差も不一致）③ bridge 値の authoring 規約適合 を検査する。**bridge が沈黙している場合は NOT_CHECKED** であり、reverse invariant（bridge 沈黙 → canonical も持ってはならない）は課していない
+  - **bridge missing / parse failure は分離している**（OD-D9-4 追加指示）: bridge ファイル不在 → **CHECK**（`BRIDGE_NOT_FOUND`。bridge existence contract は未決定のため FAIL にしない）／ bridge はあるが `drugClass:` キーがない → **NOT_CHECKED**／ `drugClass:` はあるが値ブロックを contract 形式で parse できない → **FAIL**（`DRUGCLASS_BRIDGE_PARSE_ERROR`。silent skip / CHECK 扱いにしない）
+  - FAIL 系 error code: `DRUGCLASS_MISSING_IN_CANONICAL` / `DRUGCLASS_VALUE_MISMATCH` / `DRUGCLASS_AUTHORING_FORMAT_VIOLATION` / `DRUGCLASS_BRIDGE_PARSE_ERROR`
+  - **requiredness は別 Decision として未着手**（OD-D9-5）。`lib/types.ts` の `drugClass?: string[]` は optional のまま、`docs/JSON_STANDARD.md` JS-A への登録・`MISSING_DRUG_CLASS`・validator の missing check はいずれも実施していない。bridge 35/35 が宣言している現状では、本 parity audit が D-2 型の omission を検出する
+  - **導入時点で canonical / bridge / `data/search-manifest.json` はデータ差分ゼロ**。新 audit は corpus 全件で FAIL 0 / CHECK 0 であった
+  - 併せて `docs/VALIDATOR_STANDARD.md` §2-A の audit 責務表を実態（7 本）へ更新し、`prompts/vNext/PN7-Cross-Reference-Audit.md` の採番注記を「A〜AH の全 32 項目」→「A〜AK の全 35 項目」へ是正した（AI / AJ 追加時の追随漏れ。OD-D9-8）
+  - **非対象**: D-15 の各 field（`drug.genericName` / `drug.drugSpecificTags` / `display.*`）へ parity contract を拡張していない。GG-5 / `risks` lifecycle にも触れていない。`tests/risksContract.test.ts` の D-3 陳腐化 JSDoc も未変更（別の軽微 cleanup へ残置・OD-D9-7）
+  - 残る軽微 cleanup 候補: `prompts/vNext/PN7-Cross-Reference-Audit.md` 冒頭「## 参照」の `prompts/RULES.md §4` 重複 2 行（本 Unit では触れていない）
 - **D-10: `dm_insulin_mixed_rapid_long` の `template.urgentFlag` / `urgentCriteria` の型不整合**
   - `template.urgentFlag: true` でありながら `template.urgentCriteria: []`。正規型は `EmergencyCriteria`（`{seekUrgentCareIf, contactPrescriberIf}`。他 5 module が保持）であり、空配列はこれを満たさない
   - `dm_insulin_mixed_rapid_intermediate` にも同種の型逸脱がある（`urgentFlag: false` + `urgentCriteria: []`）

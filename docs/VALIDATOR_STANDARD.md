@@ -86,7 +86,9 @@ Validator は「機械的に判定できること」のみを保証する。設�
 
 ### 2-A. audit スクリプトの責務境界（Q-S1 / Q-S2 / Q-UX1）
 
-`npm run audit` が実行する 4 スクリプトは、それぞれ別の Question に対応する。混同しないこと。
+`npm run audit` が実行する 7 スクリプトの責務境界は以下のとおり。混同しないこと。
+前半 4 本のうち 2 本は Question（Q-S1 / Q-S2）に対応し、後半 3 本は bridge ⇔ canonical の
+preservation 監査である（対象フィールドごとに 1 本。`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS）。
 
 | スクリプト | 担当 | 保証すること |
 |---|---|---|
@@ -94,6 +96,9 @@ Validator は「機械的に判定できること」のみを保証する。設�
 | `scripts/audit-alias-bridge-chain.ts` | — | alias 系フィールドの bridge ⇔ JSON 同期 |
 | `scripts/audit-generic-name-reachability.ts` | **Q-S1** | module への**到達性**（DP-09。`GENERIC_NAME_UNREACHABLE`） |
 | `scripts/audit-brand-resolution-safety.ts` | **Q-S2** | 到達した**後**の brand resolution semantics / safety |
+| `scripts/audit-adjustment-expression-bridge-chain.ts` | — | `display.adjustmentExpression` の bridge ⇔ canonical 保持一致（PN7 item AI） |
+| `scripts/audit-menu-group-labels-bridge-chain.ts` | — | `display.menuGroupLabels` の bridge ⇔ canonical 保持一致（PN7 item AJ） |
+| `scripts/audit-drugclass-bridge-chain.ts` | — | `drug.drugClass` の bridge ⇔ canonical 保持一致、および bridge 側 UPPER_SNAKE authoring 規約（PN7 item AK） |
 
 **Q-UX1（ranking / presentation / limit=8 / bucket 結合順）はいずれの audit の責務でもない。**
 

@@ -790,6 +790,52 @@ bridge Header が正しく parse でき、かつ menuGroupLabels について沈
 
 ---
 
+### AK. drug.drugClass Bridge Parity（drugClass 保持確認）
+
+← PN2-Drug-Header.md「`drug.drugClass` の保持（必須・明示 preservation 対象）」/
+  RULES.md §4 MANDATORY_PRESERVATION_TARGETS「Drug header identifier」
+
+AI（adjustmentExpression）/ AJ（menuGroupLabels）と同じ構造の監査を、`drug.drugClass` に適用する。
+詳細な機械比較は `scripts/audit-drugclass-bridge-chain.ts` に委譲し、本チェックでは対象範囲と
+判定基準のみを定義する（PN7 自体にパーサ実装を重複させない）。
+
+対象は `drug.drugClass` のみ。`composition.classKey` / `composition.nodeKey` /
+`display.drugClassLabel` は別フィールド・別 consumer であり本チェックの scope に含まれない。
+これらとの cross-field equality は課さない。
+
+```
+対象: drug.drugClass のみ
+
+bridge Header が drug.drugClass を宣言している場合:
+  canonical の drug.drugClass が存在すること
+    欠落 → FAIL（DRUGCLASS_MISSING_IN_CANONICAL）
+  canonical 値が bridge 値と逐語一致すること（要素数・順序・表記。大文字小文字の差も不一致）
+    不一致 → FAIL（DRUGCLASS_VALUE_MISMATCH）
+  bridge の各宣言値が UPPER_SNAKE authoring 規約 ^[A-Z0-9]+(?:_[A-Z0-9]+)*$ に合致すること
+    違反 → FAIL（DRUGCLASS_AUTHORING_FORMAT_VIOLATION）
+    ※ canonical 側で正規化して解消してはならない。PN2 は規約外を PENDING で停止する
+
+bridge が存在し、かつ drug.drugClass について沈黙している場合:
+  → NOT_CHECKED（canonical の有無・値を判定しない）
+  ※ reverse invariant（bridge 沈黙 → canonical も持ってはならない）は課さない。
+    requiredness / absence semantics は本項目の対象外であり、別 Owner Decision として未確定
+
+bridge ファイル自体が存在しない場合:
+  → CHECK（BRIDGE_NOT_FOUND）。bridge existence contract は未確定のため FAIL にしない
+
+bridge に drugClass: が存在するが、値ブロックを contract 形式で parse できない場合:
+  → FAIL（DRUGCLASS_BRIDGE_PARSE_ERROR）
+  ※ 宣言済み authoring field が機械可読 contract を満たしていない状態であり、
+    沈黙として読み替えない（silent false-negative を構造的に防ぐ）
+
+配列の要素数は規定しない（現行 corpus が 1 要素であることを前提にしない）。
+
+1. npx tsx scripts/audit-drugclass-bridge-chain.ts を実行する
+2. 出力された FAIL はすべて bridge⇔canonical preservation 違反として扱う
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -912,15 +958,21 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 
 ## 監査項目の採番について（欠番注記）
 
-本ファイルの標準監査項目は **A〜AH の全 32 項目**である。以下の点に注意すること。
+本ファイルの標準監査項目は **A〜AK の全 35 項目**である。以下の点に注意すること。
 
 - **Q と X は欠番**である。項目記号は再採番せず、欠番を許容する
-- **項目 O は末尾に配置されている**（`### AH.` の後）。アルファベット順ではないが、これは意図された現状であり、
+- **項目 O は末尾に配置されている**（現在は `### AK.` の後）。アルファベット順ではないが、これは意図された現状であり、
   監査時に読み飛ばしてはならない。大規模 JSON の分割 Read で末尾を省略すると **O が欠落する**
 - **AC〜AG は 2026-08 追加**（uiGroup / requiredTags / scenarioRequiredTags / template.handlingTags /
   template.reservedHandlingTags の bridge ⇔ canonical parity 監査。既存 A〜AB の番号・判定内容は変更していない）
 - **AH は 2026-08 追加**（scenarioColor の bridge ⇔ canonical parity 監査。Unit C。scenarioColor は
   Header map 形式を持たないため、AD/AE のような map/inline 統合判定は不要）
+- **AI / AJ は 2026-09 追加**（`display.adjustmentExpression` / `display.menuGroupLabels` の
+  bridge ⇔ canonical preservation 監査。いずれも機械比較を専用 audit スクリプトへ委譲する）
+- **AK は 2026-09 追加**（D-9。`drug.drugClass` の bridge ⇔ canonical preservation 監査と
+  bridge 側 UPPER_SNAKE authoring 規約。AI / AJ と同一構造）
+- **項目数の記載は AI / AJ 追加時に追随していなかった**（「A〜AH の全 32 項目」のまま実測 34 項目）。
+  AK の追加と同一の変更契機で「A〜AK の全 35 項目」へ是正した
 - 監査項目を数える際は `grep -cE "^### [A-Z]{1,2}\. "` を用いる。`grep -c "^### "` は
   監査項目以外の見出しを含むため使用しない
 
@@ -934,7 +986,7 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 - 報告のみ行う
 - FAIL を PENDING に格下げしない
 - FAIL の根拠を曖昧にしない
-- **A〜AH の標準監査項目（全 32 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
+- **A〜AK の標準監査項目（全 35 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
 
 ---
 

@@ -15,7 +15,7 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ npx tsc --noEmit
 □ npm test（0 fail であること。件数は実行時に再測定し、変更前後で減っていないことを確認する）
 □ npm run build
-□ npm run audit（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety / adjustmentExpression 保持 / menuGroupLabels 保持 の 6 監査。個別実行する場合は下記 6 行を参照）
+□ npm run audit（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety / adjustmentExpression 保持 / menuGroupLabels 保持 / drugClass 保持 の 7 監査。個別実行する場合は下記 7 行を参照）
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
 □ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合。`npm run audit` に含まれる）
@@ -24,6 +24,7 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ scripts/audit-brand-resolution-safety.ts（BrandResolution の brand/generic 解決安全性。`npm run audit` に含まれる）
 □ scripts/audit-adjustment-expression-bridge-chain.ts（display.adjustmentExpression の bridge⇔canonical 保持一致。`npm run audit` に含まれる）
 □ scripts/audit-menu-group-labels-bridge-chain.ts（display.menuGroupLabels の bridge⇔canonical 保持一致。`npm run audit` に含まれる）
+□ scripts/audit-drugclass-bridge-chain.ts（drug.drugClass の bridge⇔canonical 保持一致および bridge 側 UPPER_SNAKE authoring 規約。`npm run audit` に含まれる）
 □ 検索・alias・drug構造を変更した場合は `npm run test:multi-drug`（buildNodeFields + mergeBlocksによる複数module合成の回帰テスト）を実施する
 □ canonical JSON のうち search-manifest の生成対象フィールド（`lib/searchManifest.ts`）を変更した場合は `npm run generate:search-manifest` を実行し、`data/search-manifest.json` を再生成する（手編集禁止。再生成漏れは `npm test` の `tests/searchManifestParity.test.ts` が検出する）
 □ 本文（S/O/A/P）のみの修正のはずが、addonsRefに意図しない差分が出ていないか確認する（RULES.md §22）

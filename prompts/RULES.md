@@ -9,7 +9,7 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 - **preservation 対象の完全リストは本ファイル §4 が正本**（保持対象と vNext 実効機構の対応表を含む）
 - **bridge→canonical JSON変換規則は、`prompts/vNext/PN1-Text-Extraction.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN3A-Scenario-Classification.md` / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` / `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md` / `prompts/vNext/PN5-Non-Scenario.md` / 本ファイル §5 に工程別に分担して定義される**
 
-最終更新: 2026-07-26
+最終更新: 2026-09-20（§4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
 
 ---
 
@@ -168,6 +168,17 @@ bridge → canonical JSON の変換において完全保持しなければなら
 | **SearchToken** | `drug.search.commonSearchTokens` / `formulationSearchTokens` / `matchPolicy` 系 | **監査未整備**。`lib/moduleValidator.ts` の `SEARCH_TOKEN_ALIAS_POLLUTION` は alias 系フィールドへの混入検出であり、bridge ⇔ JSON の一致は対象外 |
 | **Followup 内容** | `defaults.followup` / `defaults.followupProfiles` のテキスト | **監査未整備**。PN7 item I の凍結照合対象は S / O / A / P と addon text のみであり、followupProfiles のテキストは含まれない |
 | **Persona（文体）** | bridge の tone / 説明密度 / 距離感 / counseling weight | **監査未整備**。PN7 item R は `persona` フィールドの存在記録のみ（Future Expansion のため FAIL 条件から除外済）。文体は Text カテゴリの一部として PN1 凍結 + PN7 item I により間接的に保護されるが、文体そのものを評価する項目は存在しない |
+| **Drug header identifier** | `drug.drugClass`（bridge 宣言値を件数・順序・表記とも変えずに保持。canonical 側での正規化・改名・推測生成を禁止） | PN2「`drug.drugClass` の保持」・PN7 item AK ／ `scripts/audit-drugclass-bridge-chain.ts` ／ `tests/drugClassBridgeParity.test.ts` |
+| **Display（文生成用）** | `display.adjustmentExpression`（`increasePast` / `decreasePast`） | PN2「`display.adjustmentExpression` の保持」・PN7 item AI ／ `scripts/audit-adjustment-expression-bridge-chain.ts` ／ `tests/adjustmentExpressionBridgeParity.test.ts` |
+| **Display（UI ラベル）** | `display.menuGroupLabels` | PN2「`display.menuGroupLabels` の保持」・PN7 item AJ ／ `scripts/audit-menu-group-labels-bridge-chain.ts` ／ `tests/menuGroupLabelsBridgeParity.test.ts` |
+
+**display 2 行（`display.adjustmentExpression` / `display.menuGroupLabels`）について**
+
+両フィールドは PN2 の明示 preservation 条項・PN7 item AI / AJ・専用 audit・regression test により**既に mandatory preservation として運用されている**。本節への未登録は台帳側の欠落であり、上記 2 行の追記は実態を正本へ反映する documentation-contract repair である。**新しい保持義務の追加ではなく、判定基準・挙動を変更しない。**
+
+**`drug.drugClass` 行について**
+
+本行は D-9（2026-09-20）で新規に確立した preservation contract である。bridge 宣言値の逐語保持を要求し、bridge 側の authoring 規約（`^[A-Z0-9]+(?:_[A-Z0-9]+)*$`）違反は canonical 側で正規化せず PN2 が PENDING で停止する。**bridge が `drug.drugClass` について沈黙している場合の canonical 側の扱い（requiredness）は本節の対象外**であり、別 Owner Decision として未確定である（`prompts/vNext/HANDOFF.md` §6 D-9 参照）。
 
 **監査未整備 3 系統の扱い**
 

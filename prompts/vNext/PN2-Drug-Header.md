@@ -39,6 +39,30 @@ bridge.md の `drug:` / `search:` / `nameAliases:` / `brandCatalog:` / `aliasToB
    （JSON側だけの追加・変更は禁止 → RULES.md §23。機械検証は
    `scripts/audit-alias-bridge-chain.ts`）
 
+**`drug.drugClass` の保持（必須・明示 preservation 対象）:**
+
+本フィールドは bridge Header 由来の **preservation field** であり、derived metadata ではない
+（`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS「Drug header identifier」）。
+
+- bridge Header の `drug.drugClass` に宣言された値を、**件数・順序・表記のいずれも変えず**
+  canonical の `drug.drugClass` へ **exact preservation** で転記する。大文字小文字の変換・
+  語形の言い換え（例: `SECOND_GEN` → `2nd_gen`）・略語化・別 token への改名・要素の追加削除をしない
+- 以下から値を推測・導出してはならない: `moduleId` / `drug.route` / `drug.dosageForms` /
+  `composition.classKey` / `composition.nodeKey` / `display.drugClassLabel` / 既存 canonical の前例
+  （sibling module の値をそのまま流用しない）
+- `composition.classKey` を `drug.drugClass` から導出しない。両者は別フィールド・別 consumer であり、
+  `classKey` の導出規則は本ファイル「classKey 導出ルール」が正本である
+- **bridge authoring 規約（UPPER_SNAKE）**: bridge が宣言する各値は `^[A-Z0-9]+(?:_[A-Z0-9]+)*$` に
+  合致していなければならない。合致しない値を発見した場合、**canonical 側で自動修正・正規化しては
+  ならない**。`PENDING` として停止し、bridge 側の修正可否をユーザーへ確認する
+  （`prompts/RULES.md` §3 PENDING）
+- **配列の要素数は規定しない。** 現行 corpus が 1 要素であることを理由に、要素数 1 を前提とした
+  処理・検査・省略を行わない
+- bridge が `drug.drugClass` について沈黙している場合の canonical 側の扱いは本規則の対象外である
+  （requiredness は別 Owner Decision であり未確定。沈黙を理由に値を補完しないこと）
+
+機械検証は `scripts/audit-drugclass-bridge-chain.ts`（PN7 item AK）。
+
 ### brandCatalog 表示名フィールドの責務（displayName / genericName / displayGenericName）
 
 ← docs/JSON_STANDARD.md JS-A-drug「brandCatalog エントリのスキーマ」（正本）
@@ -394,5 +418,6 @@ PN2 完了後、以下を報告する:
 - aliasToBrand キー数
 - 整合確認結果（nameAliases一致 / aliases一致 / aliasToBrand網羅）
 - display.adjustmentExpression を転記したか（bridge 記載の有無。記載ありの場合は転記した exact value）
+- drug.drugClass を転記したか（bridge 宣言値の exact value。UPPER_SNAKE authoring 規約への適合可否を含む）
 
 次工程: PN3A（Scenario Classification）
