@@ -412,21 +412,8 @@
       "hypoglycemia_risk",
       "injection_site_reaction"
     ],
-    "secondary": [
-      "dehydration_risk",
-      "glycemic_deterioration"
-    ],
-    "conditional": [
-      {
-        "risk": "ketoacidosis_risk_sglt2",
-        "rule": {
-          "whenAny": [
-            "concomitant_sglt2"
-          ],
-          "whenAll": []
-        }
-      }
-    ]
+    "secondary": [],
+    "conditional": []
   },
   "ui": {
     "panels": [

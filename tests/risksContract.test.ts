@@ -30,8 +30,6 @@
  * - PN5〜PN7 の中間ファイル（`/tmp/soap-build/`）の内容。本テストの発火点は PN8 である
  *   （PN5 時点の検出は PN5 §ハンドオフ報告の `0 / 0 / 0` 報告義務が担う）
  * - 収載済み baseline 22 module の risk 値の正当性（Owner Decision OD-3 により別 Unit）
- * - `INSULIN_RISKS_REVIEW_PENDING_MODULES` 収載 module の臨床 semantics
- *   （insulin テンプレート適用の可否は Human clinical review。T-R-4d〜T-R-4g を参照）
  *
  * 実行:
  *   npx tsx --test tests/risksContract.test.ts
@@ -55,46 +53,6 @@ const MODULES_DIR = path.resolve('./data/modules')
  * 実測では全 module が 1 要素。いずれかの要素が本パターンに合致すれば insulin 分岐とする。
  */
 const INSULIN_BRANCH_PATTERN = /^INSULIN_/
-
-/**
- * INSULIN_RISKS_REVIEW_PENDING_MODULES —
- * insulin 分岐に属するが、`risks` の臨床 semantics が **Human clinical review 待ち**であり、
- * PN5 insulin 標準テンプレートへの適合を**意図的に defer している** module の集合。
- *
- * ── これは一般的な exception ではない ────────────────────────────────
- *
- * 本集合は「insulin module の risks を固定 empty にしてよい」という新しい一般契約を
- * 導入するものではない。**列挙された module に限った temporary contract deferral** であり、
- * 収載中の module は「PN5 insulin テンプレート未適用の暫定状態」にあることを意味する。
- * 集合に属さない insulin module には従来どおり T-R-4c の「risks 非空」が適用される。
- *
- * ── 現在の収載（2026-09-20・Owner Decision OD-M1〜OD-M6）─────────────
- *
- * `dm_insulin_mixed_rapid_long` 1 件のみ。同 module では本 Unit で次を実施した:
- *
- *   - `drug.drugClass` / `dosageForms` / `drugSpecificTags` の transfer defect を
- *     bridge 逐語値どおり修復した（OD-M1）。この修復により同 module は insulin 分岐へ移った
- *   - 出自を Repository で裏付けられない risks semantics（`urgentFlag` / `urgentCriteria` /
- *     日本語 risk token / scenario ID namespace の `whenAny`）を除去し、固定 empty へ
- *     正規化した（OD-M3 / OD-M4）
- *   - insulin テンプレートの適用可否、および `意識消失・けいれんを伴う重症低血糖` を
- *     `template.urgentCriteria` へ移すか否かは **臨床判断**であるため実施していない
- *     （OD-M5 / OD-M6）
- *
- * ── 集合の更新規律 ───────────────────────────────────────────────────
- *
- * - **新規 module を本集合へ追加することは、通常の baseline 更新として扱わない。**
- *   追加には Owner Decision を要する（`tests/fixtures/risksPreRuleBaseline.ts` の
- *   pre-rule baseline は「契約制定以前の既存値の grandfather」であり、本集合は
- *   「契約適用を将来へ延期する」という別種の措置である。両者を混同しない）
- * - **dedicated Human Review Unit の完了時に、当該 module を本集合から削除する。**
- *   削除後はその module へ T-R-4c（risks 非空）が適用されるため、同 Unit 内で
- *   insulin テンプレート適用の可否を確定させる必要がある
- * - 集合が空になった場合、本定数と T-R-4d〜T-R-4f を削除してよい
- *
- * 継続事項: `prompts/vNext/HANDOFF.md` §6
- */
-const INSULIN_RISKS_REVIEW_PENDING_MODULES = ['dm_insulin_mixed_rapid_long'] as const
 
 /**
  * non-insulin の固定値。`prompts/vNext/PN5-Non-Scenario.md` §risks から転記した明示リテラル。
@@ -168,21 +126,9 @@ function scanModules(): ScannedModule[] {
 const MODULES = scanModules()
 const BASELINE_IDS = new Set(PRE_RULE_RISKS_BASELINE.map(r => r.moduleId))
 
-const PENDING_IDS = new Set<string>(INSULIN_RISKS_REVIEW_PENDING_MODULES)
-
 /** 固定 empty 契約の検査対象: non-insulin かつ baseline 未収載 */
 const FIXED_EMPTY_TARGETS = MODULES.filter(m => !m.isInsulinBranch && !BASELINE_IDS.has(m.moduleId))
 const INSULIN_BRANCH_MODULES = MODULES.filter(m => m.isInsulinBranch)
-/** insulin 分岐のうち、risks semantics が Human review 待ちでない module（T-R-4c の検査対象） */
-const INSULIN_ACTIVE_MODULES = INSULIN_BRANCH_MODULES.filter(m => !PENDING_IDS.has(m.moduleId))
-
-const PENDING_NOTICE =
-  '\n\n' +
-  'INSULIN_RISKS_REVIEW_PENDING_MODULES は insulin risks の一般契約を緩めるものではなく、\n' +
-  '列挙された module に限った temporary contract deferral である。\n' +
-  '集合への追加は通常の baseline 更新として扱わず、Owner Decision を要する。\n' +
-  'dedicated Human Review Unit の完了時には当該 module を集合から削除すること\n' +
-  '（継続事項: prompts/vNext/HANDOFF.md §6）。'
 
 // ─────────────────────────────────────────────────────────────
 // T-R-1: non-insulin 固定 empty 契約
@@ -351,10 +297,10 @@ describe('risks 契約: insulin 分岐（弱形）', () => {
     )
   })
 
-  test('T-R-4c insulin 分岐 module の risks が空振りしていない（review pending を除く）', () => {
+  test('T-R-4c insulin 分岐 module の risks が空振りしていない', () => {
     const problems: string[] = []
 
-    for (const m of INSULIN_ACTIVE_MODULES) {
+    for (const m of INSULIN_BRANCH_MODULES) {
       if (!m.risks) {
         problems.push(`  ${m.moduleId}: risks キー自体が存在しない（JSON_STANDARD JS-A 必須）`)
         continue
@@ -367,11 +313,7 @@ describe('risks 契約: insulin 分岐（弱形）', () => {
         )
       }
       if (m.total === 0) {
-        problems.push(
-          `  ${m.moduleId}: risks が全キー空。insulin 分岐は標準テンプレートを使用する\n` +
-            `      （Human clinical review へ defer するのであれば Owner Decision を得たうえで\n` +
-            `        INSULIN_RISKS_REVIEW_PENDING_MODULES へ追加すること）`,
-        )
+        problems.push(`  ${m.moduleId}: risks が全キー空。insulin 分岐は標準テンプレートを使用する`)
       }
     }
 
@@ -379,103 +321,9 @@ describe('risks 契約: insulin 分岐（弱形）', () => {
       problems.length,
       0,
       `insulin 分岐 module の risks が PN5 §risks の標準テンプレート側の形をしていない。\n` +
-        `（本検査は値の byte equality を要求しない。「空でないこと」と「標準 3 キーであること」のみ）\n` +
-        `（review pending ${INSULIN_RISKS_REVIEW_PENDING_MODULES.length} 件は本検査の対象外）\n\n` +
+        `（本検査は値の byte equality を要求しない。「空でないこと」と「標準 3 キーであること」のみ）\n\n` +
         problems.join('\n') +
         SYNC_NOTICE,
-    )
-  })
-})
-
-// ─────────────────────────────────────────────────────────────
-// T-R-4d〜T-R-4f: insulin risks の temporary contract deferral
-//
-// Owner Decision（2026-09-20・OD-M1〜OD-M6）により、`dm_insulin_mixed_rapid_long` は
-// 構造 / provenance defect を修復したうえで、insulin テンプレート適合の判断のみを
-// Human clinical review へ defer している。その暫定状態を機械的に固定する。
-// ─────────────────────────────────────────────────────────────
-
-describe('risks 契約: insulin risks review deferral', () => {
-  test('T-R-4d pending 集合の membership が Owner 承認済みの 1 件から変化していない', () => {
-    assert.deepEqual(
-      [...INSULIN_RISKS_REVIEW_PENDING_MODULES],
-      ['dm_insulin_mixed_rapid_long'],
-      `INSULIN_RISKS_REVIEW_PENDING_MODULES の membership が変化している。\n` +
-        `現在 Owner が承認している deferral は dm_insulin_mixed_rapid_long の 1 件のみである。` +
-        PENDING_NOTICE,
-    )
-  })
-
-  test('T-R-4e pending module が実在し、insulin 分岐に属する', () => {
-    const problems: string[] = []
-    const byId = new Map(MODULES.map(m => [m.moduleId, m]))
-
-    for (const id of INSULIN_RISKS_REVIEW_PENDING_MODULES) {
-      const m = byId.get(id)
-      if (!m) {
-        problems.push(`  ${id}: canonical JSON が存在しない`)
-        continue
-      }
-      if (!m.isInsulinBranch) {
-        problems.push(
-          `  ${id}: insulin 分岐に属していない（drug.drugClass: ${JSON.stringify(m.drugClass)}）\n` +
-            `      本集合は insulin 分岐 module の deferral のためにのみ存在する。\n` +
-            `      non-insulin module は固定 empty 契約（T-R-1）または pre-rule baseline が扱う`,
-        )
-      }
-    }
-
-    assert.deepEqual(problems, [], `pending module が前提を満たしていない。\n\n${problems.join('\n')}${PENDING_NOTICE}`)
-  })
-
-  test('T-R-4f pending 中の risks が固定 empty に保たれている', () => {
-    const problems: string[] = []
-    const byId = new Map(MODULES.map(m => [m.moduleId, m]))
-
-    for (const id of INSULIN_RISKS_REVIEW_PENDING_MODULES) {
-      const m = byId.get(id)
-      if (!m) continue
-      if (!m.risks) {
-        problems.push(`  ${id}: risks キー自体が存在しない（JSON_STANDARD JS-A 必須）`)
-        continue
-      }
-      if (m.keys.join(',') !== FIXED_EMPTY_RISKS_KEYS.join(',')) {
-        problems.push(
-          `  ${id}: risks 直下のキー集合が不正\n` +
-            `      expected: [${FIXED_EMPTY_RISKS_KEYS.join(', ')}]\n` +
-            `      actual  : [${m.keys.join(', ')}]`,
-        )
-      }
-      for (const k of FIXED_EMPTY_RISKS_KEYS) {
-        const n = m.counts[k]
-        if (n === null) problems.push(`  ${id}: risks.${k} が配列でない`)
-        else if (n !== 0) problems.push(`  ${id}: risks.${k} に ${n} 件の値がある（期待: 0 件）`)
-      }
-    }
-
-    assert.equal(
-      problems.length,
-      0,
-      `review pending 中の insulin module の risks が固定 empty から変化している。\n` +
-        `pending 中は臨床 semantics を canonical へ入れない（出自を Repository で裏付けられないため）。\n` +
-        `値を確定するのであれば Human Review Unit 内で行い、同時に pending 集合から削除すること。\n\n` +
-        problems.join('\n') +
-        PENDING_NOTICE,
-    )
-  })
-
-  test('T-R-4g pending module が pre-rule baseline に収載されていない', () => {
-    const both = INSULIN_RISKS_REVIEW_PENDING_MODULES.filter(id => BASELINE_IDS.has(id))
-      .map(id => `  ${id}`)
-
-    assert.deepEqual(
-      both,
-      [],
-      `pending 集合と pre-rule baseline の両方に収載されている module がある。\n` +
-        `両者は別種の措置であり（baseline = 契約制定以前の既存値の grandfather /\n` +
-        `pending = 契約適用の将来への延期）、同一 module が双方に属することはない。\n\n` +
-        both.join('\n') +
-        PENDING_NOTICE,
     )
   })
 })

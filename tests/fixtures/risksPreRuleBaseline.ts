@@ -75,10 +75,8 @@ export interface PreRuleRisksBaselineRow {
  * `dm_insulin_mixed_rapid_long` は 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」で
  * 本表から除去した。同 module は `drug.drugClass` / `dosageForms` / `drugSpecificTags` の
  * transfer defect（bridge 宣言値が canonical へ転記されていなかった）を修復した結果 insulin
- * 分岐へ移り、`risks` は固定 empty へ正規化された。insulin テンプレート適合の判断は Human
- * clinical review へ defer されており、`tests/risksContract.test.ts` の
- * `INSULIN_RISKS_REVIEW_PENDING_MODULES` が暫定状態を保持する（本表の grandfather とは
- * 別種の措置であり、同一 module が双方に属することはない）。
+ * 分岐へ移った。同日の Unit「insulin risks template clinical & semantic review」で insulin
+ * 標準テンプレートが適用され、以後は他の insulin module と同じく T-R-4c が検査する。
  */
 export const PRE_RULE_RISKS_BASELINE: PreRuleRisksBaselineRow[] = [
   { moduleId: 'allergy_h1_antihistamine_eye_drops', primary: 1, secondary: 4, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },

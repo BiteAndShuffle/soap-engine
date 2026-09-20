@@ -1,10 +1,17 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「insulin mixed rapid/long 構造修復」: `dm_insulin_mixed_rapid_long` の
+最終更新: 2026-09-20（Unit「insulin risks template clinical & semantic review」: PN5 insulin 標準テンプレートを
+`primary: [hypoglycemia_risk, injection_site_reaction]` / `secondary: []` / `conditional: []` へ縮約し、
+insulin 8 module の canonical を統一（Owner Decision OD-T1）。`dm_insulin_mixed_rapid_long` の temporary
+deferral を解消し `INSULIN_RISKS_REVIEW_PENDING_MODULES` と T-R-4d〜T-R-4g を完全撤去。§6 の D-7 を完了化し、
+D-11（非 SGLT2 module に残存する conditional）/ D-12（`concomitant_sglt2` namespace 未定義）を追加。
+bridge / 非 insulin canonical / validator / `lib/types.ts` / runtime / `docs/` は無変更。
+同日先行: Unit「insulin mixed rapid/long 構造修復」: `dm_insulin_mixed_rapid_long` の
 `drug.drugClass` / `dosageForms` / `drugSpecificTags` を bridge 逐語値どおり復元し（transfer defect）、
 `risks` を固定 empty へ正規化、`data/search-manifest.json` を再生成。insulin テンプレート適合と
-`template.urgentCriteria` の扱いは Human Review Pending として `INSULIN_RISKS_REVIEW_PENDING_MODULES` が保持。
+`template.urgentCriteria` の扱いは Human Review Pending として `INSULIN_RISKS_REVIEW_PENDING_MODULES` が保持
+〔当時の状態。insulin テンプレート適合は上記 Unit で解消し、同定数は撤去済み。`template.urgentCriteria` は D-10 が保持〕。
 §6 の D-2 誤記〔「drugClass が小文字」→ 正しくは ABSENT〕を訂正し、D-7〜D-10 を追加。bridge / PN5 /
 validator / `lib/types.ts` / runtime は無変更。
 同日先行: Unit「PN5 non-insulin risks contract remediation」: PN5 §risks の non-insulin 分岐を
@@ -400,18 +407,13 @@ PN4A と PN4B は並列実行可能です。PN3B 完了後に同時開始でき�
 
 ui / risks / searchConfig / tagCatalog / expressModes を生成します。
 
-**インスリン注射系の risks 標準テンプレート**（dm_insulin_rapid_analog.json 実績値）:
+**インスリン注射系の risks 標準テンプレート**（2026-09-20 Owner Review 確定。Owner Decision OD-T1）:
 
 ```json
 "risks": {
   "primary": ["hypoglycemia_risk", "injection_site_reaction"],
-  "secondary": ["dehydration_risk", "glycemic_deterioration"],
-  "conditional": [
-    {
-      "risk": "ketoacidosis_risk_sglt2",
-      "rule": { "whenAny": ["concomitant_sglt2"], "whenAll": [] }
-    }
-  ]
+  "secondary": [],
+  "conditional": []
 }
 ```
 
@@ -996,9 +998,10 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **位置づけ**: 将来の schema cleanup / migration 候補。**現時点では blocker ではない**
 - **未確定**: solution・priority・実施時期は未確定
 
-## `risks` contract remediation の別 Unit 送り事項（D-1〜D-10・2026-09-20）
+## `risks` contract remediation の別 Unit 送り事項（D-1〜D-12・2026-09-20）
 
-2026-09-20 の 2 つの Unit の Owner Decision により、別 Unit へ送った事項。
+2026-09-20 の 3 つの Unit の Owner Decision により、別 Unit へ送った事項。
+**各項目に記載した corpus 件数は当該時点の historical observation であり、current contract ではない。**
 
 - Unit 1「PN5 non-insulin risks contract remediation」: PN5 §risks の生成契約（non-insulin = 固定 empty）・
   `tests/risksContract.test.ts` の新設・`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5 の公告を実施。
@@ -1006,6 +1009,10 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - Unit 2「insulin mixed rapid/long 構造修復」: `dm_insulin_mixed_rapid_long` の `drug` サブフィールド
   transfer defect 修復・`risks` の固定 empty 正規化・`data/search-manifest.json` 再生成・D-2 誤記訂正を実施。
   bridge / PN5 / validator / `lib/types.ts` / runtime は無変更
+- Unit 3「insulin risks template clinical & semantic review」: PN5 insulin 標準テンプレートを
+  `primary` 2 token のみへ縮約し、insulin 8 module の canonical を統一。`dm_insulin_mixed_rapid_long` の
+  temporary deferral を解消し、deferral machinery を完全撤去。bridge / validator / `lib/types.ts` /
+  runtime / `docs/` は無変更（Owner Decision OD-T1〜OD-T9）
 
 `risks` 自体の Lifecycle 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5（Classification Pending）。
 
@@ -1013,7 +1020,8 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 旧状態: `risks` のキーが `urgentFlag` / `urgentCriteria` / `conditional` であり、JS-A が要求する `primary` / `secondary` が存在しなかった（corpus 唯一）。`conditional[].risk` は日本語 prose（`"重症低血糖リスク上昇"`）、`conditional[].rule.whenAny` は患者状態トークンではなく **scenario ID**（他 22 件はすべて `concomitant_sglt2`）。いずれも初出 commit `e650858`（2026-06-29）からの birth defect であり、同一 commit の兄弟 4 module は PN5 insulin テンプレート値で正常に生成されていた
   - 実測: これらの臨床 semantics は bridge に根拠がない（`bridges/dm_insulin_mixed_rapid_long.md` に「意識消失」「けいれん」「重症低血糖」の出現は **0 件**）
   - 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」（Owner Decision OD-M3 / OD-M4）で、出自を Repository で裏付けられない semantics を除去し `{"primary": [], "secondary": [], "conditional": []}` へ正規化した。**これは「臨床的にリスクがない」という判断ではなく、provenance を裏付けられない値を canonical から除去する情報規律上の措置である**
-  - **残る Human Review Pending 事項**（別 Unit）: ① 本 module へ PN5 insulin 標準テンプレートを適用するか（OD-M6） ② `意識消失・けいれんを伴う重症低血糖` を `template.urgentCriteria` の正規型（`{seekUrgentCareIf, contactPrescriberIf}`）へ移すか、破棄するか（OD-M5）
+  - ①（本 module へ insulin 標準テンプレートを適用するか・OD-M6）は **2026-09-20 に解消**。Human Review により縮約後テンプレートを適用した（D-7 / OD-T1）
+  - ②（`意識消失・けいれんを伴う重症低血糖` を `template.urgentCriteria` の正規型 `{seekUrgentCareIf, contactPrescriberIf}` へ移すか、破棄するか・OD-M5）は**未解消**。D-10 が保持する
   - 同 module には別種の drift も既記録（上記「`scenarios[].mergePolicy` 旧 schema drift」）。**両者は別 Finding**
 - **D-2: 同 module の `drug` サブフィールド transfer defect** — **2026-09-20 に解消済み**
   - > ⚠️ **訂正（2026-09-20）**: 本項目は当初「`drug.drugClass` が小文字（`insulin_mixed_rapid_long`）」と記録していたが、これは**誤りであった**（commit `7b9e5ea`）。正しくは **`drug.drugClass` は ABSENT（キー自体が存在しない）** であり、小文字の `insulin_mixed_rapid_long` は `composition.classKey` の値で、これは全 35 module で小文字が正しい設計値である（`docs/JSON_STANDARD.md` JS-A-composition）。誤った historical fact を残さないため、ここで訂正する。
@@ -1021,11 +1029,10 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 影響: `drug.drugClass` と `drug.drugSpecificTags` は `lib/search.ts` の検索コーパスと `data/search-manifest.json` へ投影される。修復前は latin クエリ `insulin` で insulin 8 module 中 7 件しかヒットせず、**本 module のみ到達不能**だった（`drug.dosageForms` は runtime 未参照のため影響なし）
   - 2026-09-20 の Unit で bridge 逐語値どおり復元し（Owner Decision OD-M1）、`data/search-manifest.json` を正規 generator で再生成した（OD-M2）。latin `insulin` の到達は 8/8 へ回復
   - 復元により本 module は PN5 §risks の insulin 分岐へ移ったが、テンプレート適用は D-1 の Human Review Pending 事項として defer している（下記 D-7）
-- **D-7: `dm_insulin_mixed_rapid_long` の insulin risks semantic は Human Review Pending**
-  - **現状の要約**: 構造 / provenance defect（D-1 の shape・D-2 の transfer loss）は**修復済み**。ただし insulin risks semantic は Human Review Pending であり、**current PN5 insulin テンプレートへの適合を意図的に defer している**
-  - 機械的保持: `tests/risksContract.test.ts` の `INSULIN_RISKS_REVIEW_PENDING_MODULES`（現在の membership は本 module 1 件のみ）。T-R-4d〜T-R-4g が ① membership が 1 件であること ② pending module が insulin 分岐に属すること ③ pending 中の risks が固定 empty であること ④ pre-rule baseline と重複しないこと を固定する
-  - **本集合は insulin risks の一般契約を緩めるものではない。** 列挙された module に限った temporary contract deferral であり、**集合への追加は通常の baseline 更新として扱わず Owner Decision を要する**
-  - **解消条件**: dedicated Human Review Unit で OD-M5（urgentCriteria の扱い）と OD-M6（insulin テンプレート適用の可否）を確定し、**同 Unit 内で本 module を `INSULIN_RISKS_REVIEW_PENDING_MODULES` から削除する**（削除後は T-R-4c「risks 非空」が適用される）
+- **D-7: `dm_insulin_mixed_rapid_long` の insulin risks semantic Human Review — 2026-09-20 に完了・解消済み**
+  - Unit「insulin risks template clinical & semantic review」の Human Review により、本 module でも `hypoglycemia_risk` / `injection_site_reaction` の 2 token が支持できると判断され（Owner Decision OD-T1）、縮約後の insulin 標準テンプレートを適用した。これをもって temporary contract deferral は解消した
+  - `tests/risksContract.test.ts` の `INSULIN_RISKS_REVIEW_PENDING_MODULES`・`PENDING_NOTICE`・T-R-4d〜T-R-4g は**役割終了として完全撤去済み**（空の exception mechanism を将来用として残さない方針）。本 module は以後、他の insulin module と同じく T-R-4c が検査する
+  - 残る臨床判断は `template.urgentCriteria` の扱いのみで、これは D-10 が保持する（OD-M5 / OD-R5 / OD-T9）
 - **D-8: `allergy_h1_antihistamine_second_gen_oral` の `drug.drugClass` が bridge と不一致**
   - bridge: `["H1_ANTIHISTAMINE_SECOND_GEN"]` ⇔ canonical: `["H1_antihistamine_2nd_gen"]`（大文字小文字と token 自体の両方が異なる）
   - 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」の調査中に発覚。bridge ⇔ canonical の `drug.drugClass` 一致は 35 module 中 33 件で成立しており、不一致は本件と `dm_insulin_mixed_rapid_long`（D-2・解消済み）の 2 件のみだった
@@ -1037,7 +1044,8 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **D-10: `dm_insulin_mixed_rapid_long` の `template.urgentFlag` / `urgentCriteria` の型不整合**
   - `template.urgentFlag: true` でありながら `template.urgentCriteria: []`。正規型は `EmergencyCriteria`（`{seekUrgentCareIf, contactPrescriberIf}`。他 5 module が保持）であり、空配列はこれを満たさない
   - `dm_insulin_mixed_rapid_intermediate` にも同種の型逸脱がある（`urgentFlag: false` + `urgentCriteria: []`）
-  - **本 Unit では変更しない**（Owner Decision OD-M7）。別 Unit へ送る
+  - **corpus 実測〔2026-09-20 時点の historical observation〕**: insulin 8 module の `template.urgentFlag` は **4 通りに割れている** — `true` + object 3 件（`dm_insulin_rapid_analog` / `dm_insulin_regular` / `dm_insulin_intermediate`。3 件とも文言は同一）、`false` + `null` 2 件、`false` + `[]` 1 件、`true` + `[]` 1 件、キー自体なし 1 件（`dm_insulin_glp1_combination`）。`urgentFlag=true` の意味を規定した文書は存在せず、validator にも urgent 系の検査は 0 件
+  - **本 Unit では変更しない**（Owner Decision OD-M7 / OD-R5 / OD-T9）。urgent semantics drift として別 Unit へ送る
 - **D-3: `ModuleRisks.secondary` type drift**
   - `lib/types.ts` の `ModuleRisks` が `primary` / `conditional` のみを宣言し、`secondary` を持たない。一方 canonical JSON は 34/35 が `secondary` を保持し、`docs/JSON_STANDARD.md` JS-A の表も `primary` / `secondary` / `conditional` を規定している。**drift の向きは型側の追随漏れ**
   - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、この drift と D-1 のキー不正はいずれも `tsc` では検出できない
@@ -1052,7 +1060,19 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **D-6: 意味定義・語彙・field 存廃の未確定**
   - `risks.primary` と `risks.secondary` を分ける意味基準は Repository に定義が存在しない。**PENDING のまま**（Owner Decision OD-4）
   - risk identifier の vocabulary SSOT は作らない（Owner Decision OD-5）。`lib/structuredRoleVocabulary.ts` に相当するものは `risks` には存在しない
-  - `risks` field 自体の存廃（runtime 未参照であり `drug.search.prefixAliases` と同型の dead-field 判定条件を満たす）は今回判断しない（Owner Decision OD-9）。撤去には `docs/JSON_STANDARD.md` JS-A の改訂が前提
+  - `risks` field 自体の存廃（runtime 未参照であり `drug.search.prefixAliases` と同型の dead-field 判定条件を満たす）は今回判断しない（Owner Decision OD-9 / OD-T5）。撤去には `docs/JSON_STANDARD.md` JS-A の改訂が前提
+  - **corpus 実測〔2026-09-20 時点の historical observation〕**: `primary` と `secondary` の**両方**に出現する token が 6 種ある（`hypoglycemia_risk` P11/S13、`dehydration_risk` P6/S19、`injection_site_reaction` P7/S2、`gastrointestinal_symptoms` P10/S1、`liver_dysfunction_risk` P2/S5、`weight_gain_risk` P1/S3）。分類は corpus 上安定していない
+  - `ketoacidosis_risk_sglt2` の primary（自薬剤リスク）/ conditional（併用薬リスク）**二重用法**は今回再設計しない（Owner Decision OD-T5）
+- **D-11: 非 SGLT2 module に残存する `ketoacidosis_risk_sglt2 ← concomitant_sglt2`**
+  - 2026-09-20 の Unit「insulin risks template clinical & semantic review」で insulin 8 module から除去したが、**〔2026-09-20 時点の historical observation〕残り 15 module（いずれも非 insulin・非 SGLT2）に同一の conditional が残っている**。件数は current contract ではなく当該時点の実測値であり、以後の Unit で変動しうる
+  - 除去の根拠〔実測〕: insulin 製剤の電子添文（ライゾデグ配合注 / ノボラピッド注）には「ケトアシドーシス」の語が出現せず、**10.2 併用注意の SGLT2 阻害薬の臨床症状は「血糖降下作用の増強による低血糖症状」**である。一方 SGLT2 製剤側（ジャディアンス錠）は **11.1.3 重大な副作用にケトアシドーシス**を持ち、**8.6.1(2)** が発現しやすい条件として「インスリン分泌能の低下、インスリン製剤の減量や中止、過度な糖質摂取制限、食事摂取不良、感染症、脱水」を挙げる。すなわち帰属先は SGLT2 製剤であり、発火条件も「SGLT2 を併用していること」そのものではない
+  - SGLT2 含有 3 module が `ketoacidosis_risk_sglt2` / `dehydration_risk` を **primary** に持つのは電子添文（11.1.2 脱水 / 11.1.3 ケトアシドーシス）と整合しており、**変更対象ではない**
+  - **本 Unit では修正しない**（Owner Decision OD-T4 / OD-T8）。cross-corpus finding として別 Unit へ送る
+- **D-12: `concomitant_sglt2` の namespace が未定義**
+  - `rule.whenAny` に入る patient-state token の値域・設定主体・設定タイミングを定めた文書が存在しない。出現は canonical と PN5 / 本ファイルのテンプレートリテラルのみで、runtime / validator / test 参照は 0 件
+  - 同じ併用概念は bridge 由来の `addon_sickday_hold_sglt2_metformin`（20 module）と `clinicalTags: sglt2_inhibitor` として既に別 namespace で表現されている
+  - namespace が未定義であることが、`dm_insulin_mixed_rapid_long` で `whenAny` に scenario ID が入っていた defect（D-1）を機械的に検出できなかった一因である
+  - **本 Unit では定義しない**（Owner Decision OD-T6）。新しい namespace / token registry も作らない
 
 ## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
 

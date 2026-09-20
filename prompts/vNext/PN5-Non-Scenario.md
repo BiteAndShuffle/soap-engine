@@ -61,29 +61,21 @@ composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関�
 
 **インスリン注射系モジュール（drugClass に INSULIN_* を含む）の標準テンプレート:**
 
-dm_insulin_rapid_analog.json の risks 実績値（確認済み）に基づく。速効型・超速効型を問わず適用可能。
-
 ```json
 "risks": {
   "primary": [
     "hypoglycemia_risk",
     "injection_site_reaction"
   ],
-  "secondary": [
-    "dehydration_risk",
-    "glycemic_deterioration"
-  ],
-  "conditional": [
-    {
-      "risk": "ketoacidosis_risk_sglt2",
-      "rule": {
-        "whenAny": ["concomitant_sglt2"],
-        "whenAll": []
-      }
-    }
-  ]
+  "secondary": [],
+  "conditional": []
 }
 ```
+
+本テンプレートは 2026-09-20 の Owner Review により確定した現行 contract である（Owner Decision OD-T1）。
+同 Review で、旧テンプレートが `secondary` / `conditional` に保持していた 3 token は除去された。
+除去された内容は `addons`（sickday / counseling 系）側に既に表現があり、canonical から情報は失われていない。
+経緯の詳細は `prompts/vNext/HANDOFF.md` §6 を参照する。
 
 このテンプレートを起点とし、bridge の臨床記述に照らして追加・修正が必要な場合のみ変更する。
 変更がない場合はこのまま使用する。
