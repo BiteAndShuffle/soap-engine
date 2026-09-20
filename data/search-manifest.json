@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "4d61854c71de579b50676f323c020c16feb022393781671855649b1514e7e468",
+  "sourceHash": "a1bc8d5b1714295f690a47632bf1181b22b9ad8084fec6453a8fc43aa08f0a23",
   "moduleCount": 35,
   "scenarioCount": 1070,
   "modules": [
@@ -560,7 +560,7 @@
         "あぜらすちん"
       ],
       "drugClass": [
-        "H1_antihistamine_2nd_gen"
+        "H1_ANTIHISTAMINE_SECOND_GEN"
       ],
       "drugSpecificTags": [
         "h1_antihistamine_oral",

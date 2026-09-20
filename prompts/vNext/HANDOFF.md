@@ -1,7 +1,17 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「D-3 type parity repair」: `lib/types.ts` の `ModuleRisks` へ
+最終更新: 2026-09-20（Unit「D-8 drugClass canonical mismatch remediation」:
+`allergy_h1_antihistamine_second_gen_oral` の canonical `drug.drugClass` を bridge 逐語値
+`["H1_ANTIHISTAMINE_SECOND_GEN"]` へ修正し、`data/search-manifest.json` を正規 generator で
+再生成（差分は `sourceHash` と当該値の 2 箇所のみ）。**identifier normalization / bridge ⇔ canonical
+parity repair であり、臨床分類の変更ではない**（Owner Decision OD-D8-1）。修正後の `drug.drugClass`
+parity は 35/35。query `2nd` / `2n` / `2` の偶発的到達消失は許容（OD-D8-2。`second` / `h1` /
+`antihistamine` / 日本語経路 / ブランド・alias 経路は維持）。§6 の D-8 を完了化し、D-15〔bridge ⇔
+canonical の header / display divergence 8 件・記録のみ〕を追加。bridge / `composition.classKey` /
+`prompts/RULES.md` / `docs/JSON_STANDARD.md` / validator / audit / tests / `lib/` は無変更で、
+命名規約の明文化と再発防止 contract は D-9 のまま未着手（OD-D8-3）。
+同日先行: Unit「D-3 type parity repair」: `lib/types.ts` の `ModuleRisks` へ
 `secondary?: string[]` を追加し、canonical 2 キー contract との type parity を回復（§6 の D-3 を完了化）。
 pure type-contract parity repair であり、`primary` / `secondary` はいずれも optional のまま、
 semantic / values / runtime behavior・canonical・bridge・PN5・`docs/JSON_STANDARD.md`・validator・
@@ -1018,7 +1028,7 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **位置づけ**: 将来の schema cleanup / migration 候補。**現時点では blocker ではない**
 - **未確定**: solution・priority・実施時期は未確定
 
-## `risks` contract remediation の別 Unit 送り事項（D-1〜D-14・2026-09-20）
+## `risks` contract remediation の別 Unit 送り事項（D-1〜D-15・2026-09-20）
 
 2026-09-20 の 6 つの Unit の Owner Decision により、別 Unit へ送った事項。
 **各項目に記載した corpus 件数は当該時点の historical observation であり、current contract ではない。**
@@ -1068,11 +1078,18 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - Unit「insulin risks template clinical & semantic review」の Human Review により、本 module でも `hypoglycemia_risk` / `injection_site_reaction` の 2 token が支持できると判断され（Owner Decision OD-T1）、縮約後の insulin 標準テンプレートを適用した。これをもって temporary contract deferral は解消した
   - `tests/risksContract.test.ts` の `INSULIN_RISKS_REVIEW_PENDING_MODULES`・`PENDING_NOTICE`・T-R-4d〜T-R-4g は**役割終了として完全撤去済み**（空の exception mechanism を将来用として残さない方針）。本 module は以後、他の insulin module と同じく T-R-4c が検査する
   - 残る臨床判断は `template.urgentCriteria` の扱いのみで、これは D-10 が保持する（OD-M5 / OD-R5 / OD-T9）
-- **D-8: `allergy_h1_antihistamine_second_gen_oral` の `drug.drugClass` が bridge と不一致**
-  - bridge: `["H1_ANTIHISTAMINE_SECOND_GEN"]` ⇔ canonical: `["H1_antihistamine_2nd_gen"]`（大文字小文字と token 自体の両方が異なる）
-  - 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」の調査中に発覚。bridge ⇔ canonical の `drug.drugClass` 一致は 35 module 中 33 件で成立しており、不一致は本件と `dm_insulin_mixed_rapid_long`（D-2・解消済み）の 2 件のみだった
-  - `drug.drugClass` は検索コーパスと search-manifest へ投影されるため、canonical 側の値が検索到達性を決める。どちらを正とするかは未判断
-  - **本 Unit では修正しない**（Owner Decision OD-M8）。別 Unit で bridge / canonical どちらを正とするかを確定する
+- **D-8: `allergy_h1_antihistamine_second_gen_oral` の `drug.drugClass` が bridge と不一致 — 2026-09-20 に解消済み**
+  - **解消前の状態〔historical〕**: bridge `["H1_ANTIHISTAMINE_SECOND_GEN"]` ⇔ canonical `["H1_antihistamine_2nd_gen"]`（大文字小文字と token 自体の両方が異なる）
+  - 2026-09-20 の Unit「insulin mixed rapid/long 構造修復」の調査中に発覚。〔当時の観測〕bridge ⇔ canonical の `drug.drugClass` 一致は 35 module 中 33 件で成立しており、不一致は本件と `dm_insulin_mixed_rapid_long`（D-2・解消済み）の 2 件のみだった
+  - 2026-09-20 の Unit「D-8 drugClass canonical mismatch remediation」で、**canonical を bridge 逐語値 `["H1_ANTIHISTAMINE_SECOND_GEN"]` へ修正した**（Owner Decision OD-D8-1）。**bridge は無変更**。修正後の bridge ⇔ canonical `drug.drugClass` parity は **35/35**
+  - **これは臨床分類の変更ではない。** 両値は「第二世代 H1 受容体拮抗薬」という同一の分類を指しており、差は casing と序数表記（`SECOND` / `2nd`）のみである。本 Unit は identifier normalization / bridge ⇔ canonical parity repair であり、医療内容の判断を含まない
+  - **read-only investigation の実測**: canonical 値は初出 commit `625ac7e`（2026-05-23）からの birth value、bridge 値は初出 commit `10d1e2f`（2026-06-20）からの birth value であり、**いずれも一度も変更されていなかった**。canonical が bridge より 28 日先行しており、本 module の bridge は canonical 成立後に後追いで作成された back-fill である（同種の back-fill は corpus に 8/35 件あり、他 7 件は `drugClass` が逐語一致していた）。どちらの値を選んだかの理由を記録した文書は両 commit とも存在しない
+  - `drug.drugClass` は `lib/search.ts` の `globalCorpusTokens`（スコア 1 の部分一致層）と `data/search-manifest.json` へのみ投影される。`normalizeText` が `toLowerCase` と区切り除去を行うため **casing は検索挙動に影響せず**、実質的な差は `second` ⇔ `2nd` の語形のみだった
+  - **意図的に許容した到達性の消失**（Owner Decision OD-D8-2）: query `2nd` / `2n` / `2` による本 module への到達を失った。`second`（`drug.drugSpecificTags` 由来）/ `h1` / `antihistamine` / `gen` / `oral` / 日本語経路（`第二世代` / `抗ヒスタミン`）/ ブランド・alias 経路は**すべて維持**されている（修正前後の実測で差分はこの 3 query のみ）。`2nd` は明示的な search alias ではなく最下位 tier の偶発的到達であったため、bridge へ search keyword を追加しない。将来 `2nd` 到達が業務要件として必要と判明した場合は、正式な search contract として別途設計する
+  - `data/search-manifest.json` は `npm run generate:search-manifest` で正規再生成した（差分は `sourceHash` と当該 `drugClass` の 2 箇所のみ。手編集していない）
+  - `composition.classKey`（`h1_antihistamine_2nd_gen`）は**変更していない**。`classKey` は `drugClass` から導出されるフィールドではなく（`lower(drugClass) === classKey` の成立は 25/35）、当該 bridge は `classKey` を宣言していない
+  - 命名規約（`drug.drugClass` の UPPER_SNAKE。corpus 実測では 35/35 だが明文規定は Repository に存在しない）の明文化と再発防止 contract は **D-9 へ送った**（Owner Decision OD-D8-3）。本 Unit では `prompts/RULES.md` / `docs/JSON_STANDARD.md` / validator / audit / tests を変更していない
+  - 同一 module および他 module で発見された他の bridge ⇔ canonical 差分は **D-15 が保持する**（Owner Decision OD-D8-4）
 - **D-9: `drug.drugClass` の bridge 保持義務・parity 監査が未整備**
   - `drug.drugClass` は 35/35 の bridge が宣言しているが、`prompts/RULES.md` §4 MANDATORY_PRESERVATION_TARGETS に列挙されておらず、validator（`moduleValidator.ts` / `crossModuleValidator.ts` とも参照 0 件）にも `npm run audit` の 6 系統にも検査が存在しない。D-2 / D-8 がいずれも検出されないまま commit された原因
   - **本 Unit では RULES §4 へ広げない**（Owner Decision OD-M9）。再発防止 contract は別 Unit とする
@@ -1128,6 +1145,21 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 参考〔実測〕: メトホルミン含有 2 module については、メトグルコ錠電子添文が示す SGLT2 併用時の懸念（脱水→乳酸アシドーシス）は**自 module の `lactic_acidosis_risk`（primary）が既に覆っている**
   - addon は bridge 由来のため、被覆の補完には bridge 改訂＝ Owner の臨床判断が必要。**本 Unit では変更しない**（OD-N4）。SSOT 宣言と併せて別 Unit へ送る
   - 関連: `clinicalTags: sglt2_inhibitor` を持つのは corpus で 1 module のみで、同じ addon を持つ他 19 module は tagCatalog に持たない（clinicalTags drift）
+- **D-15: bridge ⇔ canonical の header / display divergence（D-8 調査由来・記録のみ）**
+  - 〔2026-09-20 実測〕D-8 の read-only investigation で、`drug.drugClass` 以外にも bridge 宣言値と canonical が一致しない箇所が **8 件**あることが判明した。**本項目は調査対象を失わないための記録であり、remediation には着手していない**（Owner Decision OD-D8-4）
+  - **8 件を同一原因・同一 remediation とみなしてはならない。** 医療・表示内容／構造 projection／生成規則依存候補が混在しており、正本の所在は項目ごとに異なる。**現時点でどちらの値が正しいかは判断していない**
+  - 対象 module: `allergy_h1_antihistamine_second_gen_oral`（6 件）
+    - `drug.genericName` — bridge「第二世代H1受容体拮抗薬」⇔ canonical「第二世代ヒスタミンH1受容体拮抗薬」。**医療・表示内容**であり Human Review 対象
+    - `drug.drugSpecificTags` — bridge `["antihistamine", "second_generation", "allergy", "oral"]` ⇔ canonical `["h1_antihistamine_oral", "second_gen_antihistamine"]`。検索コーパスへ投影される identifier 群であり、件数・語彙とも異なる
+    - `display.subtitle` — bridge「アレルギー症状に対する内服治療」⇔ canonical「アレグラ・クラリチン・ザイザル・ビラノア 他」。**生成規則依存候補**（`prompts/vNext/PN2-Drug-Header.md` に `display.subtitle` 確定ルールが存在するため、canonical 側が正規の生成結果である可能性がある）
+    - `display.drugClassLabel` — bridge「第二世代抗ヒスタミン薬」⇔ canonical「第二世代ヒスタミンH1受容体拮抗薬」。**医療・表示内容**。`drug.genericName` と同一文言の問題であり、切り離して判断できない
+    - `display.nodeLabelShort` — bridge「抗ヒスタミン内服」⇔ canonical「抗ヒスタミン薬」。表示ラベル
+    - `display.nodeKey` — bridge `antihistamine_second_gen_oral` ⇔ canonical `h1_antihistamine_oral`。**構造 projection**（canonical 側は `composition.nodeKey` と一致しており、projection 規則が優先している可能性がある）
+  - 対象 module: `dm_insulin_mixed_rapid_long`（2 件）
+    - `display.subtitle` — bridge「混合型インスリン製剤（超速効型＋持効型）」⇔ canonical「ライゾデグ」。上記 subtitle と同型の**生成規則依存候補**
+    - `display.nodeLabelShort` — bridge「混合型INS（超速効/持効）」⇔ canonical「混合型インスリン（超速効+持効）」。表示ラベル
+  - 〔2026-09-20 実測〕`display.title` / `display.nodeLabelLong` / `drug.route` / `drug.dosageForms` は 35/35 一致。`drug.drugClass` は D-8 の remediation により 35/35 一致
+  - 本項目は D-9（`drug.drugClass` の保持義務・parity 監査の未整備）とは別 Finding である。ただし parity 監査の対象範囲を決める際の入力になる
 
 ## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
 
