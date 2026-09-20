@@ -4543,17 +4543,7 @@
       "dehydration_risk",
       "renal_function_monitoring"
     ],
-    "conditional": [
-      {
-        "risk": "ketoacidosis_risk_sglt2",
-        "rule": {
-          "whenAny": [
-            "concomitant_sglt2"
-          ],
-          "whenAll": []
-        }
-      }
-    ]
+    "conditional": []
   },
   "searchConfig": {
     "minPrefixLen": 2,

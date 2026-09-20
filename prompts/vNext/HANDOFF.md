@@ -1,7 +1,13 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「insulin risks template clinical & semantic review」: PN5 insulin 標準テンプレートを
+最終更新: 2026-09-20（Unit「D-11 / D-12 cross-corpus risk attribution remediation」: 非 SGLT2 15 module から
+`ketoacidosis_risk_sglt2 ← concomitant_sglt2` を除去（誤帰属・未定義 trigger・producer/consumer 不在の
+legacy conditional の除去。DKA という臨床事実の否定ではなく、SGLT2 含有 3 module の primary は無変更）。
+`tests/fixtures/risksPreRuleBaseline.ts` の 15 行を `conditional: 0` へ追随。§6 の D-11 / D-12 を完了化し、
+D-13（`risks.conditional` が corpus 全件 `[]` の currently uninstantiated structure）/ D-14（SGLT2 併用表現の
+被覆不均一）を追加。PN5 / `lib/types.ts` / validator / runtime / `docs/` / bridge / manifest は無変更。
+同日先行: Unit「insulin risks template clinical & semantic review」: PN5 insulin 標準テンプレートを
 `primary: [hypoglycemia_risk, injection_site_reaction]` / `secondary: []` / `conditional: []` へ縮約し、
 insulin 8 module の canonical を統一（Owner Decision OD-T1）。`dm_insulin_mixed_rapid_long` の temporary
 deferral を解消し `INSULIN_RISKS_REVIEW_PENDING_MODULES` と T-R-4d〜T-R-4g を完全撤去。§6 の D-7 を完了化し、
@@ -998,9 +1004,9 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **位置づけ**: 将来の schema cleanup / migration 候補。**現時点では blocker ではない**
 - **未確定**: solution・priority・実施時期は未確定
 
-## `risks` contract remediation の別 Unit 送り事項（D-1〜D-12・2026-09-20）
+## `risks` contract remediation の別 Unit 送り事項（D-1〜D-14・2026-09-20）
 
-2026-09-20 の 3 つの Unit の Owner Decision により、別 Unit へ送った事項。
+2026-09-20 の 4 つの Unit の Owner Decision により、別 Unit へ送った事項。
 **各項目に記載した corpus 件数は当該時点の historical observation であり、current contract ではない。**
 
 - Unit 1「PN5 non-insulin risks contract remediation」: PN5 §risks の生成契約（non-insulin = 固定 empty）・
@@ -1013,6 +1019,11 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   `primary` 2 token のみへ縮約し、insulin 8 module の canonical を統一。`dm_insulin_mixed_rapid_long` の
   temporary deferral を解消し、deferral machinery を完全撤去。bridge / validator / `lib/types.ts` /
   runtime / `docs/` は無変更（Owner Decision OD-T1〜OD-T9）
+- Unit 4「D-11 / D-12 cross-corpus risk attribution remediation」: 非 SGLT2 15 module から
+  `ketoacidosis_risk_sglt2 ← concomitant_sglt2` を除去し、`tests/fixtures/risksPreRuleBaseline.ts` の
+  該当 15 行を追随。SGLT2 含有 3 module の primary・PN5・`lib/types.ts`（`ConditionalRisk` /
+  `whenAny` / `whenAll`）・validator / runtime / `docs/` / bridge / manifest は無変更
+  （Owner Decision OD-N1〜OD-N8）
 
 `risks` 自体の Lifecycle 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5（Classification Pending）。
 
@@ -1063,16 +1074,31 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - `risks` field 自体の存廃（runtime 未参照であり `drug.search.prefixAliases` と同型の dead-field 判定条件を満たす）は今回判断しない（Owner Decision OD-9 / OD-T5）。撤去には `docs/JSON_STANDARD.md` JS-A の改訂が前提
   - **corpus 実測〔2026-09-20 時点の historical observation〕**: `primary` と `secondary` の**両方**に出現する token が 6 種ある（`hypoglycemia_risk` P11/S13、`dehydration_risk` P6/S19、`injection_site_reaction` P7/S2、`gastrointestinal_symptoms` P10/S1、`liver_dysfunction_risk` P2/S5、`weight_gain_risk` P1/S3）。分類は corpus 上安定していない
   - `ketoacidosis_risk_sglt2` の primary（自薬剤リスク）/ conditional（併用薬リスク）**二重用法**は今回再設計しない（Owner Decision OD-T5）
-- **D-11: 非 SGLT2 module に残存する `ketoacidosis_risk_sglt2 ← concomitant_sglt2`**
-  - 2026-09-20 の Unit「insulin risks template clinical & semantic review」で insulin 8 module から除去したが、**〔2026-09-20 時点の historical observation〕残り 15 module（いずれも非 insulin・非 SGLT2）に同一の conditional が残っている**。件数は current contract ではなく当該時点の実測値であり、以後の Unit で変動しうる
-  - 除去の根拠〔実測〕: insulin 製剤の電子添文（ライゾデグ配合注 / ノボラピッド注）には「ケトアシドーシス」の語が出現せず、**10.2 併用注意の SGLT2 阻害薬の臨床症状は「血糖降下作用の増強による低血糖症状」**である。一方 SGLT2 製剤側（ジャディアンス錠）は **11.1.3 重大な副作用にケトアシドーシス**を持ち、**8.6.1(2)** が発現しやすい条件として「インスリン分泌能の低下、インスリン製剤の減量や中止、過度な糖質摂取制限、食事摂取不良、感染症、脱水」を挙げる。すなわち帰属先は SGLT2 製剤であり、発火条件も「SGLT2 を併用していること」そのものではない
-  - SGLT2 含有 3 module が `ketoacidosis_risk_sglt2` / `dehydration_risk` を **primary** に持つのは電子添文（11.1.2 脱水 / 11.1.3 ケトアシドーシス）と整合しており、**変更対象ではない**
-  - **本 Unit では修正しない**（Owner Decision OD-T4 / OD-T8）。cross-corpus finding として別 Unit へ送る
-- **D-12: `concomitant_sglt2` の namespace が未定義**
-  - `rule.whenAny` に入る patient-state token の値域・設定主体・設定タイミングを定めた文書が存在しない。出現は canonical と PN5 / 本ファイルのテンプレートリテラルのみで、runtime / validator / test 参照は 0 件
-  - 同じ併用概念は bridge 由来の `addon_sickday_hold_sglt2_metformin`（20 module）と `clinicalTags: sglt2_inhibitor` として既に別 namespace で表現されている
-  - namespace が未定義であることが、`dm_insulin_mixed_rapid_long` で `whenAny` に scenario ID が入っていた defect（D-1）を機械的に検出できなかった一因である
-  - **本 Unit では定義しない**（Owner Decision OD-T6）。新しい namespace / token registry も作らない
+- **D-11: 非 SGLT2 module の `ketoacidosis_risk_sglt2 ← concomitant_sglt2` — 2026-09-20 に解消済み**
+  - Unit「D-11 / D-12 cross-corpus risk attribution remediation」（Owner Decision OD-N1 / OD-N8）で、**非 SGLT2 の 15 module から当該 conditional を除去**した。`primary` / `secondary` は無変更
+  - **除去は DKA という臨床事実の否定ではない。** 除去したのは ① 非 SGLT2 module への誤帰属 ② 未定義 trigger `concomitant_sglt2` ③ producer / consumer を持たない legacy conditional の 3 点である
+  - 根拠〔実測・一次情報〕: 自薬剤側の電子添文に DKA の記載がないことを 3 系統で確認した — **インスリン**（ライゾデグ配合注 / ノボラピッド注: DKA 記載なし。10.2 併用注意の SGLT2 阻害薬は「血糖降下作用の増強による低血糖症状」）、**メトホルミン**（メトグルコ錠: DKA 記載なし。SGLT2 阻害剤は 10.2.1「利尿作用を有する薬剤」として**脱水→乳酸アシドーシス**、10.2.2 で**低血糖**）、**DPP-4**（ジャヌビア錠: DKA・脱水とも記載なし。SGLT2 併用注意は**低血糖**）。さらに非 SGLT2 の 15 bridge すべてで「ケトアシドーシス」の出現が **0 件**
+  - 一方 SGLT2 製剤側（ジャディアンス錠）は **11.1.2 重大な副作用 脱水** / **11.1.3 重大な副作用 ケトアシドーシス** を持ち、**8.6** で正常血糖でも DKA に至りうること、**8.6.1(2)** で発現しやすい条件（インスリン分泌能の低下、**インスリン製剤の減量や中止**、過度な糖質摂取制限、食事摂取不良、感染症、脱水）を規定する。すなわち帰属先は SGLT2 製剤であり、発火条件も「SGLT2 を併用していること」そのものではない
+  - **SGLT2 含有 3 module（`dm_sglt2_oral` / `cardiorenal_sglt2_oral` / `dm_dpp4_sglt2_combination_oral`）が `ketoacidosis_risk_sglt2` / `dehydration_risk` を primary に持つ状態は電子添文と整合しており、変更していない**（OD-N8）
+  - 併せて `ketoacidosis_risk_sglt2` の primary（自薬剤リスク）/ conditional（併用薬リスク）二重用法は自然解消した。新 identifier は作っていない（OD-N2）
+  - SGLT2 併用時の実務上の注意は bridge 由来の `addon_sickday_hold_sglt2_metformin`（「脱水時は休薬が必要な場合があります」「自己判断で中止せず、処方医へご相談ください」）が引き続き担っており、**canonical から臨床情報は失われていない**
+- **D-12: `concomitant_sglt2` の namespace 未定義 — 2026-09-20 に解消済み（namespace を作らない形で）**
+  - D-11 の remediation により `concomitant_sglt2` は **canonical から消滅**（出現 0 件）。残る出現は本ファイルの historical record のみ
+  - **namespace は作らなかった**（Owner Decision OD-N3）。定義元・producer・consumer のいずれも存在しなかったため、新しい patient-state vocabulary / token registry は導入していない。patient-state layer の設計も行っていない（OD-N5）
+  - 同じ併用概念は bridge 由来の `addon_sickday_hold_sglt2_metformin` と `clinicalTags: sglt2_inhibitor` が別 namespace で表現している。ただし **addon / scenario を SGLT2 併用表現の正式 SSOT とは宣言していない**（OD-N4。被覆不均一のため別 Unit）
+  - namespace が未定義であったことが、`dm_insulin_mixed_rapid_long` で `whenAny` に scenario ID が入っていた defect（D-1）を機械的に検出できなかった一因である、という観察は記録として保持する
+- **D-13: `risks.conditional` / `ConditionalRisk` は currently uninstantiated structure（dead-structure candidate）**
+  - 〔2026-09-20 時点 / HEAD `b9c67b4` からの本 Unit 後の実測〕**corpus 全 35 module で `risks.conditional` が `[]`** であり、`ConditionalRisk`（`lib/types.ts`）の `risk` / `rule.whenAny` / `rule.whenAll` に実データを持つ module は **0 件**
+  - `rule.whenAll` は本 Unit 以前から corpus 全 15 件で `[]` であり、**一度も値が入ったことがない**
+  - PN5 の現行契約は insulin / non-insulin 両分岐とも `"conditional": []` を生成するため、**現行の生成経路からこの構造が instantiate されることはない**
+  - **"dead structure" と断定しない。** 型・`whenAny` / `whenAll`・`ModuleRisks.conditional` はいずれも本 Unit で削除していない（Owner Decision OD-N7）。存廃は `docs/DEVELOPMENT_STANDARD.md` §10.5 **GG-5**（`risks` field の Lifecycle）と併せて別 Unit で判断する
+  - PN5 の「`conditional` は必ず新形式を使用する。旧形式 `{ "condition": ..., "risk": ... }` は使用しない」という形式規則も保持している（将来 conditional を使う場合の規定）
+- **D-14: SGLT2 併用表現の被覆不均一（addon 集合と conditional 集合の過去不一致）**
+  - 〔2026-09-20 時点の historical observation〕`addon_sickday_hold_sglt2_metformin` 保有は **20 module**、除去前の conditional 保有は **15 module** で、**どちらも他方の部分集合ではなかった**（共通 12 / addon のみ 8 / conditional のみ 3）。両表現は一度も同期されたことがない
+  - **addon を持たない 3 module**: `dm_dpp4_biguanide_combination_oral` / `dm_thiazolidinedione_biguanide_combination_oral` / `dm_imeglimin_oral`。うち後者 2 件は **bridge に SGLT2 の記述が 0 件**であり、SGLT2 併用概念への接点が canonical にも bridge にも存在しない
+  - 参考〔実測〕: メトホルミン含有 2 module については、メトグルコ錠電子添文が示す SGLT2 併用時の懸念（脱水→乳酸アシドーシス）は**自 module の `lactic_acidosis_risk`（primary）が既に覆っている**
+  - addon は bridge 由来のため、被覆の補完には bridge 改訂＝ Owner の臨床判断が必要。**本 Unit では変更しない**（OD-N4）。SSOT 宣言と併せて別 Unit へ送る
+  - 関連: `clinicalTags: sglt2_inhibitor` を持つのは corpus で 1 module のみで、同じ addon を持つ他 19 module は tagCatalog に持たない（clinicalTags drift）
 
 ## Static / Local First — file:// deployment 個別動作確認の残項目（2026-08-15）
 

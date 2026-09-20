@@ -77,28 +77,32 @@ export interface PreRuleRisksBaselineRow {
  * transfer defect（bridge 宣言値が canonical へ転記されていなかった）を修復した結果 insulin
  * 分岐へ移った。同日の Unit「insulin risks template clinical & semantic review」で insulin
  * 標準テンプレートが適用され、以後は他の insulin module と同じく T-R-4c が検査する。
+ *
+ * 2026-09-20 の Unit「D-11 / D-12 cross-corpus risk attribution remediation」で、収載 15 module の
+ * `conditional` 件数を 1 → 0 へ更新した（`ketoacidosis_risk_sglt2 ← concomitant_sglt2` の除去。
+ * Owner Decision OD-N1）。**`primary` / `secondary` の件数は OD-3 により非遡及のまま変更していない。**
  */
 export const PRE_RULE_RISKS_BASELINE: PreRuleRisksBaselineRow[] = [
   { moduleId: 'allergy_h1_antihistamine_eye_drops', primary: 1, secondary: 4, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'allergy_h1_antihistamine_second_gen_oral', primary: 2, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'allergy_leukotriene_receptor_antagonist_oral', primary: 2, secondary: 1, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'cardiorenal_sglt2_oral', primary: 3, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_alpha_glucosidase_inhibitor_oral', primary: 1, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_alpha_glucosidase_inhibitor_oral', primary: 1, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_biguanide_metformin_oral', primary: 2, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_dpp4_biguanide_combination_oral', primary: 4, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_dpp4_oral', primary: 3, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_dpp4_biguanide_combination_oral', primary: 4, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_dpp4_oral', primary: 3, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_dpp4_sglt2_combination_oral', primary: 5, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_dpp4_thiazolidinedione_combination_oral', primary: 4, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_epalrestat_oral', primary: 1, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', primary: 4, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_glinide_alpha_glucosidase_inhibitor_combination_oral', primary: 2, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_glinide_oral', primary: 1, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_glp1ra_injection', primary: 4, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_glp1ra_semaglutide_oral', primary: 4, secondary: 1, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_imeglimin_oral', primary: 1, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_dpp4_thiazolidinedione_combination_oral', primary: 4, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_epalrestat_oral', primary: 1, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_gip_glp1ra_tirzepatide_injection', primary: 4, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_glinide_alpha_glucosidase_inhibitor_combination_oral', primary: 2, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_glinide_oral', primary: 1, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_glp1ra_injection', primary: 4, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_glp1ra_semaglutide_oral', primary: 4, secondary: 1, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_imeglimin_oral', primary: 1, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
   { moduleId: 'dm_sglt2_oral', primary: 3, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_sulfonylurea_oral', primary: 1, secondary: 3, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_thiazolidinedione_biguanide_combination_oral', primary: 4, secondary: 4, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_thiazolidinedione_pioglitazone_oral', primary: 3, secondary: 2, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
-  { moduleId: 'dm_thiazolidinedione_sulfonylurea_combination_oral', primary: 3, secondary: 4, conditional: 1, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_sulfonylurea_oral', primary: 1, secondary: 3, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_thiazolidinedione_biguanide_combination_oral', primary: 4, secondary: 4, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_thiazolidinedione_pioglitazone_oral', primary: 3, secondary: 2, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
+  { moduleId: 'dm_thiazolidinedione_sulfonylurea_combination_oral', primary: 3, secondary: 4, conditional: 0, keys: ['primary', 'secondary', 'conditional'] },
 ]

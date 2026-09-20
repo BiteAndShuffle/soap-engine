@@ -4109,17 +4109,7 @@
       "dehydration_risk",
       "weight_gain_risk"
     ],
-    "conditional": [
-      {
-        "risk": "ketoacidosis_risk_sglt2",
-        "rule": {
-          "whenAny": [
-            "concomitant_sglt2"
-          ],
-          "whenAll": []
-        }
-      }
-    ]
+    "conditional": []
   },
   "searchConfig": {
     "minPrefixLen": 2,
