@@ -1,7 +1,20 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-21（Unit「D-15c drugSpecificTags preservation / parity」:
+最終更新: 2026-09-21（Unit「D-15b nodeKey bridge header drift repair」:
+`allergy_h1_antihistamine_second_gen_oral` の **bridge header** `display.nodeKey` を
+`antihistamine_second_gen_oral` → `h1_antihistamine_oral` へ 1 行修正し、bridge ⇔ canonical parity を
+**35/35 へ回復**した（Owner Decision OD-D15b-1〜6）。**canonical 35 件・search-manifest・`lib/` / `app/` /
+`scripts/` / `tests/` はすべて無変更**で、新しい audit / validator も追加していない。これは bridge 値を
+authoring hint へ降格した closure ではなく、**back-fill 由来の machine identifier drift を Owner 承認の
+もとで修復し、PN2 fallback 経路（bridge `display.nodeKey` → canonical `composition.nodeKey`）で current
+canonical を決定論的に再生成できる状態へ戻した**ものである。あわせて `docs/JSON_STANDARD.md`
+JS-A-composition の `nodeKey` 行へ「代表的な形式例であり、必須の命名規則ではない」旨の clarification を
+追加（`{classKey}_{route}` を strict contract 化しない・OD-D15b-4）。`classKey` ↔ `nodeKey` の関係は
+Q-J1 では包含できない別論点として §6 へ Finding 候補として記録（remediation なし・OD-D15b-5）。
+§6 の D-15b を完了化し、**親 D-15 は OPEN 維持**（D-15d / D-15e は未着手。残存 divergence 5 → 4 件）。
+`prompts/vNext/PN2-Drug-Header.md` は変更していない（生成規則自体は変わらないため・Owner 確認済み）。
+同日先行: Unit「D-15c drugSpecificTags preservation / parity」:
 `allergy_h1_antihistamine_second_gen_oral` の canonical `drug.drugSpecificTags` を bridge 宣言値
 `["antihistamine", "second_generation", "allergy", "oral"]` へ修正し、`data/search-manifest.json` を
 正規 generator で再生成。あわせて **bridge-owned exact preservation contract** を導入した
@@ -1193,16 +1206,16 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **D-15（親 Finding・OPEN）: bridge ⇔ canonical の header / display divergence（D-8 調査由来）**
   - 〔2026-09-20 実測〕D-8 の read-only investigation で、`drug.drugClass` 以外にも bridge 宣言値と canonical が一致しない箇所が **8 件**あることが判明した。2026-09-21 の read-only investigation で corpus 全 35 module × 11 field を再実測し、**8 件すべてが現存・新規 divergence なし**であることを確認したうえで、Owner Decision OD-D15-8 により**子 Unit D-15a〜D-15e へ分割**した
   - **8 件を同一原因・同一 remediation とみなしてはならない。** 医療・表示内容／検索 identifier／構造 projection／既存生成規則の適用対象が混在しており、正本の所在は項目ごとに異なる
-  - **本親 Finding は全子 Unit が完了するまで closed にしない。** 現在 **D-15a / D-15c が完了**、**D-15b / D-15d / D-15e は未着手**。残存 divergence は **5 件**（`drug.genericName` 1 / `display.drugClassLabel` 1 / `display.nodeLabelShort` 2 / `display.nodeKey` 1）
+  - **本親 Finding は全子 Unit が完了するまで closed にしない。** 現在 **D-15a / D-15b / D-15c が完了**、**D-15d / D-15e は未着手**。残存 divergence は **4 件**（`drug.genericName` 1 / `display.drugClassLabel` 1 / `display.nodeLabelShort` 2）
   - 〔2026-09-21 実測・調査で判明した構造事実〕
     - canonical では `drug.genericName == display.drugClassLabel` が **35/35** で成立する（undocumented だが例外なし）。bridge 側で両方を宣言する 19 module のうち 18 は同値で、**不一致は H1 oral の bridge のみ**。したがってこの 2 field は切り離して決められない
     - `display.title` / `subtitle` / `drugClassLabel` は bridge の **16〜17 module が宣言していない**。これら 3 field は「全 bridge が宣言する preservation field」ではない（`genericName` / `drugSpecificTags` / `nodeLabelShort` / `nodeLabelLong` / `nodeKey` は 35/35 宣言）
-    - canonical `display.nodeKey == composition.nodeKey` は **35/35**（`docs/JSON_STANDARD.md` JS-A-display の明文規則）。bridge `display.nodeKey == canonical composition.nodeKey` は 34/35 で、例外は H1 oral のみ
+    - canonical `display.nodeKey == composition.nodeKey` は **35/35**（`docs/JSON_STANDARD.md` JS-A-display の明文規則）。bridge `display.nodeKey == canonical composition.nodeKey` は調査時点で 34/35（例外は H1 oral のみ）だったが、**D-15b の bridge header drift 修復により 35/35 へ回復済み**
     - `display.nodeLabelShort` は insulin family 7/8 が略記「◯◯INS」、allergy family が剤形付き。**いずれも bridge 値の方が family 規約に沿う**
     - 対象 8 件は bridge / canonical とも **birth value のまま一度も変更されていない**
   - **子 Unit**
     - **D-15a: `display.subtitle` legacy remediation — 2026-09-21 に完了**（下記）
-    - **D-15b: `display.nodeKey` contract investigation — 未着手**。Owner Decision OD-D15-2 により、Option A/B/C を選ばず **bounded read-only Unit として分離**した。理由: canonical 内部の `display.nodeKey == composition.nodeKey` は 35/35 成立する一方、H1 oral の current canonical nodeKey（`h1_antihistamine_oral`）は JS-A の `{classKey}_{route}` / `{classKey}_{formulationType}` のどちらにも該当せず（classKey は `h1_antihistamine_2nd_gen`）、bridge mismatch だけを見て片側へ寄せると別の nodeKey contract 問題を固定しかねない。次回調査項目: ① JS-A nodeKey 規則の正確な適用範囲 ② H1 oral nodeKey の birth / history ③ runtime consumer ④ `composition.classKey` との独立性 ⑤ nodeKey 変更時の影響範囲
+    - **D-15b: `display.nodeKey` bridge header drift repair — 2026-09-21 に完了**（下記）
     - **D-15c: `drug.drugSpecificTags` preservation / parity — 2026-09-21 に完了**（下記）
     - **D-15d: `drug.genericName` + `display.drugClassLabel` Human Review — 未着手**。3 候補（canonical「第二世代ヒスタミンH1受容体拮抗薬」／ bridge generic「第二世代H1受容体拮抗薬」／ bridge label「第二世代抗ヒスタミン薬」）のいずれを正式表示語とするかは **AI では確定しない**。architecture 上は canonical で成立している `drug.genericName == display.drugClassLabel` の同値関係を維持する方向とする。正式文言確定後に bridge / canonical のどちらを改訂するかを決める
     - **D-15e: `display.nodeLabelShort` Human Review — 未着手**。H1 oral（bridge「抗ヒスタミン内服」⇔ canonical「抗ヒスタミン薬」）と `dm_insulin_mixed_rapid_long`（bridge「混合型INS（超速効/持効）」⇔ canonical「混合型インスリン（超速効+持効）」）の 2 件。**bridge 値の方が family naming に整合する**という実測を判断材料として保持するが、UI 表示文言のため現時点では修正しない
@@ -1218,7 +1231,29 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **検索到達性の変化なし。** 16 query（ブランド名・日本語・latin）で修正前後を実測し**差分 0 件**。旧 subtitle のブランド名トークンは `brandNames` / alias 経由で既に到達可能であったため、失った到達はない
   - 副作用の確認〔実測〕: mixed insulin は修正後 `title` / `subtitle` / `drugClassLabel` / `nodeLabelLong` が同値になるが、PN2 はこれを明示的に許容しており先例 `dm_insulin_rapid_analog` が 4 field 同値で実在する。また subtitle の module 間重複は既存実績がある（heparinoid 4 件・SGLT2 2 件）ため、H1 oral と leukotriene が同一 subtitle になることも逸脱ではない
   - **contract は追加していない**（OD-D15-7）: `prompts/RULES.md` §4 への昇格・audit・validator check・regression test のいずれも新設していない。bridge / PN2 / RULES / `lib/` / `app/` / `docs/` / `tests/` / `scripts/` は無変更
-  - 軽微 cleanup 候補: `lib/search.ts` の 2 箇所のコメント（L42 / L211）は、ゴースト一致問題の実例として H1 oral の**旧** subtitle「アレグラ・クラリチン・ザイザル・ビラノア 他」を引用しており、本 Unit 後は実在データ例として陳腐化する。**`SEPARATOR_PATTERN` の設計理由そのものは有効**であり search behavior にも影響しないため、本 Unit では `lib/**` を無変更のまま維持した（Owner Decision）。`tests/risksContract.test.ts` の D-3 JSDoc・PN7「## 参照」の `prompts/RULES.md §4` 重複 2 行とあわせ、**documentation / comment cleanup Unit へまとめる候補**とする
+  - 軽微 cleanup 候補: `lib/search.ts` の 2 箇所のコメント（L42 / L211）は、ゴースト一致問題の実例として H1 oral の**旧** subtitle「アレグラ・クラリチン・ザイザル・ビラノア 他」を引用しており、本 Unit 後は実在データ例として陳腐化する。**`SEPARATOR_PATTERN` の設計理由そのものは有効**であり search behavior にも影響しないため、本 Unit では `lib/**` を無変更のまま維持した（Owner Decision）。`tests/risksContract.test.ts` の D-3 JSDoc・PN7「## 参照」の `prompts/RULES.md §4` 重複 2 行・`docs/OPEN_DESIGN_QUESTIONS.md` Q-J1 の現状表が heparinoid spray を欠いている件（D-15b で観測）とあわせ、**documentation / comment cleanup Unit へまとめる候補**とする
+- **D-15b: `display.nodeKey` の bridge header drift — 2026-09-21 に解消済み（bridge 1 行修復による parity 回復）**
+  - **解消前の状態〔historical〕**: `allergy_h1_antihistamine_second_gen_oral` の bridge `display.nodeKey` が `antihistamine_second_gen_oral`、canonical の `display.nodeKey` / `composition.nodeKey` がともに `h1_antihistamine_oral` で、corpus 唯一の不一致だった（34/35 は一致）
+  - 2026-09-21 の Unit「D-15b nodeKey bridge header drift repair」で、**bridge header の `display.nodeKey` 1 行を `h1_antihistamine_oral` へ修正**した（Owner Decision OD-D15b-2）。**canonical 35 件・`data/search-manifest.json`・`lib/` / `app/` / `scripts/` / `tests/` はすべて無変更**
+  - **本 closure は「bridge 値を authoring hint として許容した」ものではない。** back-fill 由来で fallback input 側に入り込んだ machine identifier の drift を Owner 承認のもとで修正し、**bridge ⇔ canonical parity を回復**したものである。`prompts/vNext/HANDOFF.md` §7「bridge は読み取り専用」に対する例外であり、bridge **本文（SCENARIOS_START〜END）・STATUS・他 header フィールドは無変更**（前例: `e6756d4` の corpus 横断 bridge header 改訂）
+  - **source hierarchy（Owner Decision OD-D15b-1・確定）**
+    1. bridge に `composition.nodeKey` が明記されている場合 → それが canonical `composition.nodeKey` の source（corpus 17/35 が該当し、17/17 一致）
+    2. bridge に `composition:` ブロックがない場合 → bridge `display.nodeKey` が canonical `composition.nodeKey` の **authoritative fallback source**（`prompts/vNext/PN2-Drug-Header.md` のフォールバック表「display.nodeKey をそのままコピー」）。**単なる authoring hint ではない**
+    3. canonical `composition.nodeKey` → canonical structural identifier
+    4. canonical `display.nodeKey` → `composition.nodeKey` の display-side projection（`lib/types.ts` L799 / `docs/JSON_STANDARD.md` JS-A-display）
+  - **修復の効果**: 修正後は PN2 の fallback 経路（bridge `display.nodeKey` → canonical `composition.nodeKey`）で **current canonical を決定論的に再生成できる**。bridge ⇔ canonical `display.nodeKey` parity と bridge `display.nodeKey` ⇔ canonical `composition.nodeKey` parity はいずれも **35/35** へ回復した
+  - **canonical internal parity（OD-D15b-3）**: `display.nodeKey == composition.nodeKey` は canonical contract として維持する（35/35 成立）。**新しい audit / validator は追加していない**（違反実績がないため）
+  - **naming convention（OD-D15b-4）**: `{classKey}_{route}` / `{classKey}_{formulationType}` を**厳格 contract 化していない**。`docs/JSON_STANDARD.md` JS-A-composition の当該行へ「代表的な形式例であり、必須の命名規則ではない。個別 module の設計判断により他の形式を取り得る」という clarification を追加した。**個別例外の意味論は新規 contract 化していない**
+  - **canonical 側を動かさなかった理由〔実測〕**: ① canonical 3 値（`display.nodeKey` / `composition.nodeKey` / `classKey`）は初出 commit `625ac7e`（2026-05-23）の birth value で**一度も変更されていない** ② bridge は 28 日後の back-fill `10d1e2f`（2026-06-20）で、同じ波の他 bridge が canonical を逐語で写しているのに本 module だけ写していない ③ canonical の `h1_antihistamine_oral` は兄弟 family（H1 点眼 `h1_antihistamine_ophthalmic` / GLP-1 `glp1ra_oral`・`glp1ra_injection`）と同形 ④ canonical 側を動かすと、コミット済み生成物（`data/search-manifest.json`・静的 `out/`）に載る identifier の rename になる
+  - **nodeKey の consumer〔実測〕**: `display.nodeKey` の production runtime consumer は **0 件**。`composition.nodeKey` も runtime（UI / merge / persona / routing / 永続状態）からは読まれず、**`data/search-manifest.json` への投影**（`lib/searchManifest.ts`）と **`prompts/RULES.md` §14 の生成時判定（`_injection` を含むか）**、および `tests/searchCoverage.test.ts` の manifest ⇔ canonical 動的比較のみが consumer である。search corpus（`globalTags`）には入らないため検索一致には寄与しない
+  - **旧記述の訂正**: 本項目は D-15 調査時に「H1 oral の canonical nodeKey は JS-A の `{classKey}_{route}` / `{classKey}_{formulationType}` のどちらにも該当しない」と記録していたが、本 Unit の実測により ① JS-A-composition の当該行は**規範文言（MUST / 禁止 / ERROR）を持たない記述的 pattern** ② 非該当は **7/35**（heparinoid 4 = `nodeKey == classKey`・CMRI = formulationType 枝・tirzepatide = 成分入り・H1 oral）で、うち heparinoid 4 件は DP-02 が明示的に許容し Q-J1 が保留登録している ③ H1 oral の pattern 不一致は **nodeKey ではなく `classKey`（`h1_antihistamine_2nd_gen`）側に由来する**、ことが判明した。**「H1 oral の nodeKey が JS-A 違反」という評価は取り下げる**
+  - **分離事項（OD-D15b-6）**: requiredness / uniqueness contract / identifier lifecycle / rename・migration policy / classKey naming semantics はいずれも別 Decision のまま未着手
+- **Finding 候補（記録のみ・remediation なし）: `composition.classKey` ↔ `composition.nodeKey` の関係**
+  - D-15b の調査で分離した論点（Owner Decision OD-D15b-5）。**新しい Q-ID は払い出していない**
+  - `docs/OPEN_DESIGN_QUESTIONS.md` **Q-J1** は「derm 3系 `composition.classKey` の剤形込み設計」、すなわち heparinoid で classKey に剤形名が含まれ `classKey == nodeKey` となっている問題を扱う
+  - 一方 H1 oral は「**同一 H1 family 内で `_2nd_gen` により classKey が分岐している**」（`allergy_h1_antihistamine_eye_drops` は `classKey = h1_antihistamine`、H1 oral は `classKey = h1_antihistamine_2nd_gen`）という別論点であり、**Q-J1 だけでは完全には包含できない**
+  - 本論点は DP-02 の class-level S 統合（classKey が同じ module 同士が統合候補になる）および将来の composition 設計に接続するため、**現時点では remediation しない**。独立 Finding 候補として保持し、将来の Owner Decision で扱う
+  - 関連〔実測〕: Q-J1 の現状表は cream / lotion / ointment の 3 件を列挙しているが、corpus には **spray を含む 4 件**が存在する（表が 1 件分 stale）。**本 Unit では修正せず**、documentation cleanup 候補へ追加した（下記）
 - **D-15c: `drug.drugSpecificTags` の bridge ⇔ canonical 不一致 — 2026-09-21 に解消済み**
   - **解消前の状態〔historical〕**: `allergy_h1_antihistamine_second_gen_oral` の canonical が `["h1_antihistamine_oral", "second_gen_antihistamine"]`、bridge が `["antihistamine", "second_generation", "allergy", "oral"]` で、corpus 唯一の不一致だった（34/35 は逐語一致）。両値とも birth value で一度も変更されていない（canonical `625ac7e` 2026-05-23 ／ bridge `10d1e2f` 2026-06-20 の back-fill）
   - 2026-09-21 の Unit「D-15c drugSpecificTags preservation / parity」で、**canonical を bridge 宣言値へ修正**したうえで preservation contract を導入した（Owner Decision OD-D15c-1〜8）。**bridge は無変更**。修正後の parity は **35/35**

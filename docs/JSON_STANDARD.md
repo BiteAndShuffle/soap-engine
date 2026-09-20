@@ -115,7 +115,7 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 
 | フィールド | 型 | 備考 |
 |---|---|---|
-| `nodeKey` | string | `{classKey}_{route}` または `{classKey}_{formulationType}` |
+| `nodeKey` | string | `{classKey}_{route}` または `{classKey}_{formulationType}`（代表的な形式例であり、必須の命名規則ではない。個別 module の設計判断により他の形式を取り得る） |
 | `classKey` | string | 薬効クラス英略。剤形分離原則適用時は剤形を含めてもよい（DP-02）|
 | `clinicalDomain` | string | — |
 | `sMergeDomain` | string | — |

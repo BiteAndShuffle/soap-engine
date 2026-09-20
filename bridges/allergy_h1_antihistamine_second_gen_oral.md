@@ -303,7 +303,7 @@ display:
   drugGeneric: "第二世代H1受容体拮抗薬"
   nodeLabelShort: "抗ヒスタミン内服"
   nodeLabelLong: "第二世代抗ヒスタミン薬（内服）"
-  nodeKey: "antihistamine_second_gen_oral"
+  nodeKey: "h1_antihistamine_oral"
   menuGroupLabels:
     増量: "増量"
     減量: "減量"
