@@ -1,7 +1,12 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「D-13 conditional structure legacy removal」: canonical `risks` を
+最終更新: 2026-09-20（Unit「D-3 type parity repair」: `lib/types.ts` の `ModuleRisks` へ
+`secondary?: string[]` を追加し、canonical 2 キー contract との type parity を回復（§6 の D-3 を完了化）。
+pure type-contract parity repair であり、`primary` / `secondary` はいずれも optional のまま、
+semantic / values / runtime behavior・canonical・bridge・PN5・`docs/JSON_STANDARD.md`・validator・
+tests・fixture・manifest は無変更。GG-5 は Pending 維持。
+同日先行: Unit「D-13 conditional structure legacy removal」: canonical `risks` を
 `primary` / `secondary` の 2 キーへ改訂し、`conditional` / `ConditionalRisk` / `whenAny` / `whenAll` を
 canonical 35 件・PN5・`docs/JSON_STANDARD.md` JS-A・`lib/types.ts`・tests・fixture から撤去（Owner
 Decision OD-L1〜OD-L4）。**future reservation として保持しない — 将来必要になった場合は旧構造を復活
@@ -1015,7 +1020,7 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 
 ## `risks` contract remediation の別 Unit 送り事項（D-1〜D-14・2026-09-20）
 
-2026-09-20 の 5 つの Unit の Owner Decision により、別 Unit へ送った事項。
+2026-09-20 の 6 つの Unit の Owner Decision により、別 Unit へ送った事項。
 **各項目に記載した corpus 件数は当該時点の historical observation であり、current contract ではない。**
 
 - Unit 1「PN5 non-insulin risks contract remediation」: PN5 §risks の生成契約（non-insulin = 固定 empty）・
@@ -1039,6 +1044,10 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   保持しない。`primary` / `secondary` の値・意味は無変更。GG-5 は Pending 維持（保留理由の事実
   誤りのみ訂正）。bridge / validator / runtime / `app/` / `scripts/` / manifest は無変更
   （Owner Decision OD-L1〜OD-L9）
+- Unit 6「D-3 type parity repair」: `lib/types.ts` の `ModuleRisks` へ `secondary?: string[]` を
+  追加し、canonical 2 キー contract との type parity を回復。pure type-contract parity repair であり、
+  semantic / values / runtime behavior・canonical・bridge・PN5・`docs/JSON_STANDARD.md`・validator・
+  tests・fixture・manifest は無変更。GG-5 は Pending 維持
 
 `risks` 自体の Lifecycle 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5（Classification Pending）。
 
@@ -1072,12 +1081,14 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - `dm_insulin_mixed_rapid_intermediate` にも同種の型逸脱がある（`urgentFlag: false` + `urgentCriteria: []`）
   - **corpus 実測〔2026-09-20 時点の historical observation〕**: insulin 8 module の `template.urgentFlag` は **4 通りに割れている** — `true` + object 3 件（`dm_insulin_rapid_analog` / `dm_insulin_regular` / `dm_insulin_intermediate`。3 件とも文言は同一）、`false` + `null` 2 件、`false` + `[]` 1 件、`true` + `[]` 1 件、キー自体なし 1 件（`dm_insulin_glp1_combination`）。`urgentFlag=true` の意味を規定した文書は存在せず、validator にも urgent 系の検査は 0 件
   - **本 Unit では変更しない**（Owner Decision OD-M7 / OD-R5 / OD-T9）。urgent semantics drift として別 Unit へ送る
-- **D-3: `ModuleRisks.secondary` type drift**
-  - **current observation〔2026-09-20 / D-13 の conditional removal 実施後〕**: canonical `risks` は **`primary` / `secondary` の 2 キー**（35/35）、一方 `lib/types.ts` の `ModuleRisks` は **`primary` のみを宣言**している。`docs/JSON_STANDARD.md` JS-A の表も 2 キーを規定している。**したがって型は canonical の 2 キー中 1 キーしか宣言していない**
-  - **この drift は D-13 の Unit が新規に作ったものではなく、既存 D-3 の継続である。** `secondary` は元から `ModuleRisks` に宣言されておらず、D-13 では `conditional` のみを削除した（Owner Decision OD-L1 / §0 案 (a)）。`ModuleRisks.secondary?: string[]` の追加は**本 Unit で意図的に行っていない**
-  - drift の向きは型側の追随漏れであり、canonical / JSON_STANDARD 側は一致している
-  - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、この drift は `tsc` では検出できない（D-1 のキー不正が検出されなかったのと同じ機構）
-  - **独立 Unit として維持する。** `lib/types.ts` の改訂は D-3 の Unit で行う（Owner Decision OD-8。D-13 では副次的に解消しない）
+- **D-3: `ModuleRisks.secondary` type drift — 2026-09-20 に解消済み**
+  - **解消前の状態〔historical〕**: canonical `risks` は `primary` / `secondary` の 2 キー（35/35）で `docs/JSON_STANDARD.md` JS-A もこれを規定していたが、`lib/types.ts` の `ModuleRisks` は **`primary` のみを宣言**しており、**型が canonical の 2 キー中 1 キーしか宣言していない**状態だった。drift の向きは型側の追随漏れで、canonical / JSON_STANDARD 側は一致していた
+  - この drift は D-13 の Unit が作ったものではなく、それ以前からの継続だった。`secondary` は元から `ModuleRisks` に宣言されておらず、D-13 では `conditional` のみを削除した（Owner Decision OD-L1 / §0 案 (a)）
+  - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、この drift は `tsc` では検出できなかった（D-1 のキー不正が検出されなかったのと同じ機構）
+  - **current state〔2026-09-20〕**: Unit「D-3 type parity repair」で `ModuleRisks` へ **`secondary?: string[]` を追加**し、canonical 2 キー contract との type parity を回復した。`ModuleRisks` の宣言は `primary` / `secondary` となり、canonical・`docs/JSON_STANDARD.md` JS-A の 3 者が一致している
+  - **pure type-contract parity repair であり、semantic / values / runtime behavior は変更していない。** `primary` / `secondary` はいずれも optional のまま（required へ変更していない）、semantic 定義・risk vocabulary は追加しておらず、canonical / bridge / PN5 / `docs/JSON_STANDARD.md` / validator / runtime / tests / fixture / manifest はすべて無変更。`risks.secondary` の production runtime consumer は本 Unit 前後とも **0 件**
+  - **GG-5 は Pending 継続**（`docs/DEVELOPMENT_STANDARD.md` §10.5）。本 Unit は `risks` field の Lifecycle 判断に関与しない
+  - 残件: `tests/risksContract.test.ts` の JSDoc（`scanModules` 付近）に「`lib/types.ts` の `ModuleRisks` が宣言していない `secondary` も観測できる」という記述が残っている。**生 JSON を読む理由そのもの（二重キャストを経由しない）は現在も有効だが、`secondary` を例に挙げた部分は本 Unit で陳腐化した。** 本 Unit は tests を変更対象外としたため訂正していない（別 Unit の軽微 cleanup 候補）
 - **D-4: validator に `MISSING_RISKS` 相当が存在しない**
   - `risks` は JS-A（全 module 必須）だが、`lib/moduleValidator.ts` の必須検査は `MISSING_PERSONA` 等に限られ、`risks` は対象外。D-1 が `npm run build` / `npm test` を通過している直接原因
   - `tests/risksContract.test.ts` T-R-1 はキー集合も検査するため**新規 module での同型再発は防がれる**が、既存 1 件は baseline 収載のため検出対象外

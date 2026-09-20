@@ -697,9 +697,10 @@ export interface EmergencyCriteria {
   contactPrescriberIf?: string[]
 }
 
-/** risks ブロック */
+/** risks ブロック（canonical shape は `primary` / `secondary` の 2 キー。`docs/JSON_STANDARD.md` JS-A） */
 export interface ModuleRisks {
   primary?: string[]
+  secondary?: string[]
 }
 
 /** searchConfig.normalize */
