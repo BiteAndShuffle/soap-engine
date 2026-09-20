@@ -4751,8 +4751,7 @@
       "dehydration_risk",
       "weight_gain_risk",
       "renal_function_monitoring"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

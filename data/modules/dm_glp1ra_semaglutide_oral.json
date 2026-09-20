@@ -190,8 +190,7 @@
     ],
     "secondary": [
       "hypoglycemia_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

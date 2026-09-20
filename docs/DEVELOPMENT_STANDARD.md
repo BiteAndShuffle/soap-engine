@@ -5,7 +5,7 @@ SOAP Engine プロジェクト全体構造の最上位文書。
 **この文書の性格**
 本文書は、既存の正本文書を横断・要約する索引であると同時に、プロジェクト運営規則（工程完了条件・設計資産ライフサイクル等）を定義する文書です。「プロジェクト全体を一枚で理解できる入口」として機能します。個別の判断基準・型定義・工程実行手順の正本は、各節が参照する既存文書側にあります。本文書の記述と参照先文書の記述が食い違う場合、個別の判断基準については常に参照先（既存の正本文書）が優先します。
 
-最終更新: 2026-09-20（Unit「PN5 non-insulin risks contract remediation」: §10.5 へ GG-5〔canonical field `risks`。runtime / validator / test / audit 未参照でありながら JS-A 必須〕を公告。先行: 2026-09-17 §10.5 へ GG-4〔legacy Rapid v1 realization 経路〕を公告）
+最終更新: 2026-09-20（Unit「D-13 conditional structure legacy removal」: GG-5 の保留理由の事実誤りを訂正〔「test 未参照」→ production runtime / validator / audit 未参照であり、tests は構造契約のみを参照する〕。**GG-5 は Pending のまま維持し、`risks` field を Legacy / Future へ分類していない**。同日先行: Unit「PN5 non-insulin risks contract remediation」: §10.5 へ GG-5〔canonical field `risks`。runtime / validator / audit 未参照でありながら JS-A 必須〕を公告。2026-09-17: §10.5 へ GG-4〔legacy Rapid v1 realization 経路〕を公告）
 
 ---
 
@@ -556,7 +556,7 @@ canonical field の必須性は Canonical Requirement（`docs/JSON_STANDARD.md` 
 | **GG-1** | NLP 経路（`lib/scenarioSelector.ts` / `lib/createSoapFromInput.ts` / `lib/soapComposer.ts` / `app/components/NlpInputPanel.tsx` — UI 未接続） | `docs/feature-glossary.md` の NLP生成 節が Future Expansion を自称しているが、F1〜F5 の確認・整理が未完了であり §10.3 へ登録できない | F1〜F5 の充足を確認して §10.3 へ登録する、または別状態を確定する |
 | **GG-3** | `composition.sMergePolicy`（`prompts/vNext/PN7-Cross-Reference-Audit.md` item S） | 同 item S が「Owner Decision Required であり Future Expansion / Legacy いずれとも確定していない」として FAIL 対象外に置いている。位置づけが未確定であり、いずれの正規台帳へも登録できない | Owner が位置づけを決定する（canonical field としての扱いを含む） |
 | **GG-4** | legacy Rapid v1 realization 経路（`lib/rapidSentence.ts` の `buildResolvedSFirstSentence` / `buildSFirstSentence`、`lib/deriveNodeFields.ts` の v1 分岐、`app/components/ThirdPanel.tsx` の v1 表示分岐〔menuGroupLabels 適用を含む〕。v2 と共有する `SCondition` / `replaceSFirstSentence` 等は含まない） | Rapid v2 global promotion（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-GLOBAL-1）により既定経路ではなくなったが、一時除外 module の realization と rollback 経路として参照が残る。L1（現行体系からの必須参照ゼロ）を満たさないため Legacy とは確定できず、Future Expansion にも該当しない | 将来の Rapid v1 削除 Unit で、参照・rollback 要否・`display.adjustmentExpression` の扱いをまとめて再判断し、Owner が位置づけを決定する |
-| **GG-5** | canonical field `risks`（生成規定は `prompts/vNext/PN5-Non-Scenario.md` §risks セクション） | **runtime / validator / test / audit のいずれからも参照されていない**〔実測: `lib` `app` `scripts` `tests` `utils` 全体で `risk` の出現は `lib/types.ts` の型定義 3 箇所のみ〕。一方 `docs/JSON_STANDARD.md` JS-A は本 field を全 module 必須として保持しているため、現行体系からの必須参照ゼロ（L1）でありながら Legacy とは確定できず、F1〜F5 の確認も未了で §10.3 へも登録できない | Owner が位置づけを決定する（canonical field としての扱い、および将来の runtime 接続経路の有無を含む）。関連する別 Unit の未解消事項は `prompts/vNext/HANDOFF.md` §6「`risks` contract remediation の別 Unit 送り事項」を参照 |
+| **GG-5** | canonical field `risks`（生成規定は `prompts/vNext/PN5-Non-Scenario.md` §risks セクション） | **production runtime / validator / audit のいずれからも参照されていない**（`tests` は構造契約のみを参照する: `tests/risksContract.test.ts` / `tests/fixtures/risksPreRuleBaseline.ts`）。一方 `docs/JSON_STANDARD.md` JS-A は本 field を全 module 必須として保持しているため、現行体系からの必須参照ゼロ（L1）でありながら Legacy とは確定できず、F1〜F5 の確認も未了で §10.3 へも登録できない | Owner が位置づけを決定する（canonical field としての扱い、および将来の runtime 接続経路の有無を含む）。関連する別 Unit の未解消事項は `prompts/vNext/HANDOFF.md` §6「`risks` contract remediation の別 Unit 送り事項」を参照 |
 
 **本表への登録をもって、GG-1 / GG-3 / GG-4 / GG-5 の Lifecycle State を確定したものとして扱ってはならない。**
 

@@ -3217,8 +3217,7 @@
     "secondary": [
       "gastrointestinal_symptoms",
       "anemia_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

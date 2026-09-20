@@ -4108,8 +4108,7 @@
       "hypoglycemia_risk",
       "dehydration_risk",
       "weight_gain_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

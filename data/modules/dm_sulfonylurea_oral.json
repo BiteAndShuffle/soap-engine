@@ -3831,8 +3831,7 @@
       "liver_dysfunction_risk",
       "hematologic_risk",
       "dehydration_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

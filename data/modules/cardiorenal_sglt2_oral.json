@@ -3115,8 +3115,7 @@
     "secondary": [
       "hyperkalemia_risk",
       "renal_function_monitoring"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

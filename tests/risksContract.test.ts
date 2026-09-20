@@ -28,7 +28,7 @@
  *
  * - PN5 の prompt 本文が改変されていないこと（test は prompt を読まない。既存 test 群と同方針）
  * - PN5〜PN7 の中間ファイル（`/tmp/soap-build/`）の内容。本テストの発火点は PN8 である
- *   （PN5 時点の検出は PN5 §ハンドオフ報告の `0 / 0 / 0` 報告義務が担う）
+ *   （PN5 時点の検出は PN5 §ハンドオフ報告の `0 / 0` 報告義務が担う）
  * - 収載済み baseline 22 module の risk 値の正当性（Owner Decision OD-3 により別 Unit）
  *
  * 実行:
@@ -58,7 +58,7 @@ const INSULIN_BRANCH_PATTERN = /^INSULIN_/
  * non-insulin の固定値。`prompts/vNext/PN5-Non-Scenario.md` §risks から転記した明示リテラル。
  * PN5 を改訂した場合は本リテラルと下記 baseline / 各 assertion を同一作業内で更新する。
  */
-const FIXED_EMPTY_RISKS_KEYS = ['primary', 'secondary', 'conditional'] as const
+const FIXED_EMPTY_RISKS_KEYS = ['primary', 'secondary'] as const
 
 const SYNC_NOTICE =
   '\n\n' +
@@ -69,7 +69,6 @@ const SYNC_NOTICE =
 interface RisksBlock {
   primary?: unknown
   secondary?: unknown
-  conditional?: unknown
   [k: string]: unknown
 }
 
@@ -81,7 +80,7 @@ interface ScannedModule {
   /** `risks` 直下のキー集合（JSON 上の宣言順） */
   keys: string[]
   /** 配列でないキーは null */
-  counts: { primary: number | null; secondary: number | null; conditional: number | null }
+  counts: { primary: number | null; secondary: number | null }
   isInsulinBranch: boolean
   total: number
 }
@@ -108,7 +107,6 @@ function scanModules(): ScannedModule[] {
       const counts = {
         primary: lenOf(risks?.primary),
         secondary: lenOf(risks?.secondary),
-        conditional: lenOf(risks?.conditional),
       }
       const drugClass = json.drug?.drugClass ?? []
       return {
@@ -118,7 +116,7 @@ function scanModules(): ScannedModule[] {
         keys: risks ? Object.keys(risks) : [],
         counts,
         isInsulinBranch: drugClass.some(c => INSULIN_BRANCH_PATTERN.test(c)),
-        total: (counts.primary ?? 0) + (counts.secondary ?? 0) + (counts.conditional ?? 0),
+        total: (counts.primary ?? 0) + (counts.secondary ?? 0),
       }
     })
 }
@@ -174,7 +172,7 @@ describe('risks 契約: non-insulin は固定 empty（PN5 §risks）', () => {
       0,
       `non-insulin module の risks が固定 empty になっていない。\n\n` +
         `PN5 §risks: non-insulin module の risks は常に固定 empty\n` +
-        `  {"primary": [], "secondary": [], "conditional": []}\n\n` +
+        `  {"primary": [], "secondary": []}\n\n` +
         `structured Bridge risk contract も non-insulin 向け model_managed contract も存在せず、\n` +
         `有効な override 経路は存在しない。bridge 自由文 / scenario ID / intentTags /\n` +
         `他 module / Reference・Golden module / 既存 canonical からの推測・導出・転記は禁止。\n\n` +
@@ -336,7 +334,7 @@ describe('risks 契約: PN5 mirror リテラルの健全性', () => {
   test('T-R-5 固定 empty のキー集合が PN5 の 3 キーから変化していない', () => {
     assert.deepEqual(
       [...FIXED_EMPTY_RISKS_KEYS],
-      ['primary', 'secondary', 'conditional'],
+      ['primary', 'secondary'],
       `FIXED_EMPTY_RISKS_KEYS が PN5 §risks の固定値のキー集合と一致しない。\n` +
         `本リテラルを緩めることで T-R-1 を通す変更は、契約そのものの改変である。` +
         SYNC_NOTICE,

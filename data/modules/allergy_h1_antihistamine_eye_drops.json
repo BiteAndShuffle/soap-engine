@@ -5512,8 +5512,7 @@
       "pruritus_risk",
       "eye_redness_risk",
       "eye_discharge_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

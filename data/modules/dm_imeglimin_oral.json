@@ -3965,8 +3965,7 @@
     "secondary": [
       "hypoglycemia_risk",
       "dehydration_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

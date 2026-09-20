@@ -106,7 +106,7 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `scenarios` | object | — |
 | `addons` | object | `orderPresets` を含む（JS-A-addons 参照）|
 | `ui` | object | `panels` / `panelOrder` / `defaultPanelId` |
-| `risks` | object | `primary` / `secondary` / `conditional` |
+| `risks` | object | `primary` / `secondary` |
 | `searchConfig` | object | `minPrefixLen` / `normalize` / `multiTerm` |
 | `tagCatalog` | object | — |
 | `expressModes` | array | 型は配列固定（JS-expressModes 参照）|

@@ -1,7 +1,16 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-20（Unit「D-11 / D-12 cross-corpus risk attribution remediation」: 非 SGLT2 15 module から
+最終更新: 2026-09-20（Unit「D-13 conditional structure legacy removal」: canonical `risks` を
+`primary` / `secondary` の 2 キーへ改訂し、`conditional` / `ConditionalRisk` / `whenAny` / `whenAll` を
+canonical 35 件・PN5・`docs/JSON_STANDARD.md` JS-A・`lib/types.ts`・tests・fixture から撤去（Owner
+Decision OD-L1〜OD-L4）。**future reservation として保持しない — 将来必要になった場合は旧構造を復活
+させず、その時点の要件に基づく新しい Owner Decision として再設計する**（OD-L3）。§6 の D-13 を完了化し、
+D-3 へ current observation〔canonical 2 キー / 型は `primary` のみ宣言。既存 D-3 の継続であり本 Unit が
+作った drift ではない〕を追記。GG-5 は Pending 維持で保留理由の事実誤りのみ訂正（OD-L7 / OD-L8）。
+`primary` / `secondary` の値・意味・legacy 22 module・bridge / validator / runtime / `app/` / `scripts/` /
+manifest は無変更。
+同日先行: Unit「D-11 / D-12 cross-corpus risk attribution remediation」: 非 SGLT2 15 module から
 `ketoacidosis_risk_sglt2 ← concomitant_sglt2` を除去（誤帰属・未定義 trigger・producer/consumer 不在の
 legacy conditional の除去。DKA という臨床事実の否定ではなく、SGLT2 含有 3 module の primary は無変更）。
 `tests/fixtures/risksPreRuleBaseline.ts` の 15 行を `conditional: 0` へ追随。§6 の D-11 / D-12 を完了化し、
@@ -1006,7 +1015,7 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 
 ## `risks` contract remediation の別 Unit 送り事項（D-1〜D-14・2026-09-20）
 
-2026-09-20 の 4 つの Unit の Owner Decision により、別 Unit へ送った事項。
+2026-09-20 の 5 つの Unit の Owner Decision により、別 Unit へ送った事項。
 **各項目に記載した corpus 件数は当該時点の historical observation であり、current contract ではない。**
 
 - Unit 1「PN5 non-insulin risks contract remediation」: PN5 §risks の生成契約（non-insulin = 固定 empty）・
@@ -1024,6 +1033,12 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   該当 15 行を追随。SGLT2 含有 3 module の primary・PN5・`lib/types.ts`（`ConditionalRisk` /
   `whenAny` / `whenAll`）・validator / runtime / `docs/` / bridge / manifest は無変更
   （Owner Decision OD-N1〜OD-N8）
+- Unit 5「D-13 conditional structure legacy removal」: canonical `risks` を `primary` / `secondary` の
+  2 キーへ改訂し、`conditional` / `ConditionalRisk` / `whenAny` / `whenAll` を canonical・PN5・
+  `docs/JSON_STANDARD.md`・`lib/types.ts`・tests・fixture から撤去。future reservation として
+  保持しない。`primary` / `secondary` の値・意味は無変更。GG-5 は Pending 維持（保留理由の事実
+  誤りのみ訂正）。bridge / validator / runtime / `app/` / `scripts/` / manifest は無変更
+  （Owner Decision OD-L1〜OD-L9）
 
 `risks` 自体の Lifecycle 位置づけは `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-5（Classification Pending）。
 
@@ -1058,9 +1073,11 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **corpus 実測〔2026-09-20 時点の historical observation〕**: insulin 8 module の `template.urgentFlag` は **4 通りに割れている** — `true` + object 3 件（`dm_insulin_rapid_analog` / `dm_insulin_regular` / `dm_insulin_intermediate`。3 件とも文言は同一）、`false` + `null` 2 件、`false` + `[]` 1 件、`true` + `[]` 1 件、キー自体なし 1 件（`dm_insulin_glp1_combination`）。`urgentFlag=true` の意味を規定した文書は存在せず、validator にも urgent 系の検査は 0 件
   - **本 Unit では変更しない**（Owner Decision OD-M7 / OD-R5 / OD-T9）。urgent semantics drift として別 Unit へ送る
 - **D-3: `ModuleRisks.secondary` type drift**
-  - `lib/types.ts` の `ModuleRisks` が `primary` / `conditional` のみを宣言し、`secondary` を持たない。一方 canonical JSON は 34/35 が `secondary` を保持し、`docs/JSON_STANDARD.md` JS-A の表も `primary` / `secondary` / `conditional` を規定している。**drift の向きは型側の追随漏れ**
-  - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、この drift と D-1 のキー不正はいずれも `tsc` では検出できない
-  - 本 Unit では `lib/types.ts` を変更しない（Owner Decision OD-8）
+  - **current observation〔2026-09-20 / D-13 の conditional removal 実施後〕**: canonical `risks` は **`primary` / `secondary` の 2 キー**（35/35）、一方 `lib/types.ts` の `ModuleRisks` は **`primary` のみを宣言**している。`docs/JSON_STANDARD.md` JS-A の表も 2 キーを規定している。**したがって型は canonical の 2 キー中 1 キーしか宣言していない**
+  - **この drift は D-13 の Unit が新規に作ったものではなく、既存 D-3 の継続である。** `secondary` は元から `ModuleRisks` に宣言されておらず、D-13 では `conditional` のみを削除した（Owner Decision OD-L1 / §0 案 (a)）。`ModuleRisks.secondary?: string[]` の追加は**本 Unit で意図的に行っていない**
+  - drift の向きは型側の追随漏れであり、canonical / JSON_STANDARD 側は一致している
+  - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、この drift は `tsc` では検出できない（D-1 のキー不正が検出されなかったのと同じ機構）
+  - **独立 Unit として維持する。** `lib/types.ts` の改訂は D-3 の Unit で行う（Owner Decision OD-8。D-13 では副次的に解消しない）
 - **D-4: validator に `MISSING_RISKS` 相当が存在しない**
   - `risks` は JS-A（全 module 必須）だが、`lib/moduleValidator.ts` の必須検査は `MISSING_PERSONA` 等に限られ、`risks` は対象外。D-1 が `npm run build` / `npm test` を通過している直接原因
   - `tests/risksContract.test.ts` T-R-1 はキー集合も検査するため**新規 module での同型再発は防がれる**が、既存 1 件は baseline 収載のため検出対象外
@@ -1087,12 +1104,13 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **namespace は作らなかった**（Owner Decision OD-N3）。定義元・producer・consumer のいずれも存在しなかったため、新しい patient-state vocabulary / token registry は導入していない。patient-state layer の設計も行っていない（OD-N5）
   - 同じ併用概念は bridge 由来の `addon_sickday_hold_sglt2_metformin` と `clinicalTags: sglt2_inhibitor` が別 namespace で表現している。ただし **addon / scenario を SGLT2 併用表現の正式 SSOT とは宣言していない**（OD-N4。被覆不均一のため別 Unit）
   - namespace が未定義であったことが、`dm_insulin_mixed_rapid_long` で `whenAny` に scenario ID が入っていた defect（D-1）を機械的に検出できなかった一因である、という観察は記録として保持する
-- **D-13: `risks.conditional` / `ConditionalRisk` は currently uninstantiated structure（dead-structure candidate）**
-  - 〔2026-09-20 時点 / HEAD `b9c67b4` からの本 Unit 後の実測〕**corpus 全 35 module で `risks.conditional` が `[]`** であり、`ConditionalRisk`（`lib/types.ts`）の `risk` / `rule.whenAny` / `rule.whenAll` に実データを持つ module は **0 件**
-  - `rule.whenAll` は本 Unit 以前から corpus 全 15 件で `[]` であり、**一度も値が入ったことがない**
-  - PN5 の現行契約は insulin / non-insulin 両分岐とも `"conditional": []` を生成するため、**現行の生成経路からこの構造が instantiate されることはない**
-  - **"dead structure" と断定しない。** 型・`whenAny` / `whenAll`・`ModuleRisks.conditional` はいずれも本 Unit で削除していない（Owner Decision OD-N7）。存廃は `docs/DEVELOPMENT_STANDARD.md` §10.5 **GG-5**（`risks` field の Lifecycle）と併せて別 Unit で判断する
-  - PN5 の「`conditional` は必ず新形式を使用する。旧形式 `{ "condition": ..., "risk": ... }` は使用しない」という形式規則も保持している（将来 conditional を使う場合の規定）
+- **D-13: `risks.conditional` / `ConditionalRisk` の legacy removal — 2026-09-20 に完了**
+  - **除去前の実測**〔2026-09-20 時点〕: corpus 全 35 module で `risks.conditional` が `[]`、`ConditionalRisk` の `risk` / `rule.whenAny` / `rule.whenAll` に実データを持つ module は **0 件**、`rule.whenAll` は**確認した全時点で値を持ったことがない**、production runtime / validator / audit / UI / search / manifest の consumer **0**、PN5 の生成契約も `[]` のみ
+  - **Lifecycle 判断の根拠**〔read-only audit の実測〕: 導入は commit `f7e9d88`（2026-03-10、NLP 経路と同一 commit。rationale の記録なし）で、**同 commit の時点から code 側 consumer はゼロ**。実データは 1 → 23 module（2026-07-11 peak）まで増えたが、**23 件すべてが単一 shape**（`ketoacidosis_risk_sglt2 ← concomitant_sglt2`）であり、その唯一の用法は D-11 で unsupported として撤回された。Future Expansion 成立要件 **F1（将来の目的・用途がリポジトリ内に記録されている）を満たす記録は 1 件も存在しなかった**
+  - **2026-09-20 の Unit「D-13 conditional structure legacy removal」で撤去した**（Owner Decision OD-L1〜OD-L4）: canonical 35 module の `conditional` キー、`lib/types.ts` の `ConditionalRisk` / `whenAny` / `whenAll` / `ModuleRisks.conditional`、PN5 の 2 分岐テンプレートと旧形式規則とハンドオフ報告項目、`docs/JSON_STANDARD.md` JS-A 備考、`tests/risksContract.test.ts` / `tests/fixtures/risksPreRuleBaseline.ts`
+  - **future reservation として保持しない**（Owner Decision OD-L3）。**将来 conditional mechanism が必要になった場合は、旧構造を復活させるのではなく、その時点の要件に基づく新しい Owner Decision として再設計する。**
+  - canonical `risks` の shape は `primary` / `secondary` の **2 キー**になった（`docs/JSON_STANDARD.md` JS-A 表を同一 Unit で改訂済み）
+  - `primary` / `secondary` の値・意味は本 Unit で変更していない（OD-L6 により semantic contract は PENDING 継続）
 - **D-14: SGLT2 併用表現の被覆不均一（addon 集合と conditional 集合の過去不一致）**
   - 〔2026-09-20 時点の historical observation〕`addon_sickday_hold_sglt2_metformin` 保有は **20 module**、除去前の conditional 保有は **15 module** で、**どちらも他方の部分集合ではなかった**（共通 12 / addon のみ 8 / conditional のみ 3）。両表現は一度も同期されたことがない
   - **addon を持たない 3 module**: `dm_dpp4_biguanide_combination_oral` / `dm_thiazolidinedione_biguanide_combination_oral` / `dm_imeglimin_oral`。うち後者 2 件は **bridge に SGLT2 の記述が 0 件**であり、SGLT2 併用概念への接点が canonical にも bridge にも存在しない

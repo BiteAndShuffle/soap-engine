@@ -697,19 +697,9 @@ export interface EmergencyCriteria {
   contactPrescriberIf?: string[]
 }
 
-/** risks.conditional の1件 */
-export interface ConditionalRisk {
-  risk: string
-  rule: {
-    whenAny?: string[]
-    whenAll?: string[]
-  }
-}
-
 /** risks ブロック */
 export interface ModuleRisks {
   primary?: string[]
-  conditional?: ConditionalRisk[]
 }
 
 /** searchConfig.normalize */

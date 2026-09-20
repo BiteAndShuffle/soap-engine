@@ -3905,8 +3905,7 @@
       "hypoglycemia_risk",
       "liver_dysfunction_risk",
       "dehydration_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

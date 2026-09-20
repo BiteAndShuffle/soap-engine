@@ -231,8 +231,7 @@
     ],
     "secondary": [
       "abdominal_discomfort_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

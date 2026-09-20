@@ -4579,8 +4579,7 @@
       "hematologic_risk",
       "weight_gain_risk",
       "dehydration_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

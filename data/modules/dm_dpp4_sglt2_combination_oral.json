@@ -4898,8 +4898,7 @@
     "secondary": [
       "hypoglycemia_risk",
       "glycemic_deterioration"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

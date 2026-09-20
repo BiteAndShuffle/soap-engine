@@ -412,8 +412,7 @@
       "hypoglycemia_risk",
       "injection_site_reaction"
     ],
-    "secondary": [],
-    "conditional": []
+    "secondary": []
   },
   "ui": {
     "panels": [

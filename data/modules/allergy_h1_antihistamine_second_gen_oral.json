@@ -485,8 +485,7 @@
     "secondary": [
       "dry_mouth_risk",
       "abdominal_discomfort_risk"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

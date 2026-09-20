@@ -4513,8 +4513,7 @@
       "hypoglycemia_risk",
       "dehydration_risk",
       "renal_function_monitoring"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,

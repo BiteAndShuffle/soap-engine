@@ -5365,8 +5365,7 @@
   },
   "risks": {
     "primary": [],
-    "secondary": [],
-    "conditional": []
+    "secondary": []
   },
   "searchConfig": {
     "minPrefixLen": 2,

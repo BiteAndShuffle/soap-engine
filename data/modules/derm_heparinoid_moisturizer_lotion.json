@@ -2673,7 +2673,6 @@
   },
   "risks": {
     "primary": [],
-    "secondary": [],
-    "conditional": []
+    "secondary": []
   }
 }

@@ -57,8 +57,6 @@ composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関�
 `risks` の生成規則は 2 分岐のみである。**インスリン注射系は下記の標準テンプレート、それ以外は固定 empty。**
 この 2 つ以外の生成規則は存在しない。
 
-`conditional` は必ず新形式を使用する。旧形式 `{ "condition": "...", "risk": "..." }` は使用しない。
-
 **インスリン注射系モジュール（drugClass に INSULIN_* を含む）の標準テンプレート:**
 
 ```json
@@ -67,13 +65,13 @@ composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関�
     "hypoglycemia_risk",
     "injection_site_reaction"
   ],
-  "secondary": [],
-  "conditional": []
+  "secondary": []
 }
 ```
 
 本テンプレートは 2026-09-20 の Owner Review により確定した現行 contract である（Owner Decision OD-T1）。
 同 Review で、旧テンプレートが `secondary` / `conditional` に保持していた 3 token は除去された。
+その後、`conditional` キー自体も canonical contract から撤去された（Owner Decision OD-L1〜OD-L4）。
 除去された内容は `addons`（sickday / counseling 系）側に既に表現があり、canonical から情報は失われていない。
 経緯の詳細は `prompts/vNext/HANDOFF.md` §6 を参照する。
 
@@ -87,8 +85,7 @@ composition.sMergePolicy は PN2 で生成済みの値を使用し、PN5 は関�
 ```json
 "risks": {
   "primary": [],
-  "secondary": [],
-  "conditional": []
+  "secondary": []
 }
 ```
 
@@ -241,9 +238,8 @@ PN5 完了後、以下を報告する:
 - expressModes のエントリ数（ブランド数）
 - risks に適用した分岐（`insulin` / `non-insulin` のいずれか）
 - risks.primary / secondary 件数
-- risks.conditional 件数
-  ※ 分岐が `non-insulin` の場合、3 件数はすべて `0` でなければならない。
-    `0 / 0 / 0` 以外を報告する状態は本 Phase の責務違反であり、PN6 へ渡さず修正する
+  ※ 分岐が `non-insulin` の場合、2 件数はともに `0` でなければならない。
+    `0 / 0` 以外を報告する状態は本 Phase の責務違反であり、PN6 へ渡さず修正する
 - addons.orderPresets が `{}` であることの確認
 - persona が生成済みであることの確認
 

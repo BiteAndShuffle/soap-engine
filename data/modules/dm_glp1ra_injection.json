@@ -323,8 +323,7 @@
     "secondary": [
       "hypoglycemia_risk",
       "injection_site_reaction"
-    ],
-    "conditional": []
+    ]
   },
   "searchConfig": {
     "minPrefixLen": 2,
