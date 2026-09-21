@@ -13,6 +13,7 @@
     "sMergeDomain": "diabetes",
     "drugClassLabel": "混合型インスリン製剤（超速効型＋中間型）",
     "nodeKey": "insulin_mixed_rapid_intermediate_injection",
+    "nodeLabelShort": "混合型INS（超速/中間）",
     "nodeLabelLong": "混合型インスリン製剤（超速効型＋中間型）",
     "classKey": "insulin_mixed_rapid_intermediate",
     "groupKeyRegistry": [

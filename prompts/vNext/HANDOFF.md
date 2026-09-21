@@ -1,7 +1,19 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-21（Unit「D-15d + D-15e remediation」:
+最終更新: 2026-09-21（Unit「N-3 composition.nodeLabelShort repair」:
+`dm_insulin_mixed_rapid_intermediate` の canonical `composition.nodeLabelShort` 欠落（birth defect・
+`e650858` 由来）を、**bridge `display.nodeLabelShort`（`混合型INS（超速/中間）`）を source として 1 行補完**した。
+これは PN2「composition セクション生成」の**必須フォールバック条項の追認**であり新規則ではない（OD-N3-1 / OD-N3-2）。
+`resolveNodeLabel()`（composition 優先・9 箇所）が `brandNames[0]` =「ノボラピッド30ミックス」へ
+フォールバックしていた UI 不整合が解消し、**`resolveNodeLabel()` と `display.nodeLabelShort` が異なる module は 0 件**、
+`composition.nodeLabelShort` presence **35/35**、display との一致 **35/35**。**parity は contract 化していない**（OD-N3-3）。
+bridge / `data/search-manifest.json`（再生成なし・byte-identical）/ 他 34 canonical / `lib/` / `app/` /
+`scripts/` / `tests/` / `docs/` はすべて無変更で、新 validator / audit / PN7 item / test も追加していない。
+`composition.priority`（1 件）と `composition.sMergePolicy`（1 件）の欠落は修復せず、
+**`JS-A composition requiredness enforcement / corpus missing fields`** として §6 へ Finding 候補（**OPEN**）に
+まとめて記録した（OD-N3-4 / OD-N3-5）。
+同日先行: Unit「D-15d + D-15e remediation」:
 H1 oral の **bridge header** `drug.genericName` / `display.drugClassLabel` を正式語
 `第二世代ヒスタミンH1受容体拮抗薬` へ修正（canonical は無変更。bridge 凍結本文 133 件・canonical
 scenario title 29 件が同語を支持・OD-D15d-1〜5）。あわせて `display.nodeLabelShort` を
@@ -1285,10 +1297,25 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 分離理由: `categoryPath` は **`data/search-manifest.json` へ投影され、search corpus にも入る**ため、header / display の表示 divergence とは責務が異なる。DP-11（`categoryPath[0]` = 適応領域）や Domain Complete 判定にも接続する
   - 〔実測〕canonical を bridge 値へ寄せると **manifest は変化する**（再生成が必要）が、検証 8 query の hit 集合は不変だった
   - **remediation は行わない。** 正式 ID は remediation Unit へ昇格する時点で既存採番を確認して決める（OD-D15-N3 と同じ扱い）
-- **独立 Finding（記録のみ・remediation なし）: `N-3 mixed_rapid_intermediate composition.nodeLabelShort missing`**
-  - 〔2026-09-21 実測〕`dm_insulin_mixed_rapid_intermediate` は `composition.nodeLabelShort` を**欠落**している（`docs/JSON_STANDARD.md` JS-A-composition の必須サブフィールド。corpus でこの 1 件のみ）
-  - 実動作: `app/components/DashboardClient.tsx` の `resolveNodeLabel()` は `composition.nodeLabelShort` → `composition.nodeLabel` → `NODE_LABEL_MAP[categoryPath[1]]` → `brandNames[0]` の順でフォールバックするため、本 module では **ブランド名「ノボラピッド30ミックス」が描画される**（同関数は multi-drug ノードバー等 8 箇所で使用）。一方 `display.nodeLabelShort` は `混合型INS（超速/中間）` を持つため、UI 経路によって表記が異なる
-  - **remediation は行わない**（Owner Decision OD-D15-N3）。JS-A 必須 field の欠落と runtime フォールバック挙動の両面を持つため、昇格時に扱いを決める
+- **`N-3 mixed_rapid_intermediate composition.nodeLabelShort missing` — 2026-09-21 に解消済み（data repair）**
+  - **解消前の状態〔historical〕**: `dm_insulin_mixed_rapid_intermediate` の canonical `composition.nodeLabelShort` が **ABSENT**（`docs/JSON_STANDARD.md` JS-A-composition の必須サブフィールド。corpus でこの 1 件のみ）。初出 commit `e650858`（2026-06-29）からの **birth defect** で、一度も存在したことがない（削除ではない）。同一 commit の兄弟 mixed insulin module は保持していた
+  - **実動作の影響〔実測〕**: `app/components/DashboardClient.tsx` の `resolveNodeLabel()` は `composition.nodeLabelShort` → `composition.nodeLabel` → `NODE_LABEL_MAP[categoryPath[1]]` → `brandNames[0]` の順で解決し、**`display.nodeLabelShort` を参照しない**。本 module では `categoryPath[1] = 'インスリン製剤'` が `NODE_LABEL_MAP` に無いため **`brandNames[0]` =「ノボラピッド30ミックス」** が描画されていた（同関数は multi-drug ノードバー・Topbar `baseDrugLabel` 等 **9 箇所**で使用）。一方 `activeDrugLabel`（display 優先）は `混合型INS（超速/中間）` を描画しており、**同一 module が UI 経路によって 2 通りに描画されていた**
+  - 2026-09-21 の Unit「N-3 composition.nodeLabelShort repair」で、canonical へ **`"nodeLabelShort": "混合型INS（超速/中間）"` を 1 行追加**した（`nodeKey` の直後。sibling `dm_insulin_mixed_regular_intermediate` と同じキー順）
+  - **source は bridge の `display.nodeLabelShort`**（逐語 `混合型INS（超速/中間）`）。本 module の bridge には `composition:` ブロックがないため、`prompts/vNext/PN2-Drug-Header.md`「composition セクション生成」の**フォールバック表（必須）「`composition.nodeLabelShort` ← `display.nodeLabelShort`（bridge）を投影」をそのまま適用した追認**である。**新しい規則は作っていない**（Owner Decision OD-N3-2）
+  - **sibling naming から値を生成していない**（Case C 不採用）。**canonical `display.nodeLabelShort` を source とする新規則も作っていない**（Case B 不採用）
+  - **事後〔実測〕**: `resolveNodeLabel()` の返値は `混合型INS（超速/中間）` となり、**`resolveNodeLabel()` と `display.nodeLabelShort` が異なる module は 0 件**。`composition.nodeLabelShort` presence **35/35**、display との一致 **35/35**
+  - **parity を contract 化していない**（OD-N3-3）。結果として `display.nodeLabelShort == composition.nodeLabelShort` が 35/35 になるが、これを `prompts/RULES.md` / `docs/JSON_STANDARD.md` / validator へ一般規則として昇格していない
+  - **machine impact なし〔実測〕**: `composition.nodeLabelShort` は `data/search-manifest.json` へ投影されないため **manifest はバイト不変（再生成していない）**、search regression は 8 query で差分 0。bridge / 他 34 canonical / `lib/` / `app/` / `scripts/` / `tests/` / `docs/` はすべて無変更
+  - **requiredness enforcement は本 Unit に含めていない**（OD-N3-4）。下記 Finding 候補として OPEN のまま保持する
+- **Finding 候補（OPEN・remediation 未実施）: `JS-A composition requiredness enforcement / corpus missing fields`**
+  - 〔2026-09-21 実測〕`docs/JSON_STANDARD.md` JS-A-composition が**必須サブフィールド**として収載している 9 field について corpus 35 module を実測したところ、次の欠落が存在する
+    - `composition.nodeLabelShort` missing **1 件**（`dm_insulin_mixed_rapid_intermediate`）→ **上記 N-3 で data repair 済み**
+    - `composition.priority` missing **1 件**（`dm_insulin_mixed_rapid_intermediate`。本 Unit では**修復しない**）
+    - `composition.sMergePolicy` missing **1 件**（`dm_insulin_intermediate`。本 Unit では**修復しない**）
+  - **現行の検証体系はこれらを一切検出しない〔実測〕**: `lib/moduleValidator.ts`（`MISSING_*` は moduleId / moduleVersion / persona / primaryDisplayName のみ）／ `lib/crossModuleValidator.ts` ／ `npm run audit` の 8 本 ／ PN7 の 36 項目 ／ tests のいずれにも composition 必須 field の存在検査がない（D-9 が `drug.drugClass` について指摘したのと同型の contract debt）
+  - 参考〔実測・記録のみ〕: canonical の `composition` には JS-A 未収載のキーも存在する（`domain` 35 件 / `defaultSMergeLevel` `canonicalSource` `domainPolicy` `nodeIdentityPolicy` 各 21 件 / `drugClassLabel` 1 件）
+  - **requiredness enforcement（どの層で・どの severity で検査するか）は別 Unit で設計する。** 本 Finding は **N-3 の data repair 完了後も OPEN のまま**であり、`priority` / `sMergePolicy` の data repair も未実施である
+
 - **Finding 候補（記録のみ・remediation なし）: `composition.classKey` ↔ `composition.nodeKey` の関係**
   - D-15b の調査で分離した論点（Owner Decision OD-D15b-5）。**新しい Q-ID は払い出していない**
   - `docs/OPEN_DESIGN_QUESTIONS.md` **Q-J1** は「derm 3系 `composition.classKey` の剤形込み設計」、すなわち heparinoid で classKey に剤形名が含まれ `classKey == nodeKey` となっている問題を扱う
