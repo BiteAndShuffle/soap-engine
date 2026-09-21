@@ -70,6 +70,9 @@
  *   34)  template.reservedHandlingTags の各タグが、いずれかの brandCatalog[].handlingTags に
  *        既に存在していないこと（WARNING）。既にブランドが保持しているタグを予約タグとして
  *        宣言する必要はなく、宣言が古くなっている可能性を示す
+ *   （番号なし）composition の JS-A 必須 8 field（nodeKey / classKey / clinicalDomain / sMergeDomain /
+ *        groupKeyRegistry / nodeLabelShort / nodeLabelLong / priority）が undefined / null でないこと
+ *        （ERROR。MISSING_REQUIRED_COMPOSITION_FIELD。presence のみ。sMergePolicy は S3 未解決のため暫定除外）
  *   （番号なし）Rapid v2 profile の module（rapidProfileOf === 'v2'）の Rapid-capable scenario の
  *        authored S が、Rapid v2 の第1文置換・multi-node 合成の
  *        前提（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
@@ -88,6 +91,7 @@ export type ModuleValidationErrorCode =
   | 'MISSING_MODULE_ID'        // moduleId が存在しない
   | 'MISSING_MODULE_VERSION'   // moduleVersion が存在しない（警告）
   | 'MISSING_PERSONA'          // persona が存在しない（ERROR。JSON_STANDARD JS-A 必須）
+  | 'MISSING_REQUIRED_COMPOSITION_FIELD' // composition の JS-A 必須 field が undefined / null（ERROR。field path は detail）
   | 'MISSING_PRIMARY_DISPLAY_NAME' // drug.search.primaryDisplayName が存在しない
   | 'ADDON_KEY_MISMATCH'       // addons.items のキーと item.key が不一致
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
@@ -471,6 +475,45 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
       detail: 'persona が存在しません（JSON_STANDARD JS-A: 全 module 必須）',
       isWarning: false,
     })
+  }
+
+  // Required composition fields（JSON_STANDARD JS-A-composition）
+  // MISSING_PERSONA と同じく、JS-A が既に宣言している必須性を機械的に担保するだけであり、
+  // 新しい Repository 規則ではない。判定は presence のみ（undefined / null を missing とする。
+  // expressModes の EXPRESS_MODE_MISSING_FIELD と同じ判定）。"" / [] の妥当性、値域（priority の
+  // "chronic" / "acute" / "prn" 等）、bridge との値一致は別 contract であり、ここでは扱わない。
+  // groupKeyRegistry の内容の参照整合は check 18（MERGE_POLICY_GROUPKEY_INVALID）の責務のまま。
+  // composition 自体が absent / null / object でない場合は、field 単位の JS-A requirement と
+  // 1:1 になるよう 8 field それぞれを報告する（1 件に集約しない）。
+  //
+  // composition.sMergePolicy も JS-A-composition 必須だが、本 check の対象から暫定的に除外している。
+  // PN7 item S / DEVELOPMENT_STANDARD §10.5 GG-3（位置づけ確定まで FAIL にしない）と
+  // DEVELOPMENT_STANDARD §10.1 / VALIDATOR_STANDARD §5（Lifecycle を理由に JS-A の欠落を FAIL
+  // 対象から除外しない）の S3 contradiction が未解決であるための暫定措置であり、
+  // sMergePolicy を必須でないと判断したものではない。
+  const REQUIRED_COMPOSITION_FIELDS = [
+    'nodeKey',
+    'classKey',
+    'clinicalDomain',
+    'sMergeDomain',
+    'groupKeyRegistry',
+    'nodeLabelShort',
+    'nodeLabelLong',
+    'priority',
+  ] as const
+  const compositionRaw = obj?.composition
+  const composition =
+    typeof compositionRaw === 'object' && compositionRaw !== null && !Array.isArray(compositionRaw)
+      ? (compositionRaw as Record<string, unknown>)
+      : {}
+  for (const field of REQUIRED_COMPOSITION_FIELDS) {
+    if (composition[field] === undefined || composition[field] === null) {
+      errors.push({
+        code: 'MISSING_REQUIRED_COMPOSITION_FIELD',
+        detail: `composition.${field} が存在しません（JSON_STANDARD JS-A-composition: 必須）`,
+        isWarning: false,
+      })
+    }
   }
 
   // 3) drug.search.primaryDisplayName

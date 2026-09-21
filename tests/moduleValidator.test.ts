@@ -274,6 +274,80 @@ describe('persona 必須（JSON_STANDARD JS-A / F-4a）', () => {
 })
 
 // ─────────────────────────────────────────────────────────────
+// composition 必須 field の presence（JSON_STANDARD JS-A-composition / R-2）
+//
+// missing = undefined / null。"" / [] の妥当性は別 contract のためここでは扱わない。
+// sMergePolicy は S3 contradiction 未解決のため暫定的に対象外（本 describe の最終 test で固定）。
+// ─────────────────────────────────────────────────────────────
+
+const REQUIRED_COMPOSITION_FIELDS = [
+  'nodeKey',
+  'classKey',
+  'clinicalDomain',
+  'sMergeDomain',
+  'groupKeyRegistry',
+  'nodeLabelShort',
+  'nodeLabelLong',
+  'priority',
+] as const
+
+function compositionMissingErrors(mod: unknown) {
+  return validateModule(mod).errors.filter(e => e.code === 'MISSING_REQUIRED_COMPOSITION_FIELD')
+}
+
+describe('composition 必須 field の presence（JSON_STANDARD JS-A-composition / R-2）', () => {
+  for (const field of REQUIRED_COMPOSITION_FIELDS) {
+    test(`composition.${field} を削除 → MISSING_REQUIRED_COMPOSITION_FIELD（ERROR）が 1 件`, () => {
+      const broken = cloneModule()
+      delete broken.composition[field]
+      const errs = compositionMissingErrors(broken)
+      assert.equal(errs.length, 1, `R-2 由来 ERROR はちょうど 1 件であるべき: ${JSON.stringify(errs)}`)
+      assert.equal(errs[0].isWarning, false)
+      assert.ok(
+        errs[0].detail.includes(`composition.${field}`),
+        `detail に field path composition.${field} が含まれるべき: ${errs[0].detail}`,
+      )
+    })
+  }
+
+  test('composition.priority を null に → missing として検出される', () => {
+    const broken = cloneModule()
+    broken.composition.priority = null
+    const errs = compositionMissingErrors(broken)
+    assert.equal(errs.length, 1, JSON.stringify(errs))
+    assert.ok(errs[0].detail.includes('composition.priority'), errs[0].detail)
+  })
+
+  test('composition 自体を削除 → 8 field それぞれについて 1 件ずつ（計 8 件）', () => {
+    const broken = cloneModule()
+    delete broken.composition
+    const errs = compositionMissingErrors(broken)
+    assert.equal(errs.length, REQUIRED_COMPOSITION_FIELDS.length, JSON.stringify(errs))
+    for (const field of REQUIRED_COMPOSITION_FIELDS) {
+      assert.ok(
+        errs.some(e => e.detail.includes(`composition.${field} `)),
+        `composition.${field} が個別に報告されるべき: ${JSON.stringify(errs.map(e => e.detail))}`,
+      )
+    }
+    assert.ok(errs.every(e => e.isWarning === false))
+  })
+
+  test('正常データでは MISSING_REQUIRED_COMPOSITION_FIELD が出ない', () => {
+    assert.deepEqual(compositionMissingErrors(cloneModule()), [])
+  })
+
+  test('composition.sMergePolicy を削除しても MISSING_REQUIRED_COMPOSITION_FIELD は出ない（S3 未解決による暫定 scope）', () => {
+    const broken = cloneModule()
+    delete broken.composition.sMergePolicy
+    assert.deepEqual(
+      compositionMissingErrors(broken),
+      [],
+      'sMergePolicy は S3 contradiction（PN7 item S / GG-3 ⇔ §10.1 / VALIDATOR_STANDARD §5）解消まで対象外',
+    )
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
 // Express ACTIVE entry structural contract（U-EXP1）
 //
 // ACTIVE = enabled === true && disabled !== true。runtime で実際にクリック可能になり

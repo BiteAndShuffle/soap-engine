@@ -353,6 +353,37 @@ Lifecycle State が Future Expansion であることは本 check の severity �
 本文チェック表には未収載である。収載には check 番号の採番を要し、番号体系の扱いが
 確定していないためである（暫定状態であり恒久的な運用ではない）。
 
+### 適用例: `MISSING_REQUIRED_COMPOSITION_FIELD`（2026-09-22 追加・R-2）
+
+**本 check も新しい Repository 規則を追加していない。** `composition` の必須サブフィールドは
+`docs/JSON_STANDARD.md` JS-A-composition が既に宣言しており、本 check はその
+**既存宣言を機械的に担保する層を追加したにすぎない**（`MISSING_PERSONA` と同じ位置づけ）。
+必須性の宣言元は引き続き JSON_STANDARD である。
+
+- **判定は presence のみ**: 対象 field が `undefined` または `null` のとき missing とする
+  （`EXPRESS_MODE_MISSING_FIELD` と同じ判定。`MISSING_PERSONA` の falsy 判定は一般化しない）。
+  上記「Validator に入れてよいルール」のうち、必須フィールドの存在確認（§1 構造の健全性）に該当する
+- **対象は 8 field**: `nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` /
+  `groupKeyRegistry` / `nodeLabelShort` / `nodeLabelLong` / `priority`
+- **error code は generic 1 つ**。欠落した field は detail に `composition.<field>` として明記し、
+  field ごとに 1 件報告する。`composition` 自体が absent / `null` / object でない場合も、
+  field 単位の JS-A requirement と 1:1 になるよう 8 件を報告する（1 件に集約しない）
+- **severity は ERROR**。導入時点で全 35 module の検出は 0 件（R-1 で既知の欠落を補完済みの
+  green baseline 上に導入）。build を停止するか否かは呼び出し側が決定する（§4）
+- **扱わないもの（別 contract）**: `""` / `[]` の妥当性（content validity）、値域
+  （例: `priority` の `"chronic"` / `"acute"` / `"prn"`）、bridge ⇔ canonical の値一致、
+  `lib/types.ts` との型 parity。`groupKeyRegistry` の内容の参照整合は引き続き check 18
+  （`MERGE_POLICY_GROUPKEY_INVALID`）の責務であり、本 check は存在のみを見る
+- **`composition.sMergePolicy` は暫定的に対象外**。`sMergePolicy` も JS-A-composition の必須
+  field だが、`prompts/vNext/PN7-Cross-Reference-Audit.md` item S / `docs/DEVELOPMENT_STANDARD.md`
+  §10.5 GG-3（位置づけ確定まで FAIL 条件としない）と、`docs/DEVELOPMENT_STANDARD.md` §10.1
+  および本書の `MISSING_PERSONA` 適用例（Lifecycle State と severity 判定は独立）との間の
+  **S3 contradiction が未解決**であるための措置である。**`sMergePolicy` を必須でないと判断した
+  ものではなく**、S3 の解消は後続の Owner Decision で扱う
+
+`MISSING_PERSONA` と同じく、本 check は Appendix の errorCode 一覧にのみ収載し、§3-A の
+番号付き本文チェック表には収載しない。
+
 ---
 
 ## 6. P2B / P3 / P4 と Validator の関係
@@ -439,6 +470,7 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `MISSING_MODULE_ID` | ERROR | Structural |
 | `MISSING_MODULE_VERSION` | WARN | Structural |
 | `MISSING_PERSONA` | ERROR | Structural |
+| `MISSING_REQUIRED_COMPOSITION_FIELD` | ERROR | Structural |
 | `MISSING_PRIMARY_DISPLAY_NAME` | ERROR | Structural |
 | `NAME_ALIASES_MISMATCH` | ERROR | Structural |
 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARN | Design Rule |

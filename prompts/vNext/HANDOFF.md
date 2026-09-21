@@ -1,13 +1,21 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-21（Unit「R-1 composition data repair」:
+最終更新: 2026-09-22（Unit「R-2 JS-A composition requiredness enforcement」:
+`lib/moduleValidator.ts` に generic errorCode **`MISSING_REQUIRED_COMPOSITION_FIELD`**（ERROR・Structural）を追加し、
+JS-A-composition 必須 field のうち `nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / `groupKeyRegistry` /
+`nodeLabelShort` / `nodeLabelLong` / `priority` の 8 field の **presence**（missing = `undefined` / `null`）を機械担保した。
+`composition` 自体が absent / non-object なら 8 件報告。新しい Repository 規則ではなく JS-A の machine enforcement。
+current corpus 35 module で新 ERROR 0。`sMergePolicy` は **S3 contradiction 未解決のため暫定対象外**（S3 は OPEN のまま）。
+`""` / `[]` の妥当性・値域・Composition type parity（`lib/types.ts`）・drug / display requiredness は後続。
+canonical / bridge / manifest / PN7 / GG-3 / JSON_STANDARD / RULES / `lib/types.ts` は無変更。
+先行: 2026-09-21 Unit「R-1 composition data repair」:
 JS-A-composition の必須 field 欠落 2 件を、**現行 PN2 の規則をそのまま適用して**補完した。
 `dm_insulin_mixed_rapid_intermediate` に `"priority": "chronic"`（PN2 フォールバック表「インスリン注射 → "chronic"」）、
 `dm_insulin_intermediate` に PN2 固定値の `sMergePolicy` object（全 module 共通の model_managed 値）を追加
 （OD-REQ-1 / OD-REQ-2。`sMergePolicy` の補完は GG-3 の Lifecycle 分類を確定するものではない）。
 事後は priority / sMergePolicy とも presence 35/35、値も 35/35 一致。manifest はバイト不変で再生成せず、search 差分 0。
-**R-2 requiredness enforcement は未着手**（`moduleValidator`・generic code・ERROR・`sMergePolicy` を除く 8 field で決定済み）。
+R-2 requiredness enforcement は R-1 時点で未着手（`moduleValidator`・generic code・ERROR・`sMergePolicy` を除く 8 field で決定済み。2026-09-22 に R-2 で完了）。
 **S3 contradiction（PN7 item S / GG-3 ⇔ §10.1 / VALIDATOR_STANDARD §5）は OPEN** で、`sMergePolicy` の enforcement は
 S3 解消まで対象外。別 Finding 候補として `JS-B scope drift`（2026-09-18 の削除は H1 点眼 1 module のみと実測で訂正）/
 `Composition type parity` / `display.drugGeneric missing` を記録。bridge / PN2 / RULES / JSON_STANDARD /
@@ -1323,8 +1331,8 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
     - `composition.nodeLabelShort` missing 1 件（`dm_insulin_mixed_rapid_intermediate`）→ **N-3 で data repair 済み**
     - `composition.priority` missing 1 件（`dm_insulin_mixed_rapid_intermediate`）→ **R-1 で data repair 済み**
     - `composition.sMergePolicy` missing 1 件（`dm_insulin_intermediate`）→ **R-1 で data repair 済み**
-  - **本 Finding は OPEN のまま。** data の欠落は解消したが、**再発防止（R-2 requiredness enforcement）は未着手**である。現行の `lib/moduleValidator.ts`（`MISSING_*` は moduleId / moduleVersion / persona / primaryDisplayName のみ）／ `lib/crossModuleValidator.ts` ／ `npm run audit` の 8 本 ／ PN7 の 36 項目 ／ tests は、いずれも composition 必須 field の存在を検査しない（間接的に検出されるのは `tests/searchCoverage.test.ts` が manifest 経由で確認する `nodeKey` / `classKey` / `clinicalDomain` の 3 field のみ）
-  - **R-2 の scope（Owner Decision OD-REQ-4〜7・決定済み／未着手）**: 置き場所は `lib/moduleValidator.ts`（存在確認は構造健全性であり `MISSING_PERSONA` と同じ責務。bridge ⇔ canonical の値一致 audit とは混ぜない）／ error code は **generic 1 つ**（例: `MISSING_REQUIRED_COMPOSITION_FIELD`。field path は detail に入れ、field ごとの code は作らない）／ severity は **ERROR**（R-1 完了で baseline が green になった後に導入する）／ 対象は **JS-A-composition 9 field のうち `sMergePolicy` を除く 8 field**。scope は composition で仕組みを確立してから drug / display へ拡張する（Scope 3）
+  - **本 Finding は OPEN のまま（残: `sMergePolicy` の enforcement）。** data の欠落は解消し、再発防止は **R-2 で 8 field について導入済み**（下記 R-2）。`sMergePolicy` の欠落は S3 未解決のため引き続きどの層でも FAIL にならない。R-1 時点では `lib/moduleValidator.ts`（`MISSING_*` は moduleId / moduleVersion / persona / primaryDisplayName のみ）／ `lib/crossModuleValidator.ts` ／ `npm run audit` の 8 本 ／ PN7 の 36 項目 ／ tests のいずれも composition 必須 field の存在を検査していなかった（間接的に検出されていたのは `tests/searchCoverage.test.ts` が manifest 経由で確認する `nodeKey` / `classKey` / `clinicalDomain` の 3 field のみ）
+  - **R-2 の scope（Owner Decision OD-REQ-4〜7・決定済み／2026-09-22 に R-2 で実装）**: 置き場所は `lib/moduleValidator.ts`（存在確認は構造健全性であり `MISSING_PERSONA` と同じ責務。bridge ⇔ canonical の値一致 audit とは混ぜない）／ error code は **generic 1 つ**（例: `MISSING_REQUIRED_COMPOSITION_FIELD`。field path は detail に入れ、field ごとの code は作らない）／ severity は **ERROR**（R-1 完了で baseline が green になった後に導入する）／ 対象は **JS-A-composition 9 field のうち `sMergePolicy` を除く 8 field**。scope は composition で仕組みを確立してから drug / display へ拡張する（Scope 3）
   - **S3 contradiction（OPEN）**: `prompts/vNext/PN7-Cross-Reference-Audit.md` item S と `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-3 は「`composition.sMergePolicy` は位置づけが確定するまで FAIL 条件としない（欠落は記録のみ）」とする。一方 `docs/DEVELOPMENT_STANDARD.md` §10.1 の注記は「JS-A の field の欠落を Lifecycle を根拠に FAIL 対象から除外してはならない」とし、`docs/VALIDATOR_STANDARD.md` §5（`MISSING_PERSONA`）も「Lifecycle State と severity 判定は独立」とする。**正本同士が矛盾しており、未解決**
   - **`sMergePolicy` を R-2 の enforcement 対象から外すのは S3 が未解決であるための暫定措置**（OD-REQ-3）。これは PN7 item S が正しいと確定したことも、§10.1 を否定したことも、Lifecycle を理由に JS-A の必須性を外したことも意味しない。PN7 item S を改訂して JS-A requiredness を enforce するのか、GG-3 / JS-A 側の位置づけを変えるのかは、後続の Owner Decision で扱う
 - **R-1: composition data repair — 2026-09-21 に完了**
@@ -1336,6 +1344,17 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **事後〔実測〕**: `composition.priority` presence **35/35**（値の分布は `{"chronic": 35}`）／ `composition.sMergePolicy` presence **35/35**（35/35 が PN2 固定 object と完全一致）
   - **machine impact なし〔実測〕**: 両 field とも `data/search-manifest.json` へ投影されないため manifest はバイト不変（再生成していない）。search regression は 10 query で差分 0。両 field とも `lib` / `app` から読まれていないため runtime への影響もない
   - bridge / PN2 / RULES / JSON_STANDARD / VALIDATOR_STANDARD / validator / audit / tests / `lib/types.ts` / 他 33 canonical はすべて無変更
+- **R-2: JS-A composition requiredness enforcement — 2026-09-22 に完了**
+  - `lib/moduleValidator.ts` に generic errorCode **`MISSING_REQUIRED_COMPOSITION_FIELD`**（**ERROR**・Structural）を 1 つ追加した。field ごとの code は作らず、欠落 field は detail に `composition.<field>` として明記する（例: `composition.priority が存在しません（JSON_STANDARD JS-A-composition: 必須）`）
+  - **対象 8 field**: `nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / `groupKeyRegistry` / `nodeLabelShort` / `nodeLabelLong` / `priority`
+  - **判定は presence のみ**: missing = `undefined` / `null`（`EXPRESS_MODE_MISSING_FIELD` と同じ判定。`MISSING_PERSONA` の falsy 判定は一般化しない）。`composition` 自体が absent / `null` / object でない場合は 8 field それぞれを報告する（計 8 件。1 件に集約しない）
+  - **新しい Repository 規則ではない**: JSON_STANDARD JS-A-composition の既存宣言の machine enforcement（`MISSING_PERSONA` と同じ位置づけ）。`docs/VALIDATOR_STANDARD.md` Appendix に errorCode を追加し、§5 に適用例を記録した（§3-A の番号付き表には `MISSING_PERSONA` と同様に収載しない）
+  - **current corpus 35 module で新 ERROR 0〔実測〕**。ModuleValidator の baseline（ERROR 0 / WARNING 35）は不変
+  - **`composition.sMergePolicy` は暫定対象外**: S3 contradiction（上記）が未解決のため。`sMergePolicy` を必須でないと判断したものではない。**S3 は OPEN のまま**で、PN7 item S / GG-3 / JSON_STANDARD / RULES は変更していない。`sMergePolicy` を削除しても本 check が ERROR を出さないことを test で固定した
+  - **扱わないもの（別論点・未決）**: `""` / `[]` の許否（content validity）／ `priority` の値域（`"chronic"` / `"acute"` / `"prn"`）／ bridge との値一致 ／ `groupKeyRegistry` の内容の参照整合（check 18 の責務のまま）
+  - tests: `tests/moduleValidator.test.ts` に table-driven の 12 test を追加（8 field の個別削除 / `null` / `composition` 削除で 8 件 / 正常データで 0 件 / `sMergePolicy` 削除で 0 件）
+  - **後続**: Composition type parity（`lib/types.ts`。別 Unit・OD-REQ-10）／ JS-A drug / display requiredness（OD-REQ-8。`display.drugGeneric missing` を含む）／ S3 解消の Owner Decision
+  - canonical / bridge / `data/search-manifest.json` / PN2 / PN7 / RULES / JSON_STANDARD / `lib/types.ts` は無変更
 - **Finding 候補（記録のみ・remediation なし）: `JS-B scope drift`**
   - `composition.canonicalSource` / `defaultSMergeLevel` / `domainPolicy` / `nodeIdentityPolicy` は **`docs/JSON_STANDARD.md` JS-B（多剤合成対象 module のみ必須・DP-03）で宣言された条件付き field であり、宣言のない legacy key ではない**。JS-D は allergy_eye_drops / derm 3 系での欠落を「多剤合成対象外」として許容している
   - 問題点〔2026-09-21 実測〕: ① corpus の分布が保有 21 / 非保有 14（非保有は点眼 2・heparinoid 4・insulin 7・`cardiorenal_sglt2_oral`・`dm_dpp4_sglt2_combination_oral`）② JS-B の「現在の対象」欄が「allergy_oral / GLP-1 2系」のままで実態と一致しない ③ insulin 7 件・SGLT2 系 2 件が多剤合成の対象かどうかを定める明文がない
