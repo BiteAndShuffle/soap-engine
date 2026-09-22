@@ -756,7 +756,8 @@ export interface ModuleData {
   /** 合成ノード表示設定 */
   composition?: {
     domain?: string
-    priority?: number
+    /** 優先度区分（JSON_STANDARD JS-A-composition / RULES §18） */
+    priority?: string
     /** ノードバーに表示する短縮ラベル（未指定時は NODE_LABEL_MAP / categoryPath[1] / brandNames[0] で決定） */
     nodeLabel?: string
     /** ノードバーに表示する短縮ラベル（canonical source: composition.nodeLabelShort） */
@@ -784,6 +785,14 @@ export interface ModuleData {
      * 現時点では MergedBlock への伝播のみ行い、合成判定には未使用。
      */
     sMergeDomain?: string
+    /** S統合ポリシー（JSON_STANDARD JS-A-composition） */
+    sMergePolicy?: {
+      unit: string
+      conflictStrategy: string
+      withinDomainStrategy: string
+    }
+    /** scenarios[].mergePolicy.S.groupKey の登録簿（JSON_STANDARD JS-A-composition） */
+    groupKeyRegistry?: string[]
   }
   drug?: Drug
   drugResolution?: DrugResolution

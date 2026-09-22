@@ -1,13 +1,22 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-22（Unit「R-2 JS-A composition requiredness enforcement」:
+最終更新: 2026-09-22（Unit「Composition type parity」:
+`lib/types.ts` の `ModuleData.composition` 型を JS-A-composition / RULES §18 / canonical corpus と一致させた。
+**JS-A-composition 9/9 field の type parity を確認済み**で、実差分は不一致・未宣言だった 3 field のみ
+（`priority?: number` → `priority?: string` ／ inline `sMergePolicy?: { unit; conflictStrategy; withinDomainStrategy: string }` を追加 ／
+`groupKeyRegistry?: string[]` を追加）。3 field とも optional のまま、literal union・値域制約は導入していない（OD-TP-1〜5）。
+canonical 35 module の `composition` が二重 cast なしで新しい型へ代入可能（scratch probe で error 0）。
+**S3 / GG-3 は OPEN のまま**。別 Finding 候補 `Canonical ↔ TypeScript type validation gap` と、investigation 候補
+`composition.drugClassLabel` / `composition.nodeLabel` を記録（OD-TP-6）。canonical / bridge / manifest / JSON_STANDARD /
+RULES / PN2 / PN7 / validator / tests / `data/modules/index.ts` は無変更。
+先行: 同日 Unit「R-2 JS-A composition requiredness enforcement」:
 `lib/moduleValidator.ts` に generic errorCode **`MISSING_REQUIRED_COMPOSITION_FIELD`**（ERROR・Structural）を追加し、
 JS-A-composition 必須 field のうち `nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / `groupKeyRegistry` /
 `nodeLabelShort` / `nodeLabelLong` / `priority` の 8 field の **presence**（missing = `undefined` / `null`）を機械担保した。
 `composition` 自体が absent / non-object なら 8 件報告。新しい Repository 規則ではなく JS-A の machine enforcement。
 current corpus 35 module で新 ERROR 0。`sMergePolicy` は **S3 contradiction 未解決のため暫定対象外**（S3 は OPEN のまま）。
-`""` / `[]` の妥当性・値域・Composition type parity（`lib/types.ts`）・drug / display requiredness は後続。
+`""` / `[]` の妥当性・値域・Composition type parity（`lib/types.ts`。同日完了）・drug / display requiredness は後続。
 canonical / bridge / manifest / PN7 / GG-3 / JSON_STANDARD / RULES / `lib/types.ts` は無変更。
 先行: 2026-09-21 Unit「R-1 composition data repair」:
 JS-A-composition の必須 field 欠落 2 件を、**現行 PN2 の規則をそのまま適用して**補完した。
@@ -1353,17 +1362,31 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **`composition.sMergePolicy` は暫定対象外**: S3 contradiction（上記）が未解決のため。`sMergePolicy` を必須でないと判断したものではない。**S3 は OPEN のまま**で、PN7 item S / GG-3 / JSON_STANDARD / RULES は変更していない。`sMergePolicy` を削除しても本 check が ERROR を出さないことを test で固定した
   - **扱わないもの（別論点・未決）**: `""` / `[]` の許否（content validity）／ `priority` の値域（`"chronic"` / `"acute"` / `"prn"`）／ bridge との値一致 ／ `groupKeyRegistry` の内容の参照整合（check 18 の責務のまま）
   - tests: `tests/moduleValidator.test.ts` に table-driven の 12 test を追加（8 field の個別削除 / `null` / `composition` 削除で 8 件 / 正常データで 0 件 / `sMergePolicy` 削除で 0 件）
-  - **後続**: Composition type parity（`lib/types.ts`。別 Unit・OD-REQ-10）／ JS-A drug / display requiredness（OD-REQ-8。`display.drugGeneric missing` を含む）／ S3 解消の Owner Decision
+  - **後続**: Composition type parity（`lib/types.ts`。別 Unit・OD-REQ-10。**同日完了**・下記）／ JS-A drug / display requiredness（OD-REQ-8。`display.drugGeneric missing` を含む）／ S3 解消の Owner Decision
   - canonical / bridge / `data/search-manifest.json` / PN2 / PN7 / RULES / JSON_STANDARD / `lib/types.ts` は無変更
 - **Finding 候補（記録のみ・remediation なし）: `JS-B scope drift`**
   - `composition.canonicalSource` / `defaultSMergeLevel` / `domainPolicy` / `nodeIdentityPolicy` は **`docs/JSON_STANDARD.md` JS-B（多剤合成対象 module のみ必須・DP-03）で宣言された条件付き field であり、宣言のない legacy key ではない**。JS-D は allergy_eye_drops / derm 3 系での欠落を「多剤合成対象外」として許容している
   - 問題点〔2026-09-21 実測〕: ① corpus の分布が保有 21 / 非保有 14（非保有は点眼 2・heparinoid 4・insulin 7・`cardiorenal_sglt2_oral`・`dm_dpp4_sglt2_combination_oral`）② JS-B の「現在の対象」欄が「allergy_oral / GLP-1 2系」のままで実態と一致しない ③ insulin 7 件・SGLT2 系 2 件が多剤合成の対象かどうかを定める明文がない
   - **2026-09-18 の削除について（Repository 実測を正とする）**: commit `1ed17e9`「establish H1 eye drops golden reference」が上記 4 key を削除したのは **`allergy_h1_antihistamine_eye_drops` の 1 module だけ**である。DP-03 が当該 module を多剤合成対象外と明記しているにもかかわらず、`82923dd` の再生成時に `allergy_h1_antihistamine_second_gen_oral` から逐語コピーされて混入していた **reference contamination の除去**であり、**corpus 全体からの削除ではない**。corpus 全体から消えたのは同日の `e11d3a2`「remove legacy composition searchDomain」による `composition.searchDomain` のみ（現 corpus で 0 件）
   - requiredness enforcement とは別問題として保持する（OD-REQ-9）
-- **Finding 候補（記録のみ・remediation なし）: `Composition type parity`**
-  - `lib/types.ts` の `composition` 型が JS-A / corpus と一致していない〔2026-09-21 実測〕: ① `priority?: number` だが、JS-A・`prompts/RULES.md` §18・corpus 35 件はすべて string（`"chronic"`）② `sMergePolicy` の型宣言がない ③ `groupKeyRegistry` の型宣言がない
-  - `data/modules/index.ts` が 35 件すべてを `as unknown as ModuleData` で二重キャストしているため、`tsc` では検出されない（D-3 と同じ機構）
-  - 別 Unit で扱う（OD-REQ-10）。R-1 / R-2 では `lib/types.ts` を変更しない
+- **`Composition type parity` — 2026-09-22 に完了**
+  - 〔historical・2026-09-21 実測〕`lib/types.ts` の `composition` 型が JS-A / corpus と一致していなかった: ① `priority?: number` だが、JS-A・`prompts/RULES.md` §18・corpus 35 件はすべて string（`"chronic"`）② `sMergePolicy` の型宣言がない ③ `groupKeyRegistry` の型宣言がない。`data/modules/index.ts` の二重キャストにより `tsc` では検出されていなかった（D-3 と同じ機構）。R-1 / R-2 では `lib/types.ts` を変更しなかった（OD-REQ-10）
+  - **current state〔実測〕: JS-A-composition 9/9 field の type parity を確認済み**（JSON_STANDARD / RULES / canonical 35 件 / `lib/types.ts` の 4 者）。`nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / `nodeLabelShort` / `nodeLabelLong` の 6 field は既に一致しており無変更
+  - **実差分は 3 field のみ**（Option B: 9 field を確認し、差分は不一致・未宣言分だけ。OD-TP-4）。既存 field の並べ替えなし
+    - `priority?: number` → **`priority?: string`**（OD-TP-1）。literal union `'chronic' | 'acute' | 'prn'` は採用しない: JSON_STANDARD / RULES が型として定めるのは string であり 3 値は valid values であって TypeScript literal contract ではない／JSON import の string widening により literal union では 35 module すべてが型不一致になる（scratch 実測）／型修復のついでに新しい値制約を加えない。値域 validation は別 Unit
+    - **`sMergePolicy?: { unit: string; conflictStrategy: string; withinDomainStrategy: string }`** を inline で追加（OD-TP-2。`composition` / `display` の inline style に合わせ named type は作らない）。各 key は literal ではなく string で、PN2 の現行固定値を TypeScript literal contract へ昇格させていない。**型宣言の追加は S3 contradiction・GG-3 の Lifecycle 分類を解消する判断ではない**
+    - **`groupKeyRegistry?: string[]`** を追加（OD-TP-3）。non-empty array 型は導入しない（`[]` の妥当性は別 contract。PN2 は暫定 `[]` を許容している）
+  - **optionality は変更していない**（OD-TP-5）。3 field とも optional のまま。requiredness は R-2 validator の責務であり、`sMergePolicy` には S3 contradiction も残るため、compile-time required 化はしない
+  - `sMergePolicy` / `groupKeyRegistry` は `sMergeDomain` の直後へ追加（JS-A の並び `sMergeDomain → sMergePolicy → groupKeyRegistry` と局所的に一致）。JSDoc は型の意味のみを記し、設計判断・履歴は本節に保持する
+  - **検証〔実測〕**: canonical 35 module の `composition` を二重 cast なしで新しい `NonNullable<ModuleData['composition']>` へ代入する scratch probe で error 0（修復前は 35 件すべてが `priority` で TS2322）。`composition.priority` / `sMergePolicy` / `groupKeyRegistry` を型経由で読む production consumer は 0 件のため runtime behavior は不変
+  - **S3 / GG-3 は OPEN のまま**。canonical / bridge / `data/search-manifest.json` / JSON_STANDARD / RULES / PN2 / PN7 / validator / tests / `data/modules/index.ts`（cast）は無変更。dedicated test は追加していない（前例: `2e2c183`）
+- **Finding 候補（記録のみ・remediation なし）: `Canonical ↔ TypeScript type validation gap`**（OD-TP-6）
+  - `data/modules/index.ts` が 35 module すべてを `raw as unknown as ModuleData` で二重キャストしており、canonical JSON と `ModuleData` の型不一致を `tsc` が検出できない
+  - composition の type parity 修復後も、**composition 外に型不一致が残る**〔2026-09-22 実測・scratch probe で cast を外した場合の各 module の最初の不一致〕: `template.urgentCriteria` 21 / `searchConfig.multiTerm.operator` 7 / `display.localInput.targetField` 6 / `drug.brandCatalog`（`displayName` 欠落を含む）2。先頭エラーのみの計数であり全件数ではない。literal union 型（`multiTerm.operator` 等）は JSON import の string widening でも不一致になる
+  - 本 Unit では cast を変更していない。remediation（型修復・cast 除去・型検査方式の選択）は別 Unit で扱う
+- **investigation / cleanup 候補（記録のみ・変更なし）**（OD-TP-6）
+  - **`composition.drugClassLabel`**: corpus で 1 件のみ（`dm_insulin_mixed_rapid_intermediate`）。JSON_STANDARD の composition field としては未宣言（JS 上の `drugClassLabel` は `display` 側）。wrong location かどうかは未確定であり、今回変更しない
+  - **`composition.nodeLabel`**: corpus 0 件だが `lib/types.ts` に宣言あり。`app/components/DashboardClient.tsx` の node label fallback と tests が参照しているため dead field と断定しない。cleanup 可否は別調査
 - **Finding 候補（記録のみ・remediation なし）: `display.drugGeneric missing`**
   - 〔2026-09-21 実測〕`dm_insulin_mixed_rapid_long` の canonical に `display.drugGeneric` が **ABSENT**（`docs/JSON_STANDARD.md` JS-A-display の必須サブフィールド。corpus でこの 1 件のみ）。bridge は `drugGeneric: "混合型インスリン製剤（超速効型＋持効型）"` を宣言しているため、bridge → canonical の転記漏れと考えられる（同 module は D-2 でも drug サブフィールドの転記漏れがあった）
   - drug / display の requiredness を扱う後続 Unit で対応する（OD-REQ-8）。R-1 / R-2 では修復しない
