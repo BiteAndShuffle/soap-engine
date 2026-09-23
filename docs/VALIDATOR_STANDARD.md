@@ -384,6 +384,53 @@ Lifecycle State が Future Expansion であることは本 check の severity �
 `MISSING_PERSONA` と同じく、本 check は Appendix の errorCode 一覧にのみ収載し、§3-A の
 番号付き本文チェック表には収載しない。
 
+### 適用例: `MISSING_REQUIRED_DRUG_FIELD` / `MISSING_REQUIRED_DRUG_SEARCH_FIELD` / `MISSING_REQUIRED_DISPLAY_FIELD`（2026-09-23 追加・DR-2）
+
+**本 check も新しい Repository 規則を追加していない。** `drug` / `drug.search` / `display` の必須
+サブフィールドは `docs/JSON_STANDARD.md` JS-A-drug / JS-A-display が既に宣言しており、本 check は
+その **既存宣言を機械的に担保する層**である（`MISSING_PERSONA` / `MISSING_REQUIRED_COMPOSITION_FIELD`
+と同じ位置づけ）。composition の generic code を **section 単位で 3 つに分けた**もので、責務の粒度と
+命名は R-2 に揃えている。
+
+- **判定は presence のみ**: 対象 field が `undefined` または `null` のとき missing とする。
+  欠落した field は detail に field path（例: `display.title が存在しません（JSON_STANDARD JS-A-display: 必須）`）
+  として明記し、field ごとに 1 件報告する
+- **対象は 16 field**
+  - `MISSING_REQUIRED_DRUG_FIELD`（3）: `drug.nameAliases` / `drug.aliasToBrand` / `drug.brandCatalog`
+  - `MISSING_REQUIRED_DRUG_SEARCH_FIELD`（7）: `drug.search` の `exactAliases` / `nameAliases` /
+    `keywords` / `priority`、`drug.search.matchPolicy` の `preferExactAlias` / `allowPrefixMatch` /
+    `suppressCrossModuleSuggestionsOnExactHit`
+  - `MISSING_REQUIRED_DISPLAY_FIELD`（6）: `display` の `title` / `subtitle` / `drugClassLabel` /
+    `nodeLabelShort` / `nodeLabelLong` / `nodeKey`
+- **parent が absent / `null` / 配列 / 非 object の場合**も、field 単位の JS-A requirement と 1:1 に
+  なるよう配下の required field をそれぞれ報告する（`drug` 欠落なら 10 件、`drug.search` なら 7 件、
+  `matchPolicy` なら 3 件、`display` なら 6 件）
+- **severity は ERROR**。導入時点で全 35 module の検出は 0 件（green baseline 上に導入）
+- **扱わないもの（別 contract）**: `""` / `[]` / `{}` の妥当性（例: `drug.search.keywords` は 35/35
+  present だが 28 module が空配列であり、requiredness としては PASS のまま）、値域、
+  bridge ⇔ canonical の値一致、`lib/types.ts` との型 parity
+- **除外 2 field**
+  - `drug.search.primaryDisplayName`: 既存の専用 presence check `MISSING_PRIMARY_DISPLAY_NAME` が
+    担当する。**同一欠落に 2 つの ERROR を出さない**ため新 check の対象にしない
+  - `display.drugGeneric`: JS-A-display の必須 field だが、**generation contract が未確定**のため
+    暫定的に対象外（bridge 宣言は 19/35、bridge 未宣言時の生成規則が PN2 に存在しない）。
+    **必須でないと判断したものではない。** DR-1 で corpus は 35/35 になっているが、presence が
+    揃うことと generation contract が確定していることは別である
+
+**`nameAliases` における presence と parity の責務分離（DR-2）**
+
+`drug.nameAliases` / `drug.search.nameAliases` については、次のとおり責務を分離する。
+
+| 状態 | 担当する errorCode |
+|---|---|
+| 片側または両側が**欠落**している | `MISSING_REQUIRED_DRUG_FIELD` / `MISSING_REQUIRED_DRUG_SEARCH_FIELD`（presence） |
+| **両方 present** だが値（件数・要素）が一致しない | `NAME_ALIASES_MISMATCH`（SSOT parity） |
+
+**同一欠陥に requiredness ERROR と parity ERROR を二重報告しない。** この分離に伴い check 3a は
+「両方 present のときのみ比較する」挙動へ変更したが、**欠落は引き続き ERROR で停止する**（担当する
+code が変わるだけである）。§3-A の `NAME_ALIASES_MISMATCH` 行（SSOT 同期）は parity rule の説明
+として変更後も有効であり、変更していない。
+
 ---
 
 ## 6. P2B / P3 / P4 と Validator の関係
@@ -471,6 +518,9 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `MISSING_MODULE_VERSION` | WARN | Structural |
 | `MISSING_PERSONA` | ERROR | Structural |
 | `MISSING_REQUIRED_COMPOSITION_FIELD` | ERROR | Structural |
+| `MISSING_REQUIRED_DRUG_FIELD` | ERROR | Structural |
+| `MISSING_REQUIRED_DRUG_SEARCH_FIELD` | ERROR | Structural |
+| `MISSING_REQUIRED_DISPLAY_FIELD` | ERROR | Structural |
 | `MISSING_PRIMARY_DISPLAY_NAME` | ERROR | Structural |
 | `NAME_ALIASES_MISMATCH` | ERROR | Structural |
 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARN | Design Rule |

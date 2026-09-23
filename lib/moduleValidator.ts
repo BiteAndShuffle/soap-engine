@@ -73,6 +73,11 @@
  *   （番号なし）composition の JS-A 必須 8 field（nodeKey / classKey / clinicalDomain / sMergeDomain /
  *        groupKeyRegistry / nodeLabelShort / nodeLabelLong / priority）が undefined / null でないこと
  *        （ERROR。MISSING_REQUIRED_COMPOSITION_FIELD。presence のみ。sMergePolicy は S3 未解決のため暫定除外）
+ *   （番号なし）drug / drug.search / display の JS-A 必須 field が undefined / null でないこと
+ *        （ERROR。MISSING_REQUIRED_DRUG_FIELD / MISSING_REQUIRED_DRUG_SEARCH_FIELD /
+ *        MISSING_REQUIRED_DISPLAY_FIELD。presence のみ・計 16 field。
+ *        primaryDisplayName は既存 MISSING_PRIMARY_DISPLAY_NAME、display.drugGeneric は
+ *        generation contract 未確定のため対象外）
  *   （番号なし）Rapid v2 profile の module（rapidProfileOf === 'v2'）の Rapid-capable scenario の
  *        authored S が、Rapid v2 の第1文置換・multi-node 合成の
  *        前提（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
@@ -92,6 +97,9 @@ export type ModuleValidationErrorCode =
   | 'MISSING_MODULE_VERSION'   // moduleVersion が存在しない（警告）
   | 'MISSING_PERSONA'          // persona が存在しない（ERROR。JSON_STANDARD JS-A 必須）
   | 'MISSING_REQUIRED_COMPOSITION_FIELD' // composition の JS-A 必須 field が undefined / null（ERROR。field path は detail）
+  | 'MISSING_REQUIRED_DRUG_FIELD'        // drug の JS-A 必須 field が undefined / null（ERROR。field path は detail）
+  | 'MISSING_REQUIRED_DRUG_SEARCH_FIELD' // drug.search の JS-A 必須 field が undefined / null（ERROR。primaryDisplayName は除外）
+  | 'MISSING_REQUIRED_DISPLAY_FIELD'     // display の JS-A 必須 field が undefined / null（ERROR。drugGeneric は除外）
   | 'MISSING_PRIMARY_DISPLAY_NAME' // drug.search.primaryDisplayName が存在しない
   | 'ADDON_KEY_MISMATCH'       // addons.items のキーと item.key が不一致
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
@@ -528,6 +536,82 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     })
   }
 
+  // Required drug / drug.search / display fields（JSON_STANDARD JS-A-drug / JS-A-display）
+  // MISSING_REQUIRED_COMPOSITION_FIELD（composition）と同じ責務・同じ判定の section 版であり、
+  // JS-A が既に宣言している必須性を機械的に担保するだけで、新しい Repository 規則ではない。
+  // 判定は presence のみ（undefined / null を missing とする）。"" / [] / {} の妥当性、値域、
+  // 値の一致（bridge ⇔ canonical / SSOT parity）は別 contract でありここでは扱わない。
+  // parent（drug / drug.search / display / matchPolicy）が absent / null / 非 object の場合は、
+  // field 単位の JS-A requirement と 1:1 になるよう配下の required field をそれぞれ報告する。
+  //
+  // 除外 2 field:
+  //   - drug.search.primaryDisplayName: 既存の専用 presence check（MISSING_PRIMARY_DISPLAY_NAME）
+  //     が担当する。同一欠落に 2 つの ERROR を出さない
+  //   - display.drugGeneric: JS-A-display 必須だが generation contract が未確定のため暫定除外
+  //     （bridge 宣言は 19/35・bridge 未宣言時の生成規則なし・PN2 に専用規則なし）。
+  //     必須でないと判断したものではない
+  const asObject = (v: unknown): Record<string, unknown> =>
+    typeof v === 'object' && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {}
+  const REQUIRED_DRUG_FIELDS = ['nameAliases', 'aliasToBrand', 'brandCatalog'] as const
+  const REQUIRED_DRUG_SEARCH_FIELDS = ['exactAliases', 'nameAliases', 'keywords', 'priority'] as const
+  const REQUIRED_MATCH_POLICY_FIELDS = [
+    'preferExactAlias',
+    'allowPrefixMatch',
+    'suppressCrossModuleSuggestionsOnExactHit',
+  ] as const
+  const REQUIRED_DISPLAY_FIELDS = [
+    'title',
+    'subtitle',
+    'drugClassLabel',
+    'nodeLabelShort',
+    'nodeLabelLong',
+    'nodeKey',
+  ] as const
+
+  const requireFields = (
+    container: Record<string, unknown>,
+    fields: readonly string[],
+    code: ModuleValidationErrorCode,
+    pathPrefix: string,
+    standardRef: string,
+  ): void => {
+    for (const field of fields) {
+      if (container[field] === undefined || container[field] === null) {
+        errors.push({
+          code,
+          detail: `${pathPrefix}.${field} が存在しません（JSON_STANDARD ${standardRef}: 必須）`,
+          isWarning: false,
+        })
+      }
+    }
+  }
+
+  const drugObj = asObject(drug)
+  const drugSearchObj = asObject(drugObj.search)
+  const matchPolicyObj = asObject(drugSearchObj.matchPolicy)
+  requireFields(drugObj, REQUIRED_DRUG_FIELDS, 'MISSING_REQUIRED_DRUG_FIELD', 'drug', 'JS-A-drug')
+  requireFields(
+    drugSearchObj,
+    REQUIRED_DRUG_SEARCH_FIELDS,
+    'MISSING_REQUIRED_DRUG_SEARCH_FIELD',
+    'drug.search',
+    'JS-A-drug',
+  )
+  requireFields(
+    matchPolicyObj,
+    REQUIRED_MATCH_POLICY_FIELDS,
+    'MISSING_REQUIRED_DRUG_SEARCH_FIELD',
+    'drug.search.matchPolicy',
+    'JS-A-drug',
+  )
+  requireFields(
+    asObject(obj?.display),
+    REQUIRED_DISPLAY_FIELDS,
+    'MISSING_REQUIRED_DISPLAY_FIELD',
+    'display',
+    'JS-A-display',
+  )
+
   // 3-dgn) brandCatalog[brand].displayGenericName の必須化・旧コピーパターン検出
   //
   // displayGenericName は表示用一般名の SSOT（塩類名を含まない）。
@@ -580,20 +664,12 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   const drugNameAliases = drug?.nameAliases as string[] | undefined
   const searchNameAliases = drugSearch?.nameAliases as string[] | undefined
 
-  if (drugNameAliases !== undefined || searchNameAliases !== undefined) {
-    if (drugNameAliases === undefined) {
-      errors.push({
-        code: 'NAME_ALIASES_MISMATCH',
-        detail: 'drug.search.nameAliases が存在しますが drug.nameAliases が存在しません（完全一致が必須）',
-        isWarning: false,
-      })
-    } else if (searchNameAliases === undefined) {
-      errors.push({
-        code: 'NAME_ALIASES_MISMATCH',
-        detail: 'drug.nameAliases が存在しますが drug.search.nameAliases が存在しません（完全一致が必須）',
-        isWarning: false,
-      })
-    } else if (drugNameAliases.length !== searchNameAliases.length) {
+  // 責務分離（DR-2）: 片側または両側の**欠落**は presence check
+  // （MISSING_REQUIRED_DRUG_FIELD / MISSING_REQUIRED_DRUG_SEARCH_FIELD）が担当する。
+  // 本 check は **両方が present のときの値の一致（SSOT parity）のみ**を担当し、
+  // 同一欠陥へ requiredness ERROR と parity ERROR を二重報告しない。
+  if (drugNameAliases !== undefined && searchNameAliases !== undefined) {
+    if (drugNameAliases.length !== searchNameAliases.length) {
       errors.push({
         code: 'NAME_ALIASES_MISMATCH',
         detail: `drug.nameAliases（${drugNameAliases.length}件）と drug.search.nameAliases（${searchNameAliases.length}件）のエントリ数が一致しません`,

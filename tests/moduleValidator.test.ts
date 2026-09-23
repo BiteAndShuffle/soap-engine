@@ -348,6 +348,177 @@ describe('composition 必須 field の presence（JSON_STANDARD JS-A-composition
 })
 
 // ─────────────────────────────────────────────────────────────
+// drug / drug.search / display 必須 field の presence（JS-A-drug / JS-A-display / DR-2）
+//
+// missing = undefined / null。"" / [] / {} は別 contract のためここでは扱わない。
+// 除外 2 field: drug.search.primaryDisplayName（既存 MISSING_PRIMARY_DISPLAY_NAME が担当）/
+// display.drugGeneric（generation contract 未確定のため暫定対象外）。
+// nameAliases は presence をここで、値の一致は NAME_ALIASES_MISMATCH が担当する（責務分離）。
+// ─────────────────────────────────────────────────────────────
+
+const DR2_CODES = [
+  'MISSING_REQUIRED_DRUG_FIELD',
+  'MISSING_REQUIRED_DRUG_SEARCH_FIELD',
+  'MISSING_REQUIRED_DISPLAY_FIELD',
+]
+
+/** [削除する field path, 期待 code] */
+const DR2_REQUIRED_FIELDS: Array<[string, string]> = [
+  ['drug.nameAliases', 'MISSING_REQUIRED_DRUG_FIELD'],
+  ['drug.aliasToBrand', 'MISSING_REQUIRED_DRUG_FIELD'],
+  ['drug.brandCatalog', 'MISSING_REQUIRED_DRUG_FIELD'],
+  ['drug.search.exactAliases', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['drug.search.nameAliases', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['drug.search.keywords', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['drug.search.priority', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['drug.search.matchPolicy.preferExactAlias', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['drug.search.matchPolicy.allowPrefixMatch', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['drug.search.matchPolicy.suppressCrossModuleSuggestionsOnExactHit', 'MISSING_REQUIRED_DRUG_SEARCH_FIELD'],
+  ['display.title', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+  ['display.subtitle', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+  ['display.drugClassLabel', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+  ['display.nodeLabelShort', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+  ['display.nodeLabelLong', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+  ['display.nodeKey', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+]
+
+function deletePath(obj: any, path: string): void {
+  const keys = path.split('.')
+  const last = keys.pop()!
+  const target = keys.reduce((a, k) => a?.[k], obj)
+  if (target) delete target[last]
+}
+
+function dr2Errors(mod: unknown) {
+  return validateModule(mod).errors.filter(e => DR2_CODES.includes(e.code))
+}
+
+describe('drug / drug.search / display 必須 field の presence（JS-A-drug / JS-A-display / DR-2）', () => {
+  for (const [path, code] of DR2_REQUIRED_FIELDS) {
+    test(`${path} を削除 → ${code}（ERROR）が 1 件`, () => {
+      const broken = cloneModule()
+      deletePath(broken, path)
+      const errs = dr2Errors(broken)
+      assert.equal(errs.length, 1, `DR-2 由来 ERROR はちょうど 1 件であるべき: ${JSON.stringify(errs)}`)
+      assert.equal(errs[0].code, code)
+      assert.equal(errs[0].isWarning, false)
+      assert.ok(
+        errs[0].detail.includes(path),
+        `detail に field path ${path} が含まれるべき: ${errs[0].detail}`,
+      )
+    })
+  }
+
+  test('display.title を null に → missing として検出される', () => {
+    const broken = cloneModule()
+    broken.display.title = null
+    const errs = dr2Errors(broken)
+    assert.equal(errs.length, 1, JSON.stringify(errs))
+    assert.ok(errs[0].detail.includes('display.title'), errs[0].detail)
+  })
+
+  test('parent object を削除 → 配下の required field がそれぞれ報告される', () => {
+    const cases: Array<[string, number]> = [
+      ['drug', 10], // drug 3 + drug.search 4 + matchPolicy 3（primaryDisplayName は既存 code）
+      ['drug.search', 7],
+      ['drug.search.matchPolicy', 3],
+      ['display', 6],
+    ]
+    for (const [path, expected] of cases) {
+      const broken = cloneModule()
+      deletePath(broken, path)
+      assert.equal(
+        dr2Errors(broken).length,
+        expected,
+        `${path} 削除時は ${expected} 件であるべき: ${JSON.stringify(dr2Errors(broken).map(e => e.detail))}`,
+      )
+    }
+  })
+
+  test('parent object 削除時も primaryDisplayName は既存 MISSING_PRIMARY_DISPLAY_NAME が 1 件担当する', () => {
+    // 新 check は primaryDisplayName を対象外にしているため、parent が丸ごと欠落した場合の
+    // 当該 field の停止経路は既存 code が担う。total ERROR も固定して退行を防ぐ。
+    const cases: Array<[string, number, number]> = [
+      // [path, 新 3 code の件数, ModuleValidator の total ERROR]
+      ['drug', 10, 11],
+      ['drug.search', 7, 8],
+    ]
+    for (const [path, newCount, totalErrors] of cases) {
+      const broken = cloneModule()
+      deletePath(broken, path)
+      const fatals = validateModule(broken).errors.filter(e => !e.isWarning)
+      assert.equal(
+        fatals.filter(e => e.code === 'MISSING_PRIMARY_DISPLAY_NAME').length,
+        1,
+        `${path} 削除時も MISSING_PRIMARY_DISPLAY_NAME が 1 件残るべき: ${JSON.stringify(fatals.map(e => e.code))}`,
+      )
+      assert.equal(dr2Errors(broken).length, newCount, `${path}: 新 3 code は ${newCount} 件`)
+      assert.equal(
+        fatals.length,
+        totalErrors,
+        `${path} 削除時の total ERROR は ${totalErrors} 件であるべき: ${JSON.stringify(fatals.map(e => e.code))}`,
+      )
+    }
+  })
+
+  test('parent object が null / 非 object でも同様に報告される', () => {
+    for (const value of [null, [], 'x', 5]) {
+      const broken = cloneModule()
+      broken.display = value
+      assert.equal(dr2Errors(broken).length, 6, `display=${JSON.stringify(value)}`)
+    }
+  })
+
+  test('正常データでは DR-2 の ERROR が出ない', () => {
+    assert.deepEqual(dr2Errors(cloneModule()), [])
+  })
+
+  test('display.drugGeneric を削除しても DR-2 の新 check は ERROR を出さない（generation contract 未確定による暫定 scope）', () => {
+    const broken = cloneModule()
+    delete broken.display.drugGeneric
+    assert.deepEqual(dr2Errors(broken), [])
+    assert.deepEqual(
+      errorCodesOf(broken),
+      [],
+      'display.drugGeneric の欠落を止める経路は現時点で存在しない（OD-DR-3 による意図的な状態）',
+    )
+  })
+
+  test('drug.search.keywords: [] は requiredness として PASS（empty は別 contract）', () => {
+    const broken = cloneModule()
+    broken.drug.search.keywords = []
+    assert.deepEqual(dr2Errors(broken), [])
+  })
+
+  test('drug.search.primaryDisplayName の欠落は既存 MISSING_PRIMARY_DISPLAY_NAME のみ（二重報告しない）', () => {
+    const broken = cloneModule()
+    deletePath(broken, 'drug.search.primaryDisplayName')
+    assert.deepEqual(errorCodesOf(broken), ['MISSING_PRIMARY_DISPLAY_NAME'])
+  })
+
+  test('nameAliases 片側欠落は presence ERROR のみ（NAME_ALIASES_MISMATCH と二重報告しない）', () => {
+    const a = cloneModule()
+    deletePath(a, 'drug.nameAliases')
+    assert.deepEqual(errorCodesOf(a), ['MISSING_REQUIRED_DRUG_FIELD'])
+
+    const b = cloneModule()
+    deletePath(b, 'drug.search.nameAliases')
+    assert.deepEqual(errorCodesOf(b), ['MISSING_REQUIRED_DRUG_SEARCH_FIELD'])
+  })
+
+  test('両方 present で値が不一致 → NAME_ALIASES_MISMATCH は従来どおり ERROR（parity 責務は維持）', () => {
+    const broken = cloneModule()
+    broken.drug.nameAliases = [...broken.drug.nameAliases]
+    broken.drug.nameAliases[0] = 'ZZZ_不一致'
+    assert.deepEqual(errorCodesOf(broken), ['NAME_ALIASES_MISMATCH'])
+
+    const shorter = cloneModule()
+    shorter.drug.nameAliases = shorter.drug.nameAliases.slice(0, -1)
+    assert.deepEqual(errorCodesOf(shorter), ['NAME_ALIASES_MISMATCH'])
+  })
+})
+
+// ─────────────────────────────────────────────────────────────
 // Express ACTIVE entry structural contract（U-EXP1）
 //
 // ACTIVE = enabled === true && disabled !== true。runtime で実際にクリック可能になり

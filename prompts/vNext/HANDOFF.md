@@ -1,7 +1,17 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「DR-1 display.drugGeneric exact restore」:
+最終更新: 2026-09-23（Unit「DR-2 JS-A drug / display requiredness enforcement」:
+`lib/moduleValidator.ts` へ section 単位の generic errorCode 3 つ（**`MISSING_REQUIRED_DRUG_FIELD` /
+`MISSING_REQUIRED_DRUG_SEARCH_FIELD` / `MISSING_REQUIRED_DISPLAY_FIELD`**。ERROR・Structural）を追加し、
+JS-A-drug / JS-A-display の **16 field の presence**（missing = `undefined` / `null`）を機械担保した（OD-DR2-1〜10）。
+除外は `drug.search.primaryDisplayName`（既存 `MISSING_PRIMARY_DISPLAY_NAME` に委任）と
+`display.drugGeneric`（generation contract 未確定のため暫定対象外）。`nameAliases` は **presence と parity の
+責務を分離**（欠落＝新 code、両方 present の値不一致＝`NAME_ALIASES_MISMATCH`）し、二重報告をなくした。
+`drug.brandCatalog` の presence hole も解消。current corpus 35 module で新 ERROR 0、baseline は ERROR 0 / WARN 35 のまま。
+`""` / `[]` / `{}`・値域・型 parity は別 contract。canonical / bridge / manifest / `lib/types.ts` / PN2 / PN7 /
+RULES / JSON_STANDARD は無変更。
+先行: 同日 Unit「DR-1 display.drugGeneric exact restore」:
 `dm_insulin_mixed_rapid_long.display.drugGeneric` の欠落（birth defect・`e650858` 由来）を、
 **bridge の exact source**（`"混合型インスリン製剤（超速効型＋持効型）"`）から 1 行復元した（OD-DR-1）。
 sibling inference / fallback 生成は不使用。事後 presence **35/35**、値は bridge と exact parity。
@@ -1436,7 +1446,21 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 〔2026-09-23 実測〕bridge の `drugGeneric` 宣言は **19/35**、canonical presence は 34/35（DR-1 後 35/35）。**bridge 未宣言の 16 module では canonical の `drugGeneric` が `display.drugClassLabel` と完全一致**（16/16）しているが、この対応を定めた規則は **PN2 にも RULES にも存在しない**
   - **この 16/16 のパターンを contract へ昇格させない**（OD-DR-4）。family pattern や既存値から新しい fallback を作らない。`display.drugGeneric` の意味と source policy は別 Unit で先に確認する
   - `prompts/vNext/PN2-Drug-Header.md` に `display.drugGeneric` の専用生成規則はなく、「display / template / persona / regulatory / topical は bridge の対応フィールドから移植する」という包括規定のみ
-- **DR-2 requiredness enforcement — 未着手（OPEN）**
+- **DR-2: JS-A drug / display requiredness enforcement — 2026-09-23 に完了**
+  - `lib/moduleValidator.ts` に section 単位の generic errorCode **3 つ**を追加した（いずれも **ERROR**・Structural。OD-DR2-1）。R-2 の `MISSING_REQUIRED_COMPOSITION_FIELD` と命名・責務粒度を揃えたもので、新しい Repository 規則ではなく JS-A-drug / JS-A-display の machine enforcement
+    - `MISSING_REQUIRED_DRUG_FIELD` / `MISSING_REQUIRED_DRUG_SEARCH_FIELD` / `MISSING_REQUIRED_DISPLAY_FIELD`
+  - **対象は 16 field**（OD-DR2-5）: drug 3（`nameAliases` / `aliasToBrand` / `brandCatalog`）／ drug.search 7（`exactAliases` / `nameAliases` / `keywords` / `priority` ＋ `matchPolicy` 3 field）／ display 6（`title` / `subtitle` / `drugClassLabel` / `nodeLabelShort` / `nodeLabelLong` / `nodeKey`）
+  - **除外 2 field**: `drug.search.primaryDisplayName`（既存 `MISSING_PRIMARY_DISPLAY_NAME` に委任。二重報告しない・OD-DR2-2）／ `display.drugGeneric`（generation contract 未確定のため暫定対象外・OD-DR-3。**必須でないと判断したものではない**。DR-1 で 35/35 になっても、presence が揃うことと generation contract が確定していることは別）
+  - **判定は presence のみ**（OD-DR2-6）: missing = `undefined` / `null`。`""` / `[]` / `{}` は別 contract で、**`drug.search.keywords: []`（28 module）は requiredness として PASS のまま**。値域・値の一致・型 parity も扱わない
+  - **parent object**（OD-DR2-7）: `drug` / `drug.search` / `matchPolicy` / `display` が absent / `null` / 配列 / 非 object の場合、配下の required field をそれぞれ報告する（`drug`→10 件、`drug.search`→7 件、`matchPolicy`→3 件、`display`→6 件）。R-2 の pattern を再利用
+  - **`nameAliases` の責務分離**（OD-DR2-3）: 片側・両側の**欠落**は presence check（`MISSING_REQUIRED_DRUG_FIELD` / `MISSING_REQUIRED_DRUG_SEARCH_FIELD`）が担当し、**両方 present で値が不一致のときのみ** `NAME_ALIASES_MISMATCH` が担当する。check 3a を「両方 present のときのみ比較」へ変更したが、**欠落は引き続き ERROR で停止する**（担当 code が変わるだけ）。〔実測〕当該挙動に依存する既存 test は 0 件で、`scripts/audit-alias-bridge-chain.ts` は独立した別 code 体系のため影響なし
+  - **`drug.brandCatalog` の presence hole を解消**（OD-DR2-4）: 従来は `validateBrandConsistency` が `if (!brandCatalog) return null` で早期 return するため、`brandCatalog` を削除しても ERROR が 0 件だった。新 presence check が停止させる。**既存 consistency validator の挙動自体はリファクタリングしていない**
+  - **current corpus 35 module で新 ERROR 0〔実測〕**。ModuleValidator baseline（ERROR 0 / WARN 35）は不変
+  - tests: `tests/moduleValidator.test.ts` に table-driven で 24 test 追加（16 field の個別削除 / `null` / parent 4 種 / parent 非 object 4 種 / 正常データ / `display.drugGeneric` 削除で 0 件 / `keywords: []` で 0 件 / `primaryDisplayName` は既存 code のみ / `nameAliases` 片側欠落で二重報告なし / 両方 present の値不一致で `NAME_ALIASES_MISMATCH` 維持）。ファイル単体で 70 tests PASS
+  - `docs/VALIDATOR_STANDARD.md`: Appendix へ 3 code を追加し、§5 へ適用例と責務分離を記録（OD-DR2-8 / OD-DR2-10）。**§3-A の `NAME_ALIASES_MISMATCH` 行は変更していない**（parity rule の説明として有効）。§3-A の番号付き表には新 code を収載しない（`MISSING_PERSONA` / R-2 と同じ扱い）
+  - canonical / bridge / `data/search-manifest.json` / `lib/types.ts` / PN2 / PN7 / RULES / JSON_STANDARD は無変更（OD-DR2-9）
+  - **残る enforcement 空白**: `display.drugGeneric` は引き続き validator の検査対象外であり、bridge に source があるのに canonical が欠落しても自動で止める経路は存在しない（意図的な状態）
+- **historical: DR-2 着手前の状態（2026-09-23 実測）**
   - 〔2026-09-23 実測〕JS-A-display 7 field と JS-A-drug / `drug.search` 必須 field の **presence を検査する validator / PN7 / audit は存在しない**（validator の display 系は `display.localInput` の参照整合のみ。drug 系は `MISSING_PRIMARY_DISPLAY_NAME` / `NAME_ALIASES_MISMATCH` / `BRAND_CATALOG_MISMATCH` / `DISPLAY_GENERIC_NAME_*` で、presence の網羅検査ではない）
   - **enforcement 対象は 2 群に分ける**（OD-DR-3）: ① **今すぐ enforce 可能** = Class A（drug 3 field / `drug.search` 8 field / display の `title`・`subtitle`・`drugClassLabel`・`nodeLabelShort`・`nodeLabelLong`・`nodeKey`。いずれも現在 35/35 green） ② **まだ enforce しない** = `display.drugGeneric`（DR-1 で 35/35 になっても対象外。bridge 宣言 19/35・未宣言時の生成規則なし・H1 oral の value 不一致・PN2 専用規則なしのため）
   - **presence が揃うことと generation contract が確定していることは別**である。R-2（composition）と同型の generic error code で実装する想定だが、本 Unit では未実装
