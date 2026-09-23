@@ -506,8 +506,8 @@ F2・F4・F5 の確認記録および詳細は、`scripts/build-static.js` に�
 | 区分 | 内容 |
 |---|---|
 | 起点 | ① 本節の位置づけの定義または遷移条件を変更した<br>② Lifecycle State の分類作業で「位置づけ」節の条件（未確定、または成立条件確認が未完了）に該当したとき<br>③【追随起点】「現在の Classification Pending 資産」表の既存エントリ（保留理由・解消条件）を変更したとき<br>④ 登録済み資産が Owner 承認により Legacy／Future Expansion／Archived のいずれかへ確定したとき（本遷移固有の Owner 承認要件は本節自身の「遷移」が定める規律であり、§10.3 自体の一般的な成立条件を変更するものではない） |
-| 更新対象 | ①の場合 — 既存登録エントリが新しい定義・遷移条件と矛盾しないか再確認する<br>②の場合 — 「現在の Classification Pending 資産」表へ新規 ID を追加登録する（既存 ID：GG-1／GG-3／GG-4／GG-5 との重複がないことを確認。GG-2 は過去に払い出し済みで解消した ID であり再利用しない）<br>③の場合 — 当該資産のファイル内状態表示、および保留理由・解消条件の根拠となる正本文書・実装状況が、変更後の台帳内容と整合していることを確認する<br>④の場合 — 本表から当該行を除去し、遷移先に応じて次を実施する：Legacy／Future Expansion へ確定 → §10.2／§10.3 の正規台帳へ新規登録する／Archived へ確定 → 正規台帳が存在しないため、当該資産のファイル内状態表示を Archived へ更新する |
-| 対象外 | GG-1／GG-3／GG-4／GG-5 個別の確定判断そのものは Owner 判断であり対象外 |
+| 更新対象 | ①の場合 — 既存登録エントリが新しい定義・遷移条件と矛盾しないか再確認する<br>②の場合 — 「現在の Classification Pending 資産」表へ新規 ID を追加登録する（既存 ID：GG-1／GG-4／GG-5 との重複がないことを確認。GG-2 および GG-3 は過去に払い出し済みで解消した ID であり再利用しない）<br>③の場合 — 当該資産のファイル内状態表示、および保留理由・解消条件の根拠となる正本文書・実装状況が、変更後の台帳内容と整合していることを確認する<br>④の場合 — 本表から当該行を除去し、遷移先に応じて次を実施する：Legacy／Future Expansion へ確定 → §10.2／§10.3 の正規台帳へ新規登録する／Archived へ確定 → 正規台帳が存在しないため、当該資産のファイル内状態表示を Archived へ更新する |
+| 対象外 | GG-1／GG-4／GG-5 個別の確定判断そのものは Owner 判断であり対象外 |
 
 **本節は Lifecycle State ではない。** 分類、または正式登録に必要な成立条件の確認が未完了であることを
 管理する **governance 上の状態**である。
@@ -554,11 +554,10 @@ canonical field の必須性は Canonical Requirement（`docs/JSON_STANDARD.md` 
 | ID | 対象 | 保留理由 | 解消条件 |
 |---|---|---|---|
 | **GG-1** | NLP 経路（`lib/scenarioSelector.ts` / `lib/createSoapFromInput.ts` / `lib/soapComposer.ts` / `app/components/NlpInputPanel.tsx` — UI 未接続） | `docs/feature-glossary.md` の NLP生成 節が Future Expansion を自称しているが、F1〜F5 の確認・整理が未完了であり §10.3 へ登録できない | F1〜F5 の充足を確認して §10.3 へ登録する、または別状態を確定する |
-| **GG-3** | `composition.sMergePolicy`（`prompts/vNext/PN7-Cross-Reference-Audit.md` item S） | 同 item S が「Owner Decision Required であり Future Expansion / Legacy いずれとも確定していない」として FAIL 対象外に置いている。位置づけが未確定であり、いずれの正規台帳へも登録できない | Owner が位置づけを決定する（canonical field としての扱いを含む） |
 | **GG-4** | legacy Rapid v1 realization 経路（`lib/rapidSentence.ts` の `buildResolvedSFirstSentence` / `buildSFirstSentence`、`lib/deriveNodeFields.ts` の v1 分岐、`app/components/ThirdPanel.tsx` の v1 表示分岐〔menuGroupLabels 適用を含む〕。v2 と共有する `SCondition` / `replaceSFirstSentence` 等は含まない） | Rapid v2 global promotion（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-GLOBAL-1）により既定経路ではなくなったが、一時除外 module の realization と rollback 経路として参照が残る。L1（現行体系からの必須参照ゼロ）を満たさないため Legacy とは確定できず、Future Expansion にも該当しない | 将来の Rapid v1 削除 Unit で、参照・rollback 要否・`display.adjustmentExpression` の扱いをまとめて再判断し、Owner が位置づけを決定する |
 | **GG-5** | canonical field `risks`（生成規定は `prompts/vNext/PN5-Non-Scenario.md` §risks セクション） | **production runtime / validator / audit のいずれからも参照されていない**（`tests` は構造契約のみを参照する: `tests/risksContract.test.ts` / `tests/fixtures/risksPreRuleBaseline.ts`）。一方 `docs/JSON_STANDARD.md` JS-A は本 field を全 module 必須として保持しているため、現行体系からの必須参照ゼロ（L1）でありながら Legacy とは確定できず、F1〜F5 の確認も未了で §10.3 へも登録できない | Owner が位置づけを決定する（canonical field としての扱い、および将来の runtime 接続経路の有無を含む）。関連する別 Unit の未解消事項は `prompts/vNext/HANDOFF.md` §6「`risks` contract remediation の別 Unit 送り事項」を参照 |
 
-**本表への登録をもって、GG-1 / GG-3 / GG-4 / GG-5 の Lifecycle State を確定したものとして扱ってはならない。**
+**本表への登録をもって、GG-1 / GG-4 / GG-5 の Lifecycle State を確定したものとして扱ってはならない。**
 
 #### 遷移
 

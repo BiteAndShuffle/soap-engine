@@ -1,7 +1,18 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「DG-5 JS-A-display TypeScript requiredness parity」:
+最終更新: 2026-09-23（Unit「S3-1 sMergePolicy requiredness contradiction docs closure」:
+**S3 contradiction を RESOLVED**（Option A・OD-S3-1〜8）。`composition.sMergePolicy` を
+**canonical-required / model_managed field** と確定し、**runtime consumer 0 件は requiredness と別軸**と明記した。
+**PN7 item S の「missing を FAIL にしない（記録のみ）」を廃止**して **missing → FAIL** へ改訂し、
+**§10.5 の Pending 台帳から GG-3 行を除去**した（**Lifecycle State へ遷移したのではなく掲載理由が消滅したため**。
+遷移ルール・変更契機は無変更、GG-3 ID は再利用しない）。JSON_STANDARD には「全 module 共通の model_managed 固定値・
+exact generation value の正本は PN2」のみ追記し、**exact JSON 値は重複記載しない**。
+corpus は **presence 35/35・PN2 固定値と exact parity 35/35**（current HEAD 実測）。
+**validator は S3-2 で未着手**、**TypeScript は S3-3 で未着手**、**cast gap は OPEN のまま**。
+canonical / bridge / manifest / validator / tests / `lib/types.ts` / PN2 / RULES / VALIDATOR_STANDARD /
+GG-1 / GG-4 / GG-5 は無変更。
+先行: 同日 Unit「DG-5 JS-A-display TypeScript requiredness parity」:
 `lib/types.ts` の `ModuleData.display` で optional だった **5 field**（`drugClassLabel` / `drugGeneric` /
 `nodeLabelShort` / `nodeLabelLong` / `nodeKey`）から `?` を外し、**JS-A-display 7/7 が TypeScript でも required** になった
 （`title` / `subtitle` は元から required・**`display?:` 自体は無変更**）。**目的は static contract parity** であり
@@ -1408,7 +1419,8 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
     - `composition.sMergePolicy` missing 1 件（`dm_insulin_intermediate`）→ **R-1 で data repair 済み**
   - **本 Finding は OPEN のまま（残: `sMergePolicy` の enforcement）。** data の欠落は解消し、再発防止は **R-2 で 8 field について導入済み**（下記 R-2）。`sMergePolicy` の欠落は S3 未解決のため引き続きどの層でも FAIL にならない。R-1 時点では `lib/moduleValidator.ts`（`MISSING_*` は moduleId / moduleVersion / persona / primaryDisplayName のみ）／ `lib/crossModuleValidator.ts` ／ `npm run audit` の 8 本 ／ PN7 の 36 項目 ／ tests のいずれも composition 必須 field の存在を検査していなかった（間接的に検出されていたのは `tests/searchCoverage.test.ts` が manifest 経由で確認する `nodeKey` / `classKey` / `clinicalDomain` の 3 field のみ）
   - **R-2 の scope（Owner Decision OD-REQ-4〜7・決定済み／2026-09-22 に R-2 で実装）**: 置き場所は `lib/moduleValidator.ts`（存在確認は構造健全性であり `MISSING_PERSONA` と同じ責務。bridge ⇔ canonical の値一致 audit とは混ぜない）／ error code は **generic 1 つ**（例: `MISSING_REQUIRED_COMPOSITION_FIELD`。field path は detail に入れ、field ごとの code は作らない）／ severity は **ERROR**（R-1 完了で baseline が green になった後に導入する）／ 対象は **JS-A-composition 9 field のうち `sMergePolicy` を除く 8 field**。scope は composition で仕組みを確立してから drug / display へ拡張する（Scope 3）
-  - **S3 contradiction（OPEN）**: `prompts/vNext/PN7-Cross-Reference-Audit.md` item S と `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-3 は「`composition.sMergePolicy` は位置づけが確定するまで FAIL 条件としない（欠落は記録のみ）」とする。一方 `docs/DEVELOPMENT_STANDARD.md` §10.1 の注記は「JS-A の field の欠落を Lifecycle を根拠に FAIL 対象から除外してはならない」とし、`docs/VALIDATOR_STANDARD.md` §5（`MISSING_PERSONA`）も「Lifecycle State と severity 判定は独立」とする。**正本同士が矛盾しており、未解決**
+  - **S3 contradiction — 2026-09-23 に S3-1 で RESOLVED**（詳細は下記「S3-1」節）。以下は解消前の historical 記述である
+  - **〔historical〕S3 contradiction（当時 OPEN）**: `prompts/vNext/PN7-Cross-Reference-Audit.md` item S と `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-3 は「`composition.sMergePolicy` は位置づけが確定するまで FAIL 条件としない（欠落は記録のみ）」とする。一方 `docs/DEVELOPMENT_STANDARD.md` §10.1 の注記は「JS-A の field の欠落を Lifecycle を根拠に FAIL 対象から除外してはならない」とし、`docs/VALIDATOR_STANDARD.md` §5（`MISSING_PERSONA`）も「Lifecycle State と severity 判定は独立」とする。**正本同士が矛盾しており、未解決**
   - **`sMergePolicy` を R-2 の enforcement 対象から外すのは S3 が未解決であるための暫定措置**（OD-REQ-3）。これは PN7 item S が正しいと確定したことも、§10.1 を否定したことも、Lifecycle を理由に JS-A の必須性を外したことも意味しない。PN7 item S を改訂して JS-A requiredness を enforce するのか、GG-3 / JS-A 側の位置づけを変えるのかは、後続の Owner Decision で扱う
 - **R-1: composition data repair — 2026-09-21 に完了**
   - 上記 Finding の data 欠落のうち、`composition.priority` と `composition.sMergePolicy` の 2 件を **現行 PN2 の規則をそのまま適用して**補完した（Owner Decision OD-REQ-1 / OD-REQ-2）。兄弟 module から値を推測していない
@@ -1526,6 +1538,19 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **historical: DG-4 着手前の状態**（OD-DG-7）
   - generation contract が DG-2 で確定したため、DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加できる状態になった。現 corpus は 35/35 のため presence baseline は green のまま導入可能
   - **DG-2 では validator を変更していない。** 別 Unit / 別 commit で扱う
+- **S3-1: `composition.sMergePolicy` requiredness contradiction — 2026-09-23 に RESOLVED（docs closure）**
+  - **Owner Decision（OD-S3-1〜8・Option A）**: `composition.sMergePolicy` は **JS-A の全 module 必須 field として維持**し、optional / lifecycle-managed へ降格しない（OD-S3-1）。位置づけは **canonical-required / model_managed field** と確定（OD-S3-2）
+  - **runtime consumer 0 件は requiredness を左右しない**〔current HEAD 実測: production runtime / SOAP merge / search / manifest / validator / audit のいずれも参照せず、`lib/types.ts` の型宣言と validator・tests の S3 除外コメントのみ〕。canonical completeness と runtime 接続は直交する別軸であり、runtime 接続は将来扱う（OD-S3-2）
+  - **generation contract は PN2 の現行規定を正とする**（OD-S3-3）: bridge 非依存・PN2 が常に生成・全 module 共通・model_managed・fixed value・`PENDING` にしない。**PN2 は無変更**
+  - **corpus〔current HEAD 実測〕**: presence **35/35**（missing 0）、値は **1 種類のみ**、**PN2 固定値と exact parity 35/35**。bridge に値の宣言は 0 件（1 bridge のコメントが「PN2 の生成責務」と説明しているのみ）
+  - **PN7 item S を改訂**（OD-S3-4）: 旧ルール（Owner Decision Required / 位置づけ未確定 / **missing を FAIL にしない** / 記録のみ）を廃止し、**missing → FAIL**、3 サブフィールド（`unit` / `conflictStrategy` / `withinDomainStrategy`）の存在確認、requiredness の正本は JSON_STANDARD、exact generation value の正本は PN2、を明記した。チェックリスト（`S. composition.sMergePolicy存在: PASS / FAIL`）と JSON 出力（`"S_sMergePolicy"`）は書式がそのまま使えるため**変更していない**
+  - **GG-3 を Pending 台帳から除去**（OD-S3-5・案 1）: `docs/DEVELOPMENT_STANDARD.md` §10.5「現在の Classification Pending 資産」から GG-3 行を削除し、同節内の ID 列挙（変更契機②・対象外・表直後の注記）からも GG-3 を外した。**GG-3 ID は再利用しない**（GG-2 と同じ扱い）
+  - **GG-3 は別 Lifecycle State へ遷移したのではない。** 掲載理由（item S が FAIL 対象外に置いていたこと）が消滅したため台帳から外れた扱いである。§10.5 自身が「canonical field の必須性は Canonical Requirement が決定し、本節はこれに関与しない」と定めており、**Lifecycle 遷移ルール・変更契機そのものは変更していない**
+  - **JSON_STANDARD**（OD-S3-6）: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記。**exact JSON 値は重複記載していない**（責務分離: JSON_STANDARD = schema / requiredness / field positioning、PN2 = exact generation value）
+  - **validator は未変更（S3-2 で実施）**（OD-S3-7）: `REQUIRED_COMPOSITION_FIELDS` への `sMergePolicy` 追加（composition 8 → 9 field）、新 errorCode は作らず既存 `MISSING_REQUIRED_COMPOSITION_FIELD` を使用、R-2 の scope 固定 test は current contract へ反転。**本 Unit では `lib/moduleValidator.ts` / tests を変更していない**
+  - **TypeScript は未変更（S3-3 で実施）**（OD-S3-8）: `lib/types.ts` の `sMergePolicy?:` を required へ合わせる。目的は static contract parity
+  - **`Canonical ↔ TypeScript type validation gap` は OPEN のまま**（`as unknown as` 112 箇所）。本 Unit では触れていない
+  - canonical / bridge / manifest / validator / tests / `lib/types.ts` / PN2 / RULES / VALIDATOR_STANDARD / GG-1 / GG-4 / GG-5 は無変更
 - **DG-5: JS-A-display の TypeScript requiredness parity — 2026-09-23 に完了**
   - `lib/types.ts` の `ModuleData.display` で **optional だった 5 field から `?` を外した**: `drugClassLabel` / `drugGeneric` / `nodeLabelShort` / `nodeLabelLong` / `nodeKey`。**`title` / `subtitle` は元から required** のため無変更
   - 結果として **JS-A-display の 7 field すべてが TypeScript 上でも required** になり、JSON_STANDARD / PN2 / ModuleValidator / corpus / TypeScript の 5 者が一致した

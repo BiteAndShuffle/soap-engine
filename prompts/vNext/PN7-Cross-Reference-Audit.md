@@ -317,15 +317,20 @@ top-level に persona フィールドが存在するかを確認する
 ### S. composition.sMergePolicy 存在確認
 
 ```
-composition.sMergePolicy は現在 Owner Decision Required であり、
-Future Expansion / Legacy いずれとも確定していない。
-位置づけが確定するまで FAIL 条件としない。
+composition.sMergePolicy は JS-A（全 module 必須）の canonical field であり、
+PN2 が全 module 共通の固定値として生成する model_managed field である。
 
-composition.sMergePolicy が存在するかを記録する
-（存在する場合は unit / conflictStrategy / withinDomainStrategy の3フィールドの有無も記録する）
-欠落 → FAIL としない（記録のみ）
+composition.sMergePolicy が存在すること
+存在する場合は unit / conflictStrategy / withinDomainStrategy の3フィールドが存在すること
+欠落 → FAIL
 
-参照: docs/DEVELOPMENT_STANDARD.md §10
+runtime consumer の有無は requiredness を左右しない（Canonical Requirement と
+Lifecycle State は直交する別軸である: docs/JSON_STANDARD.md JS-00）。
+
+参照:
+  requiredness の正本        : docs/JSON_STANDARD.md JS-A-composition
+  exact generation value の正本: prompts/vNext/PN2-Drug-Header.md
+                               「composition.sMergePolicy（必須・PN2が常に生成する固定値）」
 ```
 
 ---
