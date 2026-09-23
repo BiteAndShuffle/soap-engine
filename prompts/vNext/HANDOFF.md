@@ -1,7 +1,16 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「DG-1 調査 / DG-2 display.drugGeneric generation contract」:
+最終更新: 2026-09-23（Unit「DG-3a H1 oral display.drugGeneric value parity」:
+`allergy_h1_antihistamine_second_gen_oral.display.drugGeneric` の bridge ⇔ canonical 不一致を解消した（OD-DG3-1〜6）。
+**bridge を先に repair**（`"第二世代H1受容体拮抗薬"` → **`"第二世代ヒスタミンH1受容体拮抗薬"`**。bridge 内 `genericName` との表記揺れ修正）し、
+**canonical をその exact value へ追随**させた（旧値 `"フェキソフェナジン 他"`）。**Bridge SSOT の逆転ではない。**
+13 成分を包含する class-level module であり、代表成分の選定規則が Repository に存在しないため代表成分方式は採らない
+（ただし「代表成分＋他」方式自体を全面禁止する判断ではない）。正表記は `drug.genericName` / `display.drugClassLabel` /
+bridge `genericName` / DG-2 fallback の 4 者と一致。事後照合は bridge explicit exact parity **19/19**・未宣言 **16/16**・
+**known exception 0**。runtime behavior 不変（consumer 0）。**DG-4 validator enforcement は未着手**。
+validator / PN2 / JSON_STANDARD / `lib/types.ts` / tests / manifest / 他 34 canonical / 他 bridge / PN7 / RULES は無変更。
+先行: 同日 Unit「DG-1 調査 / DG-2 display.drugGeneric generation contract」:
 `display.drugGeneric` の **semantics と生成規則を確定し、docs / PN2 へ明文化**した（OD-DG-1〜8）。
 semantics は **module 単位の一般名系表示ラベル**（`drugClassLabel` = 薬効分類ラベル、
 `brandCatalog[*].displayGenericName` = brand 単位とは責務が別）。生成規則は **bridge 明示 → exact copy /
@@ -1468,7 +1477,18 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **DG-2 implementation（2026-09-23）**: `docs/JSON_STANDARD.md` JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載し、表の直後へ 3 field の責務分離を明記。`prompts/vNext/PN2-Drug-Header.md` の「`display.subtitle` の確定ルール」直後へ **「`display.drugGeneric` の確定ルール（推測生成禁止）」を新設**。**本ルールは今後の新規 module 生成を決定論的にするための current rule であり、bridge 未宣言 16 件の historical origin を追認するものではない**（DG-2 内にその旨を明記）
   - **現 corpus と新ルールの照合〔2026-09-23 実測〕**: bridge 明示 + canonical exact parity **18** ／ bridge 未宣言 + `drug.genericName` parity **16** ／ **known exception 1**（H1 oral）
   - **canonical は 1 件も変更していない**（H1 oral / `dm_glp1ra_semaglutide_oral` を含む）。bridge / manifest / validator / tests / `lib/types.ts` / PN7 / RULES も無変更
-- **Finding（OPEN）: H1 oral `display.drugGeneric` value parity**（OD-DG-4）
+- **H1 oral `display.drugGeneric` value parity — 2026-09-23 に DG-3a で解消**
+  - **確定値**: `allergy_h1_antihistamine_second_gen_oral.display.drugGeneric` = **`"第二世代ヒスタミンH1受容体拮抗薬"`**（bridge / canonical とも同値）
+  - **class-level module としての判断（OD-DG3-1）**: 本 module は **brandCatalog 13 brand・一般名 13 種すべて異なる**（フェキソフェナジン / ロラタジン / レボセチリジン / ビラスチン / デスロラタジン / オロパタジン / ベポタスチン / エバスチン / エピナスチン / ルパタジン / メキタジン / セチリジン / アゼラスチン）module である。したがって代表成分＋「他」ではなく、**module 全体を表す分類レベルの一般名系表示**を採る
+  - **`"フェキソフェナジン 他"` を採用しない理由**: 13 成分のうち**フェキソフェナジンを代表成分として選ぶ規則が Repository に存在しない**（結果として brandCatalog 先頭 brand「アレグラ」の `displayGenericName` と一致していたが、これを根拠とする規則はない）。**DG-2 は family / sibling / brand 順からの推測生成を禁止**しており、根拠のない代表選定はこれに反する
+  - **正表記の根拠〔実測〕**: `"第二世代ヒスタミンH1受容体拮抗薬"` は canonical `drug.genericName` / canonical `display.drugClassLabel` / bridge `genericName`（11 行目）/ DG-2 の bridge 未宣言時 fallback 値の **4 者すべてと一致**する。旧 bridge 値 `"第二世代H1受容体拮抗薬"` は「ヒスタミン」を欠く短縮形で、**bridge 内部で `genericName` と表記が揺れていた**（OD-DG3-2）。`"第二世代抗ヒスタミン薬"` は `display.title` / `nodeLabelLong` 系の presentation label として保持し、`drugGeneric` の正値にはしない
+  - **修正順序（OD-DG3-3 / OD-DG3-4）**: **bridge を先に repair し、canonical をその exact value へ追随**させた。これは Human Review により **bridge 正本自体の表記揺れを修正**したものであり、**Bridge SSOT の逆転ではない**。結果として DG-2 の「bridge explicit → exact copy」と一致する。sibling inference / 別 family の模倣は使っていない
+  - **「代表成分＋他」方式を全面禁止した Decision ではない**（OD-DG3-5）。将来その表現が必要な module では bridge author が明示し、**代表成分を選ぶ根拠を Human Review で確認する**。本 module にはその根拠が存在しなかったため採用しなかった
+  - **history〔実測〕**: canonical は `625ac7e`（2026-05-23）誕生時から `"フェキソフェナジン 他"` で、以後当該値に触れた commit は 0 件。**bridge は約 1 か月後の `10d1e2f`（2026-06-20）に追加**され、field semantics 未定義の時期に異なる意味レベル（短縮した分類名）で記載された。canonical が bridge から drift したのではない
+  - **事後の corpus 照合〔実測〕**: bridge explicit + canonical exact parity **19/19** ／ bridge 未宣言 + `drug.genericName` parity **16/16** ／ **known exception 0**。`display.drugGeneric` は 35/35 が DG-2 の生成規則どおりになった
+  - **runtime behavior は不変**（`display.drugGeneric` の production consumer は 0 件）。他 34 canonical / 他 bridge / manifest / validator / PN2 / JSON_STANDARD / `lib/types.ts` / tests / PN7 / RULES は無変更
+  - **DG-4（`display.drugGeneric` の validator enforcement）は引き続き未着手**（下記）
+- **historical: DG-3a 着手前の Finding（OPEN だったもの）**（OD-DG-4）
   - `allergy_h1_antihistamine_second_gen_oral`: canonical `"フェキソフェナジン 他"` ⇔ bridge `"第二世代H1受容体拮抗薬"`。**canonical は今回変更しない**
   - current canonical は OD-DG-1 の semantics（module 単位の一般名系ラベル）に**適合可能**である一方、bridge 側の値は薬効分類レベルの表現である。したがって **canonical を bridge の class label へ寄せるのではなく、bridge 側が確定 semantics に適合するかを別 Unit で Human Review する**
   - **Bridge SSOT 原則は維持する。** ただし本件は bridge が canonical より後に、かつ field semantics 未定義の時期に異なる意味レベルで作成されたことが history から確認されているため、「現在 bridge に書いてあるから自動的に canonical を置換する」とはしない
