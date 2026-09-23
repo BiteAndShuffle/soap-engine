@@ -351,8 +351,9 @@ describe('composition 必須 field の presence（JSON_STANDARD JS-A-composition
 // drug / drug.search / display 必須 field の presence（JS-A-drug / JS-A-display / DR-2）
 //
 // missing = undefined / null。"" / [] / {} は別 contract のためここでは扱わない。
-// 除外 2 field: drug.search.primaryDisplayName（既存 MISSING_PRIMARY_DISPLAY_NAME が担当）/
-// display.drugGeneric（generation contract 未確定のため暫定対象外）。
+// 除外 1 field: drug.search.primaryDisplayName（既存 MISSING_PRIMARY_DISPLAY_NAME が担当）。
+// display.drugGeneric は DG-2 で generation contract が確定し DG-3a で corpus 例外が解消したため、
+// DG-4 で対象へ追加した（display は 7 field・計 17 field）。
 // nameAliases は presence をここで、値の一致は NAME_ALIASES_MISMATCH が担当する（責務分離）。
 // ─────────────────────────────────────────────────────────────
 
@@ -377,6 +378,7 @@ const DR2_REQUIRED_FIELDS: Array<[string, string]> = [
   ['display.title', 'MISSING_REQUIRED_DISPLAY_FIELD'],
   ['display.subtitle', 'MISSING_REQUIRED_DISPLAY_FIELD'],
   ['display.drugClassLabel', 'MISSING_REQUIRED_DISPLAY_FIELD'],
+  ['display.drugGeneric', 'MISSING_REQUIRED_DISPLAY_FIELD'],
   ['display.nodeLabelShort', 'MISSING_REQUIRED_DISPLAY_FIELD'],
   ['display.nodeLabelLong', 'MISSING_REQUIRED_DISPLAY_FIELD'],
   ['display.nodeKey', 'MISSING_REQUIRED_DISPLAY_FIELD'],
@@ -422,7 +424,7 @@ describe('drug / drug.search / display 必須 field の presence（JS-A-drug / J
       ['drug', 10], // drug 3 + drug.search 4 + matchPolicy 3（primaryDisplayName は既存 code）
       ['drug.search', 7],
       ['drug.search.matchPolicy', 3],
-      ['display', 6],
+      ['display', 7], // DG-4 で display.drugGeneric を追加したため 6 → 7
     ]
     for (const [path, expected] of cases) {
       const broken = cloneModule()
@@ -465,7 +467,7 @@ describe('drug / drug.search / display 必須 field の presence（JS-A-drug / J
     for (const value of [null, [], 'x', 5]) {
       const broken = cloneModule()
       broken.display = value
-      assert.equal(dr2Errors(broken).length, 6, `display=${JSON.stringify(value)}`)
+      assert.equal(dr2Errors(broken).length, 7, `display=${JSON.stringify(value)}`)
     }
   })
 
@@ -473,15 +475,13 @@ describe('drug / drug.search / display 必須 field の presence（JS-A-drug / J
     assert.deepEqual(dr2Errors(cloneModule()), [])
   })
 
-  test('display.drugGeneric を削除しても DR-2 の新 check は ERROR を出さない（generation contract 未確定による暫定 scope）', () => {
+  test('display.drugGeneric を null に → missing として検出される（DG-4 で対象化）', () => {
     const broken = cloneModule()
-    delete broken.display.drugGeneric
-    assert.deepEqual(dr2Errors(broken), [])
-    assert.deepEqual(
-      errorCodesOf(broken),
-      [],
-      'display.drugGeneric の欠落を止める経路は現時点で存在しない（OD-DR-3 による意図的な状態）',
-    )
+    broken.display.drugGeneric = null
+    const errs = dr2Errors(broken)
+    assert.equal(errs.length, 1, JSON.stringify(errs))
+    assert.equal(errs[0].code, 'MISSING_REQUIRED_DISPLAY_FIELD')
+    assert.ok(errs[0].detail.includes('display.drugGeneric'), errs[0].detail)
   })
 
   test('drug.search.keywords: [] は requiredness として PASS（empty は別 contract）', () => {

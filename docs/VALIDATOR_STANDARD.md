@@ -395,27 +395,37 @@ Lifecycle State が Future Expansion であることは本 check の severity �
 - **判定は presence のみ**: 対象 field が `undefined` または `null` のとき missing とする。
   欠落した field は detail に field path（例: `display.title が存在しません（JSON_STANDARD JS-A-display: 必須）`）
   として明記し、field ごとに 1 件報告する
-- **対象は 16 field**
+- **対象は 17 field**（DR-2 導入時は 16 field。DG-4 で `display.drugGeneric` を追加）
   - `MISSING_REQUIRED_DRUG_FIELD`（3）: `drug.nameAliases` / `drug.aliasToBrand` / `drug.brandCatalog`
   - `MISSING_REQUIRED_DRUG_SEARCH_FIELD`（7）: `drug.search` の `exactAliases` / `nameAliases` /
     `keywords` / `priority`、`drug.search.matchPolicy` の `preferExactAlias` / `allowPrefixMatch` /
     `suppressCrossModuleSuggestionsOnExactHit`
-  - `MISSING_REQUIRED_DISPLAY_FIELD`（6）: `display` の `title` / `subtitle` / `drugClassLabel` /
-    `nodeLabelShort` / `nodeLabelLong` / `nodeKey`
+  - `MISSING_REQUIRED_DISPLAY_FIELD`（7）: `display` の `title` / `subtitle` / `drugClassLabel` /
+    `drugGeneric` / `nodeLabelShort` / `nodeLabelLong` / `nodeKey`
 - **parent が absent / `null` / 配列 / 非 object の場合**も、field 単位の JS-A requirement と 1:1 に
   なるよう配下の required field をそれぞれ報告する（`drug` 欠落なら 10 件、`drug.search` なら 7 件、
-  `matchPolicy` なら 3 件、`display` なら 6 件）
+  `matchPolicy` なら 3 件、`display` なら 7 件）
 - **severity は ERROR**。導入時点で全 35 module の検出は 0 件（green baseline 上に導入）
 - **扱わないもの（別 contract）**: `""` / `[]` / `{}` の妥当性（例: `drug.search.keywords` は 35/35
   present だが 28 module が空配列であり、requiredness としては PASS のまま）、値域、
   bridge ⇔ canonical の値一致、`lib/types.ts` との型 parity
-- **除外 2 field**
+- **除外 1 field**
   - `drug.search.primaryDisplayName`: 既存の専用 presence check `MISSING_PRIMARY_DISPLAY_NAME` が
     担当する。**同一欠落に 2 つの ERROR を出さない**ため新 check の対象にしない
-  - `display.drugGeneric`: JS-A-display の必須 field だが、**generation contract が未確定**のため
-    暫定的に対象外（bridge 宣言は 19/35、bridge 未宣言時の生成規則が PN2 に存在しない）。
-    **必須でないと判断したものではない。** DR-1 で corpus は 35/35 になっているが、presence が
-    揃うことと generation contract が確定していることは別である
+
+**`display.drugGeneric` の扱い（DR-2 → DG-4 の更新。current state）**
+
+DR-2 導入時点では、`display.drugGeneric` は JS-A-display の必須 field でありながら
+**generation contract が未確定**（bridge 宣言 19/35・bridge 未宣言時の生成規則が PN2 に存在しない）
+であったため、暫定的に対象外としていた。その後、次の順で解消した。
+
+| Unit | 内容 |
+|---|---|
+| **DG-2** | `display.drugGeneric` の **semantics と generation rule を確定**（module 単位の一般名系表示ラベル／bridge 明示は exact copy・未宣言は `drug.genericName` を deterministic fallback）。`docs/JSON_STANDARD.md` JS-A-display と `prompts/vNext/PN2-Drug-Header.md` へ明文化 |
+| **DG-3a** | H1 oral の bridge ⇔ canonical value parity を解消し、**corpus の known exception が 0** になった（bridge explicit exact parity 19/19・bridge 未宣言 + `drug.genericName` parity 16/16） |
+| **DG-4** | 上記を前提に **`display.drugGeneric` を `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ追加**（display は 6 → 7 field、全体で 16 → 17 field）。corpus は 35/35 のため presence baseline は green のまま |
+
+新しい errorCode は追加していない（既存 `MISSING_REQUIRED_DISPLAY_FIELD` をそのまま使用）。
 
 **`nameAliases` における presence と parity の責務分離（DR-2）**
 

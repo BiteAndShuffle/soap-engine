@@ -1,7 +1,16 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「DG-3a H1 oral display.drugGeneric value parity」:
+最終更新: 2026-09-23（Unit「DG-4 display.drugGeneric requiredness enforcement」:
+`display.drugGeneric` を `lib/moduleValidator.ts` の **`MISSING_REQUIRED_DISPLAY_FIELD` 対象へ追加**した。
+**新 errorCode は作らず**、display required fields は **6 → 7**、generic requiredness の対象は **16 → 17 field**
+（drug 3 / drug.search 7 / display 7）。除外は `drug.search.primaryDisplayName` の 1 field のみ。
+missing semantics は DR-2 継承（`undefined` / `null`）。前提は **DG-2 の generation contract 確定**と
+**DG-3a の corpus exception 解消**で、corpus は **35/35** のため新 ERROR 0・baseline は ERROR 0 / WARN 35 のまま。
+DR-2 時点の scope 固定 test（drugGeneric 欠落でも 0 件）は**反転**させた。
+**`lib/types.ts` の `drugGeneric?: string` type drift は引き続き OPEN**（別 Unit）。
+canonical / bridge / manifest / PN2 / JSON_STANDARD / `lib/types.ts` / PN7 / RULES は無変更。
+先行: 同日 Unit「DG-3a H1 oral display.drugGeneric value parity」:
 `allergy_h1_antihistamine_second_gen_oral.display.drugGeneric` の bridge ⇔ canonical 不一致を解消した（OD-DG3-1〜6）。
 **bridge を先に repair**（`"第二世代H1受容体拮抗薬"` → **`"第二世代ヒスタミンH1受容体拮抗薬"`**。bridge 内 `genericName` との表記揺れ修正）し、
 **canonical をその exact value へ追随**させた（旧値 `"フェキソフェナジン 他"`）。**Bridge SSOT の逆転ではない。**
@@ -1494,7 +1503,18 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - **Bridge SSOT 原則は維持する。** ただし本件は bridge が canonical より後に、かつ field semantics 未定義の時期に異なる意味レベルで作成されたことが history から確認されているため、「現在 bridge に書いてあるから自動的に canonical を置換する」とはしない
   - **新ルール適用上の既知の例外として保持する**（DG-2 で無理に整合させていない）
   - `dm_glp1ra_semaglutide_oral` の ingredient-level 値（`"セマグルチド"`）は **許容**（OD-DG-5）。class label へ統一しない
-- **DG-4: `display.drugGeneric` の validator enforcement — 未着手（OPEN）**（OD-DG-7）
+- **DG-4: `display.drugGeneric` の validator enforcement — 2026-09-23 に完了**
+  - `lib/moduleValidator.ts` の **`MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加**した。**新しい errorCode は作っていない**（既存 code をそのまま使用）
+  - **display required fields = 7**（`title` / `subtitle` / `drugClassLabel` / **`drugGeneric`** / `nodeLabelShort` / `nodeLabelLong` / `nodeKey`）。**generic requiredness の対象は計 17 field**（drug 3 / drug.search 7 / display 7。DR-2 時点の 16 から +1）
+  - **除外は `drug.search.primaryDisplayName` の 1 field のみ**になった（既存 `MISSING_PRIMARY_DISPLAY_NAME` が担当。二重報告しない）
+  - missing semantics は DR-2 をそのまま継承（missing = `undefined` / `null`。`""` / semantic invalid value / parity mismatch は別 contract）
+  - **前提の充足**: generation contract は **DG-2** で確定（bridge 明示 → exact copy／未宣言 → `drug.genericName`）、H1 oral の value parity は **DG-3a** で解消し corpus の known exception は 0。`display.drugGeneric` は **corpus 35/35** のため presence baseline は green のまま導入できた
+  - **current corpus で新 ERROR 0〔実測〕**。ModuleValidator baseline（ERROR 0 / WARN 35）は不変
+  - tests: DR-2 の table-driven へ `display.drugGeneric` を追加し、`null` 検出 test を追加。**DR-2 時点の「`display.drugGeneric` 欠落でも新 code 0 件」という scope 固定 test は役目を終えたため反転させた**（historical behavior を残すためだけの test にはしていない）。parent 削除時の display 件数 assert も 6 → 7 へ更新
+  - `docs/VALIDATOR_STANDARD.md` §5 の除外理由を current state へ更新（DG-2 / DG-3a / DG-4 の経緯を表で記録）。**Appendix の errorCode 追加は不要**（新 code なし）、**§3-A も変更なし**
+  - **残る OPEN**: `lib/types.ts` の `drugGeneric?: string`（optional）と JS-A required の **type drift は未解消**。別 Unit で扱う
+  - canonical / bridge / manifest / PN2 / JSON_STANDARD / `lib/types.ts` / PN7 / RULES は無変更
+- **historical: DG-4 着手前の状態**（OD-DG-7）
   - generation contract が DG-2 で確定したため、DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加できる状態になった。現 corpus は 35/35 のため presence baseline は green のまま導入可能
   - **DG-2 では validator を変更していない。** 別 Unit / 別 commit で扱う
 - **`display.drugGeneric` の TypeScript requiredness — 未着手（OPEN・別 Unit）**（OD-DG-6 / OD-DG-8）

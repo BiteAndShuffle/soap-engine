@@ -75,9 +75,8 @@
  *        （ERROR。MISSING_REQUIRED_COMPOSITION_FIELD。presence のみ。sMergePolicy は S3 未解決のため暫定除外）
  *   （番号なし）drug / drug.search / display の JS-A 必須 field が undefined / null でないこと
  *        （ERROR。MISSING_REQUIRED_DRUG_FIELD / MISSING_REQUIRED_DRUG_SEARCH_FIELD /
- *        MISSING_REQUIRED_DISPLAY_FIELD。presence のみ・計 16 field。
- *        primaryDisplayName は既存 MISSING_PRIMARY_DISPLAY_NAME、display.drugGeneric は
- *        generation contract 未確定のため対象外）
+ *        MISSING_REQUIRED_DISPLAY_FIELD。presence のみ・計 17 field。
+ *        primaryDisplayName のみ既存 MISSING_PRIMARY_DISPLAY_NAME が担当するため対象外）
  *   （番号なし）Rapid v2 profile の module（rapidProfileOf === 'v2'）の Rapid-capable scenario の
  *        authored S が、Rapid v2 の第1文置換・multi-node 合成の
  *        前提（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
@@ -99,7 +98,7 @@ export type ModuleValidationErrorCode =
   | 'MISSING_REQUIRED_COMPOSITION_FIELD' // composition の JS-A 必須 field が undefined / null（ERROR。field path は detail）
   | 'MISSING_REQUIRED_DRUG_FIELD'        // drug の JS-A 必須 field が undefined / null（ERROR。field path は detail）
   | 'MISSING_REQUIRED_DRUG_SEARCH_FIELD' // drug.search の JS-A 必須 field が undefined / null（ERROR。primaryDisplayName は除外）
-  | 'MISSING_REQUIRED_DISPLAY_FIELD'     // display の JS-A 必須 field が undefined / null（ERROR。drugGeneric は除外）
+  | 'MISSING_REQUIRED_DISPLAY_FIELD'     // display の JS-A 必須 field が undefined / null（ERROR。field path は detail）
   | 'MISSING_PRIMARY_DISPLAY_NAME' // drug.search.primaryDisplayName が存在しない
   | 'ADDON_KEY_MISMATCH'       // addons.items のキーと item.key が不一致
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
@@ -544,12 +543,13 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   // parent（drug / drug.search / display / matchPolicy）が absent / null / 非 object の場合は、
   // field 単位の JS-A requirement と 1:1 になるよう配下の required field をそれぞれ報告する。
   //
-  // 除外 2 field:
+  // 除外 1 field:
   //   - drug.search.primaryDisplayName: 既存の専用 presence check（MISSING_PRIMARY_DISPLAY_NAME）
   //     が担当する。同一欠落に 2 つの ERROR を出さない
-  //   - display.drugGeneric: JS-A-display 必須だが generation contract が未確定のため暫定除外
-  //     （bridge 宣言は 19/35・bridge 未宣言時の生成規則なし・PN2 に専用規則なし）。
-  //     必須でないと判断したものではない
+  //
+  // display.drugGeneric は DG-2 で generation contract が確定し（bridge 明示は exact copy /
+  // 未宣言は drug.genericName を fallback。docs/JSON_STANDARD.md JS-A-display・PN2）、
+  // DG-3a で corpus の例外が解消した（35/35）ため、DG-4 で本 check の対象へ追加した。
   const asObject = (v: unknown): Record<string, unknown> =>
     typeof v === 'object' && v !== null && !Array.isArray(v) ? (v as Record<string, unknown>) : {}
   const REQUIRED_DRUG_FIELDS = ['nameAliases', 'aliasToBrand', 'brandCatalog'] as const
@@ -563,6 +563,7 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
     'title',
     'subtitle',
     'drugClassLabel',
+    'drugGeneric',
     'nodeLabelShort',
     'nodeLabelLong',
     'nodeKey',
