@@ -1,7 +1,16 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「DG-4 display.drugGeneric requiredness enforcement」:
+最終更新: 2026-09-23（Unit「DG-5 JS-A-display TypeScript requiredness parity」:
+`lib/types.ts` の `ModuleData.display` で optional だった **5 field**（`drugClassLabel` / `drugGeneric` /
+`nodeLabelShort` / `nodeLabelLong` / `nodeKey`）から `?` を外し、**JS-A-display 7/7 が TypeScript でも required** になった
+（`title` / `subtitle` は元から required・**`display?:` 自体は無変更**）。**目的は static contract parity** であり
+runtime validation の強化ではない（canonical 欠落の実効 guard は ModuleValidator）。clean scratch で 5 field 同時
+required 化 → **compile error 0**、harness validity も deliberate error で確認済み。runtime behavior・canonical /
+bridge / manifest は不変。**`Canonical ↔ TypeScript type validation gap`（`as unknown as` 112 箇所）は OPEN のまま**で
+cast は触っていない。これにより `display.drugGeneric` 系列（**DG-1 → DG-2 → DG-3a → DG-4 → DG-5**）が完了した。
+validator / tests / PN2 / PN7 / RULES / JSON_STANDARD / VALIDATOR_STANDARD は無変更。
+先行: 同日 Unit「DG-4 display.drugGeneric requiredness enforcement」:
 `display.drugGeneric` を `lib/moduleValidator.ts` の **`MISSING_REQUIRED_DISPLAY_FIELD` 対象へ追加**した。
 **新 errorCode は作らず**、display required fields は **6 → 7**、generic requiredness の対象は **16 → 17 field**
 （drug 3 / drug.search 7 / display 7）。除外は `drug.search.primaryDisplayName` の 1 field のみ。
@@ -1517,7 +1526,24 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **historical: DG-4 着手前の状態**（OD-DG-7）
   - generation contract が DG-2 で確定したため、DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加できる状態になった。現 corpus は 35/35 のため presence baseline は green のまま導入可能
   - **DG-2 では validator を変更していない。** 別 Unit / 別 commit で扱う
-- **`display.drugGeneric` の TypeScript requiredness — 未着手（OPEN・別 Unit）**（OD-DG-6 / OD-DG-8）
+- **DG-5: JS-A-display の TypeScript requiredness parity — 2026-09-23 に完了**
+  - `lib/types.ts` の `ModuleData.display` で **optional だった 5 field から `?` を外した**: `drugClassLabel` / `drugGeneric` / `nodeLabelShort` / `nodeLabelLong` / `nodeKey`。**`title` / `subtitle` は元から required** のため無変更
+  - 結果として **JS-A-display の 7 field すべてが TypeScript 上でも required** になり、JSON_STANDARD / PN2 / ModuleValidator / corpus / TypeScript の 5 者が一致した
+  - **`display?:` 自体は変更していない。** `ModuleData` の top-level field が optional である既存方針には触れない（変更するなら別 Unit）
+  - **目的は static contract parity であり、runtime validation の強化ではない。** canonical の欠落に対する実効 guard は引き続き **ModuleValidator**（DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` ＋ DG-4 の `drugGeneric` 追加）が担う
+  - **実測〔clean scratch〕**: 5 field を同時に required 化して full-project `tsc --noEmit` を実行し **compile error 0 件**。`npm test` も 3891 / pass 3889 / fail 0 / skipped 2 で本体と同値
+  - **harness validity も確認済み**: scratch は `tsconfig.tsbuildinfo` を持ち込まず毎回削除したうえで、cast のない箇所（`lib/menuGroups.ts`）へ **故意の型エラーを入れて検出されること**（exit 2 / `TS2322`）を確認してから測定した。`incremental: true` の tsbuildinfo を持ち込むと tsc が何も検査せず exit 0 になる事象を実際に踏んだため、以後の型 probe では必ずこの手順を採る
+  - **runtime behavior 不変**（型は実行時に存在しない）。canonical / Bridge / `data/search-manifest.json` は不変
+  - **`Canonical ↔ TypeScript type validation gap` は OPEN のまま**。`as unknown as` の二重 cast は repository 全体で **112 箇所**（`data/modules/index.ts` 35 / tests 71 / `lib/searchManifest.ts` 1 / `lib/moduleValidator.ts` 1 / scripts 1）あり、**required 化しても canonical JSON の欠落は `tsc` では検出されない**。cast gap は本 Unit でも触っていない
+  - validator / tests / PN2 / PN7 / RULES / JSON_STANDARD / VALIDATOR_STANDARD は無変更
+- **`display.drugGeneric` 系列 — DG-1 → DG-5 で完了**
+  - **DG-1**（調査）: normative 記述は JS-A の 1 行のみで semantics 未定義・bridge 宣言 19/35・runtime consumer 0・bridge 未宣言 16 件の provenance は説明不能、を実測
+  - **DG-2**（generation contract）: semantics（module 単位の一般名系表示ラベル）と生成規則（bridge 明示 → exact copy / 未宣言 → `drug.genericName`）を JSON_STANDARD・PN2 へ明文化
+  - **DG-3a**（value parity）: H1 oral の bridge を先に repair し canonical を追随させ、corpus の known exception を 0 にした
+  - **DG-4**（validator enforcement）: `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ追加（display 7 field・全体 17 field）
+  - **DG-5**（type parity）: TypeScript の optional を解消し 7/7 parity
+  - 残る関連 OPEN は `Canonical ↔ TypeScript type validation gap` のみ
+- **historical: DG-5 着手前の状態**（OD-DG-6 / OD-DG-8）
   - `display.drugGeneric` は **JS-A required のまま維持**する（optional / legacy へ降格しない）。generation rule 確定により新規 module でも決定論的に生成可能になった
   - `lib/types.ts` の `drugGeneric?: string`（optional）は、generation contract と validator enforcement が閉じた後に別 Unit で扱う。**DG-2 では型を変更していない**
 - **DR-2: JS-A drug / display requiredness enforcement — 2026-09-23 に完了**

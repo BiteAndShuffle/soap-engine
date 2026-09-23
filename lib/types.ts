@@ -799,14 +799,14 @@ export interface ModuleData {
   display?: {
     title: string
     subtitle: string
-    drugClassLabel?: string
-    drugGeneric?: string
+    drugClassLabel: string
+    drugGeneric: string
     /** composition.nodeLabelShort の表示側 projection（canonical source は composition） */
-    nodeLabelShort?: string
+    nodeLabelShort: string
     /** composition.nodeLabelLong の表示側 projection */
-    nodeLabelLong?: string
+    nodeLabelLong: string
     /** composition.nodeKey の表示側 projection */
-    nodeKey?: string
+    nodeKey: string
     /**
      * 左メニューの MenuGroup 表示ラベルをモジュール単位でオーバーライドする。
      * キーは MenuGroup の標準値、値は表示したいラベル文字列。
