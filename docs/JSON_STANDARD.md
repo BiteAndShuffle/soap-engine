@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-09-17（JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
+最終更新: 2026-09-22（JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
 
 ---
 
@@ -387,6 +387,25 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 | `composition.domainPolicy` | 同上 |
 | `composition.nodeIdentityPolicy` | 同上 |
 
+> **current-generation policy（2026-09-22。上記 4 key に限る）**
+>
+> 上表と DP-03 は historical な設計記録として保持する（削除・再分類していない）。そのうえで、
+> **current の新規 module 生成では上記 4 key を生成しない。**
+>
+> - **「多剤合成対象 module」の判定条件は current Repository に存在せず、機械的に判定できない。**
+>   JS-B / DP-03 / JS-D は用語を使うのみで条件を定義しておらず、`prompts/vNext/PN2-Drug-Header.md`
+>   と bridge にも当該 4 key の生成規則がない
+> - **current runtime consumer は 0 件**〔2026-09-22 実測〕。`lib/**` / `app/**` / validator /
+>   search / manifest / tests / scripts のいずれからも参照されていない。S 統合が実際に読むのは
+>   `clinicalDomain` と `scenarios[].mergePolicy.S.groupKey` である
+> - **既存 canonical は preserve する。** 4 key を保持する 21 module の値は削除・変更しない
+> - **21 を正しい対象範囲とも、14 を欠落とも確定していない**〔実測: 保有 21 / 非保有 14・部分保有 0〕。
+>   corpus migration は行わず、conditional requiredness の validator も設けない
+> - `composition.canonicalSource` の必須化範囲（Q-F4）は **PENDING のまま**であり、本 policy は
+>   Q-F4 を解決しない。4 key の future lifecycle を確定する判断でもない
+>
+> 判断記録は `prompts/vNext/HANDOFF.md`（Finding `JS-B scope drift`・OD-JSB-1〜11。本 Finding は OPEN）。
+
 ### 剤形分割検索が必要な module のみ必須
 
 参照: DP-05（heparinoid 剤形検索分離原則）
@@ -465,7 +484,7 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 | 差分 | 対象 | 根拠 |
 |---|---|---|
 | `addons.orderPresets` が `{}` | allergy 2系 / derm 3系 | bridge 未明示のため空。DP-08 最小構成原則 |
-| `composition.defaultSMergeLevel` 等の欠落 | allergy_eye_drops / derm 3系 | 多剤合成対象外。DP-03 条件付き必須原則 |
+| `composition.defaultSMergeLevel` 等の欠落 | allergy_eye_drops / derm 3系 | 多剤合成対象外。DP-03 条件付き必須原則（**注**: この「多剤合成対象外」という分類は current Repository では機械的に判定できない。JS-B の current-generation policy を参照）|
 | `expressModes[*].enabled: true` + `disabled: true` | derm 3系 | 準備中プレースホルダー。将来の有効化時に `disabled` を外す（JS-expressModes 参照）|
 | `moduleVersion` 値が module ごとに異なる | 全 module | string 型で存在すればよい。runtime 未参照。validator は存在確認のみ。値の形式は不問 |
 | `addons.items[].uiVariant` の有無・値 | 全 module | ADDON の視覚的 accent を指定する optional UI metadata。臨床内容ではない。未指定でも runtime は通常ボタンとして描画する（JS-D-addonUi 参照）|

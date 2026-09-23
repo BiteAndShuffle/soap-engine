@@ -1,7 +1,15 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-22（Unit「Composition type parity」:
+最終更新: 2026-09-22（Unit「JSB-1 current-generation policy」:
+JS-B 条件付き 4 key（`canonicalSource` / `defaultSMergeLevel` / `domainPolicy` / `nodeIdentityPolicy`）について、
+**current の新規 module 生成では生成しない**という current-generation policy を docs / PN2 へ明文化した（OD-JSB-1〜11）。
+判定条件は **新しく定義していない**（OD-JSB-1）。**canonical 21/14 は無変更**（migration なし・OD-JSB-3）、**validator も作らない**（OD-JSB-7）。
+`Q-F4` は PENDING のまま（OD-JSB-6 / OD-JSB-9）、Finding `JS-B scope drift` も **OPEN のまま**。
+変更は `docs/JSON_STANDARD.md`（JS-B / JS-D 注記）・`docs/DESIGN_PRINCIPLES.md`（DP-03 追記）・
+`docs/OPEN_DESIGN_QUESTIONS.md`（Q-F4 追記）・`prompts/vNext/PN2-Drug-Header.md`（composition 生成節）・本ファイルの 5 件のみ。
+canonical / bridge / manifest / `lib/**` / `app/**` / validator / tests / PN7 / RULES / `PROJECT_CONTEXT.md` / `P0-C.md` は無変更。
+先行: 同日 Unit「Composition type parity」:
 `lib/types.ts` の `ModuleData.composition` 型を JS-A-composition / RULES §18 / canonical corpus と一致させた。
 **JS-A-composition 9/9 field の type parity を確認済み**で、実差分は不一致・未宣言だった 3 field のみ
 （`priority?: number` → `priority?: string` ／ inline `sMergePolicy?: { unit; conflictStrategy; withinDomainStrategy: string }` を追加 ／
@@ -1369,6 +1377,24 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
   - 問題点〔2026-09-21 実測〕: ① corpus の分布が保有 21 / 非保有 14（非保有は点眼 2・heparinoid 4・insulin 7・`cardiorenal_sglt2_oral`・`dm_dpp4_sglt2_combination_oral`）② JS-B の「現在の対象」欄が「allergy_oral / GLP-1 2系」のままで実態と一致しない ③ insulin 7 件・SGLT2 系 2 件が多剤合成の対象かどうかを定める明文がない
   - **2026-09-18 の削除について（Repository 実測を正とする）**: commit `1ed17e9`「establish H1 eye drops golden reference」が上記 4 key を削除したのは **`allergy_h1_antihistamine_eye_drops` の 1 module だけ**である。DP-03 が当該 module を多剤合成対象外と明記しているにもかかわらず、`82923dd` の再生成時に `allergy_h1_antihistamine_second_gen_oral` から逐語コピーされて混入していた **reference contamination の除去**であり、**corpus 全体からの削除ではない**。corpus 全体から消えたのは同日の `e11d3a2`「remove legacy composition searchDomain」による `composition.searchDomain` のみ（現 corpus で 0 件）
   - requiredness enforcement とは別問題として保持する（OD-REQ-9）
+  - **JSB-1 current-generation policy — 2026-09-22 に docs 明文化を完了（Finding 自体は OPEN のまま）**
+    - **本 Finding は CLOSE していない。** 「多剤合成対象 module」の判定条件は **新しく定義していない**（OD-JSB-1）。current 21/14 から contract を復元することも、family / route / domain / historical presence から新しい条件を推測生成することもしていない
+    - **corpus 実測〔2026-09-22〕**: 4 key の **保有 21 / 非保有 14 / 部分保有 0**。4 key は **all-or-nothing**（4 つ揃うか 4 つとも無いか）で、**値は各 key 1 種類のみ**（`defaultSMergeLevel` = `"clinical_domain"`、他 3 key も固定 object。module 間のばらつきなし）
+    - **historical birth distribution〔実測〕**: 保有・非保有は **module 誕生時点で決まっている**（`dm_insulin_regular` `ffadbeb` 2026-06-26 / `dm_insulin_rapid_analog` `5182357` 2026-06-27 は誕生時から保有、`dm_insulin_intermediate` `1a072d4` 2026-06-27 / `dm_insulin_long_acting` `e650858` 2026-06-29 は誕生時から非保有）。**同一 family・同一時期でも割れており**、insulin 2/7・SGLT2 系 1/2・配合剤は混在。唯一 `dm_glp1ra_semaglutide_oral` のみ誕生後（`b7e3f75` 2026-04-11）に追加された。これらは **contract ではなく historical distribution として扱う**（OD-JSB-4）
+    - **runtime consumer 0 件〔実測〕**: `lib/**` / `app/**` / validator / search / manifest / tests / scripts のいずれからも 4 key は参照されていない。S 統合が実際に読むのは `clinicalDomain` と `scenarios[].mergePolicy.S.groupKey`（`deriveNodeFields` / `soapComposer`）であり、4 key は経路に入っていない
+    - **PN2 / bridge に従来の生成規則がない〔実測〕**: 改訂前の `prompts/vNext/PN2-Drug-Header.md` に 4 key の記載は 0 件。bridge 35 本のうち 19 本が `canonicalSource` を含むが、これは `constitution.canonicalSource`（bridge 原稿を SSOT とする宣言文）であり `composition.canonicalSource` とは別物。他 3 key は bridge 0 件
+    - **multi-drug test に非保有 module が参加している〔実測〕**: `scripts/test-multi-drug-synthesis.ts`（`npm run test:multi-drug`）が使う 16 module のうち **10 module が 4 key 非保有**（H1 点眼・chemical mediator 点眼・heparinoid 4・insulin 4・`dm_insulin_glp1_combination`）。JS-D が「多剤合成対象外」としている点眼・derm も含まれる。したがって **「multi-drug synthesis に参加するか」を 4 key の生成条件とすることも current では成立しない**
+    - **2026-09-18 の 2 commit の区別〔history 実測〕**: `1ed17e9`「establish H1 eye drops golden reference」が 4 key を削除したのは **`allergy_h1_antihistamine_eye_drops` の 1 module のみ**（変更は当該 bridge と当該 JSON の 2 ファイルだけ）。**corpus 全体からの削除ではない**。corpus 全体から消えたのは同日の `e11d3a2`「remove legacy composition searchDomain」による `composition.searchDomain` であり、両者は別事象
+    - **Owner Decision OD-JSB-1〜11**: ① 判定条件を新しく定義しない ② **新規 module では 4 key を生成しない**（current-generation policy。「将来不要」と確定する判断ではない） ③ 既存 21 module から削除しない・21 を正しいとも 14 を欠落とも確定しない・**corpus migration をしない** ④ insulin / SGLT2 / 配合剤を family 単位で対象・非対象と決めない ⑤ 「多剤合成対象 module のみ必須」を current generation contract としては使用しない方向で整理し、docs へ historical / unresolved metadata であることを明文化 ⑥ `canonicalSource` も他 3 key と同じ current-generation policy とするが **Q-F4 は PENDING のまま** ⑦ **conditional requiredness validator は作らない**（作れば historical 21/14 を誤って contract 化するため） ⑧ 新規 module 生成は決定論的に扱い、insulin / 配合剤 / 新 family でも分岐させない ⑨ Q-F4 の旧「現状」表（7 module）は historical observation として保持し、current 実測 21/14 を追記（status は変更しない） ⑩ `prompts/PROJECT_CONTEXT.md` を read-only 確認 ⑪ `JSON_STANDARD.md` / `DESIGN_PRINCIPLES.md` に新しい変更契機節は作らず、関連正本を内容ベースで横断確認する
+    - **PROJECT_CONTEXT 確認結果〔read-only・OD-JSB-10〕**: 4 key / 「多剤合成」/ JS-B / DP-03 の記述は **0 件**であり、本 Decision と直接矛盾する current contract 記述はない。**無変更**
+    - **横断確認結果〔OD-JSB-11〕**: 編集対象 5 ファイル以外で 4 key に言及するのは **旧体系の `prompts/P0-C.md` のみ**（別 Unit 候補として下記に記録）。`docs/IMPLEMENTATION_CHECKLIST.md` / `docs/DEVELOPMENT_STANDARD.md` の「多剤合成」は runtime 確認・テスト実施の記述であり 4 key の生成条件とは無関係で追随不要
+    - **本 Unit で変更していないもの**: canonical 21/14 / bridge / `data/search-manifest.json` / `lib/**` / `app/**` / validator / tests / PN7 / RULES / `lib/types.ts` / `PROJECT_CONTEXT.md` / `P0-C.md` / S3 / GG-3 / Q-F4 status / JS-B の Requirement Class 分類。JS-B・DP-03 の既存表・見出し・採用理由は historical record として保持し、削除も置き換えもしていない
+- **別 Unit 候補（記録のみ・変更なし）: legacy `prompts/P0-C.md` の `composition.domainPolicy`**
+  - 旧体系 P0-C（`MULTI_DRUG_MERGE_RULE`）が app 受け口仕様として `composition.domainPolicy` を列挙している〔2026-09-22 実測・178 行目〕。current runtime は当該 key を参照していない
+  - P0-C は旧体系の工程プロンプトであり、`prompts/PROJECT_CONTEXT.md` §10 が「新規作業では使用しない」と定めているため、current の新規 module 生成経路（vNext PN1〜PN8）には影響しない。JSB-1 では変更していない
+- **別 Unit 候補（記録のみ・変更なし）: document change-trigger governance**
+  - `docs/JSON_STANDARD.md` / `docs/DESIGN_PRINCIPLES.md` には**変更契機節が存在しない**。`docs/DEVELOPMENT_STANDARD.md` §11.6 は「節が存在しないことを理由に追随不要と判定してはならない」「適用対象外か未適用かは判定できない」と定める
+  - JSB-1 では **新しい変更契機節を作らず**（OD-JSB-11）、関連正本を内容ベースで横断確認する方法を採った。両文書が変更契機の適用対象かどうかの判定は **本 Unit では行っていない**。governance 自体の整備は別 Unit で扱う
 - **`Composition type parity` — 2026-09-22 に完了**
   - 〔historical・2026-09-21 実測〕`lib/types.ts` の `composition` 型が JS-A / corpus と一致していなかった: ① `priority?: number` だが、JS-A・`prompts/RULES.md` §18・corpus 35 件はすべて string（`"chronic"`）② `sMergePolicy` の型宣言がない ③ `groupKeyRegistry` の型宣言がない。`data/modules/index.ts` の二重キャストにより `tsc` では検出されていなかった（D-3 と同じ機構）。R-1 / R-2 では `lib/types.ts` を変更しなかった（OD-REQ-10）
   - **current state〔実測〕: JS-A-composition 9/9 field の type parity を確認済み**（JSON_STANDARD / RULES / canonical 35 件 / `lib/types.ts` の 4 者）。`nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / `nodeLabelShort` / `nodeLabelLong` の 6 field は既に一致しており無変更

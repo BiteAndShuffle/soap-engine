@@ -250,6 +250,27 @@ bridge の記載有無に関わらず、以下の固定値を composition に含
 }
 ```
 
+**JS-B 条件付き 4 key（新規 module では生成しない。current-generation policy）:**
+
+次の 4 key は、**新規 module の canonical には生成しない**。
+
+- `composition.canonicalSource`
+- `composition.defaultSMergeLevel`
+- `composition.domainPolicy`
+- `composition.nodeIdentityPolicy`
+
+- **family / route / domain / 配合剤かどうかで分岐しない。** すべての新規 module で一律に生成しない
+- **bridge に同名・類似の情報があっても、新規 canonical へ転記しない**（bridge の
+  `constitution.canonicalSource` は bridge 原稿を SSOT とする宣言文であり、
+  `composition.canonicalSource` とは別物である）
+- **`"PENDING"` placeholder としても生成しない**
+- 本規則は新規生成のみを対象とする。**既存 canonical（4 key を保持する module）の値を削除・
+  変更する指示ではない**
+- 根拠: `docs/JSON_STANDARD.md` JS-B / `docs/DESIGN_PRINCIPLES.md` DP-03 の
+  current-generation policy。「多剤合成対象 module」の判定条件は current Repository に存在せず、
+  当該 4 key の runtime consumer も 0 件である。**これは 4 key の future lifecycle を確定する
+  判断ではない**（`docs/OPEN_DESIGN_QUESTIONS.md` Q-F4 は PENDING のまま）
+
 ### display / template / persona / regulatory / topical
 
 bridge の対応フィールドから移植する。

@@ -8,7 +8,7 @@ SOAP Engine の設計根拠・例外許容条件・禁止事項を永続化し�
 設計判断の参照順序:
   このドキュメント → JSON_STANDARD.md → OPEN_DESIGN_QUESTIONS.md → bridge 原稿 → canonical JSON
 
-最終更新: 2026-09-13（DP-19 へ Owner Decision OD-RAPID-SCOPE-1 を追記: Rapid の薬歴確認前提と「処方整理」の意味境界。DP-12 へ Owner Decision OD-COMPLIANCE-REALIZATION-1 を追記: コンプライアンス評価単位が Rapid sentence realization に与える含意。DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記）
+最終更新: 2026-09-22（DP-03 へ current-generation policy と current observation を追記: 条件付き必須 4 key は current の新規 module 生成では生成しない／判定条件は未定義のまま／既存 canonical は preserve／採用理由の前提と runtime consumer 0 件の実測が一致していない。本文・表・採用理由は historical design record として不変。2026-09-13: DP-19 へ Owner Decision OD-RAPID-SCOPE-1 を追記: Rapid の薬歴確認前提と「処方整理」の意味境界。DP-12 へ Owner Decision OD-COMPLIANCE-REALIZATION-1 を追記: コンプライアンス評価単位が Rapid sentence realization に与える含意。DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記）
 
 ---
 
@@ -154,6 +154,25 @@ runtime が実際に参照するフィールドのみを必須とする最小構
 **関連フィールド**
 `composition.canonicalSource` / `composition.defaultSMergeLevel` /
 `composition.domainPolicy` / `composition.nodeIdentityPolicy`
+
+**current-generation policy（2026-09-22。上記 4 key に限る）**
+
+本原則の本文・適用範囲の表・採用理由は historical design record として保持する。そのうえで、
+**current の新規 module 生成では上記 4 key を生成しない。**
+
+- **current の判定条件は未定義である。** 「多剤合成対象 module」が何を満たせば該当するのかを
+  定義した記述は Repository に存在せず、`prompts/vNext/PN2-Drug-Header.md` と bridge にも
+  当該 4 key の生成規則がない。family / route / domain / 配合剤かどうかで分岐させない
+- **既存 canonical は preserve する。** 4 key を保持する module の値は削除・変更しない
+- 本 policy は 4 key の future lifecycle を確定する判断ではない（Q-F4 は PENDING のまま）
+
+**current observation（2026-09-22 実測）**
+上記「採用理由」は *runtime が実際に参照するフィールドのみを必須とする* と述べているが、
+当該 4 key の runtime consumer は現在 0 件である（`lib/**` / `app/**` / validator / search /
+manifest / tests / scripts のいずれからも参照されていない）。すなわち採用理由の前提と current の
+実測が一致していない。**これは本原則が誤りであったこと・廃止されたこと・解決済みであることを
+意味しない。** 対象条件の定義は未解決であり、判断記録は `prompts/vNext/HANDOFF.md`
+（Finding `JS-B scope drift`・OD-JSB-1〜11。本 Finding は OPEN）。
 
 **保留事項**
 Q-F4: composition.canonicalSource の必須化範囲（→ OPEN_DESIGN_QUESTIONS.md）
