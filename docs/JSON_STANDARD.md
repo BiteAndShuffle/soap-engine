@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-09-22（JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
+最終更新: 2026-09-23（JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
 
 ---
 
@@ -245,10 +245,21 @@ interface BrandEntry {
 | `title` | — |
 | `subtitle` | — |
 | `drugClassLabel` | — |
-| `drugGeneric` | — |
+| `drugGeneric` | **module 単位の一般名系表示ラベル**。bridge に明示があれば exact copy、bridge 未宣言なら `drug.genericName` を deterministic fallback とする（生成規則の詳細は `prompts/vNext/PN2-Drug-Header.md`「`display.drugGeneric` の確定ルール」）。`drugClassLabel` / `brandCatalog[*].displayGenericName` とは責務が異なる（下記参照）|
 | `nodeLabelShort` | — |
 | `nodeLabelLong` | — |
 | `nodeKey` | `composition.nodeKey` と必ず一致させる |
+
+**一般名系ラベルの責務分離**
+
+| フィールド | 責務 |
+|---|---|
+| `display.drugClassLabel` | **薬効分類ラベル** |
+| `drug.brandCatalog[*].displayGenericName` | **brand 単位の一般名表示**（表示用一般名の SSOT。JS-A-drug 参照）|
+| `display.drugGeneric` | **module 単位の一般名系表示** |
+
+- **`display.drugGeneric` は `drugClassLabel` の機械コピーではない。** 両者が同一値になる module は存在するが、責務は別である
+- **class-level module（単一の有効成分に対応しない module）では、module を代表する一般名系ラベルを許容する。** 「必ず個別有効成分名」とは定義しない
 
 ### JS-A-addons: addons 構造
 

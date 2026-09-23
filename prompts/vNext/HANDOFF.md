@@ -1,7 +1,18 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「DR-2 JS-A drug / display requiredness enforcement」:
+最終更新: 2026-09-23（Unit「DG-1 調査 / DG-2 display.drugGeneric generation contract」:
+`display.drugGeneric` の **semantics と生成規則を確定し、docs / PN2 へ明文化**した（OD-DG-1〜8）。
+semantics は **module 単位の一般名系表示ラベル**（`drugClassLabel` = 薬効分類ラベル、
+`brandCatalog[*].displayGenericName` = brand 単位とは責務が別）。生成規則は **bridge 明示 → exact copy /
+bridge 未宣言 → `drug.genericName` を deterministic fallback**（推測生成・`"PENDING"` 禁止）。
+DG-1 実測: normative 記述は JS-A の 1 行のみで semantics 未定義・bridge 宣言 19/35・canonical は 33/35 が
+`drug.genericName` と同値・runtime consumer 0・bridge 未宣言 16 件の source provenance は説明不能・
+H1 oral は canonical が先で bridge が後。**canonical は 1 件も変更していない**（H1 oral / semaglutide を含む）。
+**H1 oral の value parity は OPEN**（bridge 側を別 Unit で Human Review）、**validator enforcement は DG-4 で未着手**、
+**TypeScript requiredness は別 Unit**。canonical / bridge / manifest / validator / tests / `lib/types.ts` /
+PN7 / RULES は無変更。
+先行: 同日 Unit「DR-2 JS-A drug / display requiredness enforcement」:
 `lib/moduleValidator.ts` へ section 単位の generic errorCode 3 つ（**`MISSING_REQUIRED_DRUG_FIELD` /
 `MISSING_REQUIRED_DRUG_SEARCH_FIELD` / `MISSING_REQUIRED_DISPLAY_FIELD`**。ERROR・Structural）を追加し、
 JS-A-drug / JS-A-display の **16 field の presence**（missing = `undefined` / `null`）を機械担保した（OD-DR2-1〜10）。
@@ -1442,10 +1453,33 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **Finding（OPEN・DR-1 では修復しない）: `display.drugGeneric` value parity（H1 oral）**
   - 〔2026-09-23 実測〕`allergy_h1_antihistamine_second_gen_oral` の bridge は `drugGeneric: "第二世代H1受容体拮抗薬"`、canonical は `"フェキソフェナジン 他"` で **値が一致しない**（presence は両者にあり、requiredness defect ではない）。誕生 commit `625ac7e`（2026-05-23）から canonical は現在の値
   - **requiredness ではなく semantic / value parity の問題として分離する**（OD-DR-2）。**Bridge SSOT 原則だけを理由に即時置換しない。** `display.drugGeneric` の field semantics 自体を確認してから判断する
-- **Finding（OPEN）: `display.drugGeneric` generation rule 未確定**
-  - 〔2026-09-23 実測〕bridge の `drugGeneric` 宣言は **19/35**、canonical presence は 34/35（DR-1 後 35/35）。**bridge 未宣言の 16 module では canonical の `drugGeneric` が `display.drugClassLabel` と完全一致**（16/16）しているが、この対応を定めた規則は **PN2 にも RULES にも存在しない**
-  - **この 16/16 のパターンを contract へ昇格させない**（OD-DR-4）。family pattern や既存値から新しい fallback を作らない。`display.drugGeneric` の意味と source policy は別 Unit で先に確認する
-  - `prompts/vNext/PN2-Drug-Header.md` に `display.drugGeneric` の専用生成規則はなく、「display / template / persona / regulatory / topical は bridge の対応フィールドから移植する」という包括規定のみ
+- **`display.drugGeneric` generation contract — 2026-09-23 に DG-1（調査）／ DG-2（明文化）で確定**
+  - **DG-1 調査結果〔実測・historical〕**
+    - **normative 記述は JS-A-display 表の 1 行のみ**で、備考欄は「—」だった。`prompts/RULES.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN7-Cross-Reference-Audit.md` / `docs/DESIGN_PRINCIPLES.md` には **言及が 0 件**。**field semantics が Repository に存在しなかった**
+    - bridge 宣言 **19/35**（うち canonical と exact parity 18・MISMATCH 1）／ bridge 未宣言 **16/35**
+    - canonical 値は **33/35 が `drug.genericName` と同値**であり、**同時に 33/35 が `display.drugClassLabel` とも同値**（両者が同値の corpus のため、パターンからは source を特定できない）。単一 `displayGenericName` と一致するのは 1/35 のみ
+    - bridge 宣言 19 件の値自体が **class label 17 件 / ingredient name 1 件（`dm_glp1ra_semaglutide_oral` = `"セマグルチド"`）/ 例外 1 件**と、**2 つの意味レベルが混在**していた
+    - **bridge 未宣言 16 件はすべて module 誕生時から canonical に値を持つ**（2026-07-05〜07-14 の一連の生成 wave）。当該 bridge の `display:` ブロックは `nodeKey` / `nodeLabelShort` / `nodeLabelLong` のみで、**その値がどの source から生成されたかは Repository から説明できない（unresolved）**
+    - **production runtime consumer は 0 件**（`lib/**` / `app/**` / search / manifest / validator / audit / tests）。`lib/menuGroups.ts` は `drugGeneric` を「個別一般名」として prefix 候補から**除外する**旨のコメントを持つのみ
+    - **H1 oral の順序〔history 実測〕**: canonical は `625ac7e`（2026-05-23）誕生時から `"フェキソフェナジン 他"`。**bridge は約 1 か月後の `10d1e2f`（2026-06-20）に追加**され、そこで class label（`"第二世代H1受容体拮抗薬"`）が記載された。**canonical が bridge から drift したのではなく、後から作られた bridge が異なる意味レベルで書かれた**
+  - **OD-DG-1 semantics（確定）**: `display.drugGeneric` = **module 単位の一般名系表示ラベル**。責務分離は `display.drugClassLabel` = 薬効分類ラベル ／ `drug.brandCatalog[*].displayGenericName` = brand 単位の一般名表示 ／ `display.drugGeneric` = module 単位の一般名系表示。**「必ず個別有効成分名」とは定義せず**、class-level module では代表ラベルを許容する。**`drugClassLabel` の機械コピーとも定義しない**
+  - **OD-DG-2 generation rule（確定）**: ① bridge に `display.drugGeneric` が明示 → **exact copy** ② 明示なし → **`drug.genericName` を deterministic fallback**。sibling / family pattern / `drugClassLabel` / brandCatalog の列挙からの推測生成は禁止。`"PENDING"` placeholder も生成しない。PN2 が `display.subtitle` 等で既に採る「明示値優先 → deterministic source fallback」と同じ方針
+  - **OD-DG-3 bridge authoring**: `drug.genericName` では表現できない module-level 表示が必要な場合のみ bridge が明示する（代表成分名＋「他」／ module 固有表示／複数成分の集約）。**bridge への記載は全 module 必須ではない**
+  - **DG-2 implementation（2026-09-23）**: `docs/JSON_STANDARD.md` JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載し、表の直後へ 3 field の責務分離を明記。`prompts/vNext/PN2-Drug-Header.md` の「`display.subtitle` の確定ルール」直後へ **「`display.drugGeneric` の確定ルール（推測生成禁止）」を新設**。**本ルールは今後の新規 module 生成を決定論的にするための current rule であり、bridge 未宣言 16 件の historical origin を追認するものではない**（DG-2 内にその旨を明記）
+  - **現 corpus と新ルールの照合〔2026-09-23 実測〕**: bridge 明示 + canonical exact parity **18** ／ bridge 未宣言 + `drug.genericName` parity **16** ／ **known exception 1**（H1 oral）
+  - **canonical は 1 件も変更していない**（H1 oral / `dm_glp1ra_semaglutide_oral` を含む）。bridge / manifest / validator / tests / `lib/types.ts` / PN7 / RULES も無変更
+- **Finding（OPEN）: H1 oral `display.drugGeneric` value parity**（OD-DG-4）
+  - `allergy_h1_antihistamine_second_gen_oral`: canonical `"フェキソフェナジン 他"` ⇔ bridge `"第二世代H1受容体拮抗薬"`。**canonical は今回変更しない**
+  - current canonical は OD-DG-1 の semantics（module 単位の一般名系ラベル）に**適合可能**である一方、bridge 側の値は薬効分類レベルの表現である。したがって **canonical を bridge の class label へ寄せるのではなく、bridge 側が確定 semantics に適合するかを別 Unit で Human Review する**
+  - **Bridge SSOT 原則は維持する。** ただし本件は bridge が canonical より後に、かつ field semantics 未定義の時期に異なる意味レベルで作成されたことが history から確認されているため、「現在 bridge に書いてあるから自動的に canonical を置換する」とはしない
+  - **新ルール適用上の既知の例外として保持する**（DG-2 で無理に整合させていない）
+  - `dm_glp1ra_semaglutide_oral` の ingredient-level 値（`"セマグルチド"`）は **許容**（OD-DG-5）。class label へ統一しない
+- **DG-4: `display.drugGeneric` の validator enforcement — 未着手（OPEN）**（OD-DG-7）
+  - generation contract が DG-2 で確定したため、DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加できる状態になった。現 corpus は 35/35 のため presence baseline は green のまま導入可能
+  - **DG-2 では validator を変更していない。** 別 Unit / 別 commit で扱う
+- **`display.drugGeneric` の TypeScript requiredness — 未着手（OPEN・別 Unit）**（OD-DG-6 / OD-DG-8）
+  - `display.drugGeneric` は **JS-A required のまま維持**する（optional / legacy へ降格しない）。generation rule 確定により新規 module でも決定論的に生成可能になった
+  - `lib/types.ts` の `drugGeneric?: string`（optional）は、generation contract と validator enforcement が閉じた後に別 Unit で扱う。**DG-2 では型を変更していない**
 - **DR-2: JS-A drug / display requiredness enforcement — 2026-09-23 に完了**
   - `lib/moduleValidator.ts` に section 単位の generic errorCode **3 つ**を追加した（いずれも **ERROR**・Structural。OD-DR2-1）。R-2 の `MISSING_REQUIRED_COMPOSITION_FIELD` と命名・責務粒度を揃えたもので、新しい Repository 規則ではなく JS-A-drug / JS-A-display の machine enforcement
     - `MISSING_REQUIRED_DRUG_FIELD` / `MISSING_REQUIRED_DRUG_SEARCH_FIELD` / `MISSING_REQUIRED_DISPLAY_FIELD`

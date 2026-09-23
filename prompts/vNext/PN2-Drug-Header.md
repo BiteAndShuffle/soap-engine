@@ -379,6 +379,40 @@ display.subtitle = "DPP-4阻害薬（内服）"
 それ自体は問題ない（`dm_insulin_rapid_analog.json` の title / drugClassLabel / nodeLabelLong が
 同値である実績と同型）。
 
+### display.drugGeneric の確定ルール（推測生成禁止）
+
+`display.drugGeneric` は **module 単位の一般名系表示ラベル**である
+（`docs/JSON_STANDARD.md` JS-A-display。`display.drugClassLabel` = 薬効分類ラベル、
+`drug.brandCatalog[*].displayGenericName` = brand 単位の一般名表示とは責務が異なる）。
+
+**bridge に `display.drugGeneric` が明記されている場合:** その値を **exact copy** する。
+
+**bridge に明記がない場合:** 以下を確定値として使用する。
+
+```
+display.drugGeneric = {drug.genericName}
+```
+
+例（`dm_dpp4_oral`: `drug.genericName="DPP-4阻害薬"`）:
+```
+display.drugGeneric = "DPP-4阻害薬"
+```
+
+**推測生成の禁止**: 同系統モジュールの値・family pattern・`display.drugClassLabel`・
+`drug.brandCatalog[*].displayGenericName` の列挙から値を組み立ててはならない
+（copied/reference pattern による creative build と判定される）。`display.subtitle` と同じ扱いである。
+
+**bridge author が明示すべき場合**: `drug.genericName` では表現できない module-level の一般名表示が
+必要なときに限り、bridge へ `display.drugGeneric` を明示する（例: 代表成分名＋「他」、module 固有の
+一般名表示、複数有効成分をまとめる表示）。**bridge への記載は全 module 必須ではない。**
+明示がなければ上記 fallback を使用する。
+
+**`"PENDING"` placeholder としては生成しない。** 上記 2 経路のいずれかで必ず確定する。
+
+本ルールは **今後の新規 module 生成を決定論的にするための current rule** であり、既存 canonical の
+値の由来を追認するものではない（bridge 未宣言 16 module の値がどの source から生成されたかは
+Repository から説明できない。`prompts/vNext/HANDOFF.md` の DG-1 調査結果を参照）。
+
 ### defaults セクション
 
 `defaults.followup` と `defaults.followupProfiles` は bridge から直接生成しない。
