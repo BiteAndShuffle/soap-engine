@@ -18,7 +18,7 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ npm run audit（addon chain / alias 同期 / 一般名読み到達性 / brand resolution safety / adjustmentExpression 保持 / menuGroupLabels 保持 / drugClass 保持 / drugSpecificTags 保持 の 8 監査。個別実行する場合は下記 8 行を参照）
 □ ModuleValidator（対象モジュールが OK / 既存warning件数に変化がないか）
 □ CrossModuleValidator
-□ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合。`npm run audit` に含まれる）
+□ scripts/audit-addon-bridge-chain.ts（bridge⇔addonsRef⇔AddonPanel整合・bridge P_ADDON_INLINE⇔addonInsertions 整合。`npm run audit` に含まれる）
 □ scripts/audit-alias-bridge-chain.ts（alias系フィールドのbridge⇔JSON同期。`npm run audit` に含まれる）
 □ scripts/audit-generic-name-reachability.ts（displayGenericName の読み到達性。`npm run audit` に含まれる）
 □ scripts/audit-brand-resolution-safety.ts（BrandResolution の brand/generic 解決安全性。`npm run audit` に含まれる）
@@ -128,6 +128,7 @@ PN7（Cross Reference Audit）は JSON 構造の静的整合性を、PN8 は tsc
 □ PStructured の内容が生成結果へ正しく反映されていること
 □ ADDON の表示順（AddonPanel）が bridge の P_ADDON 記載順と一致すること
 □ ADDON 選択後、SOAP 本文中の挿入位置が想定どおりであること
+□ P_ADDON_INLINE を持つ scenario では、inline addon 選択時に P 本文の marker 位置（addonInsertions.afterLine）へ inline list 順で挿入され、未選択時は P 本文がそのまま連続し、通常 ADDON 欄へ二重出力されないこと（DP-22）
 □ followup closing（P_CLOSING）が正しく付与されること
 □ P 本文と followup closing の文言が重複していないこと
 □ persona 切替後の文体変換が正しく機能し、医学的内容が変化していないこと

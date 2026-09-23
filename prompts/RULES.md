@@ -9,7 +9,7 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 - **preservation 対象の完全リストは本ファイル §4 が正本**（保持対象と vNext 実効機構の対応表を含む）
 - **bridge→canonical JSON変換規則は、`prompts/vNext/PN1-Text-Extraction.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN3A-Scenario-Classification.md` / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` / `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md` / `prompts/vNext/PN5-Non-Scenario.md` / 本ファイル §5 に工程別に分担して定義される**
 
-最終更新: 2026-09-21（§4 へ `drug.drugSpecificTags`〔Drug header search metadata〕を新規登録。2026-09-20: §4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
+最終更新: 2026-09-24（DP-22: §4 Reference（addon）行・§20・§25 へ `P_ADDON_INLINE` / `scenarios[].addonInsertions` を反映。2026-09-21: §4 へ `drug.drugSpecificTags`〔Drug header search metadata〕を新規登録。2026-09-20: §4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
 
 ---
 
@@ -160,7 +160,7 @@ bridge → canonical JSON の変換において完全保持しなければなら
 | カテゴリ | 保持対象 | vNext 実効機構 |
 |---|---|---|
 | **Text** | S / O / A / P / P_APPEND / P_CLOSING | PN1「本文凍結宣言」+ PN7 item I（`phase1_text_spine.json` との文字単位照合） |
-| **Reference（addon）** | P_ADDON 記載 / `addonsRef`（配列順を含む）/ addon 参照先 | PN7 item A（参照整合）・item P（未参照検出）・item Y（bridge P_ADDON ⇔ addonsRef の順序込み完全一致 + AddonPanel 到達確認）/ `scripts/audit-addon-bridge-chain.ts` |
+| **Reference（addon）** | P_ADDON / P_ADDON_INLINE 記載 / `addonsRef`（配列順を含む）/ `addonInsertions`（P 本文内の挿入位置・keys 順。DP-22）/ addon 参照先 | PN7 item A（参照整合）・item P（未参照検出）・item Y（bridge P_ADDON_INLINE・P_ADDON ⇔ addonsRef の順序込み完全一致 + AddonPanel 到達確認）・item AM（bridge P_ADDON_INLINE ⇔ addonInsertions 完全一致）/ `scripts/audit-addon-bridge-chain.ts` / `lib/moduleValidator.ts`（`ADDON_INSERTION_REF_BROKEN` / `ADDON_INSERTION_INVALID`） |
 | **Brand / Alias** | `brandCatalog` / `aliases` / `normalizedAliases` / `aliasToBrand` / `drug.search` 配下の各 alias / `drug.nameAliases` | PN7 item B（nameAliases 完全一致）・item C（aliases ⇔ normalizedAliases 件数一致）・item D（aliasToBrand 網羅）・item AA（bridge ⇔ JSON 同期）/ `scripts/audit-alias-bridge-chain.ts` / `lib/moduleValidator.ts`（`NAME_ALIASES_MISMATCH`） |
 | **Reference（followup）** | `scenarios[].followupRef` の参照先 | `lib/moduleValidator.ts`（`FOLLOWUP_REF_BROKEN` / `FOLLOWUP_REF_MISSING` / `FOLLOWUP_SCOPE_VIOLATION`）。**参照整合のみ。テキスト内容の一致は下記「Followup 内容」を参照** |
 | **Identity** | scenario id / addon key / addon id | PN7 item J（scenario id 重複）・item K（addon id 重複）。**id の一意性のみ。scenario title / addon title / brand identity の bridge 一致を検証する項目は存在しない** |
@@ -681,7 +681,8 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 
 ## 20. addonsRef Source of Truth 原則
 
-`scenarios[].addonsRef` は bridge の `P_ADDON` 記載を正本とする。
+`scenarios[].addonsRef` は bridge の `P_ADDON` 記載を正本とする。P 本文内部の `P_ADDON_INLINE` 記載（DP-22）も
+`addonsRef.P` に含まれ、その挿入位置・keys 順は `scenarios[].addonInsertions` が保持する（PN1 §3b）。
 
 - bridge に無い addon を `addonsRef` にJSON側だけで追加してはならない
 - bridge にある `P_ADDON` を `addonsRef` からJSON側だけで省略してはならない
@@ -827,6 +828,8 @@ HEADER_ONLY → DRAFT → FROZEN_FOR_PN1 → JSON_COMPLETE
 Addon の表示順は、コード側の固定順ではなく bridge / canonical JSON に記載された順序そのものを使用する（設計原則の詳細は `docs/DESIGN_PRINCIPLES.md` DP-10 を参照）。
 
 - `P_ADDON` の記載順は、canonical JSON の `addonsRef.P` 配列順・UI（AddonPanel）表示順として、そのまま扱われる
+- P 本文内部の `P_ADDON_INLINE`（DP-22）がある scenario では、`addonsRef.P` は inline addon と通常 `P_ADDON` の addon の **bridge 上の出現順** とする
+- 本節が定めるのは AddonPanel の表示順である。SOAP 本文（P）への出力順は、通常 `P_ADDON` の addon は選択（click）順、`P_ADDON_INLINE` の addon は inline list（`addonInsertions[].keys`）順とする（DP-22）
 - bridge 執筆時は、実際に UI へ表示したい順番で `P_ADDON` を記載すること
 - コード側では順番を補正・推測・優先順位付けしない（GROUP_ORDER のような固定配列は用いない）
 - 順序もデータの一部として扱い、監査対象とする（`scripts/audit-addon-bridge-chain.ts` が bridge の `P_ADDON` 順・canonical JSON の `addonsRef.P` 順・`getVisibleAddonKeys()` の返却順の一致を機械検証する）

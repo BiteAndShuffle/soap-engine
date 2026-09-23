@@ -487,10 +487,10 @@ Addon の表示順は bridge の P_ADDON 記載順をそのまま UI へ反映�
 
 ```
 対象: 全 scenarios[]
-1. bridge の P_ADDON 記載一覧と scenarios[].addonsRef.P を、配列の順序を含めて突合する
+1. bridge の P_ADDON_INLINE / P_ADDON 記載一覧（bridge 上の出現順。DP-22）と scenarios[].addonsRef.P を、配列の順序を含めて突合する
    - bridge にあるが addonsRef に無い → FAIL（欠落: {addon_id} in scenario {scenario_id}）
    - addonsRef にあるが bridge に無い → FAIL（bridge外追加: {addon_id} in scenario {scenario_id}）
-   - bridge に P_ADDON が無いシナリオに addonsRef が存在する → FAIL（bridge外追加）
+   - bridge に P_ADDON / P_ADDON_INLINE が無いシナリオに addonsRef が存在する → FAIL（bridge外追加）
    - 集合は一致するが並び順が異なる → FAIL（順序不一致: {addon_id} in scenario {scenario_id}）
 2. addonsRef.P の各 id が addons.items に存在すること（A と重複する場合は一本化してよい）
 3. lib/addonFilter.ts の getVisibleAddonKeys() と同じロジックで
@@ -889,6 +889,40 @@ bridge に drugSpecificTags: が存在するが、値ブロックを contract �
 
 ---
 
+### AM. P_ADDON_INLINE ⇔ addonInsertions Bridge Parity（P 本文内 inline addon 位置の保持確認）
+
+← PN1-Text-Extraction.md §3b / RULES.md §20・§25 / docs/DESIGN_PRINCIPLES.md DP-22
+
+bridge の P セクション内の `P_ADDON_INLINE` block（marker 位置が挿入位置の正本）が、canonical の
+`scenarios[].addonInsertions` として決定論的に保持されていることを確認する。機械比較は
+`scripts/audit-addon-bridge-chain.ts`（parser は `scripts/bridgeAddonGrammar.ts`）に委譲する。
+
+canonical 単独の構造妥当性（key の addonsRef.P / addons.items 所属・afterLine 範囲・strictly increasing・
+空 keys・block 内 / 間の重複・inline addon の S/A テキスト）は ModuleValidator
+（`ADDON_INSERTION_REF_BROKEN` / `ADDON_INSERTION_INVALID`）が担う。本項目は canonical 単独では
+判定できない bridge 側の事項を担う。
+
+```
+対象: 全 scenarios[]
+
+1. bridge に P_ADDON_INLINE がある scenario:
+     canonical の addonInsertions が bridge の block 列と完全一致すること（afterLine・keys の順序込み）
+       不一致・欠落 → FAIL（BRIDGE_JSON_ADDON_INSERTIONS_MISMATCH）
+   bridge に P_ADDON_INLINE がない scenario:
+     canonical に addonInsertions が存在しないこと（JS-B: absent）
+       存在する → FAIL（BRIDGE_JSON_ADDON_INSERTIONS_MISMATCH）
+2. bridge 側の局所的文法エラーがないこと → あれば FAIL（BRIDGE_INLINE_ADDON_GRAMMAR）
+   - 同一 addon key を P_ADDON_INLINE と通常 P_ADDON の両方へ記載
+   - inline list 行と P 本文の曖昧さ（`- addon_` で始まるが addon id のみの行ではない）
+   - 空 list / P 先頭・P 末尾・連続 marker / inline 内・間の重複 / P セクション外の marker
+3. inline addon も addonsRef.P に bridge 上の出現順で含まれていること（check Y と同一ロジック）
+
+1. npx tsx scripts/audit-addon-bridge-chain.ts を実行する
+2. BRIDGE_JSON_ADDON_INSERTIONS_MISMATCH / BRIDGE_INLINE_ADDON_GRAMMAR はすべて FAIL として扱う
+```
+
+---
+
 ### O. scenario omit 禁止フィールド確認
 
 ← RULES.md §16
@@ -944,6 +978,11 @@ AE. SCENARIO scenarioRequiredTags保持確認: PASS / FAIL / NOT_CHECKED
 AF. template.handlingTags保持確認:    PASS / FAIL / NOT_CHECKED
 AG. template.reservedHandlingTags保持確認: PASS / FAIL / NOT_CHECKED
 AH. SCENARIO scenarioColor保持確認:    PASS / FAIL / NOT_CHECKED
+AI. display.adjustmentExpression保持確認: PASS / FAIL
+AJ. display.menuGroupLabels保持確認:   PASS / FAIL
+AK. drug.drugClass保持確認:            PASS / FAIL / NOT_CHECKED / CHECK
+AL. drug.drugSpecificTags保持確認:     PASS / FAIL / NOT_CHECKED / CHECK
+AM. P_ADDON_INLINE⇔addonInsertions一致: PASS / FAIL
 
 ---
 FAIL: {N} 件 / NOT_CHECKED: {N} 件 / CHECK: {N} 件
@@ -994,7 +1033,12 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
     "AE_scenarioRequiredTagsParity": "PASS",
     "AF_templateHandlingTagsParity": "PASS",
     "AG_templateReservedHandlingTagsParity": "PASS",
-    "AH_scenarioColorParity": "PASS"
+    "AH_scenarioColorParity": "PASS",
+    "AI_adjustmentExpressionParity": "PASS",
+    "AJ_menuGroupLabelsParity": "PASS",
+    "AK_drugClassParity": "PASS",
+    "AL_drugSpecificTagsParity": "PASS",
+    "AM_addonInsertionsParity": "PASS"
   },
   "failCount": 0,
   "checkCount": 0,
@@ -1003,7 +1047,8 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 ```
 
 `verdict` は `"PASS"` / `"FAIL"` のいずれか。PN8 はこのファイルを読んで判定する。
-`Z_addonResponsibilityConsistency` / `AB_displayGenericNameResponsibility` が `"CHECK"` の場合は
+`Z_addonResponsibilityConsistency` / `AB_displayGenericNameResponsibility` が `"CHECK"` の場合、および
+`AK_drugClassParity` / `AL_drugSpecificTagsParity` が `BRIDGE_NOT_FOUND` により `"CHECK"` の場合は
 `verdict` を FAIL にはしない（CHECK は要確認フラグであり、PN8 進行のブロッカーではない）。
 ただしチャット出力では CHECK の内容を必ず報告する。
 
@@ -1011,10 +1056,10 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 
 ## 監査項目の採番について（欠番注記）
 
-本ファイルの標準監査項目は **A〜AL の全 36 項目**である。以下の点に注意すること。
+本ファイルの標準監査項目は **A〜AM の全 37 項目**である。以下の点に注意すること。
 
 - **Q と X は欠番**である。項目記号は再採番せず、欠番を許容する
-- **項目 O は末尾に配置されている**（現在は `### AL.` の後）。アルファベット順ではないが、これは意図された現状であり、
+- **項目 O は末尾に配置されている**（現在は `### AM.` の後）。アルファベット順ではないが、これは意図された現状であり、
   監査時に読み飛ばしてはならない。大規模 JSON の分割 Read で末尾を省略すると **O が欠落する**
 - **AC〜AG は 2026-08 追加**（uiGroup / requiredTags / scenarioRequiredTags / template.handlingTags /
   template.reservedHandlingTags の bridge ⇔ canonical parity 監査。既存 A〜AB の番号・判定内容は変更していない）
@@ -1026,8 +1071,13 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
   bridge 側 UPPER_SNAKE authoring 規約。AI / AJ と同一構造）
 - **AL は 2026-09 追加**（D-15c。`drug.drugSpecificTags` の bridge ⇔ canonical 逐語保持監査。
   multi-element 配列のため順序込みで比較する。語彙・表記形式・重複・空配列は判定しない）
+- **AM は 2026-09 追加**（DP-22。bridge `P_ADDON_INLINE` ⇔ canonical `addonInsertions` の完全一致と
+  bridge 側の局所的文法エラー。機械比較は `scripts/audit-addon-bridge-chain.ts` へ委譲する）
 - **項目数の記載は AI / AJ 追加時に追随していなかった**（「A〜AH の全 32 項目」のまま実測 34 項目）。
   AK の追加と同一の変更契機で「A〜AK の全 35 項目」へ是正した
+- **出力 template（チャット出力・`audit_report.json`）は AI〜AL 追加時に追随していなかった**（AH までのまま）。
+  AM の追加と同一の変更契機で A〜AM の全 37 項目を列挙する形へ是正した。項目を追加する際は、
+  本節の項目数・禁止事項の範囲・両 template を同時に更新する
 - 監査項目を数える際は `grep -cE "^### [A-Z]{1,2}\. "` を用いる。`grep -c "^### "` は
   監査項目以外の見出しを含むため使用しない
 
@@ -1041,7 +1091,7 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 - 報告のみ行う
 - FAIL を PENDING に格下げしない
 - FAIL の根拠を曖昧にしない
-- **A〜AL の標準監査項目（全 36 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
+- **A〜AM の標準監査項目（全 37 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
 
 ---
 

@@ -5,7 +5,7 @@ SOAP Engine プロジェクト全体構造の最上位文書。
 **この文書の性格**
 本文書は、既存の正本文書を横断・要約する索引であると同時に、プロジェクト運営規則（工程完了条件・設計資産ライフサイクル等）を定義する文書です。「プロジェクト全体を一枚で理解できる入口」として機能します。個別の判断基準・型定義・工程実行手順の正本は、各節が参照する既存文書側にあります。本文書の記述と参照先文書の記述が食い違う場合、個別の判断基準については常に参照先（既存の正本文書）が優先します。
 
-最終更新: 2026-09-20（Unit「D-13 conditional structure legacy removal」: GG-5 の保留理由の事実誤りを訂正〔「test 未参照」→ production runtime / validator / audit 未参照であり、tests は構造契約のみを参照する〕。**GG-5 は Pending のまま維持し、`risks` field を Legacy / Future へ分類していない**。同日先行: Unit「PN5 non-insulin risks contract remediation」: §10.5 へ GG-5〔canonical field `risks`。runtime / validator / audit 未参照でありながら JS-A 必須〕を公告。2026-09-17: §10.5 へ GG-4〔legacy Rapid v1 realization 経路〕を公告）
+最終更新: 2026-09-24（§7 Documentation Map の DP 範囲を DP-22〔inline addon placement 原則〕まで更新。2026-09-20: Unit「D-13 conditional structure legacy removal」: GG-5 の保留理由の事実誤りを訂正〔「test 未参照」→ production runtime / validator / audit 未参照であり、tests は構造契約のみを参照する〕。**GG-5 は Pending のまま維持し、`risks` field を Legacy / Future へ分類していない**。同日先行: Unit「PN5 non-insulin risks contract remediation」: §10.5 へ GG-5〔canonical field `risks`。runtime / validator / audit 未参照でありながら JS-A 必須〕を公告。2026-09-17: §10.5 へ GG-4〔legacy Rapid v1 realization 経路〕を公告）
 
 ---
 
@@ -190,7 +190,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 |---|---|
 | `prompts/PROJECT_CONTEXT.md` | 現在のフェーズ・進捗・プロジェクト概要を確認するとき |
 | `prompts/RULES.md` | 横断ルール辞書。禁止事項・ERROR/PENDING/CHECK定義・型変換表・matchPolicy変更ルール等 |
-| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-21。DP-06 / DP-14 は欠番） |
+| `docs/DESIGN_PRINCIPLES.md` | 「なぜそう設計したか」の根拠（DP-00〜DP-22。DP-06 / DP-14 は欠番） |
 | `docs/JSON_STANDARD.md` | canonical JSONの「どう書くか」。**Canonical Requirement Class（JS-A〜JS-E）の正本**。Lifecycle State との直交性は JS-00 |
 | `docs/OPEN_DESIGN_QUESTIONS.md` | まだ決めていないこと（保留事項と判断タイミング） |
 | `docs/VALIDATOR_STANDARD.md` | Validatorが何を保証し、何を保証しないか。errorCode一覧 |

@@ -38,6 +38,13 @@
  *   G. text が title と同一（title の流用）
  *   H. targetSection に対応する本文セクションが当該モジュールの bridge から
  *      見つからない（bridge未定義・bridge側の対応セクション欠落）
+ *   I. P 本文内部の P_ADDON_INLINE block の局所的文法エラー（list 行と P 本文の曖昧さ・
+ *      P 先頭 / 末尾 / 連続 block・inline 内 / 間の重複・P_ADDON との二重記載。DP-22）
+ *   J. bridge の P_ADDON_INLINE と canonical scenarios[].addonInsertions の不一致
+ *      （afterLine・keys の順序込み完全一致。block がない scenario では absent であること）
+ *
+ * A / B / D の「bridge 宣言」は P_ADDON_INLINE と P_ADDON に現れた addon key の出現順
+ * （inline addon も addonsRef.P に含まれる。RULES.md §25）。parser は scripts/bridgeAddonGrammar.ts。
  *
  * ── E の正規化アルゴリズム（許可されたトークン変換のみ） ──
  * bridge本文（正本・決め打ち表記）→ 許可されたトークン変換 → JSON比較、という
@@ -71,6 +78,7 @@ import path from 'path'
 import { getVisibleAddonKeys } from '../lib/addonFilter'
 import type { ModuleData, Scenario } from '../lib/types'
 import { listModuleIds, printAuditReport, type AuditIssue } from './auditShared'
+import { parseBridgeAddonRefs } from './bridgeAddonGrammar'
 
 const MODULES_DIR = path.resolve('./data/modules')
 const BRIDGES_DIR = path.resolve('./bridges')
@@ -174,57 +182,6 @@ function compareAddonText(bridgeBody: string | undefined, jsonText: string | und
 }
 
 // ─────────────────────────────────────────────────────────────
-// bridge から scenario id ごとの P_ADDON 一覧を抽出
-// ─────────────────────────────────────────────────────────────
-
-function parseBridgeAddonRefs(bridgeText: string): Map<string, string[]> {
-  const lines = bridgeText.split('\n')
-  const result = new Map<string, string[]>()
-  let curId: string | null = null
-  let inPAddon = false
-  let addons: string[] = []
-
-  const flush = () => {
-    if (curId) result.set(curId, addons)
-  }
-
-  for (const line of lines) {
-    const scenarioMatch = line.match(/【SCENARIO｜.*?id=([a-zA-Z0-9_]+)｜/)
-    const addonMatch = line.match(/【ADDON｜.*?id=([a-zA-Z0-9_]+)｜/)
-
-    if (scenarioMatch) {
-      flush()
-      curId = scenarioMatch[1]
-      addons = []
-      inPAddon = false
-      continue
-    }
-    if (addonMatch) {
-      flush()
-      curId = null
-      inPAddon = false
-      continue
-    }
-    if (curId) {
-      const trimmed = line.trim()
-      if (trimmed === 'P_ADDON') {
-        inPAddon = true
-        continue
-      }
-      if (/^[A-Z_]+$/.test(trimmed) && trimmed !== 'P_ADDON') {
-        inPAddon = false
-      }
-      if (inPAddon) {
-        const m = trimmed.match(/^- ?(addon_[a-zA-Z0-9_]+)/)
-        if (m) addons.push(m[1])
-      }
-    }
-  }
-  flush()
-  return result
-}
-
-// ─────────────────────────────────────────────────────────────
 // 監査本体
 // ─────────────────────────────────────────────────────────────
 
@@ -249,8 +206,26 @@ for (const moduleId of moduleIds) {
   const bridgeRefs = parseBridgeAddonRefs(bridgeText)
 
   for (const scenario of mod.scenarios) {
-    const bridgeAddons = bridgeRefs.get(scenario.id) ?? []
+    const bridgeScenario = bridgeRefs.get(scenario.id)
+    const bridgeAddons = bridgeScenario?.refs ?? []
     const jsonAddons = scenario.addonsRef?.P ?? []
+
+    // I: P_ADDON_INLINE の局所的文法エラー（曖昧さ・位置・P_ADDON との二重記載）
+    for (const err of bridgeScenario?.errors ?? []) {
+      issues.push({ moduleId, target: scenario.id, code: 'BRIDGE_INLINE_ADDON_GRAMMAR', detail: err })
+    }
+
+    // J: bridge P_ADDON_INLINE ⇔ canonical addonInsertions の完全一致（JS-B: block がなければ absent）
+    const bridgeInsertions = bridgeScenario?.insertions ?? []
+    const expectedInsertions = bridgeInsertions.length > 0 ? bridgeInsertions : undefined
+    if (JSON.stringify(expectedInsertions) !== JSON.stringify(scenario.addonInsertions)) {
+      issues.push({
+        moduleId,
+        target: scenario.id,
+        code: 'BRIDGE_JSON_ADDON_INSERTIONS_MISMATCH',
+        detail: `bridge=${JSON.stringify(expectedInsertions ?? null)} json=${JSON.stringify(scenario.addonInsertions ?? null)}`,
+      })
+    }
 
     // A + B: bridge ⇔ JSON 順序一致監査（表示順もデータの一部として扱う）
     if (JSON.stringify(bridgeAddons) !== JSON.stringify(jsonAddons)) {

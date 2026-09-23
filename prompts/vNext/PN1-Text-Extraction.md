@@ -33,7 +33,7 @@ bridge.md の SCENARIOS_START ～ SCENARIOS_END セクション
 - S セクション全体（複数行は `\n` で結合）
 - O セクション全体
 - A セクション全体（複数行は `\n` で結合）
-- P セクション全体（`P_ADDON` / `P_CLOSING` の前まで。複数行は `\n` で結合）
+- P セクション全体（`P_ADDON` / `P_CLOSING` の前まで。複数行は `\n` で結合）。P セクション内の `P_ADDON_INLINE` block（下記 3b）は P 本文に含めない。P 本文中の空行は本文の一部として保持する（末尾の空行はセクション区切りとして含めない）
 
 ### 2. Addon 本文の抽出
 
@@ -70,7 +70,41 @@ P_ADDON
 ```
 → `addonsRef: { "P": ["addon_xxx", "addon_yyy"] }`
 
-P_ADDON が存在しないシナリオには `addonsRef` フィールドを含めない。
+P_ADDON も P_ADDON_INLINE も存在しないシナリオには `addonsRef` フィールドを含めない。
+
+### 3b. addonInsertions の解析（P 本文内部の inline addon。DP-22）
+
+P セクション内には `P_ADDON_INLINE` を 0 個以上置ける。**marker が置かれた位置そのものが挿入位置の正本**であり、
+semantic な placement 名（before_followup 等）は持たない。
+```
+P
+{P 本文 1 行目}
+{P 本文 2 行目}
+P_ADDON_INLINE
+- addon_aaa
+- addon_bbb
+{P 本文 3 行目}
+P_ADDON
+- addon_ccc
+P_CLOSING
+…
+```
+→ `"P": "{1 行目}\n{2 行目}\n{3 行目}"`、
+`addonInsertions: [{ "afterLine": 2, "keys": ["addon_aaa", "addon_bbb"] }]`、
+`addonsRef: { "P": ["addon_aaa", "addon_bbb", "addon_ccc"] }`
+
+- marker 直後の連続する `- addon_…` 行を inline list として consume し、最初の non-addon 行から P 本文へ戻る
+- `afterLine` = inline block を除外した P 本文行列（`scenarios[].P` を `\n` で分割した行列）上で、marker より前にある行数
+- `keys` = inline list の記載順（runtime はこの順で出力する。click 順ではない）
+- block は上から順に配列化する。block が 1 つもない scenario には `addonInsertions` を含めない（JS-B）
+- `addonsRef.P` には inline addon と通常 `P_ADDON` の addon を **bridge 上の出現順** で含める（RULES.md §25）
+
+**局所的な文法エラー（停止して報告する）:** 以下に該当する場合のみ ERROR とする（P 本文の空行等を global に禁止しない）。
+- inline list 直後の行が `- addon_` で始まるが addon id のみの行ではない（list 行と P 本文の曖昧さ）
+- marker 直後に addon 行がない（空 list）
+- P 先頭（`afterLine` = 0）/ P 末尾（`afterLine` = P 行数。末尾は通常 `P_ADDON` の責務）/ 連続する marker（block 間に P 本文がない）
+- 同一 key が inline block 内 / 間で重複、または `P_ADDON_INLINE` と通常 `P_ADDON` の両方に記載されている
+- `P_ADDON_INLINE` が P セクションの外にある
 
 ### 4. followupRef の決定
 
@@ -209,6 +243,8 @@ bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `
 }
 ```
 
+`P_ADDON_INLINE` がある scenario のみ、`addonsRef` の直後に `addonInsertions`（3b）を出力する。上記例の scenario には inline block がないため含めない。
+
 ---
 
 ## 検証
@@ -216,7 +252,7 @@ bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `
 出力後・本文凍結宣言の前に確認する。
 
 1. 逆置換整合: `{{drug_subject}}` をbridgeの薬剤名へ戻し、bridge原文と完全一致することを確認する。一致しない場合はERRORとして停止する。
-2. addonsRef整合: P_ADDON未定義参照・未参照ADDONがないことを確認する。
+2. addonsRef整合: P_ADDON / P_ADDON_INLINE の未定義参照・未参照ADDONがないことを確認する。`addonInsertions` を適用して（inline block を元の位置へ戻して）bridge の P セクションと一致することを確認する。
 3. followupRef整合: bridgeのP_CLOSING内訳とfollowupRef内訳が一致することを確認する。対応表にないP_CLOSINGがあればERRORとして停止する（責務4のMUST_STOPに従う）。
 4. JSON構文確認: 保存したJSONが正常に読み込めることを確認する。
 5. 軽量チェック: SCENARIO/ADDON ID重複・不可視文字がないことを確認する。
@@ -239,6 +275,7 @@ Phase 1 完了時に以下を宣言する。
   scenarios[].O
   scenarios[].A
   scenarios[].P
+  scenarios[].addonInsertions（存在する場合）
   addons.items[].text
   addons.items[].sectionTexts.S
   addons.items[].sectionTexts.A
@@ -255,6 +292,7 @@ Phase 1 完了時に以下を宣言する。
 - 本文を要約・改善・意訳・修正しない
 - bridge に存在しない addon / followup を追加しない
 - P_CLOSING テキストを scenarios[].P に含めない
+- P_ADDON_INLINE block（marker 行・inline list 行）を scenarios[].P に含めない
 
 ---
 
@@ -268,6 +306,7 @@ PN1 完了後、以下を報告する:
 - 逆置換不一致件数
 - 未定義参照件数
 - 未参照ADDON件数
+- addonInsertions 内訳（scenario id ごとの afterLine / keys。0 件の場合はその旨）
 - PENDING
 - ERROR
 - 本文凍結宣言の完了

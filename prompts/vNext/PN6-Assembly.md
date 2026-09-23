@@ -75,6 +75,7 @@ Phase 3B の scenarios[] をベースとし、各シナリオの空配列 `SStru
 - Phase 4B の対象（side_effect / adherence / lifestyle_guidance / sickday / followup）は Phase 4B から取得
 - id キーで突き合わせる
 - `addonsRef` は Phase 3B の値（配列順を含む）をそのまま引き継ぐ。PN6 では並び替えない（addonsRef.P の順序は表示順として扱われる。RULES.md §25）
+- `addonInsertions` は Phase 3B にキーが存在する scenario のみそのまま引き継ぐ（afterLine / keys 順を含む。DP-22）。存在しない scenario へ新規に付与しない
 - `scenarioRequiredTags` は Phase 3B にキーが存在する scenario のみそのまま引き継ぐ。Phase 3B に存在しない scenario へ新規に付与しない（推測生成禁止）
 - `scenarioColor` は Phase 3B にキーが存在する scenario のみそのまま引き継ぐ。存在しない scenario へ
   `scenarioToColor()` の fallback 結果や推測値を書き込まない（`scenarioColor` は bridge 由来の明示値の

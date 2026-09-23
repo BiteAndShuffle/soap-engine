@@ -94,6 +94,30 @@ export function buildNodeFields(
     P: scenario.P ?? '',
   }
 
+  // 1b. P 本文内部への inline addon 挿入（DP-22。addonInsertions がある scenario のみ）
+  // original scenario.P の行境界で分割し、選択済み key を keys 順（click 順ではない）で挿入する。
+  // afterLine は original 行列上の位置なので、先行 block の挿入行数に影響されない。
+  // 未選択時は何も挿入されず、P 本文はそのまま連続する（split/join は恒等）。
+  const inlineKeys = new Set<string>()
+  if (scenario.addonInsertions && scenario.addonInsertions.length > 0) {
+    const selected = new Set(addonIds)
+    const lines = result.P.split('\n')
+    const out: string[] = []
+    let cursor = 0
+    for (const block of scenario.addonInsertions) {
+      out.push(...lines.slice(cursor, block.afterLine))
+      cursor = block.afterLine
+      for (const key of block.keys) {
+        inlineKeys.add(key)
+        if (!selected.has(key) || !mod.addons) continue
+        const text = resolveAddonText(key, mod.addons)
+        if (text) out.push(text)
+      }
+    }
+    out.push(...lines.slice(cursor))
+    result.P = out.join('\n')
+  }
+
   // 2. followup S のみ先に追記（P は addon の後に追記するため分離）
   {
     let appendText: string | null | undefined
@@ -115,6 +139,8 @@ export function buildNodeFields(
     // section ごとに addon テキストを集める
     const sectionMap = new Map<string, string[]>()
     for (const key of addonIds) {
+      // inline 挿入済み key は tail へ二重出力しない（inline addon は P 専用: moduleValidator が保証）
+      if (inlineKeys.has(key)) continue
       const item = mod.addons.items[key]
       if (!item) continue
       if (item.sectionTexts) {

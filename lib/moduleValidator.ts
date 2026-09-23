@@ -12,6 +12,12 @@
  *   3b)  drug.search.formulationSearchTokens / commonSearchTokens が alias 系フィールドに混入していないか（警告）
  *   4)   addons.items の各アイテムで key フィールドが存在する場合、マップキーと一致
  *   5)   scenarios[].addonsRef.* の全参照が addons.items に存在
+ *   5b)  scenarios[].addonInsertions（DP-22）が
+ *        存在する場合: 各 key が addonsRef.P と addons.items に存在すること（ADDON_INSERTION_REF_BROKEN）、
+ *        afterLine が 1 以上 P 行数未満の整数で block 間 strictly increasing・keys が空でない・
+ *        key が block 内 / 間で重複しない・inline addon が S / A テキストを持たないこと
+ *        （ADDON_INSERTION_INVALID）。いずれも ERROR。bridge の P_ADDON_INLINE と P_ADDON への
+ *        同一 key 二重記載・bridge ⇔ canonical 完全一致は scripts/audit-addon-bridge-chain.ts が担う
  *   6)   ui.panelOrder と ui.panels[].id が整合（panelOrder に含まれる全 id が panels に存在）
  *   7)   addons.orderPresets の必須確認・型確認・全参照が addons.items に存在（P0-A SSOT）
  *   8)   scenarios[].followupRef が defaults.followupProfiles に存在するか（警告）
@@ -102,6 +108,8 @@ export type ModuleValidationErrorCode =
   | 'MISSING_PRIMARY_DISPLAY_NAME' // drug.search.primaryDisplayName が存在しない
   | 'ADDON_KEY_MISMATCH'       // addons.items のキーと item.key が不一致
   | 'ADDON_REF_BROKEN'         // scenarios[].addonsRef の参照先が addons.items に存在しない
+  | 'ADDON_INSERTION_REF_BROKEN' // scenarios[].addonInsertions[].keys が addonsRef.P / addons.items に存在しない（ERROR）
+  | 'ADDON_INSERTION_INVALID'  // scenarios[].addonInsertions の afterLine 範囲・順序・空 keys・重複・S/A テキスト保持（ERROR）
   | 'PANEL_ORDER_MISMATCH'     // ui.panelOrder に存在する id が ui.panels にない
   | 'FOLLOWUP_REF_BROKEN'      // scenarios[].followupRef が defaults.followupProfiles に存在しない（警告）
   | 'FOLLOWUP_REF_MISSING'     // followupProfiles が存在するのに scenarios[].followupRef が未設定（警告）
@@ -759,6 +767,72 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
           })
         }
       }
+    }
+  }
+
+  // 5b) scenarios[].addonInsertions の参照・構造チェック（DP-22。ERROR）
+  //     P_ADDON_INLINE と通常 P_ADDON の両方への同一 key 記載、および bridge ⇔ canonical の
+  //     完全一致は canonical 単独では判定できないため scripts/audit-addon-bridge-chain.ts / PN7 AL が担う
+  if (Array.isArray(scenarios)) {
+    for (const sc of scenarios as Scenario[]) {
+      const insertions = sc.addonInsertions as unknown
+      if (insertions === undefined) continue
+      const where = `scenarios["${sc.id}"].addonInsertions`
+      const invalid = (detail: string) =>
+        errors.push({ code: 'ADDON_INSERTION_INVALID', detail: `${where}: ${detail}`, isWarning: false })
+
+      if (!Array.isArray(insertions) || insertions.length === 0) {
+        invalid('空でない配列である必要があります（inline block がない scenario では absent）')
+        continue
+      }
+      const pLineCount = (sc.P ?? '').split('\n').length
+      const refP = new Set(sc.addonsRef?.P ?? [])
+      const seen = new Set<string>()
+      let prevAfterLine = 0
+      insertions.forEach((block: unknown, i: number) => {
+        const b = block as { afterLine?: unknown; keys?: unknown }
+        const afterLine = b?.afterLine
+        if (typeof afterLine !== 'number' || !Number.isInteger(afterLine)
+          || afterLine < 1 || afterLine >= pLineCount) {
+          invalid(`[${i}].afterLine = ${JSON.stringify(afterLine)} は 1 以上 P 行数（${pLineCount}）未満の整数である必要があります（P 先頭 / 末尾への挿入は禁止）`)
+        } else if (afterLine <= prevAfterLine) {
+          invalid(`[${i}].afterLine = ${afterLine} が直前 block（${prevAfterLine}）より大きくありません（strictly increasing）`)
+        }
+        if (typeof afterLine === 'number') prevAfterLine = Math.max(prevAfterLine, afterLine)
+
+        const keys = b?.keys
+        if (!Array.isArray(keys) || keys.length === 0) {
+          invalid(`[${i}].keys は空でない配列である必要があります`)
+          return
+        }
+        for (const key of keys as unknown[]) {
+          if (typeof key !== 'string') {
+            invalid(`[${i}].keys に文字列以外の値があります: ${JSON.stringify(key)}`)
+            continue
+          }
+          if (seen.has(key)) invalid(`"${key}" が inline block 内 / 間で重複しています`)
+          seen.add(key)
+          if (!refP.has(key)) {
+            errors.push({
+              code: 'ADDON_INSERTION_REF_BROKEN',
+              detail: `${where}[${i}]: "${key}" が addonsRef.P に存在しません`,
+              isWarning: false,
+            })
+          }
+          const item = addonItems?.[key] as
+            | { targetSection?: string; sectionTexts?: { S?: string; A?: string } }
+            | undefined
+          if (!item) {
+            errors.push({
+              code: 'ADDON_INSERTION_REF_BROKEN',
+              detail: `${where}[${i}]: "${key}" が addons.items に存在しません`,
+              isWarning: false,
+            })
+          } else if (item.sectionTexts ? (item.sectionTexts.S || item.sectionTexts.A) : item.targetSection !== 'P') {
+            invalid(`"${key}" は S / A テキストを持つため inline 挿入できません（inline addon は P 専用）`)
+          }
+        }
+      })
     }
   }
 

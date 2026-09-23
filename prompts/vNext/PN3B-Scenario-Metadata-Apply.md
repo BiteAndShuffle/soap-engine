@@ -92,6 +92,7 @@ Phase 1 の各シナリオに以下のフィールドを追加する。
   },
   "followupRef": "{phase1_text_spine[id].followupRef — phase1 の値をそのまま採用}",
   "addonsRef": "{phase1_text_spine[id].addonsRef — phase1 の値をそのまま採用（存在するシナリオのみ）}",
+  "addonInsertions": "{phase1_text_spine[id].addonInsertions — phase1 の値をそのまま採用（存在するシナリオのみ。DP-22）}",
   "intentTags": "{phase3a_decisions.scenarioDecisions[id].intentTags}",
   "scenarioRequiredTags": "{phase3a_decisions.scenarioDecisions[id].scenarioRequiredTags — 存在する場合のみ設定。phase3a に無ければこのキー自体を省略する}",
   "scenarioColor": "{phase3a_decisions.scenarioDecisions[id].scenarioColor — 存在する場合のみ設定。phase3a に無ければこのキー自体を省略する}",
@@ -104,7 +105,7 @@ Phase 1 の各シナリオに以下のフィールドを追加する。
 }
 ```
 
-**followupRef / addonsRef は Phase 1 の値を採用する。Phase 3B では配列順を含めて変更しない（addonsRef.P の順序は表示順として扱われる。RULES.md §25）。**
+**followupRef / addonsRef / addonInsertions は Phase 1 の値を採用する。Phase 3B では配列順を含めて変更しない（addonsRef.P の順序は表示順として扱われる。RULES.md §25。addonInsertions の afterLine / keys 順は P 本文内の挿入位置・出力順。DP-22）。**
 
 **scenarioRequiredTags は optional metadata である。** `phase3a_decisions.scenarioDecisions[id]` に `scenarioRequiredTags` キーが存在する場合のみ、その配列値をそのまま出力へ含める。
 存在しない場合は当該シナリオの出力から `scenarioRequiredTags` キー自体を省略する（空配列 `[]` を推測生成しない。「map に記載がない = タグ条件なし = 常時表示」という bridge 側の意味を保つため）。

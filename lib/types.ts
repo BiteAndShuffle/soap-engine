@@ -84,6 +84,14 @@ export interface StructuredEntry {
 // sideEffectPresence でグルーピングを管理する。
 // ─────────────────────────────────────────────────────────────
 
+/** scenarios[].addonInsertions の 1 block（bridge の `P_ADDON_INLINE` 1 個に対応。DP-22） */
+export interface AddonInsertion {
+  /** inline block を除外した original scenario.P 行列上の挿入位置（直前の行数） */
+  afterLine: number
+  /** bridge の inline list 順の addon key 一覧 */
+  keys: string[]
+}
+
 export interface Scenario {
   /** module 内ローカル識別子（旧 templateId に相当） */
   id: string
@@ -126,6 +134,21 @@ export interface Scenario {
     A?: string[]
     P?: string[]
   }
+  /**
+   * P 本文内部への inline addon 挿入位置（DP-22 / JSON_STANDARD JS-B）。
+   *
+   * bridge の P セクション内に置かれた `P_ADDON_INLINE` block を上から順に機械変換したもの。
+   * bridge に `P_ADDON_INLINE` がある scenario のみ必須、ない scenario では absent。
+   *
+   *   afterLine — inline block を除外した original `scenario.P` の行列（'\n' 区切り）上で、
+   *               挿入位置の直前にある行数。1 ≤ afterLine < P の行数（P 先頭 / 末尾は禁止）。
+   *               複数 block 間では strictly increasing。
+   *   keys      — bridge の inline list 順。runtime はこの順（click 順ではない）で出力する。
+   *               各 key は addonsRef.P にも含まれる（AddonPanel 到達のため）。
+   *
+   * inline で出力した key は通常の addon 出力（tail）では skip する（二重出力しない）。
+   */
+  addonInsertions?: AddonInsertion[]
   /**
    * followupRef — defaults.followupProfiles のキーを参照する（新スキーマ）。
    * 存在する場合、対応するプロファイルの値を末尾に追加。

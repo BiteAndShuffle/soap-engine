@@ -8,7 +8,7 @@ SOAP Engine の設計根拠・例外許容条件・禁止事項を永続化し�
 設計判断の参照順序:
   このドキュメント → JSON_STANDARD.md → OPEN_DESIGN_QUESTIONS.md → bridge 原稿 → canonical JSON
 
-最終更新: 2026-09-22（DP-03 へ current-generation policy と current observation を追記: 条件付き必須 4 key は current の新規 module 生成では生成しない／判定条件は未定義のまま／既存 canonical は preserve／採用理由の前提と runtime consumer 0 件の実測が一致していない。本文・表・採用理由は historical design record として不変。2026-09-13: DP-19 へ Owner Decision OD-RAPID-SCOPE-1 を追記: Rapid の薬歴確認前提と「処方整理」の意味境界。DP-12 へ Owner Decision OD-COMPLIANCE-REALIZATION-1 を追記: コンプライアンス評価単位が Rapid sentence realization に与える含意。DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記）
+最終更新: 2026-09-24（DP-22 inline addon placement 原則を新設。2026-09-22: DP-03 へ current-generation policy と current observation を追記: 条件付き必須 4 key は current の新規 module 生成では生成しない／判定条件は未定義のまま／既存 canonical は preserve／採用理由の前提と runtime consumer 0 件の実測が一致していない。本文・表・採用理由は historical design record として不変。2026-09-13: DP-19 へ Owner Decision OD-RAPID-SCOPE-1 を追記: Rapid の薬歴確認前提と「処方整理」の意味境界。DP-12 へ Owner Decision OD-COMPLIANCE-REALIZATION-1 を追記: コンプライアンス評価単位が Rapid sentence realization に与える含意。DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記）
 
 ---
 
@@ -922,6 +922,53 @@ bridge の `# 確定済み事項` 節・`docs/reviews/` 配下・`docs/OPEN_DESI
 
 ---
 
+## DP-22: inline addon placement 原則（Inline Addon Placement Principle）
+
+**Owner Decision（2026-09-24、AVAREPT-P1 / P2-a）**
+
+**目的**
+Human-authored の P 本文の途中（前半と後半の間）へ addon を差し込む指導順序を、推測なしに
+bridge → canonical → runtime で同じ順序として再現する。
+
+**背景**
+従来の addon 配置は「scenario P 本文全体 → 選択された addon → followup（P_CLOSING）」の 1 形式のみだった
+（`lib/buildSoap.ts` buildNodeFields。2026-04 commit 3938564 で確立）。Avarept（ドライアイ TRPV1 拮抗薬）の
+Human-authored draft は「P 前半 → 製品固有 addon → P 後半（相談文）→ 通常 addon → P_CLOSING」という
+順序を持ち、既存形式では表現できなかった。相談文を addon の前へ移すと文言が同じでも指導の説明順序が
+変わり、addon を固定 P 本文化すると選択性・brand gating・将来拡張性を失う。
+
+**ルール**
+- **bridge 内の marker 位置が inline addon placement の正本（SOT）である。** P セクション内に
+  `P_ADDON_INLINE` を 0 個以上置き、その直後の連続する `- addon_…` 行を inline list とする
+  （文法・変換は `prompts/vNext/PN1-Text-Extraction.md` §3b）
+- **canonical はその位置を決定論的に保持する。** `scenarios[].addonInsertions[]`
+  （`{ afterLine, keys }`。inline block を除外した `scenarios[].P` 行列上の位置と inline list 順）。
+  `scenarios[].P` は inline block を除いた Human-authored 本文そのままであり、分割・トークン埋め込みをしない
+- runtime は original `scenarios[].P` の行境界へ、選択された key を `keys` 順（click 順ではない）で挿入し、
+  通常 addon 出力（tail）では skip する。未選択時は何も挿入せず P 本文がそのまま連続する
+- `before_followup` 等の **semantic placement type は先行設計しない**。位置の意味は marker 位置そのもので表す
+- **scope は P 内部 inline のみ**。S / A への inline addon、named slot、領域別 placement type は
+  実要件が出た時点で別 Unit として検討する
+- P 先頭・P 末尾への inline 挿入は現時点で禁止する（末尾は通常 `P_ADDON` の責務）
+
+**採用理由**
+比較した案のうち、P を前半／後半 field へ分割する案は `scenarios[].P` を読む既存 consumer
+（validator check 16・PN7 item I・persona・PN1 逆置換照合）をすべて変更させ、P 本文へ slot token を
+埋め込む案は未解決 token の漏出経路を作る。marker 位置 → `afterLine` 変換は `scenarios[].P` を不変に保ち、
+field absent の既存 scenario を従来経路のまま残せる最小の決定論的 contract である。
+
+**関連フィールド**
+`scenarios[].addonInsertions` / `scenarios[].addonsRef.P` / `lib/buildSoap.ts`（buildNodeFields）/
+`lib/moduleValidator.ts`（`ADDON_INSERTION_REF_BROKEN` / `ADDON_INSERTION_INVALID`）/
+`scripts/audit-addon-bridge-chain.ts` / `scripts/bridgeAddonGrammar.ts`
+
+**関連原則**
+- DP-07（bridge SOT 原則）— 位置情報も bridge を正本とする
+- DP-10（Addon 表示順原則）— AddonPanel の表示順は `addonsRef.P`（inline addon を含む bridge 上の出現順）。
+  DP-22 が定めるのは SOAP 本文（P）への出力位置・順であり、表示順とは別軸
+
+---
+
 ## 監査・設計時の参照ガイド
 
 ### 新人が最初に読むべき原則
@@ -944,6 +991,7 @@ bridge の `# 確定済み事項` 節・`docs/reviews/` 配下・`docs/OPEN_DESI
 | 一般名検索到達性 / brandCatalog alias | DP-09 |
 | brand 帰属解決 / alias 複製境界 | DP-18 |
 | Addon 表示順 / P_ADDON 記載順 | DP-10 |
+| P 本文内部への inline addon 挿入 / P_ADDON_INLINE | DP-22 |
 | 適応横断検索（crossModuleIndicationLabel） | DP-11 |
 | 多剤合成のRuntime評価優先順位 | DP-12 |
 | Runtime 未接続資産が設計負債か Future Expansion か | DP-13 |
@@ -961,6 +1009,7 @@ bridge の `# 確定済み事項` 節・`docs/reviews/` 配下・`docs/OPEN_DESI
 | DP-07 | JSON 直接編集 → bridge と乖離 → 次回 JSON 化で変更が消える |
 | DP-08 | 推測 preset 追加 → 意図しない ADDON 組み合わせが固定化 |
 | DP-10 | コード側に固定順（GROUP_ORDER 相当）を再導入 → bridge/JSON の記載順が UI に反映されなくなる |
+| DP-22 | inline addon を click 順・tail 側で出力する／`scenarios[].P` を分割・加工する → Human-authored の P 本文と addon の説明順序が崩れる、または inline addon が二重出力される |
 | DP-11 | crossModuleIndicationLabel 実装時に dedup・優先順位ロジックのみを変更 → ブランド⇔一般名の相互到達性が失われる（2026-07 に実際に発生した回帰） |
 | DP-13 | 意図的な未接続が記録されないまま放置 → Runtime 未接続資産が設計負債と誤認され削除・改変される、または監査のたびに同じ調査コストが発生する |
 | DP-15 | 不確定を推測で埋める運用へ回帰 → 誤った値が「検証済み」として基盤に固定され、実機確認や最終監査まで発覚しない |

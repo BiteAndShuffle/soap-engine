@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-09-23（S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
+最終更新: 2026-09-24（DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
 
 ---
 
@@ -470,6 +470,28 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 | `cp_good` | 存在する場合 |
 
 上記以外の SE なし確認系（例: `se_nausea_diarrhea_none`, `se_pancreatitis_none`）にも同値を付与してよい。bridge に明示がなくても「注射薬モジュール構造パターン」として適用する（推測生成ではなく model_managed 項目として扱う）。
+
+### bridge の P 本文内に `P_ADDON_INLINE` がある scenario の addonInsertions
+
+参照: DP-22（inline addon placement 原則）/ `prompts/vNext/PN1-Text-Extraction.md` §3b
+
+| フィールド | 条件 |
+|---|---|
+| `scenarios[].addonInsertions` | bridge の当該 scenario の P セクション内に `P_ADDON_INLINE` が 1 個以上ある場合のみ必須。ない場合は **absent**（`[]` を出力しない） |
+
+```json
+"addonInsertions": [
+  { "afterLine": 3, "keys": ["addon_xxx", "addon_yyy"] }
+]
+```
+
+- bridge の `P_ADDON_INLINE` block を上から順に機械変換する（block 1 個 = 要素 1 個）。semantic な placement 名は持たない
+- `afterLine`: inline block を除外した `scenarios[].P`（`\n` 区切り）の行列上で、挿入位置の直前にある行数。`1 ≤ afterLine < P の行数`、block 間で strictly increasing（P 先頭 / 末尾への挿入は禁止。末尾は通常 `P_ADDON` の責務）
+- `keys`: inline list の記載順。runtime は選択された key をこの順（click 順ではない）で挿入し、通常 addon 出力（tail）では skip する
+- 各 key は `addonsRef.P` にも含める（AddonPanel 到達のため。`addonsRef.P` は bridge 上の出現順）
+- inline addon は P テキストのみを持つ（`sectionTexts.S` / `sectionTexts.A` を持つ addon は inline にできない）
+- 構造妥当性は ModuleValidator（`ADDON_INSERTION_REF_BROKEN` / `ADDON_INSERTION_INVALID`）、bridge ⇔ canonical 完全一致・bridge 側の二重記載は `scripts/audit-addon-bridge-chain.ts`（PN7 AM）が検証する
+- 現在の対象: 0 module（2026-09-24 実測。bridge に `P_ADDON_INLINE` を持つ canonical module はまだない）
 
 ---
 

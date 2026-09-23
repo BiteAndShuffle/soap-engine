@@ -185,6 +185,8 @@ build/runtime を停止させる致命的問題。
 | 3a | `NAME_ALIASES_MISMATCH` | Structural | `drug.nameAliases` と `drug.search.nameAliases` の SSOT 同期 |
 | 4 | `ADDON_KEY_MISMATCH` | Structural | `addons.items[key].key` がマップキーと一致すること |
 | 5 | `ADDON_REF_BROKEN` | Reference | `scenarios[].addonsRef.*` → `addons.items` |
+| 5b | `ADDON_INSERTION_REF_BROKEN` | Reference | `scenarios[].addonInsertions[].keys` → `scenarios[].addonsRef.P` および `addons.items`（DP-22） |
+| 5b | `ADDON_INSERTION_INVALID` | Structural | `scenarios[].addonInsertions` の構造: 空でない配列 / `afterLine` が `1 ≤ afterLine < P 行数` の整数で block 間 strictly increasing / `keys` が空でない / key が block 内・間で重複しない / inline addon が S・A テキストを持たない（DP-22）。bridge の `P_ADDON_INLINE` と `P_ADDON` への同一 key 二重記載・bridge ⇔ canonical 完全一致は canonical 単独では判定できないため `scripts/audit-addon-bridge-chain.ts`（PN7 AM）が担う |
 | 6 | `PANEL_ORDER_MISMATCH` | Reference | `ui.panelOrder[]` → `ui.panels[].id` |
 | 7a | `ORDERPRESETS_MISSING` | Structural | `addons.items` 存在時に `orderPresets` が必須 |
 | 7b | `ORDERPRESETS_TYPE_INVALID` | Structural | `addons.orderPresets` が object 型であること |
@@ -478,6 +480,8 @@ P2B（生成）→ P3（構造レビュー）→ P4（Runtime レビュー）→
 |---|---|
 | `addonsRef["foo"]` → `addons.items["foo"]` が存在するか | **ModuleValidator** (check 5) |
 | bridge の `P_ADDON` と `addonsRef` が順序を含む完全一致か、AddonPanel に実際に同じ順序で表示されるか | **`scripts/audit-addon-bridge-chain.ts`**（PN7 check Y） |
+| `addonInsertions` の key が `addonsRef.P` / `addons.items` に存在するか・`afterLine` の範囲と順序・重複・S/A テキスト | **ModuleValidator** (check 5b) |
+| bridge の `P_ADDON_INLINE` と `addonInsertions` が完全一致か、同一 key が `P_ADDON_INLINE` と `P_ADDON` の両方に記載されていないか | **`scripts/audit-addon-bridge-chain.ts`**（PN7 check AM） |
 | 近似責務シナリオ間で addon 構成に説明できない差分が無いか | **PN7 check Z**（将来的に自動化予定） |
 | alias系フィールドがbridgeとJSONで一致しているか | **`scripts/audit-alias-bridge-chain.ts`**（PN7 check AA） |
 | `brandToTags` のタグが `TAG_TO_GENERIC_NAME` で解決できるか | **P3** |
@@ -547,6 +551,8 @@ P3 は Validator の pass を前提に動作する。Validator が pass した�
 | `SEARCH_TOKEN_ALIAS_POLLUTION` | WARN | Design Rule |
 | `ADDON_KEY_MISMATCH` | ERROR | Structural |
 | `ADDON_REF_BROKEN` | ERROR | Reference |
+| `ADDON_INSERTION_REF_BROKEN` | ERROR | Reference |
+| `ADDON_INSERTION_INVALID` | ERROR | Structural |
 | `PANEL_ORDER_MISMATCH` | ERROR | Reference |
 | `ORDERPRESETS_MISSING` | ERROR | Structural |
 | `ORDERPRESETS_TYPE_INVALID` | ERROR | Structural |
