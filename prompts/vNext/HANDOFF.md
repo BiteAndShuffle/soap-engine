@@ -1,7 +1,17 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-22（Unit「JSB-1 current-generation policy」:
+最終更新: 2026-09-23（Unit「DR-1 display.drugGeneric exact restore」:
+`dm_insulin_mixed_rapid_long.display.drugGeneric` の欠落（birth defect・`e650858` 由来）を、
+**bridge の exact source**（`"混合型インスリン製剤（超速効型＋持効型）"`）から 1 行復元した（OD-DR-1）。
+sibling inference / fallback 生成は不使用。事後 presence **35/35**、値は bridge と exact parity。
+**DR-2 requiredness enforcement は未着手**（対象は Class A。`display.drugGeneric` は generation contract
+未確定のため enforcement 対象外・OD-DR-3 / OD-DR-4）。**DR-1 後も validator は `display.drugGeneric` を
+検査せず、同種の欠落を自動で止める経路は存在しない。**
+H1 oral の value parity（OD-DR-2）/ generation rule 未確定 / type・記述 drift（OD-DR-5 / OD-DR-6）は
+別 Finding として OPEN。bridge / manifest / `lib/**` / `app/**` / validator / tests / PN2 / PN7 / RULES /
+JSON_STANDARD / `lib/types.ts` / 他 34 canonical は無変更。
+先行: 2026-09-22 Unit「JSB-1 current-generation policy」:
 JS-B 条件付き 4 key（`canonicalSource` / `defaultSMergeLevel` / `domainPolicy` / `nodeIdentityPolicy`）について、
 **current の新規 module 生成では生成しない**という current-generation policy を docs / PN2 へ明文化した（OD-JSB-1〜11）。
 判定条件は **新しく定義していない**（OD-JSB-1）。**canonical 21/14 は無変更**（migration なし・OD-JSB-3）、**validator も作らない**（OD-JSB-7）。
@@ -1413,9 +1423,29 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **investigation / cleanup 候補（記録のみ・変更なし）**（OD-TP-6）
   - **`composition.drugClassLabel`**: corpus で 1 件のみ（`dm_insulin_mixed_rapid_intermediate`）。JSON_STANDARD の composition field としては未宣言（JS 上の `drugClassLabel` は `display` 側）。wrong location かどうかは未確定であり、今回変更しない
   - **`composition.nodeLabel`**: corpus 0 件だが `lib/types.ts` に宣言あり。`app/components/DashboardClient.tsx` の node label fallback と tests が参照しているため dead field と断定しない。cleanup 可否は別調査
-- **Finding 候補（記録のみ・remediation なし）: `display.drugGeneric missing`**
-  - 〔2026-09-21 実測〕`dm_insulin_mixed_rapid_long` の canonical に `display.drugGeneric` が **ABSENT**（`docs/JSON_STANDARD.md` JS-A-display の必須サブフィールド。corpus でこの 1 件のみ）。bridge は `drugGeneric: "混合型インスリン製剤（超速効型＋持効型）"` を宣言しているため、bridge → canonical の転記漏れと考えられる（同 module は D-2 でも drug サブフィールドの転記漏れがあった）
-  - drug / display の requiredness を扱う後続 Unit で対応する（OD-REQ-8）。R-1 / R-2 では修復しない
+- **`display.drugGeneric missing` — 2026-09-23 に DR-1 で完了（exact Bridge restore）**
+  - 〔historical・2026-09-21 実測〕`dm_insulin_mixed_rapid_long` の canonical に `display.drugGeneric` が **ABSENT** だった（`docs/JSON_STANDARD.md` JS-A-display の必須サブフィールド。corpus でこの 1 件のみ）。R-1 / R-2 / Composition type parity では修復しなかった（OD-REQ-8）
+  - **DR-1〔実測〕**: `bridges/dm_insulin_mixed_rapid_long.md` が宣言する `drugGeneric: "混合型インスリン製剤（超速効型＋持効型）"` を **exact restore** で canonical へ 1 行追加した（OD-DR-1）。**sibling inference / fallback 生成は使っていない**。値は bridge と exact parity。挿入位置は `drugClassLabel` の直後（JS-A-display の並び・兄弟 module の key 順と一致）で、**他 field の変更・key reorder はしていない**
+  - **birth defect**〔history 実測〕: 生成 commit `e650858`（2026-06-29）時点から ABSENT で、以後 `drugGeneric` に触れた commit は 0 件。**同一 commit で作られた兄弟 2 件**（`dm_insulin_mixed_rapid_intermediate` / `dm_insulin_mixed_regular_intermediate`）は誕生時から保持しており、本件は transfer omission と評価できる（ただし「なぜ 1 件だけ落ちたか」を示す記述は Repository にない）
+  - **事後〔実測〕**: `display.drugGeneric` presence **35/35**。他 33 canonical / bridge / `data/search-manifest.json` は無変更（manifest はバイト不変）。`display.drugGeneric` の runtime consumer は 0 件のため runtime behavior も不変
+  - **DR-1 後も validator は `display.drugGeneric` を検査しない。** `lib/moduleValidator.ts` / `lib/crossModuleValidator.ts` / PN7 / `npm run audit` のいずれも当該 field の presence を見ておらず、**bridge に source があるのに canonical が欠落しても自動で止める経路は現時点でも存在しない**。これは OD-DR-3 による意図的な状態であり、enforcement は DR-2 で扱う
+- **Finding（OPEN・DR-1 では修復しない）: `display.drugGeneric` value parity（H1 oral）**
+  - 〔2026-09-23 実測〕`allergy_h1_antihistamine_second_gen_oral` の bridge は `drugGeneric: "第二世代H1受容体拮抗薬"`、canonical は `"フェキソフェナジン 他"` で **値が一致しない**（presence は両者にあり、requiredness defect ではない）。誕生 commit `625ac7e`（2026-05-23）から canonical は現在の値
+  - **requiredness ではなく semantic / value parity の問題として分離する**（OD-DR-2）。**Bridge SSOT 原則だけを理由に即時置換しない。** `display.drugGeneric` の field semantics 自体を確認してから判断する
+- **Finding（OPEN）: `display.drugGeneric` generation rule 未確定**
+  - 〔2026-09-23 実測〕bridge の `drugGeneric` 宣言は **19/35**、canonical presence は 34/35（DR-1 後 35/35）。**bridge 未宣言の 16 module では canonical の `drugGeneric` が `display.drugClassLabel` と完全一致**（16/16）しているが、この対応を定めた規則は **PN2 にも RULES にも存在しない**
+  - **この 16/16 のパターンを contract へ昇格させない**（OD-DR-4）。family pattern や既存値から新しい fallback を作らない。`display.drugGeneric` の意味と source policy は別 Unit で先に確認する
+  - `prompts/vNext/PN2-Drug-Header.md` に `display.drugGeneric` の専用生成規則はなく、「display / template / persona / regulatory / topical は bridge の対応フィールドから移植する」という包括規定のみ
+- **DR-2 requiredness enforcement — 未着手（OPEN）**
+  - 〔2026-09-23 実測〕JS-A-display 7 field と JS-A-drug / `drug.search` 必須 field の **presence を検査する validator / PN7 / audit は存在しない**（validator の display 系は `display.localInput` の参照整合のみ。drug 系は `MISSING_PRIMARY_DISPLAY_NAME` / `NAME_ALIASES_MISMATCH` / `BRAND_CATALOG_MISMATCH` / `DISPLAY_GENERIC_NAME_*` で、presence の網羅検査ではない）
+  - **enforcement 対象は 2 群に分ける**（OD-DR-3）: ① **今すぐ enforce 可能** = Class A（drug 3 field / `drug.search` 8 field / display の `title`・`subtitle`・`drugClassLabel`・`nodeLabelShort`・`nodeLabelLong`・`nodeKey`。いずれも現在 35/35 green） ② **まだ enforce しない** = `display.drugGeneric`（DR-1 で 35/35 になっても対象外。bridge 宣言 19/35・未宣言時の生成規則なし・H1 oral の value 不一致・PN2 専用規則なしのため）
+  - **presence が揃うことと generation contract が確定していることは別**である。R-2（composition）と同型の generic error code で実装する想定だが、本 Unit では未実装
+- **Finding（OPEN・記録のみ）: JS-A drug / display の type・記述 drift**（OD-DR-5 / OD-DR-6）
+  - `lib/types.ts` の `display.drugGeneric?: string` は **optional** だが JS-A-display は必須。Composition type parity と同型の requiredness / type drift（本 Unit では修正しない）
+  - top-level `topical` は **`lib/types.ts` に型宣言がなく**、corpus は **object 32 / boolean（`false`）3**（`dm_insulin_glp1_combination` / `dm_insulin_mixed_rapid_intermediate` / `dm_insulin_mixed_rapid_long`）。JS-A は object（`steroidPotency` / `notes`）と規定。runtime consumer 0 件
+  - `drug.search.keywords` は 35/35 present だが **28 module が空配列**（非空は allergy 3・derm 4 のみ）。missing ではなく empty であり、R-2 と同じく別 contract として分離する
+  - JS-A top-level 表は `scenarios` を **object** と記載しているが corpus は 35/35 **array**（記述 drift）
+  - いずれも requiredness とは別契約として分離し、DR-1 では触れていない
 
 - **Finding 候補（記録のみ・remediation なし）: `composition.classKey` ↔ `composition.nodeKey` の関係**
   - D-15b の調査で分離した論点（Owner Decision OD-D15b-5）。**新しい Q-ID は払い出していない**
