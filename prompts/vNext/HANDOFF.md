@@ -1,7 +1,15 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「S3-2 sMergePolicy requiredness enforcement」:
+最終更新: 2026-09-23（Unit「S3-3 sMergePolicy TypeScript requiredness parity」:
+`lib/types.ts` の `composition.sMergePolicy` を **optional → required**（`?` を外す 1 行のみ。subfields の型・並び・
+JSDoc は無変更、**`composition?:` 自体も無変更**）。**目的は static contract parity** であり runtime validation の
+強化ではない（canonical 欠落の実効 guard は S3-2 の validator）。clean scratch で **compile error 0**、harness validity も
+deliberate error で確認済み。これで **S3 系列（S3-1 docs closure → S3-2 validator enforcement → S3-3 type parity）が完了**し、
+`composition.sMergePolicy` は JSON_STANDARD / PN2 / validator / corpus / TypeScript の 5 者一致となった。
+runtime behavior・canonical / bridge / manifest は不変。**cast gap は OPEN のまま**。
+validator / tests / PN2 / PN7 / JSON_STANDARD / DEVELOPMENT_STANDARD / VALIDATOR_STANDARD / RULES は無変更。
+先行: 同日 Unit「S3-2 sMergePolicy requiredness enforcement」:
 S3-1 で contract が解消したことを受け、`lib/moduleValidator.ts` の `REQUIRED_COMPOSITION_FIELDS` へ
 **`sMergePolicy` を追加**した。**composition requiredness は 8 → 9 field**（**JS-A-composition 9/9 が enforce**）。
 **新 errorCode は作らず**既存 `MISSING_REQUIRED_COMPOSITION_FIELD` を使用し、missing semantics は R-2 継承
@@ -1546,6 +1554,15 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **historical: DG-4 着手前の状態**（OD-DG-7）
   - generation contract が DG-2 で確定したため、DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加できる状態になった。現 corpus は 35/35 のため presence baseline は green のまま導入可能
   - **DG-2 では validator を変更していない。** 別 Unit / 別 commit で扱う
+- **S3-3: `composition.sMergePolicy` TypeScript requiredness parity — 2026-09-23 に完了**
+  - `lib/types.ts` の `ModuleData.composition.sMergePolicy` を **optional → required** にした（`sMergePolicy?: {` の `?` を外す 1 行のみ）。subfields（`unit` / `conflictStrategy` / `withinDomainStrategy`）の型・並び・JSDoc は無変更
+  - **`composition?:` 自体は変更していない**（`ModuleData` の top-level field が optional である既存方針には触れない）
+  - **目的は static contract parity であり、runtime validation の強化ではない。** canonical の欠落に対する実効 guard は **S3-2 の validator**（`MISSING_REQUIRED_COMPOSITION_FIELD`）が担う
+  - **実測〔clean scratch〕**: `tsconfig.tsbuildinfo` を持ち込まず毎回削除し、cast のない箇所（`lib/menuGroups.ts`）へ **deliberate error を入れて検出されること**（exit 2 / `TS2322`）を確認したうえで測定 → **full-project compile error 0 件**
+  - **S3 系列の完了**: **S3-1**（docs closure: canonical-required / model_managed 確定・PN7 item S を missing → FAIL へ改訂・GG-3 を Pending 台帳から除去）／ **S3-2**（validator enforcement: composition 8 → 9 field）／ **S3-3**（TypeScript parity）。これで `composition.sMergePolicy` は **JSON_STANDARD / PN2 / validator / corpus / TypeScript の 5 者が一致**した
+  - **runtime behavior 不変**（型は実行時に存在しない）。canonical / bridge / `data/search-manifest.json` は不変
+  - **`Canonical ↔ TypeScript type validation gap` は OPEN のまま**（`as unknown as` 112 箇所により、required 化しても canonical JSON の欠落は `tsc` では検出されない）。cast は本 Unit でも触っていない
+  - validator / tests / PN2 / PN7 / JSON_STANDARD / DEVELOPMENT_STANDARD / VALIDATOR_STANDARD / RULES は無変更
 - **S3-2: `composition.sMergePolicy` requiredness enforcement — 2026-09-23 に完了**
   - R-2 の `REQUIRED_COMPOSITION_FIELDS` へ **`sMergePolicy` を追加**した。**composition requiredness は 8 → 9 field**（`nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / **`sMergePolicy`** / `groupKeyRegistry` / `nodeLabelShort` / `nodeLabelLong` / `priority`）で、**JS-A-composition 9/9 が enforce される状態**になった
   - **新しい errorCode は作っていない**。既存 `MISSING_REQUIRED_COMPOSITION_FIELD` をそのまま使用する

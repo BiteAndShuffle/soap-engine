@@ -786,7 +786,7 @@ export interface ModuleData {
      */
     sMergeDomain?: string
     /** S統合ポリシー（JSON_STANDARD JS-A-composition） */
-    sMergePolicy?: {
+    sMergePolicy: {
       unit: string
       conflictStrategy: string
       withinDomainStrategy: string
