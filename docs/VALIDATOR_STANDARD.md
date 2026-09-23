@@ -363,26 +363,37 @@ Lifecycle State が Future Expansion であることは本 check の severity �
 - **判定は presence のみ**: 対象 field が `undefined` または `null` のとき missing とする
   （`EXPRESS_MODE_MISSING_FIELD` と同じ判定。`MISSING_PERSONA` の falsy 判定は一般化しない）。
   上記「Validator に入れてよいルール」のうち、必須フィールドの存在確認（§1 構造の健全性）に該当する
-- **対象は 8 field**: `nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` /
-  `groupKeyRegistry` / `nodeLabelShort` / `nodeLabelLong` / `priority`
+- **対象は 9 field**（R-2 導入時は 8 field。S3-2 で `sMergePolicy` を追加）: `nodeKey` / `classKey` /
+  `clinicalDomain` / `sMergeDomain` / `sMergePolicy` / `groupKeyRegistry` / `nodeLabelShort` /
+  `nodeLabelLong` / `priority`
 - **error code は generic 1 つ**。欠落した field は detail に `composition.<field>` として明記し、
   field ごとに 1 件報告する。`composition` 自体が absent / `null` / object でない場合も、
-  field 単位の JS-A requirement と 1:1 になるよう 8 件を報告する（1 件に集約しない）
+  field 単位の JS-A requirement と 1:1 になるよう 9 件を報告する（1 件に集約しない）
 - **severity は ERROR**。導入時点で全 35 module の検出は 0 件（R-1 で既知の欠落を補完済みの
   green baseline 上に導入）。build を停止するか否かは呼び出し側が決定する（§4）
 - **扱わないもの（別 contract）**: `""` / `[]` の妥当性（content validity）、値域
   （例: `priority` の `"chronic"` / `"acute"` / `"prn"`）、bridge ⇔ canonical の値一致、
   `lib/types.ts` との型 parity。`groupKeyRegistry` の内容の参照整合は引き続き check 18
   （`MERGE_POLICY_GROUPKEY_INVALID`）の責務であり、本 check は存在のみを見る
-- **`composition.sMergePolicy` は暫定的に対象外**。`sMergePolicy` も JS-A-composition の必須
-  field だが、`prompts/vNext/PN7-Cross-Reference-Audit.md` item S / `docs/DEVELOPMENT_STANDARD.md`
-  §10.5 GG-3（位置づけ確定まで FAIL 条件としない）と、`docs/DEVELOPMENT_STANDARD.md` §10.1
-  および本書の `MISSING_PERSONA` 適用例（Lifecycle State と severity 判定は独立）との間の
-  **S3 contradiction が未解決**であるための措置である。**`sMergePolicy` を必須でないと判断した
-  ものではなく**、S3 の解消は後続の Owner Decision で扱う
-
 `MISSING_PERSONA` と同じく、本 check は Appendix の errorCode 一覧にのみ収載し、§3-A の
 番号付き本文チェック表には収載しない。
+
+**`composition.sMergePolicy` の扱い（R-2 → S3-2 の更新。current state）**
+
+R-2 導入時点では、`sMergePolicy` は JS-A-composition の必須 field でありながら
+**S3 contradiction が未解決**であったため暫定的に対象外としていた（当時の矛盾は、
+`prompts/vNext/PN7-Cross-Reference-Audit.md` item S / `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-3 が
+「位置づけ確定まで FAIL 条件としない」としていた一方で、同 §10.1 および本書の `MISSING_PERSONA`
+適用例が「Lifecycle State と severity 判定は独立」としていたこと）。その後、次の順で解消した。
+
+| Unit | 内容 |
+|---|---|
+| **S3-1** | `composition.sMergePolicy` を **canonical-required / model_managed field** と確定。PN7 item S を **missing → FAIL** へ改訂し、§10.5 の Pending 台帳から GG-3 を除去（Lifecycle State への遷移ではなく、掲載理由の消滅による）。JSON_STANDARD へ field positioning を追記（exact generation value の正本は PN2） |
+| **S3-2** | 上記を前提に **`sMergePolicy` を本 check の対象へ追加**（composition 8 → 9 field）。**新 errorCode は作らず**既存 `MISSING_REQUIRED_COMPOSITION_FIELD` を使用。corpus は 35/35（PN2 固定値と exact parity 35/35）のため **baseline の新 ERROR は 0** |
+
+**runtime consumer が 0 件であることは requiredness を左右しない**（Canonical Requirement と
+Lifecycle State は直交する別軸。`docs/JSON_STANDARD.md` JS-00）。値の検証（PN2 固定値との一致等）は
+引き続き別 contract であり、本 check は presence のみを見る。
 
 ### 適用例: `MISSING_REQUIRED_DRUG_FIELD` / `MISSING_REQUIRED_DRUG_SEARCH_FIELD` / `MISSING_REQUIRED_DISPLAY_FIELD`（2026-09-23 追加・DR-2）
 

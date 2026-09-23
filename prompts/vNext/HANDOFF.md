@@ -1,7 +1,15 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「S3-1 sMergePolicy requiredness contradiction docs closure」:
+最終更新: 2026-09-23（Unit「S3-2 sMergePolicy requiredness enforcement」:
+S3-1 で contract が解消したことを受け、`lib/moduleValidator.ts` の `REQUIRED_COMPOSITION_FIELDS` へ
+**`sMergePolicy` を追加**した。**composition requiredness は 8 → 9 field**（**JS-A-composition 9/9 が enforce**）。
+**新 errorCode は作らず**既存 `MISSING_REQUIRED_COMPOSITION_FIELD` を使用し、missing semantics は R-2 継承
+（`undefined` / `null` のみ。値の検証は別 contract）。corpus は **presence 35/35・PN2 固定値 exact parity 35/35** で
+**新 ERROR 0**、baseline は ERROR 0 / WARN 35 のまま。R-2 の scope 固定 test（sMergePolicy 欠落でも 0 件）は**反転**。
+**S3-3（`lib/types.ts` の `sMergePolicy?:` required 化）は未着手**、**cast gap は OPEN のまま**。
+canonical / bridge / manifest / PN2 / PN7 / JSON_STANDARD / DEVELOPMENT_STANDARD / `lib/types.ts` / RULES は無変更。
+先行: 同日 Unit「S3-1 sMergePolicy requiredness contradiction docs closure」:
 **S3 contradiction を RESOLVED**（Option A・OD-S3-1〜8）。`composition.sMergePolicy` を
 **canonical-required / model_managed field** と確定し、**runtime consumer 0 件は requiredness と別軸**と明記した。
 **PN7 item S の「missing を FAIL にしない（記録のみ）」を廃止**して **missing → FAIL** へ改訂し、
@@ -1538,6 +1546,16 @@ Unit A「diabetes domain metadata consistency」の調査で観測した。**dom
 - **historical: DG-4 着手前の状態**（OD-DG-7）
   - generation contract が DG-2 で確定したため、DR-2 の `MISSING_REQUIRED_DISPLAY_FIELD` の対象へ `display.drugGeneric` を追加できる状態になった。現 corpus は 35/35 のため presence baseline は green のまま導入可能
   - **DG-2 では validator を変更していない。** 別 Unit / 別 commit で扱う
+- **S3-2: `composition.sMergePolicy` requiredness enforcement — 2026-09-23 に完了**
+  - R-2 の `REQUIRED_COMPOSITION_FIELDS` へ **`sMergePolicy` を追加**した。**composition requiredness は 8 → 9 field**（`nodeKey` / `classKey` / `clinicalDomain` / `sMergeDomain` / **`sMergePolicy`** / `groupKeyRegistry` / `nodeLabelShort` / `nodeLabelLong` / `priority`）で、**JS-A-composition 9/9 が enforce される状態**になった
+  - **新しい errorCode は作っていない**。既存 `MISSING_REQUIRED_COMPOSITION_FIELD` をそのまま使用する
+  - missing semantics は R-2 を継承（missing = `undefined` / `null` のみ）。**`sMergePolicy` の中身の value validation・PN2 固定値との exact 一致検証は追加していない**（別 contract）
+  - **前提の充足**: S3-1 で contract が解消済み（canonical-required / model_managed・PN7 item S は missing → FAIL へ改訂・GG-3 は Pending 台帳から除去）。**corpus は presence 35/35、PN2 固定値との exact parity も 35/35**
+  - **current corpus で新 ERROR 0〔実測〕**。ModuleValidator baseline（ERROR 0 / WARN 35）は不変
+  - tests: R-2 の table へ `sMergePolicy` を追加し、**「`sMergePolicy` missing でも ERROR 0」という R-2 の scope 固定 test は current contract へ反転**した（`null` を missing として検出する test に置換。historical behavior を残すためだけの test にはしていない）。`composition` 削除時の件数 assert も 8 → 9 へ更新
+  - `docs/VALIDATOR_STANDARD.md` §5 を current state へ更新（対象 9 field・`composition` 欠落時 9 件・R-2 → S3-1 → S3-2 の経緯を表で記録。R-2 時点の除外理由は**過去形かつ解消済み**と分かる形で保持）。**Appendix の errorCode 追加は不要**（新 code なし）、**§3-A も変更なし**
+  - **残る OPEN**: **S3-3（`lib/types.ts` の `sMergePolicy?:` を required 化）は未着手**。`Canonical ↔ TypeScript type validation gap`（`as unknown as` 112 箇所）も OPEN のまま
+  - canonical / bridge / manifest / PN2 / PN7 / JSON_STANDARD / DEVELOPMENT_STANDARD / `lib/types.ts` / RULES は無変更
 - **S3-1: `composition.sMergePolicy` requiredness contradiction — 2026-09-23 に RESOLVED（docs closure）**
   - **Owner Decision（OD-S3-1〜8・Option A）**: `composition.sMergePolicy` は **JS-A の全 module 必須 field として維持**し、optional / lifecycle-managed へ降格しない（OD-S3-1）。位置づけは **canonical-required / model_managed field** と確定（OD-S3-2）
   - **runtime consumer 0 件は requiredness を左右しない**〔current HEAD 実測: production runtime / SOAP merge / search / manifest / validator / audit のいずれも参照せず、`lib/types.ts` の型宣言と validator・tests の S3 除外コメントのみ〕。canonical completeness と runtime 接続は直交する別軸であり、runtime 接続は将来扱う（OD-S3-2）

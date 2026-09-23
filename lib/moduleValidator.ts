@@ -70,9 +70,9 @@
  *   34)  template.reservedHandlingTags の各タグが、いずれかの brandCatalog[].handlingTags に
  *        既に存在していないこと（WARNING）。既にブランドが保持しているタグを予約タグとして
  *        宣言する必要はなく、宣言が古くなっている可能性を示す
- *   （番号なし）composition の JS-A 必須 8 field（nodeKey / classKey / clinicalDomain / sMergeDomain /
- *        groupKeyRegistry / nodeLabelShort / nodeLabelLong / priority）が undefined / null でないこと
- *        （ERROR。MISSING_REQUIRED_COMPOSITION_FIELD。presence のみ。sMergePolicy は S3 未解決のため暫定除外）
+ *   （番号なし）composition の JS-A 必須 9 field（nodeKey / classKey / clinicalDomain / sMergeDomain /
+ *        sMergePolicy / groupKeyRegistry / nodeLabelShort / nodeLabelLong / priority）が
+ *        undefined / null でないこと（ERROR。MISSING_REQUIRED_COMPOSITION_FIELD。presence のみ）
  *   （番号なし）drug / drug.search / display の JS-A 必須 field が undefined / null でないこと
  *        （ERROR。MISSING_REQUIRED_DRUG_FIELD / MISSING_REQUIRED_DRUG_SEARCH_FIELD /
  *        MISSING_REQUIRED_DISPLAY_FIELD。presence のみ・計 17 field。
@@ -493,16 +493,17 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
   // composition 自体が absent / null / object でない場合は、field 単位の JS-A requirement と
   // 1:1 になるよう 8 field それぞれを報告する（1 件に集約しない）。
   //
-  // composition.sMergePolicy も JS-A-composition 必須だが、本 check の対象から暫定的に除外している。
-  // PN7 item S / DEVELOPMENT_STANDARD §10.5 GG-3（位置づけ確定まで FAIL にしない）と
-  // DEVELOPMENT_STANDARD §10.1 / VALIDATOR_STANDARD §5（Lifecycle を理由に JS-A の欠落を FAIL
-  // 対象から除外しない）の S3 contradiction が未解決であるための暫定措置であり、
-  // sMergePolicy を必須でないと判断したものではない。
+  // composition.sMergePolicy は R-2 時点では S3 contradiction（PN7 item S / GG-3 ⇔ §10.1 /
+  // VALIDATOR_STANDARD §5）が未解決だったため暫定除外していたが、S3-1 で contract が解消し
+  // （canonical-required / model_managed・PN7 item S は missing → FAIL へ改訂・GG-3 は
+  // Pending 台帳から除去）、S3-2 で本 check の対象へ追加した。値の検証（PN2 固定値との一致等）は
+  // 引き続き別 contract であり、ここでは presence のみを見る。
   const REQUIRED_COMPOSITION_FIELDS = [
     'nodeKey',
     'classKey',
     'clinicalDomain',
     'sMergeDomain',
+    'sMergePolicy',
     'groupKeyRegistry',
     'nodeLabelShort',
     'nodeLabelLong',

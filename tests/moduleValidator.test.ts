@@ -277,7 +277,8 @@ describe('persona 必須（JSON_STANDARD JS-A / F-4a）', () => {
 // composition 必須 field の presence（JSON_STANDARD JS-A-composition / R-2）
 //
 // missing = undefined / null。"" / [] の妥当性は別 contract のためここでは扱わない。
-// sMergePolicy は S3 contradiction 未解決のため暫定的に対象外（本 describe の最終 test で固定）。
+// sMergePolicy は R-2 時点では S3 contradiction 未解決のため暫定除外していたが、S3-1 で contract が
+// 解消し S3-2 で対象へ追加した（composition 8 → 9 field）。値の検証は引き続き別 contract。
 // ─────────────────────────────────────────────────────────────
 
 const REQUIRED_COMPOSITION_FIELDS = [
@@ -285,6 +286,7 @@ const REQUIRED_COMPOSITION_FIELDS = [
   'classKey',
   'clinicalDomain',
   'sMergeDomain',
+  'sMergePolicy',
   'groupKeyRegistry',
   'nodeLabelShort',
   'nodeLabelLong',
@@ -318,7 +320,7 @@ describe('composition 必須 field の presence（JSON_STANDARD JS-A-composition
     assert.ok(errs[0].detail.includes('composition.priority'), errs[0].detail)
   })
 
-  test('composition 自体を削除 → 8 field それぞれについて 1 件ずつ（計 8 件）', () => {
+  test('composition 自体を削除 → 9 field それぞれについて 1 件ずつ（計 9 件）', () => {
     const broken = cloneModule()
     delete broken.composition
     const errs = compositionMissingErrors(broken)
@@ -336,13 +338,14 @@ describe('composition 必須 field の presence（JSON_STANDARD JS-A-composition
     assert.deepEqual(compositionMissingErrors(cloneModule()), [])
   })
 
-  test('composition.sMergePolicy を削除しても MISSING_REQUIRED_COMPOSITION_FIELD は出ない（S3 未解決による暫定 scope）', () => {
+  test('composition.sMergePolicy を null に → missing として検出される（S3-2 で対象化）', () => {
     const broken = cloneModule()
-    delete broken.composition.sMergePolicy
-    assert.deepEqual(
-      compositionMissingErrors(broken),
-      [],
-      'sMergePolicy は S3 contradiction（PN7 item S / GG-3 ⇔ §10.1 / VALIDATOR_STANDARD §5）解消まで対象外',
+    broken.composition.sMergePolicy = null
+    const errs = compositionMissingErrors(broken)
+    assert.equal(errs.length, 1, JSON.stringify(errs))
+    assert.ok(
+      errs[0].detail.includes('composition.sMergePolicy'),
+      `detail に field path が含まれるべき: ${errs[0].detail}`,
     )
   })
 })
