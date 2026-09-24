@@ -3,10 +3,15 @@
 # dry_eye_trpv1_antagonist_eye_drops
 # =========================================
 #
-# ⚠️ STATUS: HEADER_ONLY ⚠️
+# ⚠️ STATUS: DRAFT ⚠️
 #
-# ヘッダー案のみ。SCENARIOS_START〜SCENARIOS_END（Human authored scenario draft は別途存在する）は
-# 本 HEADER_ONLY ファイルには未収載であり、Repository へは未反映。
+# 2026-09-24 に HEADER_ONLY として作成した Header へ、Human authored scenario draft の
+# SCENARIOS_START〜SCENARIOS_END を収載した（2026-09-24。prompts/RULES.md §24 HEADER_ONLY → DRAFT）。
+# 収載時の変更は構造上の正規化のみ: inline addon marker を正式 marker `P_ADDON_INLINE` へ正規化
+# （marker 位置は不変。docs/DESIGN_PRINCIPLES.md DP-22）／ADDON header の inline requiredTags を削除
+# （正本は Header の addonRequiredTags map）／仮 placement 設計コメントを削除。clinical wording・
+# scenario / addon の id と順序・addon 本文・P_ADDON・P_CLOSING は変更していない。
+# Owner による本文確認・凍結宣言は未実施（FROZEN_FOR_PN1 ではない）。
 # 目的: アバレプト点眼液（モツギバトレプ）の brandCatalog / alias / handlingTags /
 # reachability / composition / display 設計を、会話ログではなくリポジトリ上に固定する。
 # Header 形状は既存点眼共通シャーシ（Family A: H1 点眼 / chemical mediator 点眼）に従う（Owner Decision ODN-2）。
@@ -16,8 +21,7 @@
 #   [P] Claude proposal / Owner approved on 2026-09-24（提案由来・Owner 承認済み）
 #   [D] 確定事項・固定規則からの決定論的導出
 #
-# 次の作業: P-addon placement contract の確定（別 Unit）→ SCENARIOS 本文追加（DRAFT）→
-# Owner 凍結宣言（FROZEN_FOR_PN1）→ PN1（prompts/vNext/HANDOFF.md「bridge 作成から開始する」）。
+# 次の作業: Owner 本文確認・凍結宣言（FROZEN_FOR_PN1）→ PN1（prompts/vNext/HANDOFF.md「bridge 作成から開始する」）。
 #
 # 参照:
 #   - bridges/allergy_h1_antihistamine_eye_drops.md（点眼共通シャーシ・golden reference）
@@ -295,7 +299,7 @@ scenarioEngine:
 # 記載のない scenario / addon は常時表示候補。
 # [H] アバレプト固有 2 addon の avarept gate も本 map に置く（Option C）。SCENARIOS 本文の ADDON ヘッダー行には
 # inline requiredTags を記載しない（reachability metadata の配置であり clinical wording の変更ではない）。
-# requiredTags の配置は P-addon placement（DESIGN_PENDING・別 Unit）とは別責務である。
+# requiredTags の配置は P-addon placement（DP-22 で確定済み）とは別責務である。
 # ─────────────────────────────────────────
 scenarioRequiredTags:
   lifestyle_guidance_suspension_shake: ["suspension"]
@@ -372,10 +376,1057 @@ constitution:
 # =========================================
 # 残る未確定事項（PENDING）— header 外
 # =========================================
-# - P-addon placement contract（P_ADDON_INLINE_BEFORE_FOLLOWUP / DESIGN_PENDING_PLACEMENT）:
-#   header の blocker ではないが、SCENARIOS 本文の FROZEN_FOR_PN1 / PN1 開始の blocker。別 Unit（Opus 伴走）。
+# - P-addon placement contract: 解決済み（2026-09-24。DP-22 / `P_ADDON_INLINE` / scenarios[].addonInsertions。
+#   commit 83ba91d）。SCENARIOS 本文収載時に Human authored draft の仮 marker を正式 marker へ正規化した。
 # - PENDING QA（HEADER_ONLY の blocker ではない）: ゼペリン点眼液 ZEP-1 と同型に、アバレプト検索時に
 #   一般名見出し候補「モツギバトレプ点眼液」が表示される可能性がある。canonical / runtime 接続後に実測する。
 #
-# SCENARIOS_START〜SCENARIOS_END: 本 HEADER_ONLY ファイルには未収載・Repository 未反映
-# （Human authored scenario draft は別途存在する。STATUS: HEADER_ONLY）
+# SCENARIOS_START〜SCENARIOS_END: 下記に収載済み（STATUS: DRAFT。Owner 凍結宣言前）
+
+
+=======SCENARIOS_START=======
+
+
+【SCENARIO｜type=treatment_start｜id=initial｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 初回】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、{{applicationSite}}眼の乾燥症状に対して追加となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、ドライアイに伴う眼の症状の改善を目的として追加となった。
+刺激受容に関与するTRPV1イオンチャネルの働きを阻害することで、ドライアイに伴う眼の不快症状の改善を目的として使用する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、ドライアイによる目の不快な症状を改善する薬です。
+症状の改善のため、継続して使用することが大切です。
+使用により目のかすみや温度の感じ方に変化が出ることがあります。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+- addon_avarept_temperature_sensation_burn_caution
+気になる症状がある場合はご相談ください。
+P_ADDON
+- addon_eye_drop_tip_contamination
+- addon_eye_drop_after_opening_expiry
+- addon_eye_drop_interval_5min
+- addon_eye_drop_interval_after_suspension_5min
+- addon_eye_drop_interval_10min
+- addon_eye_drop_interval_after_suspension_10min
+- addon_eye_drop_suspension_shake
+- addon_eye_drop_storage_upright_suspension
+- addon_eye_drop_storage_light_protection
+- addon_eye_drop_storage_cold
+- addon_eye_drop_warm_container_after_cold_storage
+- addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_avoid_cold_storage
+- addon_eye_drop_single_dose_mini
+- addon_eye_drop_preservative_free_pf
+- addon_eye_drop_contact_lens_remove_before_use
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_avarept_blurred_vision_driving_caution｜title=霧視時の運転・機械操作｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
+P_APPEND
+目がかすんでいる間は、自動車の運転や機械の操作に注意してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_avarept_temperature_sensation_burn_caution｜title=温度感覚変化・低温やけど｜uiGroup=薬剤固有介入｜uiVariant=rightAccentAmber】
+P_APPEND
+カイロやこたつなどを使用する際は、低温やけどに注意してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_tip_contamination｜title=点眼方法（容器先端の接触防止）】
+P_APPEND
+点眼薬の先端が、目や瞼などに触れると汚染されることがあります。
+先端部分に触れないように使用してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_after_opening_expiry｜title=使用期限（開封後1ヶ月）】
+P_APPEND
+開封後の点眼薬は、衛生面を考慮し、1ヶ月を目安に処分してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_5min｜title=点眼間隔（5分以上）】
+P_APPEND
+複数の点眼薬を使用する場合は、5分以上あけて使用してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_after_suspension_5min｜title=点眼間隔（懸濁・5分以上）】
+P_APPEND
+複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を5分以上あけてください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_10min｜title=点眼間隔（10分以上）】
+P_APPEND
+複数の点眼薬を使用する場合は、10分以上あけて使用してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_interval_after_suspension_10min｜title=点眼間隔（懸濁・10分以上）】
+P_APPEND
+複数の点眼薬を使用する場合は、懸濁性点眼薬を後に使用し、点眼の間隔を10分以上あけてください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_suspension_shake｜title=点眼方法（懸濁性・振り混ぜ）】
+P_APPEND
+点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。
+使用する前に、よく振り混ぜてから使用してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_upright_suspension｜title=保管方法（懸濁性・先端上向き）】
+P_APPEND
+保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_light_protection｜title=保管方法（遮光）】
+P_APPEND
+光の影響により、効果が十分に出ない可能性があります。
+使用していない間は、遮光袋に入れて保管してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold｜title=保管方法（冷所保存）】
+P_APPEND
+温度の影響により、効果が十分に出ない可能性があります。
+使用していない間は、冷所で保管してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_warm_container_after_cold_storage｜title=点眼方法（冷所保存後・手で温める）】
+P_APPEND
+冷所から取り出した後すぐに点眼すると、薬液が連続して落ちる可能性があります。
+キャップを閉めたまま容器を手で温めてから点眼してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_storage_cold_before_opening｜title=保管方法（未開封時のみ冷所）】
+P_APPEND
+温度の影響により、効果が十分に出ない可能性があります。
+開封するまでは冷所で保管してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_avoid_cold_storage｜title=保管方法（低温保存を避ける）】
+P_APPEND
+低温で保管すると、薬液の状態が変化することがあります。
+冷蔵庫には入れず、指示された保管方法に従って保管してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_single_dose_mini｜title=点眼方法（ミニ・1回使い切り）】
+P_APPEND
+1回使い切りの点眼薬です。
+開封後は速やかに使用し、薬液が残っていても処分してください。
+
+
+
+
+【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_preservative_free_pf｜title=点眼方法（PF・防腐剤フリー）】
+P_APPEND
+防腐剤を使用していないため、特殊な構造の容器が使用されています。
+通常の点眼薬と容器の扱い方が異なるため、使用方法を確認して使用してください。
+
+
+
+
+【ADDON｜type=administration_guidance｜id=addon_eye_drop_contact_lens_remove_before_use｜title=コンタクトレンズ（外して点眼）】
+P_APPEND
+コンタクトレンズを装用している場合は、点眼前に外してください。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=restart｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 再開】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、{{applicationSite}}眼の乾燥症状に対して再開となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、ドライアイに伴う眼の症状の改善を目的として再開となった。
+刺激受容に関与するTRPV1イオンチャネルの働きを阻害することで、ドライアイに伴う眼の不快症状の改善を目的として使用する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、ドライアイによる目の不快な症状を改善する薬です。
+症状の改善のため、継続して使用することが大切です。
+使用により目のかすみや温度の感じ方に変化が出ることがあります。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+- addon_avarept_temperature_sensation_burn_caution
+気になる症状がある場合はご相談ください。
+P_ADDON
+- addon_eye_drop_tip_contamination
+- addon_eye_drop_after_opening_expiry
+- addon_eye_drop_interval_5min
+- addon_eye_drop_interval_after_suspension_5min
+- addon_eye_drop_interval_10min
+- addon_eye_drop_interval_after_suspension_10min
+- addon_eye_drop_suspension_shake
+- addon_eye_drop_storage_upright_suspension
+- addon_eye_drop_storage_light_protection
+- addon_eye_drop_storage_cold
+- addon_eye_drop_warm_container_after_cold_storage
+- addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_avoid_cold_storage
+- addon_eye_drop_single_dose_mini
+- addon_eye_drop_preservative_free_pf
+- addon_eye_drop_contact_lens_remove_before_use
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_start｜id=external_start｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 他所開始】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、{{applicationSite}}眼の乾燥症状に対して他院で開始され継続使用中であった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、ドライアイに伴う眼の症状の改善を目的として継続使用中であった。
+刺激受容に関与するTRPV1イオンチャネルの働きを阻害することで、ドライアイに伴う眼の不快症状の改善を目的として使用する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、ドライアイによる目の不快な症状を改善する薬です。
+症状の改善のため、継続して使用することが大切です。
+使用により目のかすみや温度の感じ方に変化が出ることがあります。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+- addon_avarept_temperature_sensation_burn_caution
+気になる症状がある場合はご相談ください。
+P_ADDON
+- addon_eye_drop_tip_contamination
+- addon_eye_drop_after_opening_expiry
+- addon_eye_drop_interval_5min
+- addon_eye_drop_interval_after_suspension_5min
+- addon_eye_drop_interval_10min
+- addon_eye_drop_interval_after_suspension_10min
+- addon_eye_drop_suspension_shake
+- addon_eye_drop_storage_upright_suspension
+- addon_eye_drop_storage_light_protection
+- addon_eye_drop_storage_cold
+- addon_eye_drop_warm_container_after_cold_storage
+- addon_eye_drop_storage_cold_before_opening
+- addon_eye_drop_avoid_cold_storage
+- addon_eye_drop_single_dose_mini
+- addon_eye_drop_preservative_free_pf
+- addon_eye_drop_contact_lens_remove_before_use
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_low_perceived_effect｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 回数増（効果実感乏しい）｜scenarioColor=blue】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果の実感が乏しいため点眼回数が増えた。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数増
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果不十分のため点眼回数が増えた。
+点眼回数の変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_increase_low_perceived_effect｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度増（効果実感乏しい）｜scenarioColor=green】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果の実感が乏しいため、より効果が高いものへ変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　高濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果不十分のため、高濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_increase_due_to_other_med_adjustment｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 回数増（他剤との調整）｜scenarioColor=blue】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、他剤との調整により点眼回数が増えた。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数増
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、併用薬との調整のため点眼回数が増えた。
+点眼回数の変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_increase_due_to_other_med_adjustment｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度増（他剤との調整）｜scenarioColor=green】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、他剤との調整により、より効果が高いものへ変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　高濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、併用薬との調整のため、高濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_improved｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 回数減（症状改善）｜scenarioColor=blue】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、症状が改善したため点眼回数が減った。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数減
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、症状改善を踏まえ点眼回数が減った。
+点眼回数の変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_improved｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度減（症状改善）｜scenarioColor=green】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、症状が改善したため、より効果が穏やかなものへ変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　低濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、症状改善を踏まえ、低濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_low_perceived_effect｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 回数減（効果実感乏しい）｜scenarioColor=blue】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果の実感が乏しく使用継続に不安があるため、点眼回数を減らして継続することとなった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数減
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果実感の乏しさと使用継続への不安を踏まえ、点眼回数を減らして治療継続となった。
+点眼回数変更後は、症状や使用状況について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、変更された点眼回数で継続してください。
+症状や使用感に変化がある場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_low_perceived_effect｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度減（効果実感乏しい）｜scenarioColor=green】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果の実感が乏しく使用継続に不安があるため、より効果が穏やかなものへ変更して継続することとなった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　低濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果実感の乏しさと使用継続への不安を踏まえ、低濃度製剤へ変更して治療継続となった。
+製剤変更後は、症状や使用状況について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、変更された製剤で継続してください。
+症状や使用感に変化がある場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=frequency_decrease_due_to_other_med_adjustment｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 回数減（他剤との調整）｜scenarioColor=blue】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、他剤との調整により点眼回数が減った。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数減
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、併用薬との調整のため点眼回数が減った。
+点眼回数の変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、点眼回数の変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=strength_decrease_due_to_other_med_adjustment｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度減（他剤との調整）｜scenarioColor=green】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、他剤との調整により、より効果が穏やかなものへ変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　低濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、併用薬との調整のため、低濃度製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_adjustment｜id=switch_to_sustained_formulation_reduced_frequency｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 持続型製剤へ変更（点眼回数減）｜scenarioColor=orange】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、点眼回数を減らすために変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　持続型製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、点眼回数を減らすため、持続型製剤へ変更となった。
+製剤変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、製剤変更後、気になる症状や使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_blurred_vision_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（霧視）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+目のかすみは認めない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による霧視は現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に目のかすみが出ることがあります。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+症状が続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_temperature_sensation_change_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（温度感覚変化）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+温度の感じ方に変化はない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による温度感覚の変化は現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に温度の感じ方が変化することがあります。
+P_ADDON_INLINE
+- addon_avarept_temperature_sensation_burn_caution
+気になる変化がある場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_irritation_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+刺激感は認めない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による刺激感は現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に刺激感が出ることがあります。
+症状が続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_foreign_body_sensation_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（異物感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+異物感は認めない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による異物感は現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に異物感が出ることがあります。
+症状が続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_pruritus_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（掻痒感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+掻痒感は認めない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による掻痒感は現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に掻痒感が出ることがあります。
+症状が続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_eye_redness_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（充血）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+充血は認めない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による充血は現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に充血が出ることがあります。
+症状が続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_eye_discharge_none｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（目やに）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）を使用して症状は落ち着いている。
+目やには認めない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による目やには現時点で認められず、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の継続中に目やにが出ることがあります。
+症状が続く場合はご相談ください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_good｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） CP良好】
+S
+薬を使用して症状は落ち着いている。
+使用忘れなく継続できている。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　使用中
+A
+コンプライアンスは良好で、治療継続に問題はない。
+P
+引き続き用法を守って使用することで、治療効果の維持が期待されます。
+今後も継続して使用できるようにすることが大切です。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_missed_doses｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） CP不良（使用忘れ）】
+S
+使用を忘れることがある。
+症状は大きく変わっていない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　使用中
+A
+コンプライアンスは不良で、使用忘れがみられる。
+P
+継続して使用することで、十分な治療効果が期待されます。
+使用忘れが続くと、期待される治療効果が十分に得られない可能性があります。
+P_ADDON
+- addon_eye_drop_after_opening_expiry
+- addon_adherence_notification_alarm
+- addon_adherence_notification_app
+- addon_adherence_visual_calendar_checklist
+- addon_adherence_visual_note
+- addon_adherence_prep_previous_night
+- addon_adherence_habit_routine_link
+- addon_adherence_family_support_reminder
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_alarm｜title=アラーム｜uiGroup=通知｜uiVariant=rightAccentBlue】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_notification_app｜title=記録アプリ｜uiGroup=通知｜uiVariant=rightAccentBlue】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_calendar_checklist｜title=カレンダー・チェックリスト｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_visual_note｜title=貼り紙｜uiGroup=視覚化｜uiVariant=rightAccentLavender】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_prep_previous_night｜title=前夜に準備｜uiGroup=事前準備｜uiVariant=rightAccentBlue】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の薬を目につく場所へ準備しておく方法があります。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_habit_routine_link｜title=生活習慣と結びつける｜uiGroup=習慣化｜uiVariant=rightAccentBlue】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、毎日の生活習慣と使用を結びつける方法があります。
+
+
+
+
+【ADDON｜type=adherence_guidance｜id=addon_adherence_family_support_reminder｜title=家族などの声掛け｜uiGroup=家族の支援｜uiVariant=rightAccentLavender】
+P_APPEND
+使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_self_adjust｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） CP不良（自己判断）】
+S
+自己判断で使用を調整することがある。
+症状は大きく変わっていない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　使用中
+A
+コンプライアンスは不良で、自己判断による調整がみられる。
+P
+継続して使用することで、十分な治療効果が期待されます。
+自己判断で中止・調整すると、期待される治療効果が十分に得られない可能性があります。
+体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。
+P_ADDON
+- addon_eye_drop_after_opening_expiry
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=adherence｜id=cp_poor_visit_delay｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） CP不良（受診遅延）】
+S
+受診が遅れ、使用を調整することがある。
+症状は大きく変わっていない。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　使用中
+A
+コンプライアンスは不良で、受診遅延がみられる。
+P
+継続的な使用により、十分な治療効果が期待されます。
+治療が中断すると、期待される治療効果が十分に得られない可能性があります。
+次回受診が難しい場合は、早めに医療機関へご連絡ください。
+P_ADDON
+- addon_eye_drop_after_opening_expiry
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_improved｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 終了（改善）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、症状が改善したため中止となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方終了
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、症状改善により終了となった。
+終了後に症状が悪化する可能性があるため、注意が必要である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の終了後、目の症状の変化がある場合はご相談ください。
+P_ADDON
+- addon_eye_drop_after_opening_expiry
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_insufficient_effect｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 終了（効果不十分）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果不十分のため中止となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方終了
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果不十分のため終了となった。
+終了後は、目の症状の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の終了後、目の症状の変化がある場合はご相談ください。
+P_ADDON
+- addon_eye_drop_after_opening_expiry
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=treatment_end｜id=end_ineffective｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） 終了（無効）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果が認められなかったため中止となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方終了
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）は、効果が認められなかったため終了となった。
+終了後は、目の症状の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の終了後、目の症状の変化がある場合はご相談ください。
+P_ADDON
+- addon_eye_drop_after_opening_expiry
+P_CLOSING
+次回、治療経過および体調変化の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_ocular_irritation_mild_continue｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE継続（軽症 刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により刺激感があるが、日常生活は送れている。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による刺激感を軽度認めるが、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）による刺激感が軽い場合は、そのまま経過をみてください。
+刺激感が続く場合や強くなる場合は、ご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_blurred_vision_mild_continue｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE継続（軽症 霧視）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により目のかすみがあるが、日常生活は送れている。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による霧視を軽度認めるが、治療継続が可能である。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）による目のかすみが軽い場合は、そのまま経過をみてください。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+目のかすみが続く場合や強くなる場合は、ご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_ocular_irritation_moderate_consider_dr｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE継続（中等度 刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）による刺激感が強く、継続困難の可能性があるため対応を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）による刺激感が続く場合や強くなる場合は、使用回数の調整や薬剤の変更が必要になることがあります。
+症状が続く場合は、処方医へご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_irritation｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE変更（刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により刺激感が出現したため、他剤へ変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による刺激感を認め、他剤変更後の経過確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の変更後、目の症状の悪化や変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_change_due_to_blurred_vision｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE変更（霧視）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により目のかすみが出現したため、他剤へ変更となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による霧視を認め、他剤変更後の経過確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の変更後、目の症状の悪化や変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_frequency_reduced_due_to_irritation｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE回数減（刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により刺激感が強いため、点眼回数が減った。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数減
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による刺激感を認め、点眼回数変更後の経過確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の点眼回数が減った後も刺激感が続く場合はご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_frequency_reduced_due_to_blurred_vision｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE回数減（霧視）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により目のかすみが強いため、点眼回数が減った。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　点眼回数減
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による霧視を認め、点眼回数変更後の経過確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の点眼回数が減った後も目のかすみが続く場合があります。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+目のかすみが続く場合はご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_strength_decreased_due_to_irritation｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE濃度減（刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により刺激感が強かったため、効果が穏やかなものになった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　低濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による刺激感を認め、低濃度製剤へ変更となった。
+低濃度製剤へ変更後は、症状や使用感の変化について確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）を低濃度製剤へ変更後も、刺激感が続く場合や、気になる症状、使用感の変化がありましたらご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_strength_decreased_due_to_blurred_vision｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE濃度減（霧視）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により目のかすみが強かったため、効果が穏やかなものになった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　低濃度製剤へ変更
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による霧視を認め、低濃度製剤へ変更となった。
+低濃度製剤へ変更後は、症状や使用感の変化について確認を要する。
+P
+低濃度製剤へ変更後も、目のかすみが続く場合があります。
+P_ADDON_INLINE
+- addon_avarept_blurred_vision_driving_caution
+目のかすみが続く場合や、気になる症状、使用感の変化がある場合はご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_irritation｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE中止（刺激感）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により刺激感が強いため、中止となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方中止
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による刺激感を認め、中止後の経過確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の中止後、目の症状の悪化や変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=side_effect｜id=se_stop_due_to_blurred_vision｜title=ドライアイ治療点眼薬（TRPV1拮抗薬） SE中止（霧視）】
+S
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用により目のかすみが強いため、中止となった。
+O
+ドライアイ治療点眼薬（TRPV1拮抗薬）　処方中止
+A
+ドライアイ治療点眼薬（TRPV1拮抗薬）の使用による霧視を認め、中止後の経過確認を要する。
+P
+ドライアイ治療点眼薬（TRPV1拮抗薬）の中止後、目の症状の悪化や変化があればご相談ください。
+P_CLOSING
+次回、治療経過および副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_tip_contamination｜title=点眼方法説明（容器先端の接触）】
+S
+点眼薬の先端を、目や瞼などに触れて使用している。
+O
+点眼薬　使用中
+A
+点眼薬の使い方の理解が不十分であり、点眼方法の指導が必要である。
+P
+点眼薬の先端が、目や瞼などに触れると汚染されることがあります。
+先端部分に触れないように使用してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_interval｜title=点眼方法説明（間隔不十分）】
+S
+複数の点眼薬を、十分な間隔をあけずに使用している。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、点眼方法の指導が必要である。
+P
+点眼薬は、目に十分行き渡るまでに時間がかかります。
+複数の点眼薬を使用する場合は、薬剤ごとに指示された間隔をあけて使用してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_after_opening_expiry｜title=点眼方法説明（開封後1ヶ月以上使用）】
+S
+点眼薬は、開封後1ヶ月以上経過しても使用を続けている。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、点眼方法の指導が必要である。
+P
+点眼薬は、衛生面を考慮し、開封後1ヶ月を目安に使用を終了し、残っていても処分してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_suspension_shake｜title=点眼方法説明（懸濁不十分）】
+S
+点眼薬は、振らないまま使用を続けている。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、点眼方法の指導が必要である。
+P
+点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。
+使用する前に、よく振り混ぜてから使用してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_upright_suspension｜title=保管方法説明（懸濁性・先端上向き）】
+S
+点眼薬は、向きを気にせず保管していた。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、先端部分を上にして保管することで、目詰まりを防ぐことができます。
+保管するときは向きに注意してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_light_protection｜title=保管方法説明（遮光不十分）】
+S
+点眼薬は、遮光せずに保管している。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、光の影響により、効果が十分に出ない可能性があります。
+使用していない間は、遮光袋に入れて保管してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_cold｜title=保管方法説明（冷所保存不十分）】
+S
+点眼薬は、冷所に保管せず、常温で保管している。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、温度の影響により、効果が十分に出ない可能性があります。
+使用していない間は、冷所で保管してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+
+
+【SCENARIO｜type=lifestyle_guidance｜id=lifestyle_guidance_storage_cold_before_opening｜title=保管方法説明（未開封時のみ冷所保存不十分）】
+S
+点眼薬は、未開封時に冷所へ保管せず、常温で保管していた。
+O
+点眼薬　使用中
+A
+点眼薬の薬剤特性の理解が不十分であり、保管方法の指導が必要である。
+P
+点眼薬は、温度の影響により、効果が十分に出ない可能性があります。
+開封するまでは冷所で保管してください。
+P_CLOSING
+次回、引き続き使用できているか、副作用の有無を確認。
+
+
+=======SCENARIOS_END=======

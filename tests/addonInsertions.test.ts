@@ -277,13 +277,45 @@ describe('bridge parser — P_ADDON_INLINE', () => {
     assert.ok(parseBridgeAddonRefs(text).get('t1')!.errors.length > 0)
   })
 
-  test('既存 bridge はすべて inline block・文法エラーなし（addonsRef.P との一致は audit A / B が担う）', () => {
-    const dir = path.resolve(__dirname, '..', 'bridges')
-    for (const file of fs.readdirSync(dir).filter(f => f.endsWith('.md'))) {
-      for (const [id, s] of parseBridgeAddonRefs(fs.readFileSync(path.join(dir, file), 'utf-8'))) {
-        assert.deepEqual(s.insertions, [], `${file}/${id}`)
-        assert.deepEqual(s.errors, [], `${file}/${id}`)
-      }
+  // ── 実 bridge（addonsRef.P との一致は audit A / B が担う）──────────────
+  const BRIDGES_DIR = path.resolve(__dirname, '..', 'bridges')
+  const bridgeFiles = fs.readdirSync(BRIDGES_DIR).filter(f => f.endsWith('.md'))
+  const parseBridge = (file: string) =>
+    parseBridgeAddonRefs(fs.readFileSync(path.join(BRIDGES_DIR, file), 'utf-8'))
+  /** P_ADDON_INLINE を初めて実データへ適用した bridge（P2-b。Human authored draft の marker 位置） */
+  const AVAREPT_BRIDGE = 'dry_eye_trpv1_antagonist_eye_drops.md'
+  const BLURRED = 'addon_avarept_blurred_vision_driving_caution'
+  const TEMPERATURE = 'addon_avarept_temperature_sensation_burn_caution'
+
+  test('全 bridge で P_ADDON_INLINE / P_ADDON の文法エラーなし', () => {
+    for (const file of bridgeFiles) {
+      for (const [id, s] of parseBridge(file)) assert.deepEqual(s.errors, [], `${file}/${id}`)
     }
+  })
+
+  test('既存 35 bridge は inline block を持たない', () => {
+    const others = bridgeFiles.filter(f => f !== AVAREPT_BRIDGE)
+    assert.equal(others.length, 35)
+    for (const file of others) {
+      for (const [id, s] of parseBridge(file)) assert.deepEqual(s.insertions, [], `${file}/${id}`)
+    }
+  })
+
+  test('Avarept bridge の inline insertion は 8 箇所（afterLine=3 × 3 / afterLine=1 × 5）', () => {
+    const actual = Object.fromEntries(
+      [...parseBridge(AVAREPT_BRIDGE)]
+        .filter(([, s]) => s.insertions.length > 0)
+        .map(([id, s]) => [id, s.insertions]),
+    )
+    assert.deepEqual(actual, {
+      initial: [{ afterLine: 3, keys: [BLURRED, TEMPERATURE] }],
+      restart: [{ afterLine: 3, keys: [BLURRED, TEMPERATURE] }],
+      external_start: [{ afterLine: 3, keys: [BLURRED, TEMPERATURE] }],
+      se_blurred_vision_none: [{ afterLine: 1, keys: [BLURRED] }],
+      se_temperature_sensation_change_none: [{ afterLine: 1, keys: [TEMPERATURE] }],
+      se_blurred_vision_mild_continue: [{ afterLine: 1, keys: [BLURRED] }],
+      se_frequency_reduced_due_to_blurred_vision: [{ afterLine: 1, keys: [BLURRED] }],
+      se_strength_decreased_due_to_blurred_vision: [{ afterLine: 1, keys: [BLURRED] }],
+    })
   })
 })
