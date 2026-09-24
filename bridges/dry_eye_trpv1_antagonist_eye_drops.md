@@ -3,7 +3,7 @@
 # dry_eye_trpv1_antagonist_eye_drops
 # =========================================
 #
-# ⚠️ STATUS: DRAFT ⚠️
+# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
 # 2026-09-24 に HEADER_ONLY として作成した Header へ、Human authored scenario draft の
 # SCENARIOS_START〜SCENARIOS_END を収載した（2026-09-24。prompts/RULES.md §24 HEADER_ONLY → DRAFT）。
@@ -11,7 +11,8 @@
 # （marker 位置は不変。docs/DESIGN_PRINCIPLES.md DP-22）／ADDON header の inline requiredTags を削除
 # （正本は Header の addonRequiredTags map）／仮 placement 設計コメントを削除。clinical wording・
 # scenario / addon の id と順序・addon 本文・P_ADDON・P_CLOSING は変更していない。
-# Owner による本文確認・凍結宣言は未実施（FROZEN_FOR_PN1 ではない）。
+# Owner 本文確認・凍結宣言により FROZEN_FOR_PN1 へ遷移した（2026-09-24。prompts/RULES.md §24）。
+# 凍結時点で SCENARIOS 本文・header 値は変更していない（STATUS 行と状態コメントのみ更新）。
 # 目的: アバレプト点眼液（モツギバトレプ）の brandCatalog / alias / handlingTags /
 # reachability / composition / display 設計を、会話ログではなくリポジトリ上に固定する。
 # Header 形状は既存点眼共通シャーシ（Family A: H1 点眼 / chemical mediator 点眼）に従う（Owner Decision ODN-2）。
@@ -21,7 +22,7 @@
 #   [P] Claude proposal / Owner approved on 2026-09-24（提案由来・Owner 承認済み）
 #   [D] 確定事項・固定規則からの決定論的導出
 #
-# 次の作業: Owner 本文確認・凍結宣言（FROZEN_FOR_PN1）→ PN1（prompts/vNext/HANDOFF.md「bridge 作成から開始する」）。
+# 次の作業: PN1（prompts/vNext/HANDOFF.md「bridge 作成から開始する」）。
 #
 # 参照:
 #   - bridges/allergy_h1_antihistamine_eye_drops.md（点眼共通シャーシ・golden reference）
@@ -381,7 +382,7 @@ constitution:
 # - PENDING QA（HEADER_ONLY の blocker ではない）: ゼペリン点眼液 ZEP-1 と同型に、アバレプト検索時に
 #   一般名見出し候補「モツギバトレプ点眼液」が表示される可能性がある。canonical / runtime 接続後に実測する。
 #
-# SCENARIOS_START〜SCENARIOS_END: 下記に収載済み（STATUS: DRAFT。Owner 凍結宣言前）
+# SCENARIOS_START〜SCENARIOS_END: 下記に収載済み（STATUS: FROZEN_FOR_PN1。2026-09-24 Owner 凍結宣言）
 
 
 =======SCENARIOS_START=======
