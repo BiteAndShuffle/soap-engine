@@ -105,6 +105,8 @@ bridge 原稿（内容の正本）:
 - sickday シナリオの situationFilter が ["sickday"] 以外（Section 13 参照）
 - O フィールドに {{drug_subject}} でない固定薬剤名（ブランド名 / genericName / drugClass 固定）
   ※ O フィールドは全シナリオで {{drug_subject}} 必須。主語省略は O では許容しない。
+  ※ 唯一の例外は §16「O フィールドの generic noun exception」（frozen Bridge の generic noun / dosage-form noun の逐語保持）。
+     例外条件を 1 つでも満たさない O は本 ERROR のままである。
   ※ S / A / P の主語省略許容シナリオ（adherence 系 / lifestyle_guidance 系 / sickday 系 / injection_technique 等）では
      S に {{drug_subject}} が含まれなくても正常（bridge 設計上の主語省略意図のため）。
 - injection module の対象シナリオに thirdPanelSPlacement 欠落（Section 14 参照）
@@ -444,7 +446,33 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 - 正: `"{{drug_subject}}　処方"` / `"{{drug_subject}}　使用中"`
 - 誤: ブランド名固定 / genericName 固定 / drugClass 固定
 
-`O` フィールドの薬剤名部分は必ず `{{drug_subject}}` を使用する。固定文字列のままだと `resolveDrugSubject()` で置換されず UI 上で薬剤名が表示されない。
+`O` フィールドの薬剤名部分は必ず `{{drug_subject}}` を使用する（下記 generic noun exception を除く）。固定文字列のままだと `resolveDrugSubject()` で置換されず UI 上で薬剤名が表示されない。
+
+**O フィールドの generic noun exception（2026-09-25 追記・Owner Decision OD-C8）:**
+
+原則は上記のとおり `{{drug_subject}}` である。次の条件を**すべて**満たす scenario に限り、`{{drug_subject}}` を含まない O を許容する。
+条件はすべて Bridge / canonical 本文と canonical の field 値から機械的に判定するものであり、module 別の記録や Owner Decision の有無を条件としない。
+
+1. canonical の O が、frozen Bridge（STATUS が `FROZEN_FOR_PN1` または `JSON_COMPLETE`。§24）の当該 scenario の O と
+   **逐語一致**する（`{{drug_subject}}` への置換も、その他の変換もしない）
+2. O の薬剤 subject が、製品・成分を特定しない **generic noun / dosage-form noun**（例: `点眼薬`）である。
+   すなわち、条件 3 の product-identity 値をいずれも含まない
+3. O に **product-specific hard-code** を含まない。判定対象は current corpus（`data/modules/*.json`）全 module の
+   product-identity field の値（`drug.brandNames` / `drug.brandCatalog` のキー・`displayGenericName`・`genericName`・`aliases` /
+   `drug.genericName` / `drug.nameAliases` / `drug.aliasToBrand` のキー / `display.drugGeneric` / `display.drugClassLabel`）で、
+   いずれかを O が部分文字列として含めば不成立とする。`drug.search.keywords` 等の検索用 token（剤形 token を含む）は
+   product-identity 値ではないため判定対象にしない
+
+- 本 exception は **Bridge fidelity を優先する**ためのものであり、ブランド名・一般名・薬効分類名を O に hard-code することを
+  許可する一般原則ではない（それらの hard-code は引き続き §3 の ERROR）
+- product-specific な legacy O（例: 成分名を直書きした `{成分名}　服用中`）は、Bridge と逐語一致していても本 exception で許可しない
+- module 別の適用実績（`prompts/vNext/PN7-Cross-Reference-Audit.md` Check I「module 別 Owner Decision 実績」）は履歴の記録であり、
+  本 exception の PASS 条件ではない
+- Bridge 側の generic noun を生成工程で `{{drug_subject}}` へ書き換えることも、逆に Bridge の `{{drug_subject}}` 相当の
+  薬剤名を generic noun へ書き換えることもしない
+- 本 exception の追加は既存 canonical module の O を変更・retrofit する根拠にならない
+- 監査（PN7 Check I）は本条件を機械的に確認し、条件を満たさない O を FAIL とする。監査実行中に判定基準を変更・再解釈して
+  FAIL を PASS へ格下げしてはならない
 
 ---
 

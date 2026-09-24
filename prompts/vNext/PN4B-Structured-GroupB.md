@@ -35,6 +35,10 @@ PN4A と同一ルールを適用する。以下を参照:
 → PN4A-Structured-GroupA.md の「xStructured 生成ルール」
 → PN4A-Structured-GroupA.md の「text フィールドの絶対ルール」
 → PN4A-Structured-GroupA.md の「transform / safety / lockTerms の基準」
+→ PN4A-Structured-GroupA.md の「transform / safety / lockTerms の判定単位」（2026-09-25 追記）
+→ PN4A-Structured-GroupA.md の「module 別 Owner Decision 実績（xStructured）」
+  （Group B の scenario に対する module 別決定値も同節が正本。本ファイルへ値を複製しない。
+  例: `dry_eye_trpv1_antagonist_eye_drops` の `se_ocular_irritation_moderate_consider_dr` p_1 / p_2 は同節 OD-C3 の値を使う）
 
 ### このグループに特有の role 選択肢
 

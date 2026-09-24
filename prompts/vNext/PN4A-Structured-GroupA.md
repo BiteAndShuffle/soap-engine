@@ -109,6 +109,49 @@ P フィールドの注意喚起・指示文は `"minimal"` を優先する。
 - `"受診してください"` / `"ご相談ください"`（受診・相談指示）
 - 固有の疾患名・薬剤名（ペルソナ変換対象外）
 
+### transform / safety / lockTerms の判定単位（2026-09-25 追記・generic clarification）
+
+- transform / safety は**各文（各行）の内容だけ**から上記基準で判定する
+- **lockTerms が存在することだけを理由に** transform を `minimal` へ、safety を `medium` / `high` へ引き上げない
+  （lockTerms は変換してはならない語の保護であり、文の安全度の判定とは別軸である）
+- **行位置だけを理由に**（例: A 欄の最終行、P 欄の最終行）引き上げない
+- 上記基準に根拠のない一律の escalation rule（「P の注意文はすべて medium」等）を作らない
+- 本節は判定の仕方の明確化であり、既存 canonical module の xStructured を retrofit する根拠にならない
+
+### module 別 Owner Decision 実績（xStructured）
+
+Group B（PN4B）の scenario の決定も含め、module 別の xStructured 決定値は本節を正本とする（PN4B は本節を参照する）。
+
+- `dry_eye_trpv1_antagonist_eye_drops`（OD-C3 / OD-C6・2026-09-25）
+  - 当該 module に限り、`allergy_h1_antihistamine_eye_drops`（以下 H1）に同一 scenario id・同一行 id で本文（Phase 1 凍結テキストの行 text。`{{drug_subject}}` 変換後）が逐語一致する行があり、
+    current PN4 contract と矛盾しない場合は H1 の値に合わせ、exact precedent が無い行は current PN4 contract で判定する。
+    **「precedent があれば precedent、なければ contract」は当該 module の決定であり、一般原則ではない**
+    （他 module は H1 を xStructured の precedent として扱わない）
+  - H1 の precedent 値は下表へ値として転記済みであり、再生成時に H1 canonical を読み直して値を取り直さない（下表が正本）
+  - role は下表の全行とも変更しない
+
+**OD-C3（exact precedent に合わせる行）:**
+
+| scenario id | 欄・行 id | text | 確定値 |
+|---|---|---|---|
+| `frequency_decrease_low_perceived_effect` | PStructured `p_2` | 症状や使用感に変化がある場合はご相談ください。 | role `side_effect_guidance` / transform `minimal` / safety **`low`** / lockTerms `["ご相談ください"]` |
+| `strength_decrease_low_perceived_effect` | PStructured `p_2` | 症状や使用感に変化がある場合はご相談ください。 | role `side_effect_guidance` / transform `minimal` / safety **`low`** / lockTerms `["ご相談ください"]` |
+| `end_insufficient_effect` | AStructured `a_2` | 終了後は、目の症状の変化について確認を要する。 | role `treatment_end_assessment` / transform `moderate` / safety **`low`** / lockTerms `[]` |
+| `end_ineffective` | AStructured `a_2` | 終了後は、目の症状の変化について確認を要する。 | role `treatment_end_assessment` / transform `moderate` / safety **`low`** / lockTerms `[]` |
+| `se_ocular_irritation_moderate_consider_dr`（Group B） | PStructured `p_1` | {{drug_subject}}による刺激感が続く場合や強くなる場合は、使用回数の調整や薬剤の変更が必要になることがあります。 | role `side_effect_guidance` / transform **`moderate`** / safety **`low`** / lockTerms **`[]`** |
+| `se_ocular_irritation_moderate_consider_dr`（Group B） | PStructured `p_2` | 症状が続く場合は、処方医へご相談ください。 | role `side_effect_guidance` / transform `minimal` / safety `medium` / lockTerms **`["ご相談ください", "処方医へご相談ください"]`**（順序どおり） |
+
+**OD-C6（exact precedent なし・current PN4A contract を優先し現在値を維持する行）:**
+
+`initial` / `restart` / `external_start` の P 欄は H1 と本文が異なるため precedent を適用しない。3 scenario とも同一値とする。
+
+| scenario id | 欄・行 id | text | 確定値 |
+|---|---|---|---|
+| `initial` / `restart` / `external_start` | PStructured `p_3` | 使用により目のかすみや温度の感じ方に変化が出ることがあります。 | role `side_effect_attention` / transform `minimal` / safety `medium` / lockTerms `[]` |
+| `initial` / `restart` / `external_start` | PStructured `p_4` | 気になる症状がある場合はご相談ください。 | role `side_effect_attention` / transform `minimal` / safety `medium` / lockTerms `["ご相談ください"]` |
+
+- 既存 module（H1 / chemical mediator 点眼を含む）の xStructured は本記録により変更しない（preserve・retrofit なし）
+
 ---
 
 ## 出力

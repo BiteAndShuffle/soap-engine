@@ -281,6 +281,46 @@ bridge type= と具体的な id / title から判断する。
 - administration_instruction
 - concomitant_drug_attention
 
+**module 別 Owner Decision 実績（intentTags）:**
+
+- `dry_eye_trpv1_antagonist_eye_drops`（OD-C2 / OD-C4 / OD-C5・2026-09-25）: 全 47 scenario の intentTags を下表の値で確定する
+  （配列の要素・順序とも下表どおり）。**これは当該 module の決定であり、一般原則ではない。**
+  `allergy_h1_antihistamine_eye_drops`（以下 H1）は当該 module に限った precedent として参照したものであり、
+  H1 を他 module の intentTags の generic golden rule としない。H1 の precedent 値は下表へ値として転記済みであり、
+  再生成時に H1 canonical を読み直して値を取り直さない（下表が正本）
+  - **OD-C2（exact precedent）**: H1 に同一 id の scenario があり、S / O / A / P が逐語一致し、意味・役割が一致する scenario は
+    H1 の値に合わせる。一致判定は、両 module の frozen Bridge 本文に PN1 の許可変換（選択薬剤自身を指す名称 →
+    `{{drug_subject}}`）**のみ**を適用した後の S / O / A / P で行う（bridge 上の差が各 module 自身の薬効分類名だけである
+    scenario は一致とみなす。それ以外の差がある scenario は一致としない）。
+    lifestyle_guidance 8 件は canonical O のみ H1 と異なるが、これは OD-C1（RULES.md §16 generic noun exception）による
+    意図的な差であり、intentTags の precedent 判定を分岐させる理由にしない（O 本文は OD-C1、intentTags は OD-C2 と責務を分離する）
+  - **OD-C4**: `initial` / `restart` / `external_start` は Bridge 本文が H1 と異なる（S の適応症状・P の副作用注意文）ため、
+    H1 へ機械的に戻さない
+  - **OD-C5**: H1 に存在しない Avarept 固有の副作用 scenario（目のかすみ・温度感覚変化）は、scenario role
+    （none / mild / change / frequency 減 / strength 減 / stop）が一致する H1 の刺激感 scenario を semantic precedent とする。
+    症状の種類が異なることだけを理由に intentTags を変えない
+
+| scenario id | intentTags（確定値） | 根拠 |
+|---|---|---|
+| `initial` / `restart` / `external_start` | `["drug_effect_explanation", "side_effect_attention"]` | OD-C4 |
+| `frequency_increase_low_perceived_effect` / `strength_increase_low_perceived_effect` / `frequency_increase_due_to_other_med_adjustment` / `strength_increase_due_to_other_med_adjustment` | `["dose_increase_explanation", "followup_monitoring"]` | OD-C2 |
+| `frequency_decrease_improved` / `strength_decrease_improved` / `frequency_decrease_low_perceived_effect` / `strength_decrease_low_perceived_effect` / `frequency_decrease_due_to_other_med_adjustment` / `strength_decrease_due_to_other_med_adjustment` / `switch_to_sustained_formulation_reduced_frequency` | `["dose_decrease_explanation", "followup_monitoring"]` | OD-C2 |
+| `se_irritation_none` / `se_foreign_body_sensation_none` / `se_pruritus_none` / `se_eye_redness_none` / `se_eye_discharge_none` | `["side_effect_attention", "followup_monitoring"]` | OD-C2 |
+| `se_blurred_vision_none` / `se_temperature_sensation_change_none` | `["side_effect_attention", "followup_monitoring"]` | OD-C5（none） |
+| `cp_good` | `["adherence_support", "followup_monitoring"]` | OD-C2 |
+| `cp_poor_missed_doses` / `cp_poor_self_adjust` / `cp_poor_visit_delay` | `["adherence_support"]` | OD-C2 |
+| `end_improved` / `end_insufficient_effect` / `end_ineffective` | `["treatment_end_explanation", "followup_monitoring"]` | OD-C2 |
+| `se_ocular_irritation_mild_continue` | `["side_effect_attention", "followup_monitoring"]` | OD-C2 |
+| `se_blurred_vision_mild_continue` | `["side_effect_attention", "followup_monitoring"]` | OD-C5（mild） |
+| `se_ocular_irritation_moderate_consider_dr` | `["side_effect_attention", "urgent_consult_advice"]` | OD-C2 |
+| `se_change_due_to_irritation` / `se_stop_due_to_irritation` | `["side_effect_attention", "followup_monitoring"]` | OD-C2 |
+| `se_change_due_to_blurred_vision` / `se_stop_due_to_blurred_vision` | `["side_effect_attention", "followup_monitoring"]` | OD-C5（change / stop） |
+| `se_frequency_reduced_due_to_irritation` / `se_strength_decreased_due_to_irritation` | `["side_effect_attention", "dose_decrease_explanation"]` | OD-C2 |
+| `se_frequency_reduced_due_to_blurred_vision` / `se_strength_decreased_due_to_blurred_vision` | `["side_effect_attention", "dose_decrease_explanation"]` | OD-C5（frequency 減 / strength 減。現在値を維持） |
+| `lifestyle_guidance_tip_contamination` / `lifestyle_guidance_interval` / `lifestyle_guidance_after_opening_expiry` / `lifestyle_guidance_suspension_shake` / `lifestyle_guidance_storage_upright_suspension` / `lifestyle_guidance_storage_light_protection` / `lifestyle_guidance_storage_cold` / `lifestyle_guidance_storage_cold_before_opening` | `["lifestyle_guidance"]` | OD-C2（O 本文は OD-C1 で `点眼薬　使用中` を維持） |
+
+- 既存 module（H1 / chemical mediator 点眼を含む）の intentTags は本記録により変更しない（preserve・retrofit なし）
+
 #### thirdPanelSPlacement 対象判定
 
 injection module においてのみ適用する。← RULES.md §14

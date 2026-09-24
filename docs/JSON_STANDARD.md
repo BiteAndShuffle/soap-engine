@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-09-24（DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
+最終更新: 2026-09-25（OD-C8: JS-A「O フィールドルール」へ generic noun exception〔frozen Bridge の generic noun / dosage-form noun の逐語保持に限る・本文から機械判定・条件の正本は RULES §16 / PN7 Check I〕を追記。既存 canonical は無変更。2026-09-24: DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
 
 ---
 
@@ -295,7 +295,7 @@ bridge 未記載の preset を推測生成しない。
 
 **O フィールドルール（全シナリオ）**
 
-`scenarios[].O` フィールドの薬剤名部分は必ず `{{drug_subject}}` を使用する。
+`scenarios[].O` フィールドの薬剤名部分は必ず `{{drug_subject}}` を使用する（下記「例外（generic noun exception）」を除く）。
 
 ```
 正: "{{drug_subject}}　処方"
@@ -307,6 +307,14 @@ bridge 未記載の preset を推測生成しない。
 `genericName` / `drugClass` / `classKey` / bridge header の薬効分類名を O フィールドに固定出力することを禁止する。
 状態語（処方 / 使用中 / 減量 等）はそのまま保持する。
 O フィールドは `resolveDrugSubject()` の対象であり、固定文字列のままだと UI 上で薬剤名が置換されない。
+
+**例外（generic noun exception・2026-09-25 OD-C8）**: frozen Bridge が当該 scenario の O で意図的に
+product-specific でない generic noun / dosage-form noun（例: `点眼薬　使用中`）を用いている場合に限り、
+canonical O はその Bridge O と**逐語一致**で保持してよい（`{{drug_subject}}` へ書き換えない）。
+ブランド名・一般名・薬効分類名を hard-code する例外ではなく、Bridge fidelity を優先するためのものである。
+判定は本文と canonical の field 値だけで機械的に行い（module 別の記録を条件としない）、product-specific な legacy O は Bridge と逐語一致していても許可しない。
+適用条件・監査手順の正本は `prompts/RULES.md` §16「O フィールドの generic noun exception」および
+`prompts/vNext/PN7-Cross-Reference-Audit.md` Check I であり、本書は条件を重複定義しない。
 
 **addon.text 薬剤名ルール（全 addon）**
 

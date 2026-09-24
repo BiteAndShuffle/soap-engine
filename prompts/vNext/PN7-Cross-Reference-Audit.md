@@ -190,6 +190,25 @@ data/modules/{moduleId}.json の
   全 scenarios[].O に {{drug_subject}} が含まれること
   固定薬剤名（ブランド名 / genericName / drugClass）が O に直書きされている → FAIL
 
+  {{drug_subject}} を含まない O は、RULES.md §16「O フィールドの generic noun exception」の
+  条件を scenario ごとに機械的に確認する（2026-09-25 追記・OD-C8）:
+    条件は本文と canonical の field 値だけで判定する（module 別の記録や Owner Decision の有無は条件にしない）
+    (1) canonical O が当該 scenario の bridge O と逐語一致すること（bridge を直接再読込して比較する）。
+        bridges/{moduleId}.md の STATUS が FROZEN_FOR_PN1 または JSON_COMPLETE であること（RULES.md §24）
+    (2) O の薬剤 subject が製品・成分を特定しない generic noun / dosage-form noun であること
+        （= (3) の product-identity 値をいずれも含まないこと）
+    (3) O が current corpus 全 module の product-identity 値（drug.brandNames / brandCatalog のキー・
+        displayGenericName・genericName・aliases / drug.genericName / drug.nameAliases / aliasToBrand のキー /
+        display.drugGeneric / display.drugClassLabel）のいずれも部分文字列として含まないこと
+        （drug.search.keywords 等の検索用 token は判定対象にしない）
+  (1)〜(3) をすべて満たす → PASS（exception 適用。適用した scenario id を audit_report に全件列挙する）
+  1 つでも満たさない → FAIL（scenario id と満たさなかった条件番号を明記）
+
+  監査実行中に判定基準を変更・再解釈して、FAIL を別基準で PASS へ格下げしてはならない
+  （例: 「bridge と一致しているから」だけを理由に (2)(3) を省略して PASS にしない。
+   product-specific な legacy O は bridge と逐語一致していても FAIL のままとする）。
+  判定基準に疑義がある場合は FAIL のまま報告し、Owner Decision を待つ。
+
 【S / A / P フィールド — scenarioType 依存】
   以下のシナリオ分類では、S に {{drug_subject}} がなくても正常:
     - adherence 系（cp_good / cp_poor_* 等）
@@ -205,6 +224,16 @@ data/modules/{moduleId}.json の
 不一致 → FAIL（scenario id と欠落フィールドを明記）
 主語省略該当シナリオの S への {{drug_subject}} 欠落 → PASS（正常）
 ```
+
+**I 補足: O フィールド generic noun exception の module 別 Owner Decision 実績**
+
+Owner Decision として exception の適用を確認した履歴の記録である。**PASS 条件ではない**（判定は上記 (1)〜(3) のみで行う）。
+本表に無い module・scenario も (1)〜(3) を満たせば PASS であり、本表にあっても (1)〜(3) を満たさなければ FAIL である。
+既存 canonical module の O を retrofit しない。
+
+| moduleId | scenario id | frozen Bridge O（canonical O と逐語一致） | 決定 |
+|---|---|---|---|
+| `dry_eye_trpv1_antagonist_eye_drops` | `lifestyle_guidance_tip_contamination` / `lifestyle_guidance_interval` / `lifestyle_guidance_after_opening_expiry` / `lifestyle_guidance_suspension_shake` / `lifestyle_guidance_storage_upright_suspension` / `lifestyle_guidance_storage_light_protection` / `lifestyle_guidance_storage_cold` / `lifestyle_guidance_storage_cold_before_opening`（8 件） | `点眼薬　使用中` | 2026-09-25 OD-C1。Bridge の generic dosage-form noun を保持し `{{drug_subject}}` へ書き換えない |
 
 ---
 
@@ -1090,6 +1119,7 @@ Write ツールを使用して `/tmp/soap-build/{moduleId}/audit_report.json` �
 - `data/modules/{moduleId}.json` を修正しない
 - 報告のみ行う
 - FAIL を PENDING に格下げしない
+- 監査実行中に判定基準を変更・再解釈して FAIL を別基準で PASS へ格下げしない（Check I 補足参照）
 - FAIL の根拠を曖昧にしない
 - **A〜AM の標準監査項目（全 37 項目）を独自の簡略版に置き換えない**（項目名・チェック内容は本ファイルの定義に完全準拠すること）
 

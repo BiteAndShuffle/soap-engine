@@ -1,7 +1,18 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-24（Unit「PN3A contract repair」: アバレプト（`dry_eye_trpv1_antagonist_eye_drops`）の
+最終更新: 2026-09-25（Unit「Avarept canonical finalization — contract write」: アバレプト
+（`dry_eye_trpv1_antagonist_eye_drops`）canonical 監査後の Owner Decision OD-C1〜C8 を living contract へ記録し、
+canonical を Repository だけから再現可能にした（**docs のみ・canonical 再生成は未実施**）。
+generic contract: `prompts/RULES.md` §16 / §3、`prompts/vNext/PN7-Cross-Reference-Audit.md` Check I、`docs/JSON_STANDARD.md`
+の O フィールド規則へ **generic noun exception**（frozen Bridge の generic noun / dosage-form noun の逐語保持に限る・
+product-specific hard-code は引き続き ERROR・PN7 は本文から機械判定できる条件 (1)〜(3) のみで判定し module 別記録を PASS 条件にしない・FAIL を別基準で PASS へ格下げしない）を同期（OD-C8）、
+`PN4A` へ transform / safety の判定単位の明確化（lockTerms の存在・行位置だけを理由に引き上げない）を追記。
+module-specific: OD-C1 → PN7 Check I の module 別実績、OD-C2 / C4 / C5（intentTags 全 47 scenario の確定値）→ PN3A、
+OD-C3 / C6（xStructured 確定値）→ PN4A（PN4B は PN4A を参照）。H1 precedent は当該 module 限りの決定で一般原則ではない。
+**既存 canonical は preserve・retrofit なし**。bridge / canonical / index.ts / code / validator / tests は無変更。
+次工程は canonical 再生成（別 Unit）。
+先行: 2026-09-24（Unit「PN3A contract repair」: アバレプト（`dry_eye_trpv1_antagonist_eye_drops`）の
 Sonnet 単独 baseline run が PN3A で STOP した原因（DM 実績値の表が閉じた語彙に見え、groupKey が同一 `clinicalDomain`
 内でのみ効くこと・副作用 scenario のメニュー分類 SSOT が `sideEffectPresence` であることが PN3A に書かれていなかった）を
 docs のみで修正した。`prompts/vNext/PN3A-Scenario-Classification.md` へ scenarioGroup / groupKey の **role 別既定値**と
