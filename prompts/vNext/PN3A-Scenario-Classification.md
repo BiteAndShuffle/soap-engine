@@ -45,6 +45,38 @@
 
 bridge type= と具体的な id / title から判断する。
 
+**値域と runtime 上の意味（2026-09-24 追記・PN3A contract repair）:**
+
+- `scenarioGroup` は open vocabulary である（`lib/types.ts` の型は `string`。validator が検査するのは存在のみ）。
+  下の「既存実績表」は DM / injection 系 module の実績値を含む**参考表**であり、全薬効領域を網羅する閉じた語彙ではない
+- **副作用 scenario のメニュー分類の SSOT は `sideEffectPresence` である**（`lib/menuGroups.ts`
+  `getMenuGroupFromScenario()`）。`sideEffectPresence` が `absent_or_not_observed` / `present_*` の scenario では、
+  メニュー分類に `scenarioGroup` は参照されない
+- 新規 module は、まず次の **role 別既定値**を適用する（全薬効領域共通）
+
+| role（scenarioType / 内容） | scenarioGroup 既定値 |
+|---|---|
+| treatment_start（開始・再開・他所開始） | `start_or_change` |
+| treatment_adjustment（増量・減量・回数増減・濃度増減・製剤変更） | `dose_change` |
+| side_effect（副作用なし確認・副作用あり のすべて） | `side_effect_monitoring` |
+| adherence（CP良好） | `adherence_good` |
+| adherence（CP不良） | `adherence_poor` |
+| treatment_end | `end_improved` / `end_insufficient_effect` / `end_ineffective`（RULES.md §12） |
+| lifestyle_guidance | `lifestyle_guidance` |
+| sickday | `sickday` |
+
+- 下表の症状別 group（`hypoglycemia` / `injection_site` 等）は既存 module の値として **preserve** する（retrofit しない）
+- **既存の症状別 group の再利用（deterministic reuse）**: side_effect scenario について、次の 3 条件をすべて満たす
+  既存 group がある場合は、role 別既定値ではなくその group を再利用する
+  1. current corpus（`data/modules/*.json`）の `scenarioGroup` に存在する
+  2. `lib/scenarioSelector.ts` の `GROUP_RULES` に同名の group が定義されている
+  3. bridge 上の当該 scenario の症状が、その group の意味（`GROUP_RULES` のキーワードが表す症状）と exact に一致する
+- 3 条件を満たす既存 group が無い side_effect scenario は、role 別既定値 `side_effect_monitoring` とする。
+  **新しい症状別 group は作らない**（作成は Owner 確認とする）
+- role 別既定値にも下表にも該当しない scenario は、推測で group 名を新設せず PENDING として停止する
+
+**既存実績表（DM / injection 系を含む参考表）:**
+
 | 内容 | scenarioGroup |
 |---|---|
 | 開始・再開・他所開始・自己中断後再開 | start_or_change |
@@ -104,12 +136,18 @@ bridge type= と具体的な id / title から判断する。
 | side_effect | 副作用あり継続 | side_effect_present |
 | side_effect | 副作用→減量 | dose_decrease |
 | side_effect | 副作用→中止 | stop |
+| side_effect | 副作用→他剤へ変更（`sideEffectPresence: present_change`） | stop |
 | adherence | 継続確認・経過確認 | adherence_check |
 | adherence | CP良好・継続 | continue |
 | adherence | 状態報告 | status_report |
 | lifestyle_guidance / sickday / followup | — | status_report |
 
 **intent 禁止値（ERROR）:** `"side_effect_absent"` / `"adherence_good"` / `"adherence_poor"` / `"continuation"`
+
+**`present_change → stop`（2026-09-24 追記・Owner Decision OD-2）:** intent は `sideEffectPresence` と 1:1 対応ではない
+（RULES.md §17）。副作用による他剤への変更は、当該薬剤から見れば使用終了であるため `stop` とする
+（「変更」であることは `sideEffectPresence: present_change` が担う）。新しい intent 値は追加しない。
+既存 module が `present_change` の scenario に設定している `side_effect_present` 等の値は preserve し、retrofit しない。
 
 #### sCompositionTemplate
 
@@ -133,7 +171,76 @@ bridge type= と具体的な id / title から判断する。
 
 副作用なし・CP良好・生活指導等、症状が観察されないシナリオでは `[]` とする。
 
+**責務分離（2026-09-24 追記・Owner Decision OD-3 / OD-4）:**
+
+| フィールド | 責務 |
+|---|---|
+| `symptomCodes` | 症状の identity（何の症状か）。臨床所見そのものを表す code |
+| `symptoms` | 症状の人間可読表記。S composition と整合する語を使う |
+| `sideEffectPresence` | 有無・重症度・結果として取った対応（継続 / 変更 / 減量 / 中止） |
+
+**side_effect scenario で観察された副作用症状の code 規則:**
+
+- `sideEffectPresence` が `present_*` の scenario は、bridge 上で観察された症状（臨床所見）を code で表す。
+  code は次の順で決める
+  1. 下の「承認済み語彙表」に、意味が exact に一致する code がある → その code を使う
+  2. current corpus（`data/modules/*.json`）の既存 finding code（state suffix・理由系ではない code）に、
+     意味が exact に一致する code がある → その code を再利用する
+     （例: bridge の観察所見が「下痢」で、既存の `diarrhea` と意味が一致する場合）。
+     一致判定は code 名・既存 module の `symptoms` 表記と bridge の症状語の意味で行い、
+     他 module の値を意味の確認なしにコピーしない。再利用した code は PN3A 完了報告に列挙する
+  3. いずれにも exact に一致する code が無い → **code を新設せず PENDING として停止し、Owner の個別承認を求める。**
+     承認後、本表に追記する（PN1 の P_CLOSING 対応表と同じ運用）
+- 状態・重症度・変更理由を code 名へ埋め込まない。**state suffix 付きの code（`*_none` / `*_mild` /
+  `*_moderate` / `*_led_to_*` 等）は新設せず、再利用の対象にもしない**（状態は `sideEffectPresence` が担う）
+- `sideEffectPresence: absent_or_not_observed` の scenario は、上記の既存規則どおり `[]` とする
+- 既存 module の stateful code（`irritation_mild` / `drowsiness_led_to_change` 等）および理由系 code
+  （`low_perceived_effect` / `other_med_adjustment` 等）は **preserve し、retrofit しない**
+
+**承認済み語彙表（observed side-effect symptom）:**
+
+| symptomCodes | symptoms | 承認 |
+|---|---|---|
+| `irritation` | `刺激感` | 2026-09-24 OD-3 / OD-4（`dry_eye_trpv1_antagonist_eye_drops` で承認。current HEAD では exact value として新規。rebuild 前の chemical mediator 点眼に使用実績があったが、これは past precedent であり current corpus の事実ではない） |
+| `blurred_vision` | `目のかすみ` | 2026-09-24 OD-3 / OD-4（同上。bridge A 欄の「霧視」は canonical の symptoms 表記として採用しない） |
+
+**module 別 Owner Decision 実績:**
+
+- `dry_eye_trpv1_antagonist_eye_drops`（OD-6・2026-09-24）: side_effect 以外の scenario（treatment_start /
+  treatment_adjustment / treatment_end / adherence / lifestyle_guidance）は `symptomCodes: []` / `symptoms: []` とする
+  （treatment_start の S にある適応症状「眼の乾燥症状」も code 化しない）。**これは当該 module の決定であり、
+  「非 side_effect scenario は必ず `[]`」という一般原則ではない**。非 side_effect scenario の一般規則は未確定であり、
+  `symptomCodes` の consumer / cross-domain semantics が確定した時点で別 Unit として再検討する
+
 #### mergePolicy.S.groupKey
+
+**runtime 上の意味と role 別既定値（2026-09-24 追記・PN3A contract repair / Owner Decision OD-1）:**
+
+- `mergePolicy.S.groupKey` が効くのは **同一 `composition.clinicalDomain` 内の S 合成のみ**である。
+  `lib/buildSoap.ts` は S 合成の前にブロックを `clinicalDomain` ごとに分け、groupKey はその内側で
+  reason の主語統合・body 結合・Rapid 第1文の重複排除に使われる。**`clinicalDomain` が異なる module 同士の S は、
+  groupKey の値にかかわらず統合されない**
+- 値は open vocabulary である（validator / PN7 が検査するのは `composition.groupKeyRegistry` への包含のみ）
+- 新規 module の groupKey は、role（scenarioType）ごとに次の順で決める。**domain 固有の groupKey（`{domain}_*` 等）を先行して新設しない**
+  1. 当該 `composition.clinicalDomain` を持つ既存 module が current corpus に無い（新しい clinicalDomain）→ 下表の **role 別既定値**
+  2. 同一 `clinicalDomain` の既存 module で、同じ scenarioType の scenario が使っている groupKey（precedent）が**一意** → その既存値を再利用する
+  3. 同一 `clinicalDomain` 内に precedent が複数ある、または下記「groupKey 設計原則」（投与経路・症状領域の相違等）により
+     既存 module との S 文統合の可否を一意に判断できない → **PENDING として停止し、Owner に確認する**
+
+| role | groupKey 既定値（新しい clinicalDomain の場合） |
+|---|---|
+| treatment_start | `treatment_start` |
+| treatment_adjustment | `treatment_adjustment` |
+| side_effect | `side_effect_monitoring` |
+| adherence | `adherence` |
+| treatment_end | `treatment_end` |
+| lifestyle_guidance | `lifestyle_guidance` |
+| sickday | `sickday` |
+
+- 既存 module の domain 固有 groupKey（`hyperglycemia_management` / `glycemic_control_adjustment` /
+  `ocular_allergy_symptom_management` / `allergy_dose_adjustment` 等）は **preserve し、retrofit しない**
+
+**既存実績表（DM / injection 系の実績値。参考表）:**
 
 | 内容 | groupKey |
 |---|---|
@@ -294,6 +401,9 @@ prompt 側に色の許容値リストを新設・複製しない（二重正本�
 
 `/tmp/soap-build/{moduleId}/phase3a_decisions.json` に保存する。
 
+（下の例の `scenarioGroup` / `groupKey` / `symptomCodes` の値は DM 系既存 module の実績値による形式例である。
+新規 module の値は上記「role 別既定値」「承認済み語彙表」に従って決める）
+
 ```json
 {
   "scenarioDecisions": {
@@ -417,5 +527,11 @@ PN3A 完了後、以下を報告する:
 - **CHECK**: map と inline の両方に requiredTags/scenarioRequiredTags 記載があった id（値が完全一致していた場合のみ。0件なら「該当なし」と明記）
 - **MUST_STOP**: map と inline の値が不一致だった id（発生した場合、値の相違点を明示し PN3A を完了させない）
 - scenarioColor を保持した scenario 数（bridge SCENARIO ヘッダーに `scenarioColor=` が定義されていた件数。内訳を値ごとに報告）
+- **PENDING**（発生した場合、PN3A を完了させない。0件なら「該当なし」と明記）:
+  - 承認済み語彙表にも current corpus の既存 finding code にも意味が exact に一致する code が無い、観察された副作用症状（scenario id と bridge 上の症状語）
+  - 同一 `clinicalDomain` 内に precedent が複数ある、または S 文統合の可否を一意に判断できない groupKey
+  - role 別既定値にも既存実績表にも該当しない scenarioGroup、および新しい症状別 group が必要と判断した scenario
+- 既存値を再利用した項目（0件なら「該当なし」と明記）: 再利用した既存 finding code（scenario id・code・一致根拠）、
+  同一 `clinicalDomain` の precedent から再利用した groupKey、3 条件で再利用した既存の症状別 scenarioGroup
 
 次工程: PN3B（Scenario Metadata Apply）

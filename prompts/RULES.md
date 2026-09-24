@@ -9,7 +9,7 @@ SOAPエンジン RULES.md — 横断ルール辞書 v1.2
 - **preservation 対象の完全リストは本ファイル §4 が正本**（保持対象と vNext 実効機構の対応表を含む）
 - **bridge→canonical JSON変換規則は、`prompts/vNext/PN1-Text-Extraction.md` / `prompts/vNext/PN2-Drug-Header.md` / `prompts/vNext/PN3A-Scenario-Classification.md` / `prompts/vNext/PN3B-Scenario-Metadata-Apply.md` / `prompts/vNext/PN4A-Structured-GroupA.md` / `prompts/vNext/PN4B-Structured-GroupB.md` / `prompts/vNext/PN5-Non-Scenario.md` / 本ファイル §5 に工程別に分担して定義される**
 
-最終更新: 2026-09-24（DP-22: §4 Reference（addon）行・§20・§25 へ `P_ADDON_INLINE` / `scenarios[].addonInsertions` を反映。2026-09-21: §4 へ `drug.drugSpecificTags`〔Drug header search metadata〕を新規登録。2026-09-20: §4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
+最終更新: 2026-09-24（PN3A contract repair: §17 へ intent と sideEffectPresence が 1:1 対応ではない旨と `present_change → stop` を追記。新しい intent 値は追加していない。同日先行: DP-22: §4 Reference（addon）行・§20・§25 へ `P_ADDON_INLINE` / `scenarios[].addonInsertions` を反映。2026-09-21: §4 へ `drug.drugSpecificTags`〔Drug header search metadata〕を新規登録。2026-09-20: §4 へ `drug.drugClass` を新規登録し、既に運用されていた `display.adjustmentExpression` / `display.menuGroupLabels` の未登録を是正）
 
 ---
 
@@ -488,6 +488,13 @@ TypeScript 型上は optional でも、世代差として欠落は ERROR。
 | treatment_end 系 | `treatment_end` / `stop` |
 
 **intent 禁止値（ERROR）:** `side_effect_absent` / `adherence_good` / `adherence_poor`
+
+**intent と sideEffectPresence の関係（2026-09-24 追記）:** 両者は 1:1 対応ではない。上表の intent 有効値は
+既存 module 系統の実績値として確立したものであり、`sideEffectPresence` の各値に専用の intent があるわけではない。
+`sideEffectPresence: present_change`（副作用→変更）の scenario は、新しい intent 値を設けず `stop` とする
+（当該薬剤から見れば使用終了。変更であることは `sideEffectPresence` が担う。対応表の正本は
+`prompts/vNext/PN3A-Scenario-Classification.md`「sCompositionIntent」）。既存 module の `present_change` scenario に
+設定済みの値（`side_effect_present` 等）は preserve し、retrofit しない。
 
 **treatment_start 系 intent 細分（必須）:**
 - id が initial / new_addition 系 → `intent: new_addition`

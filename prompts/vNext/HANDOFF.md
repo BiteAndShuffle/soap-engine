@@ -1,7 +1,19 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-23（Unit「S3-3 sMergePolicy TypeScript requiredness parity」:
+最終更新: 2026-09-24（Unit「PN3A contract repair」: アバレプト（`dry_eye_trpv1_antagonist_eye_drops`）の
+Sonnet 単独 baseline run が PN3A で STOP した原因（DM 実績値の表が閉じた語彙に見え、groupKey が同一 `clinicalDomain`
+内でのみ効くこと・副作用 scenario のメニュー分類 SSOT が `sideEffectPresence` であることが PN3A に書かれていなかった）を
+docs のみで修正した。`prompts/vNext/PN3A-Scenario-Classification.md` へ scenarioGroup / groupKey の **role 別既定値**と
+既存値の deterministic reuse 規則（groupKey: 同一 clinicalDomain・同一 role の precedent が一意なら再利用／
+症状別 scenarioGroup: corpus 存在・`GROUP_RULES` 定義・意味の exact 一致の 3 条件で再利用／symptomCodes: 意味が exact に一致する
+既存 finding code を再利用）、`present_change → stop`、symptomCodes / symptoms / sideEffectPresence の責務分離と
+**承認済み語彙表**（`irritation` / 刺激感、`blurred_vision` / 目のかすみ）、module 別 Owner Decision 実績
+（アバレプト非 side_effect scenario は `[]`。一般原則ではない）、PENDING 停止条件を追記。`prompts/RULES.md` §17 へ intent と sideEffectPresence が 1:1 対応ではない旨を追記
+（新 intent 値なし）。Owner Decision OD-1〜OD-6（2026-09-24）。**既存 module の値は preserve・retrofit なし**、
+canonical / bridge / validator / types / tests / PN2 / JSON_STANDARD / VALIDATOR_STANDARD は無変更。
+PN2 の文言 2 件（composition fallback が field 単位であること・regulatory/topical 固定値の「注射薬全般」）は別 Unit。
+先行: 2026-09-23 Unit「S3-3 sMergePolicy TypeScript requiredness parity」:
 `lib/types.ts` の `composition.sMergePolicy` を **optional → required**（`?` を外す 1 行のみ。subfields の型・並び・
 JSDoc は無変更、**`composition?:` 自体も無変更**）。**目的は static contract parity** であり runtime validation の
 強化ではない（canonical 欠落の実効 guard は S3-2 の validator）。clean scratch で **compile error 0**、harness validity も
@@ -530,12 +542,15 @@ bridge 未記載の場合、`composition.nodeKey`（= `display.nodeKey` フォ�
 
 各シナリオに以下を決定します:
 - `scenarioType`: bridge の `type=` フィールドと対応（treatment_start / treatment_adjustment / side_effect / adherence / treatment_end / lifestyle_guidance / sickday / followup）
-- `scenarioGroup`: 内容に基づいた分類  
+- `scenarioGroup`: 内容に基づいた分類（新規 module は PN3A の role 別既定値。side_effect は `side_effect_monitoring`）  
   **treatment_end 系の混同禁止**: `end_improved` / `end_insufficient_effect` / `end_ineffective` は各々その値を設定する。`"treatment_end"` は groupKey 専用であり scenarioGroup には使用しない（RULES.md §12）。
 - `situationFilter`: `["general"]` または `["sickday"]`
 - `sideEffectPresence`: side_effect 系シナリオのみ（absent_or_not_observed / present_mild 等）
 - `sCompositionIntent` / `sCompositionTemplate` / `symptomCodes` / `symptoms`
-- `groupKey`（semantic merge 用）
+  （symptomCodes は臨床所見の code。承認済み語彙表 → current corpus の意味が exact に一致する既存 finding code の順で使い、
+  どちらにも無い副作用症状は PENDING で停止）
+- `groupKey`（semantic merge 用。同一 `clinicalDomain` 内でのみ効く。新しい clinicalDomain は role 別既定値、
+  同一 clinicalDomain・同一 role の precedent が一意ならその値を再利用、複数または統合可否が一意に判断できない場合は PENDING）
 - `thirdPanelSPlacement`（injection module の特定シナリオ）
 
 各 ADDON の `group` / `uiVariant` / `uiGroup` / `requiredTags` も PN3A で確定させます
