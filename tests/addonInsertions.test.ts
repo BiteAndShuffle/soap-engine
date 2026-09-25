@@ -146,19 +146,35 @@ function legacyNodeFields(scenario: Scenario, mod: ModuleData, addonIds: string[
   return resolveDrugSubject(r, drugName)
 }
 
+/** bridge に P_ADDON_INLINE を持つ唯一の canonical（dry_eye_trpv1_antagonist_eye_drops）の inline scenario */
+const AVAREPT_MODULE_ID = 'dry_eye_trpv1_antagonist_eye_drops'
+const AVAREPT_INLINE_SCENARIOS = [
+  'initial',
+  'restart',
+  'external_start',
+  'se_blurred_vision_none',
+  'se_temperature_sensation_change_none',
+  'se_blurred_vision_mild_continue',
+  'se_frequency_reduced_due_to_blurred_vision',
+  'se_strength_decreased_due_to_blurred_vision',
+]
+
 describe('既存 module non-regression（addonInsertions absent は従来経路）', () => {
-  test('現行 canonical の全 scenario は addonInsertions を持たない（bridge に P_ADDON_INLINE がない）', () => {
+  test('addonInsertions を持つ canonical scenario は bridge に P_ADDON_INLINE がある Avarept の 8 件のみ', () => {
+    const withInsertions: string[] = []
     for (const mod of ALL_MODULES) {
       for (const sc of mod.scenarios) {
-        assert.equal(sc.addonInsertions, undefined, `${mod.moduleId}/${sc.id}`)
+        if (sc.addonInsertions !== undefined) withInsertions.push(`${mod.moduleId}/${sc.id}`)
       }
     }
+    assert.deepEqual(withInsertions, AVAREPT_INLINE_SCENARIOS.map(id => `${AVAREPT_MODULE_ID}/${id}`))
   })
 
-  test('全 module × 全 scenario × {未選択 / addonsRef.P 順 / 逆順} で従来出力と一致', () => {
+  test('全 module × addonInsertions を持たない全 scenario × {未選択 / addonsRef.P 順 / 逆順} で従来出力と一致', () => {
     let cases = 0
     for (const mod of ALL_MODULES) {
       for (const sc of mod.scenarios) {
+        if (sc.addonInsertions !== undefined) continue
         const ref = sc.addonsRef?.P ?? []
         for (const ids of [[], ref, [...ref].reverse()]) {
           const actual = buildNodeFields(sc, mod, ids, 'DRUG').fields
@@ -169,6 +185,41 @@ describe('既存 module non-regression（addonInsertions absent は従来経路�
     }
     assert.ok(cases > 0)
   })
+})
+
+// ─────────────────────────────────────────────────────────────
+// Avarept canonical: inline addon は afterLine の位置へ keys 順で入り、tail へ二重出力されず、
+// followup より前に出る（click 順に依存しない）。期待値は従来経路の出力（inline key を除いた選択）へ
+// 選択済み inline addon を original P 行境界で挿入したものとして独立に組み立てる。
+// ─────────────────────────────────────────────────────────────
+
+describe('Avarept canonical — inline addon 挿入（DP-22）', () => {
+  const mod = ALL_MODULES.find(m => m.moduleId === AVAREPT_MODULE_ID)!
+
+  test('Avarept module が registry に存在する', () => {
+    assert.ok(mod, `${AVAREPT_MODULE_ID} が registry に存在しない`)
+  })
+
+  for (const scenarioId of AVAREPT_INLINE_SCENARIOS) {
+    test(`${scenarioId}: {未選択 / addonsRef.P 順 / 逆順} で afterLine・keys 順どおり・tail 二重出力なし`, () => {
+      const sc = mod.scenarios.find(s => s.id === scenarioId)!
+      const blocks = sc.addonInsertions!
+      const inlineKeys = new Set(blocks.flatMap(b => b.keys))
+      const ref = sc.addonsRef?.P ?? []
+      for (const ids of [[], ref, [...ref].reverse()]) {
+        const expected = legacyNodeFields(sc, mod, ids.filter(k => !inlineKeys.has(k)), 'DRUG')
+        const lines = expected.P.split('\n')
+        for (const block of [...blocks].reverse()) {
+          const texts = block.keys
+            .filter(k => ids.includes(k))
+            .map(k => resolveDrugSubject({ S: '', O: '', A: '', P: pText(mod, k) }, 'DRUG').P)
+          lines.splice(block.afterLine, 0, ...texts)
+        }
+        expected.P = lines.join('\n')
+        assert.deepEqual(buildNodeFields(sc, mod, ids, 'DRUG').fields, expected, `${scenarioId} / ${JSON.stringify(ids)}`)
+      }
+    })
+  }
 })
 
 // ─────────────────────────────────────────────────────────────

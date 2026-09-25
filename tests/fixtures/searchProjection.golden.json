@@ -792,6 +792,14 @@
   ],
   "てんがん": [
     {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "アバレプト点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "dry_eye_trpv1_antagonist_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "matchedBrandName": null,
       "drugDisplayLabel": "アレジオン点眼液",
@@ -1158,6 +1166,14 @@
       "isGenericLabel": null
     },
     {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "matchedBrandName": "アバレプト点眼液",
+      "drugDisplayLabel": "アバレプト点眼液",
+      "uiLabel": "アバレプト点眼液（モツギバトレプ点眼液）",
+      "representativeTemplateId": "dry_eye_trpv1_antagonist_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
       "moduleId": "dm_insulin_rapid_analog",
       "matchedBrandName": "ノボラピッド",
       "drugDisplayLabel": "ノボラピッド",
@@ -1174,14 +1190,6 @@
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_sulfonylurea_oral",
-      "matchedBrandName": "アマリール",
-      "drugDisplayLabel": "アマリール",
-      "uiLabel": "アマリール（グリメピリド）",
-      "representativeTemplateId": "dm_sulfonylurea_oral.initial",
-      "isGenericLabel": null
-    },
-    {
       "moduleId": "dm_insulin_long_acting",
       "matchedBrandName": "アウィクリ",
       "drugDisplayLabel": "インスリンイコデク",
@@ -1190,19 +1198,19 @@
       "isGenericLabel": true
     },
     {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "matchedBrandName": "アバレプト点眼液",
+      "drugDisplayLabel": "モツギバトレプ点眼液",
+      "uiLabel": "モツギバトレプ点眼液",
+      "representativeTemplateId": "dry_eye_trpv1_antagonist_eye_drops.initial",
+      "isGenericLabel": true
+    },
+    {
       "moduleId": "dm_insulin_rapid_analog",
       "matchedBrandName": "ノボラピッド",
       "drugDisplayLabel": "インスリングルリジン",
       "uiLabel": "インスリングルリジン",
       "representativeTemplateId": "dm_insulin_rapid_analog.initial",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "dm_sulfonylurea_oral",
-      "matchedBrandName": "アマリール",
-      "drugDisplayLabel": "グリメピリド",
-      "uiLabel": "グリメピリド",
-      "representativeTemplateId": "dm_sulfonylurea_oral.initial",
       "isGenericLabel": true
     }
   ],

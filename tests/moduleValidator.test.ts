@@ -651,7 +651,7 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
   })
 
-  test('WARNING の総数が baseline（35 件）から変化していない', () => {
+  test('WARNING の総数が baseline（53 件）から変化していない', () => {
     // 2026-09: allergy_h1_antihistamine_eye_drops へ strength_decrease_low_perceived_effect
     // （scenarioRequiredTags: ["concentration_variant"]）を追加したことに伴い、
     // 同一クラスタの既存4件（strength_increase/decrease系）と同型の
@@ -676,12 +676,23 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     // 0 件となった。commonSearchTokens の値自体は変更していない。
     // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 12 / SCENARIO_REQUIRED_TAG_UNREACHABLE 19 /
     //       ADDON_SCOPE_VIOLATION 4 = 35。
+    //
+    // 2026-09（dry_eye_trpv1_antagonist_eye_drops registry 登録）: 35→53。
+    // アバレプト点眼液 module の登録により、同 module 由来の WARNING が 0→18 件
+    // （ADDON_REQUIRED_TAG_UNREACHABLE 7 / SCENARIO_REQUIRED_TAG_UNREACHABLE 11）純増した。
+    // 18 件はすべて template.reservedHandlingTags に宣言済みのタグ（concentration_variant /
+    // reduced_frequency_option / light_protection / cold_storage / cold_storage_before_opening /
+    // preservative_free / single_use_container / avoid_cold_storage）を要求する scenario / addon であり、
+    // 現行収載製品（handlingTags: suspension / avarept）では到達不能だが点眼共通シャーシとして
+    // 意図的に保持する capability である（ERROR ではなく WARNING）。他 module の内訳は不変。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 19 / SCENARIO_REQUIRED_TAG_UNREACHABLE 30 /
+    //       ADDON_SCOPE_VIOLATION 4 = 53。
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      35,
+      53,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })

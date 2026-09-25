@@ -47,6 +47,7 @@ import rawEpalrestatOral from './dm_epalrestat_oral.json'
 import rawSglt2Oral from './dm_sglt2_oral.json'
 import rawDpp4Sglt2CombinationOral from './dm_dpp4_sglt2_combination_oral.json'
 import rawCardiorenalSglt2Oral from './cardiorenal_sglt2_oral.json'
+import rawDryEyeTrpv1AntagonistEyeDrops from './dry_eye_trpv1_antagonist_eye_drops.json'
 
 export const ALL_MODULES: ModuleData[] = [
   rawSemaglutideOral as unknown as ModuleData,
@@ -84,4 +85,5 @@ export const ALL_MODULES: ModuleData[] = [
   rawSglt2Oral as unknown as ModuleData,
   rawDpp4Sglt2CombinationOral as unknown as ModuleData,
   rawCardiorenalSglt2Oral as unknown as ModuleData,
+  rawDryEyeTrpv1AntagonistEyeDrops as unknown as ModuleData,
 ]

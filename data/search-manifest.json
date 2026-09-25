@@ -1,8 +1,8 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "2fc304290d2d4fdba92c3ab99b448b0cf876614852ca8476799b2e086a51666a",
-  "moduleCount": 35,
-  "scenarioCount": 1070,
+  "sourceHash": "cb93bd4e61341ef707341ef8e2535287babd3bbe153c0e344edce111af7fc783",
+  "moduleCount": 36,
+  "scenarioCount": 1117,
   "modules": [
     {
       "moduleId": "dm_glp1ra_semaglutide_oral",
@@ -4151,6 +4151,94 @@
       "clinicalDomain": "cardiorenal",
       "displayTitle": "SGLT2阻害薬（内服）",
       "displaySubtitle": "SGLT2阻害薬（内服）"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "categoryPath": [
+        "ドライアイ",
+        "ドライアイ治療点眼薬",
+        "TRPV1拮抗薬",
+        "点眼"
+      ],
+      "brandNames": [
+        "アバレプト点眼液"
+      ],
+      "nameAliases": [
+        "あばれぷとてんがん",
+        "あばれぷと",
+        "もつぎばとれぷ"
+      ],
+      "drugClass": [
+        "TRPV1_ANTAGONIST_EYE_DROPS"
+      ],
+      "drugSpecificTags": [
+        "trpv1_antagonist",
+        "dry_eye",
+        "eye_drops",
+        "ophthalmic",
+        "external_use",
+        "storage_instruction",
+        "formulation_instruction",
+        "contact_lens_caution"
+      ],
+      "search": {
+        "exactAliases": [
+          "アバレプト点眼液",
+          "アバレプト",
+          "アバレプト懸濁性点眼液0.3%",
+          "ドライアイ治療点眼薬（TRPV1拮抗薬）",
+          "モツギバトレプ",
+          "モツギバトレプ点眼液"
+        ],
+        "nameAliases": [
+          "あばれぷとてんがん",
+          "あばれぷと",
+          "もつぎばとれぷ"
+        ],
+        "keywords": [
+          "ドライアイ",
+          "眼の乾燥",
+          "点眼"
+        ],
+        "formulationSearchTokens": [],
+        "priority": 5,
+        "matchPolicy": {
+          "preferExactAlias": true,
+          "allowPrefixMatch": true,
+          "suppressCrossModuleSuggestionsOnExactHit": true
+        },
+        "primaryDisplayName": "ドライアイ治療点眼薬（TRPV1拮抗薬）"
+      },
+      "brandCatalog": {
+        "アバレプト点眼液": {
+          "aliases": [
+            "あばれぷとてんがん",
+            "あばれぷと"
+          ],
+          "displayName": "アバレプト点眼液",
+          "displayGenericName": "モツギバトレプ点眼液",
+          "genericName": "モツギバトレプ",
+          "handlingTags": [
+            "suspension",
+            "avarept"
+          ]
+        }
+      },
+      "classKey": "trpv1_antagonist",
+      "nodeKey": "trpv1_antagonist_ophthalmic",
+      "clinicalDomain": "dry_eye",
+      "displayTitle": "ドライアイ治療点眼薬（TRPV1拮抗薬）",
+      "displaySubtitle": "ドライアイに伴う眼の不快症状に対する点眼治療",
+      "reservedHandlingTags": [
+        "cold_storage",
+        "cold_storage_before_opening",
+        "concentration_variant",
+        "reduced_frequency_option",
+        "light_protection",
+        "preservative_free",
+        "single_use_container",
+        "avoid_cold_storage"
+      ]
     }
   ],
   "scenarios": [
@@ -23004,6 +23092,830 @@
       "intentTags": [
         "sickday_guidance",
         "urgent_consult_advice"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.initial",
+      "id": "initial",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 初回",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "initial"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "new_addition"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.restart",
+      "id": "restart",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 再開",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "restart"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "restart"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.external_start",
+      "id": "external_start",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 他所開始",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "external_start"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "external_continuation"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.frequency_increase_low_perceived_effect",
+      "id": "frequency_increase_low_perceived_effect",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 回数増（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.strength_increase_low_perceived_effect",
+      "id": "strength_increase_low_perceived_effect",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度増（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.frequency_increase_due_to_other_med_adjustment",
+      "id": "frequency_increase_due_to_other_med_adjustment",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 回数増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.strength_increase_due_to_other_med_adjustment",
+      "id": "strength_increase_due_to_other_med_adjustment",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.frequency_decrease_improved",
+      "id": "frequency_decrease_improved",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 回数減（症状改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.strength_decrease_improved",
+      "id": "strength_decrease_improved",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度減（症状改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.frequency_decrease_low_perceived_effect",
+      "id": "frequency_decrease_low_perceived_effect",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 回数減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.strength_decrease_low_perceived_effect",
+      "id": "strength_decrease_low_perceived_effect",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.frequency_decrease_due_to_other_med_adjustment",
+      "id": "frequency_decrease_due_to_other_med_adjustment",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 回数減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.strength_decrease_due_to_other_med_adjustment",
+      "id": "strength_decrease_due_to_other_med_adjustment",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 濃度減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "id": "switch_to_sustained_formulation_reduced_frequency",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 持続型製剤へ変更（点眼回数減）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_blurred_vision_none",
+      "id": "se_blurred_vision_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_temperature_sensation_change_none",
+      "id": "se_temperature_sensation_change_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（温度感覚変化）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_irritation_none",
+      "id": "se_irritation_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_foreign_body_sensation_none",
+      "id": "se_foreign_body_sensation_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（異物感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_pruritus_none",
+      "id": "se_pruritus_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（掻痒感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_eye_redness_none",
+      "id": "se_eye_redness_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（充血）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_eye_discharge_none",
+      "id": "se_eye_discharge_none",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 副作用なし（目やに）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.cp_good",
+      "id": "cp_good",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） CP良好",
+      "scenarioGroup": "adherence_good",
+      "scenarioTags": [
+        "adherence",
+        "adherence_good",
+        "good"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "continue"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.cp_poor_missed_doses",
+      "id": "cp_poor_missed_doses",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） CP不良（使用忘れ）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.cp_poor_self_adjust",
+      "id": "cp_poor_self_adjust",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） CP不良（自己判断）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.cp_poor_visit_delay",
+      "id": "cp_poor_visit_delay",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） CP不良（受診遅延）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.end_improved",
+      "id": "end_improved",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 終了（改善）",
+      "scenarioGroup": "end_improved",
+      "scenarioTags": [
+        "treatment_end",
+        "improved"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.end_insufficient_effect",
+      "id": "end_insufficient_effect",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 終了（効果不十分）",
+      "scenarioGroup": "end_insufficient_effect",
+      "scenarioTags": [
+        "treatment_end",
+        "insufficient_effect"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.end_ineffective",
+      "id": "end_ineffective",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） 終了（無効）",
+      "scenarioGroup": "end_ineffective",
+      "scenarioTags": [
+        "treatment_end",
+        "ineffective"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_ocular_irritation_mild_continue",
+      "id": "se_ocular_irritation_mild_continue",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE継続（軽症 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "mild"
+      ],
+      "sideEffectPresence": "present_mild",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_blurred_vision_mild_continue",
+      "id": "se_blurred_vision_mild_continue",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE継続（軽症 霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "mild"
+      ],
+      "sideEffectPresence": "present_mild",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_ocular_irritation_moderate_consider_dr",
+      "id": "se_ocular_irritation_moderate_consider_dr",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE継続（中等度 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "moderate"
+      ],
+      "sideEffectPresence": "present_moderate",
+      "intentTags": [
+        "side_effect_attention",
+        "urgent_consult_advice"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_change_due_to_irritation",
+      "id": "se_change_due_to_irritation",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE変更（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "change"
+      ],
+      "sideEffectPresence": "present_change",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_change_due_to_blurred_vision",
+      "id": "se_change_due_to_blurred_vision",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE変更（霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "change"
+      ],
+      "sideEffectPresence": "present_change",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_frequency_reduced_due_to_irritation",
+      "id": "se_frequency_reduced_due_to_irritation",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE回数減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "dose_decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_frequency_reduced_due_to_blurred_vision",
+      "id": "se_frequency_reduced_due_to_blurred_vision",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE回数減（霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "dose_decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_strength_decreased_due_to_irritation",
+      "id": "se_strength_decreased_due_to_irritation",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE濃度減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "dose_decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_strength_decreased_due_to_blurred_vision",
+      "id": "se_strength_decreased_due_to_blurred_vision",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE濃度減（霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "dose_decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_stop_due_to_irritation",
+      "id": "se_stop_due_to_irritation",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE中止（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "stop"
+      ],
+      "sideEffectPresence": "present_stop",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.se_stop_due_to_blurred_vision",
+      "id": "se_stop_due_to_blurred_vision",
+      "title": "ドライアイ治療点眼薬（TRPV1拮抗薬） SE中止（霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "stop"
+      ],
+      "sideEffectPresence": "present_stop",
+      "intentTags": [
+        "side_effect_attention",
+        "followup_monitoring"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_tip_contamination",
+      "id": "lifestyle_guidance_tip_contamination",
+      "title": "点眼方法説明（容器先端の接触）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "tip_contamination"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_interval",
+      "id": "lifestyle_guidance_interval",
+      "title": "点眼方法説明（間隔不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "interval"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_after_opening_expiry",
+      "id": "lifestyle_guidance_after_opening_expiry",
+      "title": "点眼方法説明（開封後1ヶ月以上使用）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "after_opening_expiry"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_suspension_shake",
+      "id": "lifestyle_guidance_suspension_shake",
+      "title": "点眼方法説明（懸濁不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "suspension_shake"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_storage_upright_suspension",
+      "id": "lifestyle_guidance_storage_upright_suspension",
+      "title": "保管方法説明（懸濁性・先端上向き）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_upright_suspension"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_storage_light_protection",
+      "id": "lifestyle_guidance_storage_light_protection",
+      "title": "保管方法説明（遮光不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_light_protection"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_storage_cold",
+      "id": "lifestyle_guidance_storage_cold",
+      "title": "保管方法説明（冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_cold"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
+      "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_storage_cold_before_opening",
+      "id": "lifestyle_guidance_storage_cold_before_opening",
+      "title": "保管方法説明（未開封時のみ冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_cold_before_opening"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
       ],
       "sCompositionIntent": "status_report"
     }

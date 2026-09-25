@@ -161,6 +161,18 @@ const DRUG_SPECIFIC_ADDON: Record<string, { key: string; title: string }> = {
 const SPECIFIC_UI_GROUP = '薬剤固有介入'
 const SPECIFIC_UI_VARIANT = 'rightAccentAmber'
 
+/**
+ * dry_eye_trpv1_antagonist_eye_drops（アバレプト点眼液）固有の Amber ADDON（2026-09 registry 登録）。
+ * Human authored の bridge ADDON ヘッダーに uiGroup=薬剤固有介入 / uiVariant=rightAccentAmber が宣言され、
+ * Owner 凍結（FROZEN_FOR_PN1・285a761）済み。requiredTags は bridge Header の addonRequiredTags map
+ * （["avarept"]）が正本であり ADDON ヘッダー inline には記載しないため、inline requiredTags を前提とする
+ * ADMIN_SPECIFIC_ENTRIES 契約には含めず、許可リストにのみ追加する。本 2 件以外への Amber 展開は許可しない。
+ */
+const AVAREPT_SPECIFIC_AMBER_KEYS = [
+  'addon_avarept_blurred_vision_driving_caution',
+  'addon_avarept_temperature_sensation_burn_caution',
+]
+
 /** bridge の 【ADDON｜…｜id=<key>｜…】 ヘッダー属性を取り出す */
 function bridgeAddonHeader(moduleId: string, key: string): Record<string, string> | null {
   const txt = fs.readFileSync(path.resolve('./bridges', `${moduleId}.md`), 'utf-8')
@@ -214,6 +226,7 @@ describe('薬剤固有 ADDON の canonical 契約（Amber / 薬剤固有介入�
     const allowed = new Set([
       ...Object.values(DRUG_SPECIFIC_ADDON).map(v => v.key),
       ...ADMIN_SPECIFIC_ENTRIES.map(e => e.addon.key),
+      ...AVAREPT_SPECIFIC_AMBER_KEYS,
     ])
     for (const mod of ALL_MODULES) {
       for (const [key, item] of Object.entries(mod.addons?.items ?? {})) {
