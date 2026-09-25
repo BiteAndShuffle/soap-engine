@@ -21,11 +21,21 @@
 完成 JSON の構造整合性を全項目検証する。
 修正は行わない。報告のみ。
 
+**前提（2026-09 追記）:** PN7 は PN6R（`prompts/vNext/PN6R-Registry-Integration.md`）完了後に実行する。
+開始時に `grep "{moduleId}" data/modules/index.ts` で当該 module が registry に接続済みであることを確認し、
+未接続なら PN7 を開始せず PN6R へ戻る。
+
+**official audit と ad-hoc 確認の区別:** 本ファイルが機械比較を `scripts/audit-*.ts` へ委譲している項目
+（Y / AA / AI / AJ / AK / AL / AM 等）は、Repository の official audit script（`npm run audit` を構成する script）の
+実行結果で判定する。ad-hoc script は補助的な inspection / debugging には使ってよいが、**official PASS の代替にはしない**。
+official script が当該 module を検証できない場合（未登録・列挙対象外等）は、それ自体を pipeline gap として STOP し、
+ad-hoc script の結果で PASS としない。
+
 ---
 
 ## 入力
-- `data/modules/{moduleId}.json`（PN6 完成 JSON）
-- `/tmp/soap-build/{moduleId}/phase1_text_spine.json`（本文凍結照合用）
+- `data/modules/{moduleId}.json`（PN6 完成 JSON。PN6R で registry 接続済みであること）
+- `/tmp/soap-build/{moduleId}/phase1_text_spine.json`（本文凍結照合用。消失時は `prompts/vNext/HANDOFF.md` §2「/tmp/soap-build 運用」の復旧規則に従う）
 - `bridges/{moduleId}.md`（原稿。check Y の bridge P_ADDON 突合に使用）
 
 ### 大規模 JSON の読み込み手順（必須）

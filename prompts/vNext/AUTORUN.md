@@ -1,7 +1,7 @@
 # vNext 半自動実行モード（AUTORUN）
 
 作成日: 2026-06-27
-最終更新: 2026-07-26
+最終更新: 2026-09-25（PN6R Registry Integration を PN6 と PN7 の間へ追加・MUST_STOP R・/tmp 消失時の扱い）
 
 このファイルは PN1〜PN8 個別プロンプトの上位に位置する「実行制御ルール」です。
 各 PN プロンプトの詳細ルールはここに再掲しません。
@@ -35,6 +35,9 @@ PN1 → 承認 → PN2 → 承認 → **PN3A〜PN8 自動連続実行** → RELE
 | PN1 | 手動（承認必須） | 完了報告を出力して停止。ユーザーの承認を待つ。 |
 | PN2 | 手動（承認必須） | 完了報告を出力して停止。ユーザーの承認 + AUTORUN 開始指示を待つ。 |
 | PN3A〜PN8 | 自動連続実行 | 1 行報告のみ出力して即座に次 Phase を開始する。 |
+
+PN3A〜PN8 の実行順序は PN3A → PN3B → PN4A / PN4B / PN5 → PN6 → **PN6R** → PN7 → PN8 である
+（PN6R: `prompts/vNext/PN6R-Registry-Integration.md`。registry 接続・生成物再生成・baseline 分類。release ではない）。
 
 PN1 / PN2 を承認必須とする理由:
 - PN1: 本文凍結の起点。漏れは全 Phase 再実行になる。
@@ -72,7 +75,8 @@ PN3B完了: {N}シナリオ / {N}addon。PN4Aを開始します。
 PN4A完了: {N}件xStructured生成。禁止role非該当。PN4Bを開始します。
 PN4B完了: {N}件xStructured生成。禁止role非該当。PN5を開始します。
 PN5完了: risks/searchConfig/expressModes/persona生成。PN6を開始します。
-PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。addon.text/group標準変換適用済み。PN7を開始します。
+PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。addon.text/group標準変換適用済み。PN6Rを開始します。
+PN6R完了: registry接続済み（module数 {N}→{N}）/ 生成物再生成済み / npm test fail 分類 A {N}・B {N}・C 0。PN7を開始します。
 PN7完了: FAIL 0件 / CHECK 0件 / PENDING 0件 / verdict: PASS。PN8を開始します。
 PN8完了: tsc PASS / build PASS。RELEASE_OK。
 ```
@@ -116,6 +120,8 @@ PN7完了: FAIL 0件 / CHECK {N}件（{該当項目と内容}）/ PENDING {N}件
 | N | PN6 addon.group が標準変換表に従っていない（lifestyle_guidance 等が未変換） | PN6 |
 | P | PN7 に CHECK 項目が 1 件でも残る（Z の Addon責務一貫性等） | PN7（ユーザー承認待ち） |
 | Q | PN7 監査中、または data/modules/{moduleId}.json 内に未確定の `"PENDING"` 文字列が残存している | 該当 PENDING が発生した元 Phase |
+| R | PN6R の STOP 条件に該当（新規 hard error / 説明不能な baseline delta / behavioral expectation〔分類 C〕の変化 / unexpected cross-module change 等） | PN6R（Owner review 待ち） |
+| S | `/tmp/soap-build/{moduleId}/` の中間成果物が消失し、Repository SOT から決定論的に再構築できない（`prompts/vNext/HANDOFF.md` §2「/tmp/soap-build 運用」） | 消失した最初の Phase（ユーザー判断） |
 
 **条件 P の詳細:**
 CHECK は ERROR ではなく build 可能な状態だが、AUTORUN は CHECK を FAIL と同様に **PN8 進行のブロッカー**として扱う。
@@ -136,8 +142,8 @@ CHECK は ERROR ではなく build 可能な状態だが、AUTORUN は CHECK を
 値を推測で埋めて先へ進めてはならない。
 
 **条件記号の採番について（欠番注記）:**
-MUST_STOP 条件の記号は **A〜N / P / Q** である。**条件 O は欠番**であり、記号は再採番せず欠番を許容する。
-新規条件を追加する場合は、既存記号を再利用せず末尾（R 以降）へ追加すること。
+MUST_STOP 条件の記号は **A〜N / P〜S** である。**条件 O は欠番**であり、記号は再採番せず欠番を許容する。
+新規条件を追加する場合は、既存記号を再利用せず末尾（T 以降）へ追加すること。
 （同種の欠番注記の前例: `docs/DESIGN_PRINCIPLES.md`「DP-06 について（欠番注記）」/ `prompts/RULES.md`「19 について（欠番注記）」）
 
 **条件 G の詳細:**
@@ -177,10 +183,10 @@ PN8 で RELEASE_OK になった場合、Claude は以下の形式で終了宣言
 moduleId:         {moduleId}
 release:          RELEASE_OK
 final JSON:       data/modules/{moduleId}.json
-registry登録:     済み（data/modules/index.ts）
+registry登録:     済み（data/modules/index.ts・PN6R）
 tsc:              PASS
 build:            PASS
-/tmp キャッシュ:  /tmp/soap-build/{moduleId}/ — 破棄可能（bridge から再生成可能なビルドキャッシュ）
+/tmp キャッシュ:  /tmp/soap-build/{moduleId}/ — 揮発する中間成果物。消失時の再構築規則は HANDOFF §2「/tmp/soap-build 運用」
 
 次モジュールへ進む場合は PN1 から開始してください。
 ```

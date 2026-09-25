@@ -125,6 +125,7 @@ SOAPエンジン開発を継続します。
 | PN4開始 | prompts/vNext/PN4A-Structured-GroupA.md → prompts/vNext/PN4B-Structured-GroupB.md |
 | PN5開始 | prompts/vNext/PN5-Non-Scenario.md |
 | PN6開始 | prompts/vNext/PN6-Assembly.md |
+| PN6R開始 | prompts/vNext/PN6R-Registry-Integration.md |
 | PN7開始 | prompts/vNext/PN7-Cross-Reference-Audit.md |
 | PN8開始 | prompts/vNext/PN8-Build-Runtime-Release.md |
 | AUTORUN モードで進める場合（PN3A を開始する時点） | prompts/vNext/AUTORUN.md |

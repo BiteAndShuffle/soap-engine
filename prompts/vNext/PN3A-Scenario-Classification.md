@@ -265,21 +265,68 @@ bridge type= と具体的な id / title から判断する。
 
 #### intentTags
 
-以下から該当するものをすべて選択する（複数可）:
-- drug_effect_explanation
-- side_effect_attention
-- hypoglycemia_attention
-- injection_site_attention
-- dose_increase_explanation
-- dose_decrease_explanation
-- treatment_end_explanation
-- lifestyle_guidance
-- adherence_support
-- sickday_guidance
-- urgent_consult_advice
-- followup_monitoring
-- administration_instruction
-- concomitant_drug_attention
+**generic contract（2026-09-26・Owner Decision「intentTags Option 2: role defaults + content additions」）:**
+新規 module の intentTags は、下記の base-tag table（構造情報から一意）に content trigger（Bridge 本文の明示的記述）を
+加えて決定する。既存 module の値を precedent としてコピーしない・corpus の多数決で補完しない。
+**既存 module の値は preserve し、retrofit しない。**
+
+**allowed vocabulary（許可語彙・16 値）と generic 生成可否:**
+「許可語彙に含まれること」と「generic rule で自動生成してよいこと」は別である。
+
+| 区分 | tag | 扱い |
+|---|---|---|
+| **G: generic 生成** | `drug_effect_explanation` / `dose_increase_explanation` / `dose_decrease_explanation` / `side_effect_attention` / `adherence_support` / `treatment_end_explanation` / `lifestyle_guidance` / `sickday_guidance` | base-tag table から生成する（下表） |
+| **G: generic 生成** | `urgent_consult_advice` / `hypoglycemia_attention` / `gi_symptom_attention` / `pancreatitis_attention` / `concomitant_drug_attention` / `administration_instruction` | content trigger から生成する（下表。T1 / T8 は base 区分の `side_effect_attention` / `sickday_guidance` を追加する） |
+| **E: 根拠がある場合のみ** | `injection_site_attention` | generic rule では生成しない。Bridge 本文または明示的 Bridge metadata に当該 caution の根拠がある場合のみ付与する |
+| **C: 互換のみ** | `followup_monitoring` | 既存 module 互換のため許可語彙に残すが、新規 module の generic derivation では**生成しない**（runtime consumer がなく、follow-up は全 scenario の `followupRef` / P_CLOSING が既に表す） |
+
+- runtime（`lib/personaGuard.ts` の importance 判定等）が読む intentTag は許可語彙から欠落させない
+  （`gi_symptom_attention` / `pancreatitis_attention` は 2026-09-26 に追加）
+- 上記以外の corpus 上の tag（`drowsiness_attention` / `edema_attention` 等）は許可語彙へ自動追加しない。
+  将来の Bridge で必要になり、許可語彙に対応する tag が無い場合は **PENDING / Owner Decision** とする
+
+**base-tag table（`scenarioType` / `scenarioGroup` / `sideEffectPresence` / `sComposition.intent` から一意に決める）:**
+
+| role 条件 | base intentTags |
+|---|---|
+| `treatment_start`（initial / restart / external のいずれも） | `drug_effect_explanation` |
+| `treatment_adjustment` かつ intent = `dose_increase` | `dose_increase_explanation` |
+| `treatment_adjustment` かつ intent = `dose_decrease` | `dose_decrease_explanation` |
+| `treatment_adjustment` かつ上記以外の intent | PENDING |
+| `side_effect` かつ sideEffectPresence = `absent_or_not_observed` / `present_mild` / `present_moderate` / `present_change` / `present_stop` | `side_effect_attention` |
+| `side_effect` かつ sideEffectPresence = `present_dose_decrease` | `side_effect_attention`, `dose_decrease_explanation` |
+| `adherence` かつ scenarioGroup = `adherence_good` / `adherence_poor` | `adherence_support` |
+| `treatment_end`（`end_improved` / `end_insufficient_effect` / `end_ineffective`） | `treatment_end_explanation` |
+| `lifestyle_guidance` | `lifestyle_guidance` |
+| `sickday` | `sickday_guidance` |
+| `followup`（`injection_technique` 等）／ `usage`（`as_needed`） | **PENDING**（generic contract 未確定・deferred） |
+| 上記いずれにも該当しない | PENDING |
+
+- `side_effect` の `present_change` / `present_stop` に `treatment_end_explanation` を base として付与しない
+  （当該薬剤の中止・変更は treatment_end scenario の semantic role と同一ではない）
+
+**content trigger（当該 scenario の P セクションに明示的な記述がある場合のみ追加）:**
+
+判定対象は当該 scenario の P 本文（`{{drug_subject}}` 置換後）のみとする。P_CLOSING・S・A・addon 本文は対象外。
+**role 本来の内容（lifestyle scenario の使用・保管指導、sickday scenario のシックデイ指導、dose change scenario の用量説明等）は
+trigger にしない。**
+
+| # | Bridge P 上の明示的条件 | 追加する tag | 曖昧時 |
+|---|---|---|---|
+| T1 | `side_effect` 以外の scenario で、当該薬剤の使用により副作用・望ましくない変化が起こり得ることを述べる文 | `side_effect_attention` | 疾患自体の症状か副作用か判断できない → PENDING |
+| T2 | 明示的な **urgent** 受診指示（`すぐに` / `速やかに` / `直ちに` / `救急` / `受診してください` 等） | `urgent_consult_advice` | `ご相談ください` / `処方医へご相談ください` 単独は **non-urgent**（付与しない）。urgent 語と「相談」の組合せ等、判断できない → PENDING |
+| T3 | 低血糖への明示的な注意 | `hypoglycemia_attention` | — |
+| T4 | 副作用としての消化器症状（悪心・吐き気・嘔吐・下痢・便秘・腹部膨満）への明示的な注意 | `gi_symptom_attention` | 列挙外の症状、または疾患自体の症状 → PENDING |
+| T5 | 膵炎、または副作用としての背中に響く強い腹痛への明示的な注意 | `pancreatitis_attention` | 膵炎の文脈を伴わない腹痛のみ → PENDING |
+| T6 | 他剤との併用に関する明示的な注意（例: 「他の〜薬と併用している場合は」） | `concomitant_drug_attention` | S の変更理由（他剤との調整）として言及されるだけの場合は付与しない |
+| T7 | lifestyle_guidance / followup 以外の scenario で、使用方法（タイミング・手技・順序）の明示的な指示 | `administration_instruction` | 「継続して使用することが大切です」等の継続の励行は付与しない。指示か励行か判断できない → PENDING |
+| T8 | sickday 以外の scenario で、シックデイ時の明示的な指示 | `sickday_guidance` | — |
+
+- 薬剤固有の caution（区分 E、または許可語彙に対応 tag が無いもの）は、Bridge 本文または明示的 Bridge metadata に根拠がある場合のみ扱う。
+  対応 tag が許可語彙に無い場合は PENDING / Owner Decision
+- **配列順**: base tag（表の順）→ trigger tag（T1〜T8 の順）。重複は 1 回のみ
+- **rule で一意に決まらない場合は PENDING / Owner Decision とし、既存 module の値・corpus の多数決で補完しない**
+- 下記「module 別 Owner Decision 実績」に記録された module はその記録値を正本とする（generic default へ昇格させない）
 
 **module 別 Owner Decision 実績（intentTags）:**
 
@@ -441,8 +488,8 @@ prompt 側に色の許容値リストを新設・複製しない（二重正本�
 
 `/tmp/soap-build/{moduleId}/phase3a_decisions.json` に保存する。
 
-（下の例の `scenarioGroup` / `groupKey` / `symptomCodes` の値は DM 系既存 module の実績値による形式例である。
-新規 module の値は上記「role 別既定値」「承認済み語彙表」に従って決める）
+（下の例の `scenarioGroup` / `groupKey` / `symptomCodes` / `intentTags` の値は DM 系既存 module の実績値による形式例である。
+新規 module の値は上記「role 別既定値」「承認済み語彙表」「intentTags の generic contract」に従って決める）
 
 ```json
 {
@@ -571,6 +618,7 @@ PN3A 完了後、以下を報告する:
   - 承認済み語彙表にも current corpus の既存 finding code にも意味が exact に一致する code が無い、観察された副作用症状（scenario id と bridge 上の症状語）
   - 同一 `clinicalDomain` 内に precedent が複数ある、または S 文統合の可否を一意に判断できない groupKey
   - role 別既定値にも既存実績表にも該当しない scenarioGroup、および新しい症状別 group が必要と判断した scenario
+  - intentTags が base-tag table / content trigger で一意に決まらない scenario（PENDING となる role・判断できない trigger・許可語彙に対応 tag が無い caution）
 - 既存値を再利用した項目（0件なら「該当なし」と明記）: 再利用した既存 finding code（scenario id・code・一致根拠）、
   同一 `clinicalDomain` の precedent から再利用した groupKey、3 条件で再利用した既存の症状別 scenarioGroup
 

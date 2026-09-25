@@ -41,17 +41,14 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 新規モジュールを 1 件追加したときは、次の順序で機械的に検証できる。
 
 ```
-canonical JSON を data/modules/ へ追加
+canonical JSON を data/modules/ へ追加（vNext: PN6）
   ↓
-data/modules/index.ts へ登録（登録漏れは npm test の tests/moduleRegistry.test.ts が検出）
+data/modules/index.ts へ登録（vNext: PN6R。登録漏れは npm test の tests/moduleRegistry.test.ts が検出）
   ↓
-npm run audit
-  ├ ADDON bridge→JSON→UI chain
-  ├ Alias fields bridge⇔JSON
-  ├ Generic name reachability          （Q-S1: module への到達性）
-  ├ Brand resolution safety            （Q-S2: brand/generic 解決の安全性）
-  ├ adjustmentExpression bridge⇔canonical 保持一致
-  └ menuGroupLabels bridge⇔canonical 保持一致
+生成物の再生成（vNext: PN6R。例: npm run generate:search-manifest）と、npm test FAIL の
+A（生成物）/ B（corpus 前提）/ C（behavioral・Owner review 必須）分類（prompts/vNext/PN6R-Registry-Integration.md）
+  ↓
+npm run audit（構成 script とその数は package.json の audit script が正本。責務境界は docs/VALIDATOR_STANDARD.md §2-A）
         FAIL  → exit 1。module 追加不可。JSON を修正して再実行する
         CHECK → exit 0 だが人間レビューが必要（generic 選択時に gate 対象 ADDON / scenario が減る）
   ↓

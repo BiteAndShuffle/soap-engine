@@ -375,9 +375,10 @@ prompts/vNext/PN4A-Structured-GroupA.md       #
 prompts/vNext/PN4B-Structured-GroupB.md       #
 prompts/vNext/PN5-Non-Scenario.md             #
 prompts/vNext/PN6-Assembly.md                 #
+prompts/vNext/PN6R-Registry-Integration.md    # （registry 接続。PN6 と PN7 の間）
 prompts/vNext/PN7-Cross-Reference-Audit.md    #
 prompts/vNext/PN8-Build-Runtime-Release.md    # （PN1〜PN8 の実行プロンプト正本）
-/tmp/soap-build/{moduleId}/                   # vNext 中間成果物（セッション固定パス）
+/tmp/soap-build/{moduleId}/                   # vNext 中間成果物（固定パス・揮発。消失時は HANDOFF §2 の復旧規則）
 ```
 
 **旧体系パス（過去の作業記録を参照する場合のみ・新規作業では使用しない）**

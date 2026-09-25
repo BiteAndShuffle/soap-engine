@@ -16,6 +16,19 @@ bridge 本文を JSON に保存する唯一の工程。
 
 bridge.md の SCENARIOS_START ～ SCENARIOS_END セクション
 
+**section marker の位置固定（2026-09 追記）:** section の境界は、**行全体が marker と一致する独立した marker 行のみ**で判定する。
+現行 bridge 36 件の marker 行はいずれも次の形式である（`=` は前後 7 個）。
+
+```
+=======SCENARIOS_START=======
+=======SCENARIOS_END=======
+```
+
+- 行単位で照合する（意味として `^=======SCENARIOS_START=======$` / `^=======SCENARIOS_END=======$`。行末の空白は除いて比較する）
+- bridge header の説明文・設定値（例: `start: "=======SCENARIOS_START======="`）・コメント行に引用された文字列にはマッチさせない。
+  ファイル先頭からの単純な文字列検索（`indexOf` 等）で位置を決めない
+- START 行・END 行はそれぞれ**ちょうど 1 行**であり、START が END より前にあること。0 行・複数行・順序逆転は ERROR として停止する
+
 ---
 
 ## 責務
@@ -195,8 +208,9 @@ bridge の editingRules に従い、本文中の薬剤名・薬効分類名を `
 
 `/tmp/soap-build/{moduleId}/phase1_text_spine.json` に保存する。
 
-> **パスについて**: `/tmp/soap-build/{moduleId}/` はセッションをまたいで有効な固定一時ディレクトリ。
-> PN1〜PN8 の全成果物をここに保存することで、セッション再起動・新規チャットへの移行後も継続実行できる。
+> **パスについて**: `/tmp/soap-build/{moduleId}/` は PN1〜PN7 の中間成果物を置く固定パスである（セッション UUID に依存しない）。
+> ただし `/tmp` は OS の再起動・一時領域の掃除で**消失し得る揮発領域**であり、セッションをまたいだ存続は保証されない。
+> 消失を検出した場合の扱いは `prompts/vNext/HANDOFF.md` §2「/tmp/soap-build 運用」の復旧規則に従う。
 > ディレクトリが存在しない場合は `mkdir -p /tmp/soap-build/{moduleId}` で作成してから Write する。
 
 ```json

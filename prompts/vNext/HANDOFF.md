@@ -1,7 +1,19 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-25（Unit「Avarept canonical finalization — contract write」: アバレプト
+最終更新: 2026-09-25（Unit「vNext pipeline repair（Avarept post-registration findings）」: **docs / prompts のみ**。
+Avarept で再現した pipeline gap を最小修正した。① PN6 と PN7 の間に **PN6R Registry Integration**
+（`prompts/vNext/PN6R-Registry-Integration.md`）を新設し、registry 登録・生成物再生成・`npm test` FAIL の
+A（deterministic generated）/ B（deterministic corpus expectation）/ C（behavioral・Owner review 必須）分類と STOP 条件を定義
+（PN6 / PN7 / PN8 / AUTORUN〔MUST_STOP R / S〕/ STARTUP_PROMPT / IMPLEMENTATION_CHECKLIST / DEVELOPMENT_STANDARD §4 を追随）。
+PN7 は委譲項目を official audit script で判定し ad-hoc script を official PASS の代替にしない。PN8 へ状態の区別
+（canonical generated〜release ready。build PASS 単独では release-ready にならない）を追加。② §2 へ `/tmp/soap-build`
+中間成果物消失時の復旧規則（決定論的再構築・phase contract による同等性確認・byte hash 一致は必須にしない・STOP 条件）。
+③ PN7 項目数・`npm run audit` script 数の複製記載を正本（PN7 採番注記・`package.json`）参照へ置換。
+④ PN1 に SCENARIOS marker の行単位照合規則。`NOT_APPLICABLE` / `NOT_CHECKED` の区別は既存 script / test / RULES §3 と
+衝突するため変更していない。⑤ PN3A へ intentTags generic contract（2026-09-26 Owner Decision Option 2）: 許可語彙 16 値を G〔generic 生成〕/ E〔根拠がある場合のみ〕/ C〔互換のみ・`followup_monitoring`〕に区分、`gi_symptom_attention` / `pancreatitis_attention` を追加、構造情報からの base-tag table と Bridge P の明示的記述による content trigger T1〜T8、一意に決まらない場合は PENDING。followup / usage（as_needed）は deferred。Avarept OD-C2 / C4 / C5 は module-specific record のまま・既存 module の retrofit なし。
+bridge / canonical / registry / manifest / lib / app / tests は無変更。
+先行: 2026-09-25（Unit「Avarept canonical finalization — contract write」: アバレプト
 （`dry_eye_trpv1_antagonist_eye_drops`）canonical 監査後の Owner Decision OD-C1〜C8 を living contract へ記録し、
 canonical を Repository だけから再現可能にした（**docs のみ・canonical 再生成は未実施**）。
 generic contract: `prompts/RULES.md` §16 / §3、`prompts/vNext/PN7-Cross-Reference-Audit.md` Check I、`docs/JSON_STANDARD.md`
@@ -430,8 +442,9 @@ PN3A は **考えるだけ** です。JSON を書きません。
 
 ## /tmp/soap-build 運用
 
-スクラッチパスを `/tmp/soap-build/{moduleId}/` に固定することで、セッションをまたいで継続実行できます。  
-セッション UUID に依存するパスは使用しません。
+スクラッチパスを `/tmp/soap-build/{moduleId}/` に固定します（セッション UUID に依存するパスは使用しません）。  
+**ただし `/tmp` は OS 再起動・一時領域の掃除で消失し得る揮発領域であり、セッションをまたいだ存続は保証されません**
+（2026-09 Avarept で PN1〜PN7 の成果物が 2 回消失した実例あり）。消失時は下記「中間成果物消失時の復旧規則」に従います。
 
 各フェーズの成果物は以下のパスに保存されます（`{moduleId}` を実際の値に置換）:
 
@@ -448,6 +461,34 @@ PN3A は **考えるだけ** です。JSON を書きません。
 ↓ 最終出力（プロジェクト内）
 data/modules/{moduleId}.json
 ```
+
+### 中間成果物消失時の復旧規則（2026-09 追記）
+
+Phase 開始時に、その Phase が入力とする `/tmp/soap-build/{moduleId}/` の成果物が存在しない場合:
+
+1. **消失を明示する**（どの成果物が無いかを報告する。黙って作り直さない）
+2. **Repository SOT の確認**: `bridges/{moduleId}.md` の STATUS が `FROZEN_FOR_PN1` / `JSON_COMPLETE` であり、
+   復旧に必要な判断根拠（living PN contract・module 別 Owner Decision 実績）が committed Repository に存在することを確認する
+3. **最初に欠けている Phase から決定論的に再構築する**（PN1 → PN2 → … の順。後段だけを作り直さない）
+4. **current Repository inputs から再検証する**。同等性は各 Phase contract の検証項目で確認する:
+   - PN1: scenario / addon 件数・ID・本文の逆置換一致・addonsRef / addonInsertions・followupRef 内訳・PENDING / ERROR 0
+   - PN2: `drug.nameAliases` ⇔ `drug.search.nameAliases`・aliases ⇔ normalizedAliases・aliasToBrand 網羅・
+     `drugResolution.brandToTags` ⇔ brandCatalog keys・`drug.drugClass` / `drug.drugSpecificTags` の bridge 逐語保持 等
+   - PN3A〜PN6: 各 PN の決定表・contract から同じ値へ到達すること。既存 canonical がある場合は、変更を意図しないフィールドとの一致
+5. **reconstructed artifact であることを報告する**（再構築した Phase・検証結果）
+6. **臨床・内容の判断をやり直さない**。判断値は living contract の記録から再現する
+
+**byte hash の一致は必須条件にしない**（pretty-print・生成 metadata 等で byte 差が生じ得るため）。
+ただし、当該 Phase contract が byte 再現性を明示的に要求している場合はそれに従う。
+
+**続行 / STOP の区別:**
+
+| 状況 | 扱い |
+|---|---|
+| Repository SOT から決定論的に再構築でき、上記 4 の検証が一致する | 再構築して続行してよい（報告必須）。PN1 / PN2 は、過去に承認された結果（または committed canonical の凍結フィールド）と一致することを確認できる場合に限り再承認なしで続行できる。比較対象が無い初回実行は通常どおり承認を得る |
+| bridge が凍結状態でない・bridge が変更されている・必要な Repository SOT が無い | STOP |
+| 過去の Owner Decision に依存する成果物で、その Decision が living contract に保存されていない | STOP（過去チャットの内容を根拠に復元しない） |
+| 再構築結果が検証項目と一致しない | STOP |
 
 ---
 
@@ -466,7 +507,9 @@ PN4A ‖ PN4B ‖ PN5（3者は並列可 — すべて PN3B 完了後に開始�
    ↓    ↓    ↓
     PN6（PN4A + PN4B + PN5 すべて完了後）
      ↓
-    PN7（監査のみ）
+    PN6R（registry 接続・生成物再生成・baseline 分類。release ではない）
+     ↓
+    PN7（監査のみ。委譲項目は official audit script で判定）
      ↓
     PN8（tsc / build / release）
 ```
@@ -702,22 +745,34 @@ xStructured 突き合わせ確認: PN4A の id 一覧 + PN4B の id 一覧の和
 
 ---
 
+### PN6R — Registry Integration
+
+**プロンプトファイル**: `prompts/vNext/PN6R-Registry-Integration.md`  
+**入力**: `data/modules/{moduleId}.json` + `data/modules/index.ts`  
+**出力**: `data/modules/index.ts`（registry 登録）/ 再生成した生成物（`data/search-manifest.json` 等）/ 分類済みの baseline 更新
+
+PN6 の canonical を official validation path（registry 経由の validator / audit / test）へ接続します。**release ではありません。**
+`npm test` の FAIL は A（deterministic generated artifact）/ B（deterministic corpus expectation）/ C（behavioral expectation）に
+分類し、C は Owner review 後のみ更新します。canonical・bridge・runtime logic・search ranking logic は変更しません。
+
+---
+
 ### PN7 — Cross Reference Audit
 
 **プロンプトファイル**: `prompts/vNext/PN7-Cross-Reference-Audit.md`  
-**入力**: `data/modules/{moduleId}.json` + `/tmp/soap-build/{moduleId}/phase1_text_spine.json`  
+**入力**: `data/modules/{moduleId}.json`（PN6R で registry 接続済み）+ `/tmp/soap-build/{moduleId}/phase1_text_spine.json`  
 **出力**: `/tmp/soap-build/{moduleId}/audit_report.json`
 
-修正は行いません。32 項目を全確認します（A〜AH。**Q / X は欠番、項目 O は末尾に配置**）。
-AC〜AG は uiGroup / requiredTags / scenarioRequiredTags / template.handlingTags / reservedHandlingTags、
-AH は scenarioColor の bridge ⇔ canonical parity 監査（いずれも 2026-08 追加）。
+修正は行いません。`PN7-Cross-Reference-Audit.md` に定義された**全監査項目**を確認します
+（項目数・欠番・配置の正本は同ファイル「監査項目の採番について」。本ファイルには項目数を複製しません）。
+機械比較を `scripts/audit-*.ts` へ委譲している項目は official script の結果で判定し、ad-hoc script を official PASS の代替にしません。
 
 **大規模 JSON の Read 手順**:
 1. `wc -l data/modules/{moduleId}.json` で行数確認
 2. 2,000 行超なら `offset=0, limit=2000` → `offset=2000, limit=2000` ... と分割 Read
 3. 末尾（addons / expressModes / searchConfig）の確認を省略しない
 
-32 項目すべて PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
+全項目 PASS → `audit_report.json` に `verdict: "PASS"` を書いて PN8 へ。  
 FAIL がある → 該当 Phase に差し戻し。PN8 は開始しない。
 
 ---
@@ -729,12 +784,15 @@ FAIL がある → 該当 Phase に差し戻し。PN8 は開始しない。
 
 以下の順序で実行します:
 
-1. `grep "{moduleId}" data/modules/index.ts` — registry 登録確認（未登録は RELEASE_HOLD）
+1. `grep "{moduleId}" data/modules/index.ts` — registry 登録確認（未登録は RELEASE_HOLD。PN8 は登録せず PN6R へ差し戻す）
 2. `npx tsc --noEmit` — 型チェック
 3. `npm run build` — ビルド確認（ModuleValidator / CrossModuleValidator を含む）
+4. `npm test` / `npm run audit`（全 script。数は `package.json` が正本）/（該当時）`npm run test:multi-drug`
 
-**重要**: tsc が通っても registry 未登録ではアプリ上にモジュールが現れません。  
-登録確認を必ず tsc より先に行います。
+**重要**: tsc が通っても registry 未登録ではアプリ上にモジュールが現れません。登録確認を必ず tsc より先に行います。
+**build PASS 単独では release-ready になりません。** canonical generated / registry connected / official audit passed /
+tests passed / build passed / runtime loaded / search reachable / Owner behavioral approvals complete の区別は
+`PN8-Build-Runtime-Release.md`「状態の区別」を正本とします。
 
 ---
 
@@ -828,6 +886,7 @@ bridge の STATUS 値の定義・遷移ルール・PN1 開始条件は `prompts/
 # 1. /tmp/soap-build に既存ファイルがあるか確認する
 ls /tmp/soap-build/{moduleId}/ 2>/dev/null && echo "既存ファイルあり" || echo "ディレクトリなし（クリーン）"
 
+# ディレクトリが無い / 途中 Phase の成果物が欠けている場合: §2「中間成果物消失時の復旧規則」に従う
 # 既存ファイルがある場合: 前回の中断セッションのファイルの可能性
 # 内容をユーザーへ報告し、継続か再実行かを確認してから進む
 # 再実行する場合: rm -rf /tmp/soap-build/{moduleId} && mkdir -p /tmp/soap-build/{moduleId}
@@ -844,7 +903,7 @@ wc -l /Users/AdNauseumTendrils/Desktop/soap-engine/bridges/{moduleId}.md
 
 **PN1 実行前の確認チェックリスト:**
 - [ ] bridge ヘッダーの STATUS が `FROZEN_FOR_PN1` であることを確認した（RULES.md §24。`DRAFT` / `HEADER_ONLY` の場合は開始しない）
-- [ ] bridge の SCENARIOS_START〜SCENARIOS_END 範囲を確認した
+- [ ] bridge の SCENARIOS_START〜SCENARIOS_END 範囲を、独立した marker 行（`=======SCENARIOS_START=======` / `=======SCENARIOS_END=======`）で確認した（header 内の引用文字列にマッチさせない。PN1「入力」）
 - [ ] シナリオ数・ADDON 数を把握した
 - [ ] P_CLOSING パターン数と件数内訳を把握した
 - [ ] followupProfiles の型（S/P 形式）を理解した
@@ -854,7 +913,7 @@ wc -l /Users/AdNauseumTendrils/Desktop/soap-engine/bridges/{moduleId}.md
 ## 推奨実行順序
 
 ```
-PN1 → [承認] → PN2 → [承認 + AUTORUN開始コマンド] → PN3A〜PN8 自動連続実行 → RELEASE_OK
+PN1 → [承認] → PN2 → [承認 + AUTORUN開始コマンド] → PN3A〜PN8 自動連続実行（PN6 と PN7 の間に PN6R を含む）→ RELEASE_OK
 ```
 
 半自動実行モード（AUTORUN）の詳細は `prompts/vNext/AUTORUN.md` を参照してください。  
@@ -1116,7 +1175,7 @@ STATUS 記載自体がない bridge（§24 制定前に作られたもの）も�
 1 箇所ずつ増える**。`tsc` は JSON の構造を検査しない。当初監査は「量産再開前」の対応を推奨していた。
 
 ただし当時と異なり、構造整合は現在**機械的に担保されている**: `lib/moduleValidator.ts`（37 check）/
-`lib/crossModuleValidator.ts` / `npm run audit` 4 系統 / `tests/moduleRegistry.test.ts`（登録漏れ検出）/
+`lib/crossModuleValidator.ts` / `npm run audit`（構成 script の数は `package.json` が正本）/ `tests/moduleRegistry.test.ts`（登録漏れ検出）/
 `tests/moduleValidator.test.ts`（全 module ERROR 0 の invariant）。**型が担保するはずだった範囲は
 これらが代替しているため、キャスト自体は現時点で欠陥として顕在化していない。**
 

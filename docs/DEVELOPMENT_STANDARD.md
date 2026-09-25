@@ -5,7 +5,7 @@ SOAP Engine プロジェクト全体構造の最上位文書。
 **この文書の性格**
 本文書は、既存の正本文書を横断・要約する索引であると同時に、プロジェクト運営規則（工程完了条件・設計資産ライフサイクル等）を定義する文書です。「プロジェクト全体を一枚で理解できる入口」として機能します。個別の判断基準・型定義・工程実行手順の正本は、各節が参照する既存文書側にあります。本文書の記述と参照先文書の記述が食い違う場合、個別の判断基準については常に参照先（既存の正本文書）が優先します。
 
-最終更新: 2026-09-24（§7 Documentation Map の DP 範囲を DP-22〔inline addon placement 原則〕まで更新。2026-09-20: Unit「D-13 conditional structure legacy removal」: GG-5 の保留理由の事実誤りを訂正〔「test 未参照」→ production runtime / validator / audit 未参照であり、tests は構造契約のみを参照する〕。**GG-5 は Pending のまま維持し、`risks` field を Legacy / Future へ分類していない**。同日先行: Unit「PN5 non-insulin risks contract remediation」: §10.5 へ GG-5〔canonical field `risks`。runtime / validator / audit 未参照でありながら JS-A 必須〕を公告。2026-09-17: §10.5 へ GG-4〔legacy Rapid v1 realization 経路〕を公告）
+最終更新: 2026-09-25（§4 Development Workflow へ PN6R Registry Integration を追加し、PN7 の項目数の複製記載〔26 項目 A〜AB〕を PN7 本文参照へ置換。2026-09-24: §7 Documentation Map の DP 範囲を DP-22〔inline addon placement 原則〕まで更新。2026-09-20: Unit「D-13 conditional structure legacy removal」: GG-5 の保留理由の事実誤りを訂正〔「test 未参照」→ production runtime / validator / audit 未参照であり、tests は構造契約のみを参照する〕。**GG-5 は Pending のまま維持し、`risks` field を Legacy / Future へ分類していない**。同日先行: Unit「PN5 non-insulin risks contract remediation」: §10.5 へ GG-5〔canonical field `risks`。runtime / validator / audit 未参照でありながら JS-A 必須〕を公告。2026-09-17: §10.5 へ GG-4〔legacy Rapid v1 realization 経路〕を公告）
 
 ---
 
@@ -135,9 +135,11 @@ PN5  — ui/risks/searchConfig等の非シナリオ構造を生成する
   ↓
 PN6  — PN1〜PN5を統合して最終JSONを生成する（新規生成はしない）
   ↓
-PN7  — 完成JSONを26項目（A〜AB）で監査する（修正はしない）
+PN6R — registryへ接続し、生成物を再生成し、baseline変化を分類する（releaseではない）
   ↓
-PN8  — registry登録確認・tsc・buildを実行してrelease判定する
+PN7  — 完成JSONを PN7 定義の全項目で監査する（修正はしない。項目数の正本は PN7 本文）
+  ↓
+PN8  — registry登録確認・tsc・build・test・auditを実行してrelease判定する
   ↓
 Runtime / 実機横断確認 — 検索・シナリオ・SOAP生成・横断機能を実機で確認する
   ↓

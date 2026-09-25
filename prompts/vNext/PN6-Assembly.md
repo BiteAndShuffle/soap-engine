@@ -244,4 +244,5 @@ template.handlingTags / reservedHandlingTags: 保持 {あり/なし}
 
 PN6 完了後、保存先・行数・シナリオ数・addon 数を報告する。
 
-次工程: PN7（Cross Reference Audit）
+次工程: PN6R（Registry Integration。`prompts/vNext/PN6R-Registry-Integration.md`）→ PN7（Cross Reference Audit）。
+PN6 は registry（`data/modules/index.ts`）へ登録しない。登録は PN6R の責務である。
