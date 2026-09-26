@@ -203,6 +203,7 @@ bridge type= と具体的な id / title から判断する。
 |---|---|---|
 | `irritation` | `刺激感` | 2026-09-24 OD-3 / OD-4（`dry_eye_trpv1_antagonist_eye_drops` で承認。current HEAD では exact value として新規。rebuild 前の chemical mediator 点眼に使用実績があったが、これは past precedent であり current corpus の事実ではない） |
 | `blurred_vision` | `目のかすみ` | 2026-09-24 OD-3 / OD-4（同上。bridge A 欄の「霧視」は canonical の symptoms 表記として採用しない） |
+| `periocular_pigmentation` | `眼周囲の色素沈着` | 2026-09-26（`glaucoma_pg_analog_eye_drops` で承認。PG系緑内障治療点眼薬のクラス効果である眼周囲色素沈着の観察所見を表す。state / severity / response（軽症・変更・回数減・中止等）は `sideEffectPresence` が担うため、code へ `mild` / `change` / `decrease` / `stop` 等の state suffix を含めない） |
 
 **module 別 Owner Decision 実績:**
 

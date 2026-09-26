@@ -7,7 +7,9 @@ import type { Scenario, ModuleData } from '../../lib/types'
 import type { SRelation, SCondition } from '../../lib/rapidSentence'
 import type { RapidState, RapidTransitionV2 } from '../../lib/rapidState'
 import { isSReplacementEligible } from '../../lib/isSReplacementEligible'
-import { RAPID_V2_TRANSITIONS, RAPID_V2_OUTCOMES, type RapidProfile } from '../../lib/rapidV2'
+import {
+  RAPID_V2_TRANSITIONS, RAPID_V2_OUTCOMES, type RapidProfile, type DoseTransitionApplicability,
+} from '../../lib/rapidV2'
 import s from '../styles/layout.module.css'
 
 // ─────────────────────────────────────────────────────────────
@@ -340,6 +342,15 @@ interface ThirdPanelProps {
    * ラベル不整合の修正は scope 外）。
    */
   rapidProfile?: RapidProfile
+  /**
+   * `dose_increased` / `dose_decreased` transition の表示可否（Q-RAPID2）。
+   * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID2: 対象 brand が増量・減量のいずれかに
+   * 対応する scenario を持たない場合、当該 transition ボタンを表示しない。
+   * `rapidProfile === 'v1'` のときは参照されないが、呼び出し側が供給し忘れて
+   * 誤って全表示へ戻ることがないよう **必須 prop とし、デフォルト値は設けない**
+   * （fail-closed。optional化・`?? true` フォールバックは採用しない）。
+   */
+  doseApplicability: DoseTransitionApplicability
   /** 合成薬剤追加検索クエリ */
   composeSearchValue?: string
   onComposeSearchChange?: (v: string) => void
@@ -394,6 +405,7 @@ export default function ThirdPanel({
   rapidState,
   onSAction,
   rapidProfile = 'v1',
+  doseApplicability,
   composeSearchValue = '',
   onComposeSearchChange,
   composeDrugSuggestions = [],
@@ -839,7 +851,13 @@ export default function ThirdPanel({
               // 6 section（Do/追加/変更/処方整理/増量/減量）× 4 outcome。
               // menuGroupLabelOverrides は適用しない（v1 の primary/secondary ラベル
               // 不整合の修正は scope 外。§12）。
-              RAPID_V2_TRANSITIONS.map(sec => (
+              // Q-RAPID2: dose_increased / dose_decreased は doseApplicability が
+              // false の場合ボタン自体を描画しない（brand が対応する scenario を持たない）。
+              RAPID_V2_TRANSITIONS.filter(sec => {
+                if (sec.value === 'dose_increased') return doseApplicability.dose_increased
+                if (sec.value === 'dose_decreased') return doseApplicability.dose_decreased
+                return true
+              }).map(sec => (
                 <div key={sec.value} className={s.sActionSection}>
                   <div className={s.sActionSectionLabel}>{sec.label}</div>
                   <div className={s.sActionBtnGrid}>

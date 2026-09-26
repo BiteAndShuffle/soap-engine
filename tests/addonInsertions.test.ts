@@ -146,7 +146,7 @@ function legacyNodeFields(scenario: Scenario, mod: ModuleData, addonIds: string[
   return resolveDrugSubject(r, drugName)
 }
 
-/** bridge に P_ADDON_INLINE を持つ唯一の canonical（dry_eye_trpv1_antagonist_eye_drops）の inline scenario */
+/** bridge に P_ADDON_INLINE を持つ canonical（dry_eye_trpv1_antagonist_eye_drops）の inline scenario */
 const AVAREPT_MODULE_ID = 'dry_eye_trpv1_antagonist_eye_drops'
 const AVAREPT_INLINE_SCENARIOS = [
   'initial',
@@ -159,15 +159,34 @@ const AVAREPT_INLINE_SCENARIOS = [
   'se_strength_decreased_due_to_blurred_vision',
 ]
 
+/**
+ * bridge に P_ADDON_INLINE を持つ 2 件目の canonical（glaucoma_pg_analog_eye_drops・2026-09-26 registry登録）。
+ * DP-22 は Avarept 専用の仕組みではなく点眼共通シャーシの一般capabilityであるため、
+ * 2件目の module が inline block を持つこと自体は正常（PN6R baseline update）。
+ */
+const PG_MODULE_ID = 'glaucoma_pg_analog_eye_drops'
+const PG_INLINE_SCENARIOS = [
+  'initial',
+  'restart',
+  'external_start',
+  'se_eyelash_growth_none',
+  'se_periocular_pigmentation_none',
+  'se_blurred_vision_none',
+  'se_periocular_pigmentation_mild_continue',
+]
+
 describe('既存 module non-regression（addonInsertions absent は従来経路）', () => {
-  test('addonInsertions を持つ canonical scenario は bridge に P_ADDON_INLINE がある Avarept の 8 件のみ', () => {
+  test('addonInsertions を持つ canonical scenario は bridge に P_ADDON_INLINE がある Avarept 8 件 + glaucoma_pg_analog_eye_drops 7 件のみ', () => {
     const withInsertions: string[] = []
     for (const mod of ALL_MODULES) {
       for (const sc of mod.scenarios) {
         if (sc.addonInsertions !== undefined) withInsertions.push(`${mod.moduleId}/${sc.id}`)
       }
     }
-    assert.deepEqual(withInsertions, AVAREPT_INLINE_SCENARIOS.map(id => `${AVAREPT_MODULE_ID}/${id}`))
+    assert.deepEqual(withInsertions, [
+      ...AVAREPT_INLINE_SCENARIOS.map(id => `${AVAREPT_MODULE_ID}/${id}`),
+      ...PG_INLINE_SCENARIOS.map(id => `${PG_MODULE_ID}/${id}`),
+    ])
   })
 
   test('全 module × addonInsertions を持たない全 scenario × {未選択 / addonsRef.P 順 / 逆順} で従来出力と一致', () => {
@@ -338,14 +357,20 @@ describe('bridge parser — P_ADDON_INLINE', () => {
   const BLURRED = 'addon_avarept_blurred_vision_driving_caution'
   const TEMPERATURE = 'addon_avarept_temperature_sensation_burn_caution'
 
+  /** P_ADDON_INLINE を持つ 2 件目の bridge（glaucoma_pg_analog_eye_drops・2026-09-26 registry登録。PN6R baseline update） */
+  const PG_BRIDGE = 'glaucoma_pg_analog_eye_drops.md'
+  const PG_WASH = 'addon_glaucoma_pg_wash_periocular_after_instillation'
+  const PG_WIPE = 'addon_glaucoma_pg_wipe_periocular_after_instillation'
+  const PG_BLURRED = 'addon_eye_drop_blurred_vision_driving_caution'
+
   test('全 bridge で P_ADDON_INLINE / P_ADDON の文法エラーなし', () => {
     for (const file of bridgeFiles) {
       for (const [id, s] of parseBridge(file)) assert.deepEqual(s.errors, [], `${file}/${id}`)
     }
   })
 
-  test('既存 35 bridge は inline block を持たない', () => {
-    const others = bridgeFiles.filter(f => f !== AVAREPT_BRIDGE)
+  test('既存 35 bridge は inline block を持たない（P_ADDON_INLINE 保有は Avarept・PG 点眼の 2 件のみ）', () => {
+    const others = bridgeFiles.filter(f => f !== AVAREPT_BRIDGE && f !== PG_BRIDGE)
     assert.equal(others.length, 35)
     for (const file of others) {
       for (const [id, s] of parseBridge(file)) assert.deepEqual(s.insertions, [], `${file}/${id}`)
@@ -367,6 +392,23 @@ describe('bridge parser — P_ADDON_INLINE', () => {
       se_blurred_vision_mild_continue: [{ afterLine: 1, keys: [BLURRED] }],
       se_frequency_reduced_due_to_blurred_vision: [{ afterLine: 1, keys: [BLURRED] }],
       se_strength_decreased_due_to_blurred_vision: [{ afterLine: 1, keys: [BLURRED] }],
+    })
+  })
+
+  test('glaucoma_pg_analog_eye_drops bridge の inline insertion は 7 箇所（afterLine=4 × 3 / afterLine=1 × 4）', () => {
+    const actual = Object.fromEntries(
+      [...parseBridge(PG_BRIDGE)]
+        .filter(([, s]) => s.insertions.length > 0)
+        .map(([id, s]) => [id, s.insertions]),
+    )
+    assert.deepEqual(actual, {
+      initial: [{ afterLine: 4, keys: [PG_WASH] }],
+      restart: [{ afterLine: 4, keys: [PG_WASH] }],
+      external_start: [{ afterLine: 4, keys: [PG_WASH] }],
+      se_eyelash_growth_none: [{ afterLine: 1, keys: [PG_WIPE, PG_WASH] }],
+      se_periocular_pigmentation_none: [{ afterLine: 1, keys: [PG_WIPE, PG_WASH] }],
+      se_blurred_vision_none: [{ afterLine: 1, keys: [PG_BLURRED] }],
+      se_periocular_pigmentation_mild_continue: [{ afterLine: 1, keys: [PG_WIPE, PG_WASH] }],
     })
   })
 })

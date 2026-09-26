@@ -687,12 +687,51 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     // 意図的に保持する capability である（ERROR ではなく WARNING）。他 module の内訳は不変。
     // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 19 / SCENARIO_REQUIRED_TAG_UNREACHABLE 30 /
     //       ADDON_SCOPE_VIOLATION 4 = 53。
+    //
+    // 2026-09-26（glaucoma_pg_analog_eye_drops registry 登録）: 53→75。
+    // プロスタグランジン(PG)系緑内障治療点眼薬 module の登録により、同 module 由来の WARNING が
+    // 0→22 件純増した（ADDON_REQUIRED_TAG_UNREACHABLE 5 / SCENARIO_REQUIRED_TAG_UNREACHABLE 9 /
+    // RAPID_CAPABLE_S_CONTRACT 8）。
+    // ADDON/SCENARIO_REQUIRED_TAG_UNREACHABLE の14件は、template.reservedHandlingTags に宣言済みの
+    // タグ（suspension / cold_storage / avoid_cold_storage / concentration_variant /
+    // reduced_frequency_option）を要求する scenario / addon であり、現行10 brandCatalog エントリでは
+    // 到達不能だが点眼共通シャーシとして意図的に保持する capability である（ERROR ではなく WARNING）。
+    // RAPID_CAPABLE_S_CONTRACT の8件（se_*_none 系）は、bridge本文が「症状は落ち着いている」ではなく
+    // 「眼圧は落ち着いている」という臨床的に正確な表現を用いているため Design Rule に不一致していた
+    // （WARNING・ERROR化しない設計）。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 24 / SCENARIO_REQUIRED_TAG_UNREACHABLE 39 /
+    //       ADDON_SCOPE_VIOLATION 4 / RAPID_CAPABLE_S_CONTRACT 8 = 75。
+    //
+    // 2026-09-26（Rapid clinical-subject pilot・OD-RAPID-READINESS-1 §1。Human Review 完了までは
+    // 正式採用ではない）: 75→67。上記8件の RAPID_CAPABLE_S_CONTRACT は、`Scenario.rapidEvaluationSubject`
+    // （optional・pilot field）を該当8scenarioへ設定し、`lib/rapidV2.ts` の完成文テーブル・
+    // `lib/moduleValidator.ts` の本チェックを「評価対象名詞をパラメータ化」する形で解消した
+    // （taxonomy・register分離・完成文テーブル方式は無変更。未指定時は既定 `"症状"` のままで
+    // 他34+1既存moduleは完全不変）。RAPID_CAPABLE_S_CONTRACT は corpus 全体で 8→0 件になった。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 24 / SCENARIO_REQUIRED_TAG_UNREACHABLE 39 /
+    //       ADDON_SCOPE_VIOLATION 4 = 67。
+    //
+    // 2026-09-26（PN7 Cross-Reference Audit AE 差し戻し修正・PN6 Assembly 反映漏れ）: 67→69。
+    // bridges/glaucoma_pg_analog_eye_drops.md Header の scenarioRequiredTags map が
+    // se_strength_decreased_due_to_irritation / se_strength_decreased_due_to_periocular_pigmentation /
+    // se_frequency_reduced_due_to_irritation / se_frequency_reduced_due_to_periocular_pigmentation の
+    // 4件に値を宣言していたが、canonical JSON 生成時にフィールド自体が反映されていなかった（PN7 Check AE
+    // FAIL）。Owner 指示によりこの4件のみを bridge map の値どおり canonical へ機械的に反映した
+    // （bridge・PN1凍結本文・PN2〜PN5確定内容・Rapid clinical-subject Unit・他 scenario/addon は無変更）。
+    // うち se_strength_decreased_due_to_irritation / se_strength_decreased_due_to_periocular_pigmentation
+    // の2件（concentration_variant）は、同クラスタの既存5件と同様に現行10 brandCatalog エントリでは
+    // 到達不能のため SCENARIO_REQUIRED_TAG_UNREACHABLE WARNING が新規に2件発生した（意図的な非表示。
+    // template.reservedHandlingTags に宣言済み）。se_frequency_reduced_due_to_irritation /
+    // se_frequency_reduced_due_to_periocular_pigmentation の2件（frequency_titration_available）は
+    // レスキュラで到達可能なタグのため WARNING は発生しない。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 24 / SCENARIO_REQUIRED_TAG_UNREACHABLE 41 /
+    //       ADDON_SCOPE_VIOLATION 4 = 69。
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      53,
+      69,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })

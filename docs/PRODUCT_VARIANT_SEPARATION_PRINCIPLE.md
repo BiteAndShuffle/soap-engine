@@ -105,6 +105,36 @@ SOAP本文（S/O/A/P）を書き分ける必要があるか？
 
 判断に迷う場合は、①剤形・投与経路が異なりSOAP骨格が変わる → 独立した薬剤単位・検索単位・SOAP主語とする。②同一剤形内の差異でSOAP本文や条件分岐によって表現できる → 独立した薬剤単位・検索単位・SOAP主語にしない、という2段階で判断する。将来的に②の差異がSOAP骨格を書き分ける必要があると現場で確認された場合は、その時点で改めて独立単位化を検討する（推測で先に分離しない）。
 
+### 4.2 相互排他的variant propertyの自動帰属を避ける原則（2026-09 タプロス／タプロスミニ想定追加）
+
+同一canonical drug unitが、複数の実世界instance（同一brand内のpackage variant、または
+同一generic name配下の複数manufacturer製品）を代表する場合、それらのinstance間で
+あるproperty（handlingTagとして表現される取り扱い上の性質）の正しい値が相互排他的に
+分岐することがある（例: 通常製剤は室温保存、単回使用PF製剤は2〜8℃保存）。
+
+**この場合の原則は次のとおりである。**
+
+- current runtimeが実際に交付されたvariantを判別できない場合、そのpropertyを
+  **canonical unit全体のhandlingTagとして自動付与しない**
+- 不明なvariant-specific propertyを「代表値」「安全側の値」「先発品の値」等で
+  **補完しない**
+- variant固有の差分は自動適用しない
+- **ADDON**について、既存UI（薬剤師がscenario単位で個別addonを確認・選択するUI）で
+  実際に交付された製剤を確認したうえで薬剤師が明示的に選択できる場合、
+  当該ADDONは requiredTags を宣言しない manual candidate として扱ってよい
+  （実例: `addon_eye_drop_contact_lens_remove_before_use`）
+- **ただし、このgapを理由に SCENARIO の reachability を自動的に広げてはならない。**
+  対象propertyのhandlingTagを持つ他のinstanceが存在する場合、そのinstanceに
+  紐づくSCENARIOのreachabilityは通常どおりtagベースで制御し、gapを口実に
+  全brandへ一律開放しない
+- 本節は既存の3フィールド（handlingTags / scenarioRequiredTags / addonRequiredTags）の
+  適用範囲を明確化するものであり、**新フィールド・新canonical unit・variant名を持つ
+  独立brandCatalog entryを追加するものではない**
+
+実装参照: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス／タプロスミニ想定。
+`single_use_container` / `preservative_free` を自動付与せず、対応ADDONを
+requiredTags未宣言のmanual candidateとした実例）。
+
 ---
 
 ## 5. 具体例

@@ -6,8 +6,9 @@
  *   T-U4a-2  handleComposeDrugSelect が item.resolution を ComposeNode.resolution へ保持する
  *   T-U4a-3  resolution 未設定の ComposeNode が型・値の双方で成立する（Express / legacy 後方互換）
  *   T-U4a-4  node の再構築（spread）が resolution の有無をそのまま維持する
- *   T-U4a-5  resolution の consumer が保持経路と U-5 gate 経路に限定されている
- *            （**U-5 で意図的に更新。詳細は当該 describe の JSDoc を参照**）
+ *   T-U4a-5  resolution の consumer が保持経路・U-5 gate 経路・brand handlingTags 経路・
+ *            Q-RAPID2 Rapid dose applicability 経路に限定されている
+ *            （**U-5 / Q-RAPID2 で意図的に更新。詳細は当該 describe の JSDoc を参照**）
  *   T-U4a-6  Express 経路が resolution に触れていない
  *
  * 正本:
@@ -208,7 +209,7 @@ describe('T-U4a-4 node 再構築（spread）が resolution をそのまま維持
   })
 })
 
-describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に限定されている', () => {
+describe('T-U4a-5 resolution の consumer が保持経路・U-5 gate 経路・Q-RAPID2 dose applicability 経路に限定されている', () => {
   /**
    * **U-5 での意図的更新（2026-08-12）**
    *
@@ -236,7 +237,19 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
    *     `setActiveResolution(undefined)`）は `setPrimaryNode(...)` の
    *     object field（`resolution: item.resolution,` / `resolution: undefined,`）へ
    *     形を変える（保持 / lifecycle reset という契約自体は不変）
-   * 「resolution の使用が保持と gate に限定されている」という契約は変えていない。
+   *
+   * **Q-RAPID2 での意図的更新（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID2）**:
+   * dose_increased / dose_decreased transition の表示可否を、resolved brand
+   * （`BrandResolution` + `brandCatalog`）から判定する `doseApplicability`
+   * memo（`lib/rapidV2.ts` `doseTransitionApplicabilityOf`）を追加した。
+   * 「代表 brand を選ばない」Owner Decision のため、legacy 経路で
+   * `addonBrandHandlingTags` が使う `matchedBrandName ?? drug.brandNames?.[0]`
+   * フォールバックは使わず、`activeContextResolution` を直接渡す新しい consumer
+   * として ALLOWED へ追加した。
+   *
+   * 「resolution の使用が保持 / subject gate / brand handlingTags 導出 /
+   * Rapid dose applicability 導出に限定されている」という契約へ更新した
+   * （旧「保持と gate に限定」から、Q-RAPID2 の正当な拡張を反映）。
    */
   const ALLOWED = [
     // ── 型 import ──
@@ -259,6 +272,12 @@ describe('T-U4a-5 resolution の consumer が保持経路と U-5 gate 経路に�
     //   Unit 4B: legacyBrandKey も projection 経由になったため dependency が追従
     //   Unit 4C-5: dependency も primaryNode 直参照へ（値 parity は T-4C5-P1 が固定）
     '}, [targetModule, activeNode, primaryNode, activeContextResolution])',
+    // ── Q-RAPID2: Rapid dose applicability（doseTransitionApplicabilityOf への
+    //    BrandResolution context 受け渡し）。「代表 brand を選ばず」resolved brand /
+    //    candidate brand 群から判定するための consumer。addonBrandHandlingTags の
+    //    legacy fallback（matchedBrandName ?? drug.brandNames?.[0]）は使わない ──
+    'activeContextResolution,',
+    '[targetModule, activeContextResolution, activeNode, primaryNode],',
     // ── U-5: SOAP 生成 gate（scenario 提示の遮断） ──
     'if (subjectUnresolved) return []',
     '}, [allGroups, selectedGroup, addonBrandHandlingTags, subjectUnresolved])',

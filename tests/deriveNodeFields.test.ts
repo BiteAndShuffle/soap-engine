@@ -107,7 +107,7 @@ function expectedFirstSentenceOf(
   mod: ModuleData, sc: Scenario, previousEvent: SRelation, currentOutcome: SCondition, drugName: string,
 ): string {
   return rapidProfileOf(mod) === 'v2'
-    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), drugName, verbOf(mod))
+    ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(sc), drugName, verbOf(mod), sc.rapidEvaluationSubject)
     : buildResolvedSFirstSentence(previousEvent, currentOutcome, drugName, mod.display?.adjustmentExpression)
 }
 

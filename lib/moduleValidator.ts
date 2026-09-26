@@ -1325,18 +1325,23 @@ export function validateModule(moduleData: unknown): ModuleValidationResult {
 
   // Rapid-capable scenario の authored S 契約（WARNING / Design Rule。OD-RAPID-ROUTE-VERB-1 / OD-RAPID-COMPOSITION-1）
   //   Rapid v2 は S の第1文を置換し、2行目以降を Node 固有の残余として合成する。その前提となる
-  //   authored 形（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して症状は落ち着いている。」、
-  //   2行目以降に残余あり）を確認する。表現の一致を求める Design Rule のため ERROR にしない
-  //   （docs/VALIDATOR_STANDARD.md §2・§5）。
+  //   authored 形（1行目 = 「{{drug_subject}}／薬 を〈drug.route 由来動詞〉して〈評価対象名詞〉は
+  //   落ち着いている。」、2行目以降に残余あり）を確認する。表現の一致を求める Design Rule のため
+  //   ERROR にしない（docs/VALIDATOR_STANDARD.md §2・§5）。
   //   scope は runtime の Rapid v2 profile（rapidProfileOf === 'v2'）と自動同期する（OD-RAPID-GLOBAL-1）。
   //   validator 専用の判定は持たない。一時除外 module（v1）は対象外。v1 / v2 を問わない
   //   第1文 subject の監視は tests/rapidCapableSubjectTripwire.test.ts が担う。
+  //   評価対象名詞は既定 `"症状"` だが、`scenario.rapidEvaluationSubject`（2026-09-26 pilot・
+  //   OD-RAPID-READINESS-1 §1。registerOf が 'drug' の scenario のみ）が指定されている場合はその値を
+  //   期待値とする（`lib/rapidV2.ts` の `buildV2FirstSentence` と同一の解決規則）。
   if (Array.isArray(scenarios) && rapidProfileOf(obj as unknown as ModuleData) === 'v2') {
     const rapidVerb = verbForRoute((obj?.drug as Record<string, unknown> | undefined)?.route as string | undefined)
     for (const sc of scenarios as Scenario[]) {
       if (!isScenarioSReplacementCapable(sc)) continue
-      const subject = registerOf(sc) === 'regimen' ? '薬' : '{{drug_subject}}'
-      const expectedFirst = `${subject}を${rapidVerb}して症状は落ち着いている。`
+      const isDrugRegister = registerOf(sc) === 'drug'
+      const subject = isDrugRegister ? '{{drug_subject}}' : '薬'
+      const evalSubject = isDrugRegister ? (sc.rapidEvaluationSubject ?? '症状') : '症状'
+      const expectedFirst = `${subject}を${rapidVerb}して${evalSubject}は落ち着いている。`
       const lines = String(sc.S ?? '').split('\n')
       if (lines[0] !== expectedFirst || lines.slice(1).join('').trim() === '') {
         errors.push({

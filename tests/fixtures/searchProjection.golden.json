@@ -808,6 +808,14 @@
       "isGenericLabel": null
     },
     {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "キサラタン点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "glaucoma_pg_analog_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "matchedBrandName": null,
       "drugDisplayLabel": "ゼペリン点眼液",
@@ -818,72 +826,6 @@
   ],
   "とうにょうびょう": [],
   "ひふか": [],
-  "い": [
-    {
-      "moduleId": "dm_insulin_intermediate",
-      "matchedBrandName": "ノボリンN",
-      "drugDisplayLabel": "ノボリンN",
-      "uiLabel": "ノボリンN（イソフェンインスリン）",
-      "representativeTemplateId": "dm_insulin_intermediate.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_intermediate",
-      "matchedBrandName": "ヒューマリンN",
-      "drugDisplayLabel": "ヒューマリンN",
-      "uiLabel": "ヒューマリンN（イソフェンインスリン）",
-      "representativeTemplateId": "dm_insulin_intermediate.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_long_acting",
-      "matchedBrandName": "ランタス",
-      "drugDisplayLabel": "ランタス",
-      "uiLabel": "ランタス（インスリングラルギン）",
-      "representativeTemplateId": "dm_insulin_long_acting.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_long_acting",
-      "matchedBrandName": "ランタスXR",
-      "drugDisplayLabel": "ランタスXR",
-      "uiLabel": "ランタスXR（インスリングラルギン）",
-      "representativeTemplateId": "dm_insulin_long_acting.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_long_acting",
-      "matchedBrandName": "トレシーバ",
-      "drugDisplayLabel": "トレシーバ",
-      "uiLabel": "トレシーバ（インスリンデグルデク）",
-      "representativeTemplateId": "dm_insulin_long_acting.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_long_acting",
-      "matchedBrandName": "アウィクリ",
-      "drugDisplayLabel": "アウィクリ",
-      "uiLabel": "アウィクリ（インスリンイコデク）",
-      "representativeTemplateId": "dm_insulin_long_acting.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_long_acting",
-      "matchedBrandName": "レベミル",
-      "drugDisplayLabel": "レベミル",
-      "uiLabel": "レベミル（インスリンデテミル）",
-      "representativeTemplateId": "dm_insulin_long_acting.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_glp1_combination",
-      "matchedBrandName": "ソリクア",
-      "drugDisplayLabel": "ソリクア",
-      "uiLabel": "ソリクア（インスリングラルギン/リキシセナチド）",
-      "representativeTemplateId": "dm_insulin_glp1_combination.initial",
-      "isGenericLabel": null
-    }
-  ],
   "め": [
     {
       "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",

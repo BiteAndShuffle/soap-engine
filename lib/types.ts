@@ -232,6 +232,22 @@ export interface Scenario {
    */
   mergePolicy?: ScenarioMergePolicy
   /**
+   * Rapid v2 drug-register realization が「症状」の代わりに使う評価対象名詞（optional）。
+   *
+   * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-READINESS-1 §1 の再開 Trigger
+   * （clinical-subject generalization）に対する field。`glaucoma_pg_analog_eye_drops` を
+   * pilot module として導入し、2026-09-26 Owner Human Review PASS により正式採用
+   * （OD-RAPID-SUBJECT-PILOT-1）。2026-09-26 時点では同 module の該当 8 scenario のみが
+   * 値を持つ（他 module へ retrofit しない）。
+   *
+   * - 未指定時は現行どおり `"症状"` を使う（既存 module は完全不変）
+   * - `registerOf(scenario) === 'regimen'` の scenario では参照しない（常に `"症状"` のまま）
+   * - Rapid v2 realization 以外の意味を持たせない。enum 化・multi-axis 化・
+   *   汎用 clinical subject schema 化はしない（Current Standard として採用済みだが、
+   *   スキーマの拡張自体は別途 Owner 判断が必要）
+   */
+  rapidEvaluationSubject?: string
+  /**
    * Structured テキスト分解（runtime 未接続・moduleValidator check #16 で text 同期チェックに使用）。
    * 全既存モジュールに SStructured / AStructured / PStructured が存在する。
    * OStructured は一部モジュールに空配列として存在する。

@@ -17,6 +17,17 @@
  *   - 未解決論点 : docs/OPEN_DESIGN_QUESTIONS.md Q-S2
  *
  * 注意: 本ファイルは既存テストの期待値を一切変更しない。新フィールドの検証のみを追加する。
+ *
+ * 2026-09-26（glaucoma_pg_analog_eye_drops registry 登録に伴う golden fixture 整合）:
+ * - `てんがん`: PG点眼 module 追加によるcorpus拡張として、期待値へ新規候補1件
+ *   （キサラタン点眼液）を追加した。他候補・順序（末尾へ後退したゼペリン点眼液を含む）は不変。
+ * - `い`: golden fixture から削除した。`docs/DESIGN_PRINCIPLES.md` DP-18
+ *   OD-DRUG-PREFIX-BOUNDARY-1 は「bare 薬剤名クエリの正規化1〜2文字は best-effort 検索であり、
+ *   詳細な順位の安定性は保証しない」と明示しており、1文字クエリの top8 を exact order で
+ *   固定する本 golden fixture の contract は、この Owner Decision より強い保証を課していた。
+ *   本削除は新しい search 挙動の承認ではなく、既存 Owner Decision と test contract を
+ *   整合させる修正である（search logic 自体は無変更）。3文字以上の bare クエリ・複数トークン
+ *   クエリの golden 固定は本原則の対象外であり、影響しない。
  */
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'

@@ -173,6 +173,19 @@ const AVAREPT_SPECIFIC_AMBER_KEYS = [
   'addon_avarept_temperature_sensation_burn_caution',
 ]
 
+/**
+ * glaucoma_pg_analog_eye_drops（プロスタグランジン(PG)系緑内障治療点眼薬）固有の Amber ADDON
+ * （2026-09-26 registry 登録）。Human authored の bridge ADDON ヘッダーに
+ * uiGroup=薬剤固有介入 / uiVariant=rightAccentAmber が inline 宣言され、Owner 凍結
+ * （FROZEN_FOR_PN1）済み。requiredTags も同じ ADDON ヘッダーに inline 宣言（["pg_glaucoma"]。
+ * Header map にも同値で重複記載あり・PN3A CHECK 済み）されており、Avarept と同様
+ * ADMIN_SPECIFIC_ENTRIES 契約には含めず、許可リストにのみ追加する。本 2 件以外への Amber 展開は許可しない。
+ */
+const PG_SPECIFIC_AMBER_KEYS = [
+  'addon_glaucoma_pg_wash_periocular_after_instillation',
+  'addon_glaucoma_pg_wipe_periocular_after_instillation',
+]
+
 /** bridge の 【ADDON｜…｜id=<key>｜…】 ヘッダー属性を取り出す */
 function bridgeAddonHeader(moduleId: string, key: string): Record<string, string> | null {
   const txt = fs.readFileSync(path.resolve('./bridges', `${moduleId}.md`), 'utf-8')
@@ -227,6 +240,7 @@ describe('薬剤固有 ADDON の canonical 契約（Amber / 薬剤固有介入�
       ...Object.values(DRUG_SPECIFIC_ADDON).map(v => v.key),
       ...ADMIN_SPECIFIC_ENTRIES.map(e => e.addon.key),
       ...AVAREPT_SPECIFIC_AMBER_KEYS,
+      ...PG_SPECIFIC_AMBER_KEYS,
     ])
     for (const mod of ALL_MODULES) {
       for (const [key, item] of Object.entries(mod.addons?.items ?? {})) {

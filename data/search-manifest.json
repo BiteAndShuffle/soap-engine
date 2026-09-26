@@ -1,8 +1,8 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "cb93bd4e61341ef707341ef8e2535287babd3bbe153c0e344edce111af7fc783",
-  "moduleCount": 36,
-  "scenarioCount": 1117,
+  "sourceHash": "7325cbfb5d97677849c08bf6f7a2cb6c6f20adaaec18cf82cdbb2627f5f4c33c",
+  "moduleCount": 37,
+  "scenarioCount": 1165,
   "modules": [
     {
       "moduleId": "dm_glp1ra_semaglutide_oral",
@@ -4238,6 +4238,264 @@
         "preservative_free",
         "single_use_container",
         "avoid_cold_storage"
+      ]
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "categoryPath": [
+        "緑内障",
+        "緑内障治療点眼薬",
+        "プロスタグランジン(PG)系",
+        "点眼"
+      ],
+      "brandNames": [
+        "キサラタン点眼液",
+        "ラタノプロスト点眼液",
+        "トラバタンズ点眼液",
+        "トラボプロスト点眼液",
+        "ルミガン点眼液",
+        "ビマトプロスト点眼液",
+        "タプロス点眼液",
+        "タフルプロスト点眼液",
+        "レスキュラ点眼液",
+        "イソプロピルウノプロストン点眼液"
+      ],
+      "nameAliases": [
+        "きさらたんてんがん",
+        "きさらたん",
+        "らたのぷろすとてんがん",
+        "らたのぷろすと",
+        "とらばたんずてんがん",
+        "とらばたんず",
+        "とらぼぷろすとてんがん",
+        "とらぼぷろすと",
+        "るみがんてんがん",
+        "るみがん",
+        "びまとぷろすとてんがん",
+        "びまとぷろすと",
+        "たぷろすてんがん",
+        "たぷろす",
+        "たふるぷろすとてんがん",
+        "たふるぷろすと",
+        "れすきゅらてんがん",
+        "れすきゅら",
+        "いそぷろぴるうのぷろすとんてんがん",
+        "いそぷろぴるうのぷろすとん"
+      ],
+      "drugClass": [
+        "PROSTAGLANDIN_ANALOG_EYE_DROPS"
+      ],
+      "drugSpecificTags": [
+        "prostaglandin_analog",
+        "glaucoma",
+        "eye_drops",
+        "ophthalmic",
+        "external_use",
+        "storage_instruction",
+        "formulation_instruction",
+        "contact_lens_caution"
+      ],
+      "search": {
+        "exactAliases": [
+          "キサラタン点眼液",
+          "ラタノプロスト点眼液",
+          "トラバタンズ点眼液",
+          "トラボプロスト点眼液",
+          "ルミガン点眼液",
+          "ビマトプロスト点眼液",
+          "タプロス点眼液",
+          "タフルプロスト点眼液",
+          "レスキュラ点眼液",
+          "イソプロピルウノプロストン点眼液",
+          "キサラタン",
+          "ラタノプロスト",
+          "トラバタンズ",
+          "トラボプロスト",
+          "ルミガン",
+          "ビマトプロスト",
+          "タプロス",
+          "タフルプロスト",
+          "レスキュラ",
+          "イソプロピルウノプロストン",
+          "プロスタグランジン(PG)系緑内障治療点眼薬"
+        ],
+        "nameAliases": [
+          "きさらたんてんがん",
+          "きさらたん",
+          "らたのぷろすとてんがん",
+          "らたのぷろすと",
+          "とらばたんずてんがん",
+          "とらばたんず",
+          "とらぼぷろすとてんがん",
+          "とらぼぷろすと",
+          "るみがんてんがん",
+          "るみがん",
+          "びまとぷろすとてんがん",
+          "びまとぷろすと",
+          "たぷろすてんがん",
+          "たぷろす",
+          "たふるぷろすとてんがん",
+          "たふるぷろすと",
+          "れすきゅらてんがん",
+          "れすきゅら",
+          "いそぷろぴるうのぷろすとんてんがん",
+          "いそぷろぴるうのぷろすとん"
+        ],
+        "keywords": [
+          "緑内障",
+          "眼圧",
+          "点眼"
+        ],
+        "formulationSearchTokens": [],
+        "priority": 5,
+        "matchPolicy": {
+          "preferExactAlias": true,
+          "allowPrefixMatch": true,
+          "suppressCrossModuleSuggestionsOnExactHit": true,
+          "preferOwnNameMatchOverGenericMatch": true,
+          "suppressRedundantGenericHeaderOnDirectMatch": true
+        },
+        "primaryDisplayName": "プロスタグランジン(PG)系緑内障治療点眼薬"
+      },
+      "brandCatalog": {
+        "キサラタン点眼液": {
+          "aliases": [
+            "きさらたんてんがん",
+            "きさらたん"
+          ],
+          "displayName": "キサラタン点眼液",
+          "displayGenericName": "ラタノプロスト点眼液",
+          "genericName": "ラタノプロスト",
+          "handlingTags": [
+            "light_protection",
+            "cold_storage_before_opening",
+            "pg_glaucoma"
+          ]
+        },
+        "ラタノプロスト点眼液": {
+          "aliases": [
+            "らたのぷろすとてんがん",
+            "らたのぷろすと"
+          ],
+          "displayName": "ラタノプロスト点眼液",
+          "displayGenericName": "ラタノプロスト点眼液",
+          "genericName": "ラタノプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "トラバタンズ点眼液": {
+          "aliases": [
+            "とらばたんずてんがん",
+            "とらばたんず"
+          ],
+          "displayName": "トラバタンズ点眼液",
+          "displayGenericName": "トラボプロスト点眼液",
+          "genericName": "トラボプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "トラボプロスト点眼液": {
+          "aliases": [
+            "とらぼぷろすとてんがん",
+            "とらぼぷろすと"
+          ],
+          "displayName": "トラボプロスト点眼液",
+          "displayGenericName": "トラボプロスト点眼液",
+          "genericName": "トラボプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "ルミガン点眼液": {
+          "aliases": [
+            "るみがんてんがん",
+            "るみがん"
+          ],
+          "displayName": "ルミガン点眼液",
+          "displayGenericName": "ビマトプロスト点眼液",
+          "genericName": "ビマトプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "ビマトプロスト点眼液": {
+          "aliases": [
+            "びまとぷろすとてんがん",
+            "びまとぷろすと"
+          ],
+          "displayName": "ビマトプロスト点眼液",
+          "displayGenericName": "ビマトプロスト点眼液",
+          "genericName": "ビマトプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "タプロス点眼液": {
+          "aliases": [
+            "たぷろすてんがん",
+            "たぷろす"
+          ],
+          "displayName": "タプロス点眼液",
+          "displayGenericName": "タフルプロスト点眼液",
+          "genericName": "タフルプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "タフルプロスト点眼液": {
+          "aliases": [
+            "たふるぷろすとてんがん",
+            "たふるぷろすと"
+          ],
+          "displayName": "タフルプロスト点眼液",
+          "displayGenericName": "タフルプロスト点眼液",
+          "genericName": "タフルプロスト",
+          "handlingTags": [
+            "pg_glaucoma"
+          ]
+        },
+        "レスキュラ点眼液": {
+          "aliases": [
+            "れすきゅらてんがん",
+            "れすきゅら"
+          ],
+          "displayName": "レスキュラ点眼液",
+          "displayGenericName": "イソプロピルウノプロストン点眼液",
+          "genericName": "イソプロピルウノプロストン",
+          "handlingTags": [
+            "light_protection",
+            "frequency_titration_available",
+            "pg_glaucoma"
+          ]
+        },
+        "イソプロピルウノプロストン点眼液": {
+          "aliases": [
+            "いそぷろぴるうのぷろすとんてんがん",
+            "いそぷろぴるうのぷろすとん"
+          ],
+          "displayName": "イソプロピルウノプロストン点眼液",
+          "displayGenericName": "イソプロピルウノプロストン点眼液",
+          "genericName": "イソプロピルウノプロストン",
+          "handlingTags": [
+            "light_protection",
+            "frequency_titration_available",
+            "pg_glaucoma"
+          ]
+        }
+      },
+      "classKey": "pg_analog",
+      "nodeKey": "pg_analog_ophthalmic",
+      "clinicalDomain": "glaucoma",
+      "displayTitle": "プロスタグランジン(PG)系緑内障治療点眼薬",
+      "displaySubtitle": "眼圧を下げ、緑内障の進行を抑制する点眼治療",
+      "reservedHandlingTags": [
+        "cold_storage",
+        "suspension",
+        "avoid_cold_storage",
+        "concentration_variant",
+        "reduced_frequency_option"
       ]
     }
   ],
@@ -23906,6 +24164,821 @@
     {
       "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
       "globalId": "dry_eye_trpv1_antagonist_eye_drops.lifestyle_guidance_storage_cold_before_opening",
+      "id": "lifestyle_guidance_storage_cold_before_opening",
+      "title": "保管方法説明（未開封時のみ冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_cold_before_opening"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.initial",
+      "id": "initial",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 初回",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "initial"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "sCompositionIntent": "new_addition"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.restart",
+      "id": "restart",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 再開",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "restart"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "sCompositionIntent": "restart"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.external_start",
+      "id": "external_start",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 他所開始",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change",
+        "external_start"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation",
+        "side_effect_attention",
+        "administration_instruction"
+      ],
+      "sCompositionIntent": "external_continuation"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.frequency_increase_low_perceived_effect",
+      "id": "frequency_increase_low_perceived_effect",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 回数増（眼圧下降不十分）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.strength_increase_low_perceived_effect",
+      "id": "strength_increase_low_perceived_effect",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 濃度増（眼圧下降不十分）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.frequency_increase_due_to_other_med_adjustment",
+      "id": "frequency_increase_due_to_other_med_adjustment",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 回数増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.strength_increase_due_to_other_med_adjustment",
+      "id": "strength_increase_due_to_other_med_adjustment",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 濃度増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "increase"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.frequency_decrease_improved",
+      "id": "frequency_decrease_improved",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 回数減（眼圧改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.strength_decrease_improved",
+      "id": "strength_decrease_improved",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 濃度減（眼圧改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.frequency_decrease_low_perceived_effect",
+      "id": "frequency_decrease_low_perceived_effect",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 回数減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.strength_decrease_low_perceived_effect",
+      "id": "strength_decrease_low_perceived_effect",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 濃度減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.frequency_decrease_due_to_other_med_adjustment",
+      "id": "frequency_decrease_due_to_other_med_adjustment",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 回数減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.strength_decrease_due_to_other_med_adjustment",
+      "id": "strength_decrease_due_to_other_med_adjustment",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 濃度減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "id": "switch_to_sustained_formulation_reduced_frequency",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 持続型製剤へ変更（点眼回数減）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change",
+        "decrease"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_eyelash_growth_none",
+      "id": "se_eyelash_growth_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（眼瞼部多毛）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_periocular_pigmentation_none",
+      "id": "se_periocular_pigmentation_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（眼周囲色素沈着）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_irritation_none",
+      "id": "se_irritation_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_foreign_body_sensation_none",
+      "id": "se_foreign_body_sensation_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（異物感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_pruritus_none",
+      "id": "se_pruritus_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（掻痒感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_eye_redness_none",
+      "id": "se_eye_redness_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（充血）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_eye_discharge_none",
+      "id": "se_eye_discharge_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（目やに）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_blurred_vision_none",
+      "id": "se_blurred_vision_none",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 副作用なし（霧視）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "absent"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.cp_good",
+      "id": "cp_good",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 CP良好",
+      "scenarioGroup": "adherence_good",
+      "scenarioTags": [
+        "adherence",
+        "adherence_good",
+        "good"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "continue"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.cp_poor_missed_doses",
+      "id": "cp_poor_missed_doses",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 CP不良（使用忘れ）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.cp_poor_self_adjust",
+      "id": "cp_poor_self_adjust",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 CP不良（自己判断）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.cp_poor_visit_delay",
+      "id": "cp_poor_visit_delay",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 CP不良（受診遅延）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor",
+        "poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.end_improved",
+      "id": "end_improved",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 終了（改善）",
+      "scenarioGroup": "end_improved",
+      "scenarioTags": [
+        "treatment_end",
+        "improved"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.end_insufficient_effect",
+      "id": "end_insufficient_effect",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 終了（効果不十分）",
+      "scenarioGroup": "end_insufficient_effect",
+      "scenarioTags": [
+        "treatment_end",
+        "insufficient_effect"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.end_ineffective",
+      "id": "end_ineffective",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 終了（無効）",
+      "scenarioGroup": "end_ineffective",
+      "scenarioTags": [
+        "treatment_end",
+        "ineffective"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_ocular_irritation_mild_continue",
+      "id": "se_ocular_irritation_mild_continue",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE継続（軽症 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "mild"
+      ],
+      "sideEffectPresence": "present_mild",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_periocular_pigmentation_mild_continue",
+      "id": "se_periocular_pigmentation_mild_continue",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE継続（軽症 眼周囲色素沈着）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "mild"
+      ],
+      "sideEffectPresence": "present_mild",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_ocular_irritation_moderate_consider_dr",
+      "id": "se_ocular_irritation_moderate_consider_dr",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE継続（中等度 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "moderate"
+      ],
+      "sideEffectPresence": "present_moderate",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_change_due_to_irritation",
+      "id": "se_change_due_to_irritation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE変更（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "change"
+      ],
+      "sideEffectPresence": "present_change",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_change_due_to_periocular_pigmentation",
+      "id": "se_change_due_to_periocular_pigmentation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE変更（眼周囲色素沈着）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "change"
+      ],
+      "sideEffectPresence": "present_change",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_frequency_reduced_due_to_irritation",
+      "id": "se_frequency_reduced_due_to_irritation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE回数減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_frequency_reduced_due_to_periocular_pigmentation",
+      "id": "se_frequency_reduced_due_to_periocular_pigmentation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE回数減（眼周囲色素沈着）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_strength_decreased_due_to_irritation",
+      "id": "se_strength_decreased_due_to_irritation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE濃度減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_strength_decreased_due_to_periocular_pigmentation",
+      "id": "se_strength_decreased_due_to_periocular_pigmentation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE濃度減（眼周囲色素沈着）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "decrease"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_stop_due_to_irritation",
+      "id": "se_stop_due_to_irritation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE中止（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "stop"
+      ],
+      "sideEffectPresence": "present_stop",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.se_stop_due_to_periocular_pigmentation",
+      "id": "se_stop_due_to_periocular_pigmentation",
+      "title": "プロスタグランジン(PG)系の緑内障治療点眼薬 SE中止（眼周囲色素沈着）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring",
+        "stop"
+      ],
+      "sideEffectPresence": "present_stop",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_tip_contamination",
+      "id": "lifestyle_guidance_tip_contamination",
+      "title": "点眼方法説明（容器先端の接触）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "tip_contamination"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_interval",
+      "id": "lifestyle_guidance_interval",
+      "title": "点眼方法説明（間隔不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "interval"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_after_opening_expiry",
+      "id": "lifestyle_guidance_after_opening_expiry",
+      "title": "点眼方法説明（開封後1ヶ月以上使用）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "after_opening_expiry"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_suspension_shake",
+      "id": "lifestyle_guidance_suspension_shake",
+      "title": "点眼方法説明（懸濁不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "suspension_shake"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_storage_upright_suspension",
+      "id": "lifestyle_guidance_storage_upright_suspension",
+      "title": "保管方法説明（懸濁性・先端上向き）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_upright_suspension"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_storage_light_protection",
+      "id": "lifestyle_guidance_storage_light_protection",
+      "title": "保管方法説明（遮光不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_light_protection"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_storage_cold",
+      "id": "lifestyle_guidance_storage_cold",
+      "title": "保管方法説明（冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "storage_cold"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "glaucoma_pg_analog_eye_drops",
+      "globalId": "glaucoma_pg_analog_eye_drops.lifestyle_guidance_storage_cold_before_opening",
       "id": "lifestyle_guidance_storage_cold_before_opening",
       "title": "保管方法説明（未開封時のみ冷所保存不十分）",
       "scenarioGroup": "lifestyle_guidance",

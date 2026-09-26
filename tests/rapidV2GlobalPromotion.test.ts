@@ -136,7 +136,7 @@ describe('C. 全 module の Rapid 第1文が profile に対応する realization
     for (const mod of V2_MODULES) for (const sc of capableOf(mod)) {
       for (const t of TRANSITIONS) for (const c of CONDITIONS) {
         const actual = firstLine(deriveRawFields(sc, mod, [], { previousEvent: t, currentOutcome: c }, DRUG).S)
-        assert.equal(actual, buildV2FirstSentence(t, c, registerOf(sc), DRUG, verbOf(mod)), `${mod.moduleId} / ${sc.id} / ${t} / ${c}`)
+        assert.equal(actual, buildV2FirstSentence(t, c, registerOf(sc), DRUG, verbOf(mod), sc.rapidEvaluationSubject), `${mod.moduleId} / ${sc.id} / ${t} / ${c}`)
         checked++
       }
     }
@@ -176,9 +176,11 @@ describe('D. v2 の意味契約を global promotion 後の corpus 全体で維�
       const verb = route === 'oral' ? '服用' : '使用'
       assert.equal(verbOf(mod), verb, mod.moduleId)
       for (const sc of capableOf(mod)) {
-        const subject = registerOf(sc) === 'regimen' ? '薬' : DRUG
+        const isDrugRegister = registerOf(sc) === 'drug'
+        const subject = isDrugRegister ? DRUG : '薬'
+        const evalSubject = isDrugRegister ? (sc.rapidEvaluationSubject ?? '症状') : '症状'
         const actual = firstLine(deriveRawFields(sc, mod, [], { previousEvent: 'continued_do', currentOutcome: 'stable' }, DRUG).S)
-        assert.equal(actual, `${subject}を${verb}して症状は落ち着いている。`, `${mod.moduleId} / ${sc.id}`)
+        assert.equal(actual, `${subject}を${verb}して${evalSubject}は落ち着いている。`, `${mod.moduleId} / ${sc.id}`)
       }
     }
     assert.deepEqual([...routes].sort(), ['injection', 'ophthalmic', 'oral', 'topical'])
@@ -198,16 +200,23 @@ describe('D. v2 の意味契約を global promotion 後の corpus 全体で維�
     assert.ok(regimen > 0 && drug > 0)
   })
 
-  test('regimen_reduced は register に依らず薬剤名を含まない承認済み4文', () => {
-    const expected: Record<SCondition, string> = {
-      stable: '前回の処方整理後も症状は落ち着いている。',
-      unchanged: '前回の処方整理後も症状は変わりない。',
-      improved: '前回の処方整理後、症状は良くなってきた。',
-      not_improved: '前回の処方整理後も症状の改善は乏しい。',
-    }
-    for (const mod of V2_MODULES) for (const sc of capableOf(mod)) for (const c of CONDITIONS) {
-      const s = firstLine(deriveRawFields(sc, mod, [], { previousEvent: 'regimen_reduced', currentOutcome: c }, DRUG).S)
-      assert.equal(s, expected[c], `${mod.moduleId} / ${sc.id} / ${c}`)
+  test('regimen_reduced は register に依らず薬剤名を含まない承認済み4文（評価対象名詞は scenario.rapidEvaluationSubject に従う）', () => {
+    const expectedFor = (subj: string): Record<SCondition, string> => ({
+      stable: `前回の処方整理後も${subj}は落ち着いている。`,
+      unchanged: `前回の処方整理後も${subj}は変わりない。`,
+      improved: `前回の処方整理後、${subj}は良くなってきた。`,
+      not_improved: `前回の処方整理後も${subj}の改善は乏しい。`,
+    })
+    for (const mod of V2_MODULES) for (const sc of capableOf(mod)) {
+      // 2026-09-26 pilot（OD-RAPID-READINESS-1 §1）: register === 'drug' の scenario は
+      // rapidEvaluationSubject（未指定なら既定「症状」）を参照する。regimen register は常に「症状」。
+      const subj = registerOf(sc) === 'drug' ? (sc.rapidEvaluationSubject ?? '症状') : '症状'
+      const expected = expectedFor(subj)
+      for (const c of CONDITIONS) {
+        const s = firstLine(deriveRawFields(sc, mod, [], { previousEvent: 'regimen_reduced', currentOutcome: c }, DRUG).S)
+        assert.equal(s, expected[c], `${mod.moduleId} / ${sc.id} / ${c}`)
+        assert.ok(!s.includes(DRUG), `${mod.moduleId} / ${sc.id} / ${c}: regimen_reduced は薬剤名を含まないはず`)
+      }
     }
   })
 

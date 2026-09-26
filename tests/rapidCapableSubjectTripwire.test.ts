@@ -51,10 +51,23 @@ import { ALL_MODULES } from '../data/modules/index'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { rapidProfileOf, registerOf, verbOf } from '../lib/rapidV2'
 
-/** 現在承認されている Rapid-capable authored S 第1文（OD-RAPID-READINESS-1 §2） */
+/**
+ * 現在承認されている Rapid-capable authored S 第1文（OD-RAPID-READINESS-1 §2）。
+ *
+ * 2026-09-26（`glaucoma_pg_analog_eye_drops` pilot・Owner Human Review PASS・正式採用。
+ * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-SUBJECT-PILOT-1）:
+ * `scenario.rapidEvaluationSubject`（drug register のみ・未指定なら既定 `"症状"`）を
+ * 評価対象名詞として許容するよう契約を一般化した。これは「未知の subject を無条件許可する」
+ * 緩和ではない —— 契約は依然として「field 未指定なら `症状`、field 指定ならその値と厳密一致」を
+ * 要求し、canonical に宣言されていない任意の名詞は従来どおり検出対象のままである。
+ * `lib/rapidV2.ts` の `buildV2FirstSentence` / `lib/moduleValidator.ts` の
+ * `RAPID_CAPABLE_S_CONTRACT` と同一の解決規則。
+ */
 function approvedFirstLine(mod: ModuleData, sc: Scenario): string {
-  const subject = registerOf(sc) === 'regimen' ? '薬' : '{{drug_subject}}'
-  return `${subject}を${verbOf(mod)}して症状は落ち着いている。`
+  const isDrugRegister = registerOf(sc) === 'drug'
+  const subject = isDrugRegister ? '{{drug_subject}}' : '薬'
+  const evalSubject = isDrugRegister ? (sc.rapidEvaluationSubject ?? '症状') : '症状'
+  return `${subject}を${verbOf(mod)}して${evalSubject}は落ち着いている。`
 }
 
 type Violation = {

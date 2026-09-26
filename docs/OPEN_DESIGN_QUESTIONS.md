@@ -9,7 +9,25 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-22（Unit「JSB-1 current-generation policy」: Q-F4 へ current 実測との関係を追記〔旧「現状」表は 2026-06 時点の historical observation・current 実測は presence 21 / absence 14・ただし 21/14 を normative な対象範囲とは確定していない・current の新規 module 生成では 4 key を生成しない〕。**Q-F4 は PENDING のまま**で status・一覧表は変更なし、旧表も保持。2026-09-17: Unit「FAC-10 Human verification」: OD-RAPID-GLOBAL-1 §6・§8-Current State・一覧表の Q-RAPID1 行へ FAC-10 VERIFIED（commit `65b056c` の正式 static build を Windows company PC 相当環境で実機確認。詳細は `prompts/vNext/HANDOFF.md` §6）を記録。FAC-13〜15 は未完了のまま。同日先行: Unit「Rapid v2 post-promotion cleanup」: Q-RAPID1 の見出しと「現状」を global promotion 後の Current State へ更新し、OD-RAPID-H1-PILOT-1 Status 節・OD-RAPID-MULTI-PILOT-1・OD-RAPID-COMPOSITION-1 Unit 付随判断・OD-RAPID-READINESS-1 へ Historical / Superseded 表示を追加〔本文は改変なし〕。OD-RAPID-READINESS-1 §3 の commit / push 記述へ後続追記。同日先行: Q-RAPID1 へ Owner Decision OD-RAPID-GLOBAL-1〔Rapid v2 global promotion。既定 v2 ＋ 明示的な一時除外（chemical mediator 点眼のみ）・`RAPID_CAPABLE_S_CONTRACT` の scope を runtime profile へ自動同期・legacy Rapid v1 は rollback 経路として保持し `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4 へ公告・adjustmentExpression / composition / clinical subject は不変〕と実装状況を追記。§8 前提 4 は充足。FAC-10 は業務配布前の release gate として未完了のまま。一覧表の Q-RAPID1 行を同期。同日先行: Q-RAPID1 OD-RAPID-READINESS-1 §7・§8-3 へ Unit A「diabetes domain metadata consistency」の解消を記録: `diabetes` / `diabetes_mellitus` の domain metadata を PN2 生成規則どおり `diabetes` へ整合〔解消記録・mergePolicy 旧 schema drift の別 Finding は `prompts/vNext/HANDOFF.md` §6〕。§8 前提 3 は充足、4〔validator scope の同期判断〕は global promotion 実装時に実施。global promotion は引き続き未実装。一覧表の Q-RAPID1 行を同期。同日先行: 6-module Rapid v2 pilot の Human Review 結果を Q-RAPID1 §3・§4 へ記録し、pilot の Human Review を CLOSE。§3 の topical/cardiorenal/combination 評価軸と mixed-route cp_good、§4 の4観点（scenario切替/OFF復帰/SOAP可読性/剤形横断）、composition 境界（cross-domain 非共有/同一 domain 共有）をすべて実施し blocker 0件。mixed-route realization と composition 横断最適化は Owner 判断により runtime を変更せず、§9・§10 に Known observation / deferred として記録（再開 Trigger は module 開発が一周する少し前・十分な実 SOAP 例が揃った段階。priority / solution /実装時期は未確定）。FAC-10 は今回の file:// 確認（`428d754` base + 未commit 6-module pilot static build。Windows company PC 相当環境ではない）では元定義の再開 Trigger を満たさず、`prompts/vNext/HANDOFF.md` の FAC-10 status は NOT YET VERIFIED のまま維持（同ファイルへ 2026-09-17 追記）。§8 の global promotion 前提1・2は充足、3・4は未充足のまま — **pilot の Human Review は CLOSE だが、global promotion は未承認**。一覧表の Q-RAPID1 行を同期。2026-09-16: Q-RAPID1 §1 へ Owner 確認を追記: bridge authored 表現が「症状」を評価対象としている間は現行 Rapid v2 表現を許容し、bridge 表現が「症状」以外へ変わった時点を再開 Trigger とする方針を確定（単純な名詞置換は不採用、現在の pilot の global promotion 判断の blocker ではない）。同日、§3 へ `cardiorenal_sglt2_oral` の Human Review 結果（現行「症状」表現は実務上許容。clinical subject generalization を承認する判断ではない）を追記し、残り module / 観点 / FAC-10 は未実施のまま明記。同日: Q-RAPID1 §3 へ追加 pilot allowlist の実装状況を追記: `lib/rapidV2.ts` の `RAPID_V2_MODULE_IDS` を Owner 承認済みの exact 6 module へ拡張〔既存3 ＋ 外用・心腎・配合剤の3〕。production 変更は central allowlist のみで、eligibility / composition / route verb / RapidState / canonical / bridge / `adjustmentExpression` 値は不変。validator は allowlist 追従のみで global 化せず。file:// での Human Review と commit / push は未実施。一覧表の Q-RAPID1 行を同期。2026-09-15: Q-RAPID1 へ Owner Decision OD-RAPID-READINESS-1 を追記: Unit「Rapid v2 global promotion readiness review」の結果として、global promotion を行わず追加 pilot を1回挟む方針・clinical subject generalization の PENDING 化・future-subject tripwire（`tests/rapidCapableSubjectTripwire.test.ts`）の承認・追加 pilot 3 module の承認〔allowlist 未実装〕・既存3 module Human 評価の補完方針・FAC-10 の位置づけ・chemical mediator 点眼の追加 pilot 除外・clinicalDomain 値の揺れの別 Finding 化を確定。一覧表の Q-RAPID1 行を同期。2026-09-14: Q-RAPID1 へ Unit「Rapid v2 composition + realization hardening」の Human UI確認由来の Known UX observation（UX-1: Rapid未選択node表示順ズレ／UX-2: 同一module複数追加時のchip識別性。いずれも現時点では blocker ではなく実運用後に再評価）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
+最終更新: 2026-09-27（Unit「Rapid Transition Applicability（Q-RAPID2）」: 横断監査（v2側36module・
+全1,165scenario実測。Rapid-eligible 182scenario中、dose_increased/decreased のみ5module・33scenario・
+18brandで表示可否の不整合を確認）を実施し、Owner Decision OD-RAPID2-APPLICABILITY-1（brand単位・
+既存canonical情報のみ・generic/module未確定はevery()集約・representative brand選定なし・UI非表示+
+write-side guardの二重防御）として実装・Human Review PASS。機械検証（tsc PASS / npm test 3955件中
+3953 pass 0 fail / build PASS / audit FAIL0・CHECK2〔既知baseline〕/ test:multi-drug 20/20）もすべて
+PASS。**Q-RAPID2 を CLOSE した**。一覧表のQ-RAPID1・Q-RAPID2行を同期。副次的に発見した realization
+語彙（「増量/減量」固定ラベルと実際の意味のズレ。具体例: `glaucoma_pg_analog_eye_drops`）はQ-RAPID2の
+scope外としてQ-RAPID1の残論点⑤へ分離した。2026-09-26: Unit「Rapid clinical-subject pilot（glaucoma_pg_analog_eye_drops）」: Q-RAPID1 へ
+Owner Decision OD-RAPID-SUBJECT-PILOT-1 を追記し、OD-RAPID-READINESS-1 §1「clinical subject generalization
+は PENDING」を機構（`Scenario.rapidEvaluationSubject`。scenario単位optional field・drug register限定・
+regimen registerは参照しない・未指定時は既定「症状」）として解消した。`glaucoma_pg_analog_eye_drops` の
+`se_*_none`系8scenarioへ`rapidEvaluationSubject: "眼圧"`を設定し、Owner Human Review PASS（機械検証: tsc /
+npm test 3934件0 fail / build / audit FAIL 0 / test:multi-drug 20/20）。他34+1既存moduleへのretrofitは
+行っていない。Rapid taxonomy・`registerOf()`・eligibility判定・multi-node domain separationは無変更。
+一覧表のQ-RAPID1行・「残論点」を同期。あわせて、Human Review中に発見したFindingとしてQ-RAPID2「Rapid
+Transition Applicability」（6 transitionが個々のscenarioで意味的に成立するかの横断整理。未着手・
+`glaucoma_pg_analog_eye_drops`のmodule completionのblockerとしない）を新設した。
+2026-09-22: Unit「JSB-1 current-generation policy」: Q-F4 へ current 実測との関係を追記〔旧「現状」表は 2026-06 時点の historical observation・current 実測は presence 21 / absence 14・ただし 21/14 を normative な対象範囲とは確定していない・current の新規 module 生成では 4 key を生成しない〕。**Q-F4 は PENDING のまま**で status・一覧表は変更なし、旧表も保持。2026-09-17: Unit「FAC-10 Human verification」: OD-RAPID-GLOBAL-1 §6・§8-Current State・一覧表の Q-RAPID1 行へ FAC-10 VERIFIED（commit `65b056c` の正式 static build を Windows company PC 相当環境で実機確認。詳細は `prompts/vNext/HANDOFF.md` §6）を記録。FAC-13〜15 は未完了のまま。同日先行: Unit「Rapid v2 post-promotion cleanup」: Q-RAPID1 の見出しと「現状」を global promotion 後の Current State へ更新し、OD-RAPID-H1-PILOT-1 Status 節・OD-RAPID-MULTI-PILOT-1・OD-RAPID-COMPOSITION-1 Unit 付随判断・OD-RAPID-READINESS-1 へ Historical / Superseded 表示を追加〔本文は改変なし〕。OD-RAPID-READINESS-1 §3 の commit / push 記述へ後続追記。同日先行: Q-RAPID1 へ Owner Decision OD-RAPID-GLOBAL-1〔Rapid v2 global promotion。既定 v2 ＋ 明示的な一時除外（chemical mediator 点眼のみ）・`RAPID_CAPABLE_S_CONTRACT` の scope を runtime profile へ自動同期・legacy Rapid v1 は rollback 経路として保持し `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4 へ公告・adjustmentExpression / composition / clinical subject は不変〕と実装状況を追記。§8 前提 4 は充足。FAC-10 は業務配布前の release gate として未完了のまま。一覧表の Q-RAPID1 行を同期。同日先行: Q-RAPID1 OD-RAPID-READINESS-1 §7・§8-3 へ Unit A「diabetes domain metadata consistency」の解消を記録: `diabetes` / `diabetes_mellitus` の domain metadata を PN2 生成規則どおり `diabetes` へ整合〔解消記録・mergePolicy 旧 schema drift の別 Finding は `prompts/vNext/HANDOFF.md` §6〕。§8 前提 3 は充足、4〔validator scope の同期判断〕は global promotion 実装時に実施。global promotion は引き続き未実装。一覧表の Q-RAPID1 行を同期。同日先行: 6-module Rapid v2 pilot の Human Review 結果を Q-RAPID1 §3・§4 へ記録し、pilot の Human Review を CLOSE。§3 の topical/cardiorenal/combination 評価軸と mixed-route cp_good、§4 の4観点（scenario切替/OFF復帰/SOAP可読性/剤形横断）、composition 境界（cross-domain 非共有/同一 domain 共有）をすべて実施し blocker 0件。mixed-route realization と composition 横断最適化は Owner 判断により runtime を変更せず、§9・§10 に Known observation / deferred として記録（再開 Trigger は module 開発が一周する少し前・十分な実 SOAP 例が揃った段階。priority / solution /実装時期は未確定）。FAC-10 は今回の file:// 確認（`428d754` base + 未commit 6-module pilot static build。Windows company PC 相当環境ではない）では元定義の再開 Trigger を満たさず、`prompts/vNext/HANDOFF.md` の FAC-10 status は NOT YET VERIFIED のまま維持（同ファイルへ 2026-09-17 追記）。§8 の global promotion 前提1・2は充足、3・4は未充足のまま — **pilot の Human Review は CLOSE だが、global promotion は未承認**。一覧表の Q-RAPID1 行を同期。2026-09-16: Q-RAPID1 §1 へ Owner 確認を追記: bridge authored 表現が「症状」を評価対象としている間は現行 Rapid v2 表現を許容し、bridge 表現が「症状」以外へ変わった時点を再開 Trigger とする方針を確定（単純な名詞置換は不採用、現在の pilot の global promotion 判断の blocker ではない）。同日、§3 へ `cardiorenal_sglt2_oral` の Human Review 結果（現行「症状」表現は実務上許容。clinical subject generalization を承認する判断ではない）を追記し、残り module / 観点 / FAC-10 は未実施のまま明記。同日: Q-RAPID1 §3 へ追加 pilot allowlist の実装状況を追記: `lib/rapidV2.ts` の `RAPID_V2_MODULE_IDS` を Owner 承認済みの exact 6 module へ拡張〔既存3 ＋ 外用・心腎・配合剤の3〕。production 変更は central allowlist のみで、eligibility / composition / route verb / RapidState / canonical / bridge / `adjustmentExpression` 値は不変。validator は allowlist 追従のみで global 化せず。file:// での Human Review と commit / push は未実施。一覧表の Q-RAPID1 行を同期。2026-09-15: Q-RAPID1 へ Owner Decision OD-RAPID-READINESS-1 を追記: Unit「Rapid v2 global promotion readiness review」の結果として、global promotion を行わず追加 pilot を1回挟む方針・clinical subject generalization の PENDING 化・future-subject tripwire（`tests/rapidCapableSubjectTripwire.test.ts`）の承認・追加 pilot 3 module の承認〔allowlist 未実装〕・既存3 module Human 評価の補完方針・FAC-10 の位置づけ・chemical mediator 点眼の追加 pilot 除外・clinicalDomain 値の揺れの別 Finding 化を確定。一覧表の Q-RAPID1 行を同期。2026-09-14: Q-RAPID1 へ Unit「Rapid v2 composition + realization hardening」の Human UI確認由来の Known UX observation（UX-1: Rapid未選択node表示順ズレ／UX-2: 同一module複数追加時のchip識別性。いずれも現時点では blocker ではなく実運用後に再評価）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-ROUTE-VERB-1（Do の動詞を canonical `drug.route` から解決。OD-RAPID-MULTI-PILOT-1 §G へ Superseded 注記）・OD-RAPID-COMPOSITION-1（Rapid v2 multi-node S composition と Unit 付随判断）を追記。同日: Q-RAPID1 へ Owner Decision OD-RAPID-MULTI-PILOT-1 を追記: H1点眼限定だった pilot allowlist を、内服 `dm_dpp4_oral`・注射 `dm_insulin_rapid_analog` を加えた3 module限定 multi-module pilot へ拡張したことを確定。OD-RAPID-H1-PILOT-1 の「H1限定境界」条件はこの新 Decision により superseded（historical record として保持）。6系統taxonomyの全module一般化は引き続き Under Validation・Owner判断待ちのまま変更なし。2026-09-13: Q-RAPID1 へ Owner Decision OD-RAPID-H1-PILOT-1 を追記: H1限定境界・H1内の適用範囲・Do×stable=Default の3点を確定し、H1 Reference Implementation の実装を許可。6系統taxonomyの全module一般化は引き続き検証中。Q-RAPID1 を新設: Rapid transition taxonomy の6種化・H1点眼 Reference Implementation による検証。2026-09 検索ユニット完了に伴い Q-S3・Q-R1・Q-R2・Q-R3 を新設。Q-UX1 に Q-S3 との相互参照を追記）
 
 ---
 
@@ -28,7 +46,8 @@ SOAP Engine — 設計保留事項
 | Q-R1 | 剤形／投与経路／部位 intent アーキテクチャ（secondary clinical token の一般化） | 🟡 中 | 点眼以外の複数剤形領域が増え、個別対応が積み上がった時 |
 | Q-R2 | route-label 表示（例:「オゼンピック注」）の一般化方針 | 🟢 低 | 複数剤形・複数経路を持つ module が増え、表示ラベルの個別対応が積み上がった時 |
 | Q-R3 | Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性） | 🟢 低（凍結範囲は DP-20 が既に定義済み） | `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節の凍結解除を Owner が判断した時 |
-| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 3 module pilot → 6 module pilot（2026-09-17 Human Review CLOSE）→ **global promotion（OD-RAPID-GLOBAL-1・2026-09-17）: Rapid v2 は全 module の既定 profile**。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ（module 再構築後に再判断）。legacy Rapid v1 は rollback 経路として保持（Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。clinical subject generalization は PENDING（許容条件は OD-RAPID-READINESS-1 §1） | 🟡 中 | 残論点の判断タイミング: ① 一時除外の解除 = chemical mediator 点眼 module の再構築完了時 ② clinical subject = 「症状」以外の評価 subject を持つ Rapid-capable scenario が初めて実装された時点（別 Unit の設計レビュー）③ v1 = Rapid v1 削除 Unit ④ composition 横断 review = module 開発が一周する少し前。**FAC-10（Windows company PC 相当での file:// 確認）は 2026-09-17 に VERIFIED（release gate PASS）。FAC-13〜15 は未完了のまま** |
+| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 3 module pilot → 6 module pilot（2026-09-17 Human Review CLOSE）→ **global promotion（OD-RAPID-GLOBAL-1・2026-09-17）: Rapid v2 は全 module の既定 profile**。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ（module 再構築後に再判断）。legacy Rapid v1 は rollback 経路として保持（Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。**clinical subject generalization は `glaucoma_pg_analog_eye_drops` pilot + Human Review PASS（2026-09-26・OD-RAPID-SUBJECT-PILOT-1）により機構として正式採用・PENDING解消**（`Scenario.rapidEvaluationSubject`。詳細は本項目末尾） | 🟡 中 | 残論点の判断タイミング: ① 一時除外の解除 = chemical mediator 点眼 module の再構築完了時 ③ v1 = Rapid v1 削除 Unit ④ composition 横断 review = module 開発が一周する少し前 ⑤ realization語彙（「増量」「減量」固定ラベルと実際の意味＝頻度変更・製品変更とのズレ。2026-09-27・Q-RAPID2 Human Review由来の具体例: `glaucoma_pg_analog_eye_drops`）の見直し = taxonomy再設計を検討する時に合わせて判断する。**FAC-10（Windows company PC 相当での file:// 確認）は 2026-09-17 に VERIFIED（release gate PASS）。FAC-13〜15 は未完了のまま** |
+| Q-RAPID2 | Rapid Transition Applicability — 6 transitionが個々のscenarioで意味的に成立するかをexisting metadataからdeterministicに導出できるか（2026-09-26・`glaucoma_pg_analog_eye_drops` Human Review由来のFinding）。**✅ CLOSED（2026-09-27・OD-RAPID2-APPLICABILITY-1）**: brand単位・既存canonical情報（`scenarioRequiredTags`/`handlingTags`/`sComposition.intent`）のみから導出し、generic/module未確定はbrandごとにevery()集約（representative brand選定なし）、UI非表示+write-side guardの二重防御で実装・Human Review PASS | **CLOSED** | 完了。realization語彙（「増量/減量」ラベル）の不一致自体はQ-RAPID1側の残論点⑤へ分離済み。既存Rapid-capable module横断の**臨床妥当性**未検証部分（31 module）は別Clinical Review Unit候補として明示のみ（詳細は本項目末尾） |
 | Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
 優先度の凡例:
@@ -650,7 +669,8 @@ Rapid v2（6 transition × 4 outcome）は Owner Decision **OD-RAPID-GLOBAL-1**�
 - profile 判定: `lib/rapidV2.ts` の `rapidProfileOf`（既定 v2 ＋ 明示的な一時除外）。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ
 - `RAPID_CAPABLE_S_CONTRACT` validator の scope は runtime の v2 profile と自動同期（WARNING / Design Rule）。future-subject tripwire は v1 / v2 を問わず全 Rapid-capable scenario を監視する
 - legacy Rapid v1 は一時除外 module と rollback 経路として保持（`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）
-- 未確定の残論点: 一時除外の解除判断 / clinical subject generalization（OD-RAPID-READINESS-1 §1 PENDING）/ legacy Rapid v1 の Lifecycle 確定 / composition 横断 review（同 §9・§10）。**FAC-10 は 2026-09-17 に VERIFIED（下記 OD-RAPID-GLOBAL-1 §6）。** FAC-13〜15 は引き続き NOT YET VERIFIED
+- 未確定の残論点: 一時除外の解除判断 / legacy Rapid v1 の Lifecycle 確定 / composition 横断 review（同 §9・§10）。**FAC-10 は 2026-09-17 に VERIFIED（下記 OD-RAPID-GLOBAL-1 §6）。** FAC-13〜15 は引き続き NOT YET VERIFIED。
+  **clinical subject generalization（旧 OD-RAPID-READINESS-1 §1 PENDING）は 2026-09-26・OD-RAPID-SUBJECT-PILOT-1 により機構として解消済み**（本項目末尾参照）。関連する新規 Finding（Rapid Transition Applicability）は Q-RAPID2 が別途追跡する
 
 以下の本文（「論点」後段の検証方針、および各 Owner Decision）は、H1 Reference Implementation → 3 module pilot → 6 module pilot → global promotion の**判断経緯の記録**である。各 Decision の冒頭に表示した Historical / Superseded 注記のとおり、現在の仕様は本節と OD-RAPID-GLOBAL-1 を正とする。
 
@@ -1075,6 +1095,108 @@ global promotion は確定・実装したが、Q-RAPID1 には未確定の論点
 - production: `lib/rapidV2.ts` の profile 判定のみ変更（`RAPID_DEFAULT_PROFILE = 'v2'` ＋ `RAPID_V1_TEMPORARY_EXCLUSIONS`）。deriveNodeFields / DashboardClient / ThirdPanel / moduleValidator / rapidState は code comment の更新のみで挙動の変更はない
 - 実測: 35 module 中 v2 = 34 module（Rapid-capable 165 scenario）、v1 = 一時除外 1 module（5 scenario）。`RAPID_CAPABLE_S_CONTRACT` は corpus 全体で 0 件。tripwire 違反 0 件
 - tests: 新設 `tests/rapidV2GlobalPromotion.test.ts`（profile 分布の exact 一時除外集合・新規 moduleId が既定 v2・validator scope と runtime profile の全 module 一致・全 module の realization が profile と一致・route 由来動詞・register・regimen_reduced・adjustmentExpression 非参照・composition register・v1 rollback 経路）。pilot 期間の exact-set allowlist 契約（`tests/rapidV2H1Pilot.test.ts` D／`tests/rapidV2MultiModulePilot.test.ts` A）と、v1 profile の実例として非 pilot module を使っていた契約は、一時除外 module を v1 の実例とする global contract へ役割を移した（coverage は削除していない）
+
+**Owner Decision（2026-09-26、OD-RAPID-SUBJECT-PILOT-1）: clinical subject generalization の pilot 実装・Human Review PASS・正式採用**
+
+> 本 Decision は OD-RAPID-READINESS-1 §1「clinical subject generalization は PENDING」を、**機構（mechanism）として解消する**。個々の新しい評価 subject の採用可否は、引き続き module ごとの Bridge 宣言と（必要な場合の）Human Review に委ねられる。「PENDING」が意味していた「clinical subject architecture を先回り設計しない」という制約自体は維持したままである——今回採用したのは汎用アーキテクチャではなく、scenario 単位の最小 optional field 1 個である。
+
+`glaucoma_pg_analog_eye_drops`（プロスタグランジン(PG)系緑内障治療点眼薬）の bridge authored 表現が「症状」ではなく「眼圧」を評価 subject として使うケースに遭遇したことが、OD-RAPID-READINESS-1 §1 が予見していた再開 Trigger（「症状」以外の評価 subject を持つ Rapid-capable scenario の初実装）に該当した。これを受けて次の最小 pilot を実装し、Owner が実機で Human Review した。
+
+**1. 採用した機構**
+
+- `Scenario.rapidEvaluationSubject?: string`（scenario 単位の optional field。`lib/types.ts`）
+- `register === 'drug'`（`registerOf(scenario) !== 'adherence'`）の Rapid v2 realization でのみ参照する。`register === 'regimen'` では常に既定 `"症状"` のまま（本 field を参照しない）
+- 未指定時は既定 `"症状"`。**既存 34+1 module は完全不変**（retrofit していない）
+- `lib/rapidV2.ts` の Human Review 済み完成文テーブル方式（DRUG_SENTENCES / DO_SENTENCES_BY_VERB）はそのまま維持し、埋め込まれていた `"症状"` リテラルを第2引数として parameterize したのみ。`RapidTransitionV2` / `SCondition` / taxonomy 本体・`registerOf()` の判定ロジック・multi-node domain separation は無変更
+- SOT は Bridge Header（SCENARIO ヘッダーの inline metadata `｜rapidEvaluationSubject=眼圧｜`。`scenarioColor` と同型）。S/O/A/P 等 PN1 凍結本文には触れない
+- 生成責務: PN3A（bridge inline token取得）→ PN3B（optional keyとしてcanonicalへ転記）→ PN6（そのまま引き継ぎ）。PN5 は関与しない
+- `lib/moduleValidator.ts` の `RAPID_CAPABLE_S_CONTRACT` と `tests/rapidCapableSubjectTripwire.test.ts` は、同一の解決規則（`register==='drug'` なら `rapidEvaluationSubject ?? '症状'`、`regimen` なら常に `'症状'`）で契約を一般化した。**未知の subject を無条件許可する緩和ではない**——field 未指定なら従来どおり `"症状"` との厳密一致を要求し、field 指定時もその値との厳密一致を要求する
+
+**2. `glaucoma_pg_analog_eye_drops` での適用値**
+
+`se_eyelash_growth_none` / `se_periocular_pigmentation_none` / `se_irritation_none` / `se_foreign_body_sensation_none` / `se_pruritus_none` / `se_eye_redness_none` / `se_eye_discharge_none` / `se_blurred_vision_none` の8scenario（`sideEffectPresence: absent_or_not_observed`・drug register）に `rapidEvaluationSubject: "眼圧"` を設定した。他34scenario・他34+1既存moduleには設定していない。
+
+**3. Human Review 結果**
+
+Owner が実機（開発ビルド）で Rapid OFF/ON・6 transition × 4 outcome・drug register完成文・regimen registerとの分離・scenario切替・SOAP全体の読みやすさを確認し、**違和感なし（PASS）**と判定した。機械検証（`npx tsc --noEmit` / `npm test` 3934件0 fail / `npm run build` / `npm run audit` FAIL 0 / `npm run test:multi-drug` 20/20）もすべてPASS。
+
+**4. 本 Decision が意味しないこと**
+
+- **多軸clinical subject schema・enum化・汎用アーキテクチャの採用ではない。** 採用したのはscenario単位の単一文字列fieldのみ
+- **他module（トラゼンタ等）への retrofit ではない。** 既存moduleは無変更のまま
+- **「新しい評価subjectが現れるたびに自動的に許可される」という意味ではない。** 各moduleが独自の値を設定する際は、引き続きBridge宣言とHuman Reviewが前提
+- **Rapid Transition Applicability（Q-RAPID2）を解決するものではない。** 「6 transitionが個々のscenarioで意味的に成立するか」は別責務であり、本Decisionの範囲外
+
+**realization語彙の不一致 Finding（2026-09-27・Q-RAPID2 Human Review由来）**
+
+Q-RAPID2の横断監査・実装（下記参照）の過程で、`glaucoma_pg_analog_eye_drops`の一部brand
+（レスキュラ／イソプロピルウノプロストン等）は「点眼回数の変更」「より効果の高い製品への変更」を
+意味する scenario を持つが、Rapid v2 の realization は本節冒頭で確定済みの方針（`display.adjustmentExpression`
+を参照せず一律「増量」「減量」まで抽象化する）により、これらにも機械的に「増量」「減量」という固定
+語彙・完成文を適用することを確認した。**これは新しい設計判断ではなく、本節冒頭の既存方針の帰結を
+具体例で確認したものである。** Q-RAPID2 は dose transition の**表示可否**（applicability）のみを
+扱う別責務であり、**realization語彙そのものの見直しはQ-RAPID2の範囲外・本Q-RAPID1側の残論点として
+記録する**（下記一覧表「残論点」⑤）。現時点で文言・taxonomyの変更は行わない。
+
+---
+
+## Q-RAPID2: Rapid Transition Applicability（2026-09-26 Finding → 2026-09-27 実装・Human Review PASS・CLOSED）
+
+**論点**
+
+Rapid v2 の6 transition（Do・追加・変更・削除〔処方整理〕・増・減）は、eligibility（`isScenarioSReplacementCapable`）が true であれば scenario の内容にかかわらず UI 上すべて表示される。一方、対象 scenario によっては一部 transition が臨床的に意味をなさない場合がありうる（例: 増量・減量という概念が成立しない薬剤・使用状況の scenario でも `dose_increased` / `dose_decreased` ボタンが表示され得る）。
+
+**由来**
+
+`glaucoma_pg_analog_eye_drops` の Rapid clinical-subject pilot（OD-RAPID-SUBJECT-PILOT-1・Q-RAPID1 末尾）の Human Review 中に Owner が発見した Finding。**clinical-subject realization（どの評価 subject を使うか）とは別責務**であり、pilot の scope 外として今回は未着手のまま記録する。
+
+**現状の扱い（2026-09-26 確定。2026-09-27 Owner Decision により Superseded — historical record として保持）**
+
+- Rapid taxonomy（6 transition）は変更しない → **不変のまま維持**
+- transition の表示条件は今回追加しない（現行どおり eligibility のみで表示）→ **Superseded**（下記 Owner Decision で dose_increased/decreased に表示条件を追加）
+- `glaucoma_pg_analog_eye_drops` 固有の hide 処理は入れない → **不変のまま維持**（module 固有分岐は実装していない。全 module 共通の deterministic 関数として実装した）
+- 新規 scenario-level metadata は新設しない → **不変のまま維持**
+- 本 Finding は `glaucoma_pg_analog_eye_drops` の module completion（RELEASE_OK）を妨げる blocker としない → **不変のまま維持**
+
+**横断レビュー実施記録（2026-09-27・実施済み）**
+
+2026-09-26 時点で「別 Unit・未着手」としていた横断レビュー（5 項目）を、`glaucoma_pg_analog_eye_drops` の module completion 後に同一 Unit 内で実施した。
+
+1. **6 transitionが各 module・各 scenario で意味的に成立するか** — v2 側 36 module・全 1,165 scenario を走査（サンプリングではなく網羅）。Rapid-eligible scenario は 182 件のみで、いずれも `se_*_none`（副作用なし）または `cp_good`（アドヒアランス良好）の 2 種類に限られる。`continued_do` / `new_addition` / `med_changed` / `regimen_reduced` の4 transitionは全 module で文言破綻なし。`dose_increased` / `dose_decreased` のみ、5 module・18 brand（`dm_dpp4_oral` のトラゼンタ等・`dm_sglt2_oral`・`dm_dpp4_sglt2_combination_oral`・`cardiorenal_sglt2_oral`〔module全体でdose scenario 0件〕・`glaucoma_pg_analog_eye_drops`）で、canonical側が既に「このbrandにdose_increase/decrease scenarioは存在しない」と記録しているにもかかわらずボタンが常時表示される不整合を確認した（brand×eligible scenario換算で増量130/650・減量118/650）
+2. **既存 canonical metadata から表示可否を deterministic に導出できるか** — `scenarioType` / `sideEffectPresence` / `intentTags` はscenario単位の粒度が粗すぎて判別不可能（同一値が insulin〔増量に意味あり〕とトラゼンタ〔意味なし〕の両方に付く）。一方、**brand 単位**では `sComposition.intent === 'dose_increase'/'dose_decrease'` の scenario が、resolved brand の `handlingTags` に対して `scenarioRequiredTags ⊆ handlingTags` で到達可能かを判定すれば、既存データのみから deterministic に導出できることを確認した（`app/components/DashboardClient.tsx` の menu 表示 `availableGroups`/`groupScenarios` と同一の AND 判定ロジックを intent 限定で再利用）
+3. **scenario-level の新規 metadata が必要か** — 不要と判明。上記 brand 単位の既存 field（`scenarioRequiredTags` / `handlingTags` / `sComposition.intent`）のみで成立する
+4. **UI 表示制御だけで十分か、runtime guard も必要か** — brand/resolution が変わる箇所は全て既存コードで同一更新内に `rapid: null` へリセットされるため、「表示条件を満たさなくなった transition の state が生き残る」carry-over は構造的に発生しない。一方、UI を迂回した書き込みに対する defense-in-depth として、`regimen_reduced` の既存 write guard（`handleSToggle` 冒頭・module 静的属性ベース）と同型の guard を追加した（brand 動的属性ベース）
+5. **現行 corpus での不整合の実際の広がり** — v2 側 36 module 中 5 module（約14%）、182 eligible scenario 中 33 scenario（約18%）で発生。残り 31 module（149 scenario）は corpus 上の矛盾なし。**ただし「制約 metadata が無い＝臨床的に増減量可能」ではない。臨床妥当性は未検証のまま明示する**（下記「対象外」参照）
+
+**対象外（本 Finding が扱わないこと。引き続き対象外のまま）**
+
+- clinical subject realization（`rapidEvaluationSubject`。Q-RAPID1 OD-RAPID-SUBJECT-PILOT-1 で解決済み）
+- Rapid taxonomy 自体の再設計（DP-19 の6 transition骨格は本 Finding の対象外）
+- **realization 語彙（「増量」「減量」固定ラベル）が実際の意味（頻度変更・製品変更等）と一致するか** — `glaucoma_pg_analog_eye_drops` で具体例を確認したが、これは Q-RAPID1 側の残論点⑤へ分離した（本項目末尾の Owner Decision参照）。dose transition の**表示可否**（本 Finding の scope）とは別責務であり、本 Decision はこれを解決しない
+- **restriction metadata が存在しない 31 module の臨床妥当性そのもの** — 添付文書等に基づく医学的判断は本 Finding の scope 外。必要なら別 Clinical Review Unit として扱う（今回は着手しない）
+
+**Owner Decision（2026-09-27、OD-RAPID2-APPLICABILITY-1）: dose transition applicability の実装・採用・Unit CLOSE**
+
+上記横断レビューの結果を踏まえ、次の設計を Owner が承認し実装、Human Review PASS の上で正式採用した。
+
+- **判定単位**: brand 単位を基本とする。module 単位の判定を別ルールとして新設せず、全 brand で同一結果になる場合に結果として module 全体が同じ表示になるだけとして扱う
+- **判定材料**: 既存 canonical 情報（`scenarioRequiredTags` / `drug.brandCatalog[*].handlingTags` / `scenario.sComposition.intent`）のみ。新規 canonical field・新規 scenario-level metadata・新しい taxonomy 値は追加しない
+- **generic / module 未確定時の集約**: candidate brand 群それぞれを brand 単位で判定した後 `every()` で集約する（tag intersection 方式は採用しない。brand A/B が異なる handlingTag 経路で共に到達可能でも共通 tag が無いケースで偽陰性になるため）。**representative brand（代表 brand）選定は行わない**
+- **legacy 経路（`resolution === undefined`）**: `matchedBrandName` が存在すればその brand 単位で判定し、存在しなければ `brandCatalog` の全 brand を `every()` 集約する。ADDON フィルタが使う `matchedBrandName ?? drug.brandNames?.[0]` フォールバックは**使用しない**（代表 brand 選定の禁止を legacy 経路にも適用するため）
+- **担保方法**: UI 非表示（`ThirdPanel` の `doseApplicability` 必須 prop。`?? true` 等のデフォルト値は設けず fail-closed）と、write-side guard（`handleSToggle` 冒頭。`regimen_reduced` の既存 guard と同型の defense-in-depth。carry-over remediation ではない）の二重防御
+- **実装**: `lib/rapidV2.ts`（`doseTransitionApplicabilityForTags` / `doseTransitionApplicabilityOf`）・`app/components/DashboardClient.tsx`・`app/components/ThirdPanel.tsx`。新規テスト `tests/rapidDoseApplicability.test.ts`（21件。generic の every 集約が tag intersection の偽陰性を修正することの回帰証明・legacy 経路が `matchedBrandName` のみを見て `brandNames[0]` へフォールバックしないことの回帰証明を含む）
+- **既存 pinning test の更新**: `resolution` の使用範囲を固定する `tests/brandResolutionPlumbing.test.ts`（T-U4a-5）と、`handleSToggle` の dependency 配列を固定する `tests/primaryAliasDirectReadUnit4C6.test.ts` を、本 Decision による正当な拡張として最小更新した
+- **機械検証**: `npx tsc --noEmit` PASS / `npm test` 3955件中 3953 pass・0 fail・2 skip / `npm run build` PASS（CrossModuleValidator 37 module OK）/ `npm run audit` FAIL 0・CHECK 2（`allergy_chemical_mediator_release_inhibitor_eye_drops` と `glaucoma_pg_analog_eye_drops` の既知 baseline。本 Decision と無関係）/ `npm run test:multi-drug` 20/20 PASS
+- **Human Review（2026-09-27・実機確認・PASS）**: トラゼンタ（増量・減量とも非表示）／マリゼブ・ザファテック（増量非表示・減量表示）／スイニー等通常 dose 調整可能 brand（増量・減量とも表示）／`cardiorenal_sglt2_oral`（dose 系とも非表示）／`glaucoma_pg_analog_eye_drops`（brand ごとの applicability。キサラタン非表示 vs レスキュラ表示）／generic 選択時（シタグリプチン。candidate 全 brand 一致のため増量・減量とも表示）を確認した。**generic candidate 間で dose applicability が不一致になる実 corpus 例は現時点で存在しない**（同一 genericKey を共有する既存 brand は同系統の handlingTags を持つため）。この分岐固有の every 集約ロジックは synthetic fixture による contract test（`tests/rapidDoseApplicability.test.ts`）で十分と Owner が判断した
+- **`allergy_chemical_mediator_release_inhibitor_eye_drops`（一時除外 module）**: 引き続き Rapid v1 のまま（`RAPID_V1_TEMPORARY_EXCLUSIONS`）。module 再構築後、同じ Q-RAPID2 の基準（brand 単位・既存 metadata・every 集約）で再監査する
+
+**本 Decision が意味しないこと**
+
+- **realization 語彙（「増量」「減量」固定ラベル）の見直しではない。** 表示可否（applicability）のみを扱う。語彙の不一致は Q-RAPID1 側の残論点⑤へ分離した
+- **restriction metadata が存在しない 31 module の臨床妥当性を保証するものではない。** 「制約が無い＝増減量可能」と確定したわけではなく、未検証のまま明示する。必要なら別 Clinical Review Unit で扱う
+- **Rapid taxonomy 自体（6 transition骨格）の再設計ではない**
+
+**本 Unit は 2026-09-27 に CLOSE した。** `docs/DESIGN_PRINCIPLES.md` / `docs/JSON_STANDARD.md` への移管は行わない（Q-S2 と同様、設計判断と closure 根拠を将来再構成できるよう本ドキュメントへ historical record として保持する）。
 
 ---
 

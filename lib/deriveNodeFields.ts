@@ -96,12 +96,12 @@ function withRapidFirstSentence(
   // O / A / P は Rapid の対象外（Rapid は S 欄のみを変更する）。
   const newFirst = previousEvent === 'regimen_reduced'
     // v2 限定の6件目（前回、処方整理）。v1 には存在しないため v1 分岐へは進めない。
-    ? buildV2FirstSentence('regimen_reduced', currentOutcome, registerOf(scenario), drugName, verbOf(mod))
+    ? buildV2FirstSentence('regimen_reduced', currentOutcome, registerOf(scenario), drugName, verbOf(mod), scenario.rapidEvaluationSubject)
     : rapidProfileOf(mod) === 'v2'
       // v2 module は v1 の5 relation も v2 の完成文テーブルで実現する
       // （display.adjustmentExpression は参照しない。「増量」「減量」まで抽象化する
       // Owner Decision による）。
-      ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(scenario), drugName, verbOf(mod))
+      ? buildV2FirstSentence(previousEvent, currentOutcome, registerOf(scenario), drugName, verbOf(mod), scenario.rapidEvaluationSubject)
       // v1 module（既存挙動。byte-identical）
       : buildResolvedSFirstSentence(
           previousEvent,

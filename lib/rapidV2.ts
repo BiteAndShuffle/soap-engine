@@ -47,6 +47,15 @@
  * 未決定（OD-RAPID-READINESS-1 §1 PENDING）であり、`tests/rapidCapableSubjectTripwire.test.ts`
  * が review trigger として検出する。
  *
+ * **2026-09-26（`glaucoma_pg_analog_eye_drops` pilot・Owner Human Review PASS・正式採用。
+ * `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 OD-RAPID-SUBJECT-PILOT-1）:**
+ * drug register の完成文テーブル（`DRUG_SENTENCES` / `DO_SENTENCES_BY_VERB`）へ、評価対象名詞
+ * （既定 `"症状"`）を第2引数として parameterize した。呼び出し元は `Scenario.rapidEvaluationSubject`
+ * （optional。未指定なら `"症状"`）を `buildV2FirstSentence` の最終引数として渡す。
+ * taxonomy（`RapidTransitionV2` / `SCondition`）・register 分離（`registerOf`）・
+ * 完成文テーブル方式そのものは変更していない。`register === 'regimen'` では常に `"症状"` のまま
+ * （`rapidEvaluationSubject` を参照しない）。
+ *
  * realization は scenario の評価単位で決定論的に分岐する
  * （DP-12 OD-COMPLIANCE-REALIZATION-1）:
  *   - `scenario.scenarioType === 'adherence'` → regimen-level（薬剤名を含めない）
@@ -76,6 +85,8 @@
 import type { ComposeNode, ModuleData, Scenario } from './types'
 import type { SCondition } from './rapidSentence'
 import type { RapidTransitionV2 } from './rapidState'
+import type { BrandResolution } from './brandResolution'
+import type { BrandCatalog } from './brandTags'
 
 export type RapidProfile = 'v1' | 'v2'
 
@@ -166,44 +177,50 @@ export function registerOf(scenario: Scenario): Register {
 
 /** continued_do（Do）は動詞（使用/服用）で表が分かれるため、他5 transitionとは別の型・別テーブルで持つ。 */
 type NonDoTransition = Exclude<RapidTransitionV2, 'continued_do'>
-type DrugSentenceTable = Record<NonDoTransition, Record<SCondition, (drug: string) => string>>
+/**
+ * 第2引数 `subj` は評価対象名詞（既定 `"症状"`）。2026-09-26 pilot（OD-RAPID-READINESS-1 §1）で
+ * 追加した parameterization であり、テーブルの本数・taxonomy・文の骨格は変更していない。
+ */
+type DrugSentenceTable = Record<NonDoTransition, Record<SCondition, (drug: string, subj: string) => string>>
 type RegimenSentenceTable = Record<NonDoTransition, Record<SCondition, string>>
 
 /**
  * Do（continued_do）の realization。動詞（使用/服用）で表が分かれる唯一の transition。
  * drug register では drugName、regimen register では「薬」を主語にして同じ表を使う。
+ * 第2引数 `subj`（評価対象名詞・既定 `"症状"`）は2026-09-26 pilotで追加。
  */
-const DO_SENTENCES_BY_VERB: Record<Verb, Record<SCondition, (subject: string) => string>> = {
+const DO_SENTENCES_BY_VERB: Record<Verb, Record<SCondition, (subject: string, subj: string) => string>> = {
   使用: {
-    stable:       d => `${d}を使用して症状は落ち着いている。`,
-    unchanged:    d => `${d}を使用して症状は変わりない。`,
-    improved:     d => `${d}を使用して症状は良くなってきた。`,
-    not_improved: d => `${d}を使用しているが症状の改善は乏しい。`,
+    stable:       (d, s) => `${d}を使用して${s}は落ち着いている。`,
+    unchanged:    (d, s) => `${d}を使用して${s}は変わりない。`,
+    improved:     (d, s) => `${d}を使用して${s}は良くなってきた。`,
+    not_improved: (d, s) => `${d}を使用しているが${s}の改善は乏しい。`,
   },
   服用: {
-    stable:       d => `${d}を服用して症状は落ち着いている。`,
-    unchanged:    d => `${d}を服用して症状は変わりない。`,
-    improved:     d => `${d}を服用して症状は良くなってきた。`,
-    not_improved: d => `${d}を服用しているが症状の改善は乏しい。`,
+    stable:       (d, s) => `${d}を服用して${s}は落ち着いている。`,
+    unchanged:    (d, s) => `${d}を服用して${s}は変わりない。`,
+    improved:     (d, s) => `${d}を服用して${s}は良くなってきた。`,
+    not_improved: (d, s) => `${d}を服用しているが${s}の改善は乏しい。`,
   },
 }
 
 /**
  * drug-specific realization（副作用確認 scenario 等。continued_do 以外の5 transition）。
  * Owner Decision で確定した完成文をそのまま保持する（prefix+suffix合成をしない）。
+ * 第2引数 `subj`（評価対象名詞・既定 `"症状"`）は2026-09-26 pilotで追加。
  */
 const DRUG_SENTENCES: DrugSentenceTable = {
   new_addition: {
-    stable:       d => `前回から${d}が追加となり症状は落ち着いている。`,
-    unchanged:    d => `前回から${d}が追加となり症状は変わりない。`,
-    improved:     d => `前回から${d}が追加となり症状は良くなってきた。`,
-    not_improved: d => `前回から${d}が追加となったが症状の改善は乏しい。`,
+    stable:       (d, s) => `前回から${d}が追加となり${s}は落ち着いている。`,
+    unchanged:    (d, s) => `前回から${d}が追加となり${s}は変わりない。`,
+    improved:     (d, s) => `前回から${d}が追加となり${s}は良くなってきた。`,
+    not_improved: (d, s) => `前回から${d}が追加となったが${s}の改善は乏しい。`,
   },
   med_changed: {
-    stable:       d => `前回から${d}に変更となり症状は落ち着いている。`,
-    unchanged:    d => `前回から${d}に変更となり症状は変わりない。`,
-    improved:     d => `前回から${d}に変更となり症状は良くなってきた。`,
-    not_improved: d => `前回から${d}に変更となったが症状の改善は乏しい。`,
+    stable:       (d, s) => `前回から${d}に変更となり${s}は落ち着いている。`,
+    unchanged:    (d, s) => `前回から${d}に変更となり${s}は変わりない。`,
+    improved:     (d, s) => `前回から${d}に変更となり${s}は良くなってきた。`,
+    not_improved: (d, s) => `前回から${d}に変更となったが${s}の改善は乏しい。`,
   },
   // 処方整理は drug-specific realization でも薬剤名を入れない（限定 multi-module
   // pilot で確定し global promotion でも維持。§6・DP-19 OD-RAPID-SCOPE-1）。「前回、処方整理」は現在表示中の
@@ -212,22 +229,22 @@ const DRUG_SENTENCES: DrugSentenceTable = {
   // register（drug/regimen）に関わらず同一文になる（REGIMEN_SENTENCES.regimen_reduced
   // と文面が一致するのは意図的な結果であり、値の重複ではない）。
   regimen_reduced: {
-    stable:       () => `前回の処方整理後も症状は落ち着いている。`,
-    unchanged:    () => `前回の処方整理後も症状は変わりない。`,
-    improved:     () => `前回の処方整理後、症状は良くなってきた。`,
-    not_improved: () => `前回の処方整理後も症状の改善は乏しい。`,
+    stable:       (_d, s) => `前回の処方整理後も${s}は落ち着いている。`,
+    unchanged:    (_d, s) => `前回の処方整理後も${s}は変わりない。`,
+    improved:     (_d, s) => `前回の処方整理後、${s}は良くなってきた。`,
+    not_improved: (_d, s) => `前回の処方整理後も${s}の改善は乏しい。`,
   },
   dose_increased: {
-    stable:       d => `前回から${d}が増量となり症状は落ち着いている。`,
-    unchanged:    d => `前回から${d}が増量となり症状は変わりない。`,
-    improved:     d => `前回から${d}が増量となり症状は良くなってきた。`,
-    not_improved: d => `前回から${d}が増量となったが症状の改善は乏しい。`,
+    stable:       (d, s) => `前回から${d}が増量となり${s}は落ち着いている。`,
+    unchanged:    (d, s) => `前回から${d}が増量となり${s}は変わりない。`,
+    improved:     (d, s) => `前回から${d}が増量となり${s}は良くなってきた。`,
+    not_improved: (d, s) => `前回から${d}が増量となったが${s}の改善は乏しい。`,
   },
   dose_decreased: {
-    stable:       d => `前回から${d}が減量となり症状は落ち着いている。`,
-    unchanged:    d => `前回から${d}が減量となり症状は変わりない。`,
-    improved:     d => `前回から${d}が減量となり症状は良くなってきた。`,
-    not_improved: d => `前回から${d}が減量となったが症状の改善は乏しい。`,
+    stable:       (d, s) => `前回から${d}が減量となり${s}は落ち着いている。`,
+    unchanged:    (d, s) => `前回から${d}が減量となり${s}は変わりない。`,
+    improved:     (d, s) => `前回から${d}が減量となり${s}は良くなってきた。`,
+    not_improved: (d, s) => `前回から${d}が減量となったが${s}の改善は乏しい。`,
   },
 }
 
@@ -277,6 +294,9 @@ const REGIMEN_SENTENCES: RegimenSentenceTable = {
  * - Do 以外の `register === 'regimen'` は薬剤名を含まない regimen-level 文を返す。
  * - `register === 'drug'` で drugName が空の場合は v1 の generic fallback（「薬」）と
  *   同じ考え方で暗黙の主語を補う（新しい fallback 設計は行わない）。
+ * - `evaluationSubject`（2026-09-26 pilot・OD-RAPID-READINESS-1 §1）: `register === 'drug'` の
+ *   ときのみ使用する評価対象名詞。未指定時は既定 `"症状"`（既存呼び出し・既存 module は完全不変）。
+ *   `register === 'regimen'` では常に `"症状"` を使い、本引数を参照しない。
  */
 export function buildV2FirstSentence(
   transition: RapidTransitionV2,
@@ -284,12 +304,14 @@ export function buildV2FirstSentence(
   register: Register,
   drugName: string | undefined,
   verb: Verb,
+  evaluationSubject?: string,
 ): string {
+  const subj = register === 'drug' ? (evaluationSubject ?? '症状') : '症状'
   if (transition === 'continued_do') {
-    return DO_SENTENCES_BY_VERB[verb][outcome](register === 'regimen' ? '薬' : (drugName || '薬'))
+    return DO_SENTENCES_BY_VERB[verb][outcome](register === 'regimen' ? '薬' : (drugName || '薬'), subj)
   }
   if (register === 'regimen') return REGIMEN_SENTENCES[transition][outcome]
-  return DRUG_SENTENCES[transition][outcome](drugName || '薬')
+  return DRUG_SENTENCES[transition][outcome](drugName || '薬', subj)
 }
 
 /**
@@ -315,4 +337,116 @@ export function rapidV2CompositionOf(node: ComposeNode): RapidV2Composition | un
   if (register === undefined || node.rapid === null) return undefined
   const { previousEvent: transition, currentOutcome: outcome } = node.rapid
   return { transition, outcome, regimenLevel: register === 'regimen' || transition === 'regimen_reduced' }
+}
+
+/**
+ * Q-RAPID2「Rapid Transition Applicability」（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID2）。
+ *
+ * `dose_increased` / `dose_decreased` transitionは、eligibility
+ * （`isScenarioSReplacementCapable`）が true であれば scenario の内容に関わらず
+ * 常にUI表示されていたが、対象 brand が増量・減量のいずれかに対応する scenario を
+ * 持たない場合がある（例: `dm_dpp4_oral` のトラゼンタは増量・減量とも非対応）。
+ *
+ * 本節は「そのbrandについて、到達可能な dose_increase / dose_decrease scenario が
+ * 1件以上存在するか」を、既存 canonical field のみから deterministic に導出する
+ * （新規 canonical field・新規 scenario-level metadata は追加しない）。
+ *
+ * 判定は brand 単位を基本とする。generic / module 未確定時は candidate brand群を
+ * 「代表 brand を選ばず」全件評価し、**全員が一致する場合のみ** true にする
+ * （`every()` 集約。tag intersection 方式は採用しない — brand A/B が異なる
+ * handlingTag 経路で共に dose_increase 可能でも共通 tag がないケースで
+ * 偽陰性になるため）。
+ */
+export type DoseTransitionApplicability = {
+  dose_increased: boolean
+  dose_decreased: boolean
+}
+
+/**
+ * brand 単位の core 判定（`doseTransitionApplicabilityOf` の集約対象）。
+ *
+ * `brandHandlingTags` は特定 brand の `handlingTags`、または未確定を表す
+ * `undefined`（brand 固有タグを参照できない）。
+ * `DashboardClient.tsx` の `availableGroups` / `groupScenarios`（scenarioRequiredTags
+ * ⊆ brandHandlingTags の AND 判定）と同一ロジックを、
+ * `sComposition.intent === 'dose_increase' / 'dose_decrease'` の scenario に限定して適用する。
+ */
+export function doseTransitionApplicabilityForTags(
+  mod: ModuleData,
+  brandHandlingTags: string[] | undefined,
+): DoseTransitionApplicability {
+  const reachable = (intent: 'dose_increase' | 'dose_decrease') =>
+    mod.scenarios.some(sc => {
+      if (sc.sComposition?.intent !== intent) return false
+      const req = sc.scenarioRequiredTags
+      if (!req || req.length === 0) return true
+      if (!brandHandlingTags) return false
+      return req.every(tag => brandHandlingTags.includes(tag))
+    })
+  return {
+    dose_increased: reachable('dose_increase'),
+    dose_decreased: reachable('dose_decrease'),
+  }
+}
+
+/**
+ * candidate brand 群それぞれを brand 単位で判定し、全員一致（`every`）でのみ
+ * true にする。代表 brand を選ばない。candidate が 0 件の場合は
+ * 根拠 brand が存在しないため `{ false, false }`（DP-15: 不確定性を推測で埋めない）。
+ */
+function everyBrandApplicability(
+  brandKeys: readonly string[],
+  brandCatalog: BrandCatalog,
+  mod: ModuleData,
+): DoseTransitionApplicability {
+  if (brandKeys.length === 0) return { dose_increased: false, dose_decreased: false }
+  const perBrand = brandKeys.map(bk =>
+    doseTransitionApplicabilityForTags(mod, brandCatalog[bk]?.handlingTags),
+  )
+  return {
+    dose_increased: perBrand.every(p => p.dose_increased),
+    dose_decreased: perBrand.every(p => p.dose_decreased),
+  }
+}
+
+/**
+ * context 単位（`BrandResolution` + `brandCatalog`）から dose transition の
+ * 適用可否を導出する唯一の判定点（Q-RAPID2）。
+ *
+ * | resolution | 判定 |
+ * |---|---|
+ * | `brandCatalog` が存在しない | brand 概念自体が無い module。`doseTransitionApplicabilityForTags(mod, undefined)` |
+ * | `undefined`（legacy）+ `matchedBrandName` あり | その brand 単体で core 判定 |
+ * | `undefined`（legacy）+ `matchedBrandName` なし | brandCatalog 全 brand を core 判定 → `every()` 集約（代表 brand を選ばない） |
+ * | `denotation: 'brand'` | その brand 単体で core 判定 |
+ * | `denotation: 'generic'` | candidate brandKeys を core 判定 → `every()` 集約 |
+ * | `denotation: 'module'` | brandCatalog 全 brand を core 判定 → `every()` 集約 |
+ *
+ * **`matchedBrandName` 未確定時に `drug.brandNames?.[0]` 等へフォールバックしない。**
+ * ADDON フィルタ（`lib/brandTags.ts` `resolveBrandHandlingTags`）は legacy 経路で
+ * 従来どおり単一 brand 解決を維持するが、それは既存契約であり本関数は再利用しない
+ * （代表 brand 選定の禁止は本関数固有の Owner Decision）。
+ */
+export function doseTransitionApplicabilityOf(
+  mod: ModuleData,
+  resolution: BrandResolution | undefined,
+  brandCatalog: BrandCatalog | undefined,
+  matchedBrandName: string | undefined,
+): DoseTransitionApplicability {
+  if (!brandCatalog) return doseTransitionApplicabilityForTags(mod, undefined)
+
+  if (resolution === undefined) {
+    if (matchedBrandName) {
+      return doseTransitionApplicabilityForTags(mod, brandCatalog[matchedBrandName]?.handlingTags)
+    }
+    return everyBrandApplicability(Object.keys(brandCatalog), brandCatalog, mod)
+  }
+  switch (resolution.denotation) {
+    case 'brand':
+      return doseTransitionApplicabilityForTags(mod, brandCatalog[resolution.brandKey]?.handlingTags)
+    case 'generic':
+      return everyBrandApplicability(resolution.brandKeys, brandCatalog, mod)
+    case 'module':
+      return everyBrandApplicability(Object.keys(brandCatalog), brandCatalog, mod)
+  }
 }

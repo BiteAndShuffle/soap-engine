@@ -47,7 +47,7 @@ import {
   isSameRapid,
   nextRapidStateOnScenarioChange,
 } from '../../lib/rapidState'
-import { rapidProfileOf, rapidV2CompositionOf } from '../../lib/rapidV2'
+import { rapidProfileOf, rapidV2CompositionOf, doseTransitionApplicabilityOf } from '../../lib/rapidV2'
 import { isScenarioSReplacementCapable } from '../../lib/isSReplacementEligible'
 import { PRIMARY_NODE_ID, rebuildPrimary, rebuildNode } from '../../lib/primaryNode'
 import ComposeNodeBar from './ComposeNodeBar'
@@ -659,6 +659,22 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     const legacyBrandKey = ctx.matchedBrandName ?? targetModule.drug?.brandNames?.[0]
     return resolveBrandHandlingTags(activeContextResolution, brandCatalog, legacyBrandKey)
   }, [targetModule, activeNode, primaryNode, activeContextResolution])
+
+  // ── doseApplicability: Q-RAPID2 dose_increased/decreased の表示可否 ──
+  // ADDON 用 addonBrandHandlingTags とは独立に導出する。「代表 brand を選ばない」
+  // Owner Decision のため、legacy 経路で addonBrandHandlingTags が使う
+  // `matchedBrandName ?? drug.brandNames?.[0]` フォールバックを使用しない
+  // （`matchedBrandName` のみを渡し、未確定時は doseTransitionApplicabilityOf 内部で
+  // 全 brand を every() 集約する）。
+  const doseApplicability = useMemo(
+    () => doseTransitionApplicabilityOf(
+      targetModule,
+      activeContextResolution,
+      targetModule.drug?.brandCatalog,
+      (activeNode ?? primaryNode).matchedBrandName,
+    ),
+    [targetModule, activeContextResolution, activeNode, primaryNode],
+  )
 
   const addonVisibleKeys = useMemo(
     () => getVisibleAddonKeys(targetModule.addons, addonTargetScenario, addonBrandHandlingTags),
@@ -1578,6 +1594,15 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
     // 許可する。ThirdPanel は 'v2' でない限り当該ボタンを描画しないため通常は到達しないが、
     // v1 module の state を汚染しないよう防御的に no-op にする（新しい state を作らない）。
     if (relation === 'regimen_reduced' && rapidProfileOf(targetModule) !== 'v2') return
+    // Q-RAPID2 write guard: dose_increased/decreased は ThirdPanel が doseApplicability
+    // に基づき非表示にするため通常は到達しないが、UI を迂回した書き込みを防ぐ
+    // defense-in-depth として同じ no-op no-state パターンで防御する
+    // （scenario 切替 carry-over の remediation ではない。brand/module context のみで
+    // 決まる値のため、resolution 変更時は既存の rapid:null リセットで必ず整合する）。
+    if (
+      (relation === 'dose_increased' && !doseApplicability.dose_increased) ||
+      (relation === 'dose_decreased' && !doseApplicability.dose_decreased)
+    ) return
     const nodeId = editingNodeIdRef.current
 
     if (nodeId !== null) {
@@ -1680,7 +1705,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
       })
       setEditedSOAP(null)
     })
-  }, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, allModules, moduleData, confirmDiscard, targetModule])
+  }, [primaryNode.matchedBrandName, primaryNode.resolvedDrugName, activeModuleData, allModules, moduleData, confirmDiscard, targetModule, doseApplicability])
 
   // ─────────────────────────────────────────────────────────────
   // handleSubcategorySelect【Express 操作】
@@ -2089,6 +2114,7 @@ export default function DashboardClient({ moduleData, allModules }: DashboardCli
             rapidState={(activeNode ?? primaryNode).rapid}
             onSAction={handleSToggle}
             rapidProfile={rapidProfileOf(targetModule)}
+            doseApplicability={doseApplicability}
             composeSearchValue={composeSearch}
             onComposeSearchChange={setComposeSearch}
             composeDrugSuggestions={composeDrugSuggestions}

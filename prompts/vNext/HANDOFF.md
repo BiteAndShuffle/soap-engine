@@ -948,6 +948,33 @@ FAIL と同様に PN8 進行のブロッカーとして扱い、人間承認を�
 
 以下は機能上の問題はないが、将来対応が望ましい項目です。次モジュール作業のブロッカーではありません。
 
+## product variant runtime selection gap（2026-09-26・glaucoma_pg_analog_eye_drops想定時に記録）
+
+`brandCatalog` は canonical drug unit単位（brand名／generic名）でしか `handlingTags` を
+持てず、同一unit内の実世界variant（package差・manufacturer差）ごとに実際に交付された
+製品を判別してtagを切り替える機構はruntimeに存在しない。誤ったvariant propertyの
+自動帰属を避け、current runtimeで判別できない差分はHuman judgmentへ委ねている
+（`docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` §4.2）。SCENARIOのreachabilityは
+このgapを理由に広げていない。将来、variant差が広く発生するdomainでは、dispensing時に
+variantを選択させるUI設計が必要になる可能性がある。現時点では新フィールド化しない。
+
+実例: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス点眼液／タプロスミニの貯法・
+容器・防腐剤差。`cold_storage_before_opening` / `single_use_container` /
+`preservative_free` を自動付与せず、対応ADDONをrequiredTags未宣言のmanual candidateとした）。
+
+## Rapid Transition Applicability（2026-09-26 Finding → 2026-09-27 実装・Human Review PASS・CLOSED）
+
+正本は `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID2（本ファイルへ内容を複製しない）。
+
+`glaucoma_pg_analog_eye_drops` の Rapid clinical-subject pilot（`docs/OPEN_DESIGN_QUESTIONS.md`
+Q-RAPID1 OD-RAPID-SUBJECT-PILOT-1）Human Review中にOwnerが発見したFinding
+（dose_increased/decreased がscenarioの意味的成立可否を問わず常時表示される）は、
+2026-09-27 に Owner Decision OD-RAPID2-APPLICABILITY-1 として実装・Human Review PASS・**CLOSE**
+した（`lib/rapidV2.ts` `doseTransitionApplicabilityOf` 等。brand単位・既存canonical情報のみ・
+generic/module は `every()` 集約・representative brand選定なし・UI非表示 + write-side guard の
+二重防御）。詳細・実装差分・横断監査結果・検証記録はすべて `docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID2
+本文が正本（本ファイルへ複製しない）。
+
 ## AddonPanel.tsx の GROUP_LABELS 未登録グループ
 
 Addon の表示順は DP-10 / RULES.md §25 の通り bridge / JSON の記載順（`addonsRef.P`）をそのまま使用する（固定配列 GROUP_ORDER は廃止済み）。
