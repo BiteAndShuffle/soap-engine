@@ -127,9 +127,13 @@ describe('⑤ 一般名検索（genericMode）の既存構造維持', () => {
     //   - 一般名系エントリ「トラニラスト点眼液」が収載ブランドとして追加された
     // この結果、旧「genericKey 別グループ（非PF / PF）」は単一グループへ統合された。
     // genericMode の本質（一般名読みで同一成分の全ブランドが展開される）は不変。
+    // 2026-09-27 zero-base Header reconstruction（OD-6）: matchPolicy.preferOwnNameMatchOverGenericMatch /
+    //   suppressRedundantGenericHeaderOnDirectMatch を opt-in した結果、own-name 一致（「トラニラスト点眼液」
+    //   ブランド自身への一致）が他ブランド経由の一致より優先されるようになり、候補順が変化した
+    //   （Owner 承認済み behavior change。候補の集合・件数は不変、順序のみ変化）。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
     const brands = results.map(r => r.matchedBrandName)
-    assert.deepEqual(brands, ['リザベン点眼液', 'トラニラスト点眼液', 'トラメラス点眼液'])
+    assert.deepEqual(brands, ['トラニラスト点眼液', 'リザベン点眼液', 'トラメラス点眼液'])
     // 一般名見出し "トラニラスト点眼液" は実在ブランド名と表示が完全一致するため、
     // D2（true-duplicate generic header 抑制）により見出し行は出ない（engine 挙動は不変）。
     // 見出しが出る genericMode の回帰は同 describe の "いんすりんりすぷろ" および ⑭ が担う。
@@ -263,13 +267,17 @@ describe('⑧ ピオグリタゾン系: preferOwnNameMatchOverGenericMatch / sup
 })
 
 describe('⑨ opt-in未設定モジュールの回帰確認（候補順・件数が変化しないこと）', () => {
-  test('"とらにらすと" → 既存のgenericMode構造を維持', () => {
+  test('"とらにらすと" → 既存のgenericMode構造を維持（件数・見出し抑制は不変。候補順はOD-6の対象）', () => {
     // 2026-09 chemical mediator rebuild: 候補は 4→3 件（PF 独立ブランドの廃止と
-    // 一般名系エントリ収載による true-duplicate 見出しの抑制）。crossModuleIndicationLabel
-    // 未 opt-in であること自体は不変であり、本 describe が守る回帰対象も不変。
+    // 一般名系エントリ収載による true-duplicate 見出しの抑制）。
+    // 2026-09-27 zero-base Header reconstruction（OD-6）: chemical mediator は
+    // matchPolicy.preferOwnNameMatchOverGenericMatch / suppressRedundantGenericHeaderOnDirectMatch へ
+    // opt-in した（本 describe が前提とする「opt-in未設定」から離脱）。件数・見出し抑制という
+    // 本 describe の回帰対象は不変のため引き続きここに置くが、先頭候補は own-name 優先により
+    // 変化する（Owner 承認済み behavior change）。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
     assert.equal(results.length, 3)
-    assert.equal(results[0].drugDisplayLabel, 'リザベン点眼液')
+    assert.equal(results[0].drugDisplayLabel, 'トラニラスト点眼液')
     assert.equal(results.some(r => r.isGenericLabel), false)
   })
 
@@ -519,11 +527,15 @@ describe('⑪ crossModuleIndicationLabel（SGLT2: dm_sglt2_oral / cardiorenal_sg
     assert.equal(headerCount, 1)
   })
 
-  test('crossModuleIndicationLabel 未設定モジュール（トラニラスト点眼液系）の候補構成は従来どおり', () => {
+  test('crossModuleIndicationLabel 未設定モジュール（トラニラスト点眼液系）の候補構成は従来どおり（順序はOD-6の対象）', () => {
+    // 2026-09-27（OD-6）: chemical mediator が matchPolicy.preferOwnNameMatchOverGenericMatch へ
+    // opt-in した結果、own-name 一致（トラニラスト点眼液自身への一致）が先頭へ来る。
+    // crossModuleIndicationLabel 自体は本 module では引き続き未設定であり、本テストが守る
+    // 「未設定モジュールの候補構成（件数・適応ラベル非付与）」という回帰対象は不変。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
     assert.equal(results.length, 3)
-    assert.equal(results[0].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
-    assert.equal(results[1].uiLabel, 'トラニラスト点眼液（トラニラスト点眼液）')
+    assert.equal(results[0].uiLabel, 'トラニラスト点眼液（トラニラスト点眼液）')
+    assert.equal(results[1].uiLabel, 'リザベン点眼液（トラニラスト点眼液）')
     assert.equal(results[2].uiLabel, 'トラメラス点眼液（トラニラスト点眼液）')
   })
 })
@@ -591,14 +603,16 @@ describe('Search Family Phase 2-A（label fix）: co-brand sibling は自身の 
     assert.equal(spraySib.resolution.subject, 'ヒルドイドフォーム')
   })
 
-  test('同一 genericKey の sibling（従来から安全な経路）は表示不変', () => {
+  test('同一 genericKey の sibling（従来から安全な経路）は表示不変（順序はOD-6の対象）', () => {
     // "とらにらすと"（generic 読み）は genericMode 経路で、各ブランドを自身の
     // 一般名で表示する（label fix の対象外・凍結）。2026-09 rebuild により
     // グループは単一化し、候補は 4→3 件になった。
+    // 2026-09-27（OD-6）: preferOwnNameMatchOverGenericMatch により own-name
+    // （トラニラスト点眼液自身）が先頭へ来る。各行の uiLabel 括弧内表記（label fix 本体）は不変。
     const results = getDrugSuggestions('とらにらすと', fullIndex, 8)
     assert.deepEqual(results.map(r => r.uiLabel), [
-      'リザベン点眼液（トラニラスト点眼液）',
       'トラニラスト点眼液（トラニラスト点眼液）',
+      'リザベン点眼液（トラニラスト点眼液）',
       'トラメラス点眼液（トラニラスト点眼液）',
     ])
   })
@@ -1533,7 +1547,12 @@ describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満
       // 新しい実際の出力を記録するのみで、識別喪失・不安全な誤解決・
       // 到達不能化がないことは別途 §モンテルカスト/プランルカスト のテストで検証する。
       'お': ['オイグルコン', 'オゼンピック', 'オノン', 'オロパタジン点眼液', 'マリゼブ', 'グリベンクラミド', 'セマグルチド', 'プランルカスト'],
-      'り': ['リオベル', 'ビクトーザ', 'リキスミア', 'リザベン点眼液', 'リベルサス', 'アログリプチン／ピオグリタゾン', 'リキシセナチド', 'トラニラスト点眼液'],
+      // 'り' のみ 2026-09-27 chemical mediator zero-base Header reconstruction（OD-6:
+      // suppressRedundantGenericHeaderOnDirectMatch 有効化）の副作用として末尾の値が変化する。
+      // トラニラスト点眼液（自moduleのgenericHeader）が redundant として抑制され、
+      // 8件枠の空きへ次順位のセマグルチド genericHeader が繰り上がる（候補集合・順序の
+      // 玉突きであり、他クエリ・他moduleの ranking logic は無変更）。
+      'り': ['リオベル', 'ビクトーザ', 'リキスミア', 'リザベン点眼液', 'リベルサス', 'アログリプチン／ピオグリタゾン', 'リキシセナチド', 'セマグルチド'],
       'め': ['メタクト', 'メトアナ', 'メトグルコ', 'メトホルミン', 'エクメット', 'イニシンク', 'ピオグリタゾン／メトホルミン', 'ビルダグリプチン/メトホルミン'],
       'ほ': ['フォシーガ', 'メタクト', 'メトアナ', 'メトグルコ', 'アマリール', 'ソニアス'],
       // 'あ' は 2026-09 dry_eye_trpv1_antagonist_eye_drops（アバレプト点眼液）registry 登録に伴い値が変化する

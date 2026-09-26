@@ -488,11 +488,25 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     // あることを 1,656 クエリの before/after 比較で確認済み（差分 0）。
     // U-4b の意味論的 delta は完全に不変: reachableChangedRows 25 / Patterns 6 /
     // gatedChangedRows 57 / gatedChangedModules 20、denotation='brand' の delta 0 件。
-    assert.equal(fixture.summary.rows, 1580)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1018, generic: 505, module: 57 })
+    //
+    // chemical mediator zero-base Header reconstruction（2026-09-27・OD-5/OD-6）:
+    // OD-6（matchPolicy.preferOwnNameMatchOverGenericMatch 有効化）に伴う DP-18 tier2
+    // sibling 参照拡張により、"とらにらすとてんがん" / "ぺみろらすとてんがん" が
+    // 各々 1→3 行（同一 genericKey の他ブランドも tier2 として到達）へ増加（+4 brand 行）。
+    // OD-5（display.subtitle 確定「アレルギー性結膜炎・目のかゆみに対する点眼治療」）により
+    // "アレルギー性結膜炎" クエリで chemical mediator の module-denotation 候補が新規に
+    // 到達可能となった（+1 module 行。U-5 gate 対象のため SOAP には現れない＝gatedDelta 側）。
+    // rows 1580→1585 / brand 1018→1022 / generic 505→505（不変）/ module 57→58。
+    // 上記4件はいずれも denotation='brand' かつ own brand の subject 一致のため changed=false。
+    // 新規 module 行のみ changed=true（+1）。reachableChangedRows/Patterns/Modules・
+    // expectedReachableDelta は完全に不変（denotation='generic' の delta は 0 件のまま）。
+    // gatedChangedRows のみ 57→58（対象 module は既存の gatedChangedModules に含まれるため
+    // gatedChangedModules.length は 20 のまま変化なし）。
+    assert.equal(fixture.summary.rows, 1585)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1022, generic: 505, module: 58 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
-    assert.equal(fixture.summary.gatedChangedRows, 57)
+    assert.equal(fixture.summary.gatedChangedRows, 58)
     assert.equal(fixture.summary.gatedChangedModules.length, 20)
   })
 })

@@ -1082,11 +1082,11 @@
       "isGenericLabel": true
     },
     {
-      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "matchedBrandName": "リザベン点眼液",
-      "drugDisplayLabel": "トラニラスト点眼液",
-      "uiLabel": "トラニラスト点眼液",
-      "representativeTemplateId": "allergy_chemical_mediator_release_inhibitor_eye_drops.initial",
+      "moduleId": "dm_glp1ra_semaglutide_oral",
+      "matchedBrandName": "リベルサス",
+      "drugDisplayLabel": "セマグルチド",
+      "uiLabel": "セマグルチド",
+      "representativeTemplateId": "dm_glp1ra_semaglutide_oral.initial",
       "isGenericLabel": true
     }
   ],

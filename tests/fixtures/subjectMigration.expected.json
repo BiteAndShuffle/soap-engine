@@ -3,13 +3,13 @@
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 560,
-    "rows": 1580,
+    "rows": 1585,
     "byDenotation": {
-      "brand": 1018,
+      "brand": 1022,
       "generic": 505,
-      "module": 57
+      "module": 58
     },
-    "changedRows": 82,
+    "changedRows": 83,
     "reachableChangedRows": 25,
     "reachableChangedPatterns": 6,
     "reachableChangedModules": [
@@ -20,7 +20,7 @@
       "dm_insulin_mixed_regular_intermediate",
       "dm_insulin_regular"
     ],
-    "gatedChangedRows": 57,
+    "gatedChangedRows": 58,
     "gatedChangedModules": [
       "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "allergy_h1_antihistamine_eye_drops",
@@ -2971,16 +2971,16 @@
       "query": "とらにらすと",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "リザベン点眼液",
-      "resolutionSubject": "リザベン点眼液",
+      "legacySubject": "トラニラスト点眼液",
+      "resolutionSubject": "トラニラスト点眼液",
       "changed": false
     },
     {
       "query": "とらにらすと",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "トラニラスト点眼液",
-      "resolutionSubject": "トラニラスト点眼液",
+      "legacySubject": "リザベン点眼液",
+      "resolutionSubject": "リザベン点眼液",
       "changed": false
     },
     {
@@ -2997,6 +2997,22 @@
       "denotation": "brand",
       "legacySubject": "トラニラスト点眼液",
       "resolutionSubject": "トラニラスト点眼液",
+      "changed": false
+    },
+    {
+      "query": "とらにらすとてんがん",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "リザベン点眼液",
+      "resolutionSubject": "リザベン点眼液",
+      "changed": false
+    },
+    {
+      "query": "とらにらすとてんがん",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "トラメラス点眼液",
+      "resolutionSubject": "トラメラス点眼液",
       "changed": false
     },
     {
@@ -5891,6 +5907,14 @@
       "query": "ぺみろらすと",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
+      "legacySubject": "ペミロラスト点眼液",
+      "resolutionSubject": "ペミロラスト点眼液",
+      "changed": false
+    },
+    {
+      "query": "ぺみろらすと",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
       "legacySubject": "アレギサール点眼液",
       "resolutionSubject": "アレギサール点眼液",
       "changed": false
@@ -5904,7 +5928,7 @@
       "changed": false
     },
     {
-      "query": "ぺみろらすと",
+      "query": "ぺみろらすとてんがん",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
       "legacySubject": "ペミロラスト点眼液",
@@ -5915,8 +5939,16 @@
       "query": "ぺみろらすとてんがん",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "ペミロラスト点眼液",
-      "resolutionSubject": "ペミロラスト点眼液",
+      "legacySubject": "アレギサール点眼液",
+      "resolutionSubject": "アレギサール点眼液",
+      "changed": false
+    },
+    {
+      "query": "ぺみろらすとてんがん",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
+      "legacySubject": "ペミラストン点眼液",
+      "resolutionSubject": "ペミラストン点眼液",
       "changed": false
     },
     {
@@ -7532,6 +7564,14 @@
       "moduleId": "allergy_h1_antihistamine_eye_drops",
       "denotation": "module",
       "legacySubject": "アレジオン点眼液",
+      "resolutionSubject": null,
+      "changed": true
+    },
+    {
+      "query": "アレルギー性結膜炎",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "module",
+      "legacySubject": "ゼペリン点眼液",
       "resolutionSubject": null,
       "changed": true
     },
@@ -9755,16 +9795,16 @@
       "query": "トラニラスト",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "リザベン点眼液",
-      "resolutionSubject": "リザベン点眼液",
+      "legacySubject": "トラニラスト点眼液",
+      "resolutionSubject": "トラニラスト点眼液",
       "changed": false
     },
     {
       "query": "トラニラスト",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "トラニラスト点眼液",
-      "resolutionSubject": "トラニラスト点眼液",
+      "legacySubject": "リザベン点眼液",
+      "resolutionSubject": "リザベン点眼液",
       "changed": false
     },
     {
@@ -9779,16 +9819,16 @@
       "query": "トラニラスト点眼液",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "リザベン点眼液",
-      "resolutionSubject": "リザベン点眼液",
+      "legacySubject": "トラニラスト点眼液",
+      "resolutionSubject": "トラニラスト点眼液",
       "changed": false
     },
     {
       "query": "トラニラスト点眼液",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
-      "legacySubject": "トラニラスト点眼液",
-      "resolutionSubject": "トラニラスト点眼液",
+      "legacySubject": "リザベン点眼液",
+      "resolutionSubject": "リザベン点眼液",
       "changed": false
     },
     {
@@ -11435,6 +11475,14 @@
       "query": "ペミロラスト",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
+      "legacySubject": "ペミロラスト点眼液",
+      "resolutionSubject": "ペミロラスト点眼液",
+      "changed": false
+    },
+    {
+      "query": "ペミロラスト",
+      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
+      "denotation": "brand",
       "legacySubject": "アレギサール点眼液",
       "resolutionSubject": "アレギサール点眼液",
       "changed": false
@@ -11448,7 +11496,7 @@
       "changed": false
     },
     {
-      "query": "ペミロラスト",
+      "query": "ペミロラスト点眼液",
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "denotation": "brand",
       "legacySubject": "ペミロラスト点眼液",
@@ -11469,14 +11517,6 @@
       "denotation": "brand",
       "legacySubject": "ペミラストン点眼液",
       "resolutionSubject": "ペミラストン点眼液",
-      "changed": false
-    },
-    {
-      "query": "ペミロラスト点眼液",
-      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "denotation": "brand",
-      "legacySubject": "ペミロラスト点眼液",
-      "resolutionSubject": "ペミロラスト点眼液",
       "changed": false
     },
     {

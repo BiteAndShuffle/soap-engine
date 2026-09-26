@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "7325cbfb5d97677849c08bf6f7a2cb6c6f20adaaec18cf82cdbb2627f5f4c33c",
+  "sourceHash": "0bec682d98bd949a15cafdae9f1f5078f20a1f97b09164245a591b74b568b492",
   "moduleCount": 37,
   "scenarioCount": 1165,
   "modules": [
@@ -1526,7 +1526,7 @@
         "keywords": [
           "アレルギー",
           "抗アレルギー点眼薬",
-          "目のかゆみ",
+          "かゆみ",
           "充血",
           "点眼"
         ],
@@ -1535,7 +1535,9 @@
         "matchPolicy": {
           "preferExactAlias": true,
           "allowPrefixMatch": true,
-          "suppressCrossModuleSuggestionsOnExactHit": true
+          "suppressCrossModuleSuggestionsOnExactHit": true,
+          "preferOwnNameMatchOverGenericMatch": true,
+          "suppressRedundantGenericHeaderOnDirectMatch": true
         },
         "primaryDisplayName": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬"
       },
@@ -1616,8 +1618,7 @@
           "genericName": "トラニラスト",
           "handlingTags": [
             "light_protection",
-            "avoid_cold_storage",
-            "preservative_free"
+            "avoid_cold_storage"
           ]
         },
         "クロモグリク酸点眼液": {
@@ -1629,8 +1630,7 @@
           "displayGenericName": "クロモグリク酸点眼液",
           "genericName": "クロモグリク酸",
           "handlingTags": [
-            "light_protection",
-            "preservative_free"
+            "light_protection"
           ]
         }
       },
@@ -1638,7 +1638,7 @@
       "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
       "clinicalDomain": "allergy",
       "displayTitle": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
-      "displaySubtitle": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬（点眼）",
+      "displaySubtitle": "アレルギー性結膜炎・目のかゆみに対する点眼治療",
       "reservedHandlingTags": [
         "concentration_variant",
         "cold_storage",
@@ -10147,8 +10147,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "dose_increase_explanation",
-        "concomitant_drug_attention"
+        "dose_increase_explanation"
       ],
       "sCompositionIntent": "dose_increase"
     },
@@ -10164,8 +10163,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "dose_increase_explanation",
-        "concomitant_drug_attention"
+        "dose_increase_explanation"
       ],
       "sCompositionIntent": "dose_increase"
     },
@@ -10245,8 +10243,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "dose_decrease_explanation",
-        "concomitant_drug_attention"
+        "dose_decrease_explanation"
       ],
       "sCompositionIntent": "dose_decrease"
     },
@@ -10262,8 +10259,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "dose_decrease_explanation",
-        "concomitant_drug_attention"
+        "dose_decrease_explanation"
       ],
       "sCompositionIntent": "dose_decrease"
     },
@@ -10295,8 +10291,7 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -10312,8 +10307,7 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -10329,8 +10323,7 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -10346,8 +10339,7 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -10363,8 +10355,7 @@
       ],
       "sideEffectPresence": "absent_or_not_observed",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_check"
     },
@@ -10413,8 +10404,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "adherence_support",
-        "urgent_consult_advice"
+        "adherence_support"
       ],
       "sCompositionIntent": "status_report"
     },
@@ -10430,8 +10420,7 @@
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [
-        "adherence_support",
-        "urgent_consult_advice"
+        "adherence_support"
       ],
       "sCompositionIntent": "status_report"
     },
@@ -10527,8 +10516,7 @@
       ],
       "sideEffectPresence": "present_mild",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_present"
     },
@@ -10544,8 +10532,7 @@
       ],
       "sideEffectPresence": "present_moderate",
       "intentTags": [
-        "side_effect_attention",
-        "urgent_consult_advice"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "side_effect_present"
     },
@@ -10561,10 +10548,9 @@
       ],
       "sideEffectPresence": "present_change",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
-      "sCompositionIntent": "side_effect_present"
+      "sCompositionIntent": "stop"
     },
     {
       "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
@@ -10612,8 +10598,7 @@
       ],
       "sideEffectPresence": "present_stop",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "sCompositionIntent": "stop"
     },

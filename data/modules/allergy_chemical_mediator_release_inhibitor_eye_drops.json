@@ -9,14 +9,14 @@
     "点眼"
   ],
   "composition": {
+    "classKey": "chemical_mediator_release_inhibitor",
+    "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
     "domain": "allergy",
-    "priority": "chronic",
     "clinicalDomain": "allergy",
     "sMergeDomain": "allergy",
+    "priority": "chronic",
     "nodeLabelShort": "ケミ点眼",
     "nodeLabelLong": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
-    "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
-    "classKey": "chemical_mediator_release_inhibitor",
     "groupKeyRegistry": [
       "ocular_allergy_symptom_management",
       "allergy_dose_adjustment",
@@ -64,25 +64,6 @@
       "formulation_instruction",
       "contact_lens_caution"
     ],
-    "nameAliases": [
-      "ぜぺりんてんがん",
-      "ぜぺりん",
-      "あれぎさーるてんがん",
-      "あれぎさーる",
-      "ぺみらすとんてんがん",
-      "ぺみらすとん",
-      "ぺみろらすとてんがん",
-      "ぺみろらすと",
-      "りざべんてんがん",
-      "りざべん",
-      "とらにらすとてんがん",
-      "とらにらすと",
-      "とらめらすてんがん",
-      "とらめらす",
-      "くろもぐりくさんてんがん",
-      "くろもぐりくさん",
-      "あしたざのらすと"
-    ],
     "search": {
       "primaryDisplayName": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
       "exactAliases": [
@@ -128,7 +109,7 @@
       "keywords": [
         "アレルギー",
         "抗アレルギー点眼薬",
-        "目のかゆみ",
+        "かゆみ",
         "充血",
         "点眼"
       ],
@@ -136,9 +117,30 @@
       "matchPolicy": {
         "preferExactAlias": true,
         "allowPrefixMatch": true,
-        "suppressCrossModuleSuggestionsOnExactHit": true
+        "suppressCrossModuleSuggestionsOnExactHit": true,
+        "preferOwnNameMatchOverGenericMatch": true,
+        "suppressRedundantGenericHeaderOnDirectMatch": true
       }
     },
+    "nameAliases": [
+      "ぜぺりんてんがん",
+      "ぜぺりん",
+      "あれぎさーるてんがん",
+      "あれぎさーる",
+      "ぺみらすとんてんがん",
+      "ぺみらすとん",
+      "ぺみろらすとてんがん",
+      "ぺみろらすと",
+      "りざべんてんがん",
+      "りざべん",
+      "とらにらすとてんがん",
+      "とらにらすと",
+      "とらめらすてんがん",
+      "とらめらす",
+      "くろもぐりくさんてんがん",
+      "くろもぐりくさん",
+      "あしたざのらすと"
+    ],
     "brandCatalog": {
       "ゼペリン点眼液": {
         "displayName": "ゼペリン点眼液",
@@ -236,8 +238,7 @@
         "displayGenericName": "トラニラスト点眼液",
         "handlingTags": [
           "light_protection",
-          "avoid_cold_storage",
-          "preservative_free"
+          "avoid_cold_storage"
         ],
         "aliases": [
           "とらめらすてんがん",
@@ -253,8 +254,7 @@
         "genericName": "クロモグリク酸",
         "displayGenericName": "クロモグリク酸点眼液",
         "handlingTags": [
-          "light_protection",
-          "preservative_free"
+          "light_protection"
         ],
         "aliases": [
           "くろもぐりくさんてんがん",
@@ -301,12 +301,10 @@
       ],
       "トラメラス点眼液": [
         "light_protection",
-        "avoid_cold_storage",
-        "preservative_free"
+        "avoid_cold_storage"
       ],
       "クロモグリク酸点眼液": [
-        "light_protection",
-        "preservative_free"
+        "light_protection"
       ]
     }
   },
@@ -350,18 +348,20 @@
       "suspension",
       "single_use_container",
       "reduced_frequency_option"
-    ],
-    "urgentFlag": false,
-    "urgentCriteria": null
+    ]
   },
   "display": {
     "title": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
-    "subtitle": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬（点眼）",
+    "subtitle": "アレルギー性結膜炎・目のかゆみに対する点眼治療",
     "drugClassLabel": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
     "drugGeneric": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
     "nodeLabelShort": "ケミ点眼",
     "nodeLabelLong": "ケミカルメディエーター遊離抑制薬系の抗アレルギー点眼薬",
     "nodeKey": "chemical_mediator_release_inhibitor_eye_drops",
+    "menuGroupLabels": {
+      "増量": "回数増",
+      "減量": "回数減"
+    },
     "localInput": {
       "enabled": true,
       "label": "点眼部位（任意）",
@@ -462,6 +462,26 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_after_opening_expiry",
+          "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_after_suspension_5min",
+          "addon_eye_drop_interval_10min",
+          "addon_eye_drop_interval_after_suspension_10min",
+          "addon_eye_drop_suspension_shake",
+          "addon_eye_drop_storage_upright_suspension",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_storage_cold",
+          "addon_eye_drop_warm_container_after_cold_storage",
+          "addon_eye_drop_storage_cold_before_opening",
+          "addon_eye_drop_avoid_cold_storage",
+          "addon_eye_drop_single_dose_mini",
+          "addon_eye_drop_preservative_free_pf",
+          "addon_eye_drop_contact_lens_remove_before_use"
+        ]
+      },
       "intentTags": [
         "drug_effect_explanation"
       ],
@@ -518,27 +538,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_tip_contamination",
-          "addon_eye_drop_after_opening_expiry",
-          "addon_eye_drop_interval_5min",
-          "addon_eye_drop_interval_after_suspension_5min",
-          "addon_eye_drop_interval_10min",
-          "addon_eye_drop_interval_after_suspension_10min",
-          "addon_eye_drop_suspension_shake",
-          "addon_eye_drop_storage_upright_suspension",
-          "addon_eye_drop_storage_light_protection",
-          "addon_eye_drop_storage_cold",
-          "addon_eye_drop_warm_container_after_cold_storage",
-          "addon_eye_drop_storage_cold_before_opening",
-          "addon_eye_drop_avoid_cold_storage",
-          "addon_eye_drop_single_dose_mini",
-          "addon_eye_drop_preservative_free_pf",
-          "addon_eye_drop_contact_lens_remove_before_use"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "restart",
@@ -590,6 +590,26 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_after_opening_expiry",
+          "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_after_suspension_5min",
+          "addon_eye_drop_interval_10min",
+          "addon_eye_drop_interval_after_suspension_10min",
+          "addon_eye_drop_suspension_shake",
+          "addon_eye_drop_storage_upright_suspension",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_storage_cold",
+          "addon_eye_drop_warm_container_after_cold_storage",
+          "addon_eye_drop_storage_cold_before_opening",
+          "addon_eye_drop_avoid_cold_storage",
+          "addon_eye_drop_single_dose_mini",
+          "addon_eye_drop_preservative_free_pf",
+          "addon_eye_drop_contact_lens_remove_before_use"
+        ]
+      },
       "intentTags": [
         "drug_effect_explanation"
       ],
@@ -646,27 +666,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_tip_contamination",
-          "addon_eye_drop_after_opening_expiry",
-          "addon_eye_drop_interval_5min",
-          "addon_eye_drop_interval_after_suspension_5min",
-          "addon_eye_drop_interval_10min",
-          "addon_eye_drop_interval_after_suspension_10min",
-          "addon_eye_drop_suspension_shake",
-          "addon_eye_drop_storage_upright_suspension",
-          "addon_eye_drop_storage_light_protection",
-          "addon_eye_drop_storage_cold",
-          "addon_eye_drop_warm_container_after_cold_storage",
-          "addon_eye_drop_storage_cold_before_opening",
-          "addon_eye_drop_avoid_cold_storage",
-          "addon_eye_drop_single_dose_mini",
-          "addon_eye_drop_preservative_free_pf",
-          "addon_eye_drop_contact_lens_remove_before_use"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "external_start",
@@ -718,6 +718,26 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_tip_contamination",
+          "addon_eye_drop_after_opening_expiry",
+          "addon_eye_drop_interval_5min",
+          "addon_eye_drop_interval_after_suspension_5min",
+          "addon_eye_drop_interval_10min",
+          "addon_eye_drop_interval_after_suspension_10min",
+          "addon_eye_drop_suspension_shake",
+          "addon_eye_drop_storage_upright_suspension",
+          "addon_eye_drop_storage_light_protection",
+          "addon_eye_drop_storage_cold",
+          "addon_eye_drop_warm_container_after_cold_storage",
+          "addon_eye_drop_storage_cold_before_opening",
+          "addon_eye_drop_avoid_cold_storage",
+          "addon_eye_drop_single_dose_mini",
+          "addon_eye_drop_preservative_free_pf",
+          "addon_eye_drop_contact_lens_remove_before_use"
+        ]
+      },
       "intentTags": [
         "drug_effect_explanation"
       ],
@@ -774,27 +794,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_tip_contamination",
-          "addon_eye_drop_after_opening_expiry",
-          "addon_eye_drop_interval_5min",
-          "addon_eye_drop_interval_after_suspension_5min",
-          "addon_eye_drop_interval_10min",
-          "addon_eye_drop_interval_after_suspension_10min",
-          "addon_eye_drop_suspension_shake",
-          "addon_eye_drop_storage_upright_suspension",
-          "addon_eye_drop_storage_light_protection",
-          "addon_eye_drop_storage_cold",
-          "addon_eye_drop_warm_container_after_cold_storage",
-          "addon_eye_drop_storage_cold_before_opening",
-          "addon_eye_drop_avoid_cold_storage",
-          "addon_eye_drop_single_dose_mini",
-          "addon_eye_drop_preservative_free_pf",
-          "addon_eye_drop_contact_lens_remove_before_use"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "frequency_increase_low_perceived_effect",
@@ -849,6 +849,7 @@
       "intentTags": [
         "dose_increase_explanation"
       ],
+      "scenarioColor": "blue",
       "SStructured": [
         {
           "id": "s_1",
@@ -887,14 +888,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioColor": "blue"
+      "workflowTags": []
     },
     {
       "id": "strength_increase_low_perceived_effect",
@@ -949,6 +951,10 @@
       "intentTags": [
         "dose_increase_explanation"
       ],
+      "scenarioRequiredTags": [
+        "concentration_variant"
+      ],
+      "scenarioColor": "green",
       "SStructured": [
         {
           "id": "s_1",
@@ -987,17 +993,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "concentration_variant"
-      ],
-      "scenarioColor": "green"
+      "workflowTags": []
     },
     {
       "id": "frequency_increase_due_to_other_med_adjustment",
@@ -1050,9 +1054,9 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "dose_increase_explanation",
-        "concomitant_drug_attention"
+        "dose_increase_explanation"
       ],
+      "scenarioColor": "blue",
       "SStructured": [
         {
           "id": "s_1",
@@ -1091,14 +1095,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioColor": "blue"
+      "workflowTags": []
     },
     {
       "id": "strength_increase_due_to_other_med_adjustment",
@@ -1151,9 +1156,12 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "dose_increase_explanation",
-        "concomitant_drug_attention"
+        "dose_increase_explanation"
       ],
+      "scenarioRequiredTags": [
+        "concentration_variant"
+      ],
+      "scenarioColor": "green",
       "SStructured": [
         {
           "id": "s_1",
@@ -1192,17 +1200,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "concentration_variant"
-      ],
-      "scenarioColor": "green"
+      "workflowTags": []
     },
     {
       "id": "frequency_decrease_improved",
@@ -1257,6 +1263,7 @@
       "intentTags": [
         "dose_decrease_explanation"
       ],
+      "scenarioColor": "blue",
       "SStructured": [
         {
           "id": "s_1",
@@ -1295,14 +1302,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioColor": "blue"
+      "workflowTags": []
     },
     {
       "id": "strength_decrease_improved",
@@ -1357,6 +1365,10 @@
       "intentTags": [
         "dose_decrease_explanation"
       ],
+      "scenarioRequiredTags": [
+        "concentration_variant"
+      ],
+      "scenarioColor": "green",
       "SStructured": [
         {
           "id": "s_1",
@@ -1395,17 +1407,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "concentration_variant"
-      ],
-      "scenarioColor": "green"
+      "workflowTags": []
     },
     {
       "id": "frequency_decrease_low_perceived_effect",
@@ -1460,6 +1470,7 @@
       "intentTags": [
         "dose_decrease_explanation"
       ],
+      "scenarioColor": "blue",
       "SStructured": [
         {
           "id": "s_1",
@@ -1507,14 +1518,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioColor": "blue"
+      "workflowTags": []
     },
     {
       "id": "strength_decrease_low_perceived_effect",
@@ -1569,6 +1581,10 @@
       "intentTags": [
         "dose_decrease_explanation"
       ],
+      "scenarioRequiredTags": [
+        "concentration_variant"
+      ],
+      "scenarioColor": "green",
       "SStructured": [
         {
           "id": "s_1",
@@ -1616,17 +1632,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "concentration_variant"
-      ],
-      "scenarioColor": "green"
+      "workflowTags": []
     },
     {
       "id": "frequency_decrease_due_to_other_med_adjustment",
@@ -1679,9 +1693,9 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "dose_decrease_explanation",
-        "concomitant_drug_attention"
+        "dose_decrease_explanation"
       ],
+      "scenarioColor": "blue",
       "SStructured": [
         {
           "id": "s_1",
@@ -1720,14 +1734,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioColor": "blue"
+      "workflowTags": []
     },
     {
       "id": "strength_decrease_due_to_other_med_adjustment",
@@ -1780,9 +1795,12 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "dose_decrease_explanation",
-        "concomitant_drug_attention"
+        "dose_decrease_explanation"
       ],
+      "scenarioRequiredTags": [
+        "concentration_variant"
+      ],
+      "scenarioColor": "green",
       "SStructured": [
         {
           "id": "s_1",
@@ -1821,17 +1839,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "concentration_variant"
-      ],
-      "scenarioColor": "green"
+      "workflowTags": []
     },
     {
       "id": "switch_to_sustained_formulation_reduced_frequency",
@@ -1886,6 +1902,10 @@
       "intentTags": [
         "dose_decrease_explanation"
       ],
+      "scenarioRequiredTags": [
+        "reduced_frequency_option"
+      ],
+      "scenarioColor": "orange",
       "SStructured": [
         {
           "id": "s_1",
@@ -1924,17 +1944,15 @@
           "role": "dose_adjustment_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "reduced_frequency_option"
-      ],
-      "scenarioColor": "orange"
+      "workflowTags": []
     },
     {
       "id": "se_irritation_none",
@@ -1988,8 +2006,7 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -2038,7 +2055,9 @@
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -2098,8 +2117,7 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -2148,7 +2166,9 @@
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -2208,8 +2228,7 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -2258,7 +2277,9 @@
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -2318,8 +2339,7 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -2368,7 +2388,9 @@
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -2428,8 +2450,7 @@
       },
       "followupRef": "default_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -2478,7 +2499,9 @@
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -2645,6 +2668,18 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry",
+          "addon_adherence_notification_alarm",
+          "addon_adherence_notification_app",
+          "addon_adherence_visual_calendar_checklist",
+          "addon_adherence_visual_note",
+          "addon_adherence_prep_previous_night",
+          "addon_adherence_habit_routine_link",
+          "addon_adherence_family_support_reminder"
+        ]
+      },
       "intentTags": [
         "adherence_support"
       ],
@@ -2701,19 +2736,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry",
-          "addon_adherence_notification_alarm",
-          "addon_adherence_notification_app",
-          "addon_adherence_visual_calendar_checklist",
-          "addon_adherence_visual_note",
-          "addon_adherence_prep_previous_night",
-          "addon_adherence_habit_routine_link",
-          "addon_adherence_family_support_reminder"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "cp_poor_self_adjust",
@@ -2765,9 +2788,13 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
-        "adherence_support",
-        "urgent_consult_advice"
+        "adherence_support"
       ],
       "SStructured": [
         {
@@ -2822,21 +2849,19 @@
         {
           "id": "p_3",
           "text": "体調変化や気になる症状がある場合は、自己判断せず医療機関へご相談ください。",
-          "role": "urgent_consult_guidance",
+          "role": "adherence_guidance",
           "transform": "minimal",
-          "safety": "high",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "医療機関へご相談ください",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "cp_poor_visit_delay",
@@ -2888,9 +2913,13 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
-        "adherence_support",
-        "urgent_consult_advice"
+        "adherence_support"
       ],
       "SStructured": [
         {
@@ -2945,21 +2974,19 @@
         {
           "id": "p_3",
           "text": "次回受診が難しい場合は、早めに医療機関へご連絡ください。",
-          "role": "urgent_consult_guidance",
+          "role": "adherence_guidance",
           "transform": "minimal",
-          "safety": "high",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "医療機関へご連絡ください",
+            "ご連絡ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "as_needed_refill_needed",
@@ -3011,6 +3038,11 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
         "administration_instruction"
       ],
@@ -3061,18 +3093,15 @@
           "role": "adherence_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "as_needed_refill_not_needed",
@@ -3124,6 +3153,11 @@
         }
       },
       "followupRef": "default_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
         "administration_instruction"
       ],
@@ -3174,18 +3208,15 @@
           "role": "adherence_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "end_improved",
@@ -3237,6 +3268,11 @@
         }
       },
       "followupRef": "end_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
         "treatment_end_explanation"
       ],
@@ -3278,18 +3314,15 @@
           "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "end_insufficient_effect",
@@ -3341,6 +3374,11 @@
         }
       },
       "followupRef": "end_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
         "treatment_end_explanation"
       ],
@@ -3382,18 +3420,15 @@
           "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "end_ineffective",
@@ -3445,6 +3480,11 @@
         }
       },
       "followupRef": "end_followup",
+      "addonsRef": {
+        "P": [
+          "addon_eye_drop_after_opening_expiry"
+        ]
+      },
       "intentTags": [
         "treatment_end_explanation"
       ],
@@ -3486,18 +3526,15 @@
           "role": "treatment_end_guidance",
           "transform": "minimal",
           "safety": "low",
-          "lockTerms": [],
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "addonsRef": {
-        "P": [
-          "addon_eye_drop_after_opening_expiry"
-        ]
-      }
+      "workflowTags": []
     },
     {
       "id": "se_ocular_irritation_mild_continue",
@@ -3516,8 +3553,12 @@
       "sComposition": {
         "intent": "side_effect_present",
         "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
       },
       "S": "{{drug_subject}}の使用により刺激感があるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
@@ -3550,8 +3591,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -3581,7 +3621,7 @@
           "text": "{{drug_subject}}による刺激感が軽い場合は、そのまま経過をみてください。",
           "role": "side_effect_guidance",
           "transform": "moderate",
-          "safety": "medium",
+          "safety": "low",
           "lockTerms": [],
           "notes": null
         },
@@ -3590,8 +3630,10 @@
           "text": "刺激感が続く場合や強くなる場合は、ご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -3616,8 +3658,12 @@
       "sComposition": {
         "intent": "side_effect_present",
         "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
       },
       "S": "{{drug_subject}}の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。",
       "O": "{{drug_subject}}　処方",
@@ -3650,8 +3696,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "side_effect_attention",
-        "urgent_consult_advice"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -3659,7 +3704,7 @@
           "text": "{{drug_subject}}の使用により刺激感が強く、辛いことがあるが、日常生活は送れている。",
           "role": "side_effect_presence",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -3670,7 +3715,7 @@
           "text": "{{drug_subject}}による刺激感が強く、継続困難の可能性があるため対応を要する。",
           "role": "side_effect_assessment",
           "transform": "moderate",
-          "safety": "low",
+          "safety": "medium",
           "lockTerms": [],
           "notes": null
         }
@@ -3691,7 +3736,10 @@
           "role": "side_effect_guidance",
           "transform": "minimal",
           "safety": "medium",
-          "lockTerms": [],
+          "lockTerms": [
+            "処方医へご相談ください",
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -3714,10 +3762,14 @@
       ],
       "sideEffectPresence": "present_change",
       "sComposition": {
-        "intent": "side_effect_present",
+        "intent": "stop",
         "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
       },
       "S": "{{drug_subject}}の使用により刺激感が出現したため、他剤へ変更となった。",
       "O": "{{drug_subject}}　処方変更",
@@ -3750,8 +3802,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -3781,8 +3832,10 @@
           "text": "{{drug_subject}}の変更後、目の症状の悪化や変化があればご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -3807,8 +3860,12 @@
       "sComposition": {
         "intent": "dose_decrease",
         "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
       },
       "S": "{{drug_subject}}の使用により刺激感が強いため、点眼回数が減った。",
       "O": "{{drug_subject}}　点眼回数減",
@@ -3872,8 +3929,10 @@
           "text": "{{drug_subject}}の点眼回数が減った後も刺激感が続く場合はご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -3898,8 +3957,12 @@
       "sComposition": {
         "intent": "dose_decrease",
         "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
       },
       "S": "{{drug_subject}}の使用により刺激感が強かったため、効果が穏やかなものになった。",
       "O": "{{drug_subject}}　低濃度製剤へ変更",
@@ -3934,6 +3997,9 @@
       "intentTags": [
         "side_effect_attention",
         "dose_decrease_explanation"
+      ],
+      "scenarioRequiredTags": [
+        "concentration_variant"
       ],
       "SStructured": [
         {
@@ -3972,17 +4038,16 @@
           "text": "{{drug_subject}}を低濃度製剤へ変更後も、刺激感が続く場合や、気になる症状、使用感の変化がありましたらご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "concentration_variant"
-      ]
+      "workflowTags": []
     },
     {
       "id": "se_stop_due_to_irritation",
@@ -4001,8 +4066,12 @@
       "sComposition": {
         "intent": "stop",
         "template": "status_based",
-        "symptomCodes": [],
-        "symptoms": []
+        "symptomCodes": [
+          "irritation"
+        ],
+        "symptoms": [
+          "刺激感"
+        ]
       },
       "S": "{{drug_subject}}の使用により刺激感が強いため、中止となった。",
       "O": "{{drug_subject}}　処方中止",
@@ -4035,8 +4104,7 @@
       },
       "followupRef": "se_followup",
       "intentTags": [
-        "side_effect_attention",
-        "followup_monitoring"
+        "side_effect_attention"
       ],
       "SStructured": [
         {
@@ -4066,8 +4134,10 @@
           "text": "{{drug_subject}}の中止後、目の症状の悪化や変化があればご相談ください。",
           "role": "side_effect_guidance",
           "transform": "minimal",
-          "safety": "medium",
-          "lockTerms": [],
+          "safety": "low",
+          "lockTerms": [
+            "ご相談ください"
+          ],
           "notes": null
         }
       ],
@@ -4416,6 +4486,9 @@
       "intentTags": [
         "lifestyle_guidance"
       ],
+      "scenarioRequiredTags": [
+        "suspension"
+      ],
       "SStructured": [
         {
           "id": "s_1",
@@ -4460,10 +4533,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "suspension"
-      ]
+      "workflowTags": []
     },
     {
       "id": "lifestyle_guidance_storage_upright_suspension",
@@ -4518,6 +4588,9 @@
       "intentTags": [
         "lifestyle_guidance"
       ],
+      "scenarioRequiredTags": [
+        "suspension"
+      ],
       "SStructured": [
         {
           "id": "s_1",
@@ -4562,10 +4635,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "suspension"
-      ]
+      "workflowTags": []
     },
     {
       "id": "lifestyle_guidance_storage_light_protection",
@@ -4620,6 +4690,9 @@
       "intentTags": [
         "lifestyle_guidance"
       ],
+      "scenarioRequiredTags": [
+        "light_protection"
+      ],
       "SStructured": [
         {
           "id": "s_1",
@@ -4664,10 +4737,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "light_protection"
-      ]
+      "workflowTags": []
     },
     {
       "id": "lifestyle_guidance_storage_cold",
@@ -4722,6 +4792,9 @@
       "intentTags": [
         "lifestyle_guidance"
       ],
+      "scenarioRequiredTags": [
+        "cold_storage"
+      ],
       "SStructured": [
         {
           "id": "s_1",
@@ -4766,10 +4839,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "cold_storage"
-      ]
+      "workflowTags": []
     },
     {
       "id": "lifestyle_guidance_storage_cold_before_opening",
@@ -4824,6 +4894,9 @@
       "intentTags": [
         "lifestyle_guidance"
       ],
+      "scenarioRequiredTags": [
+        "cold_storage_before_opening"
+      ],
       "SStructured": [
         {
           "id": "s_1",
@@ -4868,10 +4941,7 @@
       ],
       "clinicalTags": [],
       "counselingTags": [],
-      "workflowTags": [],
-      "scenarioRequiredTags": [
-        "cold_storage_before_opening"
-      ]
+      "workflowTags": []
     }
   ],
   "addons": {
@@ -4995,15 +5065,15 @@
           "P": "点眼薬の成分が沈殿して、効果が十分に出ない可能性があります。\n使用する前に、よく振り混ぜてから使用してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "suspension"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "suspension"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_storage_upright_suspension": {
         "key": "addon_eye_drop_storage_upright_suspension",
@@ -5016,15 +5086,15 @@
           "P": "保管するときは、目詰まりを防ぐために、先端部分を上にして保管してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "suspension"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "suspension"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_storage_light_protection": {
         "key": "addon_eye_drop_storage_light_protection",
@@ -5037,15 +5107,15 @@
           "P": "光の影響により、効果が十分に出ない可能性があります。\n使用していない間は、遮光袋に入れて保管してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "light_protection"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "light_protection"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_storage_cold": {
         "key": "addon_eye_drop_storage_cold",
@@ -5058,15 +5128,15 @@
           "P": "温度の影響により、効果が十分に出ない可能性があります。\n使用していない間は、冷所で保管してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "cold_storage"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "cold_storage"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_warm_container_after_cold_storage": {
         "key": "addon_eye_drop_warm_container_after_cold_storage",
@@ -5079,15 +5149,15 @@
           "P": "冷所から取り出した後すぐに点眼すると、薬液が連続して落ちる可能性があります。\nキャップを閉めたまま容器を手で温めてから点眼してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "cold_storage"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "cold_storage"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_storage_cold_before_opening": {
         "key": "addon_eye_drop_storage_cold_before_opening",
@@ -5100,15 +5170,15 @@
           "P": "温度の影響により、効果が十分に出ない可能性があります。\n開封するまでは冷所で保管してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "cold_storage_before_opening"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "cold_storage_before_opening"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_avoid_cold_storage": {
         "key": "addon_eye_drop_avoid_cold_storage",
@@ -5121,15 +5191,15 @@
           "P": "低温で保管すると、薬液の状態が変化することがあります。\n冷蔵庫には入れず、指示された保管方法に従って保管してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "avoid_cold_storage"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "avoid_cold_storage"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_single_dose_mini": {
         "key": "addon_eye_drop_single_dose_mini",
@@ -5142,15 +5212,15 @@
           "P": "1回使い切りの点眼薬です。\n開封後は速やかに使用し、薬液が残っていても処分してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "single_use_container"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "single_use_container"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_preservative_free_pf": {
         "key": "addon_eye_drop_preservative_free_pf",
@@ -5168,10 +5238,7 @@
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "requiredTags": [
-          "preservative_free"
-        ]
+        "tone": "standard"
       },
       "addon_eye_drop_contact_lens_remove_before_use": {
         "key": "addon_eye_drop_contact_lens_remove_before_use",
@@ -5202,13 +5269,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、アラームを使用時間に合わせて設定しておく方法があります。"
         },
         "uiVariant": "rightAccentBlue",
+        "uiGroup": "通知",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "通知"
+        "tone": "standard"
       },
       "addon_adherence_notification_app": {
         "key": "addon_adherence_notification_app",
@@ -5221,13 +5288,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、使用記録のできるアプリを活用する方法があります。"
         },
         "uiVariant": "rightAccentBlue",
+        "uiGroup": "通知",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "通知"
+        "tone": "standard"
       },
       "addon_adherence_visual_calendar_checklist": {
         "key": "addon_adherence_visual_calendar_checklist",
@@ -5240,13 +5307,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、カレンダーや使用チェックリストで確認する方法があります。"
         },
         "uiVariant": "rightAccentLavender",
+        "uiGroup": "視覚化",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "視覚化"
+        "tone": "standard"
       },
       "addon_adherence_visual_note": {
         "key": "addon_adherence_visual_note",
@@ -5259,13 +5326,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、使用するタイミングを目立つ場所に書いておく方法があります。"
         },
         "uiVariant": "rightAccentLavender",
+        "uiGroup": "視覚化",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "視覚化"
+        "tone": "standard"
       },
       "addon_adherence_prep_previous_night": {
         "key": "addon_adherence_prep_previous_night",
@@ -5278,13 +5345,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、前夜のうちに翌日の薬を目につく場所へ準備しておく方法があります。"
         },
         "uiVariant": "rightAccentBlue",
+        "uiGroup": "事前準備",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "事前準備"
+        "tone": "standard"
       },
       "addon_adherence_habit_routine_link": {
         "key": "addon_adherence_habit_routine_link",
@@ -5297,13 +5364,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、毎日の生活習慣と使用を結びつける方法があります。"
         },
         "uiVariant": "rightAccentBlue",
+        "uiGroup": "習慣化",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "習慣化"
+        "tone": "standard"
       },
       "addon_adherence_family_support_reminder": {
         "key": "addon_adherence_family_support_reminder",
@@ -5316,13 +5383,13 @@
           "P": "使用忘れを防ぐ方法の一つとして、家族や身近な方に使用したか声をかけてもらう方法があります。"
         },
         "uiVariant": "rightAccentLavender",
+        "uiGroup": "家族の支援",
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
         "evidenceRefs": [],
         "intentTags": [],
-        "tone": "standard",
-        "uiGroup": "家族の支援"
+        "tone": "standard"
       }
     },
     "orderPresets": {}
@@ -5386,12 +5453,9 @@
     "intentTags": [
       "drug_effect_explanation",
       "dose_increase_explanation",
-      "concomitant_drug_attention",
       "dose_decrease_explanation",
       "side_effect_attention",
-      "followup_monitoring",
       "adherence_support",
-      "urgent_consult_advice",
       "administration_instruction",
       "treatment_end_explanation",
       "lifestyle_guidance"
