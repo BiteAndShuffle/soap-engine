@@ -9,7 +9,17 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-27（Unit「Rapid Transition Applicability（Q-RAPID2）」: 横断監査（v2側36module・
+最終更新: 2026-09-27（Unit「Rapid dose transition granularity」: Q-RAPID1 の残論点⑤（realization語彙の
+不一致＝「増量/減量」が回数変更・濃度変更のどちらを指すか曖昧という論点）に対し、Owner Decision
+OD-RAPID-GRANULARITY-1 を記録した。点眼等の外用薬では増量/減量が複数の変更軸を含み得るが、厳密な軸
+分離には前回/今回処方・用法・濃度等の追加入力情報が必要であり、現段階では完全な軸判定を目的とせず
+Rapidは「増えた/減った」という上位概念の方向性のみを示す粒度を維持する（frequency/strength等への
+細分化を見送る）ことを確定した。将来、薬歴の前後処方情報だけでは解釈不十分な実例、または臨床的誤解
+を招く事例が確認された場合を再オープン条件とする。**設計判断の記録のみであり、taxonomy・runtime・
+UI・canonical JSON・Bridge・testsのいずれも変更していない。** Q-RAPID2（OD-RAPID2-APPLICABILITY-1・
+dose transitionの表示可否）とは責務を分離し、Q-RAPID2のCLOSED状態・本文は無変更。一覧表のQ-RAPID1行
+から残論点⑤の番号を除去し本Decisionへのpointerへ置換、Q-RAPID2行の同項目参照も同期。
+2026-09-27（別Unit）: Unit「Rapid Transition Applicability（Q-RAPID2）」: 横断監査（v2側36module・
 全1,165scenario実測。Rapid-eligible 182scenario中、dose_increased/decreased のみ5module・33scenario・
 18brandで表示可否の不整合を確認）を実施し、Owner Decision OD-RAPID2-APPLICABILITY-1（brand単位・
 既存canonical情報のみ・generic/module未確定はevery()集約・representative brand選定なし・UI非表示+
@@ -46,8 +56,8 @@ Transition Applicability」（6 transitionが個々のscenarioで意味的に成
 | Q-R1 | 剤形／投与経路／部位 intent アーキテクチャ（secondary clinical token の一般化） | 🟡 中 | 点眼以外の複数剤形領域が増え、個別対応が積み上がった時 |
 | Q-R2 | route-label 表示（例:「オゼンピック注」）の一般化方針 | 🟢 低 | 複数剤形・複数経路を持つ module が増え、表示ラベルの個別対応が積み上がった時 |
 | Q-R3 | Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性） | 🟢 低（凍結範囲は DP-20 が既に定義済み） | `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節の凍結解除を Owner が判断した時 |
-| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 3 module pilot → 6 module pilot（2026-09-17 Human Review CLOSE）→ **global promotion（OD-RAPID-GLOBAL-1・2026-09-17）: Rapid v2 は全 module の既定 profile**。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ（module 再構築後に再判断）。legacy Rapid v1 は rollback 経路として保持（Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。**clinical subject generalization は `glaucoma_pg_analog_eye_drops` pilot + Human Review PASS（2026-09-26・OD-RAPID-SUBJECT-PILOT-1）により機構として正式採用・PENDING解消**（`Scenario.rapidEvaluationSubject`。詳細は本項目末尾） | 🟡 中 | 残論点の判断タイミング: ① 一時除外の解除 = chemical mediator 点眼 module の再構築完了時 ③ v1 = Rapid v1 削除 Unit ④ composition 横断 review = module 開発が一周する少し前 ⑤ realization語彙（「増量」「減量」固定ラベルと実際の意味＝頻度変更・製品変更とのズレ。2026-09-27・Q-RAPID2 Human Review由来の具体例: `glaucoma_pg_analog_eye_drops`）の見直し = taxonomy再設計を検討する時に合わせて判断する。**FAC-10（Windows company PC 相当での file:// 確認）は 2026-09-17 に VERIFIED（release gate PASS）。FAC-13〜15 は未完了のまま** |
-| Q-RAPID2 | Rapid Transition Applicability — 6 transitionが個々のscenarioで意味的に成立するかをexisting metadataからdeterministicに導出できるか（2026-09-26・`glaucoma_pg_analog_eye_drops` Human Review由来のFinding）。**✅ CLOSED（2026-09-27・OD-RAPID2-APPLICABILITY-1）**: brand単位・既存canonical情報（`scenarioRequiredTags`/`handlingTags`/`sComposition.intent`）のみから導出し、generic/module未確定はbrandごとにevery()集約（representative brand選定なし）、UI非表示+write-side guardの二重防御で実装・Human Review PASS | **CLOSED** | 完了。realization語彙（「増量/減量」ラベル）の不一致自体はQ-RAPID1側の残論点⑤へ分離済み。既存Rapid-capable module横断の**臨床妥当性**未検証部分（31 module）は別Clinical Review Unit候補として明示のみ（詳細は本項目末尾） |
+| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 3 module pilot → 6 module pilot（2026-09-17 Human Review CLOSE）→ **global promotion（OD-RAPID-GLOBAL-1・2026-09-17）: Rapid v2 は全 module の既定 profile**。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ（module 再構築後に再判断）。legacy Rapid v1 は rollback 経路として保持（Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。**clinical subject generalization は `glaucoma_pg_analog_eye_drops` pilot + Human Review PASS（2026-09-26・OD-RAPID-SUBJECT-PILOT-1）により機構として正式採用・PENDING解消**（`Scenario.rapidEvaluationSubject`。詳細は本項目末尾）。**dose transition の semantic granularity（増量/減量を frequency/strength 等へ細分化するか）は Owner Decision（2026-09-27・OD-RAPID-GRANULARITY-1）により現行粒度を維持・細分化を見送ることで確定・PENDING解消**（詳細は本項目末尾） | 🟡 中 | 残論点の判断タイミング: ① 一時除外の解除 = chemical mediator 点眼 module の再構築完了時 ③ v1 = Rapid v1 削除 Unit ④ composition 横断 review = module 開発が一周する少し前。**FAC-10（Windows company PC 相当での file:// 確認）は 2026-09-17 に VERIFIED（release gate PASS）。FAC-13〜15 は未完了のまま**。旧⑤（realization語彙の細分化要否）は OD-RAPID-GRANULARITY-1（2026-09-27）で確定済み。再オープン条件は同 Decision 末尾を参照 |
+| Q-RAPID2 | Rapid Transition Applicability — 6 transitionが個々のscenarioで意味的に成立するかをexisting metadataからdeterministicに導出できるか（2026-09-26・`glaucoma_pg_analog_eye_drops` Human Review由来のFinding）。**✅ CLOSED（2026-09-27・OD-RAPID2-APPLICABILITY-1）**: brand単位・既存canonical情報（`scenarioRequiredTags`/`handlingTags`/`sComposition.intent`）のみから導出し、generic/module未確定はbrandごとにevery()集約（representative brand選定なし）、UI非表示+write-side guardの二重防御で実装・Human Review PASS | **CLOSED** | 完了。realization語彙（「増量/減量」ラベル）が回数変更・濃度変更のどちらを指すか曖昧という論点は、Q-RAPID1側でOwner Decision（OD-RAPID-GRANULARITY-1・2026-09-27。現行粒度維持・細分化見送り）により確定済み（詳細はQ-RAPID1本文末尾）。既存Rapid-capable module横断の**臨床妥当性**未検証部分（31 module）は別Clinical Review Unit候補として明示のみ（詳細は本項目末尾） |
 | Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
 優先度の凡例:
@@ -1136,7 +1146,26 @@ Q-RAPID2の横断監査・実装（下記参照）の過程で、`glaucoma_pg_an
 語彙・完成文を適用することを確認した。**これは新しい設計判断ではなく、本節冒頭の既存方針の帰結を
 具体例で確認したものである。** Q-RAPID2 は dose transition の**表示可否**（applicability）のみを
 扱う別責務であり、**realization語彙そのものの見直しはQ-RAPID2の範囲外・本Q-RAPID1側の残論点として
-記録する**（下記一覧表「残論点」⑤）。現時点で文言・taxonomyの変更は行わない。
+記録する**（当時の一覧表「残論点」⑤。下記 Owner Decision により解消済み）。現時点で文言・taxonomyの変更は行わない。
+
+**Owner Decision（2026-09-27、OD-RAPID-GRANULARITY-1）: Rapid dose transition の semantic granularity — 現行粒度を維持し、細分化を見送る**
+
+> 本 Decision は直前の Finding（realization語彙の不一致）が提起した論点のうち、**「`dose_increased`/`dose_decreased` という区分自体をどこまで細かい意味単位に分けるか」（semantic granularity）を扱う。** Q-RAPID2（OD-RAPID2-APPLICABILITY-1）が扱う「そのtransitionを表示してよいか」（applicability）とは責務が異なり、**Q-RAPID2 の CLOSED 状態・本文・結論は本 Decision により一切変更しない。**
+
+点眼などの外用薬では、「増量／減量」が必ずしも単一の変更軸を示さず、回数変更・濃度変更など複数の意味を含み得る。ただし、これらをRapid taxonomy上で厳密に分離して自然に表現するには、前回処方・今回処方・用法・濃度など、現在より多くの入力情報が必要になる。現段階では完全な軸判定を目的とせず、Rapidは「増えた／減った」という上位概念としての方向性を示す粒度を維持する。具体的に回数変更か濃度変更かは、薬歴上の前後処方情報から判断可能であることを前提とする。したがって、現時点では `dose_increased` / `dose_decreased` を frequency / strength 等へ細分化しない。将来、前後処方情報だけでは解釈が不十分となる実例や、臨床的な誤解を生む事例が確認された場合に再検討する。
+
+**本 Decision が確定すること**
+
+- `RapidTransitionV2` の taxonomy（`dose_increased` / `dose_decreased` を含む6種）は現行のまま維持する。`frequency_increased` / `strength_increased` 等への細分化は行わない
+- Rapid は処方差分を厳密に再現する完全な変更軸表現ではなく、**薬歴作成を補助する上位概念（方向性のみを示す粒度）**として位置づける
+- **本 Decision は設計判断の記録のみであり、実装は変更しない。** `RapidTransitionV2` / `RAPID_V2_TRANSITIONS` などの taxonomy・runtime（`lib/rapidV2.ts` 等）・UI（`ThirdPanel.tsx` 等）・canonical JSON・Bridge・tests のいずれにも変更を加えていない
+
+**再オープン条件（将来のいずれかに該当した時点で再検討する）**
+
+- 前後処方情報（薬歴）だけでは回数変更か濃度変更かの解釈が実務上不十分となる具体的実例が確認された場合
+- 現行の一律「増量」「減量」表現が臨床的な誤解を招く具体的事例が確認された場合
+
+**本 Decision により、残論点⑤（realization語彙の不一致＝「増量/減量が回数変更・濃度変更のどちらを指すか曖昧」という論点）は、taxonomy細分化を行わないことを結論として確定し、未解決 PENDING のまま残さない。** 語彙と実際の意味のズレ自体を解消したのではなく、「Rapid は上位概念であり厳密な軸表現ではない」という前提のもとでは細分化不要と Owner が判断したものである。下記一覧表の Q-RAPID1 行から残論点⑤の番号を除去し、本 Decision へのpointerへ置き換える。
 
 ---
 
