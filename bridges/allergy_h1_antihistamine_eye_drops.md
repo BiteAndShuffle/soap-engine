@@ -18,11 +18,18 @@
 # 下記 scenarioRequiredTags / addonRequiredTags（正式な構造データ）のみで制御する。
 #
 moduleId: "allergy_h1_antihistamine_eye_drops"
+# [Current State・2026-09-27 Ophthalmic chassis cleanup Unit・Owner Decision] 眼科module の
+# categoryPath は原則4階層・末端は「点眼」・「外用」は含めない（Avarept/PG と同型）。
+# [Historical] 従来は5階層（末尾に「外用」/「点眼」の2階層）だったが、Owner承認済みの
+# 4階層migrationにより「外用」を除去した。categoryPath は全modules共通のグローバル検索
+# コーパスへ個別トークンとして展開されるため（`lib/search.ts`）、除去は
+# `getDrugSuggestions("外用")` の到達性喪失を伴う意図的な behavior change である
+# （Owner承認済み。reachability維持目的での keywords/alias への「外用」追加は行わない
+# ＝ categoryPath taxonomy と search keyword の責務を混在させない）
 categoryPath:
   - "アレルギー"
   - "抗アレルギー点眼薬"
   - "ヒスタミンH1受容体拮抗薬"
-  - "外用"
   - "点眼"
 drug:
   genericName: "ヒスタミンH1受容体拮抗薬系抗アレルギー点眼薬"

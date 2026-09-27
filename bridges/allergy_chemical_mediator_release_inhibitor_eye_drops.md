@@ -3,7 +3,24 @@
 # allergy_chemical_mediator_release_inhibitor_eye_drops
 # =========================================
 #
-# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
+# ⚠️ STATUS: JSON_COMPLETE ⚠️
+#
+# [Current State・2026-09-27 Ophthalmic chassis cleanup Unit による実測] zero-base
+# reconstruction の PN1〜PN8 は commit `05e47a1`（"refactor: rebuild chemical mediator
+# eye-drop module"）で完了済み。canonical JSON
+# （`data/modules/allergy_chemical_mediator_release_inhibitor_eye_drops.json`）は
+# `data/modules/index.ts` に登録され ALL_MODULES に含まれる。PN7 FAIL なし・PN8相当の
+# release verification（tsc / test suite / build / audit / test:multi-drug）は
+# commit `05e47a1` 時点および以降（Rapid v2 exclusion 解除 commit `d852a3d` 含む）で
+# 繰り返しPASS確認済み。
+# STATUS 遷移（2026-09-27・Owner 承認）: `prompts/RULES.md` §24「JSON_COMPLETE は PN6
+# （Assembly）で canonical JSON への Write が完了した時点、または PN8 で RELEASE_OK と
+# 判定された時点でユーザーの指示に基づき設定する」に従い、上記実測（PN6 Write 完了・PN7
+# FAIL なし・release verification 完了・Rapid v2 promotion 完了）を根拠に STATUS を
+# `FROZEN_FOR_PN1` から `JSON_COMPLETE` へ遷移した。本遷移は STATUS 行と本コメントのみを
+# 対象とし、SCENARIOS_START〜SCENARIOS_END 本文・Header 設計・canonical JSON は
+# 変更していない（`docs/DEVELOPMENT_STANDARD.md` の「設計資産ライフサイクル」5状態とは
+# 別軸であり、本遷移はあくまで bridge 個別の工程到達状態を表す）。
 #
 # SCENARIOS_START〜SCENARIOS_END（シナリオ本文・ADDON本文）は作成済み。
 # 本Headerは、2026-09-17〜2026-09-20 に作成された旧Header（Owner Decision D-1〜D-11・
@@ -40,7 +57,9 @@
 #         （アレルギー/抗アレルギー点眼薬/かゆみ/充血/点眼）
 #   OD-5: `display.subtitle`/`menuGroupLabels` をH1点眼と同一責務構造で明示する。
 #         `display.adjustmentExpression` は今回のrebuildでは記載しない
-#         （Rapid v1一時除外中のため、Rapid v2再評価Unitまで導入を保留。
+#         （[Historical] 記載当時はRapid v1一時除外中のため導入を保留する判断だったが、
+#         [Current State・2026-09-27] 一時除外は解除済み・本moduleはRapid v2 profile。
+#         v2はadjustmentExpressionを参照しない設計のため機能的に不要でありabsent維持。
 #         menuGroupLabelsの撤回ではない。責務分離は本文コメント参照）
 #   OD-6: `matchPolicy.preferOwnNameMatchOverGenericMatch` /
 #         `suppressRedundantGenericHeaderOnDirectMatch` をopt-in
@@ -94,19 +113,31 @@
 #   P-7  display.subtitle等の文言はOD-5で確定済みだが、将来の文言調整余地は残る
 #   その他、本Unit中に生じた個別確認事項は会話記録（Owner Review）側で管理する
 #
-# Rapid: 本moduleは引き続き `RAPID_V1_TEMPORARY_EXCLUSIONS` に残る
-#   （`lib/rapidV2.ts`）。本Unitでは解除しない。Rapid v2適用可否は
-#   Header確定 → PN1〜PN8 → final canonical/runtime確認 の後、別Unitで判断する。
+# Rapid: [Historical] 本Header確定時点では、本moduleは `RAPID_V1_TEMPORARY_EXCLUSIONS`
+#   （`lib/rapidV2.ts`）に残り、Rapid v2適用可否はHeader確定 → PN1〜PN8 →
+#   final canonical/runtime確認の後、別Unitで判断する前提だった。
+#   [Current State・2026-09-27 Rapid v2 temporary exclusion 解除Unit] zero-base rebuild
+#   完了・read-only release readiness audit PASSを経てOwnerが一時除外の解除を承認し、
+#   `RAPID_V1_TEMPORARY_EXCLUSIONS` は空集合となった。本moduleの `rapidProfileOf()` は
+#   `'v2'`。legacy Rapid v1 realizationは削除せずrollback経路として維持する
+#   （`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1参照）。
 #
 # 点眼共通シャーシの capability 語彙（9種）・製品variation・alias等の詳細根拠は
 # 上記Owner Decision一覧および本文コメントを参照。
 #
 moduleId: "allergy_chemical_mediator_release_inhibitor_eye_drops"
+# [Current State・2026-09-27 Ophthalmic chassis cleanup Unit・Owner Decision] 眼科module の
+# categoryPath は原則4階層・末端は「点眼」・「外用」は含めない（Avarept/PG と同型）。
+# [Historical] 従来は5階層（末尾に「外用」/「点眼」の2階層）だったが、Owner承認済みの
+# 4階層migrationにより「外用」を除去した。categoryPath は全modules共通のグローバル検索
+# コーパスへ個別トークンとして展開されるため（`lib/search.ts`）、除去は
+# `getDrugSuggestions("外用")` の到達性喪失を伴う意図的な behavior change である
+# （Owner承認済み。reachability維持目的での keywords/alias への「外用」追加は行わない
+# ＝ categoryPath taxonomy と search keyword の責務を混在させない）
 categoryPath:
   - "アレルギー"
   - "抗アレルギー点眼薬"
   - "ケミカルメディエーター遊離抑制薬"
-  - "外用"
   - "点眼"
 
 composition:
@@ -405,9 +436,15 @@ display:
     増量: "回数増"
     減量: "回数減"
   # adjustmentExpression は今回のrebuildでは記載しない（Owner Decision・2026-09-27）。
-  # chemical mediatorはRAPID_V1_TEMPORARY_EXCLUSIONSに残るOwner Decisionであり、
-  # Rapid v2再評価はHeader→PN1〜PN8完了後の別Unitで行う。UI menu label（menuGroupLabels）
-  # とRapid文生成用expression（adjustmentExpression）は責務が別であり、本撤回は
+  # [Historical] 記載当時、chemical mediatorはRAPID_V1_TEMPORARY_EXCLUSIONSに残るOwner
+  # Decision下にあり、Rapid v2再評価はHeader→PN1〜PN8完了後の別Unitで行う前提だった。
+  # [Current State・2026-09-27 Rapid v2 exclusion解除Unit] RAPID_V1_TEMPORARY_EXCLUSIONSは
+  # 空集合となり、本moduleの rapidProfileOf() は 'v2' である。v2 realization は
+  # adjustmentExpressionを一切参照しない（`lib/deriveNodeFields.ts` withRapidFirstSentence。
+  # v2は「増量/減量」へ抽象化されたtransition表現を使う設計のOwner Decisionのため）。
+  # よってadjustmentExpressionは機能的に不要であり、absentのまま維持する
+  # （bridgeに根拠のない値を追加しない。PN2契約）。UI menu label（menuGroupLabels）と
+  # Rapid文生成用expression（adjustmentExpression）は責務が別であり、本撤回は
   # menuGroupLabelsの撤回ではない。
   # localInput: SCENARIOS本文の initial / restart / external_start の S に
   # {{applicationSite}} が含まれるため、点眼部位入力UIを有効化する。

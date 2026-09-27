@@ -502,11 +502,25 @@ describe('T-U4b-12 expected semantic delta fixture と完全一致する', () =>
     // expectedReachableDelta は完全に不変（denotation='generic' の delta は 0 件のまま）。
     // gatedChangedRows のみ 57→58（対象 module は既存の gatedChangedModules に含まれるため
     // gatedChangedModules.length は 20 のまま変化なし）。
-    assert.equal(fixture.summary.rows, 1585)
-    assert.deepEqual(fixture.summary.byDenotation, { brand: 1022, generic: 505, module: 58 })
+    //
+    // categoryPath 4階層migration（2026-09-27・Ophthalmic chassis cleanup Unit・Owner Decision）:
+    // 眼科module の categoryPath は原則4階層・末端「点眼」・「外用」は含めない、との Owner
+    // Decision により allergy_h1_antihistamine_eye_drops / allergy_chemical_mediator_release_
+    // inhibitor_eye_drops の categoryPath から「外用」を除去した。categoryPath はグローバル
+    // 検索コーパスへ個別トークン展開されるため（`lib/search.ts`）、クエリ "外用" から両 module
+    // が到達不能になった（意図された behavior change。Owner承認済み。reachability維持目的での
+    // keywords/alias への「外用」追加は行っていない）。"外用" クエリの残り4行
+    // （derm_heparinoid_moisturizer_* 系）は変化なし。
+    // rows 1585→1583 / brand 1022（不変）/ generic 505（不変）/ module 58→56。
+    // 消えた2行はいずれも denotation='module' かつ changed=true（U-5 gate 対象のため
+    // gatedChangedRows も 58→56）。両 module とも他クエリの changed 行が残るため
+    // gatedChangedModules.length は 20 のまま変化なし。reachableChangedRows/Patterns/Modules・
+    // expectedReachableDelta は完全に不変（"外用" は reachableChangedModules 対象外）。
+    assert.equal(fixture.summary.rows, 1583)
+    assert.deepEqual(fixture.summary.byDenotation, { brand: 1022, generic: 505, module: 56 })
     assert.equal(fixture.summary.reachableChangedRows, 25)
     assert.equal(fixture.summary.reachableChangedPatterns, 6)
-    assert.equal(fixture.summary.gatedChangedRows, 58)
+    assert.equal(fixture.summary.gatedChangedRows, 56)
     assert.equal(fixture.summary.gatedChangedModules.length, 20)
   })
 })

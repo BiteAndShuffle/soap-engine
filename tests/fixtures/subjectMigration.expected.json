@@ -1,15 +1,15 @@
 {
-  "_comment": "U-4b expected semantic delta。scripts/generate-subject-migration-fixture.ts で生成する。手で編集しない。",
+  "_comment": "U-4b expected semantic delta。scripts/generate-subject-migration-fixture.ts で生成する。手で編集しない。2026-09-27: categoryPath 4階層migration（H1/chemical mediatorから「外用」除去。Owner Decision）により query=\"外用\" から当該2 moduleが到達不能になった影響分（rows/byDenotation.module/changedRows/gatedChangedRowsそれぞれ-2）のみ、Ophthalmic chassis cleanup Unitでscoped patch。他行・他fieldは無変更。",
   "generatedAgainst": "Q-S2 U-5 完了時点（U-4b 実装前）",
   "summary": {
     "queries": 560,
-    "rows": 1585,
+    "rows": 1583,
     "byDenotation": {
       "brand": 1022,
       "generic": 505,
-      "module": 58
+      "module": 56
     },
-    "changedRows": 83,
+    "changedRows": 81,
     "reachableChangedRows": 25,
     "reachableChangedPatterns": 6,
     "reachableChangedModules": [
@@ -20,7 +20,7 @@
       "dm_insulin_mixed_regular_intermediate",
       "dm_insulin_regular"
     ],
-    "gatedChangedRows": 58,
+    "gatedChangedRows": 56,
     "gatedChangedModules": [
       "allergy_chemical_mediator_release_inhibitor_eye_drops",
       "allergy_h1_antihistamine_eye_drops",
@@ -12614,22 +12614,6 @@
       "legacySubject": "ヘパリン類似物質外用スプレー",
       "resolutionSubject": "ヘパリン類似物質外用スプレー",
       "changed": false
-    },
-    {
-      "query": "外用",
-      "moduleId": "allergy_h1_antihistamine_eye_drops",
-      "denotation": "module",
-      "legacySubject": "アレジオン点眼液",
-      "resolutionSubject": null,
-      "changed": true
-    },
-    {
-      "query": "外用",
-      "moduleId": "allergy_chemical_mediator_release_inhibitor_eye_drops",
-      "denotation": "module",
-      "legacySubject": "ゼペリン点眼液",
-      "resolutionSubject": null,
-      "changed": true
     },
     {
       "query": "外用",

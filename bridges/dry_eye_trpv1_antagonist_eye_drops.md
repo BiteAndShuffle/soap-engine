@@ -3,7 +3,7 @@
 # dry_eye_trpv1_antagonist_eye_drops
 # =========================================
 #
-# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
+# ⚠️ STATUS: JSON_COMPLETE ⚠️
 #
 # 2026-09-24 に HEADER_ONLY として作成した Header へ、Human authored scenario draft の
 # SCENARIOS_START〜SCENARIOS_END を収載した（2026-09-24。prompts/RULES.md §24 HEADER_ONLY → DRAFT）。
@@ -22,7 +22,20 @@
 #   [P] Claude proposal / Owner approved on 2026-09-24（提案由来・Owner 承認済み）
 #   [D] 確定事項・固定規則からの決定論的導出
 #
-# 次の作業: PN1（prompts/vNext/HANDOFF.md「bridge 作成から開始する」）。
+# [Historical] 記載当時の次の作業: PN1（prompts/vNext/HANDOFF.md「bridge 作成から開始する」）。
+# [Current State・2026-09-27 Ophthalmic chassis cleanup Unit による実測] PN1〜PN8 は commit
+# `5c28a48`（"feat: register Avarept eye-drop module"）で完了済み。canonical JSON
+# （`data/modules/dry_eye_trpv1_antagonist_eye_drops.json`）は `data/modules/index.ts` に
+# 登録され ALL_MODULES に含まれる。PN8 結果: RELEASE_OK_WITH_MONITOR（PN7 項目 H は
+# 非注射剤のため NOT_CHECKED・非該当）。
+# STATUS 遷移（2026-09-27・Owner 承認）: `prompts/RULES.md` §24「JSON_COMPLETE は PN6
+# （Assembly）で canonical JSON への Write が完了した時点、または PN8 で RELEASE_OK と
+# 判定された時点でユーザーの指示に基づき設定する」に従い、上記実測（PN6 Write 完了・PN8
+# RELEASE_OK_WITH_MONITOR・PN7 FAIL なし）を根拠に STATUS を `FROZEN_FOR_PN1` から
+# `JSON_COMPLETE` へ遷移した。本遷移は STATUS 行と本コメントのみを対象とし、
+# SCENARIOS_START〜SCENARIOS_END 本文・Header 設計は変更していない
+# （`docs/DEVELOPMENT_STANDARD.md` の「設計資産ライフサイクル」5状態〔Experimental等〕とは
+# 別軸であり、本遷移はあくまで bridge 個別の工程到達状態を表す）。
 #
 # 参照:
 #   - bridges/allergy_h1_antihistamine_eye_drops.md（点眼共通シャーシ・golden reference）
@@ -379,10 +392,16 @@ constitution:
 # =========================================
 # - P-addon placement contract: 解決済み（2026-09-24。DP-22 / `P_ADDON_INLINE` / scenarios[].addonInsertions。
 #   commit 83ba91d）。SCENARIOS 本文収載時に Human authored draft の仮 marker を正式 marker へ正規化した。
-# - PENDING QA（HEADER_ONLY の blocker ではない）: ゼペリン点眼液 ZEP-1 と同型に、アバレプト検索時に
-#   一般名見出し候補「モツギバトレプ点眼液」が表示される可能性がある。canonical / runtime 接続後に実測する。
+# - PENDING QA: [Historical] ゼペリン点眼液 ZEP-1 と同型に、アバレプト検索時に一般名見出し候補
+#   「モツギバトレプ点眼液」が表示される可能性がある。canonical / runtime 接続後に実測する。
+#   [Current State・2026-09-27 実測により RESOLVED] `getDrugSuggestions('モツギバトレプ', index)` を
+#   production 関数で直接実行し確認した。ZEP-1 と同型どおり一般名見出し候補「モツギバトレプ点眼液」
+#   （matchedBrandName: アバレプト点眼液）が表示され、他 module との衝突・誤 resolve は無い。
+#   commit `5c28a48` の登録時記録（"generic-name heading モツギバトレプ点眼液 follows the ZEP-1
+#   pattern"）と一致する。
 #
-# SCENARIOS_START〜SCENARIOS_END: 下記に収載済み（STATUS: FROZEN_FOR_PN1。2026-09-24 Owner 凍結宣言）
+# SCENARIOS_START〜SCENARIOS_END: 下記に収載済み（2026-09-24 Owner 凍結宣言により当時
+# STATUS: FROZEN_FOR_PN1 へ遷移。現在の STATUS は本ファイル冒頭を参照＝JSON_COMPLETE）
 
 
 =======SCENARIOS_START=======

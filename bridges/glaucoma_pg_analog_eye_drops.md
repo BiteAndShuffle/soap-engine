@@ -3,7 +3,7 @@
 # glaucoma_pg_analog_eye_drops
 # =========================================
 #
-# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
+# ⚠️ STATUS: JSON_COMPLETE ⚠️
 #
 # 2026-09-26 に HEADER_ONLY として作成した Header へ、Human authored scenario draft
 # （添付用.md）の SCENARIOS_START〜SCENARIOS_END を収載した（RULES §24 HEADER_ONLY → DRAFT）。
@@ -39,8 +39,21 @@
 #   [P] Claude proposal / Owner approved on 2026-09-26（提案由来・Owner 承認済み）
 #   [D] 確定事項・固定規則からの決定論的導出
 #
-# 次の作業: PN1（prompts/vNext/HANDOFF.md「bridge作成から開始する」）。
-# STATUS は FROZEN_FOR_PN1 へ遷移済み（2026-09-26）。PN1開始はOwnerの明示指示を待つ。
+# [Historical] 記載当時の次の作業: PN1（prompts/vNext/HANDOFF.md「bridge作成から開始する」）。
+# STATUS は FROZEN_FOR_PN1 へ遷移済み（2026-09-26）。PN1開始はOwnerの明示指示を待つ、としていた。
+# [Current State・2026-09-27 Ophthalmic chassis cleanup Unit による実測] PN1〜PN8 は commit
+# `de1065b`（"feat: register glaucoma_pg_analog_eye_drops module + Rapid dose transition
+# applicability (Q-RAPID2)"）で完了済み。canonical JSON
+# （`data/modules/glaucoma_pg_analog_eye_drops.json`）は `data/modules/index.ts` に登録され
+# ALL_MODULES に含まれる。commit時点で tsc / test suite（3953 pass）/ build / audit /
+# test:multi-drug の全検証PASS・Human Review完了が記録されている。
+# STATUS 遷移（2026-09-27・Owner 承認）: `prompts/RULES.md` §24「JSON_COMPLETE は PN6
+# （Assembly）で canonical JSON への Write が完了した時点...でユーザーの指示に基づき設定する」
+# に従い、上記実測（PN6 Write 完了・PN7 FAIL なし・全検証PASS）を根拠に STATUS を
+# `FROZEN_FOR_PN1` から `JSON_COMPLETE` へ遷移した。本遷移は STATUS 行と本コメントのみを
+# 対象とし、SCENARIOS_START〜SCENARIOS_END 本文・Header 設計は変更していない
+# （`docs/DEVELOPMENT_STANDARD.md` の「設計資産ライフサイクル」5状態〔Experimental等〕とは
+# 別軸であり、本遷移はあくまで bridge 個別の工程到達状態を表す）。
 #
 # 参照:
 #   - bridges/allergy_h1_antihistamine_eye_drops.md（点眼共通シャーシ・golden reference。
@@ -53,15 +66,40 @@
 #   - prompts/vNext/PN2-Drug-Header.md / prompts/RULES.md §8 §10 §18 §21 §23 §24 §27
 #   - docs/JSON_STANDARD.md（categoryPath最大4階層・JS-A）
 #
-# 会話履歴で確認した薬事情報（貯法等）の出典（KEGG医療用医薬品情報・PMDA・
-# 製造販売元サイト経由で2026-09-26に確認。添付文書原本PDFの直接確認ではないため、
-# PN1着手前に一次資料での再確認を推奨する）:
-#   - キサラタン点眼液0.005%: 未開封2〜8℃・開封後は遮光袋で室温(1〜30℃)保存可（4週間以内）
-#   - トラバタンズ点眼液0.004%: 1〜25℃（室温）・遮光の明記なし
-#   - ルミガン点眼液0.03%: 室温保存・遮光の明記なし
-#   - タプロス点眼液0.0015%（標準製剤）: 室温保存
-#   - タプロスミニ点眼液0.0015%（PF・単回使用）: 2〜8℃保存（タプロス標準製剤とは貯法が異なる）
-#   - レスキュラ点眼液0.12%: 室温保存・無色澄明（懸濁ではない）・外箱開封後は遮光
+# 薬事情報（貯法等）の出典:
+#   [Historical] 会話履歴で確認した情報（KEGG医療用医薬品情報・PMDA・製造販売元サイト経由で
+#   2026-09-26に確認。添付文書原本PDFの直接確認ではない）:
+#     - キサラタン点眼液0.005%: 未開封2〜8℃・開封後は遮光袋で室温(1〜30℃)保存可（4週間以内）
+#     - トラバタンズ点眼液0.004%: 1〜25℃（室温）・遮光の明記なし
+#     - ルミガン点眼液0.03%: 室温保存・遮光の明記なし
+#     - タプロス点眼液0.0015%（標準製剤）: 室温保存
+#     - タプロスミニ点眼液0.0015%（PF・単回使用）: 2〜8℃保存（タプロス標準製剤とは貯法が異なる）
+#     - レスキュラ点眼液0.12%: 室温保存・無色澄明（懸濁ではない）・外箱開封後は遮光
+#
+#   [Current State・2026-09-27 Ophthalmic chassis cleanup Unit・PMDA添付文書原本で一次資料確認
+#   完了。RESOLVED（一次資料とcurrent canonical/handlingTagsは全6製品で一致。臨床データ変更なし）]:
+#     - キサラタン点眼液0.005%（添付文書番号1319739Q1037_4_02・2024年7月改訂第3版）:
+#       「貯法 2～8℃」「20.1 外箱開封後は遮光して保存すること」「20.2 開栓後4週間経過した場合は
+#       残液を使用しないこと」。開封後の保存温度は明記されていない（遮光のみ規定）。
+#       current handlingTags（light_protection, cold_storage_before_opening）と整合
+#     - トラバタンズ点眼液0.004%（添付文書番号1319754Q1023_2_06・2021年7月改訂第1版）:
+#       「貯法 1～25℃」。取扱い上の注意（20節）自体が存在せず、遮光の明記なし。
+#       current handlingTags（pg_glaucoma のみ）と整合
+#     - ルミガン点眼液0.03%（添付文書番号1319757Q1027_1_11・2023年2月改訂第1版）:
+#       「貯法 室温保存」。取扱い上の注意（20節）自体が存在せず、遮光の明記なし。
+#       current handlingTags（pg_glaucoma のみ）と整合
+#     - タプロス点眼液0.0015%（標準製剤。添付文書番号1319756Q1022_1_18・2021年12月改訂第1版。
+#       タプロスミニと同一添付文書を共有）: 「貯法 室温保存」。20節はミニ点眼液のみに関する規定で、
+#       標準製剤への追加規定なし。current handlingTags（pg_glaucoma のみ）と整合
+#     - タプロスミニ点眼液0.0015%（PF・単回使用。同上添付文書内）: 「貯法 2～8℃保存」。
+#       20節: 「アルミピロー包装開封後は、添付の遮光用投薬袋に入れて2～8℃で保存し、1年以内に
+#       使用すること。添付の遮光用投薬袋に入れて室温で保存した場合には、1ヵ月以内に使用すること」
+#       （会話履歴の記述より詳細。室温保存も遮光投薬袋使用時のみ1ヵ月以内で許容される旨を追加確認）。
+#       Product Variant Separation Principle（§4.2。タプロス標準／タプロスミニのvariant gap）により
+#       brandCatalogへ独立entryを設けない現行設計は維持する（本Unitで再検討していない）
+#     - レスキュラ点眼液0.12%（添付文書番号1319732Q1035_3_04・2023年4月改訂第2版）:
+#       「貯法 室温保存」「20. 外箱開封後は、遮光して保存すること」「3.2 性状: 無色澄明の無菌水性
+#       点眼剤」。current handlingTags（light_protection, frequency_titration_available）と整合
 #
 # =========================================
 
