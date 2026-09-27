@@ -34,6 +34,7 @@ import { deriveRawFields, deriveNodeBlockCore } from '../lib/deriveNodeFields'
 import { rebuildNode } from '../lib/primaryNode'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { nextRapidStateOnScenarioChange, type RapidState, type RapidTransitionV2 } from '../lib/rapidState'
+import { buildResolvedSFirstSentence } from '../lib/rapidSentence'
 import type { SCondition } from '../lib/rapidSentence'
 import {
   rapidProfileOf,
@@ -142,7 +143,13 @@ const PILOT_VALIDATED_RAPID_V2_MODULE_IDS = [
   'dm_dpp4_biguanide_combination_oral',
 ] as const
 
-/** Rapid v2 global promotion からの一時除外 module（OD-RAPID-GLOBAL-1。v1 profile の実例） */
+/**
+ * Rapid v2 global promotion からの一時除外対象だった moduleId（OD-RAPID-GLOBAL-1）。
+ * 2026-09-27: 一時除外は解除済み（Owner Decision）で、現在は corpus 内の他 module と
+ * 同様 v2 profile である。以下のテストは「pilot 検証済み6moduleの一覧に、この
+ * moduleId が含まれていないこと」という静的な集合契約であり、実行時 profile 判定には
+ * 依存しないため exclusion 解除後もそのまま有効。
+ */
 const V1_EXCLUDED_MODULE_ID = 'allergy_chemical_mediator_release_inhibitor_eye_drops'
 
 describe('A. pilot 検証済み 6 module は global promotion 後も v2 である', () => {
@@ -512,22 +519,22 @@ describe('G. module / scenario 切替時の Rapid state 契約（H1・トラゼ�
     assert.deepEqual(next, rapid)
   })
 
-  test('v2 module（トラゼンタ）→ v1 module（一時除外）: capable→capable でも register/verb は production の rapidProfileOf 判定で切り替わる', () => {
-    const V1_MOD = ALL_MODULES.find(m => m.moduleId === V1_EXCLUDED_MODULE_ID)!
-    const V1_SC = V1_MOD.scenarios.find(isScenarioSReplacementCapable)!
-    assert.equal(rapidProfileOf(V1_MOD), 'v1')
-
+  test('v2 module（トラゼンタ）は production の rapidProfileOf 判定どおり v2 realization を使う。v1 realization 関数は v2 の「前回から」文言を生成しない（回帰確認）', () => {
+    // 2026-09-27: 本テストは従来「v2 module（トラゼンタ）→ v1 module（一時除外）」の切替実例
+    // として一時除外 module（chemical mediator）を production `deriveRawFields` 経由で使って
+    // いたが、Rapid v2 exclusion 解除（Owner Decision）により registered corpus から v1
+    // profile が消えた。Test migration principle（production exclusion へ fake moduleId を
+    // 追加しない。structuredClone + 合成 moduleId だけでは exclusion set が空の間 v1 profile
+    // を作れない）に従い、module／rapidProfileOf を経由せず、v1 の第1文 realization 関数
+    // （buildResolvedSFirstSentence）を直接呼び出して回帰確認する。
     const trazentaDerived = deriveRawFields(
       scenarioOf(TRAZENTA_MOD, 'se_hypo_none'), TRAZENTA_MOD, [],
       { previousEvent: 'continued_do', currentOutcome: 'stable' }, TRAZENTA_DRUG,
     )
     assert.equal(trazentaDerived.S.split('\n')[0], `${TRAZENTA_DRUG}を服用して症状は落ち着いている。`)
 
-    const v1Derived = deriveRawFields(
-      V1_SC, V1_MOD, [],
-      { previousEvent: 'continued_do', currentOutcome: 'stable' }, 'ゼペリン点眼液',
-    )
-    assert.ok(v1Derived.S.split('\n')[0].includes('引き続き使用して'), 'v1 module の realization が v2 化していない（回帰）')
+    const v1Sentence = buildResolvedSFirstSentence('continued_do', 'stable', 'ゼペリン点眼液')
+    assert.ok(v1Sentence.includes('引き続き使用して'), 'v1 realization 関数の出力が v2 化していない（回帰）')
   })
 
   test('capable → non-capable: state は null になる（module に依らない既存契約）', () => {

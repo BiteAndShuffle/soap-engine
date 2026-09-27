@@ -9,13 +9,28 @@
  * `tests/rapidV2MultiModulePilot.test.ts` A）は本ファイルの profile 分布契約へ役割を移した。
  *
  * 本ファイルが固定するもの:
- *   A. profile 分布: 一時除外は Owner 承認済み exact set、それ以外の全 module（新規 module を含む）は v2
+ *   A. profile 分布: 一時除外は Owner 承認済み exact set（現在は空集合）、corpus の全 module は v2
  *   B. validator scope: `RAPID_CAPABLE_S_CONTRACT` の対象が runtime profile と全 module で一致する
  *   C. runtime realization: 全 module × Rapid-capable scenario × transition × outcome の第1文が
- *      profile に対応する realization と一致する（v2 は v2 テーブル、v1 は v1 関数）
+ *      v2 テーブルと一致する（v2 は corpus 全体の唯一の runtime profile）
  *   D. v2 の意味契約を corpus 全体で維持する
  *      （route 由来動詞・drug / regimen register・regimen_reduced・adjustmentExpression 非参照・composition register）
- *   E. v1 rollback 経路: v1 realization（adjustmentExpression を含む）が削除されず corpus 全体で機能する
+ *   E. v1 rollback 経路: v1 realization 関数（adjustmentExpression を含む）は corpus の実在に依存せず
+ *      直接ユニットテストする（削除されておらず、いつでも呼び出し可能であることを固定する）
+ *
+ * **2026-09-27（chemical mediator zero-base rebuild 完了・Rapid v2 temporary exclusion 解除・
+ * Owner Decision）:** `allergy_chemical_mediator_release_inhibitor_eye_drops` の read-only
+ * readiness audit（PASS）を経て、`RAPID_V1_TEMPORARY_EXCLUSIONS` から同 module を削除した。
+ * **現在 registered corpus に v1 profile module は 0 件である。** これは異常ではなく現在の
+ * 正式な corpus state として扱う（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1 参照）。
+ *
+ * **Test migration principle（Owner Decision・2026-09-27）:** production の
+ * `RAPID_V1_TEMPORARY_EXCLUSIONS` へ test 専用の fake moduleId を追加しない。
+ * `structuredClone` + 合成 moduleId だけでは v1 profile を作れない（exclusion set が空の間は
+ * `rapidProfileOf()` が全 moduleId に対して v2 を返すため）。v1 realization 関数そのものを
+ * 直接呼び出す形（本ファイル E・`tests/rapidV2AdditionalPilot.test.ts` 等）でのみ v1 rollback
+ * 経路を検証する。corpus に実在する v1 module の存在を前提にした「両 profile が corpus に
+ * 存在すること」という走査は本 Unit で撤去した（旧 assertion は「A」参照）。
  *
  * future-subject tripwire（v1 / v2 を問わない第1文 subject 監視）は `tests/rapidCapableSubjectTripwire.test.ts`
  * が引き続き持つ（本ファイルでは重複させない）。
@@ -26,6 +41,7 @@
  */
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
 import type { ModuleData, Scenario } from '../lib/types'
 import { ALL_MODULES } from '../data/modules/index'
@@ -39,10 +55,12 @@ import { buildV2FirstSentence, rapidProfileOf, registerOf, verbOf } from '../lib
 /**
  * Owner 承認済みの一時除外（exact set。OD-RAPID-GLOBAL-1）。
  * 登録・解除は Owner Decision を要する。件数だけでなく集合で固定する。
+ *
+ * 2026-09-27: `allergy_chemical_mediator_release_inhibitor_eye_drops` の zero-base rebuild
+ * 完了・readiness audit PASS を受けて Owner が解除を承認し、空集合になった
+ * （`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1）。
  */
-const OWNER_APPROVED_V1_TEMPORARY_EXCLUSIONS = [
-  'allergy_chemical_mediator_release_inhibitor_eye_drops',
-] as const
+const OWNER_APPROVED_V1_TEMPORARY_EXCLUSIONS: readonly string[] = []
 
 const V1_RELATIONS: SRelation[] = ['new_addition', 'med_changed', 'dose_increased', 'dose_decreased', 'continued_do']
 const TRANSITIONS: RapidTransitionV2[] = [...V1_RELATIONS, 'regimen_reduced']
@@ -82,16 +100,25 @@ describe('A. profile 分布: 既定 v2 + Owner 承認済み一時除外のみ v1
     assert.equal(rapidProfileOf({ ...base, moduleId: 'zz_future_module_not_in_corpus' }), 'v2')
   })
 
-  test('一時除外は moduleId の完全一致のみ（prefix / suffix の類似 ID は除外されない）', () => {
-    const [excluded] = OWNER_APPROVED_V1_TEMPORARY_EXCLUSIONS
-    const mod = ALL_MODULES.find(m => m.moduleId === excluded)!
-    assert.equal(rapidProfileOf({ ...mod, moduleId: `${excluded}_rebuilt` }), 'v2')
-    assert.equal(rapidProfileOf({ ...mod, moduleId: excluded.replace(/^allergy_/, '') }), 'v2')
+  // 「一時除外は moduleId の完全一致のみ（prefix/suffix は除外されない）」を実在の除外 ID を
+  // 使って構成する統合テストは、exclusion set が空集合になったことで組めなくなった（Test
+  // migration principle: production exclusion へ test 専用の fake moduleId を追加しない）。
+  // 判定が `Set.has(mod.moduleId)` の完全一致セマンティクスであること自体は、以下の
+  // source contract で corpus の実在 v1 module に依存せず固定する。
+
+  test('rapidProfileOf の一時除外判定は Set.has(mod.moduleId) の完全一致であり、prefix / pattern match を行わない（source contract）', () => {
+    const src = readFileSync(new URL('../lib/rapidV2.ts', import.meta.url), 'utf-8')
+    assert.ok(
+      src.includes('RAPID_V1_TEMPORARY_EXCLUSIONS.has(mod.moduleId)'),
+      'rapidProfileOf の一時除外判定が Set.has(mod.moduleId) の exact match になっていない（prefix/pattern match が紛れ込んでいる可能性）',
+    )
   })
 
-  test('v2 / v1 の両 profile に Rapid-capable scenario が存在する（走査の空振り防止）', () => {
+  test('v2 profile に Rapid-capable scenario が存在する（走査の空振り防止）。v1 profile は現在の corpus に 0 件', () => {
     assert.ok(V2_MODULES.some(m => capableOf(m).length > 0))
-    assert.ok(V1_MODULES.some(m => capableOf(m).length > 0))
+    // 2026-09-27: chemical mediator の exclusion 解除により、registered corpus の v1 profile
+    // module は 0 件になった（正式な現在状態。Q-RAPID1 参照）。
+    assert.equal(V1_MODULES.length, 0)
   })
 })
 
@@ -104,25 +131,33 @@ describe('B. RAPID_CAPABLE_S_CONTRACT の scope は runtime profile と全 modul
     for (const m of ALL_MODULES) assert.deepEqual(contractErrors(m), [], m.moduleId)
   })
 
-  test('全 module: Rapid-capable scenario の S を契約外にすると、v2 profile なら WARNING・v1 profile なら対象外', () => {
-    let checkedV2 = 0, checkedV1 = 0
+  test('全 module（v2）: Rapid-capable scenario の S を契約外にすると WARNING が出る（ERROR へ昇格しない）', () => {
+    let checkedV2 = 0
     for (const mod of ALL_MODULES) {
       const sc = capableOf(mod)[0]
       if (!sc) continue
       const clone = structuredClone(mod)
       clone.scenarios.find(s => s.id === sc.id)!.S = '任意の文。'
       const errs = contractErrors(clone)
-      if (rapidProfileOf(mod) === 'v2') {
-        assert.equal(errs.length, 1, mod.moduleId)
-        assert.equal(errs[0].isWarning, true, `${mod.moduleId}: WARNING のまま（ERROR へ昇格していない）`)
-        checkedV2++
-      } else {
-        assert.equal(errs.length, 0, mod.moduleId)
-        checkedV1++
-      }
+      assert.equal(rapidProfileOf(mod), 'v2', `${mod.moduleId}: 現在 corpus に v1 module は無いはず`)
+      assert.equal(errs.length, 1, mod.moduleId)
+      assert.equal(errs[0].isWarning, true, `${mod.moduleId}: WARNING のまま（ERROR へ昇格していない）`)
+      checkedV2++
     }
     assert.equal(checkedV2, V2_MODULES.filter(m => capableOf(m).length > 0).length)
-    assert.ok(checkedV1 > 0)
+  })
+
+  test('v1 profile は RAPID_CAPABLE_S_CONTRACT の対象外である（source contract。corpus に実在 v1 module が無くても検証可能）', () => {
+    // 2026-09-27: registered corpus に v1 profile module が無いため、corpus 走査による
+    // 「v1 なら対象外」の統合テストは実施できない（Test migration principle: fake moduleId を
+    // production exclusion へ追加しない）。本節は lib/moduleValidator.ts が
+    // `rapidProfileOf(mod) === 'v2'` を条件として本 check を実行することを、
+    // 既存の H1Pilot / CompositionUnit の「source pattern 確認」と同型の手法で固定する。
+    const src = readFileSync(new URL('../lib/moduleValidator.ts', import.meta.url), 'utf-8')
+    assert.ok(
+      src.includes("rapidProfileOf(obj as unknown as ModuleData) === 'v2'"),
+      'RAPID_CAPABLE_S_CONTRACT の生成が rapidProfileOf === "v2" にゲートされていない（v1 rollback 時に対象外化する保証が失われている）',
+    )
   })
 })
 
@@ -143,16 +178,27 @@ describe('C. 全 module の Rapid 第1文が profile に対応する realization
     assert.ok(checked > 0)
   })
 
-  test('v1 profile（一時除外）: 5 relation × 4 outcome が v1 関数（adjustmentExpression 込み）と一致', () => {
-    let checked = 0
-    for (const mod of V1_MODULES) for (const sc of capableOf(mod)) {
-      for (const t of V1_RELATIONS) for (const c of CONDITIONS) {
-        const actual = firstLine(deriveRawFields(sc, mod, [], { previousEvent: t, currentOutcome: c }, DRUG).S)
-        assert.equal(actual, buildResolvedSFirstSentence(t, c, DRUG, mod.display?.adjustmentExpression), `${mod.moduleId} / ${sc.id} / ${t} / ${c}`)
-        checked++
-      }
-    }
-    assert.ok(checked > 0)
+  // 「v1 profile module × deriveRawFields」の統合テスト（v1 分岐への実際の dispatch 確認）は、
+  // 2026-09-27 の chemical mediator exclusion 解除により registered corpus に v1 module が
+  // 0 件になったため実施できない（Test migration principle: fake moduleId を production
+  // exclusion へ追加しない）。v1 の第1文 realization 関数自体（`buildResolvedSFirstSentence`）は
+  // 引き続き corpus に依存せず直接ユニットテストする（本ファイル E ・
+  // `tests/rapidV2AdditionalPilot.test.ts` ・ `tests/rapidV2H1Pilot.test.ts` ・
+  // `tests/rapidV2MultiModulePilot.test.ts` 参照）。describe A は「どの module が
+  // v1/v2 か」という profile 分布のみを固定し、runtime がその判定結果に応じて実際に
+  // v1 関数へ分岐すること自体は別契約であるため、以下の source contract で dispatch
+  // 分岐そのものを固定する（v1 rollback 時にこの分岐が失われていないことの保証）。
+
+  test('withRapidFirstSentence は rapidProfileOf(mod) !== "v2" のとき buildResolvedSFirstSentence（v1 realization）へ分岐する（source contract。v1 rollback dispatch 保証）', () => {
+    const src = readFileSync(new URL('../lib/deriveNodeFields.ts', import.meta.url), 'utf-8')
+    const start = src.indexOf('function withRapidFirstSentence(')
+    assert.ok(start !== -1, 'withRapidFirstSentence が見つからない')
+    const nextFn = /\n(export )?function /g
+    nextFn.lastIndex = start + 1
+    const nextMatch = nextFn.exec(src)
+    const body = src.slice(start, nextMatch ? nextMatch.index : undefined)
+    assert.ok(body.includes("rapidProfileOf(mod) === 'v2'"), 'withRapidFirstSentence に v2 判定分岐が見つからない')
+    assert.ok(body.includes('buildResolvedSFirstSentence('), 'withRapidFirstSentence に v1 realization（buildResolvedSFirstSentence）への分岐が見つからない')
   })
 
   test('Rapid OFF（null）では全 module で authored S がそのまま使われる（非 Rapid 経路は profile に依らない）', () => {

@@ -34,7 +34,6 @@ import type { RapidState, RapidTransitionV2 } from '../lib/rapidState'
 import type { SCondition } from '../lib/rapidSentence'
 import { validateModule } from '../lib/moduleValidator'
 import {
-  rapidProfileOf,
   rapidV2CompositionOf,
   verbForRoute,
   verbOf,
@@ -49,9 +48,15 @@ const H1 = byId('allergy_h1_antihistamine_eye_drops')
 const TZ = byId('dm_dpp4_oral')
 const NR = byId('dm_insulin_rapid_analog')
 const GLP = byId('dm_glp1ra_semaglutide_oral')
-/** Rapid v2 global promotion からの一時除外 module（OD-RAPID-GLOBAL-1。legacy Rapid v1 profile の実例） */
-const V1X = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
-/** V1X と同一 clinicalDomain（allergy）の既定 v2 module。非 Rapid block の比較相手に使う */
+/**
+ * allergy domain の既定 v2 module。非 Rapid block の比較相手に使う。
+ *
+ * 2026-09-27: 本ファイルは従来ここに `V1X`（Rapid v2 global promotion からの一時除外
+ * module。OD-RAPID-GLOBAL-1）を保持し、legacy Rapid v1 profile の実例として使っていた。
+ * exclusion 解除（Owner Decision）により registered corpus の v1 profile module が
+ * 0 件になったため削除した（Test migration principle）。legacy（rapidV2Register 非付与）
+ * bucketing 契約は synthetic block で検証している（describe E / F / H 参照）。
+ */
 const H1_ORAL = byId('allergy_h1_antihistamine_second_gen_oral')
 
 function scenarioOf(mod: ModuleData, id: string): Scenario {
@@ -266,29 +271,45 @@ describe('E. 非 Rapid block・legacy Rapid v1 block の既存 bucketing は変�
     assert.deepEqual(lines(compose(v2, [plain]).S), [...lines(plain.block.fields.S), ...lines(v2.block.fields.S)])
   })
 
-  test('legacy Rapid v1 block（一時除外 module）は既存の text-derived bucketing に従う（変更対象外）', () => {
+  // 2026-09-27: 以下 2 テストは従来「legacy Rapid v1 block」の実例として一時除外 module
+  // （chemical mediator）を production rebuildNode 経由で使っていたが、Rapid v2 exclusion
+  // 解除（Owner Decision）により registered corpus の v1 profile module が 0 件になった。
+  // Test migration principle（production exclusion へ fake moduleId を追加しない。
+  // structuredClone + 合成 moduleId だけでは exclusion set が空の間 v1 profile を作れない）
+  // に従い、rapidV2Register を持たない synthetic block を直接構築して legacy bucketing
+  // 契約（rapidV2CompositionOf が undefined を返す block は rapid の値に関係なく
+  // legacy 合成のまま）を検証する（rebuildNode/rapidProfileOf を経由しない）。
+
+  test('rapidV2Register を持たない block（legacy）は rapid の有無に関わらず既存の text-derived bucketing に従う（変更対象外）', () => {
     const plain = node('a', H1_ORAL, H1_ORAL.scenarios.find(isScenarioSReplacementCapable)!, null, 'アレロック')
-    const v1 = node('b', V1X, V1X.scenarios.find(isScenarioSReplacementCapable)!, R('med_changed', 'stable'), 'ゼペリン点眼液')
-    assert.equal(rapidProfileOf(V1X), 'v1')
-    assert.equal(plain.block.clinicalDomain, v1.block.clinicalDomain, '前提: 同一 clinicalDomain で比較する')
-    assert.equal(rapidV2CompositionOf(v1), undefined)
-    assert.equal(compose(plain, [v1]).S, composeWithoutRapidV2(plain, [v1]).S)
-    assert.ok(compose(plain, [v1]).S.startsWith(lines(v1.block.fields.S)[0]), 'legacy decision bucketing が失われている')
+    const legacyBlock = (rapid: RapidState): ComposeNode => ({
+      id: 'b', moduleId: 'synthetic_legacy_no_register', scenarioId: 'synthetic',
+      block: {
+        id: 'b-block', templateLabel: '', clinicalDomain: plain.block.clinicalDomain,
+        fields: { S: '点眼を継続し、症状の悪化はない。', O: '', A: '', P: '' },
+      },
+      drugLabel: 'synthetic', selectedAddonIds: [], baseLabel: '', baseDomain: 'synthetic', rapid,
+    })
+    const withRapid = legacyBlock(R('med_changed', 'stable'))
+    const withoutRapid = legacyBlock(null)
+    assert.equal('rapidV2Register' in withRapid.block, false)
+    assert.equal(rapidV2CompositionOf(withRapid), undefined, 'rapidV2Register が無ければ rapid の有無に関係なく undefined')
+    assert.equal(compose(plain, [withRapid]).S, compose(plain, [withoutRapid]).S, 'rapidV2Register が無い block は node.rapid の値に関わらず同一の S を生成する（legacy bucketing 契約）')
+    assert.equal(compose(plain, [withRapid]).S, composeWithoutRapidV2(plain, [withRapid]).S)
   })
 
-  test('v1 profile module（一時除外）同士の合成は Rapid v2 state を渡さない合成と byte 一致（v1 Rapid 全組合せ + Rapid OFF）', () => {
-    // global promotion 後の v1 profile は一時除外 module のみ。同一 module の異なる capable scenario 同士も対象にする
-    const v1Modules = ALL_MODULES.filter(m => rapidProfileOf(m) === 'v1')
+  test('rapidV2Register を持たない block 同士の合成は Rapid v2 state を渡さない合成と byte 一致（rapid 全組合せ + OFF）', () => {
+    const legacyBlock = (id: string, s: string, rapid: RapidState): ComposeNode => ({
+      id, moduleId: `synthetic_legacy_${id}`, scenarioId: 'synthetic',
+      block: { id: `${id}-block`, templateLabel: '', clinicalDomain: 'synthetic_domain', fields: { S: s, O: '', A: '', P: '' } },
+      drugLabel: 'synthetic', selectedAddonIds: [], baseLabel: '', baseDomain: 'synthetic', rapid,
+    })
     let checked = 0
-    for (const pm of v1Modules) for (const qm of v1Modules) {
-      const pCaps = pm.scenarios.filter(isScenarioSReplacementCapable), qCaps = qm.scenarios.filter(isScenarioSReplacementCapable)
-      const ps = pCaps[0], qs = pm === qm ? qCaps[1] : qCaps[0]
-      if (!ps || !qs) continue
-      for (const rapid of [null, ...T5.map(t => R(t, 'stable'))]) {
-        const p = node('p', pm, ps, rapid, 'A薬'), q = node('q', qm, qs, rapid, 'B薬')
-        assert.deepEqual(compose(p, [q]), composeWithoutRapidV2(p, [q]), `${pm.moduleId} + ${qm.moduleId} ${JSON.stringify(rapid)}`)
-        checked++
-      }
+    for (const rapid of [null, ...T5.map(t => R(t, 'stable'))]) {
+      const p = legacyBlock('p', 'A薬は継続しており症状の悪化はない。', rapid)
+      const q = legacyBlock('q', 'B薬は継続しており症状の悪化はない。', rapid)
+      assert.deepEqual(compose(p, [q]), composeWithoutRapidV2(p, [q]), JSON.stringify(rapid))
+      checked++
     }
     assert.ok(checked > 0)
   })
@@ -325,10 +346,19 @@ describe('F. rapidV2CompositionOf は node.rapid と block.rapidV2Register が�
     assert.equal(rapidV2CompositionOf({ ...on, rapid: null }), undefined)
   })
 
-  test('非 v2 module（一時除外）の block は rapidV2Register を持たず、rapid があっても undefined', () => {
-    const v1 = node('a', V1X, V1X.scenarios.find(isScenarioSReplacementCapable)!, R('med_changed', 'stable'), 'ゼペリン点眼液')
-    assert.equal('rapidV2Register' in v1.block, false)
-    assert.equal(rapidV2CompositionOf(v1), undefined)
+  test('rapidV2Register の付与は rapidProfileOf(mod) === "v2" にゲートされている（source contract。v1 rollback 時に付与されない保証）', () => {
+    // 2026-09-27: 本テストは従来「非 v2 module（一時除外）」の実例として一時除外 module
+    // （chemical mediator）を使っていたが、Rapid v2 exclusion 解除（Owner Decision）に
+    // より registered corpus の v1 profile module が 0 件になった。Test migration
+    // principle に従い、rapidV2Register の付与判定がこの gate に閉じていることを
+    // deriveNodeFields.ts の source contract として直接検証する
+    // （registered corpus に非 v2 module が無くても、rollback 時にこの gate が
+    // rapidV2Register の付与を止める保証は失われていない）。
+    const src = readFileSync(new URL('../lib/deriveNodeFields.ts', import.meta.url), 'utf-8')
+    assert.ok(
+      src.includes("rapidProfileOf(mod) === 'v2' && isScenarioSReplacementCapable(scenario)"),
+      'rapidV2Register の付与が rapidProfileOf(mod) === "v2" にゲートされていない',
+    )
   })
 
   test('v2 module でも Rapid-capable でない scenario の block は rapidV2Register を持たない', () => {
@@ -393,13 +423,12 @@ describe('H. RAPID_CAPABLE_S_CONTRACT', () => {
     assert.equal(contractErrors(withScenarioS('cp_good', '{{drug_subject}}を服用して症状は落ち着いている。\n飲み忘れなく服用している。')).length, 1)
   })
 
-  test('v1 profile module（一時除外）は対象外（validator scope は runtime の v2 profile と同期。OD-RAPID-GLOBAL-1）', () => {
-    const clone = structuredClone(V1X)
-    const sc = clone.scenarios.find(isScenarioSReplacementCapable)!
-    sc.S = '任意の文。'
-    assert.equal(rapidProfileOf(clone), 'v1')
-    assert.equal(contractErrors(clone).length, 0)
-  })
+  // 2026-09-27: 本テストは従来「v1 profile module（一時除外）」の実例として一時除外
+  // module（chemical mediator）を structuredClone して使っていたが、Rapid v2 exclusion
+  // 解除（Owner Decision）により registered corpus の v1 profile module が 0 件になった
+  // （Test migration principle）。validator scope が runtime の v2 profile 判定
+  // （rapidProfileOf(obj) === 'v2'）にゲートされていること自体は source contract として
+  // rapidV2GlobalPromotion.test.ts の describe B で検証している。
 
   test('Rapid-capable でない scenario は対象外', () => {
     assert.equal(isScenarioSReplacementCapable(scenarioOf(TZ, 'se_mild_continue')), false)

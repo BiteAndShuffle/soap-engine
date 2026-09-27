@@ -9,7 +9,33 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-27（Unit「Rapid dose transition granularity」: Q-RAPID1 の残論点⑤（realization語彙の
+最終更新: 2026-09-27（Unit「Rapid v2 temporary exclusion 解除」: `allergy_chemical_mediator_release_inhibitor_eye_drops`
+の zero-base rebuild 完了（commit `05e47a1`）を受けて実施した read-only release readiness audit が PASS したことを
+受け、Owner Decision により Q-RAPID1 の残論点①（一時除外の解除）を確定した。`lib/rapidV2.ts` の
+`RAPID_V1_TEMPORARY_EXCLUSIONS` を空集合へ変更し、現在の registered corpus に v1 profile module は 0 件である。
+legacy Rapid v1 realization（`lib/rapidSentence.ts`）・`RAPID_DEFAULT_PROFILE` を `'v1'` へ戻す rollback 経路は
+削除せず維持する。`display.adjustmentExpression` は追加せず absent のまま、Q-RAPID2 の brand-unit dose transition
+applicability contract・OD-RAPID-GRANULARITY-1（現行粒度維持）は変更していない。6つの Rapid test file
+（`tests/rapidV2GlobalPromotion.test.ts` / `rapidV2H1Pilot.test.ts` / `rapidV2AdditionalPilot.test.ts` /
+`rapidV2CompositionUnit.test.ts` / `rapidV2MultiModulePilot.test.ts` / `rapidCapableSubjectTripwire.test.ts`〔最後の
+1件は変更不要と確認〕）を Test migration principle（production exclusion への test専用 fake moduleId 追加禁止）に
+従って移行し、legacy（v1 profile / 非 v2 module）依存の corpus走査テストは v1 realization 関数の直接単体検証
+または source contract 検証へ置き換えた。**Owner review による coverage delta 監査（test 総数 3955→3951・net −4）
+の結果を以下のとおり記録する（`lost coverage 0` という単純な表現ではなく、正確な区分として記録する）:**
+semantic contract の uncovered item は 0 件。**v1 runtime dispatch の behavioral integration coverage
+（`withRapidFirstSentence` が `rapidProfileOf(mod) !== 'v2'` のとき実際に `buildResolvedSFirstSentence` へ分岐する
+ことを、実在の v1 profile module を用いて実行時に確認するテスト）は、current corpus の v1 module が 0 件と
+なったため、source-pattern tripwire（`rapidV2GlobalPromotion.test.ts` に新規追加した2件: `Set.has(mod.moduleId)`
+完全一致の実装確認・`withRapidFirstSentence` 内の分岐先関数呼び出しの実装確認）へ意図的に縮退させた。
+v1 realization 関数自体（`buildResolvedSFirstSentence`）・adjustmentExpression を使う increase/decrease
+realization・Rapid OFF byte 復元・legacy（`rapidV2Register` 非付与）composition behavior は、引き続き
+behavioral test または direct-unit test で保持されている（corpus 依存なし）。**Review trigger:** 将来
+`RAPID_V1_TEMPORARY_EXCLUSIONS` に実 module が再登録された場合、上記 source-pattern tripwire を実行時の
+behavioral integration test（実 module を用いた `deriveRawFields`/`rebuildNode` 経由の dispatch 確認）へ
+再度成立させることを、その Unit の作業に含める。
+Q-RAPID1 の他の残論点（legacy Rapid v1 の Lifecycle 確定・composition 横断 review）は本 Unit の対象外であり
+未確定のまま残る。一覧表の Q-RAPID1 行・§8「現状」・§7「Q-RAPID1 の扱い」を同期。
+2026-09-27（Unit「Rapid dose transition granularity」: Q-RAPID1 の残論点⑤（realization語彙の
 不一致＝「増量/減量」が回数変更・濃度変更のどちらを指すか曖昧という論点）に対し、Owner Decision
 OD-RAPID-GRANULARITY-1 を記録した。点眼等の外用薬では増量/減量が複数の変更軸を含み得るが、厳密な軸
 分離には前回/今回処方・用法・濃度等の追加入力情報が必要であり、現段階では完全な軸判定を目的とせず
@@ -56,7 +82,7 @@ Transition Applicability」（6 transitionが個々のscenarioで意味的に成
 | Q-R1 | 剤形／投与経路／部位 intent アーキテクチャ（secondary clinical token の一般化） | 🟡 中 | 点眼以外の複数剤形領域が増え、個別対応が積み上がった時 |
 | Q-R2 | route-label 表示（例:「オゼンピック注」）の一般化方針 | 🟢 低 | 複数剤形・複数経路を持つ module が増え、表示ラベルの個別対応が積み上がった時 |
 | Q-R3 | Phase 2-B display dedup（配合剤候補の表示順・家族単位対称性） | 🟢 低（凍結範囲は DP-20 が既に定義済み） | `docs/DESIGN_PRINCIPLES.md` DP-20「適用しないこと」節の凍結解除を Owner が判断した時 |
-| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 3 module pilot → 6 module pilot（2026-09-17 Human Review CLOSE）→ **global promotion（OD-RAPID-GLOBAL-1・2026-09-17）: Rapid v2 は全 module の既定 profile**。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ（module 再構築後に再判断）。legacy Rapid v1 は rollback 経路として保持（Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。**clinical subject generalization は `glaucoma_pg_analog_eye_drops` pilot + Human Review PASS（2026-09-26・OD-RAPID-SUBJECT-PILOT-1）により機構として正式採用・PENDING解消**（`Scenario.rapidEvaluationSubject`。詳細は本項目末尾）。**dose transition の semantic granularity（増量/減量を frequency/strength 等へ細分化するか）は Owner Decision（2026-09-27・OD-RAPID-GRANULARITY-1）により現行粒度を維持・細分化を見送ることで確定・PENDING解消**（詳細は本項目末尾） | 🟡 中 | 残論点の判断タイミング: ① 一時除外の解除 = chemical mediator 点眼 module の再構築完了時 ③ v1 = Rapid v1 削除 Unit ④ composition 横断 review = module 開発が一周する少し前。**FAC-10（Windows company PC 相当での file:// 確認）は 2026-09-17 に VERIFIED（release gate PASS）。FAC-13〜15 は未完了のまま**。旧⑤（realization語彙の細分化要否）は OD-RAPID-GRANULARITY-1（2026-09-27）で確定済み。再オープン条件は同 Decision 末尾を参照 |
+| Q-RAPID1 | Rapid transition taxonomy の6種化（Do/追加/変更/削除/増/減）— H1点眼 Reference Implementation → 3 module pilot → 6 module pilot（2026-09-17 Human Review CLOSE）→ **global promotion（OD-RAPID-GLOBAL-1・2026-09-17）: Rapid v2 は全 module の既定 profile**。**一時除外は 2026-09-27 に解除済み**（`allergy_chemical_mediator_release_inhibitor_eye_drops` の zero-base rebuild 完了・release readiness audit PASS を受けた Owner Decision）。現在 registered corpus に v1 profile module は 0 件。legacy Rapid v1 は rollback 経路として保持（Lifecycle は `docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。**clinical subject generalization は `glaucoma_pg_analog_eye_drops` pilot + Human Review PASS（2026-09-26・OD-RAPID-SUBJECT-PILOT-1）により機構として正式採用・PENDING解消**（`Scenario.rapidEvaluationSubject`。詳細は本項目末尾）。**dose transition の semantic granularity（増量/減量を frequency/strength 等へ細分化するか）は Owner Decision（2026-09-27・OD-RAPID-GRANULARITY-1）により現行粒度を維持・細分化を見送ることで確定・PENDING解消**（詳細は本項目末尾） | 🟡 中 | 残論点の判断タイミング: ③ v1 = Rapid v1 削除 Unit ④ composition 横断 review = module 開発が一周する少し前。**FAC-10（Windows company PC 相当での file:// 確認）は 2026-09-17 に VERIFIED（release gate PASS）。FAC-13〜15 は未完了のまま**。旧①（一時除外の解除）は 2026-09-27 に解除済みで確定済み。旧⑤（realization語彙の細分化要否）は OD-RAPID-GRANULARITY-1（2026-09-27）で確定済み。再オープン条件は同 Decision 末尾を参照 |
 | Q-RAPID2 | Rapid Transition Applicability — 6 transitionが個々のscenarioで意味的に成立するかをexisting metadataからdeterministicに導出できるか（2026-09-26・`glaucoma_pg_analog_eye_drops` Human Review由来のFinding）。**✅ CLOSED（2026-09-27・OD-RAPID2-APPLICABILITY-1）**: brand単位・既存canonical情報（`scenarioRequiredTags`/`handlingTags`/`sComposition.intent`）のみから導出し、generic/module未確定はbrandごとにevery()集約（representative brand選定なし）、UI非表示+write-side guardの二重防御で実装・Human Review PASS | **CLOSED** | 完了。realization語彙（「増量/減量」ラベル）が回数変更・濃度変更のどちらを指すか曖昧という論点は、Q-RAPID1側でOwner Decision（OD-RAPID-GRANULARITY-1・2026-09-27。現行粒度維持・細分化見送り）により確定済み（詳細はQ-RAPID1本文末尾）。既存Rapid-capable module横断の**臨床妥当性**未検証部分（31 module）は別Clinical Review Unit候補として明示のみ（詳細は本項目末尾） |
 | Q-E | Phase 1 監査（2026-07-25）由来の未回答事項 E-1〜E-7（環境・運用・体制に関する Owner 回答待ち） | 項目別（下記） | 項目別の Trigger を参照 |
 
@@ -676,10 +702,10 @@ DP-20「適用しないこと」節が凍結する内容について、Owner が
 
 Rapid v2（6 transition × 4 outcome）は Owner Decision **OD-RAPID-GLOBAL-1**（本項目末尾）により **全 module の既定 profile** として確定・実装済みである（commit `4238d88`）。
 
-- profile 判定: `lib/rapidV2.ts` の `rapidProfileOf`（既定 v2 ＋ 明示的な一時除外）。一時除外は `allergy_chemical_mediator_release_inhibitor_eye_drops` のみ
+- profile 判定: `lib/rapidV2.ts` の `rapidProfileOf`（既定 v2 ＋ 明示的な一時除外）。**一時除外は 2026-09-27 に解除済み**（`allergy_chemical_mediator_release_inhibitor_eye_drops` の zero-base rebuild 完了・release readiness audit PASS を受けた Owner Decision）。`RAPID_V1_TEMPORARY_EXCLUSIONS` は現在空集合であり、registered corpus に v1 profile module は 0 件
 - `RAPID_CAPABLE_S_CONTRACT` validator の scope は runtime の v2 profile と自動同期（WARNING / Design Rule）。future-subject tripwire は v1 / v2 を問わず全 Rapid-capable scenario を監視する
-- legacy Rapid v1 は一時除外 module と rollback 経路として保持（`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）
-- 未確定の残論点: 一時除外の解除判断 / legacy Rapid v1 の Lifecycle 確定 / composition 横断 review（同 §9・§10）。**FAC-10 は 2026-09-17 に VERIFIED（下記 OD-RAPID-GLOBAL-1 §6）。** FAC-13〜15 は引き続き NOT YET VERIFIED。
+- legacy Rapid v1（`lib/rapidSentence.ts`）は削除せず rollback 経路として保持（`RAPID_DEFAULT_PROFILE` を `'v1'` へ戻す経路。`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-4）。一時除外が空集合の間、v1 realization は corpus 走査からは到達しないが、関数自体は tests から直接単体検証されている
+- 未確定の残論点: legacy Rapid v1 の Lifecycle 確定 / composition 横断 review（同 §9・§10）。**FAC-10 は 2026-09-17 に VERIFIED（下記 OD-RAPID-GLOBAL-1 §6）。** FAC-13〜15 は引き続き NOT YET VERIFIED。
   **clinical subject generalization（旧 OD-RAPID-READINESS-1 §1 PENDING）は 2026-09-26・OD-RAPID-SUBJECT-PILOT-1 により機構として解消済み**（本項目末尾参照）。関連する新規 Finding（Rapid Transition Applicability）は Q-RAPID2 が別途追跡する
 
 以下の本文（「論点」後段の検証方針、および各 Owner Decision）は、H1 Reference Implementation → 3 module pilot → 6 module pilot → global promotion の**判断経緯の記録**である。各 Decision の冒頭に表示した Historical / Superseded 注記のとおり、現在の仕様は本節と OD-RAPID-GLOBAL-1 を正とする。
@@ -1098,7 +1124,7 @@ global promotion の**実装完了は業務配布可能（business release ready
 
 **7. Q-RAPID1 の扱い**
 
-global promotion は確定・実装したが、Q-RAPID1 には未確定の論点（一時除外の解除判断・clinical subject generalization・legacy Rapid v1 の Lifecycle 確定・composition 横断 review）が残るため、本項目は CLOSE せず、`docs/DESIGN_PRINCIPLES.md` への移管（本ドキュメント末尾「判断確定後の処理手順」）はこれらの確定時に行う。
+global promotion は確定・実装したが、Q-RAPID1 には未確定の論点（clinical subject generalization・legacy Rapid v1 の Lifecycle 確定・composition 横断 review）が残るため、本項目は CLOSE せず、`docs/DESIGN_PRINCIPLES.md` への移管（本ドキュメント末尾「判断確定後の処理手順」）はこれらの確定時に行う。一時除外の解除判断は 2026-09-27 の Owner Decision により確定済み（本項目「現状」参照）。
 
 **実装状況（2026-09-17・`49cc18e` 上。commit 前）**
 

@@ -42,7 +42,7 @@ import { deriveRawFields } from '../lib/deriveNodeFields'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { validateModule } from '../lib/moduleValidator'
 import { nextRapidStateOnScenarioChange, type RapidState, type RapidTransitionV2 } from '../lib/rapidState'
-import { buildResolvedSFirstSentence, type SCondition, type SRelation } from '../lib/rapidSentence'
+import { buildResolvedSFirstSentence, type SCondition } from '../lib/rapidSentence'
 import { rapidProfileOf, rapidV2CompositionOf, registerOf, verbOf } from '../lib/rapidV2'
 
 const DERM_ID = 'derm_heparinoid_moisturizer_ointment'
@@ -91,7 +91,6 @@ const COMBINATION_SEVERITY_IDS = [
 
 const TRANSITIONS: RapidTransitionV2[] = ['continued_do', 'new_addition', 'med_changed', 'regimen_reduced', 'dose_increased', 'dose_decreased']
 const CONDITIONS: SCondition[] = ['stable', 'unchanged', 'improved', 'not_improved']
-const V1_RELATIONS: SRelation[] = ['continued_do', 'new_addition', 'med_changed', 'dose_increased', 'dose_decreased']
 
 const R = (t: RapidTransitionV2, c: SCondition): RapidState => ({ previousEvent: t, currentOutcome: c })
 
@@ -308,20 +307,16 @@ describe('C. 外用の adjustmentExpression は v2 realization で参照され�
     }
   })
 
-  test('v1 profile module は AE を持つ場合引き続き AE を使う（回帰確認）', () => {
-    // 2026-09: 一時除外 module（chemical mediator）の再構築で canonical から
-    // display.adjustmentExpression が消えた（bridge D4 が PENDING。PN2 契約
-    // 「bridge に記載がない場合は canonical 側にも生成しない」）。現行 corpus に
-    // 「v1 profile かつ AE を持つ module」は存在しないため、canonical へ AE を
-    // 追加せず、clone へ AE を注入して v1 realization 側の参照契約のみを固定する。
-    const src = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
-    assert.equal(src.display?.adjustmentExpression, undefined, 'canonical に AE が復活している（PN2 契約違反）')
+  test('v1 realization 関数（buildResolvedSFirstSentence）は AE を渡された場合引き続き使う（回帰確認）', () => {
+    // 2026-09-27: 本テストが従来「v1 profile module の実例」として使っていた一時除外
+    // module（chemical mediator）は Rapid v2 exclusion 解除（Owner Decision）により
+    // registered corpus から v1 profile が消えた。Test migration principle（production
+    // exclusion へ fake moduleId を追加しない。structuredClone + 合成 moduleId だけでは
+    // exclusion set が空の間 v1 profile を作れない）に従い、module／rapidProfileOf を
+    // 経由せず、v1 の第1文 realization 関数を直接呼び出して AE 参照契約を固定する。
     const ae = { increasePast: '使用回数が増えた', decreasePast: '使用回数が減った' }
-    const v1: ModuleData = JSON.parse(JSON.stringify(src))
-    v1.display = { ...v1.display!, adjustmentExpression: ae }
-    assert.equal(rapidProfileOf(v1), 'v1')
-    const sc = v1.scenarios.find(isScenarioSReplacementCapable)!
-    assert.ok(derive(v1, sc, R('dose_increased', 'stable'), 'ゼペリン点眼液').S.includes(ae.increasePast))
+    const s = buildResolvedSFirstSentence('dose_increased', 'stable', 'ゼペリン点眼液', ae)
+    assert.ok(s.includes(ae.increasePast))
   })
 })
 
@@ -472,36 +467,24 @@ describe('G. RAPID_CAPABLE_S_CONTRACT', () => {
     for (const m of ALL_MODULES) assert.deepEqual(contractErrors(m), [], m.moduleId)
   })
 
-  test('v1 profile module（一時除外）は validator 対象外', () => {
-    const v1 = ALL_MODULES.find(m => rapidProfileOf(m) === 'v1')!
-    const clone = structuredClone(v1)
-    const sc = clone.scenarios.find(isScenarioSReplacementCapable)!
-    sc.S = '任意の文。'
-    assert.equal(contractErrors(clone).length, 0)
-  })
+  // 2026-09-27: 本 describe は従来「v1 profile module（一時除外）は validator 対象外」を
+  // corpus 内の実在 v1 module を clone して検証していたが、Rapid v2 exclusion 解除
+  // （Owner Decision）により registered corpus の v1 profile module が 0 件になった。
+  // Test migration principle（production exclusion へ fake moduleId を追加しない。
+  // structuredClone + 合成 moduleId だけでは exclusion set が空の間 v1 profile を作れない）
+  // に従い削除した。RAPID_CAPABLE_S_CONTRACT の生成が rapidProfileOf(...) === 'v2' に
+  // ゲートされていること自体は source contract として rapidV2GlobalPromotion.test.ts の
+  // describe B で検証している。
 })
 
 // ═══════════════════════════════════════════════════════════════
 // H. v1 profile module（一時除外）の v1 realization 維持
 // ═══════════════════════════════════════════════════════════════
 
-describe('H. v1 profile module（一時除外）の Rapid 出力は v1 realization と一致し続ける', () => {
-  test('全 v1 module × capable scenario × 5 relation × 4 outcome の第1文が v1 関数の出力と一致', () => {
-    let checked = 0
-    for (const mod of ALL_MODULES) {
-      if (rapidProfileOf(mod) === 'v2') continue
-      const drug = mod.drug?.brandNames?.[0] ?? '薬'
-      for (const sc of mod.scenarios.filter(isScenarioSReplacementCapable)) {
-        for (const t of V1_RELATIONS) for (const c of CONDITIONS) {
-          checked++
-          assert.equal(
-            firstLine(derive(mod, sc, R(t, c), drug)),
-            buildResolvedSFirstSentence(t, c, drug, mod.display?.adjustmentExpression),
-            `${mod.moduleId} / ${sc.id} / ${t} / ${c}`,
-          )
-        }
-      }
-    }
-    assert.ok(checked > 0, 'v1 profile module の組合せを1件も検証していない')
-  })
-})
+// 2026-09-27: 本 describe は従来「全 v1 module × capable scenario の第1文が v1 関数の
+// 出力と一致」を corpus 走査で検証していたが、Rapid v2 exclusion 解除（Owner Decision）
+// により registered corpus の v1 profile module が 0 件になり、この走査は必ず0件になる
+// （Test migration principle）。v1 の第1文 realization 関数（buildResolvedSFirstSentence）
+// 自体の unit 検証は上記 describe C の回帰テストで維持している。中央判定点
+// （rapidProfileOf）の profile 分布契約は rapidV2GlobalPromotion.test.ts の describe A で
+// 検証している。

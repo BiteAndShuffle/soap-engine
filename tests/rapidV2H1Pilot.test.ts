@@ -30,6 +30,7 @@ import { deriveRawFields, deriveNodeBlockCore } from '../lib/deriveNodeFields'
 import { rebuildNode } from '../lib/primaryNode'
 import { isScenarioSReplacementCapable } from '../lib/isSReplacementEligible'
 import { isSameRapid, nextRapidStateOnScenarioChange, type RapidState, type RapidTransitionV2 } from '../lib/rapidState'
+import { buildResolvedSFirstSentence } from '../lib/rapidSentence'
 import type { SCondition } from '../lib/rapidSentence'
 import { resolveDrugName, resolveSubjectFromResolution } from '../lib/drugSubject'
 import { isSubjectUnresolved } from '../lib/brandTags'
@@ -50,14 +51,10 @@ const DRUG = 'アレジオン点眼液'
 const H1_MOD = ALL_MODULES.find(m => m.moduleId === H1_MODULE_ID)!
 const H1_ORAL_MOD = ALL_MODULES.find(m => m.moduleId === H1_ORAL_MODULE_ID)!
 
-/**
- * Rapid v2 global promotion からの一時除外 module（OD-RAPID-GLOBAL-1。v1 profile）。
- * profile 分布の契約本体（exact set・既定 v2）は `tests/rapidV2GlobalPromotion.test.ts` が持つ。
- * 本ファイルでは H1 契約の中で「v1 profile の module」の実例として使う。
- */
-const V1_EXCLUDED_MODULE_ID = 'allergy_chemical_mediator_release_inhibitor_eye_drops'
-const V1_EXCLUDED_MOD = ALL_MODULES.find(m => m.moduleId === V1_EXCLUDED_MODULE_ID)!
-const V1_EXCLUDED_DRUG = 'ゼペリン点眼液'
+// 2026-09-27: 本ファイルが「v1 profile の module 実例」として使っていた一時除外 module
+// （chemical mediator）の定数はここにあったが、Rapid v2 temporary exclusion 解除
+// （Owner Decision）に伴い撤去した。v1 realization 自体の直接検証は
+// `buildResolvedSFirstSentence` を使う各テストへ置き換えている（本ファイル内 grep 参照）。
 
 const H1_SIDE_EFFECT_SCENARIO_IDS = [
   'se_irritation_none',
@@ -390,24 +387,22 @@ describe('D. profile 判定は中央判定点に閉じ込められている（�
   // profile 分布（一時除外の exact set・その他全 module が v2）の契約本体は
   // tests/rapidV2GlobalPromotion.test.ts が持つ。ここでは H1 Reference Model が
   // global promotion 後も v2 であり、同一成分系の別 module も既定 v2 になることを確認する。
-  test('H1点眼（点眼）は v2、H1内服（oral）も既定で v2、一時除外 module は v1', () => {
+  //
+  // 2026-09-27: 本 describe が「v1 profile の実例」として使っていた一時除外 module
+  // （chemical mediator）は、zero-base rebuild + readiness audit PASS を経て Owner が
+  // exclusion を解除した。registered corpus の v1 profile module は現在 0 件であり、
+  // 「moduleId 完全一致で v1 と判定される実例」を実 corpus から構成するテストは
+  // Test migration principle（production exclusion へ fake moduleId を追加しない）に
+  // より本ファイルからは撤去した（profile 分布契約の本体は tests/rapidV2GlobalPromotion.test.ts
+  // が引き続き固定する）。
+  test('H1点眼（点眼）は v2、H1内服（oral）も既定で v2', () => {
     assert.equal(rapidProfileOf(H1_MOD), 'v2')
     assert.equal(rapidProfileOf(H1_ORAL_MOD), 'v2')
-    assert.equal(rapidProfileOf(V1_EXCLUDED_MOD), 'v1')
   })
 
   test('DashboardClient.tsx / ThirdPanel.tsx に H1 moduleId の直書きが無い（profile 判定は lib/rapidV2.ts の rapidProfileOf に閉じている）', () => {
     assert.equal(src.includes(H1_MODULE_ID), false, 'DashboardClient.tsx に H1 moduleId が直書きされている')
     assert.equal(thirdPanelSrc.includes(H1_MODULE_ID), false, 'ThirdPanel.tsx に H1 moduleId が直書きされている')
-  })
-
-  test('rapidProfileOf は module.moduleId の完全一致で判定する（prefix一致ではない）', () => {
-    // 一時除外 moduleId で始まる架空 moduleId は除外されず既定 v2 になること
-    const decoy: ModuleData = { ...V1_EXCLUDED_MOD, moduleId: `${V1_EXCLUDED_MODULE_ID}_decoy` }
-    assert.equal(rapidProfileOf(decoy), 'v2')
-    // H1 の中身を持っていても moduleId が一時除外と完全一致すれば v1 になること（判定は moduleId のみ）
-    const excludedId: ModuleData = { ...H1_MOD, moduleId: V1_EXCLUDED_MODULE_ID }
-    assert.equal(rapidProfileOf(excludedId), 'v1')
   })
 })
 
@@ -501,22 +496,17 @@ describe('F. adjustmentExpression は v2 で参照されない', () => {
     })
   })
 
-  test('v1 profile の module は adjustmentExpression を持つ場合それを使用する（回帰確認）', () => {
-    // 2026-09: 一時除外 module（chemical mediator）の再構築により、canonical から
-    // display.adjustmentExpression が消えた（bridge の D4 が PENDING であり、
-    // PN2 契約「bridge に記載がない場合は canonical 側にも生成しない」に従うため）。
-    // 現行 corpus に「v1 profile かつ AE を持つ module」は存在しないため、canonical へ
-    // AE を追加する（= bridge に根拠のない値を canonical へ持ち込む）代わりに、
-    // v1 profile module を deep clone して AE を注入し、v1 realization が AE を
-    // 読み続けていることだけを検証する（moduleValidator.test.ts の合成データ方式に倣う）。
+  test('v1 realization 関数（buildResolvedSFirstSentence）は adjustmentExpression を渡された場合それを使用する（回帰確認）', () => {
+    // 2026-09-27: 本テストが従来「v1 profile module の実例」として使っていた一時除外 module
+    // （chemical mediator）は Rapid v2 exclusion 解除（Owner Decision）により registered
+    // corpus から v1 profile が消えた。Test migration principle（production exclusion へ
+    // fake moduleId を追加しない。structuredClone + 合成 moduleId だけでは exclusion set が
+    // 空の間 v1 profile を作れない）に従い、module／rapidProfileOf を経由せず、
+    // v1 の第1文 realization 関数（`buildResolvedSFirstSentence`）を直接呼び出して
+    // AE 参照契約を固定する。
     const ae = { increasePast: '点眼回数が増えた', decreasePast: '点眼回数が減った' }
-    const mod: ModuleData = JSON.parse(JSON.stringify(V1_EXCLUDED_MOD))
-    assert.equal(mod.display?.adjustmentExpression, undefined, 'canonical に AE が復活している（PN2 契約違反）')
-    mod.display = { ...mod.display!, adjustmentExpression: ae }
-    assert.equal(rapidProfileOf(mod), 'v1', 'clone が v1 profile として判定されていない')
-    const sc = mod.scenarios.find(isScenarioSReplacementCapable)!
-    const derived = deriveRawFields(sc, mod, [], { previousEvent: 'dose_increased', currentOutcome: 'stable' }, V1_EXCLUDED_DRUG)
-    assert.ok(derived.S.includes(ae.increasePast), 'v1 module で AE が使われなくなっている（回帰）')
+    const s = buildResolvedSFirstSentence('dose_increased', 'stable', DRUG, ae)
+    assert.ok(s.includes(ae.increasePast), 'v1 realization 関数で AE が使われなくなっている（回帰）')
   })
 })
 
@@ -592,8 +582,13 @@ function mergeTwoNodes(primary: ComposeNode, secondary: ComposeNode): SoapFields
   )
 }
 
-describe('H. multi-node（H1 v2 と v1 の混在を含む）', () => {
-  const V1_SC = V1_EXCLUDED_MOD.scenarios.find(isScenarioSReplacementCapable)!
+describe('H. multi-node', () => {
+  // 2026-09-27: 本 describe は従来「H1 v2 + v1 module（一時除外）」という multi-node 混在
+  // テストを持っていたが、Rapid v2 exclusion 解除（Owner Decision）により registered corpus
+  // の v1 profile module が 0 件になったため削除した（Test migration principle: production
+  // exclusion へ test 専用の fake moduleId を追加しない）。v1/v2 混在時の state 独立性は
+  // makeNode/ComposeNode の実装が profile を区別しないことで保証されており、
+  // 本 describe の「H1 v2 + H1 v2」テストが state 独立性そのものを検証する。
 
   test('H1 v2 + H1 v2: state が独立している', () => {
     const a = makeNode('a', H1_MOD, h1Scenario('se_irritation_none'), { previousEvent: 'new_addition', currentOutcome: 'stable' }, 'パタノール点眼液')
@@ -601,15 +596,6 @@ describe('H. multi-node（H1 v2 と v1 の混在を含む）', () => {
     assert.notDeepEqual(a.rapid, b.rapid)
     assert.deepEqual(a.rapid, { previousEvent: 'new_addition', currentOutcome: 'stable' })
     assert.deepEqual(b.rapid, { previousEvent: 'regimen_reduced', currentOutcome: 'not_improved' })
-  })
-
-  test('H1 v2 + v1 module（一時除外）: state が独立している', () => {
-    const a = makeNode('a', H1_MOD, h1Scenario('cp_good'), { previousEvent: 'regimen_reduced', currentOutcome: 'stable' }, DRUG)
-    const b = makeNode('b', V1_EXCLUDED_MOD, V1_SC, { previousEvent: 'dose_increased', currentOutcome: 'stable' }, V1_EXCLUDED_DRUG)
-    assert.deepEqual(a.rapid, { previousEvent: 'regimen_reduced', currentOutcome: 'stable' })
-    assert.deepEqual(b.rapid, { previousEvent: 'dose_increased', currentOutcome: 'stable' })
-    assert.ok(b.block.fields.S.includes(V1_EXCLUDED_DRUG), 'v1 module の realization が v2 化していない（回帰）')
-    assert.ok(!b.block.fields.S.includes(`前回から${V1_EXCLUDED_DRUG}が増量となり症状は`), 'v1 module に v2 の文言が混入している')
   })
 
   test('scenario 変更が他 node へ波及しない', () => {

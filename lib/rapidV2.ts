@@ -104,12 +104,13 @@ const RAPID_DEFAULT_PROFILE: RapidProfile = 'v2'
  * moduleId の完全一致のみで判定する（prefix・categoryPath・route・clinicalDomain からの推測はしない）。
  * **永久除外ではない。** 登録・解除は Owner Decision を要し、理由と解除条件を併記する。
  *
- * - `allergy_chemical_mediator_release_inhibitor_eye_drops`: Owner が module の全面再構築を予定しているため。
- *   再構築後の bridge / canonical を基準に Rapid v2 の適用を再判断する（OD-RAPID-READINESS-1 §6 から継続）
+ * 2026-09-27: `allergy_chemical_mediator_release_inhibitor_eye_drops` の zero-base rebuild
+ * 完了・Rapid v2 release readiness audit PASS を受けて Owner が一時除外の解除を承認し、
+ * 空集合になった（`docs/OPEN_DESIGN_QUESTIONS.md` Q-RAPID1）。現在 registered corpus に
+ * v1 profile module は 0 件である。v1 realization（`lib/rapidSentence.ts`）は削除せず、
+ * global promotion の rollback 経路として維持する。
  */
-const RAPID_V1_TEMPORARY_EXCLUSIONS: ReadonlySet<string> = new Set([
-  'allergy_chemical_mediator_release_inhibitor_eye_drops',
-])
+const RAPID_V1_TEMPORARY_EXCLUSIONS: ReadonlySet<string> = new Set([])
 
 /**
  * module が Rapid v1 / v2 のどちらの realization を使うかを返す（唯一の判定点）。
