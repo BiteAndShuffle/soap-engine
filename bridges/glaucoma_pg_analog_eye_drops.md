@@ -246,15 +246,33 @@ drug:
   #     分かれ、本moduleはメーカー別GE分割を行わない方針のため、単一の代表値を機械的に
   #     決め打ちできない。docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md §4.2 の
   #     原則「不明なvariant-specific propertyを代表値・安全側の値・先発値で補完しない」に
-  #     従い、cold/light系タグを付与しない。
+  #     従い、cold/light系プロパティタグ（light_protection等）を付与しない。
   #   - brand/genericペアのhandlingTags同値は allergy_h1_antihistamine_eye_drops.md
   #     固有のローカル設計判断であり、Repository横断契約ではないことを確認済み
   #     （RULES.md / JSON_STANDARD.md / DESIGN_PRINCIPLES.md のいずれにも当該contractなし）。
-  #   - タプロス点眼液 / タフルプロスト点眼液ペアについても、タプロスミニ variant
-  #     （PF・単回使用・2〜8℃保存）由来の cold_storage_before_opening /
-  #     single_use_container / preservative_free は同じ§4.2の原則により自動付与しない
-  #     （product variant runtime selection gap。対応ADDONはrequiredTags未宣言のまま
-  #     manual candidateとし、薬剤師が実交付製剤を確認して選択する）。
+  #
+  # [Historical・2026-09-26] タプロス点眼液 / タフルプロスト点眼液ペアについても、タプロスミニ
+  # variant（PF・単回使用・2〜8℃保存）由来の cold_storage_before_opening /
+  # single_use_container / preservative_free は同じ§4.2の原則により自動付与せず、対応ADDONは
+  # requiredTags未宣言のまま全brand ungated manual candidateとしていた（product variant
+  # runtime selection gap）。
+  #
+  # [Current State・2026-09-30 H1 generic-noun O + ophthalmic family-level variant candidate
+  # Unit・Owner Decision] docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md §4.2 を3段階
+  # （Level 1: SKU property confirmed / Level 2: variant exists in family / Level 3:
+  # familyまで絞れない）へ整理し、上記の「全brand ungated manual candidate」だった
+  # Mini（single_use_container）/ PF（preservative_free）/ 遮光（light_protection）の
+  # ADDON候補を、Level 2の family-level variant tag（`preservative_free_variant_in_family` /
+  # `single_use_variant_in_family` / `light_protection_variant_in_family`）でproduct family
+  # 単位まで絞った。family-level tagはSKU propertyそのものを主張しない
+  # （例: ラタノプロスト点眼液へ`light_protection_variant_in_family`を付与することは、
+  # 「ラタノプロスト点眼液というgeneric entry自体が遮光対象である」ことを意味しない。
+  # 「市場に遮光対象製品が存在するため薬剤師が交付製品を確認して選択できる」ことのみを表す）。
+  # family-level tagはAddon gate専用でありscenarioRequiredTagsには使用しない。
+  # 詳細は docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md §4.2〜§4.4 を参照。
+  # タプロスミニ固有の保存条件（2〜8℃・遮光投薬袋）は今回のUnitでは実装せず、
+  # 同文書のFuture considerationとして記録した（タプロス／タフルプロストのstorage表示は
+  # 通常タプロス側の扱いのまま。Mini家族へlight/cold系family tagは追加していない）。
   # ─────────────────────────────────────────
   brandCatalog:
     キサラタン点眼液:
@@ -264,6 +282,11 @@ drug:
       handlingTags:
         - "light_protection"
         - "cold_storage_before_opening"
+        # [H] Owner Decision（2026-09-30）: キサラタン自身が遮光対象（property tag
+        # light_protection を保持）のため、family = 自身を含むという意味で
+        # light_protection_variant_in_family も併記する（family内にpropertyを持つ
+        # SKUが存在する、という定義上、property保持brand自身がそれを満たすため自明に真）。
+        - "light_protection_variant_in_family"
         - "pg_glaucoma"
       aliases:
         - "きさらたんてんがん"
@@ -276,6 +299,15 @@ drug:
       genericName: "ラタノプロスト"
       displayGenericName: "ラタノプロスト点眼液"
       handlingTags:
+        # [H] Owner Decision（2026-09-30・Level 2 family-level variant candidate）:
+        # manufacturer-unspecified genericのため、遮光対象製品・PF製品いずれもメーカーにより
+        # 市場に存在するが、本moduleはメーカー別GE分割を行わない方針のため単一の代表値を
+        # 機械的に決め打ちできない（§4.2 Level 1は不成立）。family内に該当variantが存在する
+        # ことは事実であり、Addon本文（遮光保管・PF容器の取り扱い説明）はそのvariantへ
+        # そのまま適用可能なため、Level 2のfamily-level tagで候補化する。
+        # SKU propertyそのもの（light_protection / preservative_free）は付与しない。
+        - "light_protection_variant_in_family"
+        - "preservative_free_variant_in_family"
         - "pg_glaucoma"
       aliases:
         - "らたのぷろすとてんがん"
@@ -336,6 +368,14 @@ drug:
       genericName: "タフルプロスト"
       displayGenericName: "タフルプロスト点眼液"
       handlingTags:
+        # [H] Owner Decision（2026-09-30・Level 2 family-level variant candidate）:
+        # タプロスミニ（1回使い切り容器）というvariantがfamily内に存在するため、
+        # single_use_variant_in_family でMini Addonを候補化する。SKU propertyそのもの
+        # （single_use_container）は付与しない（本製剤＝タプロス標準はsingle-useではない）。
+        # タプロスミニ固有の保存条件（2〜8℃・遮光投薬袋）は今回対象外
+        # （docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md Future consideration参照。
+        # light/cold系family tagは付与しない）。
+        - "single_use_variant_in_family"
         - "pg_glaucoma"
       aliases:
         - "たぷろすてんがん"
@@ -348,6 +388,8 @@ drug:
       genericName: "タフルプロスト"
       displayGenericName: "タフルプロスト点眼液"
       handlingTags:
+        # [H] Owner Decision（2026-09-30）: タプロス点眼液と同一理由（上記コメント参照）。
+        - "single_use_variant_in_family"
         - "pg_glaucoma"
       aliases:
         - "たふるぷろすとてんがん"
@@ -361,6 +403,10 @@ drug:
       displayGenericName: "イソプロピルウノプロストン点眼液"
       handlingTags:
         - "light_protection"
+        # [H] Owner Decision（2026-09-30）: レスキュラ自身が遮光対象（property tag
+        # light_protection を保持）のため、family = 自身を含むという意味で
+        # light_protection_variant_in_family も併記する（キサラタンと同一理由）。
+        - "light_protection_variant_in_family"
         # [H] Owner Decision（2026-09-26）: レスキュラの1日2回用法から自動導出した値ではない。
         # 「回数系(frequency_*)scenarioをレスキュラのみ到達可能とする」というOwnerの
         # 明示決定を表すcapability tagである。
@@ -378,6 +424,8 @@ drug:
       displayGenericName: "イソプロピルウノプロストン点眼液"
       handlingTags:
         - "light_protection"
+        # [H] Owner Decision（2026-09-30）: レスキュラ点眼液と同一理由（上記コメント参照）。
+        - "light_protection_variant_in_family"
         - "frequency_titration_available"
         - "pg_glaucoma"
       aliases:
@@ -421,24 +469,38 @@ template:
     - "mild"
     - "moderate"
   # handlingTags（ボキャブラリー注記・bridge-only）:
-  # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの語彙一覧（11種）。
+  # scenarioRequiredTags / addonRequiredTags の判定に使用するタグの語彙一覧（14種）。
   # 現行10エントリのうち実際に付与済みなのは light_protection / cold_storage_before_opening /
-  # frequency_titration_available / pg_glaucoma の4種のみ。
+  # light_protection_variant_in_family / preservative_free_variant_in_family /
+  # single_use_variant_in_family / frequency_titration_available / pg_glaucoma の7種。
   # 残り7種（cold_storage / suspension / single_use_container / preservative_free /
   # avoid_cold_storage / concentration_variant / reduced_frequency_option）は
   # 対応するSCENARIO/ADDONを非表示に保つために定義するが、現行10エントリには付与しない。
   #
-  # single_use_container / preservative_free についての運用メモ（2026-09-26）:
+  # [Historical・2026-09-26] single_use_container / preservative_free についての運用メモ:
   #   タプロスミニ（PF・単回使用・2〜8℃保存）というvariantは実在するが、
   #   docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md §4.2 の原則により、
   #   current runtimeが実際に交付されたvariant（タプロス標準 or タプロスミニ）を
   #   判別できないため、本タグを「タプロス点眼液」entryへ自動付与しない。
   #   対応する addon_eye_drop_single_dose_mini / addon_eye_drop_preservative_free_pf は
-  #   requiredTags を宣言せず、常時候補（manual candidate）として保持する
-  #   （薬剤師が実交付製剤を確認して選択する。RULES §27 の reservedHandlingTags 対象では
-  #   ない＝「該当製品が存在しないから到達不能」ではなく「該当製品はあるが判別不能」の
-  #   ため区別する。詳細: prompts/vNext/HANDOFF.md §6「product variant runtime
-  #   selection gap」Finding）。
+  #   requiredTags を宣言せず、常時候補（manual candidate）として保持していた。
+  #
+  # [Current State・2026-09-30 H1 generic-noun O + ophthalmic family-level variant candidate
+  # Unit・Owner Decision] 上記2 ADDONの全brand ungated manual candidateという扱いを、
+  # family-level variant tag（下記）によるproduct family単位のcandidate絞り込みへ移行した。
+  # single_use_container / preservative_free / light_protection の3タグは引き続き
+  # 「SKUそのもののpropertyが確定している場合のみ付与する」property tagとして温存し、
+  # 語彙一覧・reservedHandlingTagsからも変更していない（既存挙動を壊さない）。
+  #
+  # family-level variant tag 3種（2026-09-30 新規導入。Addon gate専用。
+  # docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md §4.3 Level 2）:
+  #   - light_protection_variant_in_family
+  #   - preservative_free_variant_in_family
+  #   - single_use_variant_in_family
+  # 意味: 「そのbrandCatalog entryが表すproduct family内に、該当propertyを持つ
+  # marketed SKU / variantが存在する」ことを表す。SKU propertyそのもの（light_protection /
+  # preservative_free / single_use_container）を含意しない。**scenarioRequiredTagsには
+  # 使用しない**（Addon candidate reachability専用）。
   #
   # frequency_titration_available についての運用メモ（2026-09-26）:
   #   「レスキュラの用法(1日2回)から自動導出した値」ではない。「回数系(frequency_*)
@@ -460,6 +522,9 @@ template:
     - "concentration_variant"
     - "frequency_titration_available"
     - "reduced_frequency_option"
+    - "light_protection_variant_in_family"
+    - "preservative_free_variant_in_family"
+    - "single_use_variant_in_family"
     - "pg_glaucoma"
   # reservedHandlingTags（実型フィールド・RULES §27）:
   # 現行brandCatalogのどのエントリも保持しないが、requiredTags付きscenario/addonを
@@ -585,21 +650,30 @@ scenarioRequiredTags:
 addonRequiredTags:
   addon_eye_drop_suspension_shake: ["suspension"]
   addon_eye_drop_storage_upright_suspension: ["suspension"]
-  addon_eye_drop_storage_light_protection: ["light_protection"]
+  # [Current State・2026-09-30] family-level variant tagへ変更（Addon gate専用。
+  # scenarioRequiredTags側の lifestyle_guidance_storage_light_protection: ["light_protection"]
+  # は変更していない＝SCENARIO gateは引き続きproperty tag保持brandのみに限定される）。
+  addon_eye_drop_storage_light_protection: ["light_protection_variant_in_family"]
   addon_eye_drop_storage_cold: ["cold_storage"]
   addon_eye_drop_warm_container_after_cold_storage: ["cold_storage"]
   addon_eye_drop_storage_cold_before_opening: ["cold_storage_before_opening"]
   addon_eye_drop_avoid_cold_storage: ["avoid_cold_storage"]
+  # [Current State・2026-09-30] §4.2 gap（タプロスミニ・product variant runtime selection
+  # gap）による全brand ungated manual candidateから、family-level variant tagによる
+  # product family単位のcandidate絞り込みへ移行した（下記 [Historical] 参照）。
+  addon_eye_drop_single_dose_mini: ["single_use_variant_in_family"]
+  addon_eye_drop_preservative_free_pf: ["preservative_free_variant_in_family"]
   addon_glaucoma_pg_wash_periocular_after_instillation: ["pg_glaucoma"]
   addon_glaucoma_pg_wipe_periocular_after_instillation: ["pg_glaucoma"]
 # 上記 addonRequiredTags に記載のないADDONは常時候補（全製品で表示・薬剤師が選択）。
-# 次の2件は§4.2 gap（タプロスミニ・product variant runtime selection gap）により
-# 意図的にrequiredTagsを宣言していない。誤ったvariant propertyの自動帰属を避け、
-# current runtimeで判別できない差分をHuman judgmentへ委ねるためである
-# （「該当製品が存在しないreserved」とは意味が異なる。上記template.handlingTagsメモ参照）。
-#
-# - addon_eye_drop_single_dose_mini
-# - addon_eye_drop_preservative_free_pf
+# [Historical・2026-09-26] 次の2件は§4.2 gap（タプロスミニ・product variant runtime
+# selection gap）により、記載当時は意図的にrequiredTagsを宣言していなかった
+# （誤ったvariant propertyの自動帰属を避け、current runtimeで判別できない差分を
+# Human judgmentへ委ねるため。「該当製品が存在しないreserved」とは意味が異なる）。
+# [Current State・2026-09-30] 上記 addonRequiredTags マップに family-level variant tag
+# （single_use_variant_in_family / preservative_free_variant_in_family）を宣言し、
+# product family単位のcandidate絞り込みへ移行済み（H1 generic-noun O + ophthalmic
+# family-level variant candidate Unit・Owner Decision）。
 #
 # 次の8件は tag と無関係に全製品で薬剤師が任意選択する、本来的に常時候補のもの
 # （H1点眼の同名ADDONと同型・同一理由）。

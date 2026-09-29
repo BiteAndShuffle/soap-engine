@@ -152,6 +152,7 @@
         "handlingTags": [
           "light_protection",
           "cold_storage_before_opening",
+          "light_protection_variant_in_family",
           "pg_glaucoma"
         ],
         "aliases": [
@@ -168,6 +169,8 @@
         "genericName": "ラタノプロスト",
         "displayGenericName": "ラタノプロスト点眼液",
         "handlingTags": [
+          "light_protection_variant_in_family",
+          "preservative_free_variant_in_family",
           "pg_glaucoma"
         ],
         "aliases": [
@@ -248,6 +251,7 @@
         "genericName": "タフルプロスト",
         "displayGenericName": "タフルプロスト点眼液",
         "handlingTags": [
+          "single_use_variant_in_family",
           "pg_glaucoma"
         ],
         "aliases": [
@@ -264,6 +268,7 @@
         "genericName": "タフルプロスト",
         "displayGenericName": "タフルプロスト点眼液",
         "handlingTags": [
+          "single_use_variant_in_family",
           "pg_glaucoma"
         ],
         "aliases": [
@@ -281,6 +286,7 @@
         "displayGenericName": "イソプロピルウノプロストン点眼液",
         "handlingTags": [
           "light_protection",
+          "light_protection_variant_in_family",
           "frequency_titration_available",
           "pg_glaucoma"
         ],
@@ -299,6 +305,7 @@
         "displayGenericName": "イソプロピルウノプロストン点眼液",
         "handlingTags": [
           "light_protection",
+          "light_protection_variant_in_family",
           "frequency_titration_available",
           "pg_glaucoma"
         ],
@@ -379,6 +386,9 @@
       "concentration_variant",
       "frequency_titration_available",
       "reduced_frequency_option",
+      "light_protection_variant_in_family",
+      "preservative_free_variant_in_family",
+      "single_use_variant_in_family",
       "pg_glaucoma"
     ],
     "reservedHandlingTags": [
@@ -6018,7 +6028,7 @@
         },
         "uiVariant": null,
         "requiredTags": [
-          "light_protection"
+          "light_protection_variant_in_family"
         ],
         "clinicalTags": [],
         "counselingTags": [],
@@ -6122,6 +6132,9 @@
           "P": "1回使い切りの点眼薬です。\n開封後は速やかに使用し、薬液が残っていても処分してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "single_use_variant_in_family"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],
@@ -6140,6 +6153,9 @@
           "P": "防腐剤を使用していないため、特殊な構造の容器が使用されています。\n通常の点眼薬と容器の扱い方が異なるため、使用方法を確認して使用してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "preservative_free_variant_in_family"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],

@@ -67,12 +67,22 @@
 #   OD-7: `frequency_*` 系のungated主根拠は「Human-authored chassis上、別製品
 #         variationの存在を前提としない回数変更scenarioであり、product capability
 #         gateを要求しない」。H1点眼の同型実績は補助precedentとしてのみ扱う
-#   OD-8: `トラメラス点眼液`/`クロモグリク酸点眼液` の `preservative_free` は
+#   OD-8: `トラメラス点眼液`/`クロモグリク酸点眼液` の `preservative_free`（SKU property tag）は
 #         base brand entryへ自動付与しない（Product Variant Separation Principle
 #         §4.2: トラメラスPF点眼液0.5%・クロモグリク酸Na・PF点眼液「日点」はいずれも
 #         別JAPICコードの独立marketed SKUであり、current runtimeは交付されたvariantを
-#         識別できない。対応ADDON `addon_eye_drop_preservative_free_pf` はrequiredTags
-#         未宣言のmanual candidateとする。PGの タプロス/タプロスミニ precedentと同型）
+#         識別できない）。
+#         [Historical・2026-09-27] 対応ADDON `addon_eye_drop_preservative_free_pf` は
+#         requiredTags未宣言の全brand ungated manual candidateとしていた（PGの
+#         タプロス/タプロスミニ precedentと同型）。
+#         [Current State・2026-09-30 H1 generic-noun O + ophthalmic family-level variant
+#         candidate Unit・Owner Decision] `preservative_free_variant_in_family`
+#         （Level 2 family-level variant tag。Addon gate専用・scenario gateには使わない）を
+#         `トラメラス点眼液`/`クロモグリク酸点眼液` のみへ付与し、`addon_eye_drop_preservative_free_pf`
+#         のrequiredTagsを `["preservative_free_variant_in_family"]` へ変更した。
+#         一般名entry `トラニラスト点眼液` へは付与しない（トラメラスPFの存在を
+#         manufacturer-unspecified genericなトラニラスト全体へ横滑りさせないため）。
+#         詳細: `docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` §4.3〜§4.4
 #   OD-9: `composition.nodeKey` / `display.nodeKey` は現行runtime識別子
 #         `chemical_mediator_release_inhibitor_eye_drops` を維持する（再検討の結果、
 #         `docs/JSON_STANDARD.md` JS-A-compositionが `{classKey}_{route}` を
@@ -345,10 +355,13 @@ drug:
       displayName: "トラメラス点眼液"
       genericName: "トラニラスト"
       displayGenericName: "トラニラスト点眼液"
-      # preservative_free は付与しない（OD-8: トラメラスPFは別JAPICコードの独立SKU）
+      # preservative_free（SKU property tag）は付与しない（OD-8: トラメラスPFは別JAPICコードの
+      # 独立SKU）。preservative_free_variant_in_family（Level 2 family-level variant tag）は
+      # 付与する（2026-09-30 Owner Decision。トラメラスPFがfamily内に実在するため）。
       handlingTags:
         - "light_protection"
         - "avoid_cold_storage"
+        - "preservative_free_variant_in_family"
       aliases:
         - "とらめらすてんがん"
         - "とらめらす"
@@ -359,10 +372,13 @@ drug:
       displayName: "クロモグリク酸点眼液"
       genericName: "クロモグリク酸"
       displayGenericName: "クロモグリク酸点眼液"
-      # avoid_cold_storage・preservative_free は付与しない
-      # （前者はOwner-provided factで対象外。後者はOD-8: 「日点」PFは別JAPICコードの独立SKU）
+      # avoid_cold_storage・preservative_free（SKU property tag）は付与しない
+      # （前者はOwner-provided factで対象外。後者はOD-8: 「日点」PFは別JAPICコードの独立SKU）。
+      # preservative_free_variant_in_family（Level 2 family-level variant tag）は付与する
+      # （2026-09-30 Owner Decision。PF「日点」がfamily内に実在するため）。
       handlingTags:
         - "light_protection"
+        - "preservative_free_variant_in_family"
       aliases:
         - "くろもぐりくさんてんがん"
         - "くろもぐりくさん"
@@ -400,7 +416,7 @@ template:
     - "moderate"
     - "severe"
   handlingTags:
-    # 点眼共通シャーシの capability 語彙（9種）。scenarioRequiredTags / addonRequiredTags が参照する。
+    # 点眼共通シャーシの capability 語彙（10種）。scenarioRequiredTags / addonRequiredTags が参照する。
     - "suspension"
     - "light_protection"
     - "cold_storage"
@@ -410,6 +426,9 @@ template:
     - "single_use_container"
     - "preservative_free"
     - "avoid_cold_storage"
+    # [Current State・2026-09-30 Owner Decision] Level 2 family-level variant tag
+    # （Addon gate専用。scenarioRequiredTagsには使用しない。詳細は本ファイルOD-8参照）。
+    - "preservative_free_variant_in_family"
   reservedHandlingTags:
     # 現行8製品ではいずれのbrandも保持しないchassis capability（RULES.md §27）。
     # concentration_variant: OD-10（Owner-provided fact: 濃度が増える製剤はなし）
@@ -545,12 +564,15 @@ addonRequiredTags:
   addon_eye_drop_avoid_cold_storage: ["avoid_cold_storage"]
   # 1回使い切り容器（現行8製品・両PF SKUのいずれにも実在せず → 真にreserved）
   addon_eye_drop_single_dose_mini: ["single_use_container"]
+  # PF・防腐剤フリー容器の取り扱い説明
+  # [Historical・2026-09-27] requiredTags未宣言の全brand ungated manual candidateとしていた
+  # （OD-8§4.2 gap。トラメラスPF・クロモグリク酸PF「日点」はいずれも別JAPICコードの独立SKUで
+  # あり、current runtimeは交付されたvariantを識別できないため）。
+  # [Current State・2026-09-30 Owner Decision] Level 2 family-level variant tag
+  # （preservative_free_variant_in_family）でproduct family単位まで絞った
+  # （トラメラス点眼液・クロモグリク酸点眼液のみがこのtagを保持。詳細は本ファイルOD-8参照）。
+  addon_eye_drop_preservative_free_pf: ["preservative_free_variant_in_family"]
 # 次のADDONは requiredTags を設定せず、常時候補とする:
-# - addon_eye_drop_preservative_free_pf
-#   OD-8（§4.2 gap）: トラメラスPF・クロモグリク酸PF「日点」はいずれも別JAPICコードの
-#   独立SKUであり、current runtimeは交付されたvariantを識別できない。誤った自動帰属を
-#   避け、薬剤師が実際の交付製剤を確認して選択するmanual candidateとする
-#   （PGのタプロス/タプロスミニと同型。「該当製品が存在しないreserved」とは意味が異なる）。
 # - addon_eye_drop_interval_after_suspension_5min / addon_eye_drop_interval_after_suspension_10min
 #   （併用する他の懸濁性点眼薬との点眼間隔を扱う内容であり、本moduleの製剤性質を前提としない）
 # - addon_eye_drop_contact_lens_remove_before_use

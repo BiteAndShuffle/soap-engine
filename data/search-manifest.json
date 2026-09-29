@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "9fbffbf404c428c4bc0d57df9460fa434cfbcda8d9336e56a05fa8b48b62849c",
+  "sourceHash": "8834fba431d0d2fb289a1cfcd414cddb6530877e4a1a818b049d8c03bd3b5032",
   "moduleCount": 37,
   "scenarioCount": 1165,
   "modules": [
@@ -1616,7 +1616,8 @@
           "genericName": "トラニラスト",
           "handlingTags": [
             "light_protection",
-            "avoid_cold_storage"
+            "avoid_cold_storage",
+            "preservative_free_variant_in_family"
           ]
         },
         "クロモグリク酸点眼液": {
@@ -1628,7 +1629,8 @@
           "displayGenericName": "クロモグリク酸点眼液",
           "genericName": "クロモグリク酸",
           "handlingTags": [
-            "light_protection"
+            "light_protection",
+            "preservative_free_variant_in_family"
           ]
         }
       },
@@ -4367,6 +4369,7 @@
           "handlingTags": [
             "light_protection",
             "cold_storage_before_opening",
+            "light_protection_variant_in_family",
             "pg_glaucoma"
           ]
         },
@@ -4379,6 +4382,8 @@
           "displayGenericName": "ラタノプロスト点眼液",
           "genericName": "ラタノプロスト",
           "handlingTags": [
+            "light_protection_variant_in_family",
+            "preservative_free_variant_in_family",
             "pg_glaucoma"
           ]
         },
@@ -4439,6 +4444,7 @@
           "displayGenericName": "タフルプロスト点眼液",
           "genericName": "タフルプロスト",
           "handlingTags": [
+            "single_use_variant_in_family",
             "pg_glaucoma"
           ]
         },
@@ -4451,6 +4457,7 @@
           "displayGenericName": "タフルプロスト点眼液",
           "genericName": "タフルプロスト",
           "handlingTags": [
+            "single_use_variant_in_family",
             "pg_glaucoma"
           ]
         },
@@ -4464,6 +4471,7 @@
           "genericName": "イソプロピルウノプロストン",
           "handlingTags": [
             "light_protection",
+            "light_protection_variant_in_family",
             "frequency_titration_available",
             "pg_glaucoma"
           ]
@@ -4478,6 +4486,7 @@
           "genericName": "イソプロピルウノプロストン",
           "handlingTags": [
             "light_protection",
+            "light_protection_variant_in_family",
             "frequency_titration_available",
             "pg_glaucoma"
           ]

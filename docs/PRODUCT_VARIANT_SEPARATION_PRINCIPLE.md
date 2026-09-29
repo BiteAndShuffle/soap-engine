@@ -112,7 +112,7 @@ SOAP本文（S/O/A/P）を書き分ける必要があるか？
 あるproperty（handlingTagとして表現される取り扱い上の性質）の正しい値が相互排他的に
 分岐することがある（例: 通常製剤は室温保存、単回使用PF製剤は2〜8℃保存）。
 
-**この場合の原則は次のとおりである。**
+**[Historical・2026-09] 記載当時の原則:**
 
 - current runtimeが実際に交付されたvariantを判別できない場合、そのpropertyを
   **canonical unit全体のhandlingTagとして自動付与しない**
@@ -131,9 +131,124 @@ SOAP本文（S/O/A/P）を書き分ける必要があるか？
   適用範囲を明確化するものであり、**新フィールド・新canonical unit・variant名を持つ
   独立brandCatalog entryを追加するものではない**
 
-実装参照: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス／タプロスミニ想定。
+[Historical] 実装参照: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス／タプロスミニ想定。
 `single_use_container` / `preservative_free` を自動付与せず、対応ADDONを
-requiredTags未宣言のmanual candidateとした実例）。
+requiredTags未宣言の**全brand ungated** manual candidateとした実例。当時はfamily単位への
+絞り込みという中間段階を持たず、「SKU propertyが確定している brandCatalog entry」と
+「すべてのbrandで常時候補」の2値しかなかった）。
+
+**[Current State・2026-09-30 H1 generic-noun O + ophthalmic family-level variant candidate
+Unit・Owner Decision]** 上記の運用は「SKU propertyが確定している場合」と「確定していない
+場合は全brand ungated manual candidate」の2値しか区別できず、実機確認で候補範囲が
+広すぎる欠陥として顕在化した（例: 通常のキサラタン／ラタノプロスト／ルミガン／レスキュラ等
+にも「ミニ・1回使い切り」「PF・防腐剤フリー」ADDONが常時候補として表示されていた）。
+これを受け、本節を次の3段階（Level 1〜3）へ整理し、**Level 2「family内にvariantが存在する」
+という中間段階**を導入した。上記の歴史的な運用は Level 1（property確定）と Level 3
+（familyまで絞れない）の2値のみを扱っていたことになる。Level 2の新規導入により、
+「property未確定だが対象variantがfamily内に実在し、既存ADDON本文がそのまま適用できる」
+という中間ケースを、全brand ungatedより狭いproduct family単位のcandidateとして表現できる。
+
+#### 4.3 Level 1 — SKU property confirmed
+
+current SKU / brandCatalog entry自身のpropertyが確定している場合に適用する。
+
+- **property tag**を使用する（例: `light_protection` / `preservative_free` /
+  `single_use_container`）
+- 対応するSCENARIO・ADDONのrequiredTagsに、このproperty tagをそのまま宣言する
+- 本レベルの原則は変更していない（上記[Historical]の原則がそのままLevel 1に対応する）
+
+#### 4.4 Level 2 — Variant exists in family
+
+current runtimeでは実SKUを識別できないが、次の条件を**すべて**満たす場合に適用する。
+
+1. 同一product family内（同一brandCatalog entryが代表する複数SKU、または同一
+   generic name配下の複数manufacturer製品）に、該当propertyを持つmarketed SKU /
+   variantが存在することが事実として確認できる
+2. 既存ADDON本文が、そのvariantへ**そのまま適用可能**である（variant固有の追加説明・
+   専用ADDONの新規作成が必要な場合はLevel 2の対象外。§4.5参照）
+
+**この場合の原則は次のとおりである。**
+
+- **family-level variant tag**（例: `light_protection_variant_in_family` /
+  `preservative_free_variant_in_family` / `single_use_variant_in_family`）を
+  対象brandCatalog entryへ付与する
+- family-level variant tagは**Addon candidate reachability専用**であり、
+  **scenarioRequiredTagsには使用しない**（SCENARIOの意味論はSKU propertyが確定している
+  場合のみ変更する。§2「対象propertyのhandlingTagを持つ他のinstanceが存在する場合...
+  gapを口実に全brandへ一律開放しない」という既存原則をscenario側では維持する）
+- family-level variant tagは**SKU propertyそのものを主張しない**。
+  例: `ラタノプロスト点眼液`（manufacturer-unspecified generic entry）へ
+  `light_protection_variant_in_family` を付与することは、「ラタノプロスト点眼液という
+  generic entry自体が遮光対象である」ことを意味しない。「市場に遮光対象製品が存在するため、
+  薬剤師が実際の交付製品を確認して選択できる」ことのみを表す
+- **property保持brandは、family = 自身を含むという意味で、対応するfamily-level tagも
+  併記してよい**（例: キサラタン点眼液は`light_protection`〔property tag〕と
+  `light_protection_variant_in_family`〔family tag〕の両方を持つ。「familyに該当propertyを
+  持つSKUが存在する」という定義上、property保持brand自身がそれを満たすため自明に真である。
+  ただし両者の意味は混同しない）
+- 対応するADDONのrequiredTagsには、property tagではなくfamily-level variant tagを宣言する
+- 新規field・新規canonical unit・variant名を持つ独立brandCatalog entryを追加するものではない
+
+既存precedent: `reduced_frequency_option`（§5.1参照）は、Level 2と同じ性質の
+**existence-class tag**の既存実装である。「現在のSKUそのものが持続型である」ことを
+意味するのではなく、「同一family内に、点眼回数を減らせる持続型製剤への切替という
+variant選択肢が存在する」ことを表す。本節のfamily-level variant tagは、この
+`reduced_frequency_option`と同型の設計をstorage/PF/容器系propertyへ拡張したものである。
+
+実装参照: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス／タプロスミニ・
+キサラタン／ラタノプロスト・レスキュラ／イソプロピルウノプロストン）・
+`bridges/allergy_chemical_mediator_release_inhibitor_eye_drops.md`（トラメラス点眼液・
+クロモグリク酸点眼液のPF familyのみへ`preservative_free_variant_in_family`を付与し、
+一般名entry「トラニラスト点眼液」へは付与しない。トラメラスPFの存在を
+manufacturer-unspecified genericなトラニラスト全体へ横滑りさせないため）。
+
+#### 4.5 Level 3 — Familyまで絞れない / Addon本文がvariantへ適合しない
+
+次のいずれかに該当する場合に適用する。
+
+- product familyまで安全に絞れない（「どのfamilyに属するか」自体が不明、または
+  familyの範囲が定義できない）
+- variant existenceは分かるが、既存ADDON本文がそのvariantへ正確に適用できない
+  （variant固有の追加説明・専用ADDONの新規作成など、追加runtime contractが必要）
+
+**この場合、property tag・family-level variant tagのいずれも無理に付けない。**
+必要に応じて次のいずれかとして扱う。
+
+- 既存UIで薬剤師が実際の交付製剤を確認して選択する、requiredTags未宣言のungated
+  manual candidate（実例: `addon_eye_drop_contact_lens_remove_before_use`）
+- variantの実情に正確に適合する専用ADDONの新規設計（本文書の判断基準§4に従って
+  個別に検討する。既存の汎用ADDON本文を流用しない）
+- 将来設計事項として`docs/OPEN_DESIGN_QUESTIONS.md`等へ記録し、runtime実装を保留する
+  （§4.6「Future consideration」参照）
+
+#### 4.6 Future consideration — タプロスミニの保存条件専用表示（2026-09-30・未実装）
+
+タプロスミニ（PF・単回使用）は、通常のタプロス点眼液とは異なる保存条件
+（**2〜8℃保存**。開封後はメーカー添付の遮光用投薬袋に入れて2〜8℃で1年以内、または
+室温で保存する場合は1ヵ月以内に使用。出典: PMDA添付文書。詳細は
+`bridges/glaucoma_pg_analog_eye_drops.md`「PG primary-source verification」記録参照）を持つ。
+
+**現時点（2026-09-30）では、この保存条件差はLevel 2 family-level variant tagとしても
+実装しない。** タプロス／タフルプロストのfamilyには`single_use_variant_in_family`
+（Mini Addonのcandidate化）のみを付与し、storage系のfamily-level tag
+（`light_protection_variant_in_family` / 冷所系family tag）は付与していない。
+既存の汎用ADDON（`addon_eye_drop_storage_cold` / `addon_eye_drop_storage_cold_before_opening` /
+`addon_eye_drop_storage_light_protection`）は、タプロスミニの存在だけを理由に
+タプロス／タフルプロストへ表示させない。
+
+**理由**: これらの汎用storage ADDON本文は「通常保存条件からの逸脱」を一般的に説明する
+文言であり、タプロスミニの実際の保存条件（2〜8℃・遮光投薬袋・室温選択時1ヵ月以内という
+複合条件）を正確に説明していない（Level 2の適用条件2「既存ADDON本文がそのまま適用可能」を
+満たさない。Level 3に該当する）。
+
+**将来検討の方向性（未実装）**: Mini Addon（`addon_eye_drop_single_dose_mini`）を薬剤師が
+選択した場合に、タプロスミニ専用の保存方法ADDONを追加表示する、という
+**Addon selection → dependent Addon visibility**の仕組みを将来の検討対象とする。
+ただし、**current runtimeにはAddon→Addon依存を表現するcontractが存在しない**ため、
+今回のUnitでは導入しない。将来この設計を検討する際も、既存の汎用storage ADDON
+（冷所保存／未開封時のみ冷所保存／遮光保存）をそのまま流用するのではなく、
+タプロスミニの実際の包装開封後条件・保存条件に正確に適合する**専用ADDON**が必要かを
+先に検討すること（本節冒頭の複合条件を参照）。
 
 ---
 

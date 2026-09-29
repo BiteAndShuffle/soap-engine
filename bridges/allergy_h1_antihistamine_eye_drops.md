@@ -3,6 +3,19 @@
 # allergy_h1_antihistamine_eye_drops
 # =========================================
 #
+# ⚠️ STATUS: JSON_COMPLETE ⚠️
+#
+# [Historical] 本ファイルは prompts/RULES.md §24 の STATUS state machine（HEADER_ONLY →
+# DRAFT → FROZEN_FOR_PN1 → JSON_COMPLETE）が導入される前に作成された「後付けHeader」
+# golden referenceであり、記載当時はSTATUS行自体を持たなかった。
+# [Current State・2026-09-30 H1 generic-noun O + ophthalmic family-level variant candidate
+# Unit・Owner Decision] canonical JSON（`data/modules/allergy_h1_antihistamine_eye_drops.json`）
+# は既に `data/modules/index.ts` に登録されALL_MODULESに含まれ、PN6 Write相当の状態が
+# 長期にわたり安定稼働している（H1はcorpus内の他moduleの構造reference・golden referenceとして
+# 継続的に参照されてきた）。Owner承認により、`prompts/RULES.md` §24の4値state machineの
+# うち現状に対応する `JSON_COMPLETE` をSTATUS行として明示する。本追加はSCENARIOS_START〜
+# SCENARIOS_END本文・Header設計を変更しない（STATUS行と本コメントのみの追加）。
+#
 # 本Headerは、当初SCENARIOS_START〜SCENARIOS_END本文に対して後付けで作成された
 # ものであり、Header作成時点ではSCENARIOS本文を変更していない。
 # その後、Owner明示指示によりSCENARIOS本文へも更新（ADDON追加・P_ADDON参照追加・

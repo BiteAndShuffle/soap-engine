@@ -237,7 +237,8 @@
         "displayGenericName": "トラニラスト点眼液",
         "handlingTags": [
           "light_protection",
-          "avoid_cold_storage"
+          "avoid_cold_storage",
+          "preservative_free_variant_in_family"
         ],
         "aliases": [
           "とらめらすてんがん",
@@ -253,7 +254,8 @@
         "genericName": "クロモグリク酸",
         "displayGenericName": "クロモグリク酸点眼液",
         "handlingTags": [
-          "light_protection"
+          "light_protection",
+          "preservative_free_variant_in_family"
         ],
         "aliases": [
           "くろもぐりくさんてんがん",
@@ -338,7 +340,8 @@
       "concentration_variant",
       "single_use_container",
       "preservative_free",
-      "avoid_cold_storage"
+      "avoid_cold_storage",
+      "preservative_free_variant_in_family"
     ],
     "reservedHandlingTags": [
       "concentration_variant",
@@ -5232,6 +5235,9 @@
           "P": "防腐剤を使用していないため、特殊な構造の容器が使用されています。\n通常の点眼薬と容器の扱い方が異なるため、使用方法を確認して使用してください。"
         },
         "uiVariant": null,
+        "requiredTags": [
+          "preservative_free_variant_in_family"
+        ],
         "clinicalTags": [],
         "counselingTags": [],
         "workflowTags": [],

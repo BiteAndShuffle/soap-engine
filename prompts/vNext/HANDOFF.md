@@ -952,15 +952,38 @@ FAIL と同様に PN8 進行のブロッカーとして扱い、人間承認を�
 
 `brandCatalog` は canonical drug unit単位（brand名／generic名）でしか `handlingTags` を
 持てず、同一unit内の実世界variant（package差・manufacturer差）ごとに実際に交付された
-製品を判別してtagを切り替える機構はruntimeに存在しない。誤ったvariant propertyの
-自動帰属を避け、current runtimeで判別できない差分はHuman judgmentへ委ねている
-（`docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` §4.2）。SCENARIOのreachabilityは
-このgapを理由に広げていない。将来、variant差が広く発生するdomainでは、dispensing時に
-variantを選択させるUI設計が必要になる可能性がある。現時点では新フィールド化しない。
+製品を判別してtagを切り替える機構はruntimeに存在しない。この根本的な識別不能性自体は
+現在も変わっていない（runtime制約であり、canonical dataの設計だけでは解消できない）。
 
-実例: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス点眼液／タプロスミニの貯法・
-容器・防腐剤差。`cold_storage_before_opening` / `single_use_container` /
-`preservative_free` を自動付与せず、対応ADDONをrequiredTags未宣言のmanual candidateとした）。
+**[Historical・2026-09-26]** 記載当時は、誤ったvariant propertyの自動帰属を避けるため、
+current runtimeで判別できない差分は「全brand ungatedのHuman judgment」へ一律委ねていた
+（`docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` §4.2）。SCENARIOのreachabilityはこの
+gapを理由に広げていなかった。
+
+**[Current State・2026-09-30 H1 generic-noun O + ophthalmic family-level variant candidate
+Unit・Owner Decision]** ADDON candidate reachabilityについては、`docs/
+PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` §4.2〜§4.6 の3段階整理（Level 1: SKU property
+confirmed / Level 2: variant exists in family / Level 3: familyまで絞れない）により、
+「全brand ungated」から「product family単位のcandidate絞り込み」（family-level variant
+tag。Addon gate専用・scenarioRequiredTagsには使用しない）へ移行した。**ただし、runtime
+がSKU単位でvariantを判別できないという根本制約自体は解消していない**（family単位までしか
+絞れず、family内のどのSKUが実際に交付されたかは引き続きHuman judgmentに委ねる）。
+SCENARIOのreachabilityは引き続きこのgapを理由に広げていない（family-level variant tagは
+scenario側では使用しない）。将来、variant差が広く発生するdomainでは、dispensing時に
+variantを選択させるUI設計が必要になる可能性がある。現時点では新フィールド化していない
+（family-level variant tagはLevel 2導入に伴う3つの新規tag値のみで、新フィールドは
+追加していない）。
+
+実例: `bridges/glaucoma_pg_analog_eye_drops.md`（タプロス点眼液・タフルプロスト点眼液へ
+`single_use_variant_in_family` を付与しMini Addonをfamily単位で候補化。キサラタン点眼液・
+ラタノプロスト点眼液・レスキュラ点眼液・イソプロピルウノプロストン点眼液へ
+`light_protection_variant_in_family` を、ラタノプロスト点眼液へ
+`preservative_free_variant_in_family` を付与。タプロスミニ固有の保存条件
+〔2〜8℃・遮光投薬袋〕は今回のUnitでは実装せず、`docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md`
+§4.6 Future considerationとして記録した）・`bridges/
+allergy_chemical_mediator_release_inhibitor_eye_drops.md`（トラメラス点眼液・
+クロモグリク酸点眼液のみへ`preservative_free_variant_in_family`を付与し、一般名entry
+「トラニラスト点眼液」へは付与しない）。
 
 ## Rapid Transition Applicability（2026-09-26 Finding → 2026-09-27 実装・Human Review PASS・CLOSED）
 

@@ -879,8 +879,12 @@ describe('Express Mode UI遷移 — 油性クリーム押下 → scenarioCandida
     // H1点眼 濃度減チェイン修復（bridges/allergy_h1_antihistamine_eye_drops.md 2026-09 reconciliation）:
     //   strength_decrease_low_perceived_effect を新規追加し、直接の frequency sibling である
     //   frequency_decrease_low_perceived_effect を bridge（medical-content SSOT）に合わせて再同期した。
-    //   ここでは canonical 側の存在・タグ・到達不能性・bridge 文言一致のみを検証する
-    //   （L-2: lifestyle_guidance_* の O フィールド差異は本ユニットの対象外・意図的未修正）。
+    //   ここでは canonical 側の存在・タグ・到達不能性・bridge 文言一致のみを検証する。
+    //   [Historical] L-2: lifestyle_guidance_* の O フィールド差異は本ユニットの対象外・意図的未修正、
+    //   としていた。[Current State・2026-09-30] H1 generic-noun O + ophthalmic family-level variant
+    //   candidate Unit の Owner Decision により、当該差異は解消済み（canonical O は
+    //   Bridge 正本の `点眼薬　使用中` へ retrofit された。詳細は
+    //   `prompts/vNext/PN7-Cross-Reference-Audit.md` Check I 補足参照）。
     describe('H1点眼 濃度減（効果実感乏しい）チェイン: strength_decrease_low_perceived_effect 追加 / frequency sibling 再同期', () => {
       const h1Eye = h1EyeData as unknown as ModuleData
       const scenarios = h1Eye.scenarios ?? []

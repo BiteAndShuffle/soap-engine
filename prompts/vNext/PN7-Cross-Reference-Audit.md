@@ -241,8 +241,17 @@ Owner Decision として exception の適用を確認した履歴の記録であ
 本表に無い module・scenario も (1)〜(3) を満たせば PASS であり、本表にあっても (1)〜(3) を満たさなければ FAIL である。
 既存 canonical module の O を retrofit しない。
 
+**[Historical→Current State 2026-09-30]** 上記「retrofit しない」原則は、`allergy_h1_antihistamine_eye_drops`
+（H1）についてのみ、Owner が明示的に override した（H1 generic-noun O + ophthalmic family-level variant
+candidate Unit）。H1 は元々 `{{drug_subject}}` 準拠（原則どおり）であったが、H1 Bridge 本文が当該8 scenario で
+`点眼薬　使用中` という generic dosage-form noun を一貫して使用しており、chemical mediator / Avarept / PG の
+同一8 scenario も同じ generic noun を保持していることと整合させるため、canonical O を Bridge 正本へ retrofit
+した。この override は H1 のみに適用され、他 module への retrofit を許可する一般原則ではない
+（retrofit しない原則は H1 以外では引き続き有効）。
+
 | moduleId | scenario id | frozen Bridge O（canonical O と逐語一致） | 決定 |
 |---|---|---|---|
+| `allergy_h1_antihistamine_eye_drops` | `lifestyle_guidance_tip_contamination` / `lifestyle_guidance_interval` / `lifestyle_guidance_after_opening_expiry` / `lifestyle_guidance_suspension_shake` / `lifestyle_guidance_storage_upright_suspension` / `lifestyle_guidance_storage_light_protection` / `lifestyle_guidance_storage_cold` / `lifestyle_guidance_storage_cold_before_opening`（8 件） | `点眼薬　使用中` | 2026-09-30 Owner Decision。既存の「retrofit しない」原則を H1 に限り override し、canonical O を Bridge 正本（`点眼薬　使用中`）へ retrofit した |
 | `dry_eye_trpv1_antagonist_eye_drops` | `lifestyle_guidance_tip_contamination` / `lifestyle_guidance_interval` / `lifestyle_guidance_after_opening_expiry` / `lifestyle_guidance_suspension_shake` / `lifestyle_guidance_storage_upright_suspension` / `lifestyle_guidance_storage_light_protection` / `lifestyle_guidance_storage_cold` / `lifestyle_guidance_storage_cold_before_opening`（8 件） | `点眼薬　使用中` | 2026-09-25 OD-C1。Bridge の generic dosage-form noun を保持し `{{drug_subject}}` へ書き換えない |
 
 ---

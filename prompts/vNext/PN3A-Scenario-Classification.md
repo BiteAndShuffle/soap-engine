@@ -340,8 +340,14 @@ trigger にしない。**
     H1 の値に合わせる。一致判定は、両 module の frozen Bridge 本文に PN1 の許可変換（選択薬剤自身を指す名称 →
     `{{drug_subject}}`）**のみ**を適用した後の S / O / A / P で行う（bridge 上の差が各 module 自身の薬効分類名だけである
     scenario は一致とみなす。それ以外の差がある scenario は一致としない）。
-    lifestyle_guidance 8 件は canonical O のみ H1 と異なるが、これは OD-C1（RULES.md §16 generic noun exception）による
-    意図的な差であり、intentTags の precedent 判定を分岐させる理由にしない（O 本文は OD-C1、intentTags は OD-C2 と責務を分離する）
+    [Historical] 記載当時、lifestyle_guidance 8 件は canonical O のみ H1 と異なっていたが、これは OD-C1
+    （RULES.md §16 generic noun exception）による意図的な差であり、intentTags の precedent 判定を
+    分岐させる理由にしない（O 本文は OD-C1、intentTags は OD-C2 と責務を分離する）としていた。
+    [Current State・2026-09-30] H1 generic-noun O + ophthalmic family-level variant candidate Unit の
+    Owner Decision により、H1 の当該8 scenario の canonical O も Bridge 正本（`点眼薬　使用中`）へ
+    retrofit された（`prompts/vNext/PN7-Cross-Reference-Audit.md` Check I 補足参照）。これにより
+    lifestyle_guidance 8 件は canonical O も H1 と一致する。O 本文と intentTags の責務分離という
+    本節の趣旨（分岐させる理由にしない）自体は変更していない
   - **OD-C4**: `initial` / `restart` / `external_start` は Bridge 本文が H1 と異なる（S の適応症状・P の副作用注意文）ため、
     H1 へ機械的に戻さない
   - **OD-C5**: H1 に存在しない Avarept 固有の副作用 scenario（目のかすみ・温度感覚変化）は、scenario role
