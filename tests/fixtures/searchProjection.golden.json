@@ -792,6 +792,14 @@
   ],
   "てんがん": [
     {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "AZ点眼液",
+      "uiLabel": null,
+      "representativeTemplateId": "ocular_inflammation_azulene_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
       "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
       "matchedBrandName": null,
       "drugDisplayLabel": "アバレプト点眼液",
@@ -1108,6 +1116,14 @@
       "isGenericLabel": null
     },
     {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "matchedBrandName": "アズレン点眼液",
+      "drugDisplayLabel": "アズレン点眼液",
+      "uiLabel": "アズレン点眼液（アズレン点眼液）",
+      "representativeTemplateId": "ocular_inflammation_azulene_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
       "moduleId": "dry_eye_trpv1_antagonist_eye_drops",
       "matchedBrandName": "アバレプト点眼液",
       "drugDisplayLabel": "アバレプト点眼液",
@@ -1120,14 +1136,6 @@
       "matchedBrandName": "ノボラピッド",
       "drugDisplayLabel": "ノボラピッド",
       "uiLabel": "ノボラピッド（インスリンアスパルト）",
-      "representativeTemplateId": "dm_insulin_rapid_analog.initial",
-      "isGenericLabel": null
-    },
-    {
-      "moduleId": "dm_insulin_rapid_analog",
-      "matchedBrandName": "アピドラ",
-      "drugDisplayLabel": "アピドラ",
-      "uiLabel": "アピドラ（インスリングルリジン）",
       "representativeTemplateId": "dm_insulin_rapid_analog.initial",
       "isGenericLabel": null
     },

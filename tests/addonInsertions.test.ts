@@ -369,9 +369,11 @@ describe('bridge parser — P_ADDON_INLINE', () => {
     }
   })
 
-  test('既存 35 bridge は inline block を持たない（P_ADDON_INLINE 保有は Avarept・PG 点眼の 2 件のみ）', () => {
+  test('既存 36 bridge は inline block を持たない（P_ADDON_INLINE 保有は Avarept・PG 点眼の 2 件のみ）', () => {
     const others = bridgeFiles.filter(f => f !== AVAREPT_BRIDGE && f !== PG_BRIDGE)
-    assert.equal(others.length, 35)
+    // 2026-10-01: 35→36。ocular_inflammation_azulene_eye_drops（アズレン点眼）bridge の追加に伴う
+    // 件数のみの機械的更新（当該 bridge は P_ADDON_INLINE を持たない。下の insertions 検査で確認）。
+    assert.equal(others.length, 36)
     for (const file of others) {
       for (const [id, s] of parseBridge(file)) assert.deepEqual(s.insertions, [], `${file}/${id}`)
     }

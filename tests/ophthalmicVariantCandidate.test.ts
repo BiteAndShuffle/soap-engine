@@ -39,6 +39,7 @@ const H1 = byId('allergy_h1_antihistamine_eye_drops')
 const CHEM = byId('allergy_chemical_mediator_release_inhibitor_eye_drops')
 const AVAREPT = byId('dry_eye_trpv1_antagonist_eye_drops')
 const PG = byId('glaucoma_pg_analog_eye_drops')
+const AZULENE = byId('ocular_inflammation_azulene_eye_drops')
 
 const FAMILY_TAGS = [
   'preservative_free_variant_in_family',
@@ -296,12 +297,14 @@ describe('D. property tag と family-level variant tag の分離', () => {
     }
   })
 
-  test('横展開しない: family tag を持つ module は PG / chemical mediator のみ（H1 / Avarept を含まない）', () => {
+  // 2026-10-01 Owner 承認（OD-5）: アズレン点眼 module の両 entry が light_protection_variant_in_family を持つ。
+  // 許可対象を PG / chemical mediator / アズレン点眼の 3 module とする（H1 / Avarept は引き続き含まない）。
+  test('横展開しない: family tag を持つ module は PG / chemical mediator / アズレン点眼のみ（H1 / Avarept を含まない）', () => {
     const modulesWithFamilyTag = ALL_MODULES
       .filter(m => Object.values(m.drug?.brandCatalog ?? {}).some(e => (e.handlingTags ?? []).some(t => t.endsWith('_variant_in_family'))))
       .map(m => m.moduleId)
       .sort()
-    assert.deepEqual(modulesWithFamilyTag, [CHEM.moduleId, PG.moduleId].sort())
+    assert.deepEqual(modulesWithFamilyTag, [CHEM.moduleId, PG.moduleId, AZULENE.moduleId].sort())
     for (const m of [H1, AVAREPT]) {
       assert.deepEqual(Object.values(m.drug!.brandCatalog!).flatMap(e => e.handlingTags ?? []).filter(t => t.endsWith('_variant_in_family')), [])
     }

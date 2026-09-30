@@ -651,7 +651,7 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
   })
 
-  test('WARNING の総数が baseline（53 件）から変化していない', () => {
+  test('WARNING の総数が baseline（88 件）から変化していない', () => {
     // 2026-09: allergy_h1_antihistamine_eye_drops へ strength_decrease_low_perceived_effect
     // （scenarioRequiredTags: ["concentration_variant"]）を追加したことに伴い、
     // 同一クラスタの既存4件（strength_increase/decrease系）と同型の
@@ -726,12 +726,23 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     // レスキュラで到達可能なタグのため WARNING は発生しない。
     // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 24 / SCENARIO_REQUIRED_TAG_UNREACHABLE 41 /
     //       ADDON_SCOPE_VIOLATION 4 = 69。
+    //
+    // 2026-10-01（ocular_inflammation_azulene_eye_drops registry 登録）: 69→88。
+    // アズレン点眼（AZ点眼液 / アズレン点眼液）module の登録により、同 module 由来の WARNING が
+    // 0→19 件（ADDON_REQUIRED_TAG_UNREACHABLE 8 / SCENARIO_REQUIRED_TAG_UNREACHABLE 11）純増した。
+    // 19 件はすべて template.reservedHandlingTags に宣言済みのタグ（suspension / cold_storage /
+    // cold_storage_before_opening / avoid_cold_storage / single_use_container / preservative_free /
+    // concentration_variant / reduced_frequency_option）を要求する scenario / addon であり、現行 2 entry
+    // （handlingTags: light_protection / light_protection_variant_in_family）では到達不能だが点眼共通
+    // シャーシとして意図的に保持する capability である（ERROR ではなく WARNING）。他 module の内訳は不変。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 32 / SCENARIO_REQUIRED_TAG_UNREACHABLE 52 /
+    //       ADDON_SCOPE_VIOLATION 4 = 88。
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      69,
+      88,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })

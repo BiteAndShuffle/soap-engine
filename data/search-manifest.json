@@ -1,8 +1,8 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "8834fba431d0d2fb289a1cfcd414cddb6530877e4a1a818b049d8c03bd3b5032",
-  "moduleCount": 37,
-  "scenarioCount": 1165,
+  "sourceHash": "b0c4cbef4abe746ea7534e2b628bdfdf7af2087a20bce4004c6e5b8906681d0f",
+  "moduleCount": 38,
+  "scenarioCount": 1206,
   "modules": [
     {
       "moduleId": "dm_glp1ra_semaglutide_oral",
@@ -4501,6 +4501,119 @@
         "cold_storage",
         "suspension",
         "avoid_cold_storage",
+        "concentration_variant",
+        "reduced_frequency_option"
+      ]
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "categoryPath": [
+        "眼炎症",
+        "抗炎症点眼薬",
+        "アズレン系",
+        "点眼"
+      ],
+      "brandNames": [
+        "AZ点眼液",
+        "アズレン点眼液"
+      ],
+      "nameAliases": [
+        "azてんがん",
+        "az",
+        "えーぜっとてんがん",
+        "えーぜっと",
+        "あずれんてんがん",
+        "あずれん"
+      ],
+      "drugClass": [
+        "AZULENE_EYE_DROPS"
+      ],
+      "drugSpecificTags": [
+        "azulene",
+        "anti_inflammatory_eye_drop",
+        "eye_drops",
+        "ophthalmic",
+        "ocular_inflammation",
+        "external_use",
+        "storage_instruction",
+        "formulation_instruction",
+        "contact_lens_caution"
+      ],
+      "search": {
+        "exactAliases": [
+          "AZ点眼液",
+          "アズレン点眼液",
+          "AZ",
+          "アズレン",
+          "抗炎症点眼薬"
+        ],
+        "nameAliases": [
+          "azてんがん",
+          "az",
+          "えーぜっとてんがん",
+          "えーぜっと",
+          "あずれんてんがん",
+          "あずれん"
+        ],
+        "keywords": [
+          "眼炎症",
+          "抗炎症点眼薬",
+          "炎症",
+          "点眼"
+        ],
+        "formulationSearchTokens": [],
+        "priority": 5,
+        "matchPolicy": {
+          "preferExactAlias": true,
+          "allowPrefixMatch": true,
+          "suppressCrossModuleSuggestionsOnExactHit": true,
+          "preferOwnNameMatchOverGenericMatch": true,
+          "suppressRedundantGenericHeaderOnDirectMatch": true
+        },
+        "primaryDisplayName": "抗炎症点眼薬"
+      },
+      "brandCatalog": {
+        "AZ点眼液": {
+          "aliases": [
+            "azてんがん",
+            "az",
+            "えーぜっとてんがん",
+            "えーぜっと"
+          ],
+          "displayName": "AZ点眼液",
+          "displayGenericName": "アズレン点眼液",
+          "genericName": "アズレン",
+          "handlingTags": [
+            "light_protection",
+            "light_protection_variant_in_family"
+          ]
+        },
+        "アズレン点眼液": {
+          "aliases": [
+            "あずれんてんがん",
+            "あずれん"
+          ],
+          "displayName": "アズレン点眼液",
+          "displayGenericName": "アズレン点眼液",
+          "genericName": "アズレン",
+          "handlingTags": [
+            "light_protection",
+            "light_protection_variant_in_family"
+          ]
+        }
+      },
+      "classKey": "azulene",
+      "nodeKey": "azulene_ophthalmic",
+      "clinicalDomain": "ocular_inflammation",
+      "displayTitle": "抗炎症点眼薬",
+      "displaySubtitle": "眼の炎症症状に対する点眼治療",
+      "reservedHandlingTags": [
+        "suspension",
+        "cold_storage",
+        "cold_storage_before_opening",
+        "avoid_cold_storage",
+        "single_use_container",
+        "preservative_free",
         "concentration_variant",
         "reduced_frequency_option"
       ]
@@ -24977,6 +25090,665 @@
       "scenarioTags": [
         "lifestyle_guidance",
         "storage_cold_before_opening"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.initial",
+      "id": "initial",
+      "title": "抗炎症点眼薬 初回",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation"
+      ],
+      "sCompositionIntent": "new_addition"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.restart",
+      "id": "restart",
+      "title": "抗炎症点眼薬 再開",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation"
+      ],
+      "sCompositionIntent": "restart"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.external_start",
+      "id": "external_start",
+      "title": "抗炎症点眼薬 他所開始",
+      "scenarioGroup": "start_or_change",
+      "scenarioTags": [
+        "treatment_start",
+        "start_or_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "drug_effect_explanation"
+      ],
+      "sCompositionIntent": "external_continuation"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.frequency_increase_low_perceived_effect",
+      "id": "frequency_increase_low_perceived_effect",
+      "title": "抗炎症点眼薬 回数増（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.strength_increase_low_perceived_effect",
+      "id": "strength_increase_low_perceived_effect",
+      "title": "抗炎症点眼薬 濃度増（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.frequency_increase_due_to_other_med_adjustment",
+      "id": "frequency_increase_due_to_other_med_adjustment",
+      "title": "抗炎症点眼薬 回数増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.strength_increase_due_to_other_med_adjustment",
+      "id": "strength_increase_due_to_other_med_adjustment",
+      "title": "抗炎症点眼薬 濃度増（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_increase_explanation"
+      ],
+      "sCompositionIntent": "dose_increase"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.frequency_decrease_improved",
+      "id": "frequency_decrease_improved",
+      "title": "抗炎症点眼薬 回数減（症状改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.strength_decrease_improved",
+      "id": "strength_decrease_improved",
+      "title": "抗炎症点眼薬 濃度減（症状改善）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.frequency_decrease_low_perceived_effect",
+      "id": "frequency_decrease_low_perceived_effect",
+      "title": "抗炎症点眼薬 回数減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.strength_decrease_low_perceived_effect",
+      "id": "strength_decrease_low_perceived_effect",
+      "title": "抗炎症点眼薬 濃度減（効果実感乏しい）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.frequency_decrease_due_to_other_med_adjustment",
+      "id": "frequency_decrease_due_to_other_med_adjustment",
+      "title": "抗炎症点眼薬 回数減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.strength_decrease_due_to_other_med_adjustment",
+      "id": "strength_decrease_due_to_other_med_adjustment",
+      "title": "抗炎症点眼薬 濃度減（他剤との調整）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.switch_to_sustained_formulation_reduced_frequency",
+      "id": "switch_to_sustained_formulation_reduced_frequency",
+      "title": "抗炎症点眼薬 持続型製剤へ変更（点眼回数減）",
+      "scenarioGroup": "dose_change",
+      "scenarioTags": [
+        "treatment_adjustment",
+        "dose_change"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_irritation_none",
+      "id": "se_irritation_none",
+      "title": "抗炎症点眼薬 副作用なし（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_foreign_body_sensation_none",
+      "id": "se_foreign_body_sensation_none",
+      "title": "抗炎症点眼薬 副作用なし（異物感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_pruritus_none",
+      "id": "se_pruritus_none",
+      "title": "抗炎症点眼薬 副作用なし（掻痒感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_eye_redness_none",
+      "id": "se_eye_redness_none",
+      "title": "抗炎症点眼薬 副作用なし（充血）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "absent_or_not_observed",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.cp_good",
+      "id": "cp_good",
+      "title": "抗炎症点眼薬 CP良好",
+      "scenarioGroup": "adherence_good",
+      "scenarioTags": [
+        "adherence",
+        "adherence_good",
+        "good"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "continue"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.cp_poor_missed_doses",
+      "id": "cp_poor_missed_doses",
+      "title": "抗炎症点眼薬 CP不良（使用忘れ）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "adherence_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.cp_poor_self_adjust",
+      "id": "cp_poor_self_adjust",
+      "title": "抗炎症点眼薬 CP不良（自己判断）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "adherence_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.cp_poor_visit_delay",
+      "id": "cp_poor_visit_delay",
+      "title": "抗炎症点眼薬 CP不良（受診遅延）",
+      "scenarioGroup": "adherence_poor",
+      "scenarioTags": [
+        "adherence",
+        "adherence_poor"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "adherence_support"
+      ],
+      "sCompositionIntent": "adherence_check"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.as_needed_refill_needed",
+      "id": "as_needed_refill_needed",
+      "title": "抗炎症点眼薬 頓用使用（処方あり）",
+      "scenarioGroup": "as_needed",
+      "scenarioTags": [
+        "usage",
+        "as_needed"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.as_needed_refill_not_needed",
+      "id": "as_needed_refill_not_needed",
+      "title": "抗炎症点眼薬 頓用使用（処方なし）",
+      "scenarioGroup": "as_needed",
+      "scenarioTags": [
+        "usage",
+        "as_needed"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "administration_instruction"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.end_improved",
+      "id": "end_improved",
+      "title": "抗炎症点眼薬 終了（改善）",
+      "scenarioGroup": "end_improved",
+      "scenarioTags": [
+        "treatment_end",
+        "end_improved"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.end_insufficient_effect",
+      "id": "end_insufficient_effect",
+      "title": "抗炎症点眼薬 終了（効果不十分）",
+      "scenarioGroup": "end_insufficient_effect",
+      "scenarioTags": [
+        "treatment_end",
+        "end_insufficient_effect"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.end_ineffective",
+      "id": "end_ineffective",
+      "title": "抗炎症点眼薬 終了（無効）",
+      "scenarioGroup": "end_ineffective",
+      "scenarioTags": [
+        "treatment_end",
+        "end_ineffective"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "treatment_end_explanation"
+      ],
+      "sCompositionIntent": "treatment_end"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_ocular_irritation_mild_continue",
+      "id": "se_ocular_irritation_mild_continue",
+      "title": "抗炎症点眼薬 SE継続（軽症 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_mild",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_ocular_irritation_moderate_consider_dr",
+      "id": "se_ocular_irritation_moderate_consider_dr",
+      "title": "抗炎症点眼薬 SE継続（中等度 刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_moderate",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "side_effect_present"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_change_due_to_irritation",
+      "id": "se_change_due_to_irritation",
+      "title": "抗炎症点眼薬 SE変更（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_change",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_frequency_reduced_due_to_irritation",
+      "id": "se_frequency_reduced_due_to_irritation",
+      "title": "抗炎症点眼薬 SE回数減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_strength_decreased_due_to_irritation",
+      "id": "se_strength_decreased_due_to_irritation",
+      "title": "抗炎症点眼薬 SE濃度減（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_dose_decrease",
+      "intentTags": [
+        "side_effect_attention",
+        "dose_decrease_explanation"
+      ],
+      "sCompositionIntent": "dose_decrease"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.se_stop_due_to_irritation",
+      "id": "se_stop_due_to_irritation",
+      "title": "抗炎症点眼薬 SE中止（刺激感）",
+      "scenarioGroup": "side_effect_monitoring",
+      "scenarioTags": [
+        "side_effect",
+        "side_effect_monitoring"
+      ],
+      "sideEffectPresence": "present_stop",
+      "intentTags": [
+        "side_effect_attention"
+      ],
+      "sCompositionIntent": "stop"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_tip_contamination",
+      "id": "lifestyle_guidance_tip_contamination",
+      "title": "点眼方法説明（容器先端の接触）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_interval",
+      "id": "lifestyle_guidance_interval",
+      "title": "点眼方法説明（間隔不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_after_opening_expiry",
+      "id": "lifestyle_guidance_after_opening_expiry",
+      "title": "点眼方法説明（開封後1ヶ月以上使用）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_suspension_shake",
+      "id": "lifestyle_guidance_suspension_shake",
+      "title": "点眼方法説明（懸濁不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_storage_upright_suspension",
+      "id": "lifestyle_guidance_storage_upright_suspension",
+      "title": "保管方法説明（懸濁性・先端上向き）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_storage_light_protection",
+      "id": "lifestyle_guidance_storage_light_protection",
+      "title": "保管方法説明（遮光不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_storage_cold",
+      "id": "lifestyle_guidance_storage_cold",
+      "title": "保管方法説明（冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
+      ],
+      "sideEffectPresence": "not_applicable",
+      "intentTags": [
+        "lifestyle_guidance"
+      ],
+      "sCompositionIntent": "status_report"
+    },
+    {
+      "moduleId": "ocular_inflammation_azulene_eye_drops",
+      "globalId": "ocular_inflammation_azulene_eye_drops.lifestyle_guidance_storage_cold_before_opening",
+      "id": "lifestyle_guidance_storage_cold_before_opening",
+      "title": "保管方法説明（未開封時のみ冷所保存不十分）",
+      "scenarioGroup": "lifestyle_guidance",
+      "scenarioTags": [
+        "lifestyle_guidance",
+        "lifestyle_guidance"
       ],
       "sideEffectPresence": "not_applicable",
       "intentTags": [

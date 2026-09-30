@@ -1539,7 +1539,11 @@ describe('Search Family Phase 2-A: D5（oral / ophthalmic 同一有効成分は�
 describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満は完全凍結', () => {
   test('単一かな1文字クエリ（え/お/り/め/ほ/あ）は Phase 2-A 前と完全に同一のシーケンスを返す', () => {
     const expected: Record<string, string[]> = {
-      'え': ['エキセナチド', 'バイエッタ', 'エパルレスタット', 'キネダック', 'エンパグリフロジン', 'エンパグリフロジン', 'リナグリプチン/エンパグリフロジン', 'トラディアンス'],
+      // 'え' は 2026-10-01 ocular_inflammation_azulene_eye_drops registry 登録に伴い値が変化する
+      // （AZ点眼液〔alias「えーぜっと」。Owner Decision OD-10〕が先頭に入り、リナグリプチン/エンパグリフロジンが
+      // top-8 から外れる）。OD-DRUG-PREFIX-BOUNDARY-1（1–2文字は best-effort）に基づき Owner 承認済みの
+      // 現行実装の実測出力を記録する（ranking logic・alias 設計は変更していない）。
+      'え': ['AZ点眼液', 'バイエッタ', 'キネダック', 'エンパグリフロジン', 'エンパグリフロジン', 'トラディアンス', 'エキセナチド', 'エパルレスタット'],
       // 'お' のみ 2026-09 モンテルカスト/プランルカスト データ整合
       // （preferOwnNameMatchOverGenericMatch 有効化）の副作用として値が変化する。
       // OD-DRUG-PREFIX-BOUNDARY-1（Owner Decision）により、1–2文字クエリの
@@ -1559,7 +1563,10 @@ describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満
       // （アバレプト点眼液 / モツギバトレプ点眼液[G] が入り、アマリール / グリメピリドが top-8 から外れる）。
       // OD-DRUG-PREFIX-BOUNDARY-1（1–2文字は best-effort）に基づき Owner 承認済みの新しい実際の出力を記録する。
       // ranking logic は変更していない。
-      'あ': ['アウィクリ', 'アクトス', 'アバレプト点眼液', 'ノボラピッド', 'アピドラ', 'インスリンイコデク', 'モツギバトレプ点眼液', 'インスリングルリジン'],
+      // 2026-10-01 ocular_inflammation_azulene_eye_drops registry 登録に伴い再度変化する（アズレン点眼液〔alias「あずれん」〕が
+      // 3 位に入り、アピドラが top-8 から外れる）。同日 Owner 承認済みの「あ」の変化（searchProjection.golden.json と同一出力）。
+      // 現行実装の実測出力を記録する（ranking logic・alias 設計は変更していない）。
+      'あ': ['アウィクリ', 'アクトス', 'アズレン点眼液', 'アバレプト点眼液', 'ノボラピッド', 'インスリンイコデク', 'モツギバトレプ点眼液', 'インスリングルリジン'],
     }
     for (const [q, exp] of Object.entries(expected)) {
       const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
