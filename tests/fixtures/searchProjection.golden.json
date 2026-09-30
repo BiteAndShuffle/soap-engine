@@ -1117,9 +1117,9 @@
     },
     {
       "moduleId": "ocular_inflammation_azulene_eye_drops",
-      "matchedBrandName": "アズレン点眼液",
-      "drugDisplayLabel": "アズレン点眼液",
-      "uiLabel": "アズレン点眼液（アズレン点眼液）",
+      "matchedBrandName": "AZ点眼液",
+      "drugDisplayLabel": "AZ点眼液",
+      "uiLabel": "AZ点眼液（アズレン点眼液）",
       "representativeTemplateId": "ocular_inflammation_azulene_eye_drops.initial",
       "isGenericLabel": null
     },

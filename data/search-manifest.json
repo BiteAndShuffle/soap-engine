@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "b0c4cbef4abe746ea7534e2b628bdfdf7af2087a20bce4004c6e5b8906681d0f",
+  "sourceHash": "5c32dce01c078e2f4ead308dfb521d5c9af9f34af688bb48cf5a243f81f1f0fa",
   "moduleCount": 38,
   "scenarioCount": 1206,
   "modules": [
@@ -4522,6 +4522,8 @@
         "az",
         "えーぜっとてんがん",
         "えーぜっと",
+        "あzてんがん",
+        "あz",
         "あずれんてんがん",
         "あずれん"
       ],
@@ -4552,6 +4554,8 @@
           "az",
           "えーぜっとてんがん",
           "えーぜっと",
+          "あzてんがん",
+          "あz",
           "あずれんてんがん",
           "あずれん"
         ],
@@ -4578,7 +4582,9 @@
             "azてんがん",
             "az",
             "えーぜっとてんがん",
-            "えーぜっと"
+            "えーぜっと",
+            "あzてんがん",
+            "あz"
           ],
           "displayName": "AZ点眼液",
           "displayGenericName": "アズレン点眼液",

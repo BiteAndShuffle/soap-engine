@@ -1565,8 +1565,10 @@ describe('Search Family Phase 2-A: 強い単一成分クエリのゲート未満
       // ranking logic は変更していない。
       // 2026-10-01 ocular_inflammation_azulene_eye_drops registry 登録に伴い再度変化する（アズレン点眼液〔alias「あずれん」〕が
       // 3 位に入り、アピドラが top-8 から外れる）。同日 Owner 承認済みの「あ」の変化（searchProjection.golden.json と同一出力）。
+      // 同日（OD-12）AZ点眼液へ IME 入力揺れ alias「あz」「あzてんがん」を追加した結果、3 位が AZ点眼液に入れ替わる
+      // （同じ前方一致でも alias 保持数の増加により並びが変わる。Owner 承認済み）。
       // 現行実装の実測出力を記録する（ranking logic・alias 設計は変更していない）。
-      'あ': ['アウィクリ', 'アクトス', 'アズレン点眼液', 'アバレプト点眼液', 'ノボラピッド', 'インスリンイコデク', 'モツギバトレプ点眼液', 'インスリングルリジン'],
+      'あ': ['アウィクリ', 'アクトス', 'AZ点眼液', 'アバレプト点眼液', 'ノボラピッド', 'インスリンイコデク', 'モツギバトレプ点眼液', 'インスリングルリジン'],
     }
     for (const [q, exp] of Object.entries(expected)) {
       const labels = getDrugSuggestions(q, fullIndex, 8).map(r => r.drugDisplayLabel)
