@@ -1,10 +1,10 @@
 # SOAPエンジン PROJECT_CONTEXT
 
 > **Version:** 3.0
-> **Last Updated:** 2026-10-02（Current Development Branch を OD-C1 で宣言。Current Phase / Focus / Roadmap 自体は無変更）
+> **Last Updated:** 2026-10-02（Current Development Branch を OD-BRANCH-AUTH-1 で宣言。Current Phase / Focus / Roadmap 自体は無変更）
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
 > **Current Focus:** **Module Expansion — 点眼領域**（2026-10-01 Owner Decision OD-B: 現在の重点領域は点眼領域で、点眼 module 群を継続整備して完成させる）。個別 module の現在地は本ファイルに持たず、`prompts/vNext/STARTUP_PROMPT.md`「現在状態の再構成」で実測する。local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
-> **Current Development Branch:** `feat/nlp-input-panel-and-new-schema`（2026-10-02 Owner Decision OD-C1）。本宣言は、宣言を含む branch 自身の名前と一致する場合にのみ有効である。commit recency・GitHub default branch・handoff note・continuity 文書の所在だけでは branch authority を決めない。GitHub default branch `main` は current development branch ではない（`main` の位置づけ・Vercel 追跡 branch は `docs/OPEN_DESIGN_QUESTIONS.md` E-3。branch 未指定の起動では、current development branch を Repository 外の起動指示で明示する暫定運用〔OD-C2〕）。development branch の変更・rename・authority 移行は Owner Decision で行い、同一の変更単位で本行を更新する。
+> **Current Development Branch:** `feat/nlp-input-panel-and-new-schema`（2026-10-02 Owner Decision OD-BRANCH-AUTH-1）。本宣言は、宣言を含む branch 自身の名前と一致する場合にのみ有効である。commit recency・GitHub default branch・handoff note・continuity 文書の所在だけでは branch authority を決めない。GitHub default branch `main` は current development branch ではない（`main` の位置づけ・Vercel 追跡 branch は `docs/OPEN_DESIGN_QUESTIONS.md` E-3。branch 未指定の起動では、current development branch を Repository 外の起動指示で明示する暫定運用〔OD-BRANCH-BOOTSTRAP-1〕）。development branch の変更・rename・authority 移行は Owner Decision で行い、同一の変更単位で本行を更新する。（current な ID は OD-BRANCH-AUTH-1 / OD-BRANCH-BOOTSTRAP-1 のみ。historical review での旧称 OD-C1 / OD-C2 は historical reference mapping であり、current alias ではない。Avarept の module 固有 Owner Decision〔OD-C1〜C8〕とは別の決定である。）
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
