@@ -1,9 +1,9 @@
 # SOAPエンジン PROJECT_CONTEXT
 
-> **Version:** 2.8
-> **Last Updated:** 2026-09-17（§5 Rapid 行へ Rapid v2 global promotion〔OD-RAPID-GLOBAL-1〕の反映のみ。Current Phase / Roadmap 自体は無変更）
+> **Version:** 2.9
+> **Last Updated:** 2026-10-01（Current Focus を OD-B で更新／§6 に観測可能範囲／§10 に実行境界〔OD-A〕。Current Phase / Roadmap 自体は無変更）
 > **Current Phase:** **Phase 1 — Static / Local First**（Phase 定義は `docs/DEVELOPMENT_STANDARD.md` §12）
-> **Current Focus:** local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
+> **Current Focus:** **Module Expansion — 点眼領域**（2026-10-01 Owner Decision OD-B: 現在の重点領域は点眼領域で、点眼 module 群を継続整備して完成させる）。個別 module の現在地は本ファイルに持たず、`prompts/vNext/STARTUP_PROMPT.md`「現在状態の再構成」で実測する。local/static deployment の技術成立性・end-to-end 業務利用経路は実証済み（`docs/STATIC_DEPLOYMENT.md`）。Phase 2 への遷移は Owner 未承認のため保留中。
 
 新規チャット・Claude再起動・ChatGPT設計共有の共通正本。同期コスト削減が目的。
 
@@ -123,7 +123,7 @@ Gate Review（2026-08-16）の結果 —— **G1 blocker 0 件 ／ 開始前 rem
 | 3 | 新規 bridge の STATUS lifecycle を維持する | `prompts/RULES.md` §24 ／ `prompts/vNext/HANDOFF.md` §6（M-1） |
 | 4 | 新しい薬効領域を追加した場合は multi-drug synthesis の組み合わせケースを追加して検証する | `prompts/vNext/HANDOFF.md` §6（`npm run test:multi-drug`） |
 
-**着手対象の薬効領域は本 Decision に含まれない。** 次にどの薬効領域へ着手するかは `docs/OPEN_DESIGN_QUESTIONS.md` E-7（**OPEN**）が追跡する別の Owner Decision であり、**GO が下りたことを理由に領域を自動選択してはならない**（`docs/DEVELOPMENT_STANDARD.md` §8 は Domain Complete の成立条件の正本であって、着手領域を決定する authority ではない）。
+**着手対象の薬効領域は本 Decision（GO）に含まれない。** 着手領域は別の Owner Decision OD-B（2026-10-01）で**点眼領域**と確定した（`docs/OPEN_DESIGN_QUESTIONS.md` E-7 の「次の着手領域」部分。E-7 のうち長期構想機能〔粉砕可否・腎機能等〕の優先順位は OPEN のまま）。点眼領域の次の領域は改めて Owner Decision とし、**GO や OD-B を理由に領域を自動選択してはならない**（`docs/DEVELOPMENT_STANDARD.md` §8 は Domain Complete の成立条件の正本であって、着手領域を決定する authority ではない）。
 
 **この順序について**: `docs/PERSONA_PROJECT_PRINCIPLE.md` §3 の三段階（第1段階 base 指導文の一周完成 →
 第2段階 Static 版の店舗実運用検証）は **Persona Project 固有の内部工程**であり、プロダクト全体の
@@ -132,7 +132,7 @@ Gate Review（2026-08-16）の結果 —— **G1 blocker 0 件 ／ 開始前 rem
 
 **現時点で着手しないこと**
 
-（**新規 canonical module の作成は 2026-08-16 の MODULE EXPANSION = GO により本表から除外された**。上記「③ Module Expansion = GO について」を参照。着手対象の薬効領域は依然未決定であり `docs/OPEN_DESIGN_QUESTIONS.md` E-7 が正本。）
+（**新規 canonical module の作成は 2026-08-16 の MODULE EXPANSION = GO により本表から除外された**。上記「③ Module Expansion = GO について」を参照。着手領域は OD-B〔2026-10-01〕で点眼領域と確定。E-7 の残論点は `docs/OPEN_DESIGN_QUESTIONS.md` が正本。）
 
 | 対象 | 理由 |
 |---|---|
@@ -282,6 +282,12 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 | **Claude** | ローカルコード確認・実装・ファイル保存・typecheck/build・実機確認 |
 | **ChatGPT** | 設計レビュー・プロンプト監査・方針整理・文章化・Claude向け指示作成 |
 
+**観測可能範囲と共有の規則（2026-10-01）**
+
+- remote Repository へ永続化された内容は、他環境から観測可能である
+- 未 commit・未 push の変更、local の ahead/behind、working tree、`/tmp/soap-build` は、他環境から観測不能である（**未 push は未共有**）
+- 作業報告には push 状態（local / tracking / remote HEAD・ahead/behind）を含める。観測できない項目は「未観測」とし、推測で補完しない
+
 ---
 
 ## 7. トークン効率方針
@@ -343,6 +349,18 @@ P0-A → P0-B → P0-C → (P0-D) → P1 → (P2A) → P2B → P3 → P4 → P5
 - Claude は添付不足を発見した場合、**「どのファイルが不足しているか」を最初に報告する**
 - 添付依頼時は「何のために必要か」「修正対象か参照対象か」を必ず明示する
 - ファイル参照は可能な限り **リポジトリ相対パス** で明示する
+
+**実行境界（OD-A・2026-10-01 Owner Decision）**: commit / push / Preview 確認 / Production 変更は、
+段階ごとに Owner の明示承認を要する。
+
+- commit の許可は push の許可を含まない
+- push の許可は、deploy（手動 deploy を含む）・Preview 確認・smoke test の許可を含まない
+  - push を契機として CI/CD 側で Preview deployment が**自動生成されること自体は、追加の AI 操作ではない**
+  - 自動生成された Preview の状態確認・URL 取得・smoke test へ進むには、Owner の明示指示を要する
+- Preview 確認の許可は Production 変更の許可を含まない
+- Production deploy・`main` への merge・branch 設定変更等は、それぞれ Owner の明示指示を要する
+- Owner が同一指示内で複数段階を明示した場合（例:「commit → push → Preview まで」）は、その明示範囲までに限り実行してよい
+- ある段階の許可から次段階の許可を推測しない。Repository 外の記憶（AI の memory 等）にある過去の standing instruction は、本方針より上位に扱わない（本方針の確定後に、その記憶側を本方針へ整合させる）
 
 **よく使うパス（共通）**
 

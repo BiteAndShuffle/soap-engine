@@ -1,7 +1,7 @@
 # SOAP Engine — 読込経路の正本（新規チャット起動プロンプト）
 
-version: 2.0
-最終更新: 2026-08-02
+version: 2.1
+最終更新: 2026-10-01（現在状態の再構成手順を追加）
 対象: SOAP Engine に対するすべての作業
 
 ## Purpose
@@ -29,6 +29,7 @@ SOAP Engine に対する作業を新規チャットで開始するとき（作�
 | 対象概念 Overlay | 現在のフェーズ・進捗（→ `prompts/PROJECT_CONTEXT.md`） |
 | Overlay の運用規則 | 文書の索引（→ `docs/DEVELOPMENT_STANDARD.md` §7） |
 | vNext module 生成時に必要な起動情報 | 工程の実行手順（→ 各 PN ファイル） |
+| 現在状態の再構成手順（何を実測し、どう判定するか） | 時点依存の値そのもの（branch・HEAD・module 状態・test/audit 結果。毎回実測する） |
 
 **各正本文書の本文を本ファイルへ複製しない。** 本ファイルは「どこを読むか」だけを示す。
 
@@ -43,6 +44,7 @@ SOAP Engine に対する作業を新規チャットで開始するとき（作�
 - 対象概念 Overlay を追加・削除・変更した
 - Overlay のトリガー条件を変更した
 - Overlay の運用規則（判定順序／複数該当時／途中判明時／未該当時）を変更した
+- 「現在状態の再構成」の実測項目または判定規則を変更した
 
 **更新対象**
 
@@ -203,6 +205,40 @@ Overlay 表に該当なし
 
 **停止するのは「判断できない」ときだけであり、「知らない」ときではない。**
 
+■ 現在状態の再構成（すべての作業・Base 読込後、作業開始前）
+
+時点依存の情報（branch・HEAD・作業ツリー・module 状態・test/audit 結果）は、文書に書かれた値を
+採用せず、毎回 Repository で実測する。観測できない項目は「未観測」と報告し、推測で埋めない。
+
+**観測可能範囲の原則**: remote Repository へ永続化された内容は他環境から観測可能である。
+未 commit・未 push の変更、local の ahead/behind、working tree、`/tmp/soap-build` は
+他環境から観測不能である（**未 push は未共有**）。
+
+A. shell を実行できる環境
+  1. `git branch --show-current` / `git rev-parse HEAD @{u}` /
+     `git ls-remote origin refs/heads/{branch}` / `git rev-list --left-right --count HEAD...@{u}` /
+     `git status --short`
+  2. canonical 未作成の bridge を列挙する（`bridges/{id}.md` に対応する `data/modules/{id}.json` がないもの）
+  3. 対象 module を確定したら、その bridge Header の STATUS・Owner Decision・PENDING を読む
+  4. `data/modules/index.ts` で registry 登録の有無を確認する
+
+B. remote Repository の内容だけを読める環境（shell・local working tree を持たない環境）
+  - 観測できるのは remote へ永続化された branch・commit・ファイルのみ。ahead/behind・未 push の commit・
+    未 commit の変更・`/tmp/soap-build` は「未観測（他環境から見えない）」と報告する
+  - A の 2〜4 を、remote 上のファイル一覧と内容で行う
+
+判定規則
+  - 現在地の候補は、canonical 未作成の bridge（および、観測できる場合は未 push・未 commit の差分）。
+    **これは「候補」であり、それだけで Current Focus を確定しない**
+  - 候補が複数ある、または `prompts/PROJECT_CONTEXT.md`・git history・bridge 状態から対象 module を
+    一意に確定できない場合は、推測で選ばず、候補を列挙して STOP し、Owner の確認を待つ
+  - bridge の STATUS は、Repository 全体の現在地（Current Focus）の検出には使わない
+    （legacy bridge の STATUS は保守されていない）。STATUS は、対象 module を確定した後の
+    pipeline stage 判定（`prompts/RULES.md` §24）にのみ使う
+  - test / audit の結果は、文書に記載された過去値を現在値として扱わない。必要なときに再実行した結果だけを現在値とする
+  - 復帰直後に Freeze・PN 開始・canonical 生成・commit・push・deploy へ自動で進まない
+    （実行境界は `prompts/PROJECT_CONTEXT.md` §10）。再構成結果を起動完了報告で示し、Owner の明示指示を待つ
+
 ■ 起動完了報告（すべての作業）
 
 読み込みが完了したら、作業を開始する前に以下を報告する。
@@ -210,6 +246,10 @@ Overlay 表に該当なし
 - 読み込んだ Base
 - 該当した Overlay と、読み込んだ文書
 - Overlay 未該当の場合はその旨
+- 現在状態の再構成結果: branch / local・tracking・remote HEAD / ahead・behind / 作業ツリー
+  （B の環境では未観測の項目を明記）/ canonical 未作成の bridge / 対象 module の STATUS・PENDING / 次工程の候補
+  （対象 module を一意に確定できない場合は候補の列挙）
+- 報告後は、Owner の指示があるまで作業を開始しない
 
 ---
 

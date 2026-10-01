@@ -1,7 +1,12 @@
 # SOAP Engine — vNext プロンプト体系 新規チャット引き継ぎ文書
 
 作成日: 2026-06-26  
-最終更新: 2026-09-25（Unit「vNext pipeline repair（Avarept post-registration findings）」: **docs / prompts のみ**。
+> **本ファイル冒頭の「最終更新」「先行」の記録は historical record（Unit 単位の変更履歴）であり、current contract ではない。**
+> current contract は「1.」〜「7.」の各節が持つ。現在状態（branch・HEAD・module の進捗）は本ファイルに持たず、
+> `prompts/vNext/STARTUP_PROMPT.md`「現在状態の再構成」で毎回実測する。
+
+最終更新: 2026-10-01（冒頭に historical record 注記を追加。本文の contract は無変更）
+先行: 2026-09-25（Unit「vNext pipeline repair（Avarept post-registration findings）」: **docs / prompts のみ**。
 Avarept で再現した pipeline gap を最小修正した。① PN6 と PN7 の間に **PN6R Registry Integration**
 （`prompts/vNext/PN6R-Registry-Integration.md`）を新設し、registry 登録・生成物再生成・`npm test` FAIL の
 A（deterministic generated）/ B（deterministic corpus expectation）/ C（behavioral・Owner review 必須）分類と STOP 条件を定義

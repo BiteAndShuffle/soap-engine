@@ -1280,9 +1280,9 @@ Rapid v2 の6 transition（Do・追加・変更・削除〔処方整理〕・増
 | **E-4** | NLP 生成の将来方針（外部 LLM API 前提か、ローカル完結か） | **OPEN** | NLP 経路の Lifecycle を確定する時点（`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-1 の解消条件と連動）、または Phase 4（SaaS）設計着手時。**外部 LLM を選ぶ場合、患者テキストが初めて信頼境界を越える**（同記録がセキュリティ上の最大の分岐点と位置づけた項目） |
 | **E-5** | 旧体系（`prompts/P0-A.md`〜`P5.md` / `docs/BOOTSTRAP_STANDARD.md` / `docs/P*_STANDARD.md`）の保守方針（凍結アーカイブ化の可否） | **OPEN** | 旧体系資産の Lifecycle を確定する時点（§10.2 Legacy の L1〜L7 判定）。**運用上の扱いは `prompts/PROJECT_CONTEXT.md` §10 が「新規作業では使用しない」と既に定めている**が、Lifecycle State としては未分類 |
 | **E-6** | bridge 原稿の知財・医学的責任の整理（執筆者・監修体制・改訂責任） | **OPEN** | **Phase 3（Productization）の完了条件。** 第三者提供を意思決定した時点で回答が必要 |
-| **E-7** | 長期構想機能（粉砕可否・腎機能等）の優先順位と次の着手領域 | **OPEN** | 次の薬効領域を決定する時点（MODULE EXPANSION = GO 判定後）。**領域の既定方針は `docs/DEVELOPMENT_STANDARD.md` §8 が「次の点眼領域から」と記載**しているが、着手対象としては未確定 |
+| **E-7** | 長期構想機能（粉砕可否・腎機能等）の優先順位と次の着手領域 | **OPEN** | **「次の着手領域」は 2026-10-01 Owner Decision OD-B で回答済み**（点眼領域を重点領域とし、点眼 module 群を継続整備して完成させる。living SSOT は `prompts/PROJECT_CONTEXT.md` Current Focus。点眼領域の次の領域は改めて Owner Decision）。**長期構想機能（粉砕可否・腎機能等）の優先順位は未回答**で、その優先順位を決める時点が残る Trigger |
 
-**ANSWERED は現時点で 0 件である。** 7 件すべてが Owner 回答待ちであり、Repository 内に回答の記録は存在しない。
+**ANSWERED は現時点で 0 件である。** E-7 は「次の着手領域」部分のみ回答済み（OD-B）で、状態は OPEN のままである。他の 6 件は Owner 回答待ちであり、Repository 内に回答の記録は存在しない。
 
 **Phase との対応**: E-3 は Phase 2 の CI 整備、E-1 / E-6 は Phase 3、E-4 は Phase 4 に対応する
 （`docs/DEVELOPMENT_STANDARD.md` §12）。E-2 / E-5 / E-7 は Phase 2 で必要になる。

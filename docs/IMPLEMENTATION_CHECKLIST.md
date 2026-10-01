@@ -33,7 +33,7 @@ SOAP Engine — 実装後に毎回行う標準検証チェックリスト。
 □ 実機確認（変更内容に応じて: 検索候補の表示順序 / AddonPanel表示 / SOAP生成結果 等。変更範囲が
   1モジュール・1シナリオ程度の軽微な修正の場合はこの簡易確認で足りる。新規モジュールの
   領域完了時・検索ロジックや matchPolicy 変更時は下記「Runtime / 実機横断確認」を実施する）
-□ push後、Vercel Preview のデプロイ成功を確認（GitHub Commit Status API）
+□ （Owner が Preview 確認を明示指示した場合のみ）push後、Vercel Preview のデプロイ成功を確認（GitHub Commit Status API）。commit / push / Preview 確認 / Production 変更の実行境界は `prompts/PROJECT_CONTEXT.md` §10（OD-A）。push の許可は Preview の状態確認・URL 取得・smoke test の許可を含まない
 ```
 
 ## 新規 canonical module を追加した場合の検証工程
