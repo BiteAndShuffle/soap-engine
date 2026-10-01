@@ -1,7 +1,7 @@
 # SOAP Engine — 読込経路の正本（新規チャット起動プロンプト）
 
-version: 2.1
-最終更新: 2026-10-01（現在状態の再構成手順を追加）
+version: 2.2
+最終更新: 2026-10-02（現在状態の再構成に branch authority の確認を追加）
 対象: SOAP Engine に対するすべての作業
 
 ## Purpose
@@ -214,6 +214,14 @@ Overlay 表に該当なし
 未 commit・未 push の変更、local の ahead/behind、working tree、`/tmp/soap-build` は
 他環境から観測不能である（**未 push は未共有**）。
 
+0. branch authority の確認（A・B 共通。読んでいる branch の観測〔A の 1 / B〕に続けて、Current Focus 以降のすべての判定より前に行う）
+  - `prompts/PROJECT_CONTEXT.md` の Current Development Branch 宣言（Owner Decision。実測値ではない）を読み、
+    (1) 実測した「読んでいる branch」の名前と一致すること、(2) その branch が remote に存在することを確認する
+  - 宣言がない・branch 名と一致しない・`prompts/PROJECT_CONTEXT.md` を読めない・authority を一意に確認できない場合は、
+    commit recency・GitHub default branch・handoff note・continuity 文書の所在・他 branch の文書で補完せず STOP する。
+    ただし Owner が当該 session で作業 branch を明示した場合は、その指示に従う（宣言は変更しない）
+  - branch authority を確認できるまで、Current Focus・current module・STATUS・PN stage の判定（下記 A・B の 2 以降）へ進まない
+
 A. shell を実行できる環境
   1. `git branch --show-current` / `git rev-parse HEAD @{u}` /
      `git ls-remote origin refs/heads/{branch}` / `git rev-list --left-right --count HEAD...@{u}` /
@@ -246,7 +254,7 @@ B. remote Repository の内容だけを読める環境（shell・local working t
 - 読み込んだ Base
 - 該当した Overlay と、読み込んだ文書
 - Overlay 未該当の場合はその旨
-- 現在状態の再構成結果: branch / local・tracking・remote HEAD / ahead・behind / 作業ツリー
+- 現在状態の再構成結果: branch authority の確認結果 / branch / local・tracking・remote HEAD / ahead・behind / 作業ツリー
   （B の環境では未観測の項目を明記）/ canonical 未作成の bridge / 対象 module の STATUS・PENDING / 次工程の候補
   （対象 module を一意に確定できない場合は候補の列挙）
 - 報告後は、Owner の指示があるまで作業を開始しない
