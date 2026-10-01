@@ -363,16 +363,21 @@ describe('bridge parser — P_ADDON_INLINE', () => {
   const PG_WIPE = 'addon_glaucoma_pg_wipe_periocular_after_instillation'
   const PG_BLURRED = 'addon_eye_drop_blurred_vision_driving_caution'
 
+  /** P_ADDON_INLINE を持つ 3 件目の bridge（cataract_pirenoxine_eye_drops・2026-10-01 FROZEN_FOR_PN1。canonical 未作成）。PG と同一の汎用 ADDON を使用 */
+  const CATARACT_BRIDGE = 'cataract_pirenoxine_eye_drops.md'
+
   test('全 bridge で P_ADDON_INLINE / P_ADDON の文法エラーなし', () => {
     for (const file of bridgeFiles) {
       for (const [id, s] of parseBridge(file)) assert.deepEqual(s.errors, [], `${file}/${id}`)
     }
   })
 
-  test('既存 36 bridge は inline block を持たない（P_ADDON_INLINE 保有は Avarept・PG 点眼の 2 件のみ）', () => {
-    const others = bridgeFiles.filter(f => f !== AVAREPT_BRIDGE && f !== PG_BRIDGE)
+  test('既存 36 bridge は inline block を持たない（P_ADDON_INLINE 保有は Avarept・PG 点眼・白内障点眼の 3 件のみ）', () => {
+    const others = bridgeFiles.filter(f => f !== AVAREPT_BRIDGE && f !== PG_BRIDGE && f !== CATARACT_BRIDGE)
     // 2026-10-01: 35→36。ocular_inflammation_azulene_eye_drops（アズレン点眼）bridge の追加に伴う
     // 件数のみの機械的更新（当該 bridge は P_ADDON_INLINE を持たない。下の insertions 検査で確認）。
+    // 2026-10-01: cataract_pirenoxine_eye_drops bridge（白内障点眼・P_ADDON_INLINE 保有）の追加に伴い、
+    // inline 保有 bridge を 2→3 件へ。bridge 総数は 38→39 だが、除外対象も 1 件増えるため others は 36 のまま。
     assert.equal(others.length, 36)
     for (const file of others) {
       for (const [id, s] of parseBridge(file)) assert.deepEqual(s.insertions, [], `${file}/${id}`)
@@ -411,6 +416,17 @@ describe('bridge parser — P_ADDON_INLINE', () => {
       se_periocular_pigmentation_none: [{ afterLine: 1, keys: [PG_WIPE, PG_WASH] }],
       se_blurred_vision_none: [{ afterLine: 1, keys: [PG_BLURRED] }],
       se_periocular_pigmentation_mild_continue: [{ afterLine: 1, keys: [PG_WIPE, PG_WASH] }],
+    })
+  })
+
+  test('cataract_pirenoxine_eye_drops bridge の inline insertion は 1 箇所（afterLine=1 × 1）', () => {
+    const actual = Object.fromEntries(
+      [...parseBridge(CATARACT_BRIDGE)]
+        .filter(([, s]) => s.insertions.length > 0)
+        .map(([id, s]) => [id, s.insertions]),
+    )
+    assert.deepEqual(actual, {
+      se_blurred_vision_none: [{ afterLine: 1, keys: [PG_BLURRED] }],
     })
   })
 })
