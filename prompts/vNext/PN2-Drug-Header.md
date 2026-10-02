@@ -8,6 +8,9 @@
 bridge ヘッダーセクション（SCENARIOS_START より前）を JSON 構造に変換する。
 シナリオ本文・シナリオメタデータには一切触れない。
 
+Header の設計入力（検証済みの Product Fact 等）は PN2 の責務ではない。bridge Header に記録された値を逐語転記する。
+設計入力の要件は `docs/HEADER_DESIGN_INPUT_STANDARD.md` を参照。
+
 ---
 
 ## 入力

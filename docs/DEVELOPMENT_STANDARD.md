@@ -199,6 +199,7 @@ bridge から JSON への一方向フロー（JSON から bridge を逆生成し
 | `docs/PERSONA_PROJECT_PRINCIPLE.md`（**Core**） | Persona Project の設計思想・三段階の開発順序・判断規則の正本。`module.persona` の位置づけを判断するとき（**毎回読む**） |
 | `docs/PERSONA_PROJECT_APPENDIX.md`（**Appendix**） | Core の判断を支える実測値・詳細な反証・再測定手順（**判断の根拠を確認したいときのみ**） |
 | `docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md` | 検索単位・SOAP主語・製品バリエーション分離原則（DP-14候補）。持続型製剤・BF・容量違い等の派生製剤をどう扱うか |
+| `docs/HEADER_DESIGN_INPUT_STANDARD.md` | Bridge Header を新規設計・semantic 改修する前に必要な入力条件（検証済みの Product Fact、Fact の性質、既存本文への applicability review、Owner gate）。PN2 より前の工程 |
 | `docs/IMPLEMENTATION_CHECKLIST.md` | 実装後に毎回行う検証チェックリスト・Runtime/実機横断確認 |
 | `docs/TEAM_CHARTER.md` | Human / ChatGPT / Claude の役割分担 |
 | `docs/BOOTSTRAP_STANDARD.md` / `docs/P1_STANDARD.md` 〜 `docs/P5_STANDARD.md` | 旧体系（P0-A〜P5）各工程の設計意図（「なぜこの工程はこう設計されているか」） |

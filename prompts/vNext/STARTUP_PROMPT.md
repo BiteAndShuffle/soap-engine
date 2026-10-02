@@ -1,7 +1,7 @@
 # SOAP Engine — 読込経路の正本（新規チャット起動プロンプト）
 
-version: 2.2
-最終更新: 2026-10-02（現在状態の再構成に branch authority の確認を追加）
+version: 2.3
+最終更新: 2026-10-02（工程段階 Overlay へ「Bridge Header の新規作成・semantic 改修」を追加）
 対象: SOAP Engine に対するすべての作業
 
 ## Purpose
@@ -120,6 +120,7 @@ SOAPエンジン開発を継続します。
 
 | 段階 | 読み込む文書 |
 |---|---|
+| Bridge Header を新規作成・semantic 改修するとき（`bridges/{moduleId}.md` の Header 設計。STATUS `HEADER_ONLY`〜`DRAFT`） | docs/HEADER_DESIGN_INPUT_STANDARD.md → docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md |
 | vNext module 生成に着手するとき（`bridges/{moduleId}.md` を起点に canonical JSON を生成・改修する） | prompts/vNext/HANDOFF.md（**PN1 より前に読む**） |
 | PN1開始 | prompts/vNext/PN1-Text-Extraction.md |
 | PN2開始 | prompts/vNext/PN2-Drug-Header.md |

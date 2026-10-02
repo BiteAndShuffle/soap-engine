@@ -167,6 +167,9 @@ current runtimeでは実SKUを識別できないが、次の条件を**すべて
 2. 既存ADDON本文が、そのvariantへ**そのまま適用可能**である（variant固有の追加説明・
    専用ADDONの新規作成が必要な場合はLevel 2の対象外。§4.5参照）
 
+（条件1の Fact と条件2の applicability の入力・記録・review は `docs/HEADER_DESIGN_INPUT_STANDARD.md` §1〜§4 が定める。
+本節は判定基準のみを持つ。）
+
 **この場合の原則は次のとおりである。**
 
 - **family-level variant tag**（例: `light_protection_variant_in_family` /

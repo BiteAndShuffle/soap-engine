@@ -854,6 +854,7 @@ PN1 / PN2 で `{ closingText: "..." }` という誤ったスキーマを生成�
 ## bridge 作成から開始する（JSON 未着手の新規モジュール）
 
 新規モジュールの場合、PN1 に入る前に **bridge を作成する** 必要があります。
+bridge Header の設計（または semantic 改修）を始める前に、必要な入力条件は `docs/HEADER_DESIGN_INPUT_STANDARD.md` を参照してください。
 
 ### bridge の構成
 
