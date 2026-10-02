@@ -5,6 +5,16 @@
 #
 # ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
 #
+# 【STATUS 遷移の記録（RULES §24）2026-10-03】FROZEN_FOR_PN1 → DRAFT → FROZEN_FOR_PN1（再 Freeze）。
+#   経緯: Owner が `addon_eye_drop_after_reconstitution_expiry_3weeks` の本文（P_APPEND）1 行を承認のうえ修正した。
+#         修正中は本文が凍結後に変更された状態のため DRAFT へ戻し、Owner の Human 最終確認と明示指示により再 Freeze した。
+#   変更箇所: 当該 ADDON の P_APPEND 1 行のみ。
+#         旧: 溶解後の点眼薬は、衛生面を考慮し、3週間後を目安に処分してください。
+#         新: 溶解後の点眼薬は、安定性を考慮し、3週間を目安に処分してください。（Owner 確定文）
+#   他の SCENARIO / ADDON 本文・Header 設計値・id・順序・marker は変更していない。
+#   [Source parity への影響] 上記 1 行は更新後 `添付用.md`（下記 Source parity の基準）との既知の差分となる。
+#         Owner-authorized text edit であり、AI 側による変更・補足ではない。
+#
 # 【STATUS 遷移の記録（RULES §24）】DRAFT → FROZEN_FOR_PN1。
 #   作成日: 2026-10-01（Header Draft + Human-authored SCENARIOS 収載。DRAFT）
 #   遷移日: 2026-10-01（Owner の明示指示による）
@@ -615,7 +625,7 @@ P_APPEND
 
 【ADDON｜type=lifestyle_guidance｜id=addon_eye_drop_after_reconstitution_expiry_3weeks｜title=使用期限（溶解後3週間）】
 P_APPEND
-溶解後の点眼薬は、衛生面を考慮し、3週間後を目安に処分してください。
+溶解後の点眼薬は、安定性を考慮し、3週間を目安に処分してください。
 
 
 
