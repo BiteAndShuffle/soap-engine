@@ -702,7 +702,7 @@ PN4A と PN4B は並列実行可能です。PN3B 完了後に同時開始でき�
 **入力**: 複数の中間ファイル（PN2 / PN3A / PN3B / PN1）  
 **出力**: `/tmp/soap-build/{moduleId}/phase5_non_scenario.json`
 
-ui / risks / searchConfig / tagCatalog / expressModes を生成します。
+ui / risks / searchConfig / tagCatalog を生成します（`expressModes` は Express opt-in module のみ。`docs/JSON_STANDARD.md` JS-B）。
 
 **インスリン注射系の risks 標準テンプレート**（2026-09-20 Owner Review 確定。Owner Decision OD-T1）:
 

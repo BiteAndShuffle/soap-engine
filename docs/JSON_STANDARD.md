@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-09-25（OD-C8: JS-A「O フィールドルール」へ generic noun exception〔frozen Bridge の generic noun / dosage-form noun の逐語保持に限る・本文から機械判定・条件の正本は RULES §16 / PN7 Check I〕を追記。既存 canonical は無変更。2026-09-24: DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）
+最終更新: 2026-10-03（Express opt-in: `expressModes` を JS-A「全 module 必須」から外し JS-B「Express 対象として Owner が明示的に opt-in 選定した module のみ」へ移した。JS-expressModes は存在する場合の構造規定と明記。JS-C のエントリ数の注記を非 Express module の section absent と整合。既存 canonical は無変更・migration なし。同日以前: 2026-09-25（OD-C8: JS-A「O フィールドルール」へ generic noun exception〔frozen Bridge の generic noun / dosage-form noun の逐語保持に限る・本文から機械判定・条件の正本は RULES §16 / PN7 Check I〕を追記。既存 canonical は無変更。2026-09-24: DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新））
 
 ---
 
@@ -82,7 +82,8 @@ canonical JSON を監査・修正する前に、以下の順序で差分の性�
 ```
 moduleId → moduleVersion → categoryPath → composition → drug → drugResolution
 → regulatory → topical → template → display → defaults → persona → scenarios
-→ addons → ui → risks → searchConfig → tagCatalog → expressModes
+→ addons → ui → risks → searchConfig → tagCatalog
+（Express 対象として opt-in 選定した module のみ、末尾に expressModes を置く。JS-B 参照）
 ```
 
 - runtime / validator は top-level key 順序に依存しない（名前アクセスのみ）
@@ -109,7 +110,6 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `risks` | object | `primary` / `secondary` |
 | `searchConfig` | object | `minPrefixLen` / `normalize` / `multiTerm` |
 | `tagCatalog` | object | — |
-| `expressModes` | array | 型は配列固定（JS-expressModes 参照）|
 
 ### JS-A-composition: composition 必須サブフィールド
 
@@ -445,6 +445,18 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 
 > 実測値は `data/modules/*.json` の当該 key の有無である。両 field の生成は `prompts/vNext/PN2-Drug-Header.md`「`display.adjustmentExpression` の保持」「`display.menuGroupLabels` の保持」（bridge 明示時の preservation）に従い、増量・減量シナリオの有無だけでは決まらない（例: `dm_dpp4_sglt2_combination_oral` は増量・減量シナリオを持つが bridge が沈黙しており、いずれの field も持たない）。本節の見出し（JS-B の条件付き必須としての分類）と PN2 の生成規則との整合は未確認であり、本更新では Requirement Class の再分類を行っていない。
 
+### Express 対象として Owner が明示的に opt-in 選定した module のみ
+
+| フィールド | 条件 |
+|---|---|
+| `expressModes` | Owner が Express 対象として明示的に選定した module のみ。構造は JS-expressModes（存在する場合の規定）に従う |
+
+- `expressModes` は全 module の標準必須構造ではない。**Express 対象として選定されていない module は、`expressModes` 自体を omit する**（absent が通常状態）
+- 将来利用の予約目的だけで `enabled: false` の entry を生成しない。非対象 module の標準表現として `expressModes: []` も用いない
+- Express 対象か否かは Bridge の医療 semantic ではなく、Model JSON / UI 運用上の Owner Intent である。未選定であることを理由に module 生成を止めない
+- 既存 canonical の `expressModes`（`enabled: false` entry・空配列を含む）は preserve し、一括 migration / retrofit は行わない
+- 選定後の `expressCategory` / `expressGroup` / `expressSubGroup` 等は別 Unit で設計する
+
 ### 剤形横断ナビゲーションを持つ module
 
 | フィールド | 現在の対象 |
@@ -513,7 +525,7 @@ treatment_end 系シナリオの `scenarioGroup` は個別値を使用する。�
 | `matchPolicy.allowMultiTokenAndMatch` / `allowFormulationTokenMatch` | derm 3系 | heparinoid 剤形分割検索固有（DP-05）|
 | `commonSearchTokens` / `formulationSearchTokens` | derm 3系 | 同上 |
 | `brandCatalog` のブランド固有フィールド（`contactLensCaution`, `bakStatus` 等）| allergy_eye_drops | 点眼薬の品質管理情報 |
-| `expressModes` のエントリ数（1〜39）| 全 module | 薬剤種により変動。上限制限なし |
+| `expressModes` のエントリ数（上限制限なし）| `expressModes` を持つ module | 薬剤種により変動。Express 非対象 module では section absent（JS-B 参照）|
 | `composition.classKey` に剤形名を含む | derm 3系 | 保留中（Q-J1）の意図的設計の可能性（DP-02）|
 
 ---
@@ -578,6 +590,8 @@ addon id から導出する既存 fallback（`lib/addonSubGroups.ts` の `getSub
 ---
 
 ## JS-expressModes: expressModes 配列構造統一原則
+
+**適用範囲**: 本節は `expressModes` が**存在する場合**の構造規定である。`expressModes` を持つか否か（opt-in）は JS-B「Express 対象として Owner が明示的に opt-in 選定した module のみ」が定める。
 
 旧 DP-06。JSON 実装ルールのため JSON_STANDARD.md へ移管（DESIGN_PRINCIPLES.md の欠番注記参照）。
 

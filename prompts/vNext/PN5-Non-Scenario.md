@@ -5,7 +5,7 @@
 → prompts/RULES.md §11 addons.orderPresets object必須ルール
 
 ## 位置づけ
-**PN5 の責務: 標準非シナリオ構造をすべて生成する。**
+**PN5 の責務: 標準非シナリオ構造をすべて生成する**（`expressModes` を除く。`expressModes` は Express opt-in module のみ。下記）。
 シナリオ・addon 以外の JSON 構造を生成する。
 シナリオ本文・シナリオメタデータを変更しない。
 
@@ -145,7 +145,13 @@ Phase 3A で確定した intentTags をリストアップする。
 }
 ```
 
-### expressModes セクション
+### expressModes セクション（Express opt-in module のみ）
+
+`expressModes` は標準必須構造ではない（`docs/JSON_STANDARD.md` JS-B が requiredness の正本）。
+**Owner が Express 対象として明示的に選定した module のみ生成する。選定されていない module では `expressModes` 自体を omit する**
+（`expressModes: []` や `enabled: false` entry を非対象 module の標準表現として生成しない。未選定を理由に PN5 を停止しない）。
+
+以下は、Express 対象として選定された module の生成形式の例である。`expressCategory` / `expressGroup` / `expressSubGroup` の値は、選定時の Owner 指示に従う（推測生成しない）。
 
 drug.brandCatalog の各ブランドに対してエントリを生成する。
 
@@ -164,7 +170,7 @@ drug.brandCatalog の各ブランドに対してエントリを生成する。
 ]
 ```
 
-全エントリ `enabled: false` で統一する。
+選定された module でも、Owner が有効化を指示するまで全エントリ `enabled: false` とする。
 
 ### addons.orderPresets
 
@@ -197,7 +203,7 @@ ui
 risks
 searchConfig
 tagCatalog
-expressModes
+expressModes     ← Express 対象として選定された module のみ（非対象は omit）
 persona        ← JSON_STANDARD 標準フィールド。必ず生成する（下記参照）
 addons.orderPresets
 ```
@@ -235,7 +241,7 @@ bridge に記述がない場合は以下のデフォルト値で生成する:
 
 PN5 完了後、以下を報告する:
 - 保存先
-- expressModes のエントリ数（ブランド数）
+- expressModes: 生成した場合のみエントリ数（ブランド数）を報告する。omit した場合は「omit（Express 非対象）」と記載する
 - risks に適用した分岐（`insulin` / `non-insulin` のいずれか）
 - risks.primary / secondary 件数
   ※ 分岐が `non-insulin` の場合、2 件数はともに `0` でなければならない。

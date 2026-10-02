@@ -11,7 +11,9 @@ PN1〜PN5 の全成果物を統合し、完成 JSON を生成する。
 **PN5 成果物の事前確認（統合開始前に必ず確認）:**
 phase5_non_scenario.json に以下が存在しない場合、即 MUST_STOP → PN5 へ差し戻す:
 - `persona`
-- `ui` / `risks` / `searchConfig` / `tagCatalog` / `expressModes`
+- `ui` / `risks` / `searchConfig` / `tagCatalog`
+
+`expressModes` は Express opt-in module のみが持つ（`docs/JSON_STANDARD.md` JS-B）。`phase5_non_scenario.json` に存在しなくても MUST_STOP とせず、補完生成もしない。
 
 **composition.sMergePolicy の確認:**
 phase2_drug_header.json の `composition` に `sMergePolicy` が存在しない場合、即 MUST_STOP → PN2 へ差し戻す。
@@ -155,7 +157,7 @@ ui
 risks
 searchConfig
 tagCatalog
-expressModes
+expressModes     ← phase5 に存在する場合のみ
 persona        ← phase5 の persona を top-level へ配置（defaults の直後）
 ```
 
@@ -191,7 +193,7 @@ ui
 risks
 searchConfig
 tagCatalog
-expressModes
+expressModes（phase5 に存在する場合のみ）
 ```
 
 ---
@@ -235,7 +237,7 @@ template.handlingTags / reservedHandlingTags: 保持 {あり/なし}
 - 新規コンテンツを生成しない
 - 中間フィールド（_phase / _frozenAt / _closingText）を最終 JSON に含めない
 - Phase 1 凍結テキストを変更しない
-- **PN5 成果物に存在しない標準構造を PN6 が独自補完しない**（検出したら MUST_STOP → PN5 差し戻し）
+- **PN5 成果物に存在しない標準構造を PN6 が独自補完しない**（検出したら MUST_STOP → PN5 差し戻し。ただし opt-in 構造の `expressModes` が absent の場合は MUST_STOP 対象外）
 - **composition.sMergePolicy を PN6 が独自追加しない**（PN2 で生成すること）
 
 ---

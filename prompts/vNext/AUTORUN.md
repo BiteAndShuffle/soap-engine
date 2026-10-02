@@ -74,7 +74,7 @@ PN3A完了: groupKey {N}件確定。MUST_STOP非該当。PN3Bを開始します�
 PN3B完了: {N}シナリオ / {N}addon。PN4Aを開始します。
 PN4A完了: {N}件xStructured生成。禁止role非該当。PN4Bを開始します。
 PN4B完了: {N}件xStructured生成。禁止role非該当。PN5を開始します。
-PN5完了: risks/searchConfig/expressModes/persona生成。PN6を開始します。
+PN5完了: risks/searchConfig/persona生成（expressModes は Express 対象のみ）。PN6を開始します。
 PN6完了: {N}行保存。{N}シナリオ全件xStructured注入確認。addon.text/group標準変換適用済み。PN6Rを開始します。
 PN6R完了: registry接続済み（module数 {N}→{N}）/ 生成物再生成済み / npm test fail 分類 A {N}・B {N}・C 0。PN7を開始します。
 PN7完了: FAIL 0件 / CHECK 0件 / PENDING 0件 / verdict: PASS。PN8を開始します。
