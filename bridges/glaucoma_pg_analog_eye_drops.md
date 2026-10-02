@@ -375,6 +375,18 @@ drug:
         # タプロスミニ固有の保存条件（2〜8℃・遮光投薬袋）は今回対象外
         # （docs/PRODUCT_VARIANT_SEPARATION_PRINCIPLE.md Future consideration参照。
         # light/cold系family tagは付与しない）。
+        #
+        # [Current State・2026-10-02 PG Mini/PF rationale alignment Unit] preservative_free_variant_in_family は
+        # 付与しない。これは current mapping の根拠の明文化であり、mapping 自体は変更していない。
+        #   - Level 2 条件1: PASS。タプロスミニは marketed variant として実在し、保存剤を含有しない
+        #     （BAK不含・1回使い捨てのディスポーザブル容器。PMDA 添付文書 1319756Q1022_1_18、
+        #     医薬品インタビューフォーム 第16版〔2022年1月〕。2026-10-02 確認）。
+        #   - Level 2 条件2: FAIL。addon_eye_drop_preservative_free_pf の本文「特殊な構造の容器が使用されて
+        #     います」を、IF（10.(1)「外観が特殊な容器・包装に関する情報: 該当しない」／概要 I-3「製品の
+        #     製剤学的特性: 特になし」）・添付文書・製造販売元公式FAQのいずれも裏付けない。本文を全文そのまま
+        #     適用可能とは判断できない（PRODUCT_VARIANT_SEPARATION_PRINCIPLE §4.5 Level 3 に相当）。
+        #   - よって PF ADDON をタプロス family へ流さない。Mini固有の取り扱い（最初の1〜2滴の廃棄・
+        #     遮光用投薬袋での保存）は現行 ADDON では担保されておらず、別 Unit の検討事項（本 Unit では扱わない）。
         - "single_use_variant_in_family"
         - "pg_glaucoma"
       aliases:
@@ -529,10 +541,12 @@ template:
   # reservedHandlingTags（実型フィールド・RULES §27）:
   # 現行brandCatalogのどのエントリも保持しないが、requiredTags付きscenario/addonを
   # 意図的に到達不能のまま保持するためのタグのみを宣言する。
-  # single_use_container / preservative_free は「該当製品が存在しない」のではなく
-  # 「該当製品(タプロスミニ)は存在するがcurrent runtimeが判別できない」ケースのため、
-  # ここには含めない（上記メモ参照。§4.2の原則により当該2 addonはrequiredTags自体を
-  # 宣言していないため、そもそも到達不能状態ではなく常時候補である）。
+  # single_use_container / preservative_free（property tag）は、ここには含めない。
+  # 現行の scenario / addon のどの requiredTags もこの 2 tag を参照していない
+  # （addon_eye_drop_single_dose_mini は single_use_variant_in_family、
+  # addon_eye_drop_preservative_free_pf は preservative_free_variant_in_family で gate している。
+  # 上記 [Current State・2026-09-30] 参照）。reservedHandlingTags は、requiredTags が参照するが
+  # 現行 brand が保持しない tag を宣言するものであり、本 2 tag は該当しない。
   reservedHandlingTags:
     - "cold_storage"
     - "suspension"
