@@ -3,7 +3,15 @@
 # cataract_pirenoxine_eye_drops
 # =========================================
 #
-# ⚠️ STATUS: FROZEN_FOR_PN1 ⚠️
+# ⚠️ STATUS: JSON_COMPLETE ⚠️
+#
+# 【STATUS 遷移の記録（RULES §24）】FROZEN_FOR_PN1 → JSON_COMPLETE。
+#   遷移日: 2026-10-03（Owner の明示指示による）
+#   根拠: PN8 が RELEASE_OK に到達した（canonical JSON 生成・registry 接続・PN7 監査・tsc / build / npm test / npm run audit /
+#         test:multi-drug の完了。PN7 の CHECK 2 件〔Z 責務一貫性 / INV-4c GENERIC_GATE_TAG_DROPPED〕は Owner が設計どおりとして承認済み）。
+#   本遷移の変更範囲: STATUS 行と本状態説明コメントのみ。SCENARIOS 本文・Header 設計値・OD-1〜OD-11・P-3 / P-4 / P-5 の記載は変更していない。
+#   [注意] JSON_COMPLETE は lifecycle status であり、P-3 / P-4 / P-5（未収載製品・GE の全数確認 / 現在の流通状況 /
+#         薬局調製後交付運用の実務確認）が解決したことを意味しない。これらは未解決の Fact follow-up のままである。
 #
 # 【STATUS 遷移の記録（RULES §24）2026-10-03】FROZEN_FOR_PN1 → DRAFT → FROZEN_FOR_PN1（再 Freeze）。
 #   経緯: Owner が `addon_eye_drop_after_reconstitution_expiry_3weeks` の本文（P_APPEND）1 行を承認のうえ修正した。

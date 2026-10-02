@@ -651,7 +651,7 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     assert.deepEqual(errors, [], `ModuleValidator の ERROR は 0 件であるべき`)
   })
 
-  test('WARNING の総数が baseline（88 件）から変化していない', () => {
+  test('WARNING の総数が baseline（99 件）から変化していない', () => {
     // 2026-09: allergy_h1_antihistamine_eye_drops へ strength_decrease_low_perceived_effect
     // （scenarioRequiredTags: ["concentration_variant"]）を追加したことに伴い、
     // 同一クラスタの既存4件（strength_increase/decrease系）と同型の
@@ -737,12 +737,24 @@ describe('全 module の Validator baseline（U-EXP1 で退行させない）', 
     // シャーシとして意図的に保持する capability である（ERROR ではなく WARNING）。他 module の内訳は不変。
     // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 32 / SCENARIO_REQUIRED_TAG_UNREACHABLE 52 /
     //       ADDON_SCOPE_VIOLATION 4 = 88。
+    //
+    // 2026-10-03（cataract_pirenoxine_eye_drops registry 登録・PN6R 分類 B）: 88→99。
+    // 白内障点眼（カタリン点眼用 / ピレノキシン懸濁性点眼液）module の登録により、同 module 由来の WARNING が
+    // 0→11 件（ADDON_REQUIRED_TAG_UNREACHABLE 4 / SCENARIO_REQUIRED_TAG_UNREACHABLE 7）純増した。
+    // 11 件はすべて template.reservedHandlingTags に宣言済みのタグ（cold_storage_before_opening /
+    // avoid_cold_storage / single_use_container / preservative_free / concentration_variant /
+    // reduced_frequency_option）を要求する scenario / addon であり、現行 2 entry（handlingTags: cold_storage /
+    // light_protection / light_protection_variant_in_family / expiry_after_reconstitution_3weeks /
+    // suspension / after_opening_1month_guidance_available）では到達不能だが点眼共通シャーシとして意図的に保持する
+    // capability である（ERROR ではなく WARNING）。他 module の内訳は不変。
+    // 内訳: ADDON_REQUIRED_TAG_UNREACHABLE 36 / SCENARIO_REQUIRED_TAG_UNREACHABLE 59 /
+    //       ADDON_SCOPE_VIOLATION 4 = 99。
     const warnings = ALL_MODULES.flatMap(m => validateModule(m).errors.filter(e => e.isWarning))
     const byCode: Record<string, number> = {}
     for (const w of warnings) byCode[w.code] = (byCode[w.code] ?? 0) + 1
     assert.equal(
       warnings.length,
-      88,
+      99,
       `WARNING baseline が変化している（既知の意図的 WARNING は docs/VALIDATOR_STANDARD.md Appendix B）: ${JSON.stringify(byCode)}`,
     )
   })

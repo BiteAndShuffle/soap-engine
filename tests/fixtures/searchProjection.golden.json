@@ -816,6 +816,14 @@
       "isGenericLabel": null
     },
     {
+      "moduleId": "cataract_pirenoxine_eye_drops",
+      "matchedBrandName": null,
+      "drugDisplayLabel": "カタリン点眼用",
+      "uiLabel": null,
+      "representativeTemplateId": "cataract_pirenoxine_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
       "moduleId": "glaucoma_pg_analog_eye_drops",
       "matchedBrandName": null,
       "drugDisplayLabel": "キサラタン点眼液",
@@ -918,12 +926,20 @@
       "isGenericLabel": null
     },
     {
-      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
-      "matchedBrandName": "リオベル",
-      "drugDisplayLabel": "アログリプチン／ピオグリタゾン",
-      "uiLabel": "アログリプチン／ピオグリタゾン",
-      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
-      "isGenericLabel": true
+      "moduleId": "cataract_pirenoxine_eye_drops",
+      "matchedBrandName": "ピレノキシン懸濁性点眼液",
+      "drugDisplayLabel": "ピレノキシン懸濁性点眼液",
+      "uiLabel": "ピレノキシン懸濁性点眼液（ピレノキシン点眼液）",
+      "representativeTemplateId": "cataract_pirenoxine_eye_drops.initial",
+      "isGenericLabel": null
+    },
+    {
+      "moduleId": "cataract_pirenoxine_eye_drops",
+      "matchedBrandName": "カタリン点眼用",
+      "drugDisplayLabel": "カタリン点眼用",
+      "uiLabel": "カタリン点眼用（ピレノキシン点眼液）",
+      "representativeTemplateId": "cataract_pirenoxine_eye_drops.initial",
+      "isGenericLabel": null
     },
     {
       "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
@@ -936,14 +952,6 @@
     {
       "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
       "matchedBrandName": "ソニアス",
-      "drugDisplayLabel": "ピオグリタゾン／グリメピリド",
-      "uiLabel": "ピオグリタゾン／グリメピリド",
-      "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_sulfonylurea_combination_oral",
-      "matchedBrandName": "ソニアス",
       "drugDisplayLabel": "ソニアス",
       "uiLabel": "ソニアス（ピオグリタゾン／グリメピリド）",
       "representativeTemplateId": "dm_thiazolidinedione_sulfonylurea_combination_oral.initial",
@@ -952,18 +960,18 @@
     {
       "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
       "matchedBrandName": "メタクト",
-      "drugDisplayLabel": "ピオグリタゾン／メトホルミン",
-      "uiLabel": "ピオグリタゾン／メトホルミン",
-      "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
-      "isGenericLabel": true
-    },
-    {
-      "moduleId": "dm_thiazolidinedione_biguanide_combination_oral",
-      "matchedBrandName": "メタクト",
       "drugDisplayLabel": "メタクト",
       "uiLabel": "メタクト（ピオグリタゾン／メトホルミン）",
       "representativeTemplateId": "dm_thiazolidinedione_biguanide_combination_oral.initial",
       "isGenericLabel": null
+    },
+    {
+      "moduleId": "dm_dpp4_thiazolidinedione_combination_oral",
+      "matchedBrandName": "リオベル",
+      "drugDisplayLabel": "アログリプチン／ピオグリタゾン",
+      "uiLabel": "アログリプチン／ピオグリタゾン",
+      "representativeTemplateId": "dm_dpp4_thiazolidinedione_combination_oral.initial",
+      "isGenericLabel": true
     }
   ],
   "へ": [

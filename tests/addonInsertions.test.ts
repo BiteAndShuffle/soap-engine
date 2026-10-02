@@ -175,8 +175,15 @@ const PG_INLINE_SCENARIOS = [
   'se_periocular_pigmentation_mild_continue',
 ]
 
+/**
+ * bridge に P_ADDON_INLINE を持つ 3 件目の canonical（cataract_pirenoxine_eye_drops・2026-10-03 registry登録・PN6R 分類 B）。
+ * bridge の inline 宣言（se_blurred_vision_none の 1 箇所）を DP-22 のとおり canonical へ反映した機械的同期である。
+ */
+const CATARACT_MODULE_ID = 'cataract_pirenoxine_eye_drops'
+const CATARACT_INLINE_SCENARIOS = ['se_blurred_vision_none']
+
 describe('既存 module non-regression（addonInsertions absent は従来経路）', () => {
-  test('addonInsertions を持つ canonical scenario は bridge に P_ADDON_INLINE がある Avarept 8 件 + glaucoma_pg_analog_eye_drops 7 件のみ', () => {
+  test('addonInsertions を持つ canonical scenario は bridge に P_ADDON_INLINE がある Avarept 8 件 + glaucoma_pg_analog_eye_drops 7 件 + cataract_pirenoxine_eye_drops 1 件のみ', () => {
     const withInsertions: string[] = []
     for (const mod of ALL_MODULES) {
       for (const sc of mod.scenarios) {
@@ -186,6 +193,7 @@ describe('既存 module non-regression（addonInsertions absent は従来経路�
     assert.deepEqual(withInsertions, [
       ...AVAREPT_INLINE_SCENARIOS.map(id => `${AVAREPT_MODULE_ID}/${id}`),
       ...PG_INLINE_SCENARIOS.map(id => `${PG_MODULE_ID}/${id}`),
+      ...CATARACT_INLINE_SCENARIOS.map(id => `${CATARACT_MODULE_ID}/${id}`),
     ])
   })
 
