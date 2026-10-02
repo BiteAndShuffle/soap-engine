@@ -1276,13 +1276,15 @@ Rapid v2 の6 transition（Do・追加・変更・削除〔処方整理〕・増
 |---|---|---|---|
 | **E-1** | Vercel 環境変数の設定状況（`BASIC_AUTH_USER` / `BASIC_AUTH_PASS`）と本番 / Preview URL の公開範囲。実効的な認証境界が不明 | **OPEN** | Phase 3（第三者提供）着手時。または本番 URL を Owner 以外へ共有する時点。**現状の実装は `middleware.ts` が両変数未設定時に fail-open**（コードで確認可能な事実。方針の是非は未回答） |
 | **E-2** | 利用実態（利用者数・端末・ブラウザ、電子薬歴側へのコピー運用） | **OPEN** | Phase 2 の実運用開始時。運用要件の確定に必要 |
-| **E-3** | `main` ブランチの位置づけと Vercel が追跡するデプロイブランチ | **OPEN** | **CI 導入（S4-C）の前提。** CI を設計する時点で回答が必要 |
+| **E-3** | `main` ブランチの位置づけと Vercel が追跡するデプロイブランチ | **ANSWERED**（2026-10-02） | 回答の記録先は `prompts/PROJECT_CONTEXT.md` の Current Development Branch 宣言（`OD-BRANCH-AUTH-1` / `OD-BRANCH-BOOTSTRAP-1`）。4 つの概念を分離して記録する: ①development branch = `feat/nlp-input-panel-and-new-schema`（`OD-BRANCH-AUTH-1`）／②GitHub default branch = development branch を指す（`OD-BRANCH-BOOTSTRAP-1`・Option A。2026-10-02 に変更）／③Vercel が追跡する Production branch = `main`、Preview = それ以外の branch（**2026-10-02 時点の Owner-side の UI 観察**。GitHub default 変更の直後も `main` のまま。永続的な仕様ではなく、現行設定は Vercel 側で確認する）／④`main` の当面の役割 = Production 用 branch（Owner Decision）。**feature → `main` の release flow は E-3 に含めない**（下記）。**CI 導入（S4-C）の設計は、この回答を前提にできる** |
 | **E-4** | NLP 生成の将来方針（外部 LLM API 前提か、ローカル完結か） | **OPEN** | NLP 経路の Lifecycle を確定する時点（`docs/DEVELOPMENT_STANDARD.md` §10.5 GG-1 の解消条件と連動）、または Phase 4（SaaS）設計着手時。**外部 LLM を選ぶ場合、患者テキストが初めて信頼境界を越える**（同記録がセキュリティ上の最大の分岐点と位置づけた項目） |
 | **E-5** | 旧体系（`prompts/P0-A.md`〜`P5.md` / `docs/BOOTSTRAP_STANDARD.md` / `docs/P*_STANDARD.md`）の保守方針（凍結アーカイブ化の可否） | **OPEN** | 旧体系資産の Lifecycle を確定する時点（§10.2 Legacy の L1〜L7 判定）。**運用上の扱いは `prompts/PROJECT_CONTEXT.md` §10 が「新規作業では使用しない」と既に定めている**が、Lifecycle State としては未分類 |
 | **E-6** | bridge 原稿の知財・医学的責任の整理（執筆者・監修体制・改訂責任） | **OPEN** | **Phase 3（Productization）の完了条件。** 第三者提供を意思決定した時点で回答が必要 |
 | **E-7** | 長期構想機能（粉砕可否・腎機能等）の優先順位と次の着手領域 | **OPEN** | **「次の着手領域」は 2026-10-01 Owner Decision OD-B で回答済み**（点眼領域を重点領域とし、点眼 module 群を継続整備して完成させる。living SSOT は `prompts/PROJECT_CONTEXT.md` Current Focus。点眼領域の次の領域は改めて Owner Decision）。**長期構想機能（粉砕可否・腎機能等）の優先順位は未回答**で、その優先順位を決める時点が残る Trigger |
 
-**ANSWERED は現時点で 0 件である。** E-7 は「次の着手領域」部分のみ回答済み（OD-B）で、状態は OPEN のままである。他の 6 件は Owner 回答待ちであり、Repository 内に回答の記録は存在しない。
+**ANSWERED は現時点で 1 件（E-3）である。** E-7 は「次の着手領域」部分のみ回答済み（OD-B）で、状態は OPEN のままである。他の 5 件は Owner 回答待ちであり、Repository 内に回答の記録は存在しない。
+
+**E-3 の範囲外の未解決事項（2026-10-02）**: feature → `main` の release flow（Production への反映方針・統合手順・タグ運用）は未設計である。E-3 の回答には含めておらず、設計する場合は別の Owner Decision とする。
 
 **Phase との対応**: E-3 は Phase 2 の CI 整備、E-1 / E-6 は Phase 3、E-4 は Phase 4 に対応する
 （`docs/DEVELOPMENT_STANDARD.md` §12）。E-2 / E-5 / E-7 は Phase 2 で必要になる。
