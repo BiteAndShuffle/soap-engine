@@ -10,6 +10,11 @@
 #   根拠: PN8 が RELEASE_OK に到達した（canonical JSON 生成・registry 接続・PN7 監査・tsc / build / npm test / npm run audit /
 #         test:multi-drug の完了。PN7 の CHECK 2 件〔Z 責務一貫性 / INV-4c GENERIC_GATE_TAG_DROPPED〕は Owner が設計どおりとして承認済み）。
 #   本遷移の変更範囲: STATUS 行と本状態説明コメントのみ。SCENARIOS 本文・Header 設計値・OD-1〜OD-11・P-3 / P-4 / P-5 の記載は変更していない。
+#   [Post-release correction・2026-10-03 Owner 指示・STATUS は JSON_COMPLETE のまま]
+#         (1) treatment_start 3 scenario（initial / restart / external_start）の P 本文を 2 行へ統一した
+#             〔旧: 「…進行を抑えるために使用する薬です。」「白内障の進行を抑えるため、継続して…」→ 新: 「…進行を抑える薬です。」「進行抑制のため、継続して使用することが大切です。」。
+#             意味は「進行抑制」のまま。P_CLOSING・他 scenario 本文は変更していない〕。
+#         (2) module-level の旧製品名 search alias を追加した（下記「旧製品名の検索到達性」）。
 #   [注意] JSON_COMPLETE は lifecycle status であり、P-3 / P-4 / P-5（未収載製品・GE の全数確認 / 現在の流通状況 /
 #         薬局調製後交付運用の実務確認）が解決したことを意味しない。これらは未解決の Fact follow-up のままである。
 #
@@ -214,6 +219,15 @@
 #   本 Header の値を無条件に継承しない。
 #   カリーユニ・ニットー（F-5）も同様に未収載（P-3）。
 #
+# 旧製品名の検索到達性（[OI]・2026-10-03 Owner intent。post-release correction）:
+#   「カリーユニ」で検索したときに本 module へ到達できるよう、module-level の search alias
+#   （drug.search.exactAliases の「カリーユニ点眼液」「カリーユニ」、drug.search.nameAliases / drug.nameAliases の
+#   「かりーゆにてんがん」「かりーゆに」）のみを追加した（DP-09 / DP-18。generic reachability は module-level alias で表現する）。
+#   これは historical product-name search compatibility に限る。カリーユニを現行 marketed product として
+#   brandCatalog へ追加する判断ではなく、特定 brand への紐付け・brand-scoped alias（aliases / normalizedAliases / aliasToBrand）への
+#   複製もしていない。カリーユニの実在・流通・製剤特性は添付文書で再確認しておらず（F-5）、Fact へ昇格させていない。
+#   P-3 / P-4 / P-5 は本追加によって解決していない。
+#
 # 点眼共通シャーシ原則（azulene / H1 / PG / chemical mediator と共通）:
 #   - scenario / addon の存在 = 共通シャーシが持つ capability（該当製品がないことを理由に削除しない）
 #   - brandCatalog.handlingTags = その製品で確定している property、または family-level variant candidate
@@ -281,14 +295,20 @@ drug:
       # [P] bare 名（点眼シャーシ実績）。ピレノキシンは成分名で、両 entry の generic identity
       - "カタリン"
       - "ピレノキシン"
+      # [OI] 旧製品名の検索到達性のみ（2026-10-03 Owner intent。module-level。brandCatalog entry ではない。上記「旧製品名」注記参照）
+      - "カリーユニ点眼液"
+      - "カリーユニ"
       # [P] 薬効分類名（シャーシ実績）
       - "白内障治療点眼薬"
-    # nameAliases: brandNames 順に各 entry の aliases を連結（RULES §8 / §23）。
+    # nameAliases: brandNames 順に各 entry の aliases を連結（RULES §8 / §23）したうえで、
+    # 末尾に module-level の旧製品名（かりーゆに〜。[OI]）を置く。brand-scoped alias には複製しない。
     nameAliases:
       - "かたりんてんがん"
       - "かたりん"
       - "ぴれのきしんけんだくせいてんがん"
       - "ぴれのきしんけんだくせい"
+      - "かりーゆにてんがん"
+      - "かりーゆに"
     # [P] SCENARIOS 本文・categoryPath に現れる語のみ
     keywords:
       - "白内障"
@@ -310,6 +330,8 @@ drug:
     - "かたりん"
     - "ぴれのきしんけんだくせいてんがん"
     - "ぴれのきしんけんだくせい"
+    - "かりーゆにてんがん"
+    - "かりーゆに"
   # ─────────────────────────────────────────
   # brandCatalog
   #   - genericKey は設定しない（RULES §21 / DP-18。displayGenericName へのフォールバックで成立）。
@@ -590,8 +612,8 @@ A
 白内障治療点眼薬は、白内障の進行抑制を目的として追加となった。
 水晶体の混濁の進行を抑えることで、白内障の進行抑制を目的として使用する。
 P
-白内障治療点眼薬は、白内障の進行を抑えるために使用する薬です。
-白内障の進行を抑えるため、継続して使用することが大切です。
+白内障治療点眼薬は、白内障の進行を抑える薬です。
+進行抑制のため、継続して使用することが大切です。
 P_ADDON
 - addon_eye_drop_tip_contamination
 - addon_eye_drop_after_opening_expiry
@@ -759,8 +781,8 @@ A
 
 
 P
-白内障治療点眼薬は、白内障の進行を抑えるために使用する薬です。
-白内障の進行を抑えるため、継続して使用することが大切です。
+白内障治療点眼薬は、白内障の進行を抑える薬です。
+進行抑制のため、継続して使用することが大切です。
 
 
 P_ADDON
@@ -804,8 +826,8 @@ A
 
 
 P
-白内障治療点眼薬は、白内障の進行を抑えるために使用する薬です。
-白内障の進行を抑えるため、継続して使用することが大切です。
+白内障治療点眼薬は、白内障の進行を抑える薬です。
+進行抑制のため、継続して使用することが大切です。
 
 
 P_ADDON
