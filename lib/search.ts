@@ -1507,9 +1507,26 @@ export function getDrugSuggestions(
               resolution: makeBrandResolution(legacyBrand, legacyLabel),
             })
           } else {
+            // legacyBrandAliases の前方入力（presentation のみ）: 宣言済みの旧名称 alias の**完全一致ではない前方一致**で、
+            // 正規化後 3 文字以上（1〜2 文字は best-effort 帯。DP-18）、前方一致する旧名称 alias 群の解決先 brand が 1 種類、
+            // かつ従来の導出結果が generic の場合に限り、uiLabel だけを解決先 brand の displayGenericName にする。
+            // prefix 段階では brand を確定しない（resolution は generic のまま・matchedBrandName / drugDisplayLabel も従来のまま。
+            // handlingTags / addon / ranking / bucket / dedup は不変）。完全一致は上の分岐（brand resolution）が担う。
+            let legacyPrefixLabel: string | undefined
+            if (tokens.length === 1 && tokens[0].length >= 3 && unresolved.denotation === 'generic') {
+              const prefixTargets = new Set<string>()
+              for (const [alias, brandKey] of Object.entries(entry.legacyBrandAliasMap)) {
+                if (alias !== tokens[0] && alias.startsWith(tokens[0])) prefixTargets.add(brandKey)
+              }
+              if (prefixTargets.size === 1) {
+                const [target] = [...prefixTargets]
+                if (entry.brandNames.includes(target)) legacyPrefixLabel = entry.brandCatalogGenericMap[target]
+              }
+            }
             candidates.push({
               brand: undefined,
               displayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
+              ...(legacyPrefixLabel !== undefined ? { uiLabel: legacyPrefixLabel } : {}),
               bucket: 'lowConfidence',
               resolution: unresolved,
             })

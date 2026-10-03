@@ -13,6 +13,7 @@
  *   L-4  SOAP 本文に formal 名（ピレノキシン懸濁性点眼液）が出ない
  *   L-5  宣言対象外の cataract 既存 query は出力不変 / 宣言を取り除くと旧挙動に戻る
  *   L-6  未宣言 module・他 query の出力不変 / brandCatalog・aliasToBrand へ旧名称を複製していない
+ *   L-7  旧名称 alias の前方入力（正規化後 3 文字以上）は uiLabel のみ ピレノキシン点眼液 になる（brand は確定しない）
  */
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -147,7 +148,7 @@ describe('L-5 宣言対象外の cataract 既存 query は変化しない', () =
 
   test('ピレノキシン / カタリン / 白内障 / てんがん / ピレノキシン点眼液 / カタリン点眼液 ほかは宣言の有無で不変', () => {
     const legacy = stripped()
-    for (const q of ['ピレノキシン', 'カタリン', '白内障', 'てんがん', 'ピレノキシン点眼液', 'カタリン点眼液', 'ぴれのきしん', 'かたりん', 'かりー', 'かりーゆ']) {
+    for (const q of ['ピレノキシン', 'カタリン', '白内障', 'てんがん', 'ピレノキシン点眼液', 'カタリン点眼液', 'ぴれのきしん', 'かたりん', 'か', 'かり']) {
       assert.equal(JSON.stringify(getDrugSuggestions(q, index, 8)), legacy(q), `query: ${q}`)
     }
   })
@@ -158,6 +159,66 @@ describe('L-5 宣言対象外の cataract 既存 query は変化しない', () =
       const r = JSON.parse(legacy(q)) as Array<{ drugDisplayLabel: string }>
       assert.equal(r.length, 1)
       assert.equal(r[0].drugDisplayLabel, OTHER_BRAND)
+    }
+  })
+})
+
+describe('L-7 前方入力（3 文字以上）は presentation（uiLabel）のみ補正し、brand を確定しない', () => {
+  const PREFIX_QUERIES = ['かりー', 'カリー', 'かりーゆ', 'カリーユ', 'かりーゆにて', 'かりーゆにてん', 'かりーゆにてんが']
+  const stripped = () => {
+    const m = structuredClone(cataract) as ModuleData
+    delete m.drug!.search!.legacyBrandAliases
+    const idx = ALL_MODULES.flatMap(x => buildSearchIndex(x.moduleId === CATARACT_ID ? m : x))
+    return (q: string) => getDrugSuggestions(q, idx, 8)
+  }
+
+  test('uiLabel は ピレノキシン点眼液。resolution（generic）・matchedBrandName・drugDisplayLabel・フラグは従来のまま', () => {
+    const legacy = stripped()
+    for (const q of PREFIX_QUERIES) {
+      const now = getDrugSuggestions(q, index, 8)
+      const before = legacy(q)
+      assert.equal(now.length, before.length, q)
+      const c = now.find(x => x.moduleId === CATARACT_ID)!
+      const b = before.find(x => x.moduleId === CATARACT_ID)!
+      assert.equal(c.uiLabel, GENERIC_DISPLAY, q)
+      assert.equal(c.resolution.denotation, 'generic', q)
+      assert.equal(c.matchedBrandName, undefined, q)
+      assert.equal(c.drugDisplayLabel, b.drugDisplayLabel, q)
+      assert.equal(c.drugDisplayLabel, OTHER_BRAND, `${q}: drugDisplayLabel は従来値のまま`)
+      assert.deepEqual(c.resolution, b.resolution, q)
+      assert.equal(c.isGenericLabel, undefined, q)
+      assert.ok(!('suppressMatchedBrandLabel' in c), `${q}: presentation flag は完全一致の候補にだけ付く`)
+      // uiLabel 以外は宣言の有無で完全一致（順序・件数・他 module を含む）
+      const strip = (r: typeof now) => JSON.stringify(r.map(({ uiLabel: _u, ...rest }) => rest))
+      assert.equal(strip(now), strip(before), q)
+    }
+  })
+
+  test('prefix 段階では brand を確定しないため handlingTags は交差集合（suspension 系 Addon は出ない）', () => {
+    const c = getDrugSuggestions('かりー', index, 8).find(x => x.moduleId === CATARACT_ID)!
+    const tags = resolveBrandHandlingTags(c.resolution, cataract.drug!.brandCatalog!, c.matchedBrandName)
+    assert.ok(!tags?.includes('suspension'))
+    const visible = getVisibleAddonKeys(cataract.addons, cataract.scenarios.find(s => s.id === 'initial')!, tags)
+    assert.ok(!visible.includes('addon_eye_drop_suspension_shake'))
+    assert.equal(resolveSubjectFromResolution(c.resolution), GENERIC_DISPLAY)
+  })
+
+  test('1〜2 文字（かり）は従来挙動のまま、1 文字（か）は通常の brand 経路のまま', () => {
+    const legacy = stripped()
+    for (const q of ['か', 'かり']) {
+      assert.equal(JSON.stringify(getDrugSuggestions(q, index, 8)), JSON.stringify(legacy(q)), q)
+    }
+  })
+
+  test('完全一致 4 query の brand resolution・SOAP 主語・suspension Addon は不変', () => {
+    for (const q of ['カリーユニ', 'カリーユニ点眼液', 'かりーゆに', 'かりーゆにてんがん']) {
+      const c = getDrugSuggestions(q, index, 8)[0]
+      assert.equal(c.resolution.denotation, 'brand', q)
+      assert.equal(c.matchedBrandName, TARGET_BRAND, q)
+      assert.equal(c.uiLabel, GENERIC_DISPLAY, q)
+      assert.equal(c.suppressMatchedBrandLabel, true, q)
+      const tags = resolveBrandHandlingTags(c.resolution, cataract.drug!.brandCatalog!, c.matchedBrandName)
+      assert.ok(tags?.includes('suspension'), q)
     }
   })
 })

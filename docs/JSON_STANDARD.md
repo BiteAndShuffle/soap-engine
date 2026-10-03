@@ -156,6 +156,7 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | 発動時の候補 | 1 件。`resolution` は `denotation: 'brand'`（`brandKey` = 宣言した現行 brand）、`matchedBrandName` = その brand。**候補表示（`drugDisplayLabel` / `uiLabel`）と `resolution.subject`（SOAP の `{{drug_subject}}`）は `brandCatalog[brand].displayGenericName`**（formal な brand 名を human-facing に出さない）。handlingTags / addon の可視性は `brandKey`（brand identity）由来。Topbar の secondary label（matchedBrandName の補足表示）は、**presentation 専用フラグ `suppressMatchedBrandLabel`**（`DrugSuggestionItem` 上のみ。canonical JSON の field ではない。`isGenericLabel` は使わない）で抑制する |
 | 不変 | ranking / scoring / gateFloor / bucket の優先順 / genericMode・direct・sibling・genericHeader / genericKey semantics / brand resolution semantics / 他 brand の候補。未宣言 module の挙動 |
 | 省略時 | 従来挙動を完全に維持する（全 module 必須ではない） |
+| 前方入力 | 宣言 alias の**完全一致ではない前方入力**（正規化後 **3 文字以上**。1〜2 文字は best-effort 帯〔DP-18〕で対象外）が `lowConfidence` 経路に入り、前方一致する宣言 alias 群の解決先 brand が 1 種類で、従来の導出結果が generic のときに限り、**`uiLabel` のみ**解決先 brand の `displayGenericName` にする。brand は確定せず、`resolution`（generic）・`matchedBrandName`・`drugDisplayLabel`・handlingTags・addon は従来のまま |
 | 現在使用している module | `cataract_pirenoxine_eye_drops`（旧販売名「カリーユニ点眼液」系 4 alias → `ピレノキシン懸濁性点眼液`） |
 
 **matchPolicy 任意フィールド（opt-in・全 module 必須ではない）**

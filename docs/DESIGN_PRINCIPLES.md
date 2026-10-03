@@ -752,6 +752,7 @@ salt-name full reading を family 内の全 brand の `aliases` へ複製する�
 - 到達性は従来どおり `drug.search.exactAliases` / `nameAliases` が担う（DP-09）。**brand-scoped alias（`aliases` / `normalizedAliases` / `aliasToBrand`）へは複製しない**
 - 到達後の帰属は、`drug.search.legacyBrandAliases`（旧名称 alias → 現行 brand key。`docs/JSON_STANDARD.md`）に**明示的に宣言した alias だけ**を、authoritative な現行 brand identity へ解決する（opt-in）。宣言は既存 alias の解決先の分類であり、新しい alias source ではない
 - **brand identity（`resolution.brandKey`。handlingTags・addon 可視性の根拠）と human-facing 表現（候補表示・SOAP 主語 `resolution.subject`）は別軸**とし、解決後の human-facing 表現は `brandCatalog[brand].displayGenericName` を用いる。formal な brand 名（内部識別）を SOAP に露出させない。これは brand 解決後の表示を一般名にする既存の前例（連結一致・fallback の `makeBrandResolution(brand, 一般名表示)`）と同じ形である。Topbar の secondary label（matchedBrandName の補足）は presentation 専用フラグ `suppressMatchedBrandLabel` で抑制し、`isGenericLabel`（一般名見出しの意味を持ち、結果の組み立てにも使われる）は使わない
+- **前方入力の段階では brand identity を確定しない**（二段階）。宣言 alias の完全一致のみ brand identity へ確定し、正規化後 3 文字以上の前方入力は `uiLabel` だけを `displayGenericName` に補正する（`resolution` は generic のまま）。1〜2 文字は best-effort 帯（OD-DRUG-PREFIX-BOUNDARY-1）で対象外
 - 未宣言 module の挙動は完全に不変。ranking / scoring / gate / bucket / genericKey semantics は変更しない
 - 初回適用: `cataract_pirenoxine_eye_drops` の旧販売名「カリーユニ点眼液」系 4 alias → `ピレノキシン懸濁性点眼液`（Owner Decision 2026-10-03。旧販売名である旨は Owner 提供の Fact）
 - 一般名そのものの `brandNames[0]` 縮退（Q-S1）を一般に解決するものではない
