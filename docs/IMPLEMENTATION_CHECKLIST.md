@@ -109,6 +109,11 @@ PN7（Cross Reference Audit）は JSON 構造の静的整合性を、PN8 は tsc
 □ ブランド名⇔一般名の相互到達性（一方の型で検索した際、対応する他方の型の候補が消えていないか）
 □ 適応ラベルの表示（crossModuleIndicationLabel 等、適応ラベルを持つモジュールが対象の場合）
 □ 単一モジュール薬（他モジュールと成分・ブランドを共有しない薬剤）への回帰がないこと
+□ legacy brand alias → 現行 brand（`drug.search.legacyBrandAliases` を宣言した module が対象の場合）:
+  宣言した旧販売名／かな読みで候補が 1 件（他 brand を表示しない）、resolution が brand（brandKey = 現行 brand）、
+  候補表示と SOAP 主語が displayGenericName（formal な brand 名が SOAP と Topbar のセカンドラインに出ない）、brand identity 由来の handlingTags と
+  addon（例: 懸濁性の振り混ぜ・先端上向き保管）が表示されること。宣言対象外の既存 query と未宣言 module の候補集合・順序・表示が不変、
+  brandCatalog の aliases / normalizedAliases / aliasToBrand へ複製していないこと
 ```
 
 **シナリオ**

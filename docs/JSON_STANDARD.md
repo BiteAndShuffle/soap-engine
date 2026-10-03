@@ -6,7 +6,7 @@ SOAP Engine — canonical JSON 構造標準
 「なぜそうするのか」という設計根拠は DESIGN_PRINCIPLES.md を参照してください。
 「まだ決めていないこと」は OPEN_DESIGN_QUESTIONS.md を参照してください。
 
-最終更新: 2026-10-03（Express opt-in: `expressModes` を JS-A「全 module 必須」から外し JS-B「Express 対象として Owner が明示的に opt-in 選定した module のみ」へ移した。JS-expressModes は存在する場合の構造規定と明記。JS-C のエントリ数の注記を非 Express module の section absent と整合。既存 canonical は無変更・migration なし。同日以前: 2026-09-25（OD-C8: JS-A「O フィールドルール」へ generic noun exception〔frozen Bridge の generic noun / dosage-form noun の逐語保持に限る・本文から機械判定・条件の正本は RULES §16 / PN7 Check I〕を追記。既存 canonical は無変更。2026-09-24: DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新））
+最終更新: 2026-10-03（`drug.search.legacyBrandAliases`〔旧名称 alias → 現行 brand key の opt-in 解決表・省略時は従来挙動〕を drug.search 節へ追加。同日: Express opt-in: `expressModes` を JS-A「全 module 必須」から外し JS-B「Express 対象として Owner が明示的に opt-in 選定した module のみ」へ移した。JS-expressModes は存在する場合の構造規定と明記。JS-C のエントリ数の注記を非 Express module の section absent と整合。既存 canonical は無変更・migration なし。同日以前: 2026-09-25（OD-C8: JS-A「O フィールドルール」へ generic noun exception〔frozen Bridge の generic noun / dosage-form noun の逐語保持に限る・本文から機械判定・条件の正本は RULES §16 / PN7 Check I〕を追記。既存 canonical は無変更。2026-09-24: DP-22: JS-B へ `scenarios[].addonInsertions`〔bridge の P 本文内に `P_ADDON_INLINE` がある scenario のみ必須・ない場合は absent〕を追加。既存 field の Requirement Class は不変。2026-09-23: S3-1: JS-A-composition の `sMergePolicy` 備考へ「全 module 共通の model_managed 固定値・exact generation value の正本は PN2」を追記〔値は重複記載しない〕。requiredness は JS-A のまま不変。同日先行: JS-A-display の `drugGeneric` 備考へ semantics と生成規則の要約を記載〔module 単位の一般名系表示ラベル・bridge 明示は exact copy・未宣言は `drug.genericName` を fallback・詳細は PN2〕。表の直後へ `drugClassLabel` / `brandCatalog[*].displayGenericName` / `display.drugGeneric` の責務分離を追記。canonical は無変更。2026-09-22: JS-B「多剤合成対象 module のみ必須」の 4 key へ current-generation policy を追記〔新規 module では生成しない・既存 21 module は preserve・判定条件は未定義のまま〕。JS-D の当該行へ同旨の注記。既存表・見出し・Requirement Class 分類は不変。2026-09-17: JS-B「増量・減量シナリオが存在する module」表の現在の対象を実測値へ更新）））
 
 ---
 
@@ -145,6 +145,18 @@ moduleId → moduleVersion → categoryPath → composition → drug → drugRes
 | `matchPolicy.preferExactAlias` | boolean | — |
 | `matchPolicy.allowPrefixMatch` | boolean | — |
 | `matchPolicy.suppressCrossModuleSuggestionsOnExactHit` | boolean | 全 module で `true` |
+
+**`drug.search.legacyBrandAliases`（任意・opt-in。型は `Record<string, string>`：旧名称 alias → 現行 brand key）**
+
+| 項目 | 内容 |
+|---|---|
+| 意味 | 旧販売名など、現行 brand の旧名称 alias から、**authoritative な現行 brand key** への解決表 |
+| alias source か | **否**。キーは必ず `exactAliases` または `nameAliases`（比較は `normalizeText` 後）に**既に存在する** alias で、値は `drug.brandCatalog` の現行 brand key。この項目単独で検索到達性は増えない。`brandCatalog[].aliases` / `normalizedAliases` / `aliasToBrand` へは複製しない。ModuleValidator の rule は未追加（tests で「キー ⊆ exactAliases ∪ nameAliases」「値 ∈ brandCatalog」を確認する。複数 module へ拡大した時点で validator 化を再検討する） |
+| 発動条件 | 単一トークンのクエリが宣言 alias と（正規化後）**完全一致**し、かつ通常の brand 解決（`resolveAllHighPrecisionBrands` / `resolveBrandName`）で brand が解決されない場合のみ |
+| 発動時の候補 | 1 件。`resolution` は `denotation: 'brand'`（`brandKey` = 宣言した現行 brand）、`matchedBrandName` = その brand。**候補表示（`drugDisplayLabel` / `uiLabel`）と `resolution.subject`（SOAP の `{{drug_subject}}`）は `brandCatalog[brand].displayGenericName`**（formal な brand 名を human-facing に出さない）。handlingTags / addon の可視性は `brandKey`（brand identity）由来。Topbar の secondary label（matchedBrandName の補足表示）は、**presentation 専用フラグ `suppressMatchedBrandLabel`**（`DrugSuggestionItem` 上のみ。canonical JSON の field ではない。`isGenericLabel` は使わない）で抑制する |
+| 不変 | ranking / scoring / gateFloor / bucket の優先順 / genericMode・direct・sibling・genericHeader / genericKey semantics / brand resolution semantics / 他 brand の候補。未宣言 module の挙動 |
+| 省略時 | 従来挙動を完全に維持する（全 module 必須ではない） |
+| 現在使用している module | `cataract_pirenoxine_eye_drops`（旧販売名「カリーユニ点眼液」系 4 alias → `ピレノキシン懸濁性点眼液`） |
 
 **matchPolicy 任意フィールド（opt-in・全 module 必須ではない）**
 

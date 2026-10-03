@@ -14,7 +14,7 @@
 #         (1) treatment_start 3 scenario（initial / restart / external_start）の P 本文を 2 行へ統一した
 #             〔旧: 「…進行を抑えるために使用する薬です。」「白内障の進行を抑えるため、継続して…」→ 新: 「…進行を抑える薬です。」「進行抑制のため、継続して使用することが大切です。」。
 #             意味は「進行抑制」のまま。P_CLOSING・他 scenario 本文は変更していない〕。
-#         (2) module-level の旧製品名 search alias を追加した（下記「旧製品名の検索到達性」）。
+#         (2) 旧販売名「カリーユニ」系の search alias を追加し、drug.search.legacyBrandAliases で現行 brand「ピレノキシン懸濁性点眼液」へ解決する（下記「旧販売名の検索到達性」・[H-F6]）。
 #   [注意] JSON_COMPLETE は lifecycle status であり、P-3 / P-4 / P-5（未収載製品・GE の全数確認 / 現在の流通状況 /
 #         薬局調製後交付運用の実務確認）が解決したことを意味しない。これらは未解決の Fact follow-up のままである。
 #
@@ -120,6 +120,13 @@
 #   [F-5] 「カリーユニ点眼液0.005%」の名称は F-2 の主要文献 1) にのみ現れる（参天の懸濁製剤）。
 #         ピレノキシン点眼用0.005%「ニットー」（YJ 1319706Q1083）は PMDA 添付文書本文を取得できなかった。
 #         いずれも未確認のため収載しない（PENDING P-3）。
+#         〔2026-10-03 更新: カリーユニについては下記 [H-F6] を参照。ニットー等は引き続き未確認〕
+#   [H-F6] 「ピレノキシン懸濁性点眼液0.005%「参天」」の旧販売名は「カリーユニ点眼液0.005%」である
+#         （Owner 提供の Fact・2026-10-03。根拠は参天製薬の公式資料である旨の Owner 申告。**資料名・版・確認日は未記録**で、
+#         本 bridge 作成側では再確認していない → HEADER_DESIGN_INPUT_STANDARD §1 の source / version / verification date の
+#         記録待ち）。これにより、カリーユニは別製品ではなく現行 entry 2 の旧販売名として扱う。F-2 の製剤特性
+#         （懸濁性・振り混ぜ・先端上向き保管）は現行品の添付文書の記載であり、旧販売名時代の製剤が同一かどうかは
+#         本 Fact の範囲外（Owner の運用判断で現行 brand の handlingTags を適用する）。
 #
 # ─────────────────────────────────────────
 # カタリンの patient-facing state =「調製後製剤」（Owner Decision OD-5・確定 2026-10-01）:
@@ -207,7 +214,7 @@
 # 未確定事項（Fact follow-up。Freeze 済み Fact ではない）:
 #   P-1 [解決] Owner Decision OD-1〜OD-11 はすべて確定（2026-10-01）
 #   P-2 [解決・2026-10-01] Owner による Freeze 指示（STATUS: DRAFT → FROZEN_FOR_PN1）
-#   P-3 他製品（カタリンK / カリーユニ / ニットー / 他 GE）の全数確認。現 Header の reserved / 非付与は
+#   P-3 他製品（カタリンK / ニットー / 他 GE。カリーユニは [H-F6] により現行 entry 2 の旧販売名として扱うが、資料の記録は待ち）の全数確認。現 Header の reserved / 非付与は
 #       「確認した PMDA 添付文書 3 件の範囲」に基づく暫定扱い
 #   P-4 各製品の現在の販売・流通状況（添付文書からは確認できない。供給状況 DB は取得不能〔HTTP 403〕）
 #   P-5 カタリンの「薬局調製後に交付」運用の実務確認（Owner intent。添付文書から断定できない）
@@ -219,14 +226,16 @@
 #   本 Header の値を無条件に継承しない。
 #   カリーユニ・ニットー（F-5）も同様に未収載（P-3）。
 #
-# 旧製品名の検索到達性（[OI]・2026-10-03 Owner intent。post-release correction）:
-#   「カリーユニ」で検索したときに本 module へ到達できるよう、module-level の search alias
-#   （drug.search.exactAliases の「カリーユニ点眼液」「カリーユニ」、drug.search.nameAliases / drug.nameAliases の
-#   「かりーゆにてんがん」「かりーゆに」）のみを追加した（DP-09 / DP-18。generic reachability は module-level alias で表現する）。
-#   これは historical product-name search compatibility に限る。カリーユニを現行 marketed product として
-#   brandCatalog へ追加する判断ではなく、特定 brand への紐付け・brand-scoped alias（aliases / normalizedAliases / aliasToBrand）への
-#   複製もしていない。カリーユニの実在・流通・製剤特性は添付文書で再確認しておらず（F-5）、Fact へ昇格させていない。
-#   P-3 / P-4 / P-5 は本追加によって解決していない。
+# 旧販売名の検索到達性（2026-10-03 Owner Decision・post-release correction。根拠 Fact は [H-F6]）:
+#   「カリーユニ」（カリーユニ点眼液）で検索したときに、現行 brand「ピレノキシン懸濁性点眼液」へ解決する。
+#   - 到達性: drug.search.exactAliases の「カリーユニ点眼液」「カリーユニ」、drug.search.nameAliases / drug.nameAliases の
+#     「かりーゆにてんがん」「かりーゆに」（module-level。brandCatalog の aliases / normalizedAliases / aliasToBrand へは複製しない）
+#   - 解決: drug.search.legacyBrandAliases（旧販売名 alias → 現行 brand key。新しい alias source ではない opt-in 解決表）。
+#     候補は 1 件、resolution は brand（brandKey = ピレノキシン懸濁性点眼液 → handlingTags は suspension ほか、振り混ぜ・先端上向き保管の
+#     Addon が表示される）。候補表示と SOAP 主語は displayGenericName「ピレノキシン点眼液」（formal な brand 名は SOAP に出さない）。
+#     カタリン点眼用へは解決しない。
+#   - カリーユニを別の現行 marketed product として brandCatalog へ追加する判断ではない。
+#   - P-3 / P-4 / P-5 は本追加によって解決していない。
 #
 # 点眼共通シャーシ原則（azulene / H1 / PG / chemical mediator と共通）:
 #   - scenario / addon の存在 = 共通シャーシが持つ capability（該当製品がないことを理由に削除しない）
@@ -309,6 +318,16 @@ drug:
       - "ぴれのきしんけんだくせい"
       - "かりーゆにてんがん"
       - "かりーゆに"
+    # [OI] 2026-10-03 Owner Decision。旧販売名 alias → 現行 brand key の解決表（opt-in）。新しい alias source ではなく、
+    # 上の exactAliases / nameAliases に既に存在する alias だけをキーとする（検索到達性は増やさない）。brandCatalog の
+    # aliases / normalizedAliases / aliasToBrand へは複製しない（DP-09 / DP-18）。解決先は authoritative な現行 brand key
+    # （handlingTags / addon 可視性は brand identity 由来）。候補表示と SOAP 主語は brandCatalog[brand].displayGenericName
+    # （ピレノキシン点眼液）を使い、formal な brand 名を human-facing に出さない。根拠 Fact は上の [H-F6] を参照。
+    legacyBrandAliases:
+      "カリーユニ点眼液": "ピレノキシン懸濁性点眼液"
+      "カリーユニ": "ピレノキシン懸濁性点眼液"
+      "かりーゆにてんがん": "ピレノキシン懸濁性点眼液"
+      "かりーゆに": "ピレノキシン懸濁性点眼液"
     # [P] SCENARIOS 本文・categoryPath に現れる語のみ
     keywords:
       - "白内障"

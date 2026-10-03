@@ -9,7 +9,7 @@ SOAP Engine — 設計保留事項
 判断が確定した項目は DESIGN_PRINCIPLES.md または JSON_STANDARD.md へ移管し、
 このドキュメントから削除します。
 
-最終更新: 2026-09-27（Unit「Rapid v2 temporary exclusion 解除」: `allergy_chemical_mediator_release_inhibitor_eye_drops`
+最終更新: 2026-10-03（Q-S1 へ局所 mitigation〔`drug.search.legacyBrandAliases`〕の実装を追記。Q-S1 自体は未解決のまま。先行: 2026-09-27（Unit「Rapid v2 temporary exclusion 解除」: `allergy_chemical_mediator_release_inhibitor_eye_drops`）
 の zero-base rebuild 完了（commit `05e47a1`）を受けて実施した read-only release readiness audit が PASS したことを
 受け、Owner Decision により Q-RAPID1 の残論点①（一時除外の解除）を確定した。`lib/rapidV2.ts` の
 `RAPID_V1_TEMPORARY_EXCLUSIONS` を空集合へ変更し、現在の registered corpus に v1 profile module は 0 件である。
@@ -312,6 +312,15 @@ Tier2 が `dm_glp1ra_injection` の5ブランド全件・配合剤3件（ソリ�
 
 **現時点の扱い**
 2026-07、`lib/search.ts` の `resolveAllHighPrecisionBrands()` に `brandCatalogGenericMap` 参照を追加し、Tier1・Tier3 は解決済み（実測確認済み）。同日、`dm_glp1ra_injection` / `dm_insulin_glp1_combination` / `dm_insulin_mixed_rapid_long` へ一般名読みエイリアスを追加し、これらモジュールにおける Tier2 も解消済み（実測確認済み）。`derm_heparinoid_moisturizer_spray` の Tier2 相当（ヒルドイドフォーム）は、当時対象外のまま残存していたが、`drug.search.exactAliases` への bridge 起点の追記により解消済みである（`npm run audit` 実測: `GENERIC_NAME_UNREACHABLE` CHECK 0 / FAIL 0）。一般名読み到達性を機械的に監査する仕組み（残課題3）は `scripts/audit-generic-name-reachability.ts` として実装済みであり、今後の module 追加・変更時の検出責務を引き続き持つ。同 audit の `GENERIC_NAME_UNREACHABLE` severity は CHECK から FAIL へ昇格済みである。`lib/moduleValidator.ts` への組込み判断、および build / CI gate への配線判断は未了のままである。本 Q-S1 は残課題1・残課題2 とあわせて未解決のまま残る。
+
+**2026-10-03 追記: 局所 mitigation の実装（Q-S1 は CLOSE しない）**
+旧販売名 alias（`cataract_pirenoxine_eye_drops` の「カリーユニ」系）で到達した場合に、候補表示が `brandNames[0]` へ縮退し、
+SOAP 主語・handlingTags が brand identity と対応しなかった問題について、alias 単位の opt-in `drug.search.legacyBrandAliases`
+（旧名称 alias → 現行 brand key）を導入した（`docs/JSON_STANDARD.md` / `docs/DESIGN_PRINCIPLES.md` DP-18 追記）。
+宣言した alias のクエリのみ、現行 brand identity（`resolution.brandKey`）へ解決し、候補表示と SOAP 主語は `displayGenericName` とする。
+未宣言 module と、cataract の宣言対象外の既存 query は挙動不変である。**これは `brandNames[0]` 縮退の一般解決ではなく、
+本節が扱う global な縮退（lowConfidence 経路の代表 brand 表示）は未解決のままである。** 全 module 共通の挙動変更は、
+実測で 666 クエリ中 37 件の出力変化（insulin / heparinoid / azulene 等）を確認したため採用していない。
 
 ---
 

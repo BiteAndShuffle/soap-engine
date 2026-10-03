@@ -197,7 +197,7 @@ export default function Topbar({
                 >
                   {/* 薬剤名のみ表示（シナリオ名なし） */}
                   <span className={s.suggestionMain}>{item.uiLabel ?? item.drugDisplayLabel}</span>
-                  {!item.isGenericLabel && item.matchedBrandName && item.matchedBrandName !== item.drugDisplayLabel && (
+                  {!item.isGenericLabel && !item.suppressMatchedBrandLabel && item.matchedBrandName && item.matchedBrandName !== item.drugDisplayLabel && (
                     <span className={s.suggestionSubGroup}>
                       <span className={s.suggestionDrug}>{item.matchedBrandName}</span>
                     </span>

@@ -468,6 +468,23 @@ export interface DrugSearch {
    * 例（ローション）: ["ろー", "ろーしょん"]
    */
   formulationSearchTokens?: string[]
+  /**
+   * 旧名称 alias（旧販売名など）→ 現行 brand key の解決表（opt-in）。
+   *
+   * **新しい alias source ではない。** キーは必ず `exactAliases` または `nameAliases` に既に存在する alias（正規化後に一致）であり、
+   * 値は `drug.brandCatalog` の現行 brand key（authoritative な brand identity）でなければならない。
+   * この項目単独で検索到達性は増えない（到達は従来どおり exactAliases / nameAliases が担う）。
+   * brandCatalog[].aliases / normalizedAliases / aliasToBrand へは複製しない（DP-09 / DP-18）。
+   *
+   * 発動条件: クエリ（単一トークン）が宣言した旧名称 alias と正規化後に完全一致し、かつ通常の brand 解決
+   * （resolveAllHighPrecisionBrands / resolveBrandName）で brand が解決されない場合のみ。
+   * 発動時の候補: resolution は denotation 'brand'（brandKey = 宣言した現行 brand）、matchedBrandName = その brand、
+   * 候補表示（drugDisplayLabel / uiLabel）と resolution.subject（SOAP の {{drug_subject}}）は
+   * `brandCatalog[brand].displayGenericName`（formal な brand 名を human-facing に出さない）。
+   * handlingTags / addon の可視性は brandKey（brand identity）から導出される。
+   * 省略時は従来挙動を完全に維持する。
+   */
+  legacyBrandAliases?: Record<string, string>
 }
 
 // ─────────────────────────────────────────────────────────────

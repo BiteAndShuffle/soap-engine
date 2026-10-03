@@ -8,7 +8,7 @@ SOAP Engine の設計根拠・例外許容条件・禁止事項を永続化し�
 設計判断の参照順序:
   このドキュメント → JSON_STANDARD.md → OPEN_DESIGN_QUESTIONS.md → bridge 原稿 → canonical JSON
 
-最終更新: 2026-09-24（DP-22 inline addon placement 原則を新設。2026-09-22: DP-03 へ current-generation policy と current observation を追記: 条件付き必須 4 key は current の新規 module 生成では生成しない／判定条件は未定義のまま／既存 canonical は preserve／採用理由の前提と runtime consumer 0 件の実測が一致していない。本文・表・採用理由は historical design record として不変。2026-09-13: DP-19 へ Owner Decision OD-RAPID-SCOPE-1 を追記: Rapid の薬歴確認前提と「処方整理」の意味境界。DP-12 へ Owner Decision OD-COMPLIANCE-REALIZATION-1 を追記: コンプライアンス評価単位が Rapid sentence realization に与える含意。DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記）
+最終更新: 2026-10-03（DP-18 へ旧販売名 alias を現行 brand identity へ解決する場合の責務境界を追記〔`drug.search.legacyBrandAliases`・明示 opt-in のみ〕。先行: 2026-09-24（DP-22 inline addon placement 原則を新設。2026-09-22: DP-03 へ current-generation policy と current observation を追記: 条件付き必須 4 key は current の新規 module 生成では生成しない／判定条件は未定義のまま／既存 canonical は preserve／採用理由の前提と runtime consumer 0 件の実測が一致していない。本文・表・採用理由は historical design record として不変。2026-09-13: DP-19 へ Owner Decision OD-RAPID-SCOPE-1 を追記: Rapid の薬歴確認前提と「処方整理」の意味境界。DP-12 へ Owner Decision OD-COMPLIANCE-REALIZATION-1 を追記: コンプライアンス評価単位が Rapid sentence realization に与える含意。DP-18 へ 2026-09 追補: OD-DRUG-PREFIX-BOUNDARY-1・G5 gateFloor・MULTI_INGREDIENT_STRONG_ALIAS を追記。DP-20 へ Phase 2-A/2-B/SF-2A の用語対応を追記））
 
 ---
 
@@ -746,6 +746,15 @@ salt-name full reading を family 内の全 brand の `aliases` へ複製する�
 
 **採用理由**
 `drug.search.exactAliases`（module 単位）が peer brand としての一般名を持つ設計では、salt-name reading をそのまま `brandNames` 宣言順にランキングさせると、無関係な配合剤や医学的に非対称な候補が先頭に来る回帰が生じた。own-name 一致を優先し、salt-name の複製範囲を単一 brand に限定することで、この回帰を再発させずに検索到達性を確保する。
+
+**追記（2026-10-03）: 旧販売名 alias を現行 brand identity へ解決する場合の責務境界**
+旧販売名のように、現行 brand の旧名称である module-level alias を扱う場合の責務を次のとおり定める（DP-09 と DP-18 の組み合わせ）。
+- 到達性は従来どおり `drug.search.exactAliases` / `nameAliases` が担う（DP-09）。**brand-scoped alias（`aliases` / `normalizedAliases` / `aliasToBrand`）へは複製しない**
+- 到達後の帰属は、`drug.search.legacyBrandAliases`（旧名称 alias → 現行 brand key。`docs/JSON_STANDARD.md`）に**明示的に宣言した alias だけ**を、authoritative な現行 brand identity へ解決する（opt-in）。宣言は既存 alias の解決先の分類であり、新しい alias source ではない
+- **brand identity（`resolution.brandKey`。handlingTags・addon 可視性の根拠）と human-facing 表現（候補表示・SOAP 主語 `resolution.subject`）は別軸**とし、解決後の human-facing 表現は `brandCatalog[brand].displayGenericName` を用いる。formal な brand 名（内部識別）を SOAP に露出させない。これは brand 解決後の表示を一般名にする既存の前例（連結一致・fallback の `makeBrandResolution(brand, 一般名表示)`）と同じ形である。Topbar の secondary label（matchedBrandName の補足）は presentation 専用フラグ `suppressMatchedBrandLabel` で抑制し、`isGenericLabel`（一般名見出しの意味を持ち、結果の組み立てにも使われる）は使わない
+- 未宣言 module の挙動は完全に不変。ranking / scoring / gate / bucket / genericKey semantics は変更しない
+- 初回適用: `cataract_pirenoxine_eye_drops` の旧販売名「カリーユニ点眼液」系 4 alias → `ピレノキシン懸濁性点眼液`（Owner Decision 2026-10-03。旧販売名である旨は Owner 提供の Fact）
+- 一般名そのものの `brandNames[0]` 縮退（Q-S1）を一般に解決するものではない
 
 **DP-09との責務境界**
 - DP-09: 一般名検索によって **module へ到達できるか**（reachability）を扱う

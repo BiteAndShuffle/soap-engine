@@ -1,6 +1,6 @@
 {
   "manifestVersion": "1",
-  "sourceHash": "3fe6a00dbba3b1985b5afceed42465e39db9aa86670d8825c3dda16d961c2db3",
+  "sourceHash": "e13369a102b19e6034dea376f09a83434dc08ee0eac870e78b771ff7dd0cb054",
   "moduleCount": 39,
   "scenarioCount": 1244,
   "modules": [
@@ -4685,6 +4685,12 @@
           "点眼"
         ],
         "formulationSearchTokens": [],
+        "legacyBrandAliases": {
+          "カリーユニ点眼液": "ピレノキシン懸濁性点眼液",
+          "カリーユニ": "ピレノキシン懸濁性点眼液",
+          "かりーゆにてんがん": "ピレノキシン懸濁性点眼液",
+          "かりーゆに": "ピレノキシン懸濁性点眼液"
+        },
         "priority": 5,
         "matchPolicy": {
           "preferExactAlias": true,

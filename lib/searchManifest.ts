@@ -110,6 +110,11 @@ export interface ManifestModule {
     keywords: string[]
     /** 剤形トークン */
     formulationSearchTokens: string[]
+    /**
+     * drug.search.legacyBrandAliases（旧名称 alias → 現行 brand key の opt-in 解決表）。宣言する module のみ収録する
+     * （未宣言 module はキー自体を持たず、既存 entry の manifest 表現を変えない）。SearchEntry 再構築専用で、alias source ではない。
+     */
+    legacyBrandAliases?: Record<string, string>
     priority: number
     matchPolicy: Record<string, unknown>
   }
@@ -213,6 +218,9 @@ export function toManifestModule(m: ModuleData): ManifestModule {
       nameAliases: ds?.nameAliases ?? [],
       keywords: ds?.keywords ?? [],
       formulationSearchTokens: ds?.formulationSearchTokens ?? [],
+      ...(ds?.legacyBrandAliases !== undefined && Object.keys(ds.legacyBrandAliases).length > 0
+        ? { legacyBrandAliases: ds.legacyBrandAliases }
+        : {}),
       priority: ds?.priority ?? 0,
       matchPolicy: ds?.matchPolicy ?? {},
     },

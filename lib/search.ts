@@ -97,6 +97,12 @@ export interface SearchEntry {
   exactAliasTokens: string[]
   primaryDisplayNameNorm: string
   aliasTokens: string[]
+  /**
+   * drug.search.legacyBrandAliases の正規化済み解決表（opt-in。正規化済み旧名称 alias → 現行 brand key。未宣言モジュールでは空）。
+   * 既存 alias（exactAliases / nameAliases）の解決先を示す分類であり、検索到達性・scoring には一切使わない
+   * （lowConfidence 候補の組み立てでのみ参照）。
+   */
+  legacyBrandAliasMap: Record<string, string>
   /** 表示用タイトル（scenario.title） */
   label: string
   /** 短縮ラベル（薬効群名プレフィックスを除いたもの） */
@@ -190,6 +196,11 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
     ...(drug?.brandNames ?? []),
   ]
   const aliasTokens = rawAliases.map(normalizeText).filter(Boolean)
+  const legacyBrandAliasMap: Record<string, string> = {}
+  for (const [alias, brandKey] of Object.entries(drugSearch?.legacyBrandAliases ?? {})) {
+    const norm = normalizeText(alias)
+    if (norm) legacyBrandAliasMap[norm] = brandKey
+  }
 
   const keywordTexts: string[] = drugSearch?.keywords ?? []
 
@@ -302,6 +313,7 @@ export function buildSearchIndex(moduleData: ModuleData): SearchEntry[] {
       exactAliasTokens,
       primaryDisplayNameNorm,
       aliasTokens,
+      legacyBrandAliasMap,
       label: scenario.title,
       shortLabel: scenario.title,  // 新スキーマでは title が既に短縮形
       groupLabel,
@@ -638,6 +650,15 @@ export interface DrugSuggestionItem {
    * （一般名単独の見出し候補など、drugDisplayLabel と matchedBrandName が意図的に異なる場合）。
    */
   isGenericLabel?: boolean
+  /**
+   * presentation 専用。true の場合、UI 側は matchedBrandName をセカンドラインとして表示してはならない
+   * （候補の primary label を displayGenericName とし、formal な brand 名を human-facing に出さない場合）。
+   * `isGenericLabel`（一般名見出しの意味を持ち、結果の組み立て・並びにも使われる）とは別軸であり、
+   * 本フラグは **表示以外のいかなる処理（resolution / matchedBrandName / handlingTags / addon / ranking / bucket / dedup）にも使用しない**。
+   * 未指定（undefined）の候補ではキー自体を持たず、既存の UI 挙動を完全に維持する。
+   * 現在は `drug.search.legacyBrandAliases` 由来の候補にのみ立つ。canonical JSON の医療 semantic field ではない。
+   */
+  suppressMatchedBrandLabel?: boolean
   /**
    * この候補が「何を指しているか」を表す domain state（`lib/brandResolution.ts`）。
    *
@@ -1011,6 +1032,8 @@ export function getDrugSuggestions(
     displayLabel: string
     uiLabel?: string
     isGenericLabel?: boolean
+    /** presentation 専用（DrugSuggestionItem.suppressMatchedBrandLabel）。表示以外には使用しない */
+    suppressMatchedBrandLabel?: boolean
     dedupKeyOverride?: string
     /**
      * クエリの全トークンのうち、このブランドの正式名・alias・一般名に一致した数。
@@ -1096,6 +1119,8 @@ export function getDrugSuggestions(
       displayLabel: string
       uiLabel?: string
       isGenericLabel?: boolean
+      /** presentation 専用（DrugSuggestionItem.suppressMatchedBrandLabel）。表示以外には使用しない */
+      suppressMatchedBrandLabel?: boolean
       /** dedup キーの上書き（一般名見出し候補が特定ブランドのキーと衝突しないようにする） */
       dedupKeyOverride?: string
       bucket: Bucket
@@ -1461,14 +1486,34 @@ export function getDrugSuggestions(
           // ブランド名・一般名のいずれも解決できなかった候補。
           // corpus部分一致（keywords等）のみで scored に残っているため、
           // 正当な一般名検索（genericMode）とは区別し、専用バケツへ送る。
-          candidates.push({
-            brand: undefined,
-            displayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
-            bucket: 'lowConfidence',
-            // brand が一切解決できていない唯一の経路。module の静的構造から
-            // brand / generic / module のいずれかを決定論的に導出する。
-            resolution: deriveUnresolvedResolution(entry),
-          })
+          // brand が一切解決できていない唯一の経路。module の静的構造から
+          // brand / generic / module のいずれかを決定論的に導出する。
+          const unresolved = deriveUnresolvedResolution(entry)
+          const legacyBrand = tokens.length === 1 ? entry.legacyBrandAliasMap[tokens[0]] : undefined
+          if (legacyBrand !== undefined && entry.brandNames.includes(legacyBrand)) {
+            // opt-in（drug.search.legacyBrandAliases）: 旧名称 alias は現行 brand identity へ解決する
+            // （brandKey = authoritative な brand → handlingTags / addon 可視性は brand 由来）。
+            // 候補表示と SOAP 主語（resolution.subject）は displayGenericName を使い、formal な brand 名は
+            // human-facing に出さない。brand 解決後の表示を一般名にする既存の前例（連結一致・fallback の
+            // makeBrandResolution(brand, 一般名表示)）と同じ形である。bucket（lowConfidence）・scoring・ranking は変更しない。
+            const legacyLabel = entry.brandCatalogGenericMap[legacyBrand] ?? legacyBrand
+            candidates.push({
+              brand: legacyBrand,
+              displayLabel: legacyLabel,
+              uiLabel: legacyLabel,
+              // presentation のみ: primary label が displayGenericName のため、formal な brand 名をセカンドラインに出さない
+              suppressMatchedBrandLabel: true,
+              bucket: 'lowConfidence',
+              resolution: makeBrandResolution(legacyBrand, legacyLabel),
+            })
+          } else {
+            candidates.push({
+              brand: undefined,
+              displayLabel: entry.drugDisplayLabel ?? entry.brandNames[0] ?? entry.moduleId,
+              bucket: 'lowConfidence',
+              resolution: unresolved,
+            })
+          }
         } else {
           const isDirectBrandMatch = matchedByToken !== undefined &&
             entry.brandNames.some(b => normalizeText(b) === matchedByToken || normalizeText(b).startsWith(matchedByToken!))
@@ -1495,7 +1540,7 @@ export function getDrugSuggestions(
     const entryMatchStrength = deriveMatchStrength(entry, tokens[0])
 
     // バケツへ振り分ける（モジュール横断の結合は最後にまとめて行う）
-    for (const { brand, displayLabel, uiLabel, isGenericLabel, dedupKeyOverride, bucket, resolution } of activeCandidates) {
+    for (const { brand, displayLabel, uiLabel, isGenericLabel, suppressMatchedBrandLabel, dedupKeyOverride, bucket, resolution } of activeCandidates) {
       bucketed[bucket].push({
         moduleId: entry.moduleId,
         templateId: entry.templateId,
@@ -1504,6 +1549,7 @@ export function getDrugSuggestions(
         uiLabel,
         tokenMatchScore: brand !== undefined ? countMatchedTokens(entry, brand, tokens) : 0,
         isGenericLabel,
+        ...(suppressMatchedBrandLabel ? { suppressMatchedBrandLabel: true } : {}),
         dedupKeyOverride,
         resolution,
         matchStrength: entryMatchStrength,
@@ -1620,6 +1666,7 @@ export function getDrugSuggestions(
       representativeTemplateId: c.templateId,
       uiLabel: c.uiLabel,
       isGenericLabel: c.isGenericLabel,
+      ...(c.suppressMatchedBrandLabel ? { suppressMatchedBrandLabel: true } : {}),
       resolution: c.resolution,
       matchStrength: c.matchStrength,
     })

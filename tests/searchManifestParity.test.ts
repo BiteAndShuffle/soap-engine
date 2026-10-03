@@ -140,7 +140,7 @@ describe('T-1 structured search parity（canonical ⇔ manifest）', () => {
     )
   })
 
-  test('SearchEntry の全 23 フィールドが 1 件残らず一致する', () => {
+  test('SearchEntry の全 24 フィールドが 1 件残らず一致する', () => {
     const keys = Object.keys(canonicalIndex[0]) as Array<keyof (typeof canonicalIndex)[0]>
     // 2026-09: brandCatalogIngredientMap 追加により 21 → 22（S-2E/S-2F。
     // H1 内服/点眼のようなモジュール間の一般名前方一致促進ブロックを、
@@ -150,7 +150,10 @@ describe('T-1 structured search parity（canonical ⇔ manifest）', () => {
     // 順序付けるための判定に使用。manifest 側は buildIndexFromManifest が
     // toModuleShape() 経由で categoryPath を復元済みの ModuleData を buildSearchIndex に
     // そのまま渡すため、manifest 側コード・データとも変更不要で parity が成立する）。
-    assert.equal(keys.length, 23, `SearchEntry のフィールド数が 23 から変化している: ${keys.length}`)
+    // 2026-10-03: legacyBrandAliasMap 追加により 23 → 24（drug.search.legacyBrandAliases の opt-in 解決表。
+    // 既存 alias（exactAliases / nameAliases）の解決先を示す分類であり alias source ではない。manifest 側は ManifestModule.search に宣言 module のみ収録し、
+    // toModuleShape() 経由で復元するため parity が成立する。未宣言 module の manifest 表現は変化しない）。
+    assert.equal(keys.length, 24, `SearchEntry のフィールド数が 24 から変化している: ${keys.length}`)
 
     const mismatches: string[] = []
     for (const k of keys) {
